@@ -1,0 +1,21 @@
+/* Additional mobile menu styles */
+.mobile-menu-content {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.mobile-menu-header {
+  flex-shrink: 0;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.mobile-menu-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.mobile-menu-footer {
+  flex-shrink: 0;
+  border-top: 1px solid hsl(var(--border));
+}

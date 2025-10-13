@@ -17,7 +17,7 @@ export default function HomePage() {
   return (
     <>
       <SiteHeader />
-      <main>
+      <main className="overflow-x-hidden w-full">
         <Hero />
         <FeaturedPujas />
         <WhyChoose />
@@ -35,7 +35,7 @@ export default function HomePage() {
       <Link
         href="https://wa.me/910000000000"
         aria-label="Chat on WhatsApp"
-        className="fixed bottom-5 right-5 rounded-full bg-primary text-primary-foreground px-4 py-3 shadow-lg"
+        className="fixed bottom-5 right-5 rounded-full bg-primary text-primary-foreground px-4 py-3 shadow-lg md:bottom-8 md:right-8 max-w-[calc(100vw-40px)] overflow-hidden whitespace-nowrap"
         target="_blank"
       >
         WhatsApp

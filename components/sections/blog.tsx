@@ -8,8 +8,8 @@ export function BlogPreview() {
   ]
   return (
     <section id="blog" aria-labelledby="blog-title" className="bg-background">
-      <div className="mx-auto max-w-6xl px-4 py-12">
-        <div className="flex items-end justify-between">
+      <div className="mx-auto max-w-6xl px-4 py-12 overflow-x-hidden w-full">
+        <div className="flex items-end justify-between flex-wrap">
           <h2 id="blog-title" className="font-serif text-2xl md:text-3xl">
             Knowledge Blog
           </h2>
@@ -17,12 +17,12 @@ export function BlogPreview() {
             Explore Spiritual Knowledge Base →
           </Link>
         </div>
-        <div className="grid md:grid-cols-3 gap-6 mt-6">
+        <div className="grid md:grid-cols-3 gap-6 mt-6 w-full">
           {posts.map(([title, readTime]) => (
-            <article key={title} className="rounded-lg border bg-card p-4">
-              <img src="/hindu-rituals-knowledge-blog.jpg" alt={`Cover image for: ${title}`} className="rounded-md border" />
+            <article key={title} className="rounded-lg border bg-card p-4 flex flex-col">
+              <img src="/hindu-rituals-knowledge-blog.jpg" alt={`Cover image for: ${title}`} className="rounded-md border w-full h-auto" />
               <h3 className="font-serif text-lg mt-3">{title}</h3>
-              <p className="text-sm text-muted-foreground">{readTime}</p>
+              <p className="text-sm text-muted-foreground mt-auto">{readTime}</p>
             </article>
           ))}
         </div>

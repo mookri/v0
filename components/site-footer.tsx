@@ -3,7 +3,7 @@ import Link from "next/link"
 export function SiteFooter() {
   return (
     <footer className="bg-foreground text-background" role="contentinfo">
-      <div className="mx-auto max-w-6xl px-4 py-12 grid md:grid-cols-4 gap-8">
+      <div className="mx-auto max-w-6xl px-4 py-12 grid md:grid-cols-4 gap-8 overflow-x-hidden w-full">
         <div>
           <h3 className="font-serif text-lg">About Navdhya</h3>
           <p className="text-sm mt-2 opacity-90">
@@ -104,7 +104,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-background/20">
-        <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between text-xs opacity-90">
+        <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between text-xs opacity-90 flex-wrap">
           <div>© {new Date().getFullYear()} Navdhya. All rights reserved.</div>
           <div className="flex gap-3">
             <Link href="#" className="underline">

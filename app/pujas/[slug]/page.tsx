@@ -39,13 +39,6 @@ const DATA: Record<
     imgQuery: "rudrabhishek%20temple%20abhishek%20shivling",
     highlights: ["Experienced Pandits", "Samagri covered", "Pure ingredients", "Detailed Vidhi"],
   },
-  shraddh: {
-    title: "Shraddh Ceremony",
-    description: "Honor your ancestors with authentic rituals performed as per Vedic customs and regional traditions.",
-    price: "₹5,000 – ₹10,000",
-    imgQuery: "shraddh%20ceremony%20traditional%20ritual",
-    highlights: ["Pitr Tarpan", "Qualified priests", "Guidance and support", "Respectful conduct"],
-  },
   "hindu-wedding": {
     title: "Hindu Wedding Ceremony",
     description:
@@ -61,7 +54,7 @@ export default function PujaDetailsPage({ params }: { params: { slug: string } }
   if (!puja) return notFound()
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:py-12">
+    <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:py-12 overflow-x-hidden">
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="relative h-56 w-full overflow-hidden rounded-md sm:h-80">
           <Image

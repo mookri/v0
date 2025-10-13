@@ -16,13 +16,13 @@ export function FAQ() {
   ]
   return (
     <section aria-labelledby="faq-title" className="bg-muted/50">
-      <div className="mx-auto max-w-6xl px-4 py-12">
+      <div className="mx-auto max-w-6xl px-4 py-12 overflow-x-hidden w-full">
         <h2 id="faq-title" className="font-serif text-2xl md:text-3xl">
           Frequently Asked Questions
         </h2>
-        <Accordion type="single" collapsible className="mt-6">
+        <Accordion type="single" collapsible className="mt-6 w-full">
           {faqs.map(([q, a], i) => (
-            <AccordionItem key={i} value={`item-${i}`}>
+            <AccordionItem key={i} value={`item-${i}`} className="w-full">
               <AccordionTrigger className="text-left">{q}</AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground">{a}</AccordionContent>
             </AccordionItem>

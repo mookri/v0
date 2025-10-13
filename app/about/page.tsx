@@ -5,8 +5,8 @@ export default function AboutPage() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-6xl px-4 py-12 space-y-10">
-        <section aria-labelledby="our-story">
+      <main className="mx-auto max-w-6xl px-4 py-12 space-y-10 overflow-x-hidden w-full">
+        <section aria-labelledby="our-story" className="w-full">
           <h1 id="our-story" className="font-serif text-3xl">
             Our Story
           </h1>
@@ -60,7 +60,7 @@ export default function AboutPage() {
           <img
             src="/india-service-coverage-map.jpg"
             alt="Map showing service coverage areas"
-            className="rounded-md border mt-3"
+            className="rounded-md border mt-3 w-full h-auto"
           />
         </section>
       </main>

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 export function Hero() {
   return (
     <section aria-labelledby="hero-title" className="relative overflow-hidden">
-      <div className="mx-auto max-w-6xl px-4 py-14 md:py-20 grid md:grid-cols-2 gap-8 items-center">
+      <div className="mx-auto max-w-6xl px-4 py-14 md:py-20 grid md:grid-cols-2 gap-8 items-center overflow-x-hidden w-full">
         <div className="order-2 md:order-1">
           <h1 id="hero-title" className="font-serif text-3xl md:text-5xl leading-tight text-pretty">
             Sacred Rituals, Performed with Devotion & Precision
@@ -11,7 +11,7 @@ export function Hero() {
           <p className="mt-4 text-muted-foreground">
             Experienced Pandits • Complete Samagri • Hassle-Free Arrangements
           </p>
-          <div className="mt-6 flex gap-3">
+          <div className="mt-6 flex flex-col sm:flex-row gap-3 flex-wrap">
             <Button className="bg-primary text-primary-foreground">Book Your Puja</Button>
             <Button variant="outline">Get Free Consultation</Button>
           </div>
@@ -25,7 +25,7 @@ export function Hero() {
             alt="Traditional puja ceremony arrangement with mandap and samagri"
             className="aspect-[4/3] w-full rounded-lg border object-cover"
           />
-          <div className="absolute left-6 top-6 md:left-auto md:right-6 bg-card border rounded-md px-3 py-2 text-sm shadow">
+          <div className="absolute left-6 top-6 md:left-auto md:right-6 bg-card border rounded-md px-3 py-2 text-sm shadow max-w-[calc(100%-3rem)] overflow-hidden">
             500+ Families Blessed
           </div>
         </div>

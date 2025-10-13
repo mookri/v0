@@ -6,14 +6,14 @@ export function ProcessSteps() {
   ]
   return (
     <section id="process" aria-labelledby="process-title" className="bg-muted/50">
-      <div className="mx-auto max-w-6xl px-4 py-12">
+      <div className="mx-auto max-w-6xl px-4 py-12 overflow-x-hidden w-full">
         <h2 id="process-title" className="font-serif text-2xl md:text-3xl">
           Simple 3-Step Process
         </h2>
-        <ol className="mt-6 grid md:grid-cols-3 gap-6">
+        <ol className="mt-6 grid gap-6 md:grid-cols-3 w-full">
           {steps.map(([title, desc], i) => (
-            <li key={title} className="p-5 rounded-lg border bg-card relative">
-              <div className="absolute -top-3 -left-3 size-8 rounded-full bg-accent text-accent-foreground grid place-items-center text-sm">
+            <li key={title} className="p-5 rounded-lg border bg-card relative flex flex-col">
+              <div className="absolute -top-3 -left-3 size-8 rounded-full bg-accent text-accent-foreground grid place-items-center text-sm overflow-hidden">
                 {i + 1}
               </div>
               <h3 className="font-serif text-lg">{title}</h3>

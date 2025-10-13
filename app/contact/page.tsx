@@ -9,13 +9,13 @@ export default function ContactPage() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-6xl px-4 py-12 grid md:grid-cols-2 gap-8">
-        <section aria-labelledby="contact-us">
+      <main className="mx-auto max-w-6xl px-4 py-12 grid md:grid-cols-2 gap-8 overflow-x-hidden w-full">
+        <section aria-labelledby="contact-us" className="flex flex-col">
           <h1 id="contact-us" className="font-serif text-3xl">
             Contact Us
           </h1>
           <p className="mt-3 text-muted-foreground">
-            We’re here to help you choose the right ritual and plan your ceremony.
+            We're here to help you choose the right ritual and plan your ceremony.
           </p>
           <form className="mt-6 space-y-4">
             <div>
@@ -49,14 +49,14 @@ export default function ContactPage() {
             </a>
           </div>
         </section>
-        <aside aria-label="Office and Map">
-          <div className="rounded-lg border bg-card p-5">
+        <aside aria-label="Office and Map" className="flex flex-col">
+          <div className="rounded-lg border bg-card p-5 flex-grow">
             <h2 className="font-serif text-xl">Office Location</h2>
             <p className="text-sm text-muted-foreground mt-2">Registered Office — New Delhi</p>
             <img
               src="/office-location-map-new-delhi.jpg"
               alt="Map showing office location in New Delhi"
-              className="rounded-md border mt-4"
+              className="rounded-md border mt-4 w-full h-auto"
             />
           </div>
         </aside>
