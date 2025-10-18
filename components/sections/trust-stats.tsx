@@ -8,7 +8,7 @@ export function TrustStats() {
   return (
     <section aria-labelledby="stats-title" className="bg-secondary text-secondary-foreground">
       <div className="mx-auto max-w-6xl px-4 py-12 overflow-x-hidden w-full">
-        <h2 id="stats-title" className="font-serif text-2xl md:text-3xl">
+        <h2 id="stats-title" className="font-serif text-2xl md:text-3xl text-center">
           Trust Statistics
         </h2>
         <div className="grid md:grid-cols-4 gap-6 mt-6 w-full">

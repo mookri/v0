@@ -1,11 +1,8 @@
 "use client"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { cn } from "@/lib/utils"
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet"
-import { Separator } from "@/components/ui/separator"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Search, Phone, User, Heart, ShoppingCart, Menu, X, ChevronDown } from 'lucide-react'
 
@@ -94,7 +91,7 @@ export function SiteHeader() {
     <div className="w-full bg-background">
       {/* Top Promotional Banner */}
       <div className="bg-red-50 border-b border-red-100">
-        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between text-sm">
+        <div className="container mx-auto px-4 py-2 flex items-center justify-between text-sm">
           <div className="flex items-center gap-2">
             <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
@@ -113,7 +110,7 @@ export function SiteHeader() {
 
       {/* Main Header */}
       <div className="border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center gap-8">

@@ -44,11 +44,10 @@ const items = [
 export function FeaturedPujas() {
   return (
     <section aria-labelledby="featured-pujas" className="bg-muted/50">
-      <div className="mx-auto max-w-6xl px-4 py-12 overflow-x-hidden w-full">
+      <div className="mx-auto max-w-7xl px-4 py-12 overflow-x-hidden w-full">
         <div className="text-center mb-10">
           <h2 id="featured-pujas" className="font-serif text-2xl md:text-3xl">  
             Featured Pujas
-            <span className="absolute bottom-0 left-0 w-full h-1 bg-primary/20 rounded-full"></span>
           </h2>
           <p className="text-muted-foreground mt-4 text-sm md:text-base max-w-2xl mx-auto font-sans">
             Explore our most popular rituals performed by certified pandits
