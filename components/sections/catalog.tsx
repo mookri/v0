@@ -158,7 +158,7 @@ export function Catalog() {
                 </Link>
                 <div className="flex items-center gap-3 px-4 pb-4">
                   <Link href="#booking" className="flex-1">
-                    <Button className="w-full bg-primary text-primary-foreground" size="sm">
+                    <Button className="w-full bg-[#0E3F2E] text-white hover:bg-[#0E3F2E]/90 border-2 border-[#0E3F2E]" size="sm">
                       Book Now
                     </Button>
                   </Link>

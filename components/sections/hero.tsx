@@ -41,15 +41,20 @@ const slides = [
   },
 ];
 
-
 export default function HeroCarousel() {
   const [current, setCurrent] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  // Set isClient to true after mounting to avoid hydration issues
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Auto slide every 8 seconds
   useEffect(() => {
-    if (!isAutoPlaying || isTransitioning) return;
+    if (!isClient || !isAutoPlaying || isTransitioning) return;
 
     const timer = setInterval(() => {
       setIsTransitioning(true);
@@ -57,9 +62,10 @@ export default function HeroCarousel() {
     }, 8000);
     
     return () => clearInterval(timer);
-  }, [isAutoPlaying, isTransitioning]);
+  }, [isClient, isAutoPlaying, isTransitioning]);
 
   const handleSlideChange = (newIndex: number) => {
+    if (!isClient) return;
     setIsAutoPlaying(false);
     setIsTransitioning(true);
     setCurrent(newIndex);
@@ -81,9 +87,36 @@ export default function HeroCarousel() {
     handleSlideChange(index);
   };
 
+  // Don't render anything on the server to prevent hydration mismatch
+  if (!isClient) {
+    return (
+      <section 
+        className="relative w-full h-[60vh] md:h-[85vh] overflow-hidden bg-gradient-to-br from-background to-muted"
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/75 to-black/65" />
+        <div className="relative h-full container mx-auto px-6 lg:px-8">
+          <div className="flex h-full items-center">
+            <div className="max-w-3xl lg:max-w-4xl">
+              <div className="inline-flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg text-xs mb-4 text-white font-semibold tracking-wider border border-white/20 backdrop-blur-sm">
+                <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
+                <span>{slides[0].label.toUpperCase()}</span>
+              </div>
+              <h1 className="text-3xl md:text-4xl lg:text-6xl font-semibold leading-tight mb-4 tracking-tight text-white">
+                {slides[0].title}
+              </h1>
+              <p className="text-base md:text-lg text-gray-200 leading-relaxed mb-6 max-w-3xl font-medium">
+                {slides[0].subtitle}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section 
-      className="relative w-full h-[90vh] md:h-screen overflow-hidden bg-black"
+      className="relative w-full h-[60vh] md:h-[85vh] overflow-hidden bg-gradient-to-br from-background to-muted"
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
@@ -91,88 +124,90 @@ export default function HeroCarousel() {
       <AnimatePresence mode="wait" onExitComplete={() => setIsTransitioning(false)}>
         <motion.div
           key={slides[current].id}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
+          initial={isClient ? { opacity: 0 } : undefined}
+          animate={isClient ? { opacity: 1 } : undefined}
+          exit={isClient ? { opacity: 0 } : undefined}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
           className="absolute inset-0"
         >
-          {/* Background Image */}
+          {/* Background Image with Parallax Effect */}
           <div className="absolute inset-0">
-            <img
-              src={slides[current].image}
-              alt={slides[current].title}
-              className="w-full h-full object-cover"
-              loading="eager"
+            <div 
+              className="w-full h-full bg-cover bg-center"
+              style={{ 
+                backgroundImage: `url(${slides[current].image})`,
+                transform: 'scale(1.05)',
+              }}
             />
             
-            {/* Overlay Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
+            {/* Modern Overlay Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/75 to-black/65" />
             
             {/* Subtle Pattern Overlay */}
-            <div className="absolute inset-0 bg-[url('/sanskrit-pattern-light.svg')] bg-contain bg-center opacity-[0.03] mix-blend-overlay" />
+            <div className="absolute inset-0 opacity-[0.02]" />
           </div>
 
           {/* Content Container */}
           <div className="relative h-full container mx-auto px-6 lg:px-8">
             <div className="flex h-full items-center">
-              <div className="max-w-2xl lg:max-w-3xl text-white">
-                {/* Label Badge */}
+              <div className="max-w-3xl lg:max-w-4xl text-white">
+                {/* Label Badge - Transparent sleek design */}
                 <motion.div
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  className="inline-flex items-center gap-2 bg-amber-500 px-4 py-2 rounded-full text-sm mb-8 text-white font-medium"
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="inline-flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg text-xs mb-4 text-white font-semibold tracking-wider border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300 ease-in-out transform hover:scale-105 backdrop-blur-sm"
                 >
-                  <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                  {slides[current].label}
+                  <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                  {slides[current].label.toUpperCase()}
                 </motion.div>
 
-                {/* Main Title */}
+                {/* Main Title - Compact font size */}
                 <motion.h1
                   key={`title-${current}`}
                   initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.3 }}
-                  className="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-6"
+                  transition={{ duration: 0.7, delay: 0.2 }}
+                  className="text-3xl md:text-4xl lg:text-6xl font-semibold leading-tight mb-4 tracking-tight text-white"
                 >
-                  {slides[current].title.split(' ').map((word, index, array) => 
+                  {slides[current].title.split(' ').map((word, index) => 
                     word === "Divine" || word === "Traditional" || word === "Auspicious" ? (
-                      <span key={index} className="text-amber-400">{word} </span>
+                      <span key={index} className="text-primary">{word} </span>
                     ) : (
                       <span key={index}>{word} </span>
                     )
                   )}
                 </motion.h1>
 
-                {/* Subtitle */}
+                {/* Subtitle - Smaller font size */}
                 <motion.p
                   key={`subtitle-${current}`}
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.5 }}
-                  className="text-lg md:text-xl text-slate-200 leading-relaxed mb-8 max-w-3xl"
+                  transition={{ duration: 0.7, delay: 0.4 }}
+                  className="text-base md:text-lg text-gray-200 leading-relaxed mb-6 max-w-3xl font-medium"
                 >
                   {slides[current].subtitle}
                 </motion.p>
 
-                {/* CTA Buttons */}
+                {/* CTA Buttons - More rounded */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.7 }}
+                  transition={{ duration: 0.7, delay: 0.6 }}
                   className="flex flex-col sm:flex-row gap-4"
                 >
                   <Link
                     href={slides[current].ctaLink}
-                    className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 md:px-8 px-5 md:py-4 py-3 text-white font-medium text-lg shadow-lg hover:shadow-xl hover:scale-[1.03] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-black/50"
+                    className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-primary-foreground font-semibold text-sm shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background group"
                   >
                     {slides[current].cta}
+                    <ArrowRight className="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </Link>
                   
                   <Link
                     href={slides[current].secondaryCtaLink}
-                    className="inline-flex items-center justify-center rounded-xl border-2 border-white bg-transparent md:px-8 px-5 md:py-4 py-3 text-white font-medium text-lg hover:bg-white hover:text-black transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black/50"
+                    className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-6 py-3 text-white font-semibold text-sm hover:bg-white/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-background/50"
                   >
                     {slides[current].secondaryCta}
                   </Link>
@@ -182,13 +217,17 @@ export default function HeroCarousel() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.9 }}
-                  className="pt-8 text-sm text-slate-300"
+                  transition={{ duration: 0.7, delay: 0.8 }}
+                  className="pt-8 flex items-center gap-3 font-sans"
                 >
-                  <span className="inline-flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-                    Trusted by thousands of families worldwide
-                  </span>
+                  <div className="flex -space-x-2">
+                    {[1, 2, 3].map((item) => (
+                      <div key={item} className="w-8 h-8 rounded-full bg-white/20 border-2 border-white/30 flex items-center justify-center shadow-sm">
+                        <div className="w-2 h-2 rounded-full bg-white"></div>
+                      </div>
+                    ))}
+                  </div>
+                  <span className="text-base leading-snug tracking-wide max-w-[200px] md:max-w-none font-sans text-gray-200">Trusted by thousands of families worldwide</span>
                 </motion.div>
               </div>
             </div>
@@ -196,33 +235,33 @@ export default function HeroCarousel() {
         </motion.div>
       </AnimatePresence>
 
-      {/* Navigation Arrows */}
+      {/* Navigation Arrows - Hidden on mobile, visible on desktop */}
       <button
         onClick={prev}
-        className="hidden md:block absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 text-white rounded-md p-2.5 transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-black/50"
+        className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 text-white p-2 transition-all duration-300 hover:text-primary focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-background/50 rounded-full border border-white/30 hover:border-white hover:bg-white/10"
         aria-label="Previous slide"
       >
-        <ArrowLeft className="w-5 h-5 lg:w-6 lg:h-6" />
+        <ArrowLeft className="w-5 h-5" />
       </button>
 
       <button
         onClick={next}
-        className="hidden md:block absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 text-white rounded-md p-2.5 transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-black/50"
+        className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 text-white p-2 transition-all duration-300 hover:text-primary focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-background/50 rounded-full border border-white/30 hover:border-white hover:bg-white/10"
         aria-label="Next slide"
       >
-        <ArrowRight className="w-5 h-5 lg:w-6 lg:h-6" />
+        <ArrowRight className="w-5 h-5" />
       </button>
 
-      {/* Dots Indicator */}
+      {/* Animated Capsule-shaped Progress Indicators */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50 ${
+            className={`h-1.5 rounded-full transition-all duration-500 ease-in-out focus:outline-none focus:ring-2 focus:ring-white/50 ${
               index === current 
-                ? "bg-amber-400 scale-125 shadow-lg" 
-                : "bg-white/60 hover:bg-white/80"
+                ? "bg-white w-8" 
+                : "bg-white/30 w-4 hover:brightness-125"
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />

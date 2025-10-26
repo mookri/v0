@@ -124,7 +124,7 @@ export function Booking() {
               
               <Button 
                 type="submit" 
-                className={cn("w-full py-6 text-base font-medium transition-all", submitted ? "bg-green-600 hover:bg-green-700" : "bg-primary hover:bg-primary/90")}
+                className={cn("w-full py-6 text-base font-medium transition-all", submitted ? "bg-green-600 hover:bg-green-700" : "bg-[#0E3F2E] hover:bg-[#0E3F2E]/90 border-2 border-[#0E3F2E]")}
                 disabled={submitted}
               >
                 {submitted ? (
