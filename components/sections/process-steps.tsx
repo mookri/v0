@@ -79,7 +79,7 @@ export function ProcessSteps() {
                 </div>
               </div>
             ))}
-            <div className="step-line" />
+            {/* <div className="step-line" /> */}
           </div>
         </div>
 
