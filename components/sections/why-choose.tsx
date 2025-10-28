@@ -33,60 +33,59 @@ export function WhyChoose() {
   ];
 
   return (
-    <section aria-labelledby="why-choose" className="bg-background py-16 lg:py-20">
+    <section aria-labelledby="why-choose" className="bg-background py-12 lg:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Enhanced Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <h2
             id="why-choose"
-            className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground relative inline-block mb-4"
+            className="font-serif text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-foreground relative inline-block mb-3"
           >
             Why Choose Navdhara
-            <span className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-primary to-secondary rounded-full"></span>
+            <span className="absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 w-20 h-0.5 bg-gradient-to-r from-primary to-[#0E3F2E] rounded-full"></span>
           </h2>
-          <p className="text-muted-foreground mt-6 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+          <p className="text-muted-foreground mt-4 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
             Experience the divine difference with our authentic, professional, and comprehensive puja services
             that honor tradition while embracing modern convenience
           </p>
         </div>
 
         {/* Enhanced Grid Layout */}
-        <div className="mt-12 grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {points.map((point, index) => (
             <div
               key={point.title}
               className="group relative"
             >
-              {/* Animated Background Effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 rounded-2xl transform group-hover:scale-105 transition-all duration-500 opacity-0 group-hover:opacity-100 -z-10" />
-
-              {/* Main Card */}
-              <div className="p-8 rounded-2xl border border-border/50 bg-card/60 backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 group-hover:border-primary/30 h-full flex flex-col relative overflow-hidden">
+              {/* Premium Sleek Card */}
+              <div className="p-5 rounded-lg border border-border/50 bg-card/90 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md h-full flex flex-col relative overflow-hidden">
 
                 {/* Floating Icon Background */}
-                <div className="absolute top-4 right-4 text-6xl opacity-5 transform rotate-12 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-0">
+                <div className="absolute top-2.5 right-2.5 text-4xl opacity-5 transform rotate-12 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-0">
                   {point.icon}
                 </div>
 
-                {/* Number Indicator with Enhanced Design */}
-                <div className="flex items-start justify-between mb-6">
-                  <div className="flex items-center gap-4">
-                    <div className="flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary shadow-lg shadow-primary/25 flex-shrink-0 transition-all duration-300 group-hover:scale-110">
-                      <span className="font-bold text-white text-sm">
+                {/* Number Indicator with Premium Design */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex size-8 items-center justify-center rounded-md bg-gradient-to-br from-secondary to-primary shadow-sm shadow-primary/20 flex-shrink-0 transition-all duration-300 group-hover:scale-105">
+                      <span className="font-bold text-white text-xs">
                         {(index + 1).toString().padStart(2, '0')}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Content */}
-                <div className="flex-1">
-                  <h3 className="font-serif text-xl font-bold text-foreground mb-3 leading-tight group-hover:text-primary transition-colors duration-300">
-                    {point.title}
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
-                    {point.description}
-                  </p>
+                {/* Content with Improved Symmetry */}
+                <div className="flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-serif text-base font-bold tracking-tight text-foreground mb-1.5 leading-tight">
+                      {point.title}
+                    </h3>
+                    <p className="text-muted-foreground leading-relaxed text-xs">
+                      {point.description}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
