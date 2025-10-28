@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { ArrowRight } from "lucide-react"
 
 export function Catalog() {
   const [activeCategory, setActiveCategory] = useState("All")
@@ -107,13 +108,16 @@ export function Catalog() {
   return (
     <section id="catalog" aria-labelledby="catalog-title" className="bg-background">
       <div className="mx-auto max-w-6xl px-4 py-12 overflow-x-hidden w-full">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <h2 id="catalog-title" className="font-serif text-2xl md:text-3xl">
-            Our Puja Services
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+           <h2
+            id="catalog-title"
+            className="font-serif text-3xl font-bold text-foreground text-center"
+          >
+            Our Services
           </h2>
-          <div className="w-full sm:w-48">
+         <div className="w-full sm:w-48">
             <Select value={activeCategory} onValueChange={setActiveCategory}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full border border-slate-300 rounded-md bg-white px-3 py-2 focus:ring-2 focus:ring-[#0E3F2E]/20 focus:border-[#0E3F2E] transition-all duration-300">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
@@ -126,56 +130,59 @@ export function Catalog() {
             </Select>
           </div>
         </div>
-        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 w-full">
+        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full">
           {filteredItems.length > 0 ? (
             filteredItems.map((it) => (
               <div
                 key={it.title}
-                className="group overflow-hidden rounded-lg border bg-card transition-transform hover:-translate-y-1"
+                className="group overflow-hidden rounded-xl bg-white border border-slate-200 transition-all duration-500 ease-in-out hover:shadow-xl hover:-translate-y-2 mx-4 sm:mx-0"
               >
                 <Link href={`/pujas/${it.slug}`} className="block">
-                  <div className="relative h-48 w-full">
+                  <div className="relative h-40 w-full overflow-hidden">
                     <Image
                       src={`/.jpg?key=s7bpr&height=320&width=480&query=${it.imgQuery}`}
                       alt={`${it.title} representative image`}
                       fill
-                      className="object-cover"
+                      className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     />
                     {it.tag ? (
-                      <span className="absolute left-2 top-2 rounded bg-secondary px-2 py-1 text-xs text-secondary-foreground max-w-[calc(100%-1rem)] overflow-hidden">
+                      <span className="absolute left-3 top-3 rounded-full bg-[#0E3F2E] px-3 py-1 text-xs text-white font-medium animate-pulse">
                         {it.tag}
                       </span>
                     ) : null}
                   </div>
                   <div className="p-4 flex flex-col h-full">
-                    <h3 className="font-serif text-lg">{it.title}</h3>
-                    <p className="mt-1 text-sm text-muted-foreground flex-grow">{it.desc}</p>
-                    <p className="mt-2 text-sm">
-                      Starting from <span className="font-medium">{it.price}</span>
-                    </p>
+                    <h3 className="font-serif text-lg font-semibold text-slate-800 line-clamp-1">{it.title}</h3>
+                    <p className="mt-2 text-sm text-slate-600 flex-grow line-clamp-2">{it.desc}</p>
+                    <div className="mt-4 flex items-center justify-between">
+                      <p className="text-sm font-medium text-[#0E3F2E]">
+                        {it.price}
+                      </p>
+                    </div>
                   </div>
                 </Link>
-                <div className="flex items-center gap-3 px-4 pb-4">
-                  <Link href="#booking" className="flex-1">
-                    <Button className="w-full bg-[#0E3F2E] text-white hover:bg-[#0E3F2E]/90 border-2 border-[#0E3F2E]" size="sm">
-                      Book Now
+                <div className="px-4 pb-4">
+                  <Link href="#booking" className="block">
+                    <Button className="w-full bg-[#0E3F2E] text-white hover:bg-[#0E3F2E]/90 text-sm h-11 font-medium rounded-lg transition-all duration-300 ease-in-out transform hover:scale-[1.02] hover:shadow-md flex items-center justify-center gap-2 group/button shadow-sm">
+                      <span className="flex items-center gap-2">
+                        Book Now <ArrowRight className="w-4 h-4 transition-transform duration-500 ease-in-out group-hover/button:translate-x-1" />
+                      </span>
                     </Button>
-                  </Link>
-                  <Link href={`/pujas/${it.slug}`} className="shrink-0 text-sm hover:text-primary">
-                    Learn More →
                   </Link>
                 </div>
               </div>
             ))
           ) : (
             <div className="col-span-full text-center py-12">
-              <p className="text-muted-foreground">No services found in this category.</p>
+              <p className="text-slate-500 text-sm">No services found in this category.</p>
             </div>
           )}
         </div>
-        <div className="mt-6 text-center">
-          <Button variant="link">View All 25+ Rituals</Button>
+        <div className="mt-8 text-center">
+          <Button variant="outline" className="border-[#0E3F2E] text-[#0E3F2E] hover:bg-[#0E3F2E] hover:text-white px-6 py-2.5 h-11 text-sm font-medium rounded-md transition-all duration-300 ease-in-out transform hover:scale-105">
+            View All 25+ Rituals
+          </Button>
         </div>
       </div>
     </section>

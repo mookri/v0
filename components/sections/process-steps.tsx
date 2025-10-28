@@ -57,26 +57,26 @@ export function ProcessSteps() {
         @keyframes growCircle {
           0% {
             transform: scale(1);
-            opacity: 0.4;
+            opacity: 0.6;
           }
           50% {
-            transform: scale(1.4);
-            opacity: 0.1;
+            transform: scale(1.3);
+            opacity: 0.2;
           }
           100% {
             transform: scale(1);
-            opacity: 0.4;
+            opacity: 0.6;
           }
         }
         
         @keyframes pulse {
           0%, 100% {
             opacity: 1;
-            background-color: #0E3F2E;
+            background-color: #155d42;
           }
           50% {
-            opacity: 0.6;
-            background-color: #155d42;
+            opacity: 0.7;
+            background-color: #0E3F2E;
           }
         }
         
@@ -116,7 +116,7 @@ export function ProcessSteps() {
         }
         
         .step-wrapper {
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .step-wrapper:hover {
@@ -127,18 +127,18 @@ export function ProcessSteps() {
         @media (min-width: 1024px) {
           .image-container-wrapper {
             flex-direction: row !important;
-            gap: 16px !important;
+            gap: 12px !important;
             flex-wrap: nowrap !important;
           }
           
           .image-box {
-            flex: 0 0 calc(25% - 12px) !important;
+            flex: 0 0 calc(25% - 15px) !important;
             height: 100% !important;
             min-height: 480px !important;
           }
           
           .image-box.expanded {
-            flex: 0 0 calc(55%) !important;
+            flex: 0 0 calc(50%) !important;
           }
           
           .image-overlay-desktop {
@@ -155,18 +155,18 @@ export function ProcessSteps() {
         @media (min-width: 768px) and (max-width: 1023px) {
           .image-container-wrapper {
             flex-direction: row !important;
-            gap: 12px !important;
+            gap: 10px !important;
             flex-wrap: nowrap !important;
           }
           
           .image-box {
-            flex: 0 0 calc(25% - 9px) !important;
+            flex: 0 0 calc(25% - 12px) !important;
             height: 100% !important;
             min-height: 380px !important;
           }
           
           .image-box.expanded {
-            flex: 0 0 calc(46%) !important;
+            flex: 0 0 calc(42%) !important;
           }
           
           .left-content-padding {
@@ -182,19 +182,19 @@ export function ProcessSteps() {
           .image-container-wrapper {
             flex-direction: row !important;
             flex-wrap: wrap !important;
-            gap: 10px !important;
+            gap: 8px !important;
             height: auto !important;
           }
           
           .image-box {
-            flex: 0 0 calc(50% - 5px) !important;
-            height: 180px !important;
-            min-height: 180px !important;
+            flex: 0 0 calc(50% - 6px) !important;
+            height: 144px !important;
+            min-height: 144px !important;
             position: relative !important;
           }
           
           .image-box.expanded {
-            flex: 0 0 calc(50% - 5px) !important;
+            flex: 0 0 calc(50% - 6px) !important;
           }
           
           .image-overlay-mobile {
@@ -202,50 +202,51 @@ export function ProcessSteps() {
           }
           
           .left-content-padding {
-            padding-left: 24px !important;
-            padding-right: 24px !important;
-            padding-top: 40px !important;
-            padding-bottom: 40px !important;
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+            padding-top: 35px !important;
+            padding-bottom: 35px !important;
           }
           
           .step-item {
-            padding-left: 48px !important;
-            padding-top: 12px !important;
-            padding-bottom: 12px !important;
+            padding-left: 37.8px !important;
+            padding-top: 9px !important;
+            padding-bottom: 9px !important;
           }
           
           .step-number {
-            left: -48px !important;
-            width: 36px !important;
-            height: 36px !important;
-            line-height: 36px !important;
-            font-size: 15px !important;
+            left: -37.8px !important;
+            width: 28.8px !important;
+            height: 28.8px !important;
+            line-height: 28.8px !important;
+            font-size: 12.6px !important;
           }
           
           .connecting-line {
-            left: 29.5px !important;
-            top: 46px !important;
-            height: 30px !important;
+            left: 23.85px !important;
+            top: 37.8px !important;
+            height: 23.4px !important;
           }
           
           .growing-circle {
-            left: -6px !important;
+            left: -4.5px !important;
             top: 0px !important;
-            width: 48px !important;
-            height: 48px !important;
+            width: 37.8px !important;
+            height: 37.8px !important;
           }
           
           .book-now-button {
             display: block !important;
-            margin: 30px auto 20px !important;
-            width: 80% !important;
+            margin: 25px auto 15px !important;
+            width: 85% !important;
+            padding: 12px 20px !important;
           }
         }
         
         @media (max-width: 480px) {
           .image-box {
-            height: 150px !important;
-            min-height: 150px !important;
+            height: 126px !important;
+            min-height: 126px !important;
           }
         }
         
@@ -254,7 +255,7 @@ export function ProcessSteps() {
         }
       `}</style>
       
-      <section id="process" aria-labelledby="process-title" className="process-section lg:py-20" style={{ backgroundColor: '#F5F5F5', borderRadius: '10px 0px 0px 10px' }}>
+      <section id="process" aria-labelledby="process-title" className="process-section lg:py-20 bg-[#0E3F2E]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-0">
             {/* Left Content Column */}
@@ -262,7 +263,7 @@ export function ProcessSteps() {
               <div className="pb-4">
                 <div className="inline-block">
                   <p style={{
-                    color: '#B7B7B7',
+                    color: '#D1D5DB',
                     letterSpacing: '1px',
                     lineHeight: '12px',
                     textTransform: 'uppercase',
@@ -270,29 +271,21 @@ export function ProcessSteps() {
                     fontSize: '10px',
                     marginBottom: '12px',
                     fontFamily: "'DM Sans', sans-serif"
-                  }}>
+                  }}
+                  className="text-center lg:text-left">
                     Sacred Process - Simple & Hassle-Free
                   </p>
                   <h2 
                     id="process-title"
-                    style={{
-                      textTransform: 'uppercase',
-                      color: '#181818',
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontWeight: 700,
-                      letterSpacing: 'normal',
-                      lineHeight: '40px',
-                      fontSize: '24px',
-                      margin: '0px'
-                    }}
-                    className="text-center lg:text-left"
+                    className="font-serif text-2xl md:text-3xl lg:text-3xl font-bold tracking-tight text-center mb-3 relative inline-block"
+                    style={{ color: '#FFFFFF' }}
                   >
                     Your Journey to Divine Experience
                   </h2>
                 </div>
               </div>
 
-              <div className="pt-6">
+              <div className="pt-4">
                 <div className="text-left">
                   {steps.map((step, index) => (
                     <div 
@@ -301,105 +294,105 @@ export function ProcessSteps() {
                       className="step-item step-wrapper"
                       style={{
                         position: 'relative',
-                        paddingLeft: '60px',
-                        paddingTop: '15px',
-                        paddingBottom: '16px',
+                        paddingLeft: '48px',
+                        paddingTop: '13.5px',
+                        paddingBottom: '14.4px',
                         cursor: 'pointer'
                       }}
                       onClick={() => handleStepClick(index)}
                     >
-                        {/* Connecting line - perfectly centered */}
-                        {index < steps.length - 1 && (
-                          <div 
-                            className={index < activeStep ? 'pulse-line' : ''}
-                            style={{
-                              position: 'absolute',
-                              left: '20px',
-                              top: '56px',
-                              width: '2px',
-                              height: '85px',
-                              backgroundColor: index < activeStep ? '#0E3F2E' : '#D9D9D9',
-                              zIndex: 1,
-                              transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                              transformOrigin: 'top'
-                            }}
-                          />
-                        )}
-                        
-                        {/* Growing circle animation - perfectly centered */}
-                        {index === activeStep && (
-                          <div 
-                            className="growing-circle"
-                            style={{
-                              position: 'absolute',
-                              left: '-10px',
-                              top: '10px',
-                              width: '60px',
-                              height: '60px',
-                              borderRadius: '50%',
-                              backgroundColor: 'rgba(14, 63, 46, 0.2)',
-                              zIndex: 0,
-                              animation: 'growCircle 2s ease-in-out infinite'
-                            }}
-                          />
-                        )}
-                        
+                      {/* Connecting line - perfectly centered */}
+                      {index < steps.length - 1 && (
                         <div 
+                          className={index < activeStep ? 'pulse-line' : ''}
                           style={{
-                            position: 'relative',
-                            fontWeight: 700,
-                            lineHeight: '30px'
+                            position: 'absolute',
+                            left: '20px',
+                            top: '50.4px',
+                            width: '2px',
+                            height: '76.5px',
+                            backgroundColor: index < activeStep ? '#0E3F2E' : '#D9D9D9',
+                            zIndex: 1,
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            transformOrigin: 'top'
+                          }}
+                        />
+                      )}
+                      
+                      {/* Growing circle animation - perfectly centered */}
+                      {index === activeStep && (
+                        <div 
+                          className="growing-circle"
+                          style={{
+                            position: 'absolute',
+                            left: '-4px',
+                            top: '10px',
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: '50%',
+                            backgroundColor: 'rgba(14, 63, 46, 0.2)',
+                            zIndex: 0,
+                            animation: 'growCircle 2s ease-in-out infinite'
+                          }}
+                        />
+                      )}
+                      
+                      <div 
+                        style={{
+                          position: 'relative',
+                          fontWeight: 700,
+                          lineHeight: '30px'
+                        }}
+                      >
+                        <span 
+                          className={`step-number ${index === activeStep ? 'scale-110' : ''}`}
+                          style={{
+                            position: 'absolute',
+                            left: '-48px',
+                            top: '12.6px',
+                            width: '2rem',
+                            height: '36px',
+                            lineHeight: '36px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '9999px',
+                            backgroundColor: index === activeStep ? '#155d42' : '#4B5563',
+                            color: index === activeStep ? '#F9FAFB' : '#E5E7EB',
+                            zIndex: 2,
+                            cursor: 'pointer',
+                            fontFamily: "'DM Sans', sans-serif",
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            fontSize: '17px',
+                            fontWeight: 700
                           }}
                         >
-                          <span 
-                            className={`step-number ${index === activeStep ? 'scale-110' : ''}`}
-                            style={{
-                              position: 'absolute',
-                              left: '-60px',
-                              top: '14px',
-                              width: '2.5rem',
-                              height: '40px',
-                              lineHeight: '40px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              borderRadius: '9999px',
-                              backgroundColor: index === activeStep ? '#0E3F2E' : '#D9D9D9',
-                              color: index === activeStep ? '#FFFFFF' : '#FFFFFF',
-                              zIndex: 2,
-                              cursor: 'pointer',
-                              fontFamily: "'DM Sans', sans-serif",
-                              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                              fontSize: '17px',
-                              fontWeight: 700
-                            }}
-                          >
-                            {index + 1}
-                          </span>
-                          <h3 
-                            style={{
-                              fontFamily: "'DM Sans', sans-serif",
-                              fontWeight: 700,
-                              fontSize: '18px',
-                              lineHeight: '28px',
-                              margin: '0px',
-                              cursor: 'pointer',
-                              transition: 'all 0.3s ease',
-                              color: index === activeStep ? '#181818' : '#ABABAB'
-                            }}
-                            className="text-lg md:text-xl"
-                          >
-                            {step.title}
-                          </h3>
-                        </div>
-                        <div 
+                          {index + 1}
+                        </span>
+                        <h3 
                           style={{
-                            maxHeight: index === activeStep ? '200px' : '0',
-                            opacity: index === activeStep ? 1 : 0,
-                            overflow: 'hidden',
-                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                            fontFamily: "'DM Sans', sans-serif"
+                            fontFamily: "'DM Sans', sans-serif",
+                            fontWeight: 700,
+                            fontSize: '18px',
+                            lineHeight: '28px',
+                            margin: '0px',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            color: index === activeStep ? '#F3F4F6' : '#9CA3AF'
                           }}
+                          className="text-lg md:text-xl"
+                        >
+                          {step.title}
+                        </h3>
+                      </div>
+                      <div 
+                        style={{
+                          maxHeight: index === activeStep ? '200px' : '0',
+                          opacity: index === activeStep ? 1 : 0,
+                          overflow: 'hidden',
+                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                          fontFamily: "'DM Sans', sans-serif"
+                        }}
                       >
                         <p style={{
                           margin: '0px',
@@ -407,7 +400,7 @@ export function ProcessSteps() {
                           marginBottom: '0px',
                           fontSize: '15px',
                           lineHeight: '1.6',
-                          color: '#4A4A4A'
+                          color: '#D1D5DB'
                         }}>
                           {step.description}
                         </p>
@@ -425,7 +418,7 @@ export function ProcessSteps() {
                 display: 'flex',
                 alignItems: 'center',
                 height: '100%',
-                minHeight: '500px',
+                minHeight: '450px',
                 marginRight: '0'
               }}>
                 <div style={{
@@ -459,7 +452,7 @@ export function ProcessSteps() {
                             overflow: 'hidden',
                             borderRadius: '12px',
                             position: 'relative',
-                            transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                             transform: expandedImage === index ? 'scale(1.03)' : 'scale(1)',
                             zIndex: expandedImage === index ? 10 : 1,
                             boxShadow: expandedImage === index 
@@ -511,7 +504,7 @@ export function ProcessSteps() {
                                 width: '100%',
                                 height: '100%',
                                 objectFit: 'cover',
-                                transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                                transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                 verticalAlign: 'middle'
                               }} 
                               onMouseEnter={(e) => {
@@ -580,8 +573,8 @@ export function ProcessSteps() {
                                   width: '24px',
                                   height: '24px',
                                   borderRadius: '50%',
-                                  backgroundColor: expandedImage === index ? '#0E3F2E' : 'rgba(255,255,255,0.3)',
-                                  color: expandedImage === index ? '#FFFFFF' : '#FFFFFF',
+                                  backgroundColor: expandedImage === index ? '#155d42' : 'rgba(255,255,255,0.2)',
+                                  color: expandedImage === index ? '#F9FAFB' : '#E5E7EB',
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
@@ -632,16 +625,16 @@ export function ProcessSteps() {
                         </div>
                       ))}
                     </div>
-                     {/* Mobile Book Now Button */}
+                                    {/* Mobile Book Now Button */}
                 <button 
                   className="book-now-button"
                   style={{
-                    backgroundColor: '#0E3F2E',
-                    color: '#FFFFFF',
+                    backgroundColor: '#FFFFFF',
+                    color: '#0E3F2E',
                     border: 'none',
                     borderRadius: '8px',
-                    padding: '14px 24px',
-                    fontSize: '16px',
+                    padding: '12.6px 21.6px',
+                    fontSize: '14.4px',
                     fontWeight: 700,
                     fontFamily: "'DM Sans', sans-serif",
                     cursor: 'pointer',
@@ -649,15 +642,15 @@ export function ProcessSteps() {
                     boxShadow: '0 4px 12px rgba(14, 63, 46, 0.2)',
                     width: '100%',
                     maxWidth: '300px',
-                    margin: '30px auto 0'
+                    margin: '27px auto 0'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#155d42';
+                    e.currentTarget.style.backgroundColor = '#E5E7EB';
                     e.currentTarget.style.transform = 'translateY(-2px)';
                     e.currentTarget.style.boxShadow = '0 6px 16px rgba(14, 63, 46, 0.3)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = '#0E3F2E';
+                    e.currentTarget.style.backgroundColor = '#FFFFFF';
                     e.currentTarget.style.transform = 'translateY(0)';
                     e.currentTarget.style.boxShadow = '0 4px 12px rgba(14, 63, 46, 0.2)';
                   }}

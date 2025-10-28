@@ -42,22 +42,42 @@ export function Booking() {
   return (
     <section id="booking" aria-labelledby="booking-title" className="bg-background">
       <div className="mx-auto max-w-7xl px-4 py-12 overflow-x-hidden w-full">
-        <div className="text-center mb-10">
-          <h2 id="booking-title" className="font-serif text-3xl md:text-4xl font-bold text-foreground">
-            Get Instant Quote & Confirm Booking
-          </h2>
-          <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">
-            Fill out the form below to receive an instant quote and secure your puja booking with our certified pandits.
-          </p>
+        <div className="pb-4 text-center">
+          <div className="inline-block">
+            <p style={{
+              color: '#6B7280',
+              letterSpacing: '1px',
+              lineHeight: '12px',
+              textTransform: 'uppercase',
+              fontWeight: 500,
+              fontSize: '10px',
+              marginBottom: '12px',
+              fontFamily: "'DM Sans', sans-serif"
+            }}
+            className="text-center"
+            >
+              Sacred Booking - Simple & Hassle-Free
+            </p>
+            <h2 
+              id="booking-title"
+              className="font-serif text-2xl md:text-3xl lg:text-3xl font-bold tracking-tight text-center mb-3 relative inline-block"
+              style={{ color: '#111827' }}
+            >
+              Get Instant Quote & Confirm Booking
+            </h2>
+          </div>
         </div>
+        <p className="text-muted-foreground mt-3 max-w-2xl mx-auto text-center text-sm">
+          Fill out the form below to receive an instant quote and secure your puja booking with our certified pandits.
+        </p>
         
-        <div className="grid gap-8 lg:grid-cols-2">
-          <div className="bg-card rounded-xl border p-6 md:p-8 shadow-sm">
-            <form onSubmit={onSubmit} className="space-y-6" noValidate>
+        <div className="grid gap-6 lg:grid-cols-2 mt-8">
+          <div className="bg-card rounded-lg border p-5 shadow-sm">
+            <form onSubmit={onSubmit} className="space-y-4" noValidate>
               <div className="space-y-2">
-                <Label htmlFor="puja" className="text-base font-medium">Puja Type</Label>
+                <Label htmlFor="puja" className="text-sm font-medium">Puja Type</Label>
                 <Select onValueChange={setPujaType}>
-                  <SelectTrigger id="puja" aria-invalid={!!errors.puja} className="h-12">
+                  <SelectTrigger id="puja" aria-invalid={!!errors.puja} className="h-10">
                     <SelectValue placeholder="Select puja type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -67,12 +87,12 @@ export function Booking() {
                     <SelectItem value="shraddh">Shraddh</SelectItem>
                   </SelectContent>
                 </Select>
-                {errors.puja ? <p className="mt-1 text-sm text-destructive">{errors.puja}</p> : null}
+                {errors.puja ? <p className="mt-1 text-xs text-destructive">{errors.puja}</p> : null}
               </div>
               
-              <div className="grid gap-6 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="date" className="text-base font-medium">Preferred Date</Label>
+                  <Label htmlFor="date" className="text-sm font-medium">Preferred Date</Label>
                   <Input
                     id="date"
                     type="date"
@@ -80,12 +100,12 @@ export function Booking() {
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                     aria-invalid={!!errors.date}
-                    className="h-12"
+                    className="h-10"
                   />
-                  {errors.date ? <p className="mt-1 text-sm text-destructive">{errors.date}</p> : null}
+                  {errors.date ? <p className="mt-1 text-xs text-destructive">{errors.date}</p> : null}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="pincode" className="text-base font-medium">Pin Code</Label>
+                  <Label htmlFor="pincode" className="text-sm font-medium">Pin Code</Label>
                   <Input
                     id="pincode"
                     inputMode="numeric"
@@ -94,42 +114,42 @@ export function Booking() {
                     value={pin}
                     onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
                     aria-invalid={!!errors.pin}
-                    className="h-12"
+                    className="h-10"
                   />
-                  <p className="text-sm text-muted-foreground">We use your PIN to estimate travel cost (if any).</p>
-                  {errors.pin ? <p className="mt-1 text-sm text-destructive">{errors.pin}</p> : null}
+                  <p className="text-xs text-muted-foreground">We use your PIN to estimate travel cost (if any).</p>
+                  {errors.pin ? <p className="mt-1 text-xs text-destructive">{errors.pin}</p> : null}
                 </div>
               </div>
               
-              <div className="grid gap-6 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-base font-medium">Full Name</Label>
-                  <Input id="name" required className="h-12" />
+                  <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
+                  <Input id="name" required className="h-10" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-base font-medium">Phone</Label>
-                  <Input id="phone" type="tel" required placeholder="+91 XXXXX XXXXX" className="h-12" />
+                  <Label htmlFor="phone" className="text-sm font-medium">Phone</Label>
+                  <Input id="phone" type="tel" required placeholder="+91 XXXXX XXXXX" className="h-10" />
                 </div>
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-base font-medium">Email</Label>
-                <Input id="email" type="email" required className="h-12" />
+                <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                <Input id="email" type="email" required className="h-10" />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="notes" className="text-base font-medium">Special Requirements</Label>
-                <Textarea id="notes" placeholder="Any preferences or details..." className="min-h-[120px]" />
+                <Label htmlFor="notes" className="text-sm font-medium">Special Requirements</Label>
+                <Textarea id="notes" placeholder="Any preferences or details..." className="min-h-[100px] text-sm" />
               </div>
               
               <Button 
                 type="submit" 
-                className={cn("w-full py-6 text-base font-medium transition-all", submitted ? "bg-green-600 hover:bg-green-700" : "bg-[#0E3F2E] hover:bg-[#0E3F2E]/90 border-2 border-[#0E3F2E]")}
+                className={cn("w-full py-5 text-sm font-medium transition-all rounded-lg", submitted ? "bg-green-600 hover:bg-green-700" : "bg-[#0E3F2E] hover:bg-[#0E3F2E]/90")}
                 disabled={submitted}
               >
                 {submitted ? (
                   <span className="flex items-center justify-center">
-                    <CheckCircle className="w-5 h-5 mr-2" />
+                    <CheckCircle className="w-4 h-4 mr-2" />
                     Booking Confirmed!
                   </span>
                 ) : (
@@ -139,55 +159,101 @@ export function Booking() {
             </form>
           </div>
 
-          <div className="bg-muted/50 rounded-xl border p-6 md:p-8 h-fit">
-            <h3 className="font-serif text-2xl font-bold mb-6">Estimated Quote</h3>
-            <p className="text-muted-foreground mb-6">
+          <div className="bg-muted/30 rounded-lg border p-5 h-fit">
+            <div className="pb-4">
+              <div className="inline-block">
+                <p style={{
+                  color: '#6B7280',
+                  letterSpacing: '1px',
+                  lineHeight: '12px',
+                  textTransform: 'uppercase',
+                  fontWeight: 500,
+                  fontSize: '10px',
+                  marginBottom: '12px',
+                  fontFamily: "'DM Sans', sans-serif"
+                }}
+                className="text-left"
+                >
+                  Instant Estimate - Real-Time Pricing
+                </p>
+                <h3 
+                  className="font-serif text-xl md:text-2xl font-bold tracking-tight text-left mb-3 relative inline-block"
+                  style={{ color: '#111827' }}
+                >
+                  Estimated Quote
+                </h3>
+              </div>
+            </div>
+            <p className="text-muted-foreground mb-5 text-sm">
               Select a puja and enter your PIN to view an instant estimate.
             </p>
             
-            <div className="rounded-lg border bg-card p-6 mb-8">
+            <div className="rounded-lg border bg-card p-5 mb-6">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-base font-medium">Estimated Total</span>
-                <span className="text-2xl font-bold text-primary">₹{estimate.toLocaleString("en-IN")}</span>
+                <span className="text-sm font-medium">Estimated Total</span>
+                <span className="text-xl font-bold text-primary">₹{estimate.toLocaleString("en-IN")}</span>
               </div>
-              <p className="text-sm text-muted-foreground">Final quote may vary based on specifics and samagri.</p>
+              <p className="text-xs text-muted-foreground">Final quote may vary based on specifics and samagri.</p>
             </div>
             
-            <h3 className="font-serif text-2xl font-bold mb-6">Booking Guarantee</h3>
-            <ul className="space-y-3 mb-8">
+            <div className="pb-4">
+              <div className="inline-block">
+                <p style={{
+                  color: '#6B7280',
+                  letterSpacing: '1px',
+                  lineHeight: '12px',
+                  textTransform: 'uppercase',
+                  fontWeight: 500,
+                  fontSize: '10px',
+                  marginBottom: '12px',
+                  fontFamily: "'DM Sans', sans-serif"
+                }}
+                className="text-left"
+                >
+                  Our Sacred Promise
+                </p>
+                <h3 
+                  className="font-serif text-xl md:text-2xl font-bold tracking-tight text-left mb-3 relative inline-block"
+                  style={{ color: '#111827' }}
+                >
+                  Booking Guarantee
+                </h3>
+              </div>
+            </div>
+            <ul className="space-y-3 mb-6">
               <li className="flex items-start">
-                <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" />
-                <span className="text-muted-foreground">Certified Vedic Scholars</span>
+                <CheckCircle className="w-4 h-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                <span className="text-muted-foreground text-sm">Certified Vedic Scholars</span>
               </li>
               <li className="flex items-start">
-                <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" />
-                <span className="text-muted-foreground">Complete Samagri Included</span>
+                <CheckCircle className="w-4 h-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                <span className="text-muted-foreground text-sm">Complete Samagri Included</span>
               </li>
               <li className="flex items-start">
-                <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" />
-                <span className="text-muted-foreground">Transparent Pricing</span>
+                <CheckCircle className="w-4 h-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                <span className="text-muted-foreground text-sm">Transparent Pricing</span>
               </li>
               <li className="flex items-start">
-                <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" />
-                <span className="text-muted-foreground">Same-Day Booking (if available)</span>
+                <CheckCircle className="w-4 h-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                <span className="text-muted-foreground text-sm">Same-Day Booking (if available)</span>
               </li>
             </ul>
             
-            <div className="space-y-4">
+            <div className="space-y-3">
               <a 
-                className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-white border border-gray-300 rounded-lg text-foreground hover:bg-gray-50 transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-white border border-gray-300 rounded-lg text-foreground hover:bg-gray-50 transition-colors text-sm"
                 href="tel:+910000000000"
               >
-                <Phone className="w-5 h-5" />
+                <Phone className="w-4 h-4" />
                 <span>Call Us Now</span>
               </a>
               <a
-                className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
                 href="https://wa.me/910000000000"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <MessageCircle className="w-5 h-5" />
+                <MessageCircle className="w-4 h-4" />
                 <span>WhatsApp Quick Connect</span>
               </a>
             </div>

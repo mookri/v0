@@ -1,266 +1,251 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { Star, CheckCircle } from "lucide-react";
+import { useState } from 'react';
 
 interface Testimonial {
   id: number;
+  name: string;
+  location: string;
+  rating: number;
   title: string;
   content: string;
-  author: string;
   timeAgo: string;
-  rating: number;
 }
 
-interface TestimonialCarouselProps {
-  autoPlayInterval?: number;
-  testimonials?: Testimonial[];
-}
+const testimonials: Testimonial[] = [
+  {
+    id: 1,
+    name: "Priya Sharma",
+    location: "Mumbai",
+    rating: 5,
+    title: "Divine Blessings for Our New Home",
+    content: "The Grihapravesh ceremony conducted by Navdhara was truly divine. The priests were knowledgeable and guided us through every ritual with utmost care. Our new home is filled with positive energy.",
+    timeAgo: "2 weeks ago"
+  },
+  {
+    id: 2,
+    name: "Rahul & Neha Patel",
+    location: "Delhi",
+    rating: 5,
+    title: "Perfect Wedding Ceremony",
+    content: "Our wedding ceremony was a beautiful blend of traditions and spirituality. The Navdhara team ensured every detail was perfect, allowing us to focus on our special day without any stress.",
+    timeAgo: "1 month ago"
+  },
+  {
+    id: 3,
+    name: "Ankit Verma",
+    location: "Bangalore",
+    rating: 5,
+    title: "Ganesh Chaturthi Celebration",
+    content: "The Ganesh Chaturthi celebration organized by Navdhara brought our community together. The arrangements were impeccable and the divine atmosphere was exactly what we hoped for.",
+    timeAgo: "3 months ago"
+  },
+  {
+    id: 4,
+    name: "Sunita & Rajesh Gupta",
+    location: "Chennai",
+    rating: 5,
+    title: "Baby Naming Ceremony",
+    content: "The Namkaran ceremony for our daughter was conducted with such grace and authenticity. The priests explained the significance of each ritual, making it a memorable experience for our entire family.",
+    timeAgo: "4 months ago"
+  },
+  {
+    id: 5,
+    name: "Vikram Singh",
+    location: "Hyderabad",
+    rating: 5,
+    title: "Navagraha Puja for Prosperity",
+    content: "After the Navagraha puja, we noticed a positive change in our family's fortune. The rituals were performed with precision and devotion, exactly as per Vedic traditions.",
+    timeAgo: "5 months ago"
+  },
+  {
+    id: 6,
+    name: "Meera Reddy",
+    location: "Kolkata",
+    rating: 5,
+    title: "Satyanarayan Puja for Family Peace",
+    content: "The Satyanarayan puja brought harmony to our family. The priests were respectful and explained each step clearly. We felt the divine presence throughout the ceremony.",
+    timeAgo: "6 months ago"
+  }
+];
 
-export function Testimonials({
-  autoPlayInterval = 5000,
-  testimonials: externalTestimonials,
-}: TestimonialCarouselProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-  const autoplayRef = useRef<NodeJS.Timeout | null>(null);
-
-  const testimonials: Testimonial[] = useMemo(
-    () =>
-      externalTestimonials || [
-        {
-          id: 1,
-          title: "Exceptional Quality and Fast Delivery",
-          content:
-            "The attention to detail and craftsmanship exceeded our expectations. Delivery was prompt and the product arrived in perfect condition.",
-          author: "Viktoria Blomqvist",
-          timeAgo: "3 days ago",
-          rating: 5,
-        },
-        {
-          id: 2,
-          title: "Outstanding Service Experience",
-          content:
-            "From consultation to delivery, the team provided exceptional service. They understood our needs and delivered beyond expectations.",
-          author: "Jessica Lindström",
-          timeAgo: "5 days ago",
-          rating: 5,
-        },
-        {
-          id: 3,
-          title: "Highly Recommend Their Services",
-          content:
-            "Professional, reliable, and high-quality work. They made our ceremony truly special with their attention to every detail.",
-          author: "John Malkovich",
-          timeAgo: "1 week ago",
-          rating: 5,
-        },
-        {
-          id: 4,
-          title: "Superior Customer Support",
-          content:
-            "The support team was incredibly helpful throughout the process. They answered all our questions and provided valuable guidance.",
-          author: "Teresa Holland",
-          timeAgo: "2 weeks ago",
-          rating: 5,
-        },
-        {
-          id: 5,
-          title: "Flawless Purchase Experience",
-          content:
-            "Every aspect of the process was seamless. The quality, timing, and communication were all exceptional.",
-          author: "Michael Anderson",
-          timeAgo: "3 weeks ago",
-          rating: 5,
-        },
-      ],
-    [externalTestimonials]
+const StarRating = ({ rating }: { rating: number }) => {
+  return (
+    <div className="flex text-amber-400 text-sm">
+      {[...Array(5)].map((_, i) => (
+        <svg
+          key={i}
+          className="w-3.5 h-3.5 mx-0.5 fill-current"
+          viewBox="0 0 20 20"
+        >
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      ))}
+    </div>
   );
+};
 
-  const navigateSlide = useCallback(
-    (direction: "next" | "prev" | number) => {
-      if (typeof direction === "number") {
-        setCurrentIndex(direction);
-      } else if (direction === "next") {
-        setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-      } else if (direction === "prev") {
-        setCurrentIndex((prev) =>
-          prev === 0 ? testimonials.length - 1 : prev - 1
-        );
-      }
-    },
-    [testimonials.length]
-  );
+const ArrowIcon = ({ direction }: { direction: 'left' | 'right' }) => (
+  <svg
+    className="w-7 h-7 fill-[#0E3F2E] transition-colors duration-300 cursor-pointer hover:fill-[#155d42]"
+    viewBox="0 0 64 64"
+  >
+    {direction === 'left' ? (
+      <g transform="matrix(-1,0,0,1,64,0)">
+        <path d="M51.93 33 1 32.959a1 1 0 0 1 0-2L51.931 31a1 1 0 0 1 0 2z" opacity="1" />
+        <path d="M64 32.012c-5.681 2.1-12.731 5.692-17.1 9.5L50.346 32l-3.433-9.513C51.278 26.3 58.322 29.9 64 32.012z" opacity="1" />
+      </g>
+    ) : (
+      <>
+        <path d="m51.93 33-50.93-.041a1 1 0 0 1 0-2l50.931.041a1 1 0 0 1 0 2z" />
+        <path d="m64 32.012c-5.681 2.1-12.731 5.692-17.1 9.5l3.446-9.512-3.433-9.513c4.365 3.813 11.409 7.413 17.087 9.525z" />
+      </>
+    )}
+  </svg>
+);
 
-  // ✅ Fixed autoplay logic
-  useEffect(() => {
-    if (!isHovered) {
-      autoplayRef.current = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-      }, autoPlayInterval);
-    }
+export function Testimonials() {
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-    return () => {
-      if (autoplayRef.current) {
-        clearInterval(autoplayRef.current);
-      }
-    };
-  }, [isHovered, autoPlayInterval, testimonials.length]);
-
-  const current = testimonials[currentIndex];
-
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 5);
+  const nextSlide = () => {
+    setCurrentSlide((prev) => 
+      prev >= testimonials.length - 1 ? 0 : prev + 1
+    );
   };
 
-  return (
-    <section className="w-full py-16 bg-gradient-to-b from-slate-50 to-white" aria-label="Customer testimonials">
-      <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 font-serif mb-6">
-            Loved by Families
-          </h2>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-            Join thousands of families who have made their ceremonies memorable
-            with our trusted services
-          </p>
-        </div>
+  const prevSlide = () => {
+    setCurrentSlide((prev) => 
+      prev <= 0 ? testimonials.length - 1 : prev - 1
+    );
+  };
 
-        <div className="flex flex-col lg:flex-row gap-8 items-start max-w-7xl mx-auto">
-          {/* Rating Summary Card */}
-          <div className="w-full lg:w-96 flex-shrink-0 bg-white rounded-3xl shadow-xs p-6 lg:p-10">
-            <div className="text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 bg-slate-50 text-slate-700 px-3 py-1 rounded-full text-xs font-medium mb-4">
-                ⭐ 5.0 Rating Average
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
+  };
+
+  // For mobile, show 1 slide at a time; for desktop, show 2
+  const getSlidesToShow = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return 1;
+    }
+    return 2;
+  };
+
+  const slidesToShow = getSlidesToShow();
+
+  return (
+    <div className="py-12 transition-all duration-300 bg-white">
+      <div className="overflow-hidden">
+        <div className="px-4 w-full mx-auto max-w-6xl">
+          {/* Header */}
+          <div className="mb-8">
+            <div className="text-center">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#0E3F2E] to-[#155d42] text-white px-3 py-1.5 rounded-full text-xs font-medium mb-3 shadow-lg">
+                <span className="flex items-center">
+                  ⭐ 5.0
+                </span>
+                <span className="text-white/80">from 1230+ reviews</span>
               </div>
-              <h3 className="text-4xl font-bold mb-4 text-slate-900 font-serif">
-                Excellent
-              </h3>
-              {/* <div className="flex gap-1 mb-4 justify-center lg:justify-start">
-                {[...Array(5)].map((_, i) => (
+              <h4 className="font-extrabold text-[#181818] font-['DM_Sans'] text-xl leading-7 m-0 font-serif">
+                WHAT CUSTOMERS SAY
+              </h4>
+            </div>
+          </div>
+
+          {/* Slider */}
+          <div className="mb-6 relative">
+            <div className="relative overflow-hidden">
+              <div 
+                className="flex transition-transform duration-500 ease-in-out"
+                style={{ 
+                  transform: `translateX(-${currentSlide * (100 / slidesToShow)}%)` 
+                }}
+              >
+                {testimonials.map((testimonial) => (
                   <div
-                    key={i}
-                    className="w-6 h-6 bg-gradient-to-br from-amber-400 to-amber-500 rounded-xl flex items-center justify-center shadow-md hover:scale-110 transition-transform"
+                    key={testimonial.id}
+                    className="flex-shrink-0 w-full md:w-1/2 px-3"
                   >
-                    <Star className="w-4 h-4 fill-white text-white" />
+                    <div className="max-w-[670px]">
+                      <StarRating rating={testimonial.rating} />
+                      
+                      <div className="text-left mb-4">
+                        <h5 className="text-sm font-bold mb-2 text-[#181818] font-['DM_Sans'] leading-5 m-0">
+                          {testimonial.title}
+                        </h5>
+                        <p className="text-gray-600 text-xs leading-relaxed line-clamp-3">
+                          {testimonial.content}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center relative">
+                        <div className="rounded-full overflow-hidden w-10 h-10 bg-gradient-to-br from-[#0E3F2E] to-[#155d42] flex items-center justify-center text-white font-bold text-xs shadow-md">
+                          {testimonial.name.charAt(0)}
+                        </div>
+                        <div className="text-left flex items-center ml-3">
+                          <div className="text-[#222] font-medium text-xs">
+                            {testimonial.name} -
+                          </div>
+                          <div className="text-[#888] uppercase font-normal text-[10px] ml-1">
+                            {testimonial.location}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="text-[#b7b7b7] text-[10px] mt-1">
+                        {testimonial.timeAgo}
+                      </div>
+                    </div>
                   </div>
                 ))}
-              </div> */}
-              <div className="space-y-3 mb-6 text-sm">
-                <div className="flex justify-between items-center text-slate-600">
-                  <span>Based on</span>
-                  <span className="font-bold text-emerald-600">
-                    2,147 reviews
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-slate-600">
-                  <span>Response time</span>
-                  <span className="font-semibold text-slate-900">
-                    &lt; 2 hours
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-slate-600">
-                  <span>Satisfaction</span>
-                  <span className="font-semibold text-slate-900">99%</span>
-                </div>
-              </div>
-              <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent my-6"></div>
-              <div className="flex items-start gap-3 text-sm text-slate-500">
-                <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                <p className="leading-relaxed">
-                  All reviews are verified from genuine customers who have used
-                  our services
-                </p>
               </div>
             </div>
           </div>
 
-          <div className="flex-grow relative">
-            {/* Carousel */}
-            <div
-              className="bg-white rounded-2xl shadow-xs overflow-hidden"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
+          {/* Controls */}
+          <div className="flex justify-center items-center">
+            <button 
+              onClick={prevSlide}
+              className="mr-1"
+              aria-label="Previous slide"
             >
-              <div className="p-6 lg:p-10 transition-all duration-300 min-h-[340px] flex flex-col justify-between">
-                {/* Rating & Title */}
-                <div>
-                  <div className="flex items-center gap-2 mb-6">
-                    <div className="flex gap-1">
-                      {[...Array(current.rating)].map((_, i) => (
-                        <div
-                          key={i}
-                          className="w-6 h-6 bg-gradient-to-br from-amber-400 to-amber-500 rounded-lg flex items-center justify-center"
-                        >
-                          <Star className="w-3.5 h-3.5 fill-white text-white" />
-                        </div>
-                      ))}
-                    </div>
-                    <div className="ml-auto flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full font-medium border border-emerald-100">
-                      <CheckCircle className="w-3.5 h-3.5" />
-                      Verified
-                    </div>
-                  </div>
-
-                  <h3 className="text-2xl font-bold mb-4 text-slate-900 font-serif leading-snug">
-                    {current.title}
-                  </h3>
-                  <blockquote className="text-slate-600 leading-relaxed text-lg italic">
-                    "{current.content}"
-                  </blockquote>
-                </div>
-
-                {/* Author */}
-                <div className="flex items-center justify-between pt-6 border-t border-slate-100 mt-6">
-                  <div>
-                    <p className="font-semibold text-slate-900">
-                      {current.author}
-                    </p>
-                    <p className="text-slate-500 text-sm mt-1">
-                      {current.timeAgo}
-                    </p>
-                  </div>
-                  <div
-                    className="w-12 h-12 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center text-slate-600 font-bold text-sm border border-slate-200"
-                    aria-label={`Avatar of ${current.author}`}
+              <ArrowIcon direction="left" />
+            </button>
+            
+            <div>
+              <ul className="relative bottom-0 block w-full p-0 m-0 list-none text-center flex gap-1">
+                {testimonials.map((_, index) => (
+                  <li
+                    key={index}
+                    className="relative inline-block w-2 h-2 p-0 cursor-pointer"
+                    role="presentation"
                   >
-                    {getInitials(current.author)}
-                  </div>
-                </div>
-              </div>
+                    <button
+                      type="button"
+                      role="tab"
+                      onClick={() => goToSlide(index)}
+                      className={`font-size-0 line-height-0 block w-2 h-2 p-0 cursor-pointer border outline-none bg-transparent rounded-full transition-all duration-300 ${
+                        currentSlide === index
+                          ? 'border-[#0E3F2E] bg-[#0E3F2E]'
+                          : 'border-[#e8e8e8]'
+                      }`}
+                      aria-label={`Go to testimonial ${index + 1}`}
+                    />
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            {/* ✅ Fixed Dots Indicator */}
-            <div className="flex gap-3 justify-center mt-12">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => navigateSlide(index)}
-                  className={`rounded-full transition-all duration-300 ${
-                    index === currentIndex
-                      ? "bg-gradient-to-r from-amber-400 to-amber-500 w-8 h-3 shadow-md"
-                      : "bg-slate-300 w-3 h-3 hover:bg-slate-400 hover:scale-110"
-                  }`}
-                  aria-label={`Go to testimonial ${index + 1}`}
-                />
-              ))}
-            </div>
-
-            {/* Progress Indicator */}
-            <div className="mt-6 text-center">
-              <span className="text-sm text-slate-500">
-                {currentIndex + 1} of {testimonials.length}
-              </span>
-            </div>
+            <button 
+              onClick={nextSlide}
+              className="ml-1"
+              aria-label="Next slide"
+            >
+              <ArrowIcon direction="right" />
+            </button>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

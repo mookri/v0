@@ -17,9 +17,31 @@ export function FAQ() {
   return (
     <section aria-labelledby="faq-title" className="bg-muted/50">
       <div className="mx-auto max-w-6xl px-4 py-12 overflow-x-hidden w-full">
-        <h2 id="faq-title" className="font-serif text-2xl md:text-3xl">
-          Frequently Asked Questions
-        </h2>
+        <div className="pb-4">
+          <div className="inline-block">
+            <p style={{
+              color: '#6B7280',
+              letterSpacing: '1px',
+              lineHeight: '12px',
+              textTransform: 'uppercase',
+              fontWeight: 500,
+              fontSize: '10px',
+              marginBottom: '12px',
+              fontFamily: "'DM Sans', sans-serif"
+            }}
+            className="text-left"
+            >
+              Common Queries - Clarified
+            </p>
+            <h2 
+              id="faq-title"
+              className="font-serif text-2xl md:text-3xl lg:text-3xl font-bold tracking-tight text-left mb-3 relative inline-block"
+              style={{ color: '#111827' }}
+            >
+              Frequently Asked Questions
+            </h2>
+          </div>
+        </div>
         <Accordion type="single" collapsible className="mt-6 w-full">
           {faqs.map(([q, a], i) => (
             <AccordionItem key={i} value={`item-${i}`} className="w-full">
