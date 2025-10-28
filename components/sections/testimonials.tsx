@@ -87,7 +87,7 @@ const StarRating = ({ rating }: { rating: number }) => {
 
 const ArrowIcon = ({ direction }: { direction: 'left' | 'right' }) => (
   <svg
-    className="w-7 h-7 fill-[#0E3F2E] transition-colors duration-300 cursor-pointer hover:fill-[#155d42]"
+    className="w-7 h-7 fill-[#0E3F2E] transition-all duration-300 ease-in-out cursor-pointer hover:fill-[#155d42] hover:scale-110"
     viewBox="0 0 64 64"
   >
     {direction === 'left' ? (
@@ -140,7 +140,7 @@ export function Testimonials() {
           {/* Header */}
           <div className="mb-8">
             <div className="text-center">
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#0E3F2E] to-[#155d42] text-white px-3 py-1.5 rounded-full text-xs font-medium mb-3 shadow-lg">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#0E3F2E] to-[#155d42] text-white px-4 py-1.5 rounded-lg text-xs font-medium mb-3 shadow-lg">
                 <span className="flex items-center">
                   ⭐ 5.0
                 </span>

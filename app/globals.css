@@ -144,3 +144,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .animate-looping-arrow {
+    animation: looping-arrow 1.5s infinite linear;
+  }
+}
+
+@keyframes looping-arrow {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}

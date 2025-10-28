@@ -5,6 +5,7 @@ export function BlogPreview() {
     ["Complete Grihapravesh Puja Guide", "8 min read"],
     ["Choosing the Right Pandit for Your Wedding", "6 min read"],
     ["Understanding Shraddh: Vedic Traditions", "7 min read"],
+    ["Navratri Celebrations and Rituals", "5 min read"],
   ]
   return (
     <section id="blog" aria-labelledby="blog-title" className="bg-background">
@@ -34,18 +35,37 @@ export function BlogPreview() {
             </h2>
           </div>
         </div>
-        <div className="grid md:grid-cols-3 gap-6 mt-6 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6 w-full">
           {posts.map(([title, readTime]) => (
-            <article key={title} className="rounded-lg border bg-card p-4 flex flex-col">
-              <img src="/hindu-rituals-knowledge-blog.jpg" alt={`Cover image for: ${title}`} className="rounded-md border w-full h-auto" />
-              <h3 className="font-serif text-lg mt-3">{title}</h3>
-              <p className="text-sm text-muted-foreground mt-auto">{readTime}</p>
+            <article key={title} className="rounded-lg border bg-card p-2 flex flex-col">
+              <div className="relative h-40 w-full overflow-hidden rounded-md border">
+                <img 
+                  src="/hindu-rituals-knowledge-blog.jpg" 
+                  alt={`Cover image for: ${title}`} 
+                  className="object-cover w-full h-full" 
+                />
+              </div>
+              <h3 className="font-serif text-sm mt-2">{title}</h3>
+              <p className="text-xs text-muted-foreground mt-auto">{readTime}</p>
+              <div className="mt-2">
+                <Link 
+                  href="#" 
+                  className="inline-flex items-center justify-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg bg-gradient-to-r from-[#0E3F2E] to-[#155d42] text-white hover:from-[#155d42] hover:to-[#0E3F2E] transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-md group w-full"
+                >
+                  Explore 
+                  <span className="transition-transform duration-300 ease-in-out group-hover:translate-x-1">→</span>
+                </Link>
+              </div>
             </article>
           ))}
         </div>
         <div className="mt-8 text-center">
-          <Link href="#" className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium rounded-full bg-[#0E3F2E] text-white hover:bg-[#0E3F2E]/90 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg">
-            Explore Spiritual Knowledge Base <span className="transition-transform duration-300 ease-in-out group-hover:translate-x-1">→</span>
+          <Link 
+            href="#" 
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium rounded-full bg-gradient-to-r from-[#0E3F2E] to-[#155d42] text-white hover:from-[#155d42] hover:to-[#0E3F2E] transition-all duration-500 ease-in-out transform hover:scale-105 hover:shadow-lg group"
+          >
+            Explore Spiritual Knowledge Base 
+            <span className="animate-looping-arrow">→</span>
           </Link>
         </div>
       </div>

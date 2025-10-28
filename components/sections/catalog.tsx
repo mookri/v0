@@ -34,6 +34,7 @@ export function Catalog() {
       tag: "Most Booked",
       imgQuery: "griha%20pravesh%20home%20ritual%20mandap",
       category: "Home Rituals",
+      imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358800/Whisk_12d1d962f45c56a89444ef5b3cc2f267dr_fzoivd.jpg"
     },
     {
       slug: "satyanarayan-puja",
@@ -43,6 +44,7 @@ export function Catalog() {
       tag: "Popular",
       imgQuery: "satyanarayan%20katha%20ritual",
       category: "Home Rituals",
+      imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358798/Whisk_7a093de03fbc3bab93949b075483d783dr_zwnihl.jpg"
     },
     {
       slug: "wedding-ceremony",
@@ -52,6 +54,7 @@ export function Catalog() {
       tag: undefined,
       imgQuery: "hindu%20wedding%20ceremony%20mandap",
       category: "Life Milestones",
+      imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761678719/Whisk_5445b92b09fbb22bdf349b017836b21cdr_mpzp7d.jpg"
     },
     {
       slug: "ganesh-chaturthi",
@@ -61,6 +64,7 @@ export function Catalog() {
       tag: undefined,
       imgQuery: "ganesh%20chaturthi%20festival%20celebration",
       category: "Festival",
+      imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358800/Whisk_db05ba7c437e48abe6440798d2a33b09dr_bokdku.jpg"
     },
     {
       slug: "navagraha-puja",
@@ -70,6 +74,7 @@ export function Catalog() {
       tag: "Popular",
       imgQuery: "navagraha%20puja%20ritual",
       category: "Special",
+      imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679025/Whisk_74db7ede20dd9ab86654355ac2ceeb04dr_wgtjc6.jpg"
     },
     {
       slug: "baby-naming",
@@ -79,16 +84,18 @@ export function Catalog() {
       tag: undefined,
       imgQuery: "baby%20naming%20ceremony%20hindu",
       category: "Life Milestones",
+      imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679172/Whisk_72a69cdfe7bdb6399b34c6cbe8850902dr_j1jnhe.jpg"
     },
     {
-      slug: "shraddh-ceremony",
-      title: "Shraddh Ceremony",
-      desc: "Honor your ancestors with authentic Vedic rituals and offerings.",
-      price: "₹6,500",
-      tag: undefined,
-      imgQuery: "shraddh%20ceremony%20ritual",
-      category: "Special",
-    },
+  slug: "durga-puja",
+  title: "Durga Puja",
+  desc: "Grand celebration honoring Goddess Durga with devotion, rituals, and divine energy.",
+  price: "₹7,000",
+  tag: "Festive Special",
+  imgQuery: "durga%20puja%20celebration%20goddess%20idol%20ritual",
+  category: "Festival",
+  imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679450/Whisk_740e8530e3086b3abb94e5077c67486cdr_uid6cy.jpg"
+},
     {
       slug: "rudrabhishek",
       title: "Rudrabhishek",
@@ -97,6 +104,7 @@ export function Catalog() {
       tag: undefined,
       imgQuery: "rudrabhishek%20shiva%20ritual",
       category: "Special",
+      imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679271/Whisk_cbcb3cbfd12603c81194f8bf98abdd95dr_vkuqn9.jpg"
     },
   ]
 
@@ -117,7 +125,7 @@ export function Catalog() {
           </h2>
          <div className="w-full sm:w-48">
             <Select value={activeCategory} onValueChange={setActiveCategory}>
-              <SelectTrigger className="w-full border border-slate-300 rounded-md bg-white px-3 py-2 focus:ring-2 focus:ring-[#0E3F2E]/20 focus:border-[#0E3F2E] transition-all duration-300">
+              <SelectTrigger className="w-full border border-slate-300 rounded-md bg-white px-3 py-2 focus:ring-2 focus:ring-[#0E3F2E]/20 focus:border-[#0E3F2E]">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
@@ -135,17 +143,27 @@ export function Catalog() {
             filteredItems.map((it) => (
               <div
                 key={it.title}
-                className="group overflow-hidden rounded-xl bg-white border border-slate-200 transition-all duration-500 ease-in-out hover:shadow-xl hover:-translate-y-2 mx-4 sm:mx-0"
+                className="group overflow-hidden rounded-xl bg-white border border-slate-200 transition-all duration-500 ease-in-out hover:shadow-xl hover:-translate-y-2 mx-0 sm:mx-0"
               >
                 <Link href={`/pujas/${it.slug}`} className="block">
                   <div className="relative h-40 w-full overflow-hidden">
-                    <Image
-                      src={`/.jpg?key=s7bpr&height=320&width=480&query=${it.imgQuery}`}
-                      alt={`${it.title} representative image`}
-                      fill
-                      className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    />
+                    {it.imageUrl ? (
+                      <Image
+                        src={it.imageUrl}
+                        alt={`${it.title} representative image`}
+                        fill
+                        className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      />
+                    ) : (
+                      <Image
+                        src={`/.jpg?key=s7bpr&height=320&width=480&query=${it.imgQuery}`}
+                        alt={`${it.title} representative image`}
+                        fill
+                        className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      />
+                    )}
                     {it.tag ? (
                       <span className="absolute left-3 top-3 rounded-full bg-[#0E3F2E] px-3 py-1 text-xs text-white font-medium animate-pulse">
                         {it.tag}
@@ -166,7 +184,7 @@ export function Catalog() {
                   <Link href="#booking" className="block">
                     <Button className="w-full bg-[#0E3F2E] text-white hover:bg-[#0E3F2E]/90 text-sm h-11 font-medium rounded-lg transition-all duration-300 ease-in-out transform hover:scale-[1.02] hover:shadow-md flex items-center justify-center gap-2 group/button shadow-sm">
                       <span className="flex items-center gap-2">
-                        Book Now <ArrowRight className="w-4 h-4 transition-transform duration-500 ease-in-out group-hover/button:translate-x-1" />
+                        Book Now <ArrowRight className="w-4 h-4 animate-looping-arrow" />
                       </span>
                     </Button>
                   </Link>

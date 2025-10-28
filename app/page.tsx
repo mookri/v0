@@ -28,7 +28,7 @@ export default function HomePage() {
         <TrustStats />
         <BlogPreview />
         <FAQ />
-        <Booking />
+        {/* <Booking /> */}
         <InfoBar />
       </main>
       <SiteFooter />

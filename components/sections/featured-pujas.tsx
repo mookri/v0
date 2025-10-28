@@ -39,7 +39,7 @@ const items = [
     price: "₹1,999",
     tag: "Quick Setup",
     imgQuery: "ganesh%20puja%20traditional%20setup",
-    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358805/Whisk_3a4f5d6e7c8b9a0c1d2e3f4a5b6c7d8e_ganesh_puja.jpg"
+    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358800/Whisk_db05ba7c437e48abe6440798d2a33b09dr_bokdku.jpg"
   },
   {
     slug: "durga-puja",
@@ -48,7 +48,7 @@ const items = [
     price: "₹5,999",
     tag: "Festival Special",
     imgQuery: "durga%20puja%20elaborate%20setup",
-    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358807/Whisk_durga_puja_festival.jpg"
+    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679450/Whisk_740e8530e3086b3abb94e5077c67486cdr_uid6cy.jpg"
   },
   {
     slug: "navratri-puja",
@@ -57,7 +57,7 @@ const items = [
     price: "₹7,999",
     tag: "Extended Ritual",
     imgQuery: "navratri%20puja%20garba%20celebration",
-    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358809/Whisk_navratri_puja_celebration.jpg"
+    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg"
   },
 ]
 
@@ -102,6 +102,7 @@ export function FeaturedPujas() {
   const [isLoading, setIsLoading] = useState(true)
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const autoPlayRef = useRef<NodeJS.Timeout | null>(null)
   
   useEffect(() => {
     // Simulate loading time
@@ -112,7 +113,42 @@ export function FeaturedPujas() {
     return () => clearTimeout(timer)
   }, [])
 
-  // Update active slide index when scrolling
+  // Auto-play functionality
+  useEffect(() => {
+    if (!isLoading && scrollContainerRef.current) {
+      const startAutoPlay = () => {
+        autoPlayRef.current = setInterval(() => {
+          setActiveSlideIndex(prevIndex => {
+            const nextIndex = (prevIndex + 1) % items.length
+            scrollToSlide(nextIndex)
+            return nextIndex
+          })
+        }, 5000) // Auto-play every 5 seconds
+      }
+
+      const stopAutoPlay = () => {
+        if (autoPlayRef.current) {
+          clearInterval(autoPlayRef.current)
+          autoPlayRef.current = null
+        }
+      }
+
+      startAutoPlay()
+
+      // Pause auto-play on hover
+      const container = scrollContainerRef.current
+      container.addEventListener('mouseenter', stopAutoPlay)
+      container.addEventListener('mouseleave', startAutoPlay)
+
+      return () => {
+        stopAutoPlay()
+        container.removeEventListener('mouseenter', stopAutoPlay)
+        container.removeEventListener('mouseleave', startAutoPlay)
+      }
+    }
+  }, [isLoading])
+
+  // Update active slide index when scrolling manually
   useEffect(() => {
     const handleScroll = () => {
       if (scrollContainerRef.current) {
@@ -131,6 +167,16 @@ export function FeaturedPujas() {
     }
   }, [])
 
+  const scrollToSlide = (index: number) => {
+    if (scrollContainerRef.current) {
+      const cardWidth = 220 + 16 // width + gap
+      scrollContainerRef.current.scrollTo({
+        left: index * cardWidth,
+        behavior: 'smooth'
+      })
+    }
+  }
+
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
       const { current: container } = scrollContainerRef
@@ -139,16 +185,15 @@ export function FeaturedPujas() {
         left: direction === 'right' ? scrollAmount : -scrollAmount,
         behavior: 'smooth'
       })
+      
+      // Update active index after scroll
+      setTimeout(() => {
+        const scrollLeft = container.scrollLeft
+        const cardWidth = 220 + 16 // width + gap
+        const newIndex = Math.round(scrollLeft / cardWidth)
+        setActiveSlideIndex(newIndex)
+      }, 300)
     }
-  }
-
-  // Get current scroll position to determine active slide
-  const getActiveSlideIndex = () => {
-    if (!scrollContainerRef.current) return 0
-    const container = scrollContainerRef.current
-    const scrollLeft = container.scrollLeft
-    const cardWidth = 220 + 16 // width + gap
-    return Math.round(scrollLeft / cardWidth)
   }
 
   return (
@@ -284,12 +329,6 @@ export function FeaturedPujas() {
               <div 
                 ref={scrollContainerRef}
                 className="flex gap-4 pb-8"
-                onScroll={() => {
-                  // Force re-render to update indicators
-                  if (typeof window !== 'undefined') {
-                    window.dispatchEvent(new CustomEvent('scroll-indicator-update'))
-                  }
-                }}
               >
                 {items.map((it) => (
                   <div
@@ -353,14 +392,8 @@ export function FeaturedPujas() {
                     <button
                       key={index}
                       onClick={() => {
-                        if (scrollContainerRef.current) {
-                          const cardWidth = 220 + 16 // width + gap
-                          scrollContainerRef.current.scrollTo({
-                            left: index * cardWidth,
-                            behavior: 'smooth'
-                          })
-                          setActiveSlideIndex(index)
-                        }
+                        scrollToSlide(index)
+                        setActiveSlideIndex(index)
                       }}
                       className={`w-6 h-0.5 transition-all duration-300 rounded-full ${index === activeSlideIndex ? 'bg-primary' : 'bg-muted-foreground/30'}`}
                       aria-label={`Go to slide ${index + 1}`}
