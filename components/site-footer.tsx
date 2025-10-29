@@ -1,39 +1,63 @@
 "use client";
 
-
-import { Mail, Phone, MapPin, Heart, } from "lucide-react";
+import { Mail, Phone, MapPin, Heart, Shield, Lock } from "lucide-react";
 import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 import Link from "next/link";
-const QuickLinks = [{ Label: "Home", href: "#" }, { Label: "About Us", href: "#" }, { Label: "Our Pandits", href: "#" }, { Label: "Testimonials", href: "#" }, { Label: "Gallery", href: "#" }, { Label: "FAQs", href: "#" }];
+import { footerData } from "@/lib/footerData";
+
 export function SiteFooter() {
   return (
-    <footer className="bg-[#0d1b2a] text-white">
-      {/* Main Footer Content */}
-      <div className="container mx-auto px-4 py-14">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
-          {/* Column 1 - Quick Links */}
-          <div className="col-span-1">
-            <h4 className="text-lg font-semibold mb-5 text-[#ff9933] relative pb-2 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-10 after:bg-[#ff9933]">Quick Links</h4>
-            <ul className="space-y-3">
-              {QuickLinks.map((link) => (
-                <li key={link.Label}>
-                  <Link href={link.href} className="text-gray-200 hover:text-white transition-colors text-sm flex items-center group">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#ff9933] mr-3 group-hover:animate-pulse"></span>
-                    {link.Label}
+    <footer className="bg-gradient-to-b from-[#0d1b2a] to-[#0a121f] text-white">
+      {/* Main Content Area */}
+      <div className="container mx-auto px-4 py-5 max-w-7xl">
+        {/* Desktop Layout - Horizontal */}
+        <div className="hidden lg:grid lg:grid-cols-5 gap-8">
+          {/* Contact Us */}
+          <div className="lg:col-span-1 pr-8">
+            <h3 className="text-base font-semibold mb-2 text-[#ff9933] relative pb-1.5 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-10 after:bg-gradient-to-r from-[#ff9933] to-transparent">Contact Us</h3>
+            <div className="space-y-1.5">
+              <div className="flex items-start space-x-2.5 group">
+                <MapPin size={14} className="text-primary mt-0.5 flex-shrink-0" />
+                <span className="text-gray-300 text-xs">{footerData.contact.address}</span>
+              </div>
+              <div className="flex items-center space-x-2.5 group">
+                <Phone size={14} className="text-primary flex-shrink-0" />
+                <a href={`tel:${footerData.contact.phone}`} className="text-gray-300 hover:text-white text-xs transition-colors">{footerData.contact.phone}</a>
+              </div>
+              <div className="flex items-center space-x-2.5 group">
+                <Mail size={14} className="text-primary flex-shrink-0" />
+                <a href={`mailto:${footerData.contact.email}`} className="text-gray-300 hover:text-white text-xs transition-colors">{footerData.contact.email}</a>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div className="lg:col-span-1 pl-4">
+            <h3 className="text-base font-semibold mb-2 text-[#ff9933] relative pb-1.5 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-10 after:bg-gradient-to-r from-[#ff9933] to-transparent">Quick Links</h3>
+            <ul className="space-y-1">
+              {footerData.quickLinks.map((link, index) => (
+                <li key={index}>
+                  <Link 
+                    href={link.href} 
+                    className="text-gray-300 hover:text-white transition-all duration-300 text-xs py-0.5 block"
+                  >
+                    {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Column 2 - Services */}
-          <div className="col-span-1">
-            <h4 className="text-lg font-semibold mb-5 text-[#ff9933] relative pb-2 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-10 after:bg-[#ff9933]">Our Services</h4>
-            <ul className="space-y-3">
-              {["Puja at Home", "Online Puja", "Temple Services", "Havan & Yagya", "Vedic Rituals", "Custom Pujas"].map((service) => (
-                <li key={service}>
-                  <a href="#" className="text-gray-200 hover:text-white transition-colors text-sm flex items-center group">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#ff9933] mr-3 group-hover:animate-pulse"></span>
+          {/* Our Services */}
+          <div className="lg:col-span-1 pl-4">
+            <h3 className="text-base font-semibold mb-2 text-[#ff9933] relative pb-1.5 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-10 after:bg-gradient-to-r from-[#ff9933] to-transparent">Our Services</h3>
+            <ul className="space-y-1">
+              {footerData.services.map((service, index) => (
+                <li key={index}>
+                  <a 
+                    href="#" 
+                    className="text-gray-300 hover:text-white transition-all duration-300 text-xs py-0.5 block"
+                  >
                     {service}
                   </a>
                 </li>
@@ -41,14 +65,16 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          {/* Column 3 - Astrology */}
-          <div className="col-span-1">
-            <h4 className="text-lg font-semibold mb-5 text-[#ff9933] relative pb-2 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-10 after:bg-[#ff9933]">Astrology</h4>
-            <ul className="space-y-3">
-              {["Kundli Analysis", "Matching", "Horoscope", "Gemstone", "Vastu", "Remedies"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-gray-200 hover:text-white transition-colors text-sm flex items-center group">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#ff9933] mr-3 group-hover:animate-pulse"></span>
+          {/* Astrology */}
+          <div className="lg:col-span-1 pl-4">
+            <h3 className="text-base font-semibold mb-2 text-[#ff9933] relative pb-1.5 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-10 after:bg-gradient-to-r from-[#ff9933] to-transparent">Astrology</h3>
+            <ul className="space-y-1">
+              {footerData.astrology.map((item, index) => (
+                <li key={index}>
+                  <a 
+                    href="#" 
+                    className="text-gray-300 hover:text-white transition-all duration-300 text-xs py-0.5 block"
+                  >
                     {item}
                   </a>
                 </li>
@@ -56,45 +82,159 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          {/* Column 4 - Locations */}
-          <div className="col-span-1">
-            <h4 className="text-lg font-semibold mb-5 text-[#ff9933] relative pb-2 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-10 after:bg-[#ff9933]">Our Centers</h4>
-            <ul className="space-y-3">
-              {["New Delhi", "Mumbai", "Bangalore", "Chennai", "Kolkata", "Hyderabad"].map((city) => (
-                <li key={city}>
-                  <a href="#" className="text-gray-200 hover:text-white transition-colors text-sm flex items-center group">
-                    <MapPin size={14} className="text-[#ff9933] mr-2" />
+          {/* Our Centers */}
+          <div className="lg:col-span-1 pl-4">
+            <h3 className="text-base font-semibold mb-2 text-[#ff9933] relative pb-1.5 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-10 after:bg-gradient-to-r from-[#ff9933] to-transparent">Our Centers</h3>
+            <ul className="space-y-1">
+              {footerData.centers.map((city, index) => (
+                <li key={index}>
+                  <a 
+                    href="#" 
+                    className="text-gray-300 hover:text-white transition-all duration-300 text-xs py-0.5 block"
+                  >
                     {city}
                   </a>
                 </li>
               ))}
             </ul>
           </div>
+        </div>
 
-          {/* Column 5 - Contact Info */}
-          <div className="col-span-2 md:col-span-1">
-            <h4 className="text-lg font-semibold mb-5 text-[#ff9933] relative pb-2 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-10 after:bg-[#ff9933]">Contact Us</h4>
-            <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <MapPin size={18} className="text-[#ff9933] mt-0.5 flex-shrink-0" />
-                <span className="text-gray-200 text-sm">123 Temple Street,<br />New Delhi 110001,<br />India</span>
+        {/* Mobile Layout - 2x2 Grid */}
+        <div className="lg:hidden grid grid-cols-1 gap-2 px-4">
+          {/* Contact Us - Full width at top */}
+          <div className="px-1">
+            <h3 className="text-xl font-semibold mb-3 text-[#ff9933] relative pb-2 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-14 after:bg-gradient-to-r from-[#ff9933] to-transparent">Contact Us</h3>
+            <div className="space-y-3">
+              <div className="flex items-start space-x-3.5 group">
+                <MapPin size={20} className="text-primary mt-0.5 flex-shrink-0" />
+                <span className="text-gray-300 text-base leading-relaxed">{footerData.contact.address}</span>
               </div>
-              <div className="flex items-center space-x-3">
-                <Phone size={18} className="text-[#ff9933] flex-shrink-0" />
-                <a href="tel:+919876543210" className="text-gray-200 hover:text-white text-sm">+91 98765 43210</a>
+              <div className="flex items-center space-x-3.5 group">
+                <Phone size={20} className="text-primary flex-shrink-0" />
+                <a href={`tel:${footerData.contact.phone}`} className="text-gray-300 hover:text-white text-base transition-colors font-medium">{footerData.contact.phone}</a>
               </div>
-              <div className="flex items-center space-x-3">
-                <Mail size={18} className="text-[#ff9933] flex-shrink-0" />
-                <a href="mailto:info@divineservices.com" className="text-gray-200 hover:text-white text-sm">info@divineservices.com</a>
+              <div className="flex items-center space-x-3.5 group">
+                <Mail size={20} className="text-primary flex-shrink-0" />
+                <a href={`mailto:${footerData.contact.email}`} className="text-gray-300 hover:text-white text-base transition-colors font-medium">{footerData.contact.email}</a>
               </div>
-              <div className="pt-2">
-                <p className="text-sm text-gray-300 mb-2">Follow Us:</p>
-                <div className="flex space-x-3">
-                  {[Facebook, Instagram, Twitter, Youtube].map((Icon, index) => (
-                    <a key={index} href="#" className="h-9 w-9 rounded-full bg-[#ffffff1a] flex items-center justify-center hover:bg-[#ff9933] transition-colors duration-300">
-                      <Icon size={16} className="text-white" />
+            </div>
+          </div>
+
+          {/* Sleek horizontal divider line */}
+          <div className="border-t border-[#ff9933]/10 pt-2"></div>
+
+          {/* First Row: Quick Links and Our Services side-by-side */}
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <h3 className="text-sm font-semibold mb-2 text-[#ff9933] relative pb-1.5 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-8 after:bg-gradient-to-r from-[#ff9933] to-transparent">Quick Links</h3>
+              <ul className="space-y-1">
+                {footerData.quickLinks.map((link, index) => (
+                  <li key={index}>
+                    <Link 
+                      href={link.href} 
+                      className="text-gray-300 hover:text-white transition-all duration-300 text-xs py-0.5 block"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold mb-2 text-[#ff9933] relative pb-1.5 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-8 after:bg-gradient-to-r from-[#ff9933] to-transparent">Our Services</h3>
+              <ul className="space-y-1">
+                {footerData.services.map((service, index) => (
+                  <li key={index}>
+                    <a 
+                      href="#" 
+                      className="text-gray-300 hover:text-white transition-all duration-300 text-xs py-0.5 block"
+                    >
+                      {service}
                     </a>
-                  ))}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Second Row: Astrology and Our Centers side-by-side */}
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <h3 className="text-sm font-semibold mb-2 text-[#ff9933] relative pb-1.5 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-8 after:bg-gradient-to-r from-[#ff9933] to-transparent">Astrology</h3>
+              <ul className="space-y-1">
+                {footerData.astrology.map((item, index) => (
+                  <li key={index}>
+                    <a 
+                      href="#" 
+                      className="text-gray-300 hover:text-white transition-all duration-300 text-xs py-0.5 block"
+                    >
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold mb-2 text-[#ff9933] relative pb-1.5 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-8 after:bg-gradient-to-r from-[#ff9933] to-transparent">Our Centers</h3>
+              <ul className="space-y-1">
+                {footerData.centers.map((city, index) => (
+                  <li key={index}>
+                    <a 
+                      href="#" 
+                      className="text-gray-300 hover:text-white transition-all duration-300 text-xs py-0.5 block"
+                    >
+                      {city}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Brand Bar */}
+      <div className="border-t border-[#ff9933]/10 py-3 bg-gradient-to-r from-[#0a121f]/50 to-[#0d1b2a]/50 backdrop-blur-sm">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3">
+            {/* Company Logo */}
+            <div className="flex items-center">
+              <img 
+                src="https://res.cloudinary.com/dufzctlaj/image/upload/v1761764543/navdhya-logo_d6ap7k.png" 
+                alt="Navdhya Ritual Services Logo" 
+                className="h-12 w-auto"
+              />
+            </div>
+
+            {/* Social Media Icons */}
+            <div className="flex items-center space-x-2.5">
+              {[Facebook, Instagram, Twitter, Youtube].map((Icon, index) => (
+                <a 
+                  key={index} 
+                  href="#" 
+                  className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-[#0d1b2a]/80 transition-all duration-300"
+                >
+                  <Icon size={14} className="text-primary" />
+                </a>
+              ))}
+            </div>
+
+            {/* App Download */}
+            <div style={{display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px", border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
+              <span style={{fontSize: "11px", fontWeight: 600, color: "rgb(148, 163, 184)", border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>Download App:</span>
+              <div style={{display: "flex", alignItems: "center", flexWrap: "wrap", gap: "3px", flex: "1 0 0%", border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
+                <div style={{display: "flex", alignItems: "center", flexShrink: 0, border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
+                  <a href="" style={{textDecoration: "none", color: "rgb(0, 103, 178)", display: "flex", alignItems: "center", border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
+                    <img src="/payments/google-white.png" style={{maxHeight: "20px", maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
+                  </a>
+                </div>
+                <div style={{display: "flex", alignItems: "center", flexShrink: 0, border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
+                  <a href="" style={{textDecoration: "none", color: "rgb(0, 103, 178)", display: "flex", alignItems: "center", border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
+                    <img src="/payments/apple-white.png" style={{maxHeight: "20px", maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
+                  </a>
                 </div>
               </div>
             </div>
@@ -102,25 +242,56 @@ export function SiteFooter() {
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-[#ff9933]/20 py-6">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
-            <p className="text-gray-300 text-center md:text-left">
-              {new Date().getFullYear()} Navdhya Ritual Services. All rights reserved. Made with{" "}
-              <Heart size={14} className="inline text-[#ff9933]" />
-              for spiritual wellness
-            </p>
-            <div className="flex items-center space-x-6 text-gray-300">
-              <a href="#" className="hover:text-white transition-colors text-xs" >
-                Privacy Policy
-              </a>
-              <a href="#" className="hover:text-white transition-colors text-xs" >
-                Terms of Service
-              </a>
-              <a href="#" className="hover:text-white transition-colors text-xs" >
-                Refund Policy
-              </a>
+      {/* Copyright Bar */}
+      <div className="border-t border-[#ff9933]/10 py-3 bg-[#0a121f]">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3">
+            {/* Copyright Text and Disclaimer */}
+            <div className="flex flex-col items-start w-full">
+              <p className="text-gray-400 text-xs text-center md:text-left">
+                © 2025 Navdhya Ritual Services. All rights reserved. Made with <Heart size={10} className="inline text-primary" /> for spiritual wellness.
+              </p>
+            </div>
+
+            {/* Payment Method Logos */}
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2.5">
+                <div style={{border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
+                  <img src="/payments/payment.svg" alt="payment" style={{maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
+                </div>
+                <div style={{border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
+                  <img src="/payments/payment2.svg" alt="payment" style={{maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
+                </div>
+                <div style={{border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
+                  <img src="/payments/payment3.svg" alt="payment" style={{maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
+                </div>
+                <div style={{border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
+                  <img src="/payments/payment4.svg" alt="payment" style={{maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
+                </div>
+                <div style={{border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
+                  <img src="/payments/klarna-white.webp" alt="payment" style={{maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Bottom Links */}
+          <div className="flex flex-wrap justify-start gap-3 mt-3 pt-3 border-t border-[#ff9933]/5 w-full">
+            <div className="flex flex-col w-full">
+              <div className="rounded-lg p-4 mb-3">
+                <p className="text-gray-400 text-[11px] leading-relaxed">
+                  This service is operated by AI and may occasionally contain errors. Don't panic - our team is available 24/7 to assist you in-person. 
+                  All rituals and services are performed by certified pandits with years of experience. While we strive for accuracy in all our digital 
+                  interactions, we recommend confirming important details with our support team. Our AI assistant is continuously learning and improving 
+                  to better serve your spiritual needs. For immediate assistance, please contact our helpline or use the WhatsApp chat feature.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 ml-0 md:ml-auto">
+                <a href="#" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Privacy Policy</a>
+                <a href="#" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Terms of Service</a>
+                <a href="#" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Refund Policy</a>
+                <a href="#" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Cancellation Policy</a>
+              </div>
             </div>
           </div>
         </div>

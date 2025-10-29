@@ -6,8 +6,8 @@ export function InfoBar() {
           <h3 className="font-serif text-base sm:text-lg font-medium tracking-tight text-center sm:text-left text-white">Need Help Choosing?</h3>
           <p className="text-xs sm:text-sm mt-1 text-center sm:text-left text-white/90">
             Call us at{" "}
-            <a href="tel:+910000000000" className="underline hover:text-white/80 transition-colors duration-200">
-              +91 00000 00000
+            <a href="tel:+917289000377" className="underline hover:text-white/80 transition-colors duration-200">
+              +91-7289000377
             </a>
           </p>
         </div>
@@ -18,11 +18,11 @@ export function InfoBar() {
         <div className="flex flex-col items-center sm:items-end p-4 bg-primary">
           <h3 className="font-serif text-base sm:text-lg font-medium tracking-tight text-center sm:text-left text-white">Quick Connect</h3>
           <p className="text-xs sm:text-sm mt-1 text-center sm:text-left text-white/90">
-            <a className="underline hover:text-white/80 transition-colors duration-200" href="mailto:hello@navdhya.example">
+            <a className="underline hover:text-white/80 transition-colors duration-200" href="mailto:help@navdhya.com">
               Email
             </a>{" "}
             •{" "}
-            <a className="underline hover:text-white/80 transition-colors duration-200" href="https://wa.me/910000000000" target="_blank" rel="noopener noreferrer">
+            <a className="underline hover:text-white/80 transition-colors duration-200" href="https://wa.me/917289000377" target="_blank" rel="noopener noreferrer">
               WhatsApp
             </a>{" "}
             •{" "}

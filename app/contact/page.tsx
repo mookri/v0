@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
+import { Phone, Mail, MessageCircle } from "lucide-react"
 
 export default function ContactPage() {
   return (
@@ -36,20 +37,54 @@ export default function ContactPage() {
           </form>
           <div className="mt-6 text-sm">
             Or reach us directly:{" "}
-            <a className="underline" href="tel:+910000000000">
-              +91 00000 00000
+            <a className="underline" href="tel:+917289000377">
+              +91-7289000377
             </a>{" "}
             •{" "}
-            <a className="underline" href="mailto:hello@navdhya.example">
-              hello@navdhya.example
+            <a className="underline" href="mailto:help@navdhya.com">
+              help@navdhya.com
             </a>{" "}
             •{" "}
-            <a className="underline" href="https://wa.me/910000000000" target="_blank" rel="noopener noreferrer">
+            <a className="underline" href="https://wa.me/917289000377" target="_blank" rel="noopener noreferrer">
               WhatsApp
             </a>
           </div>
         </section>
         <aside aria-label="Office and Map" className="flex flex-col">
+          <div className="space-y-4">
+            <div className="flex items-start space-x-3">
+              <Phone className="mt-1 h-5 w-5 text-primary" />
+              <div>
+                <h3 className="font-semibold">Call Us</h3>
+                <a className="underline" href="tel:+917289000377">
+                  +91-7289000377
+                </a>
+              </div>
+            </div>
+            <div className="flex items-start space-x-3">
+              <Mail className="mt-1 h-5 w-5 text-primary" />
+              <div>
+                <h3 className="font-semibold">Email Us</h3>
+                <a className="underline" href="mailto:help@navdhya.com">
+                  help@navdhya.com
+                </a>
+              </div>
+            </div>
+            <div className="flex items-start space-x-3">
+              <MessageCircle className="mt-1 h-5 w-5 text-primary" />
+              <div>
+                <h3 className="font-semibold">WhatsApp</h3>
+                <a className="underline" href="https://wa.me/917289000377" target="_blank" rel="noopener noreferrer">
+                  +91-7289000377
+                </a>
+              </div>
+            </div>
+            <div className="pt-4">
+              <h3 className="font-semibold">Office Address</h3>
+              <p>Pandav Nagar Delhi 110092</p>
+              <p className="text-sm text-muted-foreground mt-2">Registered Office — New Delhi</p>
+            </div>
+          </div>
           <div className="rounded-lg border bg-card p-5 flex-grow">
             <h2 className="font-serif text-xl">Office Location</h2>
             <p className="text-sm text-muted-foreground mt-2">Registered Office — New Delhi</p>

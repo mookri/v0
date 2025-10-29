@@ -59,9 +59,21 @@ export function Booking() {
     setErrors(nextErrors)
 
     if (Object.keys(nextErrors).length === 0) {
-      const message = `*New Puja Booking Request*\n\n*Puja Type:* ${getPujaTypeName(form.pujaType)}\n*Preferred Date:* ${form.date}\n*Pin Code:* ${form.pin}\n*Full Name:* ${form.name}\n*Phone:* ${form.phone}\n*Email:* ${form.email}\n*Special Requirements:* ${form.notes || "None"}\n\n*Estimated Total:* ₹${estimate.toLocaleString("en-IN")}\n\nPlease confirm availability and next steps.`
+      const message = `*New Puja Booking Request*
+
+*Puja Type:* ${getPujaTypeName(form.pujaType)}
+*Preferred Date:* ${form.date}
+*Pin Code:* ${form.pin}
+*Full Name:* ${form.name}
+*Phone:* ${form.phone}
+*Email:* ${form.email}
+*Special Requirements:* ${form.notes || "None"}
+
+*Estimated Total:* ₹${estimate.toLocaleString("en-IN")}
+
+Please confirm availability and next steps.`
       const encodedMessage = encodeURIComponent(message)
-      const whatsappUrl = `https://wa.me/910000000000?text=${encodedMessage}`
+      const whatsappUrl = `https://wa.me/917289000377?text=${encodedMessage}`
       window.open(whatsappUrl, "_blank")
       setSubmitted(true)
     }
@@ -270,14 +282,14 @@ export function Booking() {
             <div className="space-y-3">
               <a
                 className="flex items-center justify-center gap-2 w-full py-2.5 bg-white border rounded-lg hover:bg-gray-50 transition"
-                href="tel:+910000000000"
+                href="tel:+917289000377"
               >
                 <Phone className="w-4 h-4" />
                 Call Us
               </a>
               <a
                 className="flex items-center justify-center gap-2 w-full py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-                href="https://wa.me/910000000000"
+                href="https://wa.me/917289000377"
                 target="_blank"
                 rel="noopener noreferrer"
               >

@@ -111,20 +111,20 @@ export function SiteHeader() {
       {/* Main Header */}
       <div className="border-b border-border">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          {/* Desktop Layout */}
+          <div className="hidden lg:flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center gap-8">
               <Link href="/" className="flex items-center gap-2" aria-label="Navdhya Home">
-                <div className="size-10 rounded-md bg-primary/15 grid place-items-center">
-                  <span className="font-serif text-primary text-xl">ॐ</span>
-                </div>
-                <div className="flex flex-col leading-tight">
-                  <span className="text-2xl font-bold text-foreground">Navdhya</span>
-                </div>
+                <img 
+                  src="/navdhya-logo.png" 
+                  alt="Navdhya Ritual Services Logo" 
+                  className="h-10 w-auto"
+                />
               </Link>
 
               {/* Desktop Navigation Links */}
-              <nav className="hidden lg:flex items-center gap-6 text-sm">
+              <nav className="flex items-center gap-6 text-sm">
                 <Link href="/" className="hover:text-primary transition-colors font-medium">
                   Home
                 </Link>
@@ -198,7 +198,7 @@ export function SiteHeader() {
             </div>
 
             {/* Search Bar - Desktop */}
-            <div className="hidden md:flex items-center flex-1 max-w-md mx-8">
+            <div className="flex items-center flex-1 max-w-md mx-8">
               <div className="relative w-full">
                 <input
                   type="text"
@@ -211,14 +211,7 @@ export function SiteHeader() {
 
             {/* Right Actions */}
             <div className="flex items-center gap-4">
-              <button 
-                className="md:hidden"
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-              >
-                <Search className="w-5 h-5" />
-              </button>
-              
-              <div className="hidden lg:flex items-center gap-2 text-sm">
+              <div className="flex items-center gap-2 text-sm">
                 <Phone className="w-4 h-4" />
                 <div>
                   <div className="text-muted-foreground">Need help?</div>
@@ -230,25 +223,25 @@ export function SiteHeader() {
                 <User className="w-5 h-5" />
               </button>
 
-              {/* Hide cart and wishlist on mobile */}
-              <div className="hidden md:block">
-                <button className="p-2 hover:bg-muted rounded relative">
-                  <Heart className="w-5 h-5" />
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center">0</span>
-                </button>
-              </div>
+              <button className="p-2 hover:bg-muted rounded relative">
+                <Heart className="w-5 h-5" />
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center">0</span>
+              </button>
 
-              <div className="hidden md:block">
-                <button className="p-2 hover:bg-muted rounded relative">
-                  <ShoppingCart className="w-5 h-5" />
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center">0</span>
-                </button>
-              </div>
+              <button className="p-2 hover:bg-muted rounded relative">
+                <ShoppingCart className="w-5 h-5" />
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center">0</span>
+              </button>
+            </div>
+          </div>
 
-              {/* Mobile Menu Trigger */}
+          {/* Mobile Layout */}
+          <div className="lg:hidden">
+            <div className="flex items-center justify-between">
+              {/* Hamburger Menu */}
               <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
                 <SheetTrigger asChild>
-                  <button className="lg:hidden p-2">
+                  <button className="p-2">
                     {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                   </button>
                 </SheetTrigger>
@@ -256,12 +249,11 @@ export function SiteHeader() {
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-6">
                       <Link href="/" className="flex items-center gap-2" aria-label="Navdhya Home">
-                        <div className="size-10 rounded-md bg-primary/15 grid place-items-center">
-                          <span className="font-serif text-primary text-xl">ॐ</span>
-                        </div>
-                        <div className="flex flex-col leading-tight">
-                          <span className="text-xl font-bold text-foreground">Navdhya</span>
-                        </div>
+                        <img 
+                          src="/navdhya-logo.png" 
+                          alt="Navdhya Ritual Services Logo" 
+                          className="h-12 w-auto"
+                        />
                       </Link>
                       <SheetClose asChild>
                         <button>
@@ -342,7 +334,6 @@ export function SiteHeader() {
                             Contact
                           </Link>
                         </SheetClose>
-                        {/* Removed About Us after Contact as requested */}
                       </nav>
                     ) : (
                       /* Categories Tab - Show all pujas */
@@ -394,22 +385,46 @@ export function SiteHeader() {
                   </div>
                 </SheetContent>
               </Sheet>
-            </div>
-          </div>
 
-          {/* Mobile Search */}
-          {isSearchOpen && (
-            <div className="md:hidden mt-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search for pujas"
-                  className="w-full px-4 py-2 pr-10 border border-input rounded-lg focus:outline-none focus:border-primary bg-background"
-                />
-                <Search className="absolute right-3 top-2.5 w-5 h-5 text-muted-foreground" />
+              {/* Logo - Centered */}
+              <div className="flex-1 flex justify-center">
+                <Link href="/" className="flex items-center gap-2" aria-label="Navdhya Home">
+                  <img 
+                    src="/navdhya-logo.png" 
+                    alt="Navdhya Ritual Services Logo" 
+                    className="h-14 w-auto"
+                  />
+                </Link>
+              </div>
+
+              {/* Auth and Search Icons - Right */}
+              <div className="flex items-center gap-2">
+                <button className="p-2 hover:bg-muted rounded">
+                  <User className="w-5 h-5" />
+                </button>
+                <button 
+                  className="p-2 hover:bg-muted rounded"
+                  onClick={() => setIsSearchOpen(!isSearchOpen)}
+                >
+                  <Search className="w-5 h-5" />
+                </button>
               </div>
             </div>
-          )}
+
+            {/* Mobile Search */}
+            {isSearchOpen && (
+              <div className="mt-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search for pujas"
+                    className="w-full px-4 py-2 pr-10 border border-input rounded-lg focus:outline-none focus:border-primary bg-background"
+                  />
+                  <Search className="absolute right-3 top-2.5 w-5 h-5 text-muted-foreground" />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -11,30 +11,66 @@ export function ProcessSteps() {
       title: "Select Your Ritual",
       description: "Choose from our comprehensive puja catalog",
       images: [
-        "https://res.cloudinary.com/dufzctlaj/image/upload/v1761680301/Whisk_b79ae5ba729b83cafd54991c00e8c3eceg_hvtgu7.png",
-        "https://res.cloudinary.com/dufzctlaj/image/upload/v1761680516/Whisk_551db29e967110fa359451e9db7c6274eg_jdcdpy.png",
-        "https://res.cloudinary.com/dufzctlaj/image/upload/v1761680691/Whisk_3dd8aeccb36feaa9cdc41fd86d9c8678dr_xk4an7.jpg",
-        "https://res.cloudinary.com/dufzctlaj/image/upload/v1761680843/Whisk_fbe5ec7e748e65687974044ae3cef9d7dr_x8hrcm.jpg"
+        {
+          url: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761680301/Whisk_b79ae5ba729b83cafd54991c00e8c3eceg_hvtgu7.png",
+          description: "Explore Intent"
+        },
+        {
+          url: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761680516/Whisk_551db29e967110fa359451e9db7c6274eg_jdcdpy.png",
+          description: "Browse Puja Categories"
+        },
+        {
+          url: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761680691/Whisk_3dd8aeccb36feaa9cdc41fd86d9c8678dr_xk4an7.jpg",
+          description: "View Ritual Details"
+        },
+        {
+          url: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761680843/Whisk_fbe5ec7e748e65687974044ae3cef9d7dr_x8hrcm.jpg",
+          description: "Add to Your Cart or Wishlist"
+        }
       ],
     },
     {
       title: "Pick Date & Time",
       description: "Select a convenient time for your ritual",
       images: [
-        "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358807/Whisk_durga_puja_festival.jpg",
-        "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358809/Whisk_navratri_puja_celebration.jpg",
-        "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358811/Whisk_baby_naming_ceremony.jpg",
-        "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358813/Whisk_shraddh_ceremony.jpg"
+        {
+          url: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761766531/step-02-01-navdhya_kzhldl.jpg",
+          description: "Check Availability"
+        },
+        {
+          url: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761766709/step-02-02-navdhya_qecw1d.jpg",
+          description: "Select Auspicious Muhurat"
+        },
+        {
+          url: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761767149/step-02-03-navdhya_btt8kw.png",
+          description: "Confirm Timing Preferences"
+        },
+        {
+          url: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761767321/step-02-04-navdhya-01_x3zlda.jpg",
+          description: "Receive Confirmation"
+        }
       ],
     },
     {
       title: "We Handle Everything",
       description: "Pandit, samagri, setup — arrive & experience divinity",
       images: [
-        "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358815/Whisk_rudrabhishek_shiva.jpg",
-        "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358817/Whisk_lakshmi_puja_ritual.jpg",
-        "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358819/Whisk_satyanarayan_katha.jpg",
-        "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358821/Whisk_griha_pravesh_setup.jpg"
+        {
+          url: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761767902/step-03-01-navdhya_fkuzls.jpg",
+          description: "Verified Pandits Assigned"
+        },
+        {
+          url: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761767903/step-03-03-navdhya_2_bn7mus.jpg",
+          description: "Samagri Kit Prepared"
+        },
+        {
+          url: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761767904/step-03-03-navdhya_rcfmu6.jpg",
+          description: "Setup & Decoration"
+        },
+        {
+          url: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761768016/step-03-04_urqedn.jpg",
+          description: "Ceremony Assistance"
+        }
       ],
     },
   ];
@@ -86,7 +122,7 @@ export function ProcessSteps() {
         {/* RIGHT CONTENT - IMAGES */}
         <div className="process-right">
           <div className="image-grid">
-            {steps[activeStep].images.map((src, index) => (
+            {steps[activeStep].images.map((image, index) => (
               <div
                 key={`${activeStep}-${index}`}
                 className={`image-card ${expandedImage === index ? "expanded" : ""}`}
@@ -101,10 +137,10 @@ export function ProcessSteps() {
                   }
                 }}
               >
-                <img src={src} alt={`${steps[activeStep].title} - Image ${index + 1}`} loading="lazy" />
+                <img src={image.url} alt={`${steps[activeStep].title} - Image ${index + 1}`} loading="lazy" />
                 <div className="image-overlay" />
                 <div className="image-number">{index + 1}</div>
-                <div className="image-title">{steps[activeStep].title}</div>
+                <div className="image-description">{image.description}</div>
               </div>
             ))}
           </div>

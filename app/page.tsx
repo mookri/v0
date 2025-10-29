@@ -9,11 +9,8 @@ import { Testimonials } from "@/components/sections/testimonials"
 import { TrustStats } from "@/components/sections/trust-stats"
 import { BlogPreview } from "@/components/sections/blog"
 import { FAQ } from "@/components/sections/faq"
-import { Booking } from "@/components/sections/booking"
-import { InfoBar } from "@/components/sections/info-bar"
-import Link from "next/link"
 import Hero from "@/components/sections/hero"
-
+import WhatsAppBtn from "@/components/whatsapp-float"
 export default function HomePage() {
   return (
     <>
@@ -29,18 +26,9 @@ export default function HomePage() {
         <BlogPreview />
         <FAQ />
         {/* <Booking /> */}
-        <InfoBar />
       </main>
       <SiteFooter />
 
-      <Link
-        href="https://wa.me/910000000000"
-        aria-label="Chat on WhatsApp"
-        className="fixed bottom-5 right-5 rounded-full bg-primary text-primary-foreground px-4 py-3 shadow-lg md:bottom-8 md:right-8 max-w-[calc(100vw-40px)] overflow-hidden whitespace-nowrap"
-        target="_blank"
-      >
-        WhatsApp
-      </Link>
-    </>
+ <WhatsAppBtn/>   </>
   )
 }
