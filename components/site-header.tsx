@@ -119,21 +119,21 @@ export function SiteHeader() {
                 <img 
                   src="/navdhya-logo.png" 
                   alt="Navdhya Ritual Services Logo" 
-                  className="h-10 w-auto"
+                  className="h-8 w-auto"
                 />
               </Link>
 
               {/* Desktop Navigation Links */}
-              <nav className="flex items-center gap-6 text-sm">
-                <Link href="/" className="hover:text-primary transition-colors font-medium">
+              <nav className="flex items-center gap-5 text-sm">
+                <Link href="/" className="hover:text-primary transition-colors font-medium text-sm">
                   Home
                 </Link>
-                <Link href="/about" className="hover:text-primary transition-colors font-medium">
+                <Link href="/about" className="hover:text-primary transition-colors font-medium text-sm">
                   About
                 </Link>
                 {/* Services dropdown - same as mobile */}
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="hover:text-primary outline-none font-medium flex items-center gap-1">
+                  <DropdownMenuTrigger className="hover:text-primary outline-none font-medium flex items-center gap-1 text-sm">
                     Services
                     <ChevronDown className="w-4 h-4" />
                   </DropdownMenuTrigger>
@@ -162,7 +162,7 @@ export function SiteHeader() {
                 
                 {/* Categories dropdown - same as mobile */}
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="hover:text-primary outline-none font-medium flex items-center gap-1">
+                  <DropdownMenuTrigger className="hover:text-primary outline-none font-medium flex items-center gap-1 text-sm">
                     Categories
                     <ChevronDown className="w-4 h-4" />
                   </DropdownMenuTrigger>
@@ -188,10 +188,10 @@ export function SiteHeader() {
                     </div>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <Link href="#blog" className="hover:text-primary transition-colors font-medium">
+                <Link href="#blog" className="hover:text-primary transition-colors font-medium text-sm">
                   Blog
                 </Link>
-                <Link href="/contact" className="hover:text-primary transition-colors font-medium">
+                <Link href="/contact" className="hover:text-primary transition-colors font-medium text-sm">
                   Contact
                 </Link>
               </nav>
@@ -252,7 +252,7 @@ export function SiteHeader() {
                         <img 
                           src="/navdhya-logo.png" 
                           alt="Navdhya Ritual Services Logo" 
-                          className="h-12 w-auto"
+                          className="h-8 w-auto"
                         />
                       </Link>
                       <SheetClose asChild>
@@ -392,7 +392,7 @@ export function SiteHeader() {
                   <img 
                     src="/navdhya-logo.png" 
                     alt="Navdhya Ritual Services Logo" 
-                    className="h-14 w-auto"
+                    className="h-10 w-auto"
                   />
                 </Link>
               </div>
