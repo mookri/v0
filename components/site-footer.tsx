@@ -7,7 +7,7 @@ import { footerData } from "@/lib/footerData";
 
 export function SiteFooter() {
   return (
-    <footer className="bg-gradient-to-b from-[#0d1b2a] to-[#0a121f] text-white">
+    <footer className="bg-gradient-to-b from-[#0d1b2a] to-[#0a121f] text-white pb-20 md:pb-0">
       {/* Main Content Area */}
       <div className="container mx-auto px-4 py-5 max-w-7xl">
         {/* Desktop Layout - Horizontal */}

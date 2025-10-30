@@ -11,6 +11,8 @@ import { BlogPreview } from "@/components/sections/blog"
 import { FAQ } from "@/components/sections/faq"
 import Hero from "@/components/sections/hero"
 import WhatsAppBtn from "@/components/whatsapp-float"
+import BottomMenu from "@/components/bottom-menu"
+
 export default function HomePage() {
   return (
     <>
@@ -28,7 +30,7 @@ export default function HomePage() {
         {/* <Booking /> */}
       </main>
       <SiteFooter />
-
+      <BottomMenu />
  <WhatsAppBtn/>   </>
   )
 }
