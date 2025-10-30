@@ -215,7 +215,7 @@ export function SiteHeader() {
                 <Phone className="w-4 h-4" />
                 <div>
                   <div className="text-muted-foreground">Need help?</div>
-                  <div className="font-semibold">+91 00000 00000</div>
+                  <div className="font-semibold">+91 7289000377</div>
                 </div>
               </div>
 
