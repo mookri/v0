@@ -1,9 +1,62 @@
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
+import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import Script from "next/script"
+
+// Add page-specific metadata
+export const metadata = {
+  title: "About Us | Navdhya – Delhi's Trusted Puja & Spiritual Wellness",
+  description: "Learn about Navdhya's mission to make authentic Hindu rituals accessible, respectful, and effortless for families in Delhi with our trusted pandits for every occasion.",
+  openGraph: {
+    title: "About Us | Navdhya – Delhi's Trusted Puja & Spiritual Wellness",
+    description: "Learn about Navdhya's mission to make authentic Hindu rituals accessible, respectful, and effortless for families in Delhi with our trusted pandits for every occasion.",
+    url: `https://www.navdhya.com/about`,
+    siteName: SEO_CONFIG.siteName,
+    images: [
+      {
+        url: SEO_CONFIG.defaultImage,
+        width: 1200,
+        height: 630,
+        alt: "About Navdhya - Hindu Ritual Services",
+      },
+    ],
+    locale: SEO_CONFIG.locale,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Us | Navdhya – Delhi's Trusted Puja & Spiritual Wellness",
+    description: "Learn about Navdhya's mission to make authentic Hindu rituals accessible, respectful, and effortless for families in Delhi with our trusted pandits for every occasion.",
+    images: [SEO_CONFIG.defaultImage],
+    site: SEO_CONFIG.twitter.site,
+  },
+  alternates: {
+    canonical: "https://www.navdhya.com/about",
+  },
+}
+
+// Schema markup for the about page
+const ABOUT_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name: "About Us - Navdhya",
+  url: `https://www.navdhya.com/about`,
+  description: "Learn about Navdhya's mission to make authentic Hindu rituals accessible, respectful, and effortless for families in Delhi with our trusted pandits for every occasion.",
+  breadcrumb: BREADCRUMB_SCHEMA([
+    { name: "Home", url: "https://www.navdhya.com" },
+    { name: "About Us", url: `https://www.navdhya.com/about` }
+  ])
+}
 
 export default function AboutPage() {
+  const aboutSchema = JSON.stringify(ABOUT_SCHEMA)
+  
   return (
     <>
+      <Script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: aboutSchema }}
+      />
       <SiteHeader />
       <main className="mx-auto max-w-6xl px-4 py-12 space-y-10 overflow-x-hidden w-full">
         <section aria-labelledby="our-story" className="w-full">

@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://navdhya.com/sitemap.xml
+
+# SEO optimization directives
+Disallow: /*?
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+# Crawl delay for better server performance
+Crawl-delay: 10
+
+# Host directive
+Host: navdhya.com

@@ -1,0 +1,23 @@
+{
+  "name": "Navdhya - Premium Hindu Ritual & Puja Services",
+  "short_name": "Navdhya",
+  "description": "Trusted partner for authentic Hindu rituals and ceremonies. Experienced pandits, complete samagri, and professional setup for a hassle-free, sacred experience.",
+  "icons": [
+    {
+      "src": "/favicon/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#0E3F2E",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/",
+  "orientation": "portrait"
+}

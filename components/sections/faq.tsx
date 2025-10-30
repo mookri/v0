@@ -1,4 +1,6 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import Script from "next/script"
+import { FAQ_SCHEMA } from "@/lib/seo-config"
 
 export function FAQ() {
   const faqs = [
@@ -14,8 +16,16 @@ export function FAQ() {
     ["Do pandits travel outside the city?", "Yes, we serve multiple cities with travel charges if applicable."],
     ["What if I need to reschedule?", "You can reschedule up to 24 hours before the event."],
   ]
+
+  // Create FAQ schema markup
+  const faqSchema = FAQ_SCHEMA(faqs.map(([question, answer]) => ({ question, answer })))
+
   return (
     <section aria-labelledby="faq-title" className="bg-muted/50">
+      <Script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <div className="mx-auto max-w-6xl px-4 py-12 overflow-x-hidden w-full">
         <div className="pb-4">
           <div className="inline-block">
