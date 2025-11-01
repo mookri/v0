@@ -203,7 +203,7 @@ export function SiteFooter() {
             {/* Company Logo */}
             <div className="flex items-center">
               <img 
-                src="https://res.cloudinary.com/dufzctlaj/image/upload/v1761764543/navdhya-logo_d6ap7k.png" 
+                src="/navdhya-logo.png" 
                 alt="Navdhya Ritual Services Logo" 
                 className="h-12 w-auto"
               />
