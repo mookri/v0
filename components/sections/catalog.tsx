@@ -198,9 +198,11 @@ export function Catalog() {
           )}
         </div>
         <div className="mt-8 text-center">
-          <Button variant="outline" className="border-[#0E3F2E] text-[#0E3F2E] hover:bg-[#0E3F2E] hover:text-white px-6 py-2.5 h-11 text-sm font-medium rounded-md transition-all duration-300 ease-in-out transform hover:scale-105">
-            View All 25+ Rituals
-          </Button>
+          <Link href="/pujas">
+            <Button variant="outline" className="border-[#0E3F2E] text-[#0E3F2E] hover:bg-[#0E3F2E] hover:text-white px-6 py-2.5 h-11 text-sm font-medium rounded-md transition-all duration-300 ease-in-out transform hover:scale-105">
+              View All 25+ Rituals
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

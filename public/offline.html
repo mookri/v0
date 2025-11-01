@@ -3,130 +3,516 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navdhya - Offline</title>
+    <title>Offline | Navdhya</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background-color: #fff8f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+        * {
             margin: 0;
-            text-align: center;
-            color: #1c1917;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        .container {
-            max-width: 400px;
-            padding: 20px;
-            margin: 20px;
+
+        :root {
+            --primary: #0E3F2E;
+            --primary-hover: #1a5c43;
+            --text-primary: #1c1c1c;
+            --text-secondary: #696969;
+            --text-tertiary: #9e9e9e;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f8f8;
+            --border: #e8e8e8;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 24px 0 rgba(0, 0, 0, 0.12);
         }
-        .logo {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            background-color: #0E3F2E;
-            border-radius: 50%;
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 36px;
-            font-weight: bold;
+            padding: 0 24px;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.95);
         }
-        h1 {
-            color: #0E3F2E;
-            margin-bottom: 10px;
-            font-size: 28px;
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        p {
-            color: #666;
-            line-height: 1.6;
+
+        .logo-mark {
+            height: 40px; /* MNC-grade sizing */
+            width: auto;
         }
-        .message {
-            font-size: 20px;
-            color: #d97706;
-            font-weight: 600;
-            margin: 20px 0;
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px 40px;
         }
-        .retry-button {
-            background-color: #d97706;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: background-color 0.3s;
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Icon */
+        .icon-wrapper {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 32px;
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .icon-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            background: linear-gradient(135deg, rgba(14, 63, 46, 0.08), rgba(14, 63, 46, 0.02));
+            border-radius: 28px;
+            z-index: -1;
+        }
+
+        .wifi-icon {
+            width: 56px;
+            height: 56px;
+            color: var(--text-tertiary);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border-radius: 100px;
+            margin-bottom: 24px;
+            font-size: 13px;
             font-weight: 500;
+            color: var(--text-secondary);
+            letter-spacing: 0.3px;
         }
-        .retry-button:hover {
-            background-color: #b45309;
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--text-tertiary);
+            border-radius: 50%;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: -0.8px;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
         .description {
             font-size: 16px;
-            margin-top: 30px;
-            color: #777;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-weight: 400;
         }
-        .connection-status {
-            display: flex;
+
+        /* Button */
+        .btn-primary {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            margin-top: 20px;
-            color: #881337;
+            gap: 8px;
+            padding: 14px 32px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-sm);
+            letter-spacing: -0.2px;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Info Card */
+        .info-card {
+            margin-top: 48px;
+            padding: 24px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            text-align: left;
+        }
+
+        .info-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            letter-spacing: -0.2px;
+        }
+
+        .info-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .info-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .check-icon {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            color: var(--primary);
+            margin-top: 1px;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 32px 24px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+
+        .footer-text {
+            font-size: 14px;
+            color: var(--text-tertiary);
+            line-height: 1.6;
+        }
+
+        .footer-brand {
+            color: var(--text-secondary);
             font-weight: 500;
         }
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            background-color: #881337;
-            border-radius: 50%;
-            margin-right: 8px;
+
+        /* Notification Banner */
+        .notification-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #4CAF50;
+            color: white;
+            padding: 16px;
+            text-align: center;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification-banner.show {
+            transform: translateY(0);
+        }
+
+        /* Instant appearance */
+        .instant-appear {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 640px) {
+            .header {
+                height: 56px;
+                padding: 0 16px;
+                justify-content: center;
+            }
+
+            .logo-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+            }
+
+            .logo-mark {
+                height: 32px; /* MNC-grade mobile sizing */
+                width: auto;
+            }
+
+            .main {
+                padding: 72px 16px 32px;
+            }
+
+            .icon-wrapper {
+                width: 100px;
+                height: 100px;
+                margin-bottom: 24px;
+            }
+
+            .wifi-icon {
+                width: 48px;
+                height: 48px;
+            }
+
+            h1 {
+                font-size: 28px;
+                margin-bottom: 10px;
+            }
+
+            .description {
+                font-size: 15px;
+                margin-bottom: 28px;
+            }
+
+            .btn-primary {
+                padding: 12px 28px;
+                font-size: 14px;
+                width: 100%;
+            }
+
+            .info-card {
+                margin-top: 40px;
+                padding: 20px;
+            }
+
+            .info-title {
+                font-size: 13px;
+            }
+
+            .info-list li {
+                font-size: 13px;
+            }
+        }
+
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .main {
+                padding: 96px 32px 48px;
+            }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Selection styling */
+        ::selection {
+            background: rgba(14, 63, 46, 0.2);
+            color: var(--text-primary);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">N</div>
-        <h1>Navdhya</h1>
-        <p class="message">Your connection might not be available</p>
-        <p>You are currently offline. Please check your internet connection and try again.</p>
-        <button class="retry-button" onclick="window.location.reload()">Retry Connection</button>
-        <div class="connection-status">
-            <div class="status-indicator"></div>
-            <span>Offline Mode</span>
-        </div>
-        <p class="description">We're here to help you with authentic Hindu rituals and ceremonies when you're back online.</p>
+    <!-- Notification Banner -->
+    <div class="notification-banner" id="notificationBanner">
+        🎉 Connection restored! Welcome back online.
     </div>
-    
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="./navdhya-logo.png" alt="Navdhya Logo" class="logo-mark">
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container instant-appear">
+            <!-- Icon -->
+            <div class="icon-wrapper">
+                <svg class="wifi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+                    <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+                    <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+                    <line x1="12" y1="20" x2="12.01" y2="20"/>
+                </svg>
+            </div>
+
+            <!-- Status Badge -->
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                <span>No Internet Connection</span>
+            </div>
+
+            <!-- Heading -->
+            <h1>You're Offline</h1>
+            <p class="description">
+                Check your connection and try again to access Navdhya's spiritual services.
+            </p>
+
+            <!-- Action Button -->
+            <button class="btn-primary" onclick="retryConnection()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                </svg>
+                Retry Connection
+            </button>
+
+            <!-- Info Card -->
+            <div class="info-card">
+                <div class="info-title">Quick troubleshooting</div>
+                <ul class="info-list">
+                    <li>
+                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        <span>Check your WiFi or mobile data is turned on</span>
+                    </li>
+                    <li>
+                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        <span>Try airplane mode toggle or restart your device</span>
+                    </li>
+                    <li>
+                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        <span>Move to an area with better signal strength</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">
+            <span class="footer-brand">Navdhya</span> — Delhi's Trusted Puja & Spiritual Wellness
+        </p>
+        <p class="footer-text" style="margin-top: 8px; font-size: 12px;">
+            &copy; 2025 Navdhya. All rights reserved.
+        </p>
+    </footer>
+
     <script>
+        // Show visual notification banner
+        function showNotificationBanner() {
+            const banner = document.getElementById('notificationBanner');
+            banner.classList.add('show');
+            
+            // Hide after 2 seconds and reload
+            setTimeout(() => {
+                banner.classList.remove('show');
+                // Reload the page after a short delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+            }, 2000);
+        }
+        
+        // Retry connection function
+        function retryConnection() {
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg> Checking...';
+            button.disabled = true;
+            
+            // Try to fetch a lightweight resource
+            fetch('/', { method: 'HEAD', cache: 'no-store' })
+                .then(response => {
+                    if (response.ok) {
+                        // Connection restored
+                        showNotificationBanner();
+                    } else {
+                        // Still offline
+                        throw new Error('Network response was not ok');
+                    }
+                })
+                .catch(() => {
+                    // Still offline
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    alert('Still offline. Please check your connection and try again.');
+                });
+        }
+        
         // Check for online status and reload when connection is restored
         window.addEventListener('online', () => {
-            // Show a message that connection is restored
-            const statusElement = document.querySelector('.connection-status');
-            if (statusElement) {
-                statusElement.innerHTML = '<div class="status-indicator" style="background-color: #10b981;"></div><span>Connection Restored</span>';
-                statusElement.style.color = '#10b981';
+            showNotificationBanner();
+        });
+        
+        // Listen for messages from service worker
+        navigator.serviceWorker.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'ONLINE') {
+                showNotificationBanner();
+            } else if (event.data && event.data.type === 'OFFLINE') {
+                // Offline detected by service worker
+                console.log('Offline detected by service worker');
             }
-            
-            // Reload the page after a short delay
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
         });
         
         // Periodically check connection status
         setInterval(() => {
-            fetch('/')
-                .then(() => {
-                    // If we can fetch, we're online
-                    window.location.reload();
+            fetch('/', { method: 'HEAD', cache: 'no-store' })
+                .then(response => {
+                    if (response.ok) {
+                        // If we can fetch, we're online - check if we need to reload
+                        if (window.location.pathname === '/offline.html') {
+                            window.location.href = '/';
+                        }
+                    }
                 })
                 .catch(() => {
                     // Still offline, do nothing
                 });
-        }, 10000); // Check every 10 seconds
+        }, 5000); // Check every 5 seconds
     </script>
 </body>
 </html>

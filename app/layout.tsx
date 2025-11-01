@@ -122,15 +122,42 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
+              // Ultra-Fast Network-Only Service Worker Registration
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js')
+                  // Register the service worker with proper scope
+                  navigator.serviceWorker.register('/sw.js', { scope: '/' })
                     .then(function(registration) {
                       console.log('SW registered: ', registration);
                     })
                     .catch(function(registrationError) {
                       console.log('SW registration failed: ', registrationError);
                     });
+                });
+                
+                // Listen for online/offline events
+                window.addEventListener('online', function() {
+                  console.log('Browser is online');
+                  // Notify service worker
+                  if (navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage({ type: 'ONLINE' });
+                  }
+                });
+                
+                window.addEventListener('offline', function() {
+                  console.log('Browser is offline');
+                  // Notify service worker
+                  if (navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage({ type: 'OFFLINE' });
+                  }
+                });
+                
+                // Listen for messages from service worker
+                navigator.serviceWorker.addEventListener('message', function(event) {
+                  if (event.data && event.data.type === 'ONLINE') {
+                    // Reload the page when connection is restored
+                    window.location.reload();
+                  }
                 });
               }
             `,

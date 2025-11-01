@@ -1,105 +1,155 @@
-// Service Worker for Navdhya PWA
+// Ultra-Fast Network-Only Service Worker for Navdhya PWA
+// Zero caching, instant offline detection
+// Version: 4.0.1
 
-const CACHE_NAME = 'navdhya-v5';
-const urlsToCache = [
-  '/',
+const VERSION = '4.0.1';
+
+// Critical assets to cache ONLY for offline page
+const CRITICAL_ASSETS = [
   '/offline.html',
-  '/navdhya-logo.png',
-  '/favicon/favicon-16x16.png',
-  '/favicon/favicon-32x32.png',
-  '/favicon/apple-touch-icon.png',
-  '/favicon/android-chrome-192x192.png',
-  '/favicon/android-chrome-512x512.png'
+  '/navdhya-logo.png'
 ];
 
-// Install event - cache essential files
+// ======================================================================
+// SERVICE WORKER LIFECYCLE EVENTS
+// ======================================================================
+
+// Installation Event - Minimal caching for offline page only
 self.addEventListener('install', event => {
+  
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
-      .catch(error => {
-        console.error('Failed to cache assets:', error);
-      })
+    (async () => {
+      try {
+        const cache = await caches.open(`navdhya-offline-v${VERSION}`);
+        
+        // ONLY cache offline page and logo
+        const cachePromises = CRITICAL_ASSETS.map(async (url) => {
+          try {
+            const response = await fetch(url);
+            if (response.ok) {
+              await cache.put(url, response);
+              return true;
+            }
+          } catch (error) {
+            console.error(`[SW] ✗ Failed to cache ${url}:`, error);
+          }
+          return false;
+        });
+        
+        await Promise.all(cachePromises);
+        // Skip waiting to activate immediately
+        self.skipWaiting();
+      } catch (error) {
+      }
+    })()
   );
 });
 
-// Fetch event - serve cached content when offline
+// Activation Event - Clean up old caches
+self.addEventListener('activate', event => {
+  
+  event.waitUntil(
+    (async () => {
+      // Clean up old caches
+      const cacheNames = await caches.keys();
+      
+      const deletePromises = cacheNames
+        .filter(cacheName => cacheName.startsWith('navdhya'))
+        .filter(cacheName => cacheName !== `navdhya-offline-v${VERSION}`)
+        .map(cacheName => {
+          return caches.delete(cacheName);
+        });
+      
+      await Promise.all(deletePromises);
+      
+      // Claim clients
+      await self.clients.claim();
+    })()
+  );
+});
+
+// Fetch Event - Network Only with Smart Offline Fallback
 self.addEventListener('fetch', event => {
+  const { request } = event;
+  const url = new URL(request.url);
+  
   // Skip non-HTTP requests
-  if (!event.request.url.startsWith('http')) {
+  if (!request.url.startsWith('http')) {
     return;
   }
   
-  // For navigation requests, try network first, fallback to cache, then offline page
-  if (event.request.mode === 'navigate') {
+  // Handle navigation requests - Network Only with reasonable timeout
+  if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          // Cache the response for future use
-          return caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, response.clone());
-            return response;
-          });
-        })
-        .catch(() => {
-          // If fetch fails, return cached version or offline page
-          return caches.match(event.request)
-            .then(response => response || caches.match('/offline.html'));
-        })
+      // Attempt network request with reasonable timeout
+      Promise.race([
+        fetch(request),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('NETWORK_TIMEOUT')), 5000) // 5 second timeout
+        )
+      ])
+      .then(response => {
+        // If successful, return the response
+        return response;
+      })
+      .catch(async (error) => {
+        // Only serve offline page if it's a network error, not other issues
+        if (error.message === 'NETWORK_TIMEOUT' || error.message === 'Failed to fetch') {
+          const offlinePage = await caches.match('/offline.html');
+          return offlinePage || new Response(
+            '<h1>Offline</h1><p>Please check your connection</p>',
+            { headers: { 'Content-Type': 'text/html' }, status: 503 }
+          );
+        } else {
+          // For other errors, re-throw them
+          throw error;
+        }
+      })
     );
     return;
   }
   
-  // For other requests (CSS, JS, images), try cache first, then network
+  // Handle all other requests - Network Only
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Return cached version if found
-        if (response) {
-          return response;
-        }
-        
-        // Otherwise fetch from network
-        return fetch(event.request)
-          .then(response => {
-            // Cache the response for future use (only for successful responses)
-            if (response.status === 200) {
-              return caches.open(CACHE_NAME).then(cache => {
-                cache.put(event.request, response.clone());
-                return response;
-              });
-            }
-            return response;
-          })
-          .catch(() => {
-            // If fetch fails, return a fallback for images
-            if (event.request.destination === 'image') {
-              return new Response('', {
-                status: 404,
-                statusText: 'Not Found'
-              });
-            }
-            throw new Error('Failed to fetch resource');
-          });
-      })
-  );
-});
-
-// Activate event - clean up old caches
-self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
+    // Network request with reasonable timeout
+    Promise.race([
+      fetch(request),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('NETWORK_TIMEOUT')), 5000) // 5 second timeout
+      )
+    ])
+    .then(response => {
+      // If successful, return the response
+      return response;
+    })
+    .catch((error) => {
+      // Only fail silently for network errors
+      if (error.message === 'NETWORK_TIMEOUT' || error.message === 'Failed to fetch') {
+        return new Response('', { status: 503, statusText: 'Network Error' });
+      } else {
+        // For other errors, re-throw them
+        throw error;
+      }
     })
   );
 });
+
+// Online/Offline Events - Notify clients
+self.addEventListener('online', async () => {
+  
+  // Notify all clients that we're back online
+  const clients = await self.clients.matchAll();
+  clients.forEach(client => {
+    client.postMessage({ type: 'ONLINE' });
+  });
+});
+
+self.addEventListener('offline', async () => {
+  
+  // Notify all clients that we're offline
+  const clients = await self.clients.matchAll();
+  clients.forEach(client => {
+    client.postMessage({ type: 'OFFLINE' });
+  });
+});
+

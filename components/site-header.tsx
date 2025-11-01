@@ -34,27 +34,41 @@ export function SiteHeader() {
 
   const services = [
     { 
-      name: 'Home Rituals', 
+      name: 'Home & Family Rituals', 
       items: [
-        'Grihapravesh',
-        'Satyanarayan Puja',
-        'Vastu Puja'
+        'Griha Pravesh Puja (Housewarming)',
+        'Satyanarayan Katha',
+        'Lakshmi Ganesh Puja',
+        'Navgraha Shanti Puja',
+        'Rudrabhishek Puja'
       ]
     },
     { 
-      name: 'Life Events', 
+      name: 'Life Events & Milestone Ceremonies', 
       items: [
-        'Weddings',
-        'Naming Ceremony',
-        'Thread Ceremony'
+        'Wedding Puja & Vivaah Sanskar',
+        'Baby Naming (Namkaran)',
+        'Annaprashan (Rice Feeding)',
+        'Mundan (Child Hair Ceremony)',
+        'Shradh / Pitra Dosh Puja'
       ]
     },
     { 
-      name: 'Special Occasions', 
+      name: 'Business & Prosperity Rituals', 
       items: [
-        'Festival Pujas',
-        'Corporate Events',
-        'Shraddh'
+        'Office / Shop Opening Puja',
+        'Vastu Shanti',
+        'Dhan Prapti Puja (Wealth Invocation)',
+        'Navagraha Business Puja'
+      ]
+    },
+    {
+      name: 'Online & Hybrid Services',
+      items: [
+        'Live Video Puja',
+        'Virtual Pandit Assistance',
+        'Digital Puja Kit Delivery',
+        'Personalized Online Ritual'
       ]
     }
   ];
@@ -134,7 +148,7 @@ export function SiteHeader() {
                 {/* Services dropdown - same as mobile */}
                 <DropdownMenu>
                   <DropdownMenuTrigger className="hover:text-primary outline-none font-medium flex items-center gap-1 text-sm">
-                    Services
+                    Pujas & Ceremonies
                     <ChevronDown className="w-4 h-4" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-[300px] sm:w-[400px] md:w-[500px] max-w-[calc(100vw-2rem)] bg-card border-border" align="start">
@@ -296,7 +310,7 @@ export function SiteHeader() {
                           <Accordion type="single" collapsible className="w-full" defaultValue="">
                             <AccordionItem value="services" className="border-none">
                               <AccordionTrigger className="py-3 text-base px-0 hover:no-underline font-medium flex justify-between items-center">
-                                <span>Services</span>
+                                <span>PUJAS & CEREMONIES</span>
                               </AccordionTrigger>
                               <AccordionContent className="pb-0">
                                 <div className="py-2 space-y-3">
