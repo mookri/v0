@@ -160,3 +160,20 @@ export const ARTICLE_SCHEMA = (article: {
     image: article.image
   })
 });
+
+// Legal Page Schema Markup
+export const LEGAL_PAGE_SCHEMA = (page: {
+  name: string;
+  url: string;
+  description: string;
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: page.name,
+  url: page.url,
+  description: page.description,
+  breadcrumb: BREADCRUMB_SCHEMA([
+    { name: "Home", url: "https://www.navdhya.com" },
+    { name: page.name, url: page.url }
+  ])
+});

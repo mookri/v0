@@ -286,11 +286,36 @@ export function SiteFooter() {
                   to better serve your spiritual needs. For immediate assistance, please contact our helpline or use the WhatsApp chat feature.
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-3 ml-0 md:ml-auto">
-                <a href="#" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Privacy Policy</a>
-                <a href="#" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Terms of Service</a>
-                <a href="#" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Refund Policy</a>
-                <a href="#" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Cancellation Policy</a>
+              <div className="flex flex-wrap items-center justify-center gap-1.5 py-3 ml-0 md:ml-auto">
+                <a href="/privacy-policy" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Privacy Policy</a>
+                
+                <a href="/terms-of-service" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Terms of Service</a>
+                
+                <a href="/refund-policy" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Refund Policy</a>
+                
+                <a href="/cancellation-policy" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Cancellation Policy</a>
+                
+                <a href="/pandit-verification" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Pandit Verification</a>
+                
+                <a href="/service-guarantee" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Service Guarantee</a>
+                
+                <a href="/accessibility" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Accessibility</a>
+                
+                <a href="/cookie-policy" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Cookie Policy</a>
+                
+                <a href="/grievance-officer" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Grievance Officer</a>
+                
+                <a href="/pandit-agreement" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Pandit Agreement</a>
+                
+                <a href="/vendor-terms" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Vendor Terms</a>
+                
+                <a href="/affiliate-disclosure" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Affiliate Disclosure</a>
+                
+                <a href="/ip-policy" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">IP Policy</a>
+                
+                <a href="/child-protection" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Child Protection</a>
+                
+                <a href="/data-processing" className="text-[10px] text-gray-500 hover:text-[#ff9933] transition-colors">Data Processing</a>
               </div>
             </div>
           </div>

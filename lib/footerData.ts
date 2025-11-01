@@ -12,6 +12,7 @@ export const footerData = {
     { label: "Testimonials", href: "#" },
     { label: "Gallery", href: "#" },
     { label: "FAQs", href: "/faq" }
+    // Legal pages removed from quick links as requested
   ],
   services: [
     "Puja at Home",

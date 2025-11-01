@@ -101,8 +101,11 @@ function DesktopSkeletonCard() {
 export function FeaturedPujas() {
   const [isLoading, setIsLoading] = useState(true)
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null)
+  const dragStartX = useRef(0)
+  const scrollStartLeft = useRef(0)
   
   useEffect(() => {
     // Simulate loading time
@@ -112,6 +115,25 @@ export function FeaturedPujas() {
     
     return () => clearTimeout(timer)
   }, [])
+
+  // Update active slide index based on scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      if (scrollContainerRef.current && !isDragging) {
+        const container = scrollContainerRef.current
+        const scrollLeft = container.scrollLeft
+        const cardWidth = 220 + 16 // width + gap
+        const newIndex = Math.round(scrollLeft / cardWidth)
+        setActiveSlideIndex(Math.min(newIndex, items.length - 1))
+      }
+    }
+
+    const container = scrollContainerRef.current
+    if (container) {
+      container.addEventListener('scroll', handleScroll, { passive: true })
+      return () => container.removeEventListener('scroll', handleScroll)
+    }
+  }, [isDragging])
 
   // Auto-play functionality
   useEffect(() => {
@@ -123,7 +145,7 @@ export function FeaturedPujas() {
             scrollToSlide(nextIndex)
             return nextIndex
           })
-        }, 5000) // Auto-play every 5 seconds
+        }, 5000)
       }
 
       const stopAutoPlay = () => {
@@ -135,7 +157,6 @@ export function FeaturedPujas() {
 
       startAutoPlay()
 
-      // Pause auto-play on hover
       const container = scrollContainerRef.current
       container.addEventListener('mouseenter', stopAutoPlay)
       container.addEventListener('mouseleave', startAutoPlay)
@@ -148,28 +169,9 @@ export function FeaturedPujas() {
     }
   }, [isLoading])
 
-  // Update active slide index when scrolling manually
-  useEffect(() => {
-    const handleScroll = () => {
-      if (scrollContainerRef.current) {
-        const container = scrollContainerRef.current
-        const scrollLeft = container.scrollLeft
-        const cardWidth = 220 + 16 // width + gap
-        const newIndex = Math.round(scrollLeft / cardWidth)
-        setActiveSlideIndex(newIndex)
-      }
-    }
-
-    const container = scrollContainerRef.current
-    if (container) {
-      container.addEventListener('scroll', handleScroll)
-      return () => container.removeEventListener('scroll', handleScroll)
-    }
-  }, [])
-
   const scrollToSlide = (index: number) => {
     if (scrollContainerRef.current) {
-      const cardWidth = 220 + 16 // width + gap
+      const cardWidth = 220 + 16
       scrollContainerRef.current.scrollTo({
         left: index * cardWidth,
         behavior: 'smooth'
@@ -177,22 +179,36 @@ export function FeaturedPujas() {
     }
   }
 
-  const scroll = (direction: 'left' | 'right') => {
+  // Mouse drag handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollContainerRef.current) return
+    setIsDragging(true)
+    dragStartX.current = e.pageX - scrollContainerRef.current.offsetLeft
+    scrollStartLeft.current = scrollContainerRef.current.scrollLeft
+    scrollContainerRef.current.style.cursor = 'grabbing'
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollContainerRef.current) return
+    e.preventDefault()
+    const x = e.pageX - scrollContainerRef.current.offsetLeft
+    const walk = (x - dragStartX.current) * 2
+    scrollContainerRef.current.scrollLeft = scrollStartLeft.current - walk
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
     if (scrollContainerRef.current) {
-      const { current: container } = scrollContainerRef
-      const scrollAmount = container.offsetWidth * 0.8
-      container.scrollBy({
-        left: direction === 'right' ? scrollAmount : -scrollAmount,
-        behavior: 'smooth'
-      })
-      
-      // Update active index after scroll
-      setTimeout(() => {
-        const scrollLeft = container.scrollLeft
-        const cardWidth = 220 + 16 // width + gap
-        const newIndex = Math.round(scrollLeft / cardWidth)
-        setActiveSlideIndex(newIndex)
-      }, 300)
+      scrollContainerRef.current.style.cursor = 'grab'
+    }
+  }
+
+  const handleMouseLeave = () => {
+    if (isDragging) {
+      setIsDragging(false)
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.style.cursor = 'grab'
+      }
     }
   }
 
@@ -211,7 +227,6 @@ export function FeaturedPujas() {
         {/* Mobile layout - 2x2 grid with circular cards and row dividers */}
         <div className="mt-5 sm:hidden">
           {isLoading ? (
-            // Skeleton loaders with row dividers
             <div className="space-y-6">
               {Array.from({ length: 3 }).map((_, rowIndex) => (
                 <div key={rowIndex}>
@@ -226,7 +241,6 @@ export function FeaturedPujas() {
               ))}
             </div>
           ) : (
-            // Actual content with row dividers
             <div className="space-y-6">
               {Array.from({ length: Math.ceil(items.length / 2) }).map((_, rowIndex) => (
                 <div key={rowIndex}>
@@ -289,7 +303,6 @@ export function FeaturedPujas() {
                           </div>
                           <div className="mt-1 text-center">
                             <p className="text-xs text-muted-foreground font-sans line-clamp-2 leading-relaxed">{it.desc}</p>
-                            {/* Price information hidden on mobile as per requirements */}
                           </div>
                         </Link>
                         <div className="mt-2.5">
@@ -311,13 +324,12 @@ export function FeaturedPujas() {
           )}
         </div>
         
-        {/* Desktop layout - horizontal row with rectangular cards and slide indicators */}
-        <div className="mt-5 w-full hidden sm:block relative px-4">
+        {/* Desktop layout - horizontal slider with drag support */}
+        <div className="mt-5 w-full hidden sm:block relative">
           {isLoading ? (
-            // Desktop skeleton loaders in horizontal row
             <div 
-              ref={scrollContainerRef}
-              className="flex gap-4 pb-8"
+              className="flex gap-4 pb-8 overflow-x-auto scrollbar-hide"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {Array.from({ length: 6 }).map((_, index) => (
                 <DesktopSkeletonCard key={index} />
@@ -325,10 +337,19 @@ export function FeaturedPujas() {
             </div>
           ) : (
             <>
-              {/* Card carousel */}
+              {/* Draggable card carousel */}
               <div 
                 ref={scrollContainerRef}
-                className="flex gap-4 pb-8"
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseLeave}
+                className="flex gap-4 pb-8 overflow-x-auto scrollbar-hide select-none"
+                style={{ 
+                  scrollbarWidth: 'none', 
+                  msOverflowStyle: 'none',
+                  cursor: isDragging ? 'grabbing' : 'grab'
+                }}
               >
                 {items.map((it) => (
                   <div
@@ -336,7 +357,7 @@ export function FeaturedPujas() {
                     className="group overflow-hidden rounded-lg border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm flex-shrink-0 shadow-xs"
                     style={{ width: "220px" }}
                   >
-                    <Link href={`/pujas/${it.slug}`} className="block">
+                    <Link href={`/pujas/${it.slug}`} className="block pointer-events-none">
                       <div className="relative w-full aspect-[4/3]">
                         {it.imageUrl ? (
                           <Image
@@ -346,6 +367,7 @@ export function FeaturedPujas() {
                             className="object-cover"
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                             priority={it.tag === "Most Booked"}
+                            draggable={false}
                           />
                         ) : (
                           <Image
@@ -355,6 +377,7 @@ export function FeaturedPujas() {
                             className="object-cover"
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                             priority={it.tag === "Most Booked"}
+                            draggable={false}
                           />
                         )}
                         {it.tag ? (
@@ -371,13 +394,13 @@ export function FeaturedPujas() {
                         </p>
                       </div>
                     </Link>
-                    <div className="flex items-center gap-1 px-2 pb-2">
-                      <Link href="#booking" className="flex-1">
+                    <div className="flex items-center gap-1 px-2 pb-2 pointer-events-auto">
+                      <Link href="#booking" className="flex-1" onClick={(e) => e.stopPropagation()}>
                         <Button className="w-full bg-[#0E3F2E] text-white font-sans text-xs hover:bg-[#0E3F2E]/90 border-2 border-[#0E3F2E] hover:scale-[1.02] transition-transform duration-200 shadow-xs h-6" size="sm">
                           Book Now
                         </Button>
                       </Link>
-                      <Link href={`/pujas/${it.slug}`} className="shrink-0 text-xs hover:text-primary font-sans">
+                      <Link href={`/pujas/${it.slug}`} className="shrink-0 text-xs hover:text-primary font-sans" onClick={(e) => e.stopPropagation()}>
                         Learn More →
                       </Link>
                     </div>
@@ -385,15 +408,15 @@ export function FeaturedPujas() {
                 ))}
               </div>
               
-              {/* MNC Grade slide indicators */}
+              {/* Slide indicators */}
               <div className="flex justify-center mt-4 items-center gap-6">
                 <div className="flex gap-1.5 bg-muted/50 px-2.5 py-1.5 rounded-full">
                   {items.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => {
-                        scrollToSlide(index)
                         setActiveSlideIndex(index)
+                        scrollToSlide(index)
                       }}
                       className={`w-6 h-0.5 transition-all duration-300 rounded-full ${index === activeSlideIndex ? 'bg-primary' : 'bg-muted-foreground/30'}`}
                       aria-label={`Go to slide ${index + 1}`}
@@ -402,7 +425,7 @@ export function FeaturedPujas() {
                 </div>
               </div>
               
-              {/* View All arrow button for desktop - repositioned to top right */}
+              {/* View All arrow button for desktop */}
               <Link href="#booking" className="absolute top-0 right-0 flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/20 transition-all duration-300 group">
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
@@ -423,27 +446,23 @@ export function FeaturedPujas() {
             </>
           )}
         </div>
-        {/* View All button for mobile - enhanced with reduced height */}
+
+        {/* View All button for mobile */}
         <div className="mt-8 text-center sm:hidden">
-       <Link
-  href="#booking"
-  className="
-    inline-block px-6 py-2
-    bg-[#0E3F2E] 
-    text-white font-sans font-semibold text-base
-    rounded-md border-2 border-[#0E3F2E]
-    shadow-md shadow-[#0E3F2E]/30
-    hover:shadow-lg hover:shadow-[#0E3F2E]/50
-    transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105
-    focus:outline-none focus:ring-2 focus:ring-[#0E3F2E]/40
-  "
->
-  View All 25+ Rituals
-</Link>
-
-
+          <Link
+            href="#booking"
+            className="inline-block px-6 py-2 bg-[#0E3F2E] text-white font-sans font-semibold text-base rounded-md border-2 border-[#0E3F2E] shadow-md shadow-[#0E3F2E]/30 hover:shadow-lg hover:shadow-[#0E3F2E]/50 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#0E3F2E]/40"
+          >
+            View All 25+ Rituals
+          </Link>
         </div>
       </div>
+      
+      <style jsx global>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </section>
   )
 }

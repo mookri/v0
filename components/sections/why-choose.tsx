@@ -41,7 +41,7 @@ export function WhyChoose() {
             id="why-choose"
             className="font-serif text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-foreground relative inline-block mb-3"
           >
-            Why Choose Navdhara
+            Why Choose Navdhya
             <span className="absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 w-20 h-0.5 bg-gradient-to-r from-primary to-[#0E3F2E] rounded-full"></span>
           </h2>
           <p className="text-muted-foreground mt-4 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
