@@ -8,57 +8,75 @@ const items = [
   {
     slug: "griha-pravesh",
     title: "Grihapravesh Puja",
-    desc: "Begin your new chapter with divine blessings",
+    desc: "Traditional housewarming ceremony for new homes with complete rituals and blessings for prosperity, harmony, and divine protection in your new dwelling.",
     price: "₹4,999",
     tag: "Most Booked",
     imgQuery: "griha%20pravesh%20home%20ritual%20mandap",
     imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358800/Whisk_12d1d962f45c56a89444ef5b3cc2f267dr_fzoivd.jpg"
   },
   {
-    slug: "lakshmi-puja",
-    title: "Lakshmi Puja",
-    desc: "Invoke Goddess Lakshmi for wealth and prosperity",
+    slug: "lakshmi-ganesh-puja",
+    title: "Lakshmi Ganesh Puja",
+    desc: "Powerful combination ritual to invoke blessings from Lord Ganesha and Goddess Lakshmi for removal of obstacles, wealth, and overall prosperity in life.",
     price: "₹2,999",
     tag: "Popular",
-    imgQuery: "lakshmi%20puja%20ritual",
-    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358803/Whisk_0f5f669b41ae7caa0134b73a006a3c5edr_1_sb2pdr.jpg"
+    imgQuery: "lakshmi%20ganesh%20puja%20ritual",
+    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg"
   },
   {
     slug: "satyanarayan-katha",
     title: "Satyanarayan Puja",
-    desc: "Seek Lord Vishnu's grace and prosperity",
+    desc: "Devotional ritual dedicated to Lord Vishnu for prosperity, peace, and fulfillment of sincere wishes with complete katha recitation and aarti.",
     price: "₹3,999",
     tag: undefined,
     imgQuery: "satyanarayan%20katha%20ritual",
     imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358798/Whisk_7a093de03fbc3bab93949b075483d783dr_zwnihl.jpg"
   },
   {
-    slug: "ganesh-puja",
-    title: "Ganesh Puja",
-    desc: "Remove obstacles and invite success",
-    price: "₹1,999",
-    tag: "Quick Setup",
-    imgQuery: "ganesh%20puja%20traditional%20setup",
-    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358800/Whisk_db05ba7c437e48abe6440798d2a33b09dr_bokdku.jpg"
+    slug: "hindu-wedding",
+    title: "Wedding Ceremony",
+    desc: "Complete traditional Hindu wedding rituals with experienced Vedic pandits, mandap setup, and all essential samagri for your special day.",
+    price: "₹24,999",
+    tag: "Life Event",
+    imgQuery: "hindu%20wedding%20ceremony%20mandap",
+    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg"
   },
   {
-    slug: "durga-puja",
-    title: "Durga Puja",
-    desc: "Celebrate the victory of good over evil",
-    price: "₹5,999",
-    tag: "Festival Special",
-    imgQuery: "durga%20puja%20elaborate%20setup",
-    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679450/Whisk_740e8530e3086b3abb94e5077c67486cdr_uid6cy.jpg"
+    slug: "office-opening",
+    title: "Office Opening Puja",
+    desc: "Bless your new business space with divine energy for success, prosperity, and protection. Includes Ganesha Puja, Lakshmi Puja, and space sanctification.",
+    price: "₹3,500",
+    tag: "Business Special",
+    imgQuery: "office%20opening%20puja%20business%20blessing",
+    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg"
   },
   {
-    slug: "navratri-puja",
-    title: "Navratri Puja",
-    desc: "Nine nights of divine feminine energy",
-    price: "₹7,999",
-    tag: "Extended Ritual",
-    imgQuery: "navratri%20puja%20garba%20celebration",
+    slug: "baby-naming",
+    title: "Baby Naming Ceremony",
+    desc: "Traditional Namkaran ceremony with auspicious name selection based on nakshatra and divine blessings for your child's health and future.",
+    price: "₹2,500",
+    tag: "Life Milestone",
+    imgQuery: "baby%20naming%20ceremony%20hindu",
+    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg"
+  },
+  {
+    slug: "annaprashan",
+    title: "Annaprashan Ceremony",
+    desc: "The first feeding of solid food to your child, marking an important milestone in their growth and development with divine blessings.",
+    price: "₹2,000",
+    tag: "Life Milestone",
+    imgQuery: "annaprashan%20ceremony%20baby%20first%20food",
     imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg"
   },
+  {
+    slug: "vastu-shanti",
+    title: "Vastu Shanti Puja",
+    desc: "Harmonize your living or working space with Vastu principles for positive energy flow and removal of negative influences.",
+    price: "₹3,000",
+    tag: "Business Special",
+    imgQuery: "vastu%20shanti%20puja%20ritual",
+    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg"
+  }
 ]
 
 // Skeleton loader component
@@ -224,6 +242,25 @@ export function FeaturedPujas() {
           </p>
         </div>
         
+        {/* View All arrow button for desktop */}
+        <Link href="/pujas" className="absolute top-4 right-4 flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/20 transition-all duration-300 group z-10">
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="20" 
+            height="20" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+            className="text-primary transform -rotate-45 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300"
+          >
+            <line x1="7" y1="17" x2="17" y2="7"></line>
+            <polyline points="7 7 17 7 17 17"></polyline>
+          </svg>
+        </Link>
+        
         {/* Mobile layout - 2x2 grid with circular cards and row dividers */}
         <div className="mt-5 sm:hidden">
           {isLoading ? (
@@ -306,7 +343,7 @@ export function FeaturedPujas() {
                           </div>
                         </Link>
                         <div className="mt-2.5">
-                          <Link href="#booking">
+                          <Link href={`/pujas/${it.slug}`}>
                             <Button className="bg-[#0E3F2E] text-white font-sans text-sm h-10 hover:bg-[#0E3F2E]/90 border-2 border-[#0E3F2E] hover:scale-[1.02] transition-transform duration-200 shadow-xs px-6" size="sm">
                               Book Now
                             </Button>
@@ -354,11 +391,11 @@ export function FeaturedPujas() {
                 {items.map((it) => (
                   <div
                     key={it.title}
-                    className="group overflow-hidden rounded-lg border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm flex-shrink-0 shadow-xs"
+                    className="group overflow-hidden rounded-lg border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm flex-shrink-0 shadow-xs flex flex-col h-full"
                     style={{ width: "220px" }}
                   >
-                    <Link href={`/pujas/${it.slug}`} className="block pointer-events-none">
-                      <div className="relative w-full aspect-[4/3]">
+                    <Link href={`/pujas/${it.slug}`} className="block pointer-events-none flex-grow flex flex-col">
+                      <div className="relative w-full aspect-[4/3] flex-shrink-0">
                         {it.imageUrl ? (
                           <Image
                             src={it.imageUrl}
@@ -386,7 +423,7 @@ export function FeaturedPujas() {
                           </span>
                         ) : null}
                       </div>
-                      <div className="p-2 flex flex-col h-full">
+                      <div className="p-2 flex flex-col flex-grow">
                         <h3 className="font-sans text-sm font-bold">{it.title}</h3>
                         <p className="mt-1 text-xs text-muted-foreground flex-grow font-sans line-clamp-2">{it.desc}</p>
                         <p className="mt-1.5 text-xs font-sans">
@@ -394,8 +431,8 @@ export function FeaturedPujas() {
                         </p>
                       </div>
                     </Link>
-                    <div className="flex items-center gap-1 px-2 pb-2 pointer-events-auto">
-                      <Link href="#booking" className="flex-1" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center gap-1 px-2 pb-2 pointer-events-auto mt-auto">
+                      <Link href={`/pujas/${it.slug}`} className="flex-1" onClick={(e) => e.stopPropagation()}>
                         <Button className="w-full bg-[#0E3F2E] text-white font-sans text-xs hover:bg-[#0E3F2E]/90 border-2 border-[#0E3F2E] hover:scale-[1.02] transition-transform duration-200 shadow-xs h-6" size="sm">
                           Book Now
                         </Button>
@@ -424,25 +461,6 @@ export function FeaturedPujas() {
                   ))}
                 </div>
               </div>
-              
-              {/* View All arrow button for desktop */}
-              <Link href="#booking" className="absolute top-0 right-0 flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/20 transition-all duration-300 group">
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="20" 
-                  height="20" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                  className="text-primary transform -rotate-45 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300"
-                >
-                  <line x1="7" y1="17" x2="17" y2="7"></line>
-                  <polyline points="7 7 17 7 17 17"></polyline>
-                </svg>
-              </Link>
             </>
           )}
         </div>

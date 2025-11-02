@@ -20,9 +20,9 @@ export function Catalog() {
     { value: "All", label: "All Services" },
     { value: "Home Rituals", label: "Home Rituals" },
     { value: "Life Milestones", label: "Life Milestones" },
-    { value: "Festival", label: "Festival" },
-    { value: "Corporate", label: "Corporate" },
-    { value: "Special", label: "Special" }
+    { value: "Business & Prosperity", label: "Business & Prosperity" },
+    { value: "Festival", label: "Festivals" },
+    { value: "Special", label: "Special Rituals" }
   ]
 
   const items = [
@@ -37,7 +37,7 @@ export function Catalog() {
       imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358800/Whisk_12d1d962f45c56a89444ef5b3cc2f267dr_fzoivd.jpg"
     },
     {
-      slug: "satyanarayan-puja",
+      slug: "satyanarayan-katha",
       title: "Satyanarayan Puja",
       desc: "Sacred worship ceremony for prosperity, peace, and divine blessings for the family.",
       price: "₹2,500",
@@ -47,21 +47,71 @@ export function Catalog() {
       imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358798/Whisk_7a093de03fbc3bab93949b075483d783dr_zwnihl.jpg"
     },
     {
-      slug: "wedding-ceremony",
+      slug: "lakshmi-ganesh-puja",
+      title: "Lakshmi Ganesh Puja",
+      desc: "Performed to seek blessings from Lord Ganesh and Goddess Lakshmi for removal of obstacles and prosperity.",
+      price: "₹1,800",
+      tag: "Popular",
+      imgQuery: "lakshmi%20ganesh%20puja%20ritual",
+      category: "Home Rituals",
+      imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg"
+    },
+    {
+      slug: "hindu-wedding",
       title: "Wedding Ceremony",
       desc: "Complete Hindu wedding rituals with experienced priests for your special day.",
-      price: "₹15,000",
-      tag: undefined,
+      price: "₹24,999",
+      tag: "Life Event",
       imgQuery: "hindu%20wedding%20ceremony%20mandap",
       category: "Life Milestones",
-      imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761678719/Whisk_5445b92b09fbb22bdf349b017836b21cdr_mpzp7d.jpg"
+      imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg"
+    },
+    {
+      slug: "baby-naming",
+      title: "Baby Naming Ceremony",
+      desc: "Traditional Namkaran ceremony with auspicious name selection and blessings.",
+      price: "₹2,500",
+      tag: "Life Milestone",
+      imgQuery: "baby%20naming%20ceremony%20hindu",
+      category: "Life Milestones",
+      imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg"
+    },
+    {
+      slug: "annaprashan",
+      title: "Annaprashan Ceremony",
+      desc: "The first feeding of solid food to your child, marking an important milestone in their growth.",
+      price: "₹2,000",
+      tag: "Life Milestone",
+      imgQuery: "annaprashan%20ceremony%20baby%20first%20food",
+      category: "Life Milestones",
+      imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg"
+    },
+    {
+      slug: "office-opening",
+      title: "Office Opening Puja",
+      desc: "Bless your new business space with divine energy for success, prosperity, and protection.",
+      price: "₹3,500",
+      tag: "Business Special",
+      imgQuery: "office%20opening%20puja%20business%20blessing",
+      category: "Business & Prosperity",
+      imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg"
+    },
+    {
+      slug: "vastu-shanti",
+      title: "Vastu Shanti Puja",
+      desc: "Harmonize your living or working space with Vastu principles for positive energy flow.",
+      price: "₹3,000",
+      tag: "Business Special",
+      imgQuery: "vastu%20shanti%20puja%20ritual",
+      category: "Business & Prosperity",
+      imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg"
     },
     {
       slug: "ganesh-chaturthi",
       title: "Ganesh Chaturthi",
       desc: "Festival celebration with traditional Ganesh installation and daily prayers.",
       price: "₹5,000",
-      tag: undefined,
+      tag: "Festival Special",
       imgQuery: "ganesh%20chaturthi%20festival%20celebration",
       category: "Festival",
       imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358800/Whisk_db05ba7c437e48abe6440798d2a33b09dr_bokdku.jpg"
@@ -75,38 +125,8 @@ export function Catalog() {
       imgQuery: "navagraha%20puja%20ritual",
       category: "Special",
       imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679025/Whisk_74db7ede20dd9ab86654355ac2ceeb04dr_wgtjc6.jpg"
-    },
-    {
-      slug: "baby-naming",
-      title: "Baby Naming Ceremony",
-      desc: "Traditional Namkaran ceremony with auspicious name selection and blessings.",
-      price: "₹3,000",
-      tag: undefined,
-      imgQuery: "baby%20naming%20ceremony%20hindu",
-      category: "Life Milestones",
-      imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679172/Whisk_72a69cdfe7bdb6399b34c6cbe8850902dr_j1jnhe.jpg"
-    },
-    {
-  slug: "durga-puja",
-  title: "Durga Puja",
-  desc: "Grand celebration honoring Goddess Durga with devotion, rituals, and divine energy.",
-  price: "₹7,000",
-  tag: "Festive Special",
-  imgQuery: "durga%20puja%20celebration%20goddess%20idol%20ritual",
-  category: "Festival",
-  imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679450/Whisk_740e8530e3086b3abb94e5077c67486cdr_uid6cy.jpg"
-},
-    {
-      slug: "rudrabhishek",
-      title: "Rudrabhishek",
-      desc: "Sacred Shiva worship for peace, prosperity and removal of obstacles.",
-      price: "₹4,000",
-      tag: undefined,
-      imgQuery: "rudrabhishek%20shiva%20ritual",
-      category: "Special",
-      imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679271/Whisk_cbcb3cbfd12603c81194f8bf98abdd95dr_vkuqn9.jpg"
-    },
-  ]
+    }
+]
 
   // Filter items based on active category
   const filteredItems = activeCategory === "All" 
@@ -143,10 +163,10 @@ export function Catalog() {
             filteredItems.map((it) => (
               <div
                 key={it.title}
-                className="group overflow-hidden rounded-xl bg-white border border-slate-200 transition-all duration-500 ease-in-out hover:shadow-xl hover:-translate-y-2 mx-0 sm:mx-0"
+                className="group overflow-hidden rounded-xl bg-white border border-slate-200 transition-all duration-500 ease-in-out hover:shadow-xl hover:-translate-y-2 mx-0 sm:mx-0 flex flex-col h-full"
               >
-                <Link href={`/pujas/${it.slug}`} className="block">
-                  <div className="relative h-40 w-full overflow-hidden">
+                <Link href={`/pujas/${it.slug}`} className="block flex-grow flex flex-col">
+                  <div className="relative h-48 w-full overflow-hidden">
                     {it.imageUrl ? (
                       <Image
                         src={it.imageUrl}
@@ -165,15 +185,15 @@ export function Catalog() {
                       />
                     )}
                     {it.tag ? (
-                      <span className="absolute left-3 top-3 rounded-full bg-[#0E3F2E] px-3 py-1 text-xs text-white font-medium animate-pulse">
+                      <span className="absolute left-3 top-3 rounded-full bg-[#0E3F2E] px-3 py-1 text-xs text-white font-medium">
                         {it.tag}
                       </span>
                     ) : null}
                   </div>
-                  <div className="p-4 flex flex-col h-full">
-                    <h3 className="font-serif text-lg font-semibold text-slate-800 line-clamp-1">{it.title}</h3>
-                    <p className="mt-2 text-sm text-slate-600 flex-grow line-clamp-2">{it.desc}</p>
-                    <div className="mt-4 flex items-center justify-between">
+                  <div className="p-4 flex flex-col flex-grow">
+                    <h3 className="font-serif text-base font-semibold text-slate-800 line-clamp-1">{it.title}</h3>
+                    <p className="mt-2 text-xs text-slate-600 flex-grow line-clamp-2">{it.desc}</p>
+                    <div className="mt-3 flex items-center justify-between">
                       <p className="text-sm font-medium text-[#0E3F2E]">
                         {it.price}
                       </p>
@@ -181,8 +201,8 @@ export function Catalog() {
                   </div>
                 </Link>
                 <div className="px-4 pb-4">
-                  <Link href="#booking" className="block">
-                    <Button className="w-full bg-[#0E3F2E] text-white hover:bg-[#0E3F2E]/90 text-sm h-11 font-medium rounded-lg transition-all duration-300 ease-in-out transform hover:scale-[1.02] hover:shadow-md flex items-center justify-center gap-2 group/button shadow-sm">
+                  <Link href={`/pujas/${it.slug}`} className="block">
+                    <Button className="w-full bg-[#0E3F2E] text-white hover:bg-[#0E3F2E]/90 text-xs h-10 font-medium rounded-lg transition-all duration-300 ease-in-out transform hover:scale-[1.02] hover:shadow-md flex items-center justify-center gap-2 group/button shadow-sm">
                       <span className="flex items-center gap-2">
                         Book Now <ArrowRight className="w-4 h-4 animate-looping-arrow" />
                       </span>

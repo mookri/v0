@@ -1,8 +1,14 @@
 // Ultra-Fast Network-Only Service Worker for Navdhya PWA
 // Zero caching, instant offline detection
-// Version: 4.0.1
+// Version: 4.0.3
 
-const VERSION = '4.0.1';
+const VERSION = '4.0.3';
+
+// Check if we're in development mode
+const isDevelopment = location.hostname === 'localhost' || 
+                     location.hostname === '127.0.0.1' || 
+                     location.hostname === '[::1]' ||
+                     location.hostname.includes('.local');
 
 // Critical assets to cache ONLY for offline page
 const CRITICAL_ASSETS = [
@@ -16,6 +22,10 @@ const CRITICAL_ASSETS = [
 
 // Installation Event - Minimal caching for offline page only
 self.addEventListener('install', event => {
+  // Skip installation in development
+  if (isDevelopment) {
+    return;
+  }
   
   event.waitUntil(
     (async () => {
@@ -27,7 +37,7 @@ self.addEventListener('install', event => {
           try {
             const response = await fetch(url);
             if (response.ok) {
-              await cache.put(url, response);
+              await cache.put(url, response.clone());
               return true;
             }
           } catch (error) {
@@ -40,6 +50,7 @@ self.addEventListener('install', event => {
         // Skip waiting to activate immediately
         self.skipWaiting();
       } catch (error) {
+        console.error('[SW] ✗ Installation failed:', error);
       }
     })()
   );
@@ -47,6 +58,10 @@ self.addEventListener('install', event => {
 
 // Activation Event - Clean up old caches
 self.addEventListener('activate', event => {
+  // Skip activation in development
+  if (isDevelopment) {
+    return;
+  }
   
   event.waitUntil(
     (async () => {
@@ -70,6 +85,11 @@ self.addEventListener('activate', event => {
 
 // Fetch Event - Network Only with Smart Offline Fallback
 self.addEventListener('fetch', event => {
+  // Skip fetch handling in development
+  if (isDevelopment) {
+    return;
+  }
+  
   const { request } = event;
   const url = new URL(request.url);
   
@@ -83,7 +103,10 @@ self.addEventListener('fetch', event => {
     event.respondWith(
       // Attempt network request with reasonable timeout
       Promise.race([
-        fetch(request),
+        fetch(request).catch(error => {
+          // If fetch fails, throw the error to be caught below
+          throw error;
+        }),
         new Promise((_, reject) => 
           setTimeout(() => reject(new Error('NETWORK_TIMEOUT')), 5000) // 5 second timeout
         )
@@ -93,11 +116,14 @@ self.addEventListener('fetch', event => {
         return response;
       })
       .catch(async (error) => {
-        // Only serve offline page if it's a network error, not other issues
-        if (error.message === 'NETWORK_TIMEOUT' || error.message === 'Failed to fetch') {
-          const offlinePage = await caches.match('/offline.html');
+        // Only serve offline page if it's a network error
+        if (error.message === 'NETWORK_TIMEOUT' || 
+            error.message === 'Failed to fetch' || 
+            error instanceof TypeError) {
+          const cache = await caches.open(`navdhya-offline-v${VERSION}`);
+          const offlinePage = await cache.match('/offline.html');
           return offlinePage || new Response(
-            '<h1>Offline</h1><p>Please check your connection</p>',
+            '<!DOCTYPE html><html><head><title>Offline</title></head><body><h1>Offline</h1><p>Please check your connection</p></body></html>',
             { headers: { 'Content-Type': 'text/html' }, status: 503 }
           );
         } else {
@@ -105,6 +131,24 @@ self.addEventListener('fetch', event => {
           throw error;
         }
       })
+    );
+    return;
+  }
+  
+  // Handle requests for critical assets (logo, offline page)
+  if (CRITICAL_ASSETS.includes(url.pathname)) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          // If successful, return the response
+          return response;
+        })
+        .catch(async () => {
+          // If network fails, try to serve from cache
+          const cache = await caches.open(`navdhya-offline-v${VERSION}`);
+          const cachedResponse = await cache.match(request);
+          return cachedResponse || new Response('', { status: 404 });
+        })
     );
     return;
   }
@@ -124,7 +168,9 @@ self.addEventListener('fetch', event => {
     })
     .catch((error) => {
       // Only fail silently for network errors
-      if (error.message === 'NETWORK_TIMEOUT' || error.message === 'Failed to fetch') {
+      if (error.message === 'NETWORK_TIMEOUT' || 
+          error.message === 'Failed to fetch' || 
+          error instanceof TypeError) {
         return new Response('', { status: 503, statusText: 'Network Error' });
       } else {
         // For other errors, re-throw them
@@ -136,6 +182,10 @@ self.addEventListener('fetch', event => {
 
 // Online/Offline Events - Notify clients
 self.addEventListener('online', async () => {
+  // Skip in development
+  if (isDevelopment) {
+    return;
+  }
   
   // Notify all clients that we're back online
   const clients = await self.clients.matchAll();
@@ -145,6 +195,10 @@ self.addEventListener('online', async () => {
 });
 
 self.addEventListener('offline', async () => {
+  // Skip in development
+  if (isDevelopment) {
+    return;
+  }
   
   // Notify all clients that we're offline
   const clients = await self.clients.matchAll();
@@ -152,4 +206,3 @@ self.addEventListener('offline', async () => {
     client.postMessage({ type: 'OFFLINE' });
   });
 });
-

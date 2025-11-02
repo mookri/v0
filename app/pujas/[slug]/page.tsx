@@ -1,14 +1,10 @@
-import Image from "next/image"
-import Link from "next/link"
 import { notFound } from "next/navigation"
-import { Button } from "@/components/ui/button"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
 import Script from "next/script"
-import { Heart, Star, Calendar, Users, BookOpen, ShieldCheck, Zap, Leaf, Target } from "lucide-react"
+import PujaDetailsClient from "./client"
 
-// Add page-specific metadata
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const { slug } = await params;
   const puja = DATA[slug]
@@ -53,20 +49,21 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-const DATA: Record<
-  string,
-  { 
-    title: string; 
-    description: string; 
-    price: string; 
-    imgQuery: string; 
-    highlights: string[];
-    longDescription: string;
-    benefits: string[];
-    process: { step: string; description: string }[];
-    image: string;
-  }
-> = {
+type PujaData = {
+  title: string;
+  description: string;
+  price: string;
+  imgQuery: string;
+  highlights: string[];
+  longDescription: string;
+  benefits: string[];
+  process: { step: string; description: string }[];
+  image: string;
+  includes: string[];
+  faqs: { question: string; answer: string }[];
+};
+
+const DATA: Record<string, PujaData> = {
   "griha-pravesh": {
     title: "Griha Pravesh Puja",
     description: "An auspicious ceremony performed before entering a new home to invoke blessings, prosperity, and harmony. Conducted by certified Pandits with proper Vidhi and Muhurat guidance.",
@@ -90,7 +87,20 @@ const DATA: Record<
       { step: "Room Sanctification", description: "Specific rituals to bless each room with appropriate deities" },
       { step: "Aarti & Prasad", description: "Concluding rituals with devotional songs and distribution of blessed food" }
     ],
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg"
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg",
+    includes: [
+      "Complete puja vidhi with Vedic mantras",
+      "All essential puja samagri",
+      "Professional pandit guidance",
+      "Post-puja clean-up service",
+      "Prasad distribution"
+    ],
+    faqs: [
+      { question: "When is the best time to perform Griha Pravesh?", answer: "The best time is during an auspicious muhurat selected by our pandits based on your family's horoscope and the property's orientation." },
+      { question: "How long does the ceremony take?", answer: "The complete Griha Pravesh ceremony typically takes 2-3 hours depending on the size of the property and specific requirements." },
+      { question: "What should we prepare for the ceremony?", answer: "Our pandits will provide a detailed list of items needed. Generally, you'll need to arrange for flowers, fruits, and a clean space for the ceremony." },
+      { question: "Can we perform this for rented properties?", answer: "Yes, Griha Pravesh can be performed for rented properties as well. Our pandits will guide you on the appropriate rituals for your situation." }
+    ]
   },
   "satyanarayan-katha": {
     title: "Satyanarayan Puja",
@@ -115,7 +125,20 @@ const DATA: Record<
       { step: "Prasad Distribution", description: "Distribution of blessed food among all participants" },
       { step: "Conclusion", description: "Final prayers and seeking continued divine blessings" }
     ],
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg"
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg",
+    includes: [
+      "Complete Satyanarayan Katha recitation",
+      "All puja samagri and offerings",
+      "Professional pandit service",
+      "Bhog and prasad distribution",
+      "Aarti with devotional songs"
+    ],
+    faqs: [
+      { question: "Who can perform Satyanarayan Katha?", answer: "Anyone can perform this puja - it's not restricted by gender, age, or caste. It's particularly beneficial for those seeking divine blessings for prosperity and peace." },
+      { question: "How often should this puja be performed?", answer: "Traditionally, it's performed on full moon days (Purnima) or during special occasions. Many families perform it monthly or on important festivals." },
+      { question: "Can it be done at home?", answer: "Yes, it can be performed at home with proper arrangements. Our pandits will guide you through the complete process." },
+      { question: "What is the ideal duration for the katha?", answer: "The complete katha typically takes 1.5-2 hours. We can adjust the duration based on your requirements and availability." }
+    ]
   },
   "lakshmi-ganesh-puja": {
     title: "Lakshmi Ganesh Puja",
@@ -140,7 +163,20 @@ const DATA: Record<
       { step: "Aarti", description: "Devotional songs with lamps to honor the deities" },
       { step: "Prasad Distribution", description: "Distribution of blessed food among all participants" }
     ],
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg"
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg",
+    includes: [
+      "Idols or images of Lord Ganesha and Goddess Lakshmi",
+      "All puja samagri and offerings",
+      "Vedic mantra chanting",
+      "Aarti with traditional lamps",
+      "Prasad distribution"
+    ],
+    faqs: [
+      { question: "When is the best time to perform this puja?", answer: "Friday is considered the most auspicious day for Lakshmi Puja, and Tuesday for Ganesha Puja. However, it can be performed on any day with proper guidance." },
+      { question: "What materials are needed for the puja?", answer: "Our pandits will bring all essential materials. You may need to arrange for a clean space and some specific items based on your requirements." },
+      { question: "How long does the ceremony take?", answer: "The complete puja typically takes 1-1.5 hours depending on the complexity and specific requirements." },
+      { question: "Can this puja help with business prosperity?", answer: "Yes, this puja is specifically performed to attract wealth and remove business obstacles. Many entrepreneurs perform this regularly for success." }
+    ]
   },
   "hindu-wedding": {
     title: "Hindu Wedding Ceremony",
@@ -165,7 +201,22 @@ const DATA: Record<
       { step: "Saptpadi", description: "Seven sacred vows taken around the holy fire" },
       { step: "Aashirwad", description: "Blessings from elders and distribution of prasad" }
     ],
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg"
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg",
+    includes: [
+      "Complete wedding ceremony with all rituals",
+      "Experienced Vedic pandits",
+      "Mandap setup and decoration",
+      "All puja samagri and offerings",
+      "Agni devta setup and maintenance",
+      "Kanyadaan and Saptpadi rituals",
+      "Post-ceremony clean-up"
+    ],
+    faqs: [
+      { question: "How far in advance should we book?", answer: "We recommend booking at least 2-3 months in advance, especially for popular dates, to ensure availability of our senior pandits." },
+      { question: "What is included in the package?", answer: "Our package includes all rituals, pandit services, mandap setup, and essential samagri. Additional items like flowers, catering, and photography are arranged separately." },
+      { question: "Can we customize the rituals?", answer: "Yes, we can customize the ceremony based on your family traditions and specific requirements while maintaining the essential Vedic rituals." },
+      { question: "Do you provide services outside Delhi?", answer: "Yes, we provide wedding services across Delhi NCR and can arrange services in other cities with prior notice." }
+    ]
   },
   "baby-naming": {
     title: "Baby Naming (Namkaran)",
@@ -190,7 +241,21 @@ const DATA: Record<
       { step: "Aarti & Prasad", description: "Devotional songs and distribution of blessed food" },
       { step: "Blessings", description: "Receiving blessings from elders and family members" }
     ],
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg"
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg",
+    includes: [
+      "Astrological name selection based on nakshatra",
+      "Sacred naming ceremony with Vedic mantras",
+      "All puja samagri and offerings",
+      "Professional pandit guidance",
+      "Aarti and prasad distribution",
+      "Certificate of the ceremony"
+    ],
+    faqs: [
+      { question: "When should the ceremony be performed?", answer: "Ideally, it's performed between 11-21 days after birth, but can be done later as per family convenience and astrological guidance." },
+      { question: "How is the name selected?", answer: "Our pandits analyze the child's nakshatra and select a name that begins with the appropriate letter as per Vedic traditions." },
+      { question: "Can we have multiple names?", answer: "Yes, you can have multiple names - a formal name for official purposes and a nickname for daily use. Both can be blessed during the ceremony." },
+      { question: "What should we prepare for the ceremony?", answer: "We'll provide a detailed list, but generally you'll need a clean space, flowers, fruits, and a small amount of ghee and rice for the rituals." }
+    ]
   },
   "annaprashan": {
     title: "Annaprashan Ceremony",
@@ -215,12 +280,102 @@ const DATA: Record<
       { step: "Aarti & Prasad", description: "Devotional songs and distribution of blessed food" },
       { step: "Blessings", description: "Receiving blessings from elders and family members" }
     ],
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg"
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg",
+    includes: [
+      "Sacred feeding ceremony with Vedic mantras",
+      "Worship of Goddess Annapurna",
+      "Traditional food preparation (kheer or cereal)",
+      "All puja samagri and offerings",
+      "Professional pandit service",
+      "Aarti and prasad distribution"
+    ],
+    faqs: [
+      { question: "What age is appropriate for Annaprashan?", answer: "The ceremony is typically performed when the child is between 6 months to 1 year old, based on family traditions and astrological guidance." },
+      { question: "What food is fed to the child?", answer: "Traditionally, kheer (rice pudding) or a small amount of cereal is fed. The specific food can be customized based on family preferences and dietary requirements." },
+      { question: "How long does the ceremony take?", answer: "The complete ceremony typically takes 1-1.5 hours including all rituals and blessings." },
+      { question: "Can both parents participate?", answer: "Yes, both parents can participate in the ceremony. Traditionally, the father feeds the child while the mother holds them, but arrangements can be made as per family preferences." }
+    ]
+  },
+  "office-opening": {
+    title: "Office/Shop Opening Puja",
+    description: "Bless your new business space with divine energy for success, prosperity, and protection. Conducted by certified Pandits with proper Vidhi and Muhurat guidance.",
+    price: "₹3,500 – ₹7,500",
+    imgQuery: "office%20opening%20puja%20business%20blessing",
+    highlights: ["Muhurat selection guidance", "All samagri support", "On-time service", "Post-puja clean-up"],
+    longDescription: "The Office/Shop Opening Puja is an auspicious ceremony performed to invoke divine blessings for success, prosperity, and protection in your new business venture. This sacred ritual helps remove obstacles, attract positive energy, and establish a harmonious environment for business growth. Our certified pandits conduct the complete vidhi with authentic mantras, ensuring every aspect follows Vedic traditions. The ceremony includes Ganesha Puja to remove obstacles, Lakshmi Puja for wealth and prosperity, and specific rituals to sanctify your business space.",
+    benefits: [
+      "Invokes divine blessings for business success and prosperity",
+      "Removes negative energies and obstacles from the workplace",
+      "Creates a positive and harmonious environment for business growth",
+      "Attracts wealth, customers, and opportunities to your business",
+      "Establishes a sacred connection between your business and divine forces",
+      "Follows authentic Vedic traditions with proper mantras and procedures"
+    ],
+    process: [
+      { step: "Preparation", description: "Selection of auspicious Muhurat, preparation of puja samagri, and cleaning of the business space" },
+      { step: "Ganesha Puja", description: "Invocation of Lord Ganesha to remove obstacles and ensure smooth business operations" },
+      { step: "Lakshmi Puja", description: "Worship of Goddess Lakshmi for wealth, prosperity, and financial success" },
+      { step: "Navagraha Shanti", description: "Pacification rituals for the nine celestial bodies for cosmic harmony" },
+      { step: "Space Sanctification", description: "Specific rituals to bless each area of your business premises" },
+      { step: "Aarti & Prasad", description: "Concluding rituals with devotional songs and distribution of blessed food" }
+    ],
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg",
+    includes: [
+      "Complete puja vidhi with Vedic mantras",
+      "All essential puja samagri",
+      "Professional pandit guidance",
+      "Post-puja clean-up service",
+      "Prasad distribution"
+    ],
+    faqs: [
+      { question: "When is the best time to perform Office Opening Puja?", answer: "The best time is during an auspicious muhurat selected by our pandits based on your business type and the property's orientation." },
+      { question: "How long does the ceremony take?", answer: "The complete Office Opening Puja ceremony typically takes 2-3 hours depending on the size of the business space and specific requirements." },
+      { question: "What should we prepare for the ceremony?", answer: "Our pandits will provide a detailed list of items needed. Generally, you'll need to arrange for flowers, fruits, and a clean space for the ceremony." },
+      { question: "Can we perform this for rented business spaces?", answer: "Yes, Office Opening Puja can be performed for rented business spaces as well. Our pandits will guide you on the appropriate rituals for your situation." }
+    ]
+  },
+  "vastu-shanti": {
+    title: "Vastu Shanti Puja",
+    description: "Harmonize your living or working space with Vastu principles for positive energy flow. Conducted by certified Pandits with proper Vidhi and Muhurat guidance.",
+    price: "₹3,000 – ₹6,000",
+    imgQuery: "vastu%20shanti%20puja%20ritual",
+    highlights: ["Muhurat selection guidance", "All samagri support", "On-time service", "Post-puja clean-up"],
+    longDescription: "Vastu Shanti Puja is performed to remove negative energies and obstacles from your living or working space, creating a harmonious environment that promotes peace, prosperity, and well-being. Our certified pandits conduct this sacred ritual following authentic Vedic traditions to align your space with positive cosmic energies. The ceremony includes worship of Vastu Purush, directional deities, and specific rituals to purify and energize each area of your premises.",
+    benefits: [
+      "Removes negative energies and obstacles from your living or working space",
+      "Creates a harmonious environment that promotes peace and well-being",
+      "Attracts positive cosmic energies for prosperity and success",
+      "Aligns your space with Vastu principles for optimal energy flow",
+      "Establishes divine blessings for harmony in your home or business",
+      "Follows authentic Vedic traditions with proper mantras and procedures"
+    ],
+    process: [
+      { step: "Preparation", description: "Selection of auspicious Muhurat, preparation of puja samagri, and cleaning of the space" },
+      { step: "Ganesha Puja", description: "Invocation of Lord Ganesha to remove obstacles and ensure smooth proceedings" },
+      { step: "Vastu Purush Puja", description: "Worship of Vastu Purush to harmonize the energy of the space" },
+      { step: "Directional Worship", description: "Worship of deities associated with each direction for balanced energy" },
+      { step: "Space Purification", description: "Specific rituals to purify and energize each area of your premises" },
+      { step: "Aarti & Prasad", description: "Concluding rituals with devotional songs and distribution of blessed food" }
+    ],
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg",
+    includes: [
+      "Complete puja vidhi with Vedic mantras",
+      "All essential puja samagri",
+      "Professional pandit guidance",
+      "Post-puja clean-up service",
+      "Prasad distribution"
+    ],
+    faqs: [
+      { question: "When is the best time to perform Vastu Shanti Puja?", answer: "The best time is during an auspicious muhurat selected by our pandits based on your property's orientation and your family's horoscope." },
+      { question: "How long does the ceremony take?", answer: "The complete Vastu Shanti Puja ceremony typically takes 2-3 hours depending on the size of the property and specific requirements." },
+      { question: "What should we prepare for the ceremony?", answer: "Our pandits will provide a detailed list of items needed. Generally, you'll need to arrange for flowers, fruits, and a clean space for the ceremony." },
+      { question: "Can we perform this for rented properties?", answer: "Yes, Vastu Shanti Puja can be performed for rented properties as well. Our pandits will guide you on the appropriate rituals for your situation." }
+    ]
   }
 }
 
 // Schema markup for individual puja pages
-const generatePujaSchema = (puja: any, slug: string) => ({
+const generatePujaSchema = (puja: PujaData, slug: string) => ({
   "@context": "https://schema.org",
   "@type": "Service",
   name: puja.title,
@@ -248,10 +403,11 @@ const generatePujaSchema = (puja: any, slug: string) => ({
 export default async function PujaDetailsPage({ params }: { params: { slug: string } }) {
   const { slug } = await params;
   const puja = DATA[slug]
+  
   if (!puja) return notFound()
   
   const pujaSchema = JSON.stringify(generatePujaSchema(puja, slug))
-
+  
   return (
     <>
       <Script
@@ -259,192 +415,7 @@ export default async function PujaDetailsPage({ params }: { params: { slug: stri
         dangerouslySetInnerHTML={{ __html: pujaSchema }}
       />
       <SiteHeader />
-      <main className="mx-auto max-w-7xl py-12 px-4 sm:px-8 lg:space-y-20 overflow-x-hidden w-full">
-        {/* Hero Section */}
-        <section aria-labelledby="hero-heading" className="relative overflow-hidden rounded-t-3xl" style={{ minHeight: "550px" }}>
-          {/* Background Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-b from-muted/80 to-background z-0"></div>
-          
-          <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 py-16 lg:py-20">
-            <div className="flex flex-col h-full">
-              {/* Badge */}
-              <div className="self-start mb-6">
-                <div className="border border-border/50 rounded-2xl py-1.5 px-5 bg-card/50 backdrop-blur-sm">
-                  <h1 className="text-sm font-medium tracking-tight text-foreground/80 uppercase">
-                    Puja Service
-                  </h1>
-                </div>
-              </div>
-              
-              {/* Heading */}
-              <div className="max-w-3xl mb-10">
-                <h2 id="hero-heading" className="text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight text-foreground leading-tight">
-                  {puja.title}
-                </h2>
-              </div>
-              
-              {/* Description */}
-              <div className="max-w-2xl mb-10">
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  {puja.description}
-                </p>
-              </div>
-              
-              {/* Price */}
-              <div className="mb-10">
-                <p className="text-xl font-medium text-primary">
-                  Typical range: {puja.price}
-                </p>
-              </div>
-              
-              {/* Image */}
-              <div className="mt-auto">
-                <div className="bg-gradient-to-br from-muted/50 to-muted/20 rounded-3xl overflow-hidden border border-border/30 h-80 md:h-96">
-                  <img 
-                    src={puja.image} 
-                    alt={`${puja.title} - Navdhya Puja Services`} 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Highlights */}
-        <section aria-labelledby="highlights" className="py-10 lg:py-14">
-          <h2 id="highlights" className="font-serif text-3xl lg:text-4xl font-bold tracking-tight text-foreground mb-10">
-            Service Highlights
-          </h2>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {puja.highlights.map((highlight, index) => (
-              <div key={index} className="bg-card rounded-3xl px-4 py-4 border border-border hover:shadow-md transition-all duration-300 flex flex-col justify-between" style={{ minHeight: "180px" }}>
-                <div className="w-14 h-14 bg-[#0E3F2E] rounded-full flex items-center justify-center mb-4">
-                  <ShieldCheck className="w-6 h-6 text-white" />
-                </div>
-                
-                <div className="bg-muted rounded-2xl p-4 flex-grow">
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    {highlight}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Detailed Description */}
-        <section aria-labelledby="detailed-description" className="py-10 lg:py-14">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 id="detailed-description" className="font-serif text-3xl lg:text-4xl font-bold tracking-tight text-foreground mb-6">
-                About This Puja
-              </h2>
-              <p className="text-muted-foreground mb-5 text-base leading-relaxed">
-                {puja.longDescription}
-              </p>
-              <div className="mt-8">
-                <a 
-                  href="/#booking" 
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 px-8 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md inline-block focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                >
-                  Book This Puja
-                </a>
-              </div>
-            </div>
-            <div className="bg-muted/50 rounded-xl h-80 flex items-center justify-center shadow-sm border border-border/30 overflow-hidden">
-              <img 
-                src={puja.image} 
-                alt={`${puja.title} - Navdhya Puja Services`} 
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* Benefits */}
-        <section aria-labelledby="benefits" className="py-10 lg:py-14">
-          <h2 id="benefits" className="font-serif text-3xl lg:text-4xl font-bold tracking-tight text-foreground text-center mb-5">
-            Spiritual Benefits
-          </h2>
-          <p className="text-muted-foreground text-center max-w-3xl mx-auto mb-14 text-lg leading-relaxed">
-            Experience the profound spiritual and material benefits of this sacred ritual.
-          </p>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {puja.benefits.map((benefit, index) => (
-              <div key={index} className="border border-border/50 rounded-xl p-6 bg-card hover:shadow-md transition-all duration-300 backdrop-blur-sm">
-                <div className="flex items-center mb-4">
-                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center mr-3">
-                    <span className="text-primary text-sm">✓</span>
-                  </div>
-                  <h3 className="font-medium text-foreground">Benefit {index + 1}</h3>
-                </div>
-                <p className="text-muted-foreground text-sm">
-                  {benefit}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Process */}
-        <section aria-labelledby="process" className="py-10 lg:py-14 bg-muted/30 rounded-2xl p-8 lg:p-12">
-          <h2 id="process" className="font-serif text-3xl lg:text-4xl font-bold tracking-tight text-foreground text-center mb-5">
-            Ceremony Process
-          </h2>
-          <p className="text-muted-foreground text-center max-w-3xl mx-auto mb-14 text-lg leading-relaxed">
-            Our pandits follow a detailed, authentic process to ensure the complete spiritual benefit of this ritual.
-          </p>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {puja.process.map((step, index) => (
-              <div key={index} className="bg-card border border-border/50 rounded-xl p-6 shadow-sm backdrop-blur-sm">
-                <div className="w-12 h-12 rounded-full bg-[#0E3F2E] flex items-center justify-center text-white font-bold mb-5">
-                  {index + 1}
-                </div>
-                <h3 className="font-serif text-xl font-bold tracking-tight text-foreground mb-3">
-                  {step.step}
-                </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  {step.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Booking CTA */}
-        <section aria-labelledby="booking-cta" className="py-16 lg:py-20 text-center border-t border-b border-border/50 my-10">
-          <h2 id="booking-cta" className="font-serif text-3xl lg:text-4xl font-bold tracking-tight text-foreground mb-8">
-            Ready to Book Your {puja.title}?
-          </h2>
-          <p className="text-muted-foreground max-w-4xl mx-auto text-lg mb-10 leading-relaxed">
-            Connect with our certified pandits to schedule your puja ceremony. We'll ensure every ritual 
-            is performed with the utmost reverence and authenticity.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a 
-              href="/#booking" 
-              className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 px-8 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md inline-block focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              Book This Puja
-            </a>
-            <Link 
-              href="/pujas" 
-              className="bg-transparent border border-primary text-primary hover:bg-primary/10 font-medium py-3 px-8 rounded-lg transition-all duration-300 inline-block focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              View All Pujas
-            </Link>
-          </div>
-        </section>
-      </main>
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 pb-12">
-        <p className="text-center text-muted-foreground italic text-lg">
-          May divine blessings grace every sacred moment. – Team Navdhya
-        </p>
-      </div>
+      <PujaDetailsClient puja={puja} slug={slug} />
       <SiteFooter />
     </>
   )

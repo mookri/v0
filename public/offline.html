@@ -367,7 +367,7 @@
     <!-- Header -->
     <header class="header">
         <div class="logo-container">
-            <img src="./navdhya-logo.png" alt="Navdhya Logo" class="logo-mark">
+            <img src="/navdhya-logo.png" alt="Navdhya Logo" class="logo-mark" onerror="this.src='/placeholder-logo.png'">
         </div>
     </header>
 
@@ -442,8 +442,21 @@
     </footer>
 
     <script>
+        // Check if we're in development mode
+        const isDevelopment = location.hostname === 'localhost' || 
+                             location.hostname === '127.0.0.1' || 
+                             location.hostname === '[::1]' ||
+                             location.hostname.includes('.local');
+        
         // Show visual notification banner
         function showNotificationBanner() {
+            // Skip in development
+            if (isDevelopment) {
+                // In development, just reload the page
+                window.location.reload();
+                return;
+            }
+            
             const banner = document.getElementById('notificationBanner');
             banner.classList.add('show');
             
@@ -459,6 +472,12 @@
         
         // Retry connection function
         function retryConnection() {
+            // Skip in development
+            if (isDevelopment) {
+                window.location.reload();
+                return;
+            }
+            
             const button = event.target.closest('button');
             const originalText = button.innerHTML;
             button.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg> Checking...';
@@ -479,17 +498,29 @@
                     // Still offline
                     button.innerHTML = originalText;
                     button.disabled = false;
-                    alert('Still offline. Please check your connection and try again.');
+                    // Show alert after a short delay to allow UI to update
+                    setTimeout(() => {
+                        alert('Still offline. Please check your connection and try again.');
+                    }, 100);
                 });
         }
         
         // Check for online status and reload when connection is restored
         window.addEventListener('online', () => {
+            // Skip in development
+            if (isDevelopment) {
+                return;
+            }
             showNotificationBanner();
         });
         
         // Listen for messages from service worker
         navigator.serviceWorker.addEventListener('message', function(event) {
+            // Skip in development
+            if (isDevelopment) {
+                return;
+            }
+            
             if (event.data && event.data.type === 'ONLINE') {
                 showNotificationBanner();
             } else if (event.data && event.data.type === 'OFFLINE') {
@@ -498,21 +529,33 @@
             }
         });
         
-        // Periodically check connection status
-        setInterval(() => {
-            fetch('/', { method: 'HEAD', cache: 'no-store' })
-                .then(response => {
-                    if (response.ok) {
-                        // If we can fetch, we're online - check if we need to reload
-                        if (window.location.pathname === '/offline.html') {
-                            window.location.href = '/';
+        // Periodically check connection status (only in production)
+        if (!isDevelopment) {
+            setInterval(() => {
+                fetch('/', { method: 'HEAD', cache: 'no-store' })
+                    .then(response => {
+                        if (response.ok) {
+                            // If we can fetch, we're online - check if we need to reload
+                            if (window.location.pathname === '/offline.html') {
+                                window.location.href = '/';
+                            }
                         }
-                    }
-                })
-                .catch(() => {
-                    // Still offline, do nothing
-                });
-        }, 5000); // Check every 5 seconds
+                    })
+                    .catch(() => {
+                        // Still offline, do nothing
+                    });
+            }, 5000); // Check every 5 seconds
+        }
+        
+        // Add fallback for logo loading
+        window.addEventListener('load', function() {
+            const logo = document.querySelector('.logo-mark');
+            if (logo && !logo.complete) {
+                logo.onerror = function() {
+                    this.src = '/placeholder-logo.png';
+                };
+            }
+        });
     </script>
 </body>
 </html>

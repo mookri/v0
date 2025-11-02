@@ -1,42 +1,11 @@
+'use client'
+import React, { useState, useEffect } from 'react';
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
 import Script from "next/script"
 import Link from "next/link"
-import { Grid, Heart, Star, Calendar, Users, BookOpen, Zap, ShieldCheck } from "lucide-react"
-
-// Add page-specific metadata
-export const metadata = {
-  title: "Puja Services & Rituals | Navdhya – Delhi's Trusted Spiritual Wellness",
-  description: "Explore our comprehensive catalog of authentic Hindu puja services and spiritual rituals. From home pujas to life event ceremonies, performed by certified Vedic pandits in Delhi NCR.",
-  keywords: "Puja Services in Delhi, Hindu Rituals, Spiritual Ceremonies, Vedic Pandits, Home Pujas, Life Event Ceremonies, Delhi Spiritual Services",
-  openGraph: {
-    title: "Puja Services & Rituals | Navdhya – Delhi's Trusted Spiritual Wellness",
-    description: "Explore our comprehensive catalog of authentic Hindu puja services and spiritual rituals. From home pujas to life event ceremonies, performed by certified Vedic pandits in Delhi NCR.",
-    url: `https://www.navdhya.com/pujas`,
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Navdhya Puja Services Catalog",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Puja Services & Rituals | Navdhya – Delhi's Trusted Spiritual Wellness",
-    description: "Explore our comprehensive catalog of authentic Hindu puja services and spiritual rituals. From home pujas to life event ceremonies, performed by certified Vedic pandits in Delhi NCR.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/pujas",
-  },
-}
+import { ChevronDown, Heart, Eye, BarChart2, ShoppingCart, Filter, X, ArrowRight } from "lucide-react"
 
 // Schema markup for the puja catalog page
 const PUJA_CATALOG_SCHEMA = {
@@ -51,129 +20,600 @@ const PUJA_CATALOG_SCHEMA = {
   ])
 }
 
-// Puja data for the catalog
-const PUJA_CATEGORIES = [
+interface Puja {
+  id: number;
+  name: string;
+  category: string;
+  price: string;
+  originalPrice?: string;
+  image: string;
+  badge?: string;
+  slug: string;
+  description: string;
+  priceRange?: string;
+  panditType?: string;
+  ritualType?: string;
+  availability?: string;
+}
+
+// Extended puja data with additional filter properties
+const allPujas: Puja[] = [
   {
-    id: "home-family",
-    name: "Home & Family Rituals",
-    icon: <Heart className="w-6 h-6" />,
-    description: "Sacred ceremonies to bless your home and family with harmony, prosperity, and divine protection.",
-    pujas: [
-      {
-        slug: "griha-pravesh",
-        title: "Griha Pravesh Puja",
-        description: "An auspicious ceremony performed before entering a new home to invoke blessings, prosperity, and harmony.",
-        price: "₹2,500 – ₹5,500",
-        image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg"
-      },
-      {
-        slug: "satyanarayan-katha",
-        title: "Satyanarayan Katha",
-        description: "A devotional ritual dedicated to Lord Vishnu for prosperity, peace, and fulfillment of wishes.",
-        price: "₹2,000 – ₹4,500",
-        image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg"
-      },
-      {
-        slug: "lakshmi-ganesh-puja",
-        title: "Lakshmi Ganesh Puja",
-        description: "Performed to seek blessings from Lord Ganesh and Goddess Lakshmi for removal of obstacles and prosperity.",
-        price: "₹1,800 – ₹3,800",
-        image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg"
-      }
-    ]
+    id: 1,
+    name: "Griha Pravesh Puja",
+    category: "Home & Family",
+    price: "₹2,500",
+    originalPrice: "₹5,500",
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg",
+    badge: "-11%",
+    slug: "griha-pravesh",
+    description: "An auspicious ceremony performed before entering a new home to invoke blessings, prosperity, and harmony.",
+    priceRange: "₹1,000 - ₹5,000",
+    panditType: "Certified Pandits",
+    ritualType: "Vedic",
+    availability: "Immediate"
   },
   {
-    id: "life-events",
-    name: "Life Events & Milestones",
-    icon: <Users className="w-6 h-6" />,
-    description: "Sacred ceremonies to mark important life transitions and celebrate divine blessings.",
-    pujas: [
-      {
-        slug: "hindu-wedding",
-        title: "Hindu Wedding Ceremony",
-        description: "Complete traditional wedding rituals with Vedic mantras, mandap, and proper vidhi performed by experienced Pandits.",
-        price: "₹24,999 – ₹75,000",
-        image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg"
-      },
-      {
-        slug: "baby-naming",
-        title: "Baby Naming (Namkaran)",
-        description: "A sacred ceremony to give your child a divine name and seek blessings for their future.",
-        price: "₹2,500 – ₹4,500",
-        image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg"
-      },
-      {
-        slug: "annaprashan",
-        title: "Annaprashan Ceremony",
-        description: "The first feeding of solid food to your child, marking an important milestone in their growth.",
-        price: "₹2,000 – ₹4,000",
-        image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg"
-      }
-    ]
+    id: 2,
+    name: "Satyanarayan Katha",
+    category: "Home & Family",
+    price: "₹2,000",
+    originalPrice: "₹4,500",
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg",
+    badge: "-34%",
+    slug: "satyanarayan-katha",
+    description: "A devotional ritual dedicated to Lord Vishnu for prosperity, peace, and fulfillment of wishes.",
+    priceRange: "₹1,000 - ₹5,000",
+    panditType: "Experienced Pandits",
+    ritualType: "Purānic",
+    availability: "Within 3 Days"
   },
   {
-    id: "business-prosperity",
-    name: "Business & Prosperity",
-    icon: <Zap className="w-6 h-6" />,
-    description: "Rituals to invoke divine blessings for business success, wealth, and professional growth.",
-    pujas: [
-      {
-        slug: "office-opening",
-        title: "Office/Shop Opening Puja",
-        description: "Bless your new business space with divine energy for success, prosperity, and protection.",
-        price: "₹3,500 – ₹7,500",
-        image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg"
-      },
-      {
-        slug: "vastu-shanti",
-        title: "Vastu Shanti Puja",
-        description: "Harmonize your living or working space with Vastu principles for positive energy flow.",
-        price: "₹3,000 – ₹6,000",
-        image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg"
-      },
-      {
-        slug: "dhan-prapti",
-        title: "Dhan Prapti Puja",
-        description: "Invoke the blessings of Lakshmi Mata for wealth, prosperity, and financial stability.",
-        price: "₹2,500 – ₹5,000",
-        image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg"
-      }
-    ]
+    id: 3,
+    name: "Lakshmi Ganesh Puja",
+    category: "Home & Family",
+    price: "₹1,800",
+    originalPrice: "₹3,800",
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg",
+    badge: "-24%",
+    slug: "lakshmi-ganesh-puja",
+    description: "Performed to seek blessings from Lord Ganesh and Goddess Lakshmi for removal of obstacles and prosperity.",
+    priceRange: "₹1,000 - ₹5,000",
+    panditType: "Certified Pandits",
+    ritualType: "Vedic",
+    availability: "Within Week"
   },
   {
-    id: "online-hybrid",
-    name: "Online & Hybrid Services",
-    icon: <Grid className="w-6 h-6" />,
-    description: "Modern spiritual solutions that bring traditional rituals to your digital space.",
-    pujas: [
-      {
-        slug: "live-video-puja",
-        title: "Live Video Puja",
-        description: "Participate in authentic pujas from anywhere through our secure video platform with certified pandits.",
-        price: "₹1,500 – ₹3,500",
-        image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg"
-      },
-      {
-        slug: "virtual-pandit",
-        title: "Virtual Pandit Assistance",
-        description: "Get personalized guidance from experienced pandits through video calls for your spiritual needs.",
-        price: "₹1,000/hr – ₹2,500/session",
-        image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg"
-      },
-      {
-        slug: "digital-puja-kit",
-        title: "Digital Puja Kit Delivery",
-        description: "Authentically sourced puja samagri delivered to your doorstep with detailed instructions.",
-        price: "₹500 – ₹2,500",
-        image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg"
-      }
-    ]
+    id: 4,
+    name: "Hindu Wedding Ceremony",
+    category: "Life Events",
+    price: "₹24,999",
+    originalPrice: "₹75,000",
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg",
+    badge: "Hot",
+    slug: "hindu-wedding",
+    description: "Complete traditional wedding rituals with Vedic mantras, mandap, and proper vidhi performed by experienced Pandits.",
+    priceRange: "Above ₹10,000",
+    panditType: "Senior Pandits",
+    ritualType: "Vedic",
+    availability: "Within 3 Days"
+  },
+  {
+    id: 5,
+    name: "Baby Naming (Namkaran)",
+    category: "Life Events",
+    price: "₹2,500",
+    originalPrice: "₹4,500",
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg",
+    badge: "-18%",
+    slug: "baby-naming",
+    description: "A sacred ceremony to give your child a divine name and seek blessings for their future.",
+    priceRange: "₹1,000 - ₹5,000",
+    panditType: "Experienced Pandits",
+    ritualType: "Custom",
+    availability: "Immediate"
+  },
+  {
+    id: 6,
+    name: "Annaprashan Ceremony",
+    category: "Life Events",
+    price: "₹2,000",
+    originalPrice: "₹4,000",
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg",
+    slug: "annaprashan",
+    description: "The first feeding of solid food to your child, marking an important milestone in their growth.",
+    priceRange: "₹1,000 - ₹5,000",
+    panditType: "Certified Pandits",
+    ritualType: "Purānic",
+    availability: "Within Week"
+  },
+  {
+    id: 7,
+    name: "Office/Shop Opening Puja",
+    category: "Business & Prosperity",
+    price: "₹3,500",
+    originalPrice: "₹7,500",
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg",
+    badge: "-15%",
+    slug: "office-opening",
+    description: "Bless your new business space with divine energy for success, prosperity, and protection.",
+    priceRange: "₹1,000 - ₹5,000",
+    panditType: "Senior Pandits",
+    ritualType: "Tantric",
+    availability: "Immediate"
+  },
+  {
+    id: 8,
+    name: "Vastu Shanti Puja",
+    category: "Business & Prosperity",
+    price: "₹3,000",
+    originalPrice: "₹6,000",
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg",
+    badge: "-22%",
+    slug: "vastu-shanti",
+    description: "Harmonize your living or working space with Vastu principles for positive energy flow.",
+    priceRange: "₹1,000 - ₹5,000",
+    panditType: "Experienced Pandits",
+    ritualType: "Vedic",
+    availability: "Within 3 Days"
+  },
+  {
+    id: 9,
+    name: "Ganesh Chaturthi",
+    category: "Festivals",
+    price: "₹5,000",
+    originalPrice: "₹7,000",
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358800/Whisk_db05ba7c437e48abe6440798d2a33b09dr_bokdku.jpg",
+    badge: "-15%",
+    slug: "ganesh-chaturthi",
+    description: "Festival celebration with traditional Ganesh installation and daily prayers.",
+    priceRange: "₹1,000 - ₹5,000",
+    panditType: "Experienced Pandits",
+    ritualType: "Purānic",
+    availability: "Within 3 Days"
+  },
+  {
+    id: 10,
+    name: "Navagraha Puja",
+    category: "Special Rituals",
+    price: "₹4,500",
+    originalPrice: "₹6,000",
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679025/Whisk_74db7ede20dd9ab86654355ac2ceeb04dr_wgtjc6.jpg",
+    badge: "-25%",
+    slug: "navagraha-puja",
+    description: "Nine planetary worship for removing obstacles and bringing positive energy.",
+    priceRange: "₹1,000 - ₹5,000",
+    panditType: "Certified Pandits",
+    ritualType: "Vedic",
+    availability: "Within Week"
   }
-]
+];
+
+const filters = {
+  category: ["Home & Family", "Life Events", "Business & Prosperity", "Festivals", "Special Rituals", "Online Services"],
+  priceRange: ["Under ₹1,000", "₹1,000 - ₹5,000", "₹5,000 - ₹10,000", "Above ₹10,000"],
+  pandit: ["Certified Pandits", "Experienced Pandits", "Senior Pandits"],
+  ritualType: ["Vedic", "Tantric", "Purānic", "Custom"],
+  availability: ["Immediate", "Within 3 Days", "Within Week"]
+};
 
 export default function PujaCatalogPage() {
+  const [showOnSale, setShowOnSale] = useState(false);
+  const [sortBy, setSortBy] = useState("price-desc");
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState({
+    category: [] as string[],
+    priceRange: [] as string[],
+    pandit: [] as string[],
+    ritualType: [] as string[],
+    availability: [] as string[]
+  });
+  const [filteredPujas, setFilteredPujas] = useState<Puja[]>(allPujas);
+  const [expandedFilter, setExpandedFilter] = useState<string | null>(null);
   const pujaSchema = JSON.stringify(PUJA_CATALOG_SCHEMA)
   
+  // Apply filters and sorting whenever selected filters, showOnSale, or sortBy changes
+  useEffect(() => {
+    let result = [...allPujas];
+    
+    // Apply discount filter
+    if (showOnSale) {
+      result = result.filter(puja => puja.badge);
+    }
+    
+    // Apply category filter
+    if (selectedFilters.category.length > 0) {
+      result = result.filter(puja => 
+        selectedFilters.category.includes(puja.category)
+      );
+    }
+    
+    // Apply price range filter
+    if (selectedFilters.priceRange.length > 0) {
+      result = result.filter(puja => 
+        selectedFilters.priceRange.some(range => puja.priceRange === range)
+      );
+    }
+    
+    // Apply pandit filter
+    if (selectedFilters.pandit.length > 0) {
+      result = result.filter(puja => 
+        selectedFilters.pandit.includes(puja.panditType || '')
+      );
+    }
+    
+    // Apply ritual type filter
+    if (selectedFilters.ritualType.length > 0) {
+      result = result.filter(puja => 
+        selectedFilters.ritualType.includes(puja.ritualType || '')
+      );
+    }
+    
+    // Apply availability filter
+    if (selectedFilters.availability.length > 0) {
+      result = result.filter(puja => 
+        selectedFilters.availability.includes(puja.availability || '')
+      );
+    }
+    
+    // Apply sorting
+    switch (sortBy) {
+      case "price-desc":
+        result.sort((a, b) => {
+          const priceA = parseInt(a.price.replace(/[₹,]/g, ""));
+          const priceB = parseInt(b.price.replace(/[₹,]/g, ""));
+          return priceB - priceA;
+        });
+        break;
+      case "price":
+        result.sort((a, b) => {
+          const priceA = parseInt(a.price.replace(/[₹,]/g, ""));
+          const priceB = parseInt(b.price.replace(/[₹,]/g, ""));
+          return priceA - priceB;
+        });
+        break;
+      case "popularity":
+        // For demo purposes, we'll sort by ID as a proxy for popularity
+        result.sort((a, b) => b.id - a.id);
+        break;
+      case "rating":
+        // For demo purposes, we'll sort by ID as a proxy for rating
+        result.sort((a, b) => b.id - a.id);
+        break;
+      case "date":
+        // For demo purposes, we'll sort by ID as a proxy for date (newer first)
+        result.sort((a, b) => b.id - a.id);
+        break;
+      default:
+        break;
+    }
+    
+    setFilteredPujas(result);
+  }, [selectedFilters, showOnSale, sortBy]);
+  
+  const toggleFilter = (filterType: string, value: string) => {
+    setSelectedFilters(prev => {
+      const currentFilters = prev[filterType as keyof typeof prev] || [];
+      const updatedFilters = currentFilters.includes(value)
+        ? currentFilters.filter(item => item !== value)
+        : [...currentFilters, value];
+      
+      return {
+        ...prev,
+        [filterType]: updatedFilters
+      };
+    });
+  };
+  
+  const clearAllFilters = () => {
+    setSelectedFilters({
+      category: [],
+      priceRange: [],
+      pandit: [],
+      ritualType: [],
+      availability: []
+    });
+    setShowOnSale(false);
+    setExpandedFilter(null);
+    setSortBy("price-desc");
+  };
+  
+  const hasActiveFilters = () => {
+    return (
+      selectedFilters.category.length > 0 || 
+      selectedFilters.priceRange.length > 0 || 
+      selectedFilters.pandit.length > 0 || 
+      selectedFilters.ritualType.length > 0 || 
+      selectedFilters.availability.length > 0 || 
+      showOnSale
+    );
+  };
+  
+  const FilterDropdown = ({ title, items, filterType }: { title: string; items: string[]; filterType: string }) => {
+    const isExpanded = expandedFilter === title;
+    
+    return (
+      <div className="relative">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setExpandedFilter(isExpanded ? null : title);
+          }}
+          className={`px-3 py-1.5 text-xs border rounded-full transition-colors flex items-center gap-1 ${
+            selectedFilters[filterType as keyof typeof selectedFilters]?.length > 0
+              ? 'border-[#0E3F2E] bg-[#0E3F2E] text-white'
+              : 'border-border bg-background'
+          }`}
+        >
+          {title}
+          <ChevronDown className={`w-3 h-3 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+          {selectedFilters[filterType as keyof typeof selectedFilters]?.length > 0 && (
+            <span className="ml-1 bg-white text-[#0E3F2E] text-[8px] rounded-full w-4 h-4 flex items-center justify-center">
+              {selectedFilters[filterType as keyof typeof selectedFilters]?.length}
+            </span>
+          )}
+        </button>
+        
+        {isExpanded && (
+          <div 
+            className="absolute top-full mt-1 bg-background border border-border rounded-md shadow-lg z-10 w-48 max-h-[300px] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-2 space-y-1">
+              {items.map((item) => (
+                <label key={item} className="flex items-center p-2 hover:bg-muted rounded cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectedFilters[filterType as keyof typeof selectedFilters]?.includes(item) || false}
+                    onChange={() => toggleFilter(filterType, item)}
+                    className="w-4 h-4 rounded border-border text-[#0E3F2E] focus:ring-[#0E3F2E]"
+                  />
+                  <span className="ml-2 text-xs">{item}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+  
+  const FilterPopup = () => (
+    <div 
+      className="fixed inset-0 z-50 bg-background"
+      onClick={() => setExpandedFilter(null)}
+    >
+      <div className="flex flex-col h-full">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h2 className="text-lg font-semibold">Filters</h2>
+          <button 
+            onClick={() => {
+              setShowFilters(false);
+              setExpandedFilter(null);
+            }}
+            className="p-2 rounded-full hover:bg-muted"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        
+        {/* Filters Content - 2 Column Layout */}
+        <div className="flex-1 overflow-hidden">
+          <div className="flex h-full">
+            {/* Filter Categories - Narrow Column */}
+            <div className="w-1/3 border-r border-border overflow-y-auto bg-muted/30">
+              <div className="p-4 space-y-1">
+                <h3 className="font-medium text-sm py-2 px-3 rounded-md bg-background border border-border">Categories</h3>
+                <h3 className="font-medium text-sm py-2 px-3 rounded-md hover:bg-muted cursor-pointer">Price Range</h3>
+                <h3 className="font-medium text-sm py-2 px-3 rounded-md hover:bg-muted cursor-pointer">Pandit Type</h3>
+                <h3 className="font-medium text-sm py-2 px-3 rounded-md hover:bg-muted cursor-pointer">Ritual Type</h3>
+                <h3 className="font-medium text-sm py-2 px-3 rounded-md hover:bg-muted cursor-pointer">Availability</h3>
+              </div>
+            </div>
+            
+            {/* Filter Options - Wide Column */}
+            <div className="w-2/3 overflow-y-auto">
+              <div className="p-4">
+                <div className="space-y-6">
+                  <div className="pb-4">
+                    <h3 className="font-medium mb-3 text-sm">Category</h3>
+                    <div className="space-y-2">
+                      {filters.category.map((value) => (
+                        <label key={value} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={selectedFilters.category.includes(value)}
+                            onChange={() => toggleFilter('category', value)}
+                            className="w-4 h-4 rounded border-border text-[#0E3F2E] focus:ring-[#0E3F2E]"
+                          />
+                          <span className="ml-2 text-sm">{value}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="pb-4">
+                    <h3 className="font-medium mb-3 text-sm">Price Range</h3>
+                    <div className="space-y-2">
+                      {filters.priceRange.map((value) => (
+                        <label key={value} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={selectedFilters.priceRange.includes(value)}
+                            onChange={() => toggleFilter('priceRange', value)}
+                            className="w-4 h-4 rounded border-border text-[#0E3F2E] focus:ring-[#0E3F2E]"
+                          />
+                          <span className="ml-2 text-sm">{value}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="pb-4">
+                    <h3 className="font-medium mb-3 text-sm">Pandit Type</h3>
+                    <div className="space-y-2">
+                      {filters.pandit.map((value) => (
+                        <label key={value} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={selectedFilters.pandit.includes(value)}
+                            onChange={() => toggleFilter('pandit', value)}
+                            className="w-4 h-4 rounded border-border text-[#0E3F2E] focus:ring-[#0E3F2E]"
+                          />
+                          <span className="ml-2 text-sm">{value}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="pb-4">
+                    <h3 className="font-medium mb-3 text-sm">Ritual Type</h3>
+                    <div className="space-y-2">
+                      {filters.ritualType.map((value) => (
+                        <label key={value} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={selectedFilters.ritualType.includes(value)}
+                            onChange={() => toggleFilter('ritualType', value)}
+                            className="w-4 h-4 rounded border-border text-[#0E3F2E] focus:ring-[#0E3F2E]"
+                          />
+                          <span className="ml-2 text-sm">{value}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="border-t border-border pt-4">
+                    <h3 className="font-medium mb-3 text-sm">Availability</h3>
+                    <div className="space-y-2">
+                      {filters.availability.map((value) => (
+                        <label key={value} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={selectedFilters.availability.includes(value)}
+                            onChange={() => toggleFilter('availability', value)}
+                            className="w-4 h-4 rounded border-border text-[#0E3F2E] focus:ring-[#0E3F2E]"
+                          />
+                          <span className="ml-2 text-sm">{value}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="border-t border-border pt-4">
+                    <h3 className="font-medium mb-3 text-sm">Special Offers</h3>
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={showOnSale}
+                        onChange={(e) => setShowOnSale(e.target.checked)}
+                        className="w-4 h-4 rounded border-border text-[#0E3F2E] focus:ring-[#0E3F2E]"
+                      />
+                      <span className="ml-2 text-sm">Show only discounted pujas</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Apply Button */}
+        <div className="p-4 border-t border-border flex gap-3">
+          <button 
+            onClick={clearAllFilters}
+            className="flex-1 border border-border rounded-md py-3 font-medium text-foreground hover:bg-muted transition-colors"
+          >
+            Clear All
+          </button>
+          <button 
+            onClick={() => {
+              setShowFilters(false);
+              setExpandedFilter(null);
+            }}
+            className="flex-1 bg-[#0E3F2E] hover:bg-[#0E3F2E]/90 text-white font-medium py-3 rounded-md transition-all duration-300 shadow-sm hover:shadow-md"
+          >
+            Apply Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const PujaCard = ({ puja }: { puja: Puja }) => {
+    const [isHovered, setIsHovered] = useState(false);
+    
+    return (
+      <div 
+        className="group relative border border-border rounded-lg overflow-hidden bg-card flex flex-col h-full"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <div className="relative bg-muted flex-shrink-0">
+          <img 
+            src={puja.image} 
+            alt={puja.name}
+            className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+          
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+          
+          {puja.badge && (
+            <div className="absolute top-2 right-2 z-10">
+              <span className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-bold ${
+                puja.badge === 'Hot' ? 'bg-green-600' : 'bg-red-600'
+              }`}>
+                {puja.badge}
+              </span>
+            </div>
+          )}
+          
+          <div className={`absolute top-2 left-2 flex flex-col gap-1 transition-opacity duration-300 ${
+            isHovered ? 'opacity-100' : 'opacity-0'
+          }`}>
+            <button className="w-7 h-7 bg-background/80 rounded-full flex items-center justify-center hover:bg-[#0E3F2E] hover:text-white transition-colors shadow-sm">
+              <Heart className="w-3 h-3" />
+            </button>
+            <button className="w-7 h-7 bg-background/80 rounded-full flex items-center justify-center hover:bg-[#0E3F2E] hover:text-white transition-colors shadow-sm">
+              <Eye className="w-3 h-3" />
+            </button>
+          </div>
+        </div>
+        
+        <div className="p-3 space-y-1.5 flex flex-col flex-grow">
+          <div className="flex justify-between items-start">
+            <p className="text-[10px] text-muted-foreground">{puja.category}</p>
+            <div className="flex items-center gap-1">
+              {puja.originalPrice && (
+                <span className="text-[10px] text-muted-foreground line-through">{puja.originalPrice}</span>
+              )}
+              <span className={`font-medium text-xs ${puja.originalPrice ? 'text-red-600' : 'text-foreground'}`}>
+                {puja.price}
+              </span>
+            </div>
+          </div>
+          
+          <h3 className="font-medium hover:text-[#0E3F2E] transition-colors line-clamp-2 text-xs flex-grow">
+            <a href="#">{puja.name}</a>
+          </h3>
+          
+          <p className="text-[10px] text-muted-foreground line-clamp-2">
+            {puja.description}
+          </p>
+          
+          <Link 
+            href={`/pujas/${puja.slug}`}
+            className="mt-2 inline-flex items-center justify-center gap-2 w-full bg-[#0E3F2E] hover:bg-[#0E3F2E]/90 text-white font-medium py-2 px-4 rounded-md transition-all duration-300 shadow-sm hover:shadow-md text-center text-xs"
+          >
+            <span>Book Now</span>
+            <ArrowRight className="w-4 h-4 animate-looping-arrow" />
+          </Link>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
       <Script
@@ -181,270 +621,128 @@ export default function PujaCatalogPage() {
         dangerouslySetInnerHTML={{ __html: pujaSchema }}
       />
       <SiteHeader />
-      <main className="mx-auto max-w-7xl py-12 px-4 sm:px-8 lg:space-y-20 overflow-x-hidden w-full">
-        {/* Hero Section */}
-        <section aria-labelledby="hero-heading" className="relative overflow-hidden rounded-t-3xl" style={{ minHeight: "550px" }}>
-          {/* Background Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-b from-muted/80 to-background z-0"></div>
-          
-          <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 py-16 lg:py-20">
-            <div className="flex flex-col h-full">
-              {/* Badge */}
-              <div className="self-start mb-6">
-                <div className="border border-border/50 rounded-2xl py-1.5 px-5 bg-card/50 backdrop-blur-sm">
-                  <h1 className="text-sm font-medium tracking-tight text-foreground/80 uppercase">
-                    Puja Services
-                  </h1>
-                </div>
-              </div>
-              
-              {/* Heading */}
-              <div className="max-w-3xl mb-10">
-                <h2 id="hero-heading" className="text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight text-foreground leading-tight">
-                  Authentic <span className="text-primary">Spiritual Rituals</span> for Every Occasion
-                </h2>
-              </div>
-              
-              {/* Subheading */}
-              <div className="max-w-2xl mb-10">
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  From home pujas to life milestones, our certified Vedic pandits bring divine blessings to your most sacred moments.
-                </p>
-              </div>
-              
-              {/* Image */}
-              <div className="mt-auto">
-                <div className="bg-gradient-to-br from-muted/50 to-muted/20 rounded-3xl overflow-hidden border border-border/30 h-80 md:h-96">
-                  <img 
-                    src="https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg" 
-                    alt="Navdhya Puja Services in Delhi" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+      <div 
+        className="min-h-screen bg-background"
+        onClick={() => setExpandedFilter(null)}
+      >
+        {/* Breadcrumb */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 mt-4">
+          <nav className="text-xs text-muted-foreground">
+            <Link href="/" className="hover:text-foreground">Home</Link>
+            <span className="mx-1.5">/</span>
+            <Link href="/pujas" className="hover:text-foreground">Services</Link>
+            <span className="mx-1.5">/</span>
+            <span className="text-foreground">Puja Services</span>
+          </nav>
+        </div>
 
-        {/* Categories Overview */}
-        <section aria-labelledby="categories-overview" className="py-10 lg:py-14">
-          <div className="text-center mb-16">
-            <div className="inline-block px-4 py-2 bg-card border border-border rounded-full text-sm text-muted-foreground mb-6">
-              OUR PUJA CATEGORIES
-            </div>
-            
-            <h2 id="categories-overview" className="font-serif text-3xl lg:text-4xl font-bold tracking-tight text-foreground mb-6">
-              Comprehensive Spiritual Services
-            </h2>
-            
-            <p className="text-muted-foreground max-w-3xl mx-auto text-lg leading-relaxed">
-              Explore our carefully curated puja categories, each designed to address specific spiritual needs 
-              and life occasions with authentic Vedic traditions.
-            </p>
-          </div>
-
-          {/* Category Cards */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {PUJA_CATEGORIES.map((category) => (
-              <div key={category.id} className="bg-card rounded-3xl px-4 py-4 border border-border hover:shadow-md transition-all duration-300 flex flex-col justify-between" style={{ minHeight: "380px" }}>
-                <div className="w-14 h-14 bg-[#0E3F2E] rounded-full flex items-center justify-center mb-24">
-                  {category.icon}
-                </div>
-                
-                <div className="bg-muted rounded-2xl p-6 flex-grow">
-                  <h3 className="text-xl font-medium text-foreground mb-3">
-                    {category.name}
-                  </h3>
-                  
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    {category.description}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Puja Catalog */}
-        <section aria-labelledby="puja-catalog" className="py-10 lg:py-14">
-          <h2 id="puja-catalog" className="font-serif text-3xl lg:text-4xl font-bold tracking-tight text-foreground text-center mb-5">
-            Our Puja Catalog
-          </h2>
-          <p className="text-muted-foreground text-center max-w-3xl mx-auto mb-14 text-lg leading-relaxed">
-            Discover our extensive collection of authentic Hindu rituals and ceremonies, each performed 
-            with meticulous attention to Vedic traditions and personalized care.
-          </p>
-          
-          {/* Category Tabs */}
-          <div className="space-y-20">
-            {PUJA_CATEGORIES.map((category) => (
-              <div key={category.id} className="border-b border-border/50 pb-16">
-                <div className="flex items-center mb-10">
-                  <div className="w-12 h-12 bg-[#0E3F2E] rounded-full flex items-center justify-center mr-4">
-                    {category.icon}
-                  </div>
-                  <div>
-                    <h3 className="font-serif text-2xl font-bold tracking-tight text-foreground">
-                      {category.name}
-                    </h3>
-                    <p className="text-muted-foreground">
-                      {category.description}
-                    </p>
-                  </div>
-                </div>
-                
-                {/* Puja Cards */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {category.pujas.map((puja) => (
-                    <div key={puja.slug} className="border border-border/50 rounded-xl p-6 bg-card hover:shadow-md transition-all duration-300 backdrop-blur-sm flex flex-col h-full">
-                      <div className="bg-muted rounded-lg overflow-hidden mb-5 h-48">
-                        <img 
-                          src={puja.image} 
-                          alt={puja.title} 
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      
-                      <h4 className="font-serif text-xl font-bold tracking-tight text-foreground mb-3">
-                        {puja.title}
-                      </h4>
-                      
-                      <p className="text-muted-foreground text-sm mb-4 flex-grow leading-relaxed">
-                        {puja.description}
-                      </p>
-                      
-                      <div className="mt-auto">
-                        <p className="text-primary font-medium mb-5">
-                          {puja.price}
-                        </p>
-                        
-                        <Link 
-                          href={`/pujas/${puja.slug}`}
-                          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2.5 px-4 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md inline-block text-center focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 text-sm"
-                        >
-                          View Details
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Why Choose Navdhya for Pujas */}
-        <section aria-labelledby="why-pujas" className="py-10 lg:py-14 bg-muted/30 rounded-2xl p-8 lg:p-12">
-          <h2 id="why-pujas" className="font-serif text-3xl lg:text-4xl font-bold tracking-tight text-foreground text-center mb-5">
-            Why Choose Navdhya for Your Pujas
-          </h2>
-          <p className="text-muted-foreground text-center max-w-3xl mx-auto mb-14 text-lg leading-relaxed">
-            Our commitment to authenticity, professionalism, and personalized service sets us apart in delivering 
-            meaningful spiritual experiences.
-          </p>
-          
-          <div className="grid lg:grid-cols-2 gap-12">
-            <div>
-              <h3 className="font-serif text-xl font-bold tracking-tight text-foreground mb-6">Authentic Rituals</h3>
-              <ul className="space-y-6">
-                <li className="flex">
-                  <div className="flex-shrink-0 h-7 w-7 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center mr-4 mt-0.5">
-                    <span className="text-primary text-sm">✓</span>
-                  </div>
-                  <div>
-                    <p className="font-medium text-foreground">Vedic Authenticity</p>
-                    <p className="text-muted-foreground text-sm mt-1">
-                      All rituals follow authentic Vedic traditions with proper mantras and procedures.
-                    </p>
-                  </div>
-                </li>
-                <li className="flex">
-                  <div className="flex-shrink-0 h-7 w-7 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center mr-4 mt-0.5">
-                    <span className="text-primary text-sm">✓</span>
-                  </div>
-                  <div>
-                    <p className="font-medium text-foreground">Certified Pandits</p>
-                    <p className="text-muted-foreground text-sm mt-1">
-                      Our pandits are verified experts with deep knowledge of rituals and traditions.
-                    </p>
-                  </div>
-                </li>
-                <li className="flex">
-                  <div className="flex-shrink-0 h-7 w-7 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center mr-4 mt-0.5">
-                    <span className="text-primary text-sm">✓</span>
-                  </div>
-                  <div>
-                    <p className="font-medium text-foreground">Personalized Approach</p>
-                    <p className="text-muted-foreground text-sm mt-1">
-                      Customized ceremonies based on your specific traditions and requirements.
-                    </p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-serif text-xl font-bold tracking-tight text-foreground mb-6">Professional Service</h3>
-              <ul className="space-y-6">
-                <li className="flex">
-                  <div className="flex-shrink-0 h-7 w-7 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center mr-4 mt-0.5">
-                    <span className="text-primary text-sm">✓</span>
-                  </div>
-                  <div>
-                    <p className="font-medium text-foreground">End-to-End Management</p>
-                    <p className="text-muted-foreground text-sm mt-1">
-                      We handle everything from booking to completion, so you can focus on the spiritual experience.
-                    </p>
-                  </div>
-                </li>
-                <li className="flex">
-                  <div className="flex-shrink-0 h-7 w-7 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center mr-4 mt-0.5">
-                    <span className="text-primary text-sm">✓</span>
-                  </div>
-                  <div>
-                    <p className="font-medium text-foreground">Transparent Pricing</p>
-                    <p className="text-muted-foreground text-sm mt-1">
-                      Clear, upfront pricing with no hidden costs or last-minute additions.
-                    </p>
-                  </div>
-                </li>
-                <li className="flex">
-                  <div className="flex-shrink-0 h-7 w-7 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center mr-4 mt-0.5">
-                    <span className="text-primary text-sm">✓</span>
-                  </div>
-                  <div>
-                    <p className="font-medium text-foreground">Quality Assurance</p>
-                    <p className="text-muted-foreground text-sm mt-1">
-                      Standardized procedures ensure consistent, high-quality service delivery.
-                    </p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* Booking CTA */}
-        <section aria-labelledby="booking-cta" className="py-16 lg:py-20 text-center border-t border-b border-border/50 my-10">
-          <h2 id="booking-cta" className="font-serif text-3xl lg:text-4xl font-bold tracking-tight text-foreground mb-8">
-            Ready to Book Your Puja?
-          </h2>
-          <p className="text-muted-foreground max-w-4xl mx-auto text-lg mb-10 leading-relaxed">
-            Connect with our certified pandits to schedule your puja ceremony. We'll ensure every ritual 
-            is performed with the utmost reverence and authenticity.
-          </p>
-          <a 
-            href="/#booking" 
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 px-8 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md inline-block focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        {/* Hero Banner */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-6">
+          <div 
+            className="relative h-48 rounded-lg overflow-hidden bg-cover bg-center flex items-end"
+            style={{
+              backgroundImage: "url('https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg')"
+            }}
           >
-            Schedule Your Puja
-          </a>
-        </section>
-      </main>
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 pb-12">
-        <p className="text-center text-muted-foreground italic text-lg">
-          May divine blessings grace every sacred moment. – Team Navdhya
-        </p>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+            <div className="relative z-10 text-white p-4 max-w-2xl">
+              <h1 className="text-2xl font-serif font-semibold">Puja Services</h1>
+              <p className="text-sm mt-1">
+                Authentic spiritual rituals for every occasion, performed by certified Vedic pandits in Delhi NCR.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Filter Button */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-4 md:hidden">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowFilters(true);
+            }}
+            className={`w-full flex items-center justify-center gap-2 py-2.5 border rounded-md transition-colors ${
+              hasActiveFilters() 
+                ? 'border-[#0E3F2E] bg-[#0E3F2E] text-white' 
+                : 'border-border bg-background hover:bg-muted'
+            }`}
+          >
+            <Filter className="w-4 h-4" />
+            <span>Filters</span>
+            {hasActiveFilters() && (
+              <span className="ml-1 bg-white text-[#0E3F2E] text-[10px] rounded-full w-5 h-5 flex items-center justify-center">
+                {selectedFilters.category.length + 
+                 selectedFilters.priceRange.length + 
+                 selectedFilters.pandit.length + 
+                 selectedFilters.ritualType.length + 
+                 selectedFilters.availability.length + 
+                 (showOnSale ? 1 : 0)}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Desktop Filters - Hidden on mobile */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-6 hidden md:block">
+          <div className="border-b border-border pb-4 mb-6">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-medium text-xs flex items-center gap-1 text-muted-foreground">
+                <Filter className="w-3 h-3" />
+                Filters:
+              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                <FilterDropdown title="Category" items={filters.category} filterType="category" />
+                <FilterDropdown title="Price" items={filters.priceRange} filterType="priceRange" />
+                <FilterDropdown title="Pandit" items={filters.pandit} filterType="pandit" />
+                <FilterDropdown title="Ritual" items={filters.ritualType} filterType="ritualType" />
+                <FilterDropdown title="Availability" items={filters.availability} filterType="availability" />
+              </div>
+              
+              <div className="flex items-center gap-3 ml-auto">
+                <label className="flex items-center gap-1 cursor-pointer text-xs">
+                  <input
+                    type="checkbox"
+                    checked={showOnSale}
+                    onChange={(e) => setShowOnSale(e.target.checked)}
+                    className="w-3 h-3"
+                  />
+                  Discounted only
+                </label>
+                
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-muted-foreground">Sort:</span>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="px-2 py-1 text-xs border border-border rounded-full bg-background cursor-pointer hover:bg-[#0E3F2E] hover:text-white transition-colors"
+                  >
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="price">Price: Low to High</option>
+                    <option value="popularity">Popularity</option>
+                    <option value="rating">Rating</option>
+                    <option value="date">Latest</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Product Grid */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-10">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {filteredPujas.map(puja => (
+              <div key={puja.id} className="flex">
+                <PujaCard puja={puja} />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
+      
+      {/* Filter Popup for Mobile */}
+      {showFilters && <FilterPopup />}
+      
       <SiteFooter />
     </>
   )

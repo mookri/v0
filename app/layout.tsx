@@ -122,8 +122,14 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              // Ultra-Fast Network-Only Service Worker Registration
-              if ('serviceWorker' in navigator) {
+              // Check if we're in development mode
+              const isDevelopment = location.hostname === 'localhost' || 
+                                   location.hostname === '127.0.0.1' || 
+                                   location.hostname === '[::1]' ||
+                                   location.hostname.includes('.local');
+              
+              // Ultra-Fast Network-Only Service Worker Registration (only in production)
+              if (!isDevelopment && 'serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
                   // Register the service worker with proper scope
                   navigator.serviceWorker.register('/sw.js', { scope: '/' })
