@@ -242,25 +242,6 @@ export function FeaturedPujas() {
           </p>
         </div>
         
-        {/* View All arrow button for desktop */}
-        <Link href="/pujas" className="absolute top-4 right-4 flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/20 transition-all duration-300 group z-10">
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="20" 
-            height="20" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
-            className="text-primary transform -rotate-45 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300"
-          >
-            <line x1="7" y1="17" x2="17" y2="7"></line>
-            <polyline points="7 7 17 7 17 17"></polyline>
-          </svg>
-        </Link>
-        
         {/* Mobile layout - 2x2 grid with circular cards and row dividers */}
         <div className="mt-5 sm:hidden">
           {isLoading ? (
