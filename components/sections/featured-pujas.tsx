@@ -449,7 +449,7 @@ export function FeaturedPujas() {
         {/* View All button for mobile */}
         <div className="mt-8 text-center sm:hidden">
           <Link
-            href="#booking"
+            href="/pujas"
             className="inline-block px-6 py-2 bg-[#0E3F2E] text-white font-sans font-semibold text-base rounded-md border-2 border-[#0E3F2E] shadow-md shadow-[#0E3F2E]/30 hover:shadow-lg hover:shadow-[#0E3F2E]/50 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#0E3F2E]/40"
           >
             View All 25+ Rituals
