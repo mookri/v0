@@ -1,37 +1,56 @@
-import React from 'react';
+// /components/ui/Preloader.tsx
+"use client"
 
-interface PreloaderProps {
-  size?: 'sm' | 'md' | 'lg';
-  className?: string;
-}
+import { motion, AnimatePresence } from "framer-motion"
+import clsx from "clsx"
+import { useLoading } from "@/context/LoadingContext"
+import Image from "next/image"
 
-const Preloader: React.FC<PreloaderProps> = ({ 
-  size = 'md',
-  className = ''
-}) => {
-  // Define sizes
-  const sizes = {
-    sm: { width: 'w-4', height: 'h-4', border: 'border-2' },
-    md: { width: 'w-6', height: 'h-6', border: 'border-3' },
-    lg: { width: 'w-8', height: 'h-8', border: 'border-4' }
-  };
-
-  const { width, height, border } = sizes[size];
+export default function Preloader({
+  className,
+  size = 84,
+  logoSrc = "/navdhya-logo.png", 
+}: {
+  className?: string
+  size?: number
+  logoSrc?: string
+}) {
+  const { isLoading } = useLoading()
 
   return (
-    <div className="flex items-center justify-center" role="status" aria-label="Loading">
-      <div 
-        className={`
-          ${width} ${height}
-          ${border}
-          rounded-full
-          border-t-primary border-r-primary border-b-primary border-l-transparent
-          animate-spin
-          ${className}
-        `}
-      />
-    </div>
-  );
-};
+    <AnimatePresence>
+      {isLoading && (
+        <motion.div
+          key="global-preloader"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.28 }}
+          className={clsx(
+            "fixed inset-0 z-[9998] flex items-center justify-center bg-background/95 backdrop-blur-sm",
+            className
+          )}
+          aria-live="polite"
+        >
+          <motion.div
+            initial={{ scale: 0.9, rotate: -6 }}
+            animate={{ scale: [0.96, 1.03, 0.98], rotate: [ -3, 2, 0 ] }}
+            transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
+            className="flex items-center gap-4 flex-col"
+            role="status"
+            aria-label="Loading"
+          >
+            <div className="flex items-center justify-center">
+              {/* Replace with Image or inline SVG for crispness */}
+              <Image src={logoSrc} alt="Navdhya" width={size} height={size} priority />
+            </div>
 
-export default Preloader;
+            <div className="text-center">
+              <p className="text-sm font-medium text-foreground/80">Preparing the next page…</p>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
