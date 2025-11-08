@@ -42,31 +42,28 @@ export function SiteHeader() {
       name: 'Pujas & Rituals',
       href: '#',
       subItems: [
-        {
-          name: 'Book a Puja', //Online & In-person
-          href: '/booking'
-        },
-        {
-          name: 'Occasion-based Pujas', //Marriage, Griha Pravesh, Health, Prosperity
-          href: '#'
-        },
-        {
-          name: 'Regional Pujas', //South Indian, North Indian, Bengali, etc.
-          href: '/pujas/regional'
-        },
-        {
-          name: 'Festival Specials', // Diwali, Navratri, Makar Sankranti
-          href: '/pujas/festival'
-        },
-        {
-          name: 'Temple Services', // Physical locations
-          href: '/pujas/temple'
-        },
-        {
-          name: 'Custom Requests', // Advanced personalization
-          href: '/pujas/request'
-        }
-      ]
+  {
+    name: 'All Pujas', // Complete catalog of traditional and modern rituals
+    href: '/pujas/',
+  },
+  {
+    name: 'Occasion Pujas', // Griha Pravesh, Marriage, Health, Prosperity
+    href: '/pujas/occasions',
+  },
+  {
+    name: 'Regional Pujas', // South Indian, North Indian, Bengali, Tamil, etc.
+    href: '/pujas/regional',
+  },
+  {
+    name: 'Temple Offerings', // Diwali, Navratri, Makar Sankranti, Temple Rituals
+    href: '/pujas/festival',
+  },
+  {
+    name: 'Personalized Rituals', // Tailored rituals for individual or family needs
+    href: '/pujas/custom',
+  },
+]
+
     },
     {
       name: 'Pandits & Experts',

@@ -1,5 +1,3 @@
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
 import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
 import Script from "next/script"
 
@@ -58,8 +56,7 @@ export default function PrivacyPolicyPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: privacySchema }}
       />
-      <SiteHeader />
-      <main className="mx-auto max-w-6xl px-4 py-12 space-y-10 overflow-x-hidden w-full">
+      <div className="mx-auto max-w-6xl px-4 py-12 space-y-10 overflow-x-hidden w-full">
         <section aria-labelledby="privacy-heading">
           <h1 id="privacy-heading" className="font-serif text-3xl">
             Privacy Policy
@@ -199,16 +196,16 @@ export default function PrivacyPolicyPage() {
             Children's Privacy
           </h2>
           <p className="mt-3 text-muted-foreground">
-            Our services are not intended for use by children under the age of 13. We do not knowingly collect personally identifiable information from children under 13. If you become aware that a child has provided us with personal information, please contact us.
+            We do not knowingly collect personal information from children under the age of 13. If we become aware that a child under 13 has provided us with personal information, we will take steps to delete such information from our servers.
           </p>
         </section>
 
-        <section aria-labelledby="policy-changes">
-          <h2 id="policy-changes" className="font-serif text-2xl">
+        <section aria-labelledby="changes-policy">
+          <h2 id="changes-policy" className="font-serif text-2xl">
             Changes to This Privacy Policy
           </h2>
           <p className="mt-3 text-muted-foreground">
-            We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date.
+            We may update this Privacy Policy from time to time. The updated version will be indicated by an updated "Last Updated" date and the updated version will be effective as soon as it is accessible.
           </p>
         </section>
 
@@ -217,17 +214,15 @@ export default function PrivacyPolicyPage() {
             Contact Us
           </h2>
           <p className="mt-3 text-muted-foreground">
-            If you have questions or comments about this policy, you may email us at help@navdhya.com or by post to:
+            If you have questions or comments about this Privacy Policy, please contact us at:
           </p>
-          <address className="mt-3 not-italic text-muted-foreground">
-            Navdhya Ritual Services<br />
-            Pandav Nagar<br />
-            Delhi 110092<br />
-            India
-          </address>
+          <p className="mt-3 text-muted-foreground">
+            Email: help@navdhya.com<br />
+            Phone: +91-7289000377<br />
+            Address: Pandav Nagar, New Delhi, 110092
+          </p>
         </section>
-      </main>
-      <SiteFooter />
+      </div>
     </>
   )
 }

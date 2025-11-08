@@ -1,5 +1,3 @@
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -121,7 +119,6 @@ export default function ConsultationPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: consultationSchema }}
       />
-      <SiteHeader />
       <main className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 overflow-x-hidden w-full">
         {/* Header */}
         <div className="text-center mb-12">
@@ -200,8 +197,8 @@ export default function ConsultationPage() {
                   
                   <div className="grid md:grid-cols-2 gap-4 mt-4">
                     <div>
-                      <Label htmlFor="place-of-birth">Place of Birth *</Label>
-                      <Input id="place-of-birth" placeholder="Enter city and state" required />
+                      <Label htmlFor="place-of-birth">Place of Birth</Label>
+                      <Input id="place-of-birth" placeholder="City, State" />
                     </div>
                     <div>
                       <Label htmlFor="gender">Gender</Label>
@@ -231,7 +228,7 @@ export default function ConsultationPage() {
                         <SelectContent>
                           {consultationTypes.map((type) => (
                             <SelectItem key={type.id} value={type.id}>
-                              {type.name}
+                              {type.name} ({type.price})
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -254,25 +251,10 @@ export default function ConsultationPage() {
                   </div>
                   
                   <div className="mt-4">
-                    <Label htmlFor="preferred-time">Preferred Time *</Label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                      </div>
-                      <Input 
-                        id="preferred-time" 
-                        type="time" 
-                        className="pl-10" 
-                        required 
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4">
-                    <Label htmlFor="areas-of-concern">Areas of Concern</Label>
+                    <Label htmlFor="expertise-area">Area of Expertise</Label>
                     <Select>
-                      <SelectTrigger id="areas-of-concern">
-                        <SelectValue placeholder="Select areas of concern" />
+                      <SelectTrigger id="expertise-area">
+                        <SelectValue placeholder="Select area of expertise" />
                       </SelectTrigger>
                       <SelectContent>
                         {expertiseAreas.map((area) => (
@@ -285,101 +267,80 @@ export default function ConsultationPage() {
                   </div>
                   
                   <div className="mt-4">
-                    <Label htmlFor="questions">Specific Questions</Label>
+                    <Label htmlFor="questions">Questions or Concerns</Label>
                     <Textarea 
                       id="questions" 
-                      placeholder="Please share any specific questions or concerns you'd like addressed during the consultation" 
+                      placeholder="Please share any specific questions or concerns you'd like addressed during the consultation..." 
                       rows={4}
                     />
                   </div>
                 </div>
                 
                 <div className="pt-4">
-                  <Button type="submit" className="w-full">
-                    Request Consultation
+                  <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6">
+                    Submit Consultation Request
                   </Button>
                 </div>
               </form>
             </div>
           </div>
           
-          {/* Consultation Information */}
+          {/* Consultation Info */}
           <div>
             <div className="bg-card border border-border rounded-xl p-6 sticky top-6">
-              <h2 className="text-xl font-semibold mb-4">Consultation Information</h2>
+              <h2 className="text-xl font-semibold mb-4">Consultation Types</h2>
               
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-medium mb-2">Consultation Types</h3>
-                  <div className="space-y-3">
-                    {consultationTypes.map((type) => (
-                      <div key={type.id} className="bg-muted rounded-lg p-3">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <div className="font-medium">{type.name}</div>
-                            <div className="text-sm text-muted-foreground">{type.duration}</div>
-                          </div>
-                          <div className="font-bold">{type.price}</div>
-                        </div>
-                        <div className="text-sm mt-1">{type.description}</div>
-                      </div>
-                    ))}
+              <div className="space-y-4 mb-6">
+                {consultationTypes.map((type) => (
+                  <div key={type.id} className="border border-border rounded-lg p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-medium">{type.name}</h3>
+                      <span className="font-bold text-primary">{type.price}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-2">{type.description}</p>
+                    <p className="text-xs text-muted-foreground">{type.duration}</p>
                   </div>
-                </div>
-                
-                <div>
-                  <h3 className="font-medium mb-2">What to Expect</h3>
-                  <ul className="text-sm space-y-2">
-                    <li className="flex items-start">
-                      <span className="text-primary mr-2">•</span>
-                      <span>Detailed analysis by certified Vedic astrologer</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-primary mr-2">•</span>
-                      <span>Personalized insights and guidance</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-primary mr-2">•</span>
-                      <span>Remedial solutions if needed</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-primary mr-2">•</span>
-                      <span>Follow-up support available</span>
-                    </li>
-                  </ul>
-                </div>
-                
-                <div className="pt-4 border-t border-border">
-                  <h3 className="font-medium mb-3">Need Immediate Help?</h3>
-                  <Button asChild variant="outline" className="w-full">
-                    <Link href="/contact">Contact Us</Link>
-                  </Button>
-                </div>
+                ))}
+              </div>
+              
+              <div className="bg-primary/5 rounded-lg p-4">
+                <h3 className="font-medium mb-2 flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-primary" />
+                  What to Expect
+                </h3>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li className="flex items-start">
+                    <span className="text-primary mr-2">•</span>
+                    <span>Detailed analysis by certified Vedic astrologer</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-primary mr-2">•</span>
+                    <span>Personalized guidance and remedies</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-primary mr-2">•</span>
+                    <span>Written report (email delivery)</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-primary mr-2">•</span>
+                    <span>Follow-up support available</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="mt-6 pt-6 border-t border-border">
+                <h3 className="font-medium mb-3">Need Help?</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Our team is available to assist you with any questions about our astrology services.
+                </p>
+                <Button asChild variant="outline" className="w-full">
+                  <Link href="/contact">Contact Us</Link>
+                </Button>
               </div>
             </div>
           </div>
         </div>
-        
-        {/* Expertise Areas */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-center">Areas of Expertise</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {expertiseAreas.map((area, index) => {
-              const icons = [BookOpen, Heart, Star, Users, Clock, Calendar, BookOpen, Heart]
-              const Icon = icons[index]
-              return (
-                <div key={area} className="bg-card border border-border rounded-lg p-5 text-center">
-                  <div className="mx-auto bg-primary/10 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-3">
-                    <Icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <h3 className="font-medium">{area}</h3>
-                </div>
-              )
-            })}
-          </div>
-        </div>
       </main>
-      <SiteFooter />
     </>
   )
 }

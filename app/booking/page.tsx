@@ -1,5 +1,3 @@
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -87,7 +85,6 @@ export default function BookingPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: bookingSchema }}
       />
-      <SiteHeader />
       <main className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 overflow-x-hidden w-full">
         {/* Header */}
         <div className="text-center mb-12">
@@ -202,7 +199,7 @@ export default function BookingPage() {
                       </div>
                       <Select>
                         <SelectTrigger id="location" className="pl-10">
-                          <SelectValue placeholder="Select your location" />
+                          <SelectValue placeholder="Select location" />
                         </SelectTrigger>
                         <SelectContent>
                           {locations.map((location) => (
@@ -216,27 +213,17 @@ export default function BookingPage() {
                   </div>
                   
                   <div className="mt-4">
-                    <Label htmlFor="address">Full Address *</Label>
-                    <Textarea 
-                      id="address" 
-                      placeholder="Enter your complete address including city and pin code" 
-                      rows={3}
-                      required 
-                    />
-                  </div>
-                  
-                  <div className="mt-4">
                     <Label htmlFor="requirements">Special Requirements</Label>
                     <Textarea 
                       id="requirements" 
-                      placeholder="Any specific requirements, traditions, or preferences for the puja" 
-                      rows={3}
+                      placeholder="Any specific requirements or customs you'd like us to follow..." 
+                      rows={4}
                     />
                   </div>
                 </div>
                 
                 <div className="pt-4">
-                  <Button type="submit" className="w-full">
+                  <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6">
                     Submit Booking Request
                   </Button>
                 </div>
@@ -244,84 +231,64 @@ export default function BookingPage() {
             </div>
           </div>
           
-          {/* Booking Information */}
+          {/* Contact Info */}
           <div>
             <div className="bg-card border border-border rounded-xl p-6 sticky top-6">
-              <h2 className="text-xl font-semibold mb-4">Booking Information</h2>
+              <h2 className="text-xl font-semibold mb-4">Need Help?</h2>
+              <p className="text-muted-foreground mb-6">
+                Our team is available to assist you with any questions about our services.
+              </p>
               
-              <div className="space-y-4 mb-6">
-                <div className="flex items-start">
-                  <Phone className="h-5 w-5 text-primary mt-0.5 mr-3" />
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <Phone className="h-5 w-5 text-primary mr-3" />
                   <div>
-                    <div className="text-sm text-muted-foreground">Call Us</div>
-                    <div className="font-medium">
-                      <a href="tel:+917289000377" className="hover:text-primary">+91-7289000377</a>
-                    </div>
+                    <div className="font-medium">Phone</div>
+                    <a href="tel:+917289000377" className="text-muted-foreground hover:text-foreground">
+                      +91-7289000377
+                    </a>
                   </div>
                 </div>
                 
-                <div className="flex items-start">
-                  <Mail className="h-5 w-5 text-primary mt-0.5 mr-3" />
+                <div className="flex items-center">
+                  <Mail className="h-5 w-5 text-primary mr-3" />
                   <div>
-                    <div className="text-sm text-muted-foreground">Email Us</div>
-                    <div className="font-medium">
-                      <a href="mailto:help@navdhya.com" className="hover:text-primary">help@navdhya.com</a>
-                    </div>
+                    <div className="font-medium">Email</div>
+                    <a href="mailto:help@navdhya.com" className="text-muted-foreground hover:text-foreground">
+                      help@navdhya.com
+                    </a>
                   </div>
                 </div>
                 
-                <div className="pt-2">
-                  <div className="text-sm text-muted-foreground">Response Time</div>
-                  <div className="font-medium">Within 2 hours during business hours</div>
+                <div className="pt-4">
+                  <h3 className="font-medium mb-2">Office Hours</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Monday - Sunday: 9:00 AM - 8:00 PM
+                  </p>
                 </div>
               </div>
               
-              <div className="bg-muted rounded-lg p-4">
-                <h3 className="font-medium mb-2">What Happens Next?</h3>
-                <ol className="text-sm space-y-2">
+              <div className="mt-8 pt-6 border-t border-border">
+                <h3 className="font-medium mb-3">Booking Policy</h3>
+                <ul className="text-sm text-muted-foreground space-y-2">
                   <li className="flex items-start">
-                    <span className="text-primary mr-2">1.</span>
-                    <span>We'll confirm your booking within 2 hours</span>
+                    <span className="text-primary mr-2">•</span>
+                    <span>Bookings must be made at least 24 hours in advance</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-primary mr-2">2.</span>
-                    <span>A pandit will contact you to discuss details</span>
+                    <span className="text-primary mr-2">•</span>
+                    <span>Confirmation will be sent within 2 hours</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-primary mr-2">3.</span>
-                    <span>Final confirmation and preparation</span>
+                    <span className="text-primary mr-2">•</span>
+                    <span>Cancellations require 48 hours notice</span>
                   </li>
-                  <li className="flex items-start">
-                    <span className="text-primary mr-2">4.</span>
-                    <span>Puja conducted as scheduled</span>
-                  </li>
-                </ol>
-              </div>
-              
-              <div className="mt-6 pt-4 border-t border-border">
-                <h3 className="font-medium mb-3">Need Help?</h3>
-                <Button asChild variant="outline" className="w-full">
-                  <Link href="/contact">Contact Support</Link>
-                </Button>
+                </ul>
               </div>
             </div>
           </div>
         </div>
-        
-        {/* Service Types Info */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-center">Our Service Types</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {serviceTypes.map((service) => (
-              <div key={service.id} className="bg-card border border-border rounded-lg p-5">
-                <h3 className="font-semibold mb-2">{service.name}</h3>
-                <p className="text-sm text-muted-foreground">{service.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
       </main>
-      <SiteFooter />
     </>
   )
 }

@@ -1,5 +1,3 @@
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
 import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
 import Script from "next/script"
 
@@ -59,7 +57,6 @@ export default function CookiePolicyPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: cookiePolicySchema }}
       />
-      <SiteHeader />
       <main className="mx-auto max-w-6xl px-4 py-12 space-y-10 overflow-x-hidden w-full">
         <section aria-labelledby="cookie-heading">
           <h1 id="cookie-heading" className="font-serif text-3xl">
@@ -290,7 +287,6 @@ export default function CookiePolicyPage() {
           </address>
         </section>
       </main>
-      <SiteFooter />
     </>
   )
 }

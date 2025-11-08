@@ -1,5 +1,3 @@
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
 import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
 import Script from "next/script"
 
@@ -58,7 +56,6 @@ export default function RefundPolicyPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: refundSchema }}
       />
-      <SiteHeader />
       <main className="mx-auto max-w-6xl px-4 py-12 space-y-10 overflow-x-hidden w-full">
         <section aria-labelledby="refund-heading">
           <h1 id="refund-heading" className="font-serif text-3xl">
@@ -257,7 +254,6 @@ export default function RefundPolicyPage() {
           </p>
         </section>
       </main>
-      <SiteFooter />
     </>
   )
 }

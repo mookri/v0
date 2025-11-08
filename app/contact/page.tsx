@@ -1,5 +1,3 @@
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -76,7 +74,6 @@ export default function ContactPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: localBusinessSchema }}
       />
-      <SiteHeader />
       <main className="mx-auto max-w-6xl px-4 py-12 grid md:grid-cols-2 gap-8 overflow-x-hidden w-full">
         <section aria-labelledby="contact-us" className="flex flex-col">
           <h1 id="contact-us" className="font-serif text-3xl">
@@ -163,7 +160,6 @@ export default function ContactPage() {
           </div>
         </aside>
       </main>
-      <SiteFooter />
     </>
   )
 }

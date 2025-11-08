@@ -1,5 +1,3 @@
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
 // import { Hero } from "@/components/hero"
 import { FeaturedPujas } from "@/components/sections/featured-pujas"
 import { WhyChoose } from "@/components/sections/why-choose"
@@ -74,7 +72,6 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: homeSchema }}
       />
-      <SiteHeader />
       <main className="overflow-x-hidden w-full">
         <Hero />
         <FeaturedPujas />
@@ -87,7 +84,6 @@ export default function HomePage() {
         <FAQ />
         {/* <Booking /> */}
       </main>
-      <SiteFooter />
    </>
   )
 }

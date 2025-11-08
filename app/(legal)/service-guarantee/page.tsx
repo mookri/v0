@@ -1,5 +1,3 @@
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
 import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
 import Script from "next/script"
 
@@ -59,7 +57,6 @@ export default function ServiceGuaranteePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serviceGuaranteeSchema }}
       />
-      <SiteHeader />
       <main className="mx-auto max-w-6xl px-4 py-12 space-y-10 overflow-x-hidden w-full">
         <section aria-labelledby="guarantee-heading">
           <h1 id="guarantee-heading" className="font-serif text-3xl">
@@ -220,7 +217,6 @@ export default function ServiceGuaranteePage() {
           </ul>
         </section>
       </main>
-      <SiteFooter />
     </>
   )
 }

@@ -1,5 +1,3 @@
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
 import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
 import Script from "next/script"
 
@@ -58,8 +56,7 @@ export default function TermsOfServicePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: termsSchema }}
       />
-      <SiteHeader />
-      <main className="mx-auto max-w-6xl px-4 py-12 space-y-10 overflow-x-hidden w-full">
+      <div className="mx-auto max-w-6xl px-4 py-12 space-y-10 overflow-x-hidden w-full">
         <section aria-labelledby="terms-heading">
           <h1 id="terms-heading" className="font-serif text-3xl">
             Terms of Service
@@ -205,7 +202,7 @@ export default function TermsOfServicePage() {
             Indemnification
           </h2>
           <p className="mt-3 text-muted-foreground">
-            You agree to defend, indemnify, and hold harmless Navdhya and its affiliates, licensors, and service providers, and their respective officers, directors, employees, contractors, agents, licensors, suppliers, successors, and assigns from and against any claims, liabilities, damages, judgments, awards, losses, costs, expenses, or fees (including reasonable attorneys' fees) arising out of or relating to your violation of these Terms or your use of the services.
+            You agree to defend, indemnify, and hold harmless Navdhya and its affiliates, licensors, and service providers, and its and their respective officers, directors, employees, contractors, agents, licensors, suppliers, successors, and assigns from and against any claims, liabilities, damages, judgments, awards, losses, costs, expenses, or fees (including reasonable attorneys' fees) arising out of or relating to your violation of these Terms or your use of the services.
           </p>
         </section>
 
@@ -218,24 +215,29 @@ export default function TermsOfServicePage() {
           </p>
         </section>
 
-        <section aria-labelledby="contact-information">
-          <h2 id="contact-information" className="font-serif text-2xl">
-            Contact Information
+        <section aria-labelledby="changes-terms">
+          <h2 id="changes-terms" className="font-serif text-2xl">
+            Changes to Terms
+          </h2>
+          <p className="mt-3 text-muted-foreground">
+            We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.
+          </p>
+        </section>
+
+        <section aria-labelledby="contact-us">
+          <h2 id="contact-us" className="font-serif text-2xl">
+            Contact Us
           </h2>
           <p className="mt-3 text-muted-foreground">
             If you have any questions about these Terms, please contact us at:
           </p>
-          <address className="mt-3 not-italic text-muted-foreground">
-            Navdhya Ritual Services<br />
-            Pandav Nagar<br />
-            Delhi 110092<br />
-            India<br />
+          <p className="mt-3 text-muted-foreground">
             Email: help@navdhya.com<br />
-            Phone: +91-7289000377
-          </address>
+            Phone: +91-7289000377<br />
+            Address: Pandav Nagar, New Delhi, 110092
+          </p>
         </section>
-      </main>
-      <SiteFooter />
+      </div>
     </>
   )
 }

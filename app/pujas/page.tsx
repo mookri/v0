@@ -1,11 +1,11 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
 import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
 import Script from "next/script"
 import Link from "next/link"
 import { ChevronDown, Heart, Eye, BarChart2, ShoppingCart, Filter, X, ArrowRight } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 
 // Schema markup for the puja catalog page
 const PUJA_CATALOG_SCHEMA = {
@@ -620,7 +620,6 @@ export default function PujaCatalogPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: pujaSchema }}
       />
-      <SiteHeader />
       <div 
         className="min-h-screen bg-background"
         onClick={() => setExpandedFilter(null)}
@@ -742,8 +741,6 @@ export default function PujaCatalogPage() {
       
       {/* Filter Popup for Mobile */}
       {showFilters && <FilterPopup />}
-      
-      <SiteFooter />
     </>
   )
 }

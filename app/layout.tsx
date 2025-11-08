@@ -7,8 +7,8 @@ import "./globals.css"
 import BottomMenu from "@/components/bottom-menu"
 import { SITE_METADATA, VIEWPORT_CONFIG } from "@/lib/metadata-config"
 import { SEO_CONFIG } from "@/lib/seo-config"
-
-// ⚙️ New Imports
+import { SiteFooter } from "@/components/site-footer"
+import { SiteHeader } from "@/components/site-header"
 import { LoadingProvider } from "@/context/LoadingContext"
 import NavigationLoader from "@/components/NavigationLoader"
 import Preloader from "@/components/ui/preloader"
@@ -105,6 +105,7 @@ export default function RootLayout({
 
       <body className="font-sans bg-background text-foreground">
         <LoadingProvider>
+          <SiteHeader />
           <NavigationLoader />
           <Suspense
             fallback={
@@ -117,8 +118,9 @@ export default function RootLayout({
             <Analytics />
           </Suspense>
           <BottomMenu />
+          <SiteFooter />
         </LoadingProvider>
-
+        
         <script
           dangerouslySetInnerHTML={{
             __html: `
