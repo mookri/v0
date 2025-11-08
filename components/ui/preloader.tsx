@@ -8,7 +8,7 @@ import Image from "next/image"
 
 export default function Preloader({
   className,
-  size = 84,
+  size = 70,
   logoSrc = "/navdhya-logo.png", 
 }: {
   className?: string
@@ -25,30 +25,39 @@ export default function Preloader({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.28 }}
+          transition={{ duration: 0.15 }}
           className={clsx(
-            "fixed inset-0 z-[9998] flex items-center justify-center bg-background/95 backdrop-blur-sm",
+            "fixed inset-0 z-[9998] flex items-center justify-center bg-background/75",
             className
           )}
           aria-live="polite"
         >
-          <motion.div
-            initial={{ scale: 0.9, rotate: -6 }}
-            animate={{ scale: [0.96, 1.03, 0.98], rotate: [ -3, 2, 0 ] }}
-            transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
-            className="flex items-center gap-4 flex-col"
-            role="status"
-            aria-label="Loading"
-          >
-            <div className="flex items-center justify-center">
-              {/* Replace with Image or inline SVG for crispness */}
-              <Image src={logoSrc} alt="Navdhya" width={size} height={size} priority />
+          <div className="flex flex-col items-center gap-3">
+            {/* Slightly Larger Circular Loader with Logo */}
+            <div className="relative w-16 h-16 flex items-center justify-center">
+              {/* Logo in the center */}
+              <div className="absolute inset-0 flex items-center justify-center z-10">
+                <Image 
+                  src={logoSrc} 
+                  alt="Navdhya" 
+                  width={size * 0.6} 
+                  height={size * 0.6} 
+                  priority 
+                />
+              </div>
+              
+              {/* Enhanced circular loader */}
+              <motion.div
+                className="absolute inset-0 rounded-full border-2 border-primary border-t-transparent"
+                animate={{ rotate: 360 }}
+                transition={{
+                  duration: 0.6,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+              />
             </div>
-
-            <div className="text-center">
-              <p className="text-sm font-medium text-foreground/80">Preparing the next page…</p>
-            </div>
-          </motion.div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
