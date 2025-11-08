@@ -32,72 +32,133 @@ export function SiteHeader() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const services = [
-    { 
-      name: 'Home & Family Rituals', 
-      items: [
-        'Griha Pravesh Puja (Housewarming)',
-        'Satyanarayan Katha',
-        'Lakshmi Ganesh Puja',
-        'Navgraha Shanti Puja',
-        'Rudrabhishek Puja'
-      ]
+  // Updated menu structure based on requirements
+  const menuData = [
+    {
+      name: 'Home',
+      href: '/'
     },
-    { 
-      name: 'Life Events & Milestone Ceremonies', 
-      items: [
-        'Wedding Puja & Vivaah Sanskar',
-        'Baby Naming (Namkaran)',
-        'Annaprashan (Rice Feeding)',
-        'Mundan (Child Hair Ceremony)',
-        'Shradh / Pitra Dosh Puja'
-      ]
-    },
-    { 
-      name: 'Business & Prosperity Rituals', 
-      items: [
-        'Office / Shop Opening Puja',
-        'Vastu Shanti',
-        'Dhan Prapti Puja (Wealth Invocation)',
-        'Navagraha Business Puja'
+    {
+      name: 'Pujas & Rituals',
+      href: '#',
+      subItems: [
+        {
+          name: 'Book a Puja', //Online & In-person
+          href: '/booking'
+        },
+        {
+          name: 'Occasion-based Pujas', //Marriage, Griha Pravesh, Health, Prosperity
+          href: '#'
+        },
+        {
+          name: 'Regional Pujas', //South Indian, North Indian, Bengali, etc.
+          href: '/pujas/regional'
+        },
+        {
+          name: 'Festival Specials', // Diwali, Navratri, Makar Sankranti
+          href: '/pujas/festival'
+        },
+        {
+          name: 'Temple Services', // Physical locations
+          href: '/pujas/temple'
+        },
+        {
+          name: 'Custom Requests', // Advanced personalization
+          href: '/pujas/request'
+        }
       ]
     },
     {
-      name: 'Online & Hybrid Services',
-      items: [
-        'Live Video Puja',
-        'Virtual Pandit Assistance',
-        'Digital Puja Kit Delivery',
-        'Personalized Online Ritual'
-      ]
-    }
-  ];
-
-  // Different pujas for categories
-  const categories = [
-    { 
-      name: 'Popular Pujas', 
-      items: [
-        'Lakshmi Puja',
-        'Ganesh Puja',
-        'Saraswati Puja'
+      name: 'Pandits & Experts',
+      href: '/pandits',
+      subItems: [
+        { name: 'Find Pandit', href: '/pandits' },           // primary discovery landing
+        { name: 'Book Consultation', href: '/pandits/book' },         // conversion-first flow
+        { name: 'Join as Pandit', href: '/pandits/join' },   // onboarding & B2B
+        { name: 'Insights', href: '/pandits/insights' }  // content & trust
       ]
     },
-    { 
-      name: 'Festival Pujas', 
-      items: [
-        'Diwali Special',
-        'Durga Puja',
-        'Navratri Puja'
+    {
+      name: 'Learning',
+      href: '#',
+      subItems: [
+        {
+          name: 'Courses — Gita Studies, Meditation, Ritual Science',
+          href: '/learn/courses'
+        },
+        {
+          name: 'Workshops — Live sessions with spiritual mentors',
+          href: '/learn/workshops'
+        },
+        {
+          name: 'Self-Learning Library — Videos, PDFs, podcasts',
+          href: '/learn/library'
+        },
+        {
+          name: 'Certification Programs — Authorized cultural training',
+          href: '/learn/certified'
+        },
+        {
+          name: 'For Kids — Mythology & value-based learning modules',
+          href: '/learn/kids'
+        }
       ]
     },
-    { 
-      name: 'Specialty Pujas', 
-      items: [
-        'Kalasha Sthapana',
-        'Rudrabhishek',
-        'Maha Mrityunjaya'
+    {
+      name: 'Community',
+      href: '#',
+      subItems: [
+        {
+          name: 'Discussions → Forums with moderation',
+          href: '/community/forums'
+        },
+        {
+          name: 'User Stories → Authentic engagement',
+          href: '/community/stories'
+        },
+        {
+          name: 'Volunteer Programs → CSR & initiatives',
+          href: '/community/volunteer'
+        },
+        {
+          name: 'Upcoming Events → Calendar-based',
+          href: '/community/events'
+        },
+        {
+          name: 'Join Navdhya → Circle Membership gateway',
+          href: '/community/join'
+        }
       ]
+    },
+    {
+      name: 'Resources',
+      href: '#',
+      subItems: [
+        {
+          name: 'Articles & Blogs → SEO content',
+          href: '/resources/blog'
+        },
+        {
+          name: 'Scriptures & Texts → Rich spiritual library',
+          href: '/resources/scriptures'
+        },
+        {
+          name: 'Tools & Calculators → Horoscope, Muhurat, Panchang',
+          href: '/resources/tools'
+        },
+        {
+          name: 'News & Updates → Real-time temple info',
+          href: '/resources/news'
+        },
+        {
+          name: 'Digital Library → Downloadable wisdom',
+          href: '/resources/library'
+        }
+      ]
+    },
+    {
+      name: 'Contact',
+      href: '/contact'
     }
   ];
 
@@ -139,91 +200,41 @@ export function SiteHeader() {
 
               {/* Desktop Navigation Links */}
               <nav className="flex items-center gap-5 text-sm">
-                <Link href="/" className="hover:text-primary transition-colors font-medium text-sm">
-                  Home
-                </Link>
-                <Link href="/about" className="hover:text-primary transition-colors font-medium text-sm">
-                  About
-                </Link>
-                {/* Services dropdown - same as mobile */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="hover:text-primary outline-none font-medium flex items-center gap-1 text-sm">
-                    Pujas & Ceremonies
-                    <ChevronDown className="w-4 h-4" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-[300px] sm:w-[400px] md:w-[500px] max-w-[calc(100vw-2rem)] bg-card border-border" align="start">
-                    <div className="p-4 space-y-4">
-                      {services.map((service, index) => (
-                        <div key={index}>
-                          <h4 className="font-medium text-foreground mb-2">{service.name}</h4>
-                          <ul className="space-y-1 ml-2">
-                            {service.items.map((item, itemIndex) => (
-                              <li key={itemIndex}>
-                                <Link 
-                                  href="#catalog" 
-                                  className="block py-1 text-muted-foreground hover:text-primary hover:underline text-sm"
-                                >
-                                  {item}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
+                {menuData.map((item, index) => (
+                  item.subItems ? (
+                    <DropdownMenu key={index}>
+                      <DropdownMenuTrigger className="hover:text-primary outline-none font-medium flex items-center gap-1 text-sm">
+                        {item.name}
+                        <ChevronDown className="w-4 h-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-[300px] sm:w-[400px] md:w-[500px] max-w-[calc(100vw-2rem)] bg-card border-border" align="start">
+                        <div className="p-4 space-y-2">
+                          {item.subItems.map((subItem, subIndex) => (
+                            <Link 
+                              key={subIndex}
+                              href={subItem.href}
+                              className="block py-2 text-muted-foreground hover:text-primary hover:underline text-sm"
+                            >
+                              {subItem.name}
+                            </Link>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                
-                {/* Categories dropdown - same as mobile */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="hover:text-primary outline-none font-medium flex items-center gap-1 text-sm">
-                    Categories
-                    <ChevronDown className="w-4 h-4" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-[350px] sm:w-[450px] md:w-[600px] max-w-[calc(100vw-2rem)] bg-card border-border" align="start">
-                    <div className="p-4 space-y-4">
-                      {/* Show all categories including services */}
-                      {[...categories, ...services].map((category, index) => (
-                        <div key={index}>
-                          <h4 className="font-medium text-foreground mb-2">{category.name}</h4>
-                          <div className="grid grid-cols-2 gap-1 ml-2">
-                            {category.items.map((item, itemIndex) => (
-                              <Link 
-                                key={itemIndex}
-                                href="#catalog" 
-                                className="block py-1 text-muted-foreground hover:text-primary hover:underline text-sm"
-                              >
-                                {item}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <Link href="#blog" className="hover:text-primary transition-colors font-medium text-sm">
-                  Blog
-                </Link>
-                <Link href="/contact" className="hover:text-primary transition-colors font-medium text-sm">
-                  Contact
-                </Link>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : (
+                    <Link 
+                      key={index}
+                      href={item.href} 
+                      className="hover:text-primary transition-colors font-medium text-sm"
+                    >
+                      {item.name}
+                    </Link>
+                  )
+                ))}
               </nav>
             </div>
 
-            {/* Search Bar - Desktop */}
-            <div className="flex items-center flex-1 max-w-md mx-8">
-              <div className="relative w-full">
-                <input
-                  type="text"
-                  placeholder="Search for pujas"
-                  className="w-full px-4 py-2 pr-10 border border-input rounded-lg focus:outline-none focus:border-primary bg-background"
-                />
-                <Search className="absolute right-3 top-2.5 w-5 h-5 text-muted-foreground" />
-              </div>
-            </div>
-
-            {/* Right Actions */}
+            {/* Right Actions (Search hidden on desktop) */}
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 text-sm">
                 <Phone className="w-4 h-4" />
@@ -294,82 +305,64 @@ export function SiteHeader() {
                     {/* Tab Content */}
                     {activeTab === 'main' ? (
                       <nav className="space-y-1">
-                        <SheetClose asChild>
-                          <Link href="/" className="block py-3 border-b border-border">
-                            Home
-                          </Link>
-                        </SheetClose>
-                        <SheetClose asChild>
-                          <Link href="/about" className="block py-3 border-b border-border">
-                            About
-                          </Link>
-                        </SheetClose>
-                        
-                        {/* Services dropdown - default closed */}
-                        <div className="py-2 border-b border-border">
-                          <Accordion type="single" collapsible className="w-full" defaultValue="">
-                            <AccordionItem value="services" className="border-none">
-                              <AccordionTrigger className="py-3 text-base px-0 hover:no-underline font-medium flex justify-between items-center">
-                                <span>PUJAS & CEREMONIES</span>
-                              </AccordionTrigger>
-                              <AccordionContent className="pb-0">
-                                <div className="py-2 space-y-3">
-                                  {services.map((service, index) => (
-                                    <div key={index}>
-                                      <h4 className="font-medium text-foreground mb-2">{service.name}</h4>
-                                      <ul className="space-y-2 ml-2">
-                                        {service.items.map((item, itemIndex) => (
-                                          <li key={itemIndex}>
-                                            <SheetClose asChild>
-                                              <Link 
-                                                href="#catalog" 
-                                                className="block py-1 text-muted-foreground hover:text-primary hover:underline"
-                                              >
-                                                {item}
-                                              </Link>
-                                            </SheetClose>
-                                          </li>
-                                        ))}
-                                      </ul>
+                        {menuData.map((item, index) => (
+                          item.subItems ? (
+                            <div key={index} className="py-2 border-b border-border">
+                              <Accordion type="single" collapsible className="w-full" defaultValue="">
+                                <AccordionItem value={`item-${index}`} className="border-none">
+                                  <AccordionTrigger className="py-3 text-base px-0 hover:no-underline font-medium flex justify-between items-center">
+                                    <span>{item.name}</span>
+                                  </AccordionTrigger>
+                                  <AccordionContent className="pb-0">
+                                    <div className="py-2 space-y-2">
+                                      {item.subItems.map((subItem, subIndex) => (
+                                        <SheetClose asChild key={subIndex}>
+                                          <Link 
+                                            href={subItem.href}
+                                            className="block py-2 text-muted-foreground hover:text-primary hover:underline"
+                                            onClick={() => setMobileOpen(false)}
+                                          >
+                                            {subItem.name}
+                                          </Link>
+                                        </SheetClose>
+                                      ))}
                                     </div>
-                                  ))}
-                                </div>
-                              </AccordionContent>
-                            </AccordionItem>
-                          </Accordion>
-                        </div>
-                        <SheetClose asChild>
-                          <Link href="#blog" className="block py-3 border-b border-border">
-                            Blog
-                          </Link>
-                        </SheetClose>
-                        <SheetClose asChild>
-                          <Link href="/contact" className="block py-3 border-b border-border">
-                            Contact
-                          </Link>
-                        </SheetClose>
+                                  </AccordionContent>
+                                </AccordionItem>
+                              </Accordion>
+                            </div>
+                          ) : (
+                            <SheetClose asChild key={index}>
+                              <Link 
+                                href={item.href} 
+                                className="block py-3 border-b border-border"
+                                onClick={() => setMobileOpen(false)}
+                              >
+                                {item.name}
+                              </Link>
+                            </SheetClose>
+                          )
+                        ))}
                       </nav>
                     ) : (
                       /* Categories Tab - Show all pujas */
                       <nav className="space-y-4">
-                        {categories.map((category, index) => (
-                          <div key={index} className="border-b border-border pb-4">
-                            <h3 className="font-medium text-foreground mb-3">{category.name}</h3>
-                            <div className="grid grid-cols-2 gap-2">
-                              {category.items.map((item, itemIndex) => (
-                                <SheetClose asChild key={itemIndex}>
-                                  <Link 
-                                    href="#catalog" 
-                                    className="block py-2 px-3 rounded-lg bg-muted hover:bg-muted/80 text-sm"
-                                    onClick={() => setMobileOpen(false)}
-                                  >
-                                    {item}
-                                  </Link>
-                                </SheetClose>
-                              ))}
-                            </div>
+                        <div className="border-b border-border pb-4">
+                          <h3 className="font-medium text-foreground mb-3">Quick Links</h3>
+                          <div className="grid grid-cols-2 gap-2">
+                            {menuData.slice(1, 4).map((item, index) => (
+                              <SheetClose asChild key={index}>
+                                <Link 
+                                  href={item.href} 
+                                  className="block py-2 px-3 rounded-lg bg-muted hover:bg-muted/80 text-sm"
+                                  onClick={() => setMobileOpen(false)}
+                                >
+                                  {item.name}
+                                </Link>
+                              </SheetClose>
+                            ))}
                           </div>
-                        ))}
+                        </div>
                       </nav>
                     )}
 

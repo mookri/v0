@@ -91,12 +91,12 @@ export default function HeroCarousel() {
   if (!isClient) {
     return (
       <section 
-        className="relative w-full h-[60vh] md:h-[85vh] overflow-hidden bg-gradient-to-br from-background to-muted"
+        className="relative w-full h-[65vh] md:h-[85vh] overflow-hidden bg-gradient-to-br from-background to-muted"
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/75 to-black/65" />
-        <div className="relative h-full container mx-auto px-6 lg:px-8">
+        <div className="relative h-full container mx-auto px-6 lg:px-8 pt-4 md:pt-0">
           <div className="flex h-full items-center">
-            <div className="max-w-3xl lg:max-w-4xl">
+            <div className="max-w-3xl lg:max-w-4xl text-white">
               <div className="inline-flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg text-xs mb-4 text-white font-semibold tracking-wider border border-white/20 backdrop-blur-sm">
                 <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
                 <span>{slides[0].label.toUpperCase()}</span>
@@ -116,7 +116,7 @@ export default function HeroCarousel() {
 
   return (
     <section 
-      className="relative w-full h-[60vh] md:h-[85vh] overflow-hidden bg-gradient-to-br from-background to-muted"
+      className="relative w-full h-[65vh] md:h-[85vh] overflow-hidden bg-gradient-to-br from-background to-muted"
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
@@ -136,7 +136,7 @@ export default function HeroCarousel() {
               className="w-full h-full bg-cover bg-center"
               style={{ 
                 backgroundImage: `url(${slides[current].image})`,
-                transform: 'scale(1.05)',
+                
               }}
             />
             
@@ -148,7 +148,7 @@ export default function HeroCarousel() {
           </div>
 
           {/* Content Container */}
-          <div className="relative h-full container mx-auto px-6 lg:px-8">
+          <div className="relative h-full container mx-auto px-6 lg:px-8 pt-4 md:pt-0">
             <div className="flex h-full items-center">
               <div className="max-w-3xl lg:max-w-4xl text-white">
                 {/* Label Badge - Transparent sleek design */}
@@ -218,16 +218,16 @@ export default function HeroCarousel() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.7, delay: 0.8 }}
-                  className="pt-8 flex items-center gap-3 font-sans"
+                  className="pt-6 md:pt-8 flex items-center gap-2 md:gap-3 font-sans"
                 >
-                  <div className="flex -space-x-2">
+                  <div className="flex -space-x-1 md:-space-x-2">
                     {[1, 2, 3].map((item) => (
-                      <div key={item} className="w-8 h-8 rounded-full bg-white/20 border-2 border-white/30 flex items-center justify-center shadow-sm">
-                        <div className="w-2 h-2 rounded-full bg-white"></div>
+                      <div key={item} className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/20 border-2 border-white/30 flex items-center justify-center shadow-sm">
+                        <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-white"></div>
                       </div>
                     ))}
                   </div>
-                  <span className="text-base leading-snug tracking-wide max-w-[200px] md:max-w-none font-sans text-gray-200">Trusted by thousands of families worldwide</span>
+                  <span className="text-xs md:text-base leading-snug tracking-wide max-w-[150px] md:max-w-[200px] lg:max-w-none font-sans text-gray-200">Trusted by thousands of families worldwide</span>
                 </motion.div>
               </div>
             </div>
@@ -253,15 +253,15 @@ export default function HeroCarousel() {
       </button>
 
       {/* Animated Capsule-shaped Progress Indicators */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3">
+      <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 flex gap-2 md:gap-3">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
             className={`h-1.5 rounded-full transition-all duration-500 ease-in-out focus:outline-none focus:ring-2 focus:ring-white/50 ${
               index === current 
-                ? "bg-white w-8" 
-                : "bg-white/30 w-4 hover:brightness-125"
+                ? "bg-white w-6 sm:w-7 md:w-8" 
+                : "bg-white/30 w-1.5 sm:w-2 md:w-4 hover:brightness-125"
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />

@@ -7,6 +7,7 @@ import "./globals.css"
 import BottomMenu from "@/components/bottom-menu"
 import themeConfig from "@/lib/theme-config.json"
 import { SEO_CONFIG, WEBSITE_SCHEMA, ORGANIZATION_SCHEMA } from "@/lib/seo-config"
+import Preloader from "@/components/ui/preloader"
 
 const albert = Albert_Sans({
   subsets: ["latin"],
@@ -114,7 +115,11 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans bg-background text-foreground">
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={
+          <div className="fixed inset-0 flex items-center justify-center bg-background z-50">
+            <Preloader size="lg" className="text-primary" />
+          </div>
+        }>
           {children}
           <Analytics />
         </Suspense>
