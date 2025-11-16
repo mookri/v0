@@ -37,7 +37,7 @@ const TestSuspense = () => {
       <div className="w-full max-w-md">
         <Suspense fallback={
           <div className="flex flex-col items-center justify-center p-8 bg-card rounded-lg border border-border">
-            <Preloader size="lg" className="text-primary mb-4" />
+            <Preloader size={70} className="text-primary mb-4" />
             <p className="text-muted-foreground">Loading content...</p>
           </div>
         }>

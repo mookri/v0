@@ -193,6 +193,45 @@ export function SiteFooter() {
               </ul>
             </div>
           </div>
+
+          {/* Social Media Icons for Mobile */}
+          <div className="flex items-center justify-center space-x-4 pt-2">
+            <a 
+              href="https://www.facebook.com/thenavdhya" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-[#0d1b2a]/80 transition-all duration-300"
+            >
+              <Facebook size={16} className="text-primary" />
+            </a>
+            <a 
+              href="https://www.instagram.com/thenavdhya" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-[#0d1b2a]/80 transition-all duration-300"
+            >
+              <Instagram size={16} className="text-primary" />
+            </a>
+            <a 
+              href="https://www.twitter.com/thenavdhya" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-[#0d1b2a]/80 transition-all duration-300"
+            >
+              <Twitter size={16} className="text-primary" />
+            </a>
+            <a 
+              href="https://www.youtube.com/thenavdhya" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-[#0d1b2a]/80 transition-all duration-300"
+            >
+              <Youtube size={16} className="text-primary" />
+            </a>
+          </div>
+
+          {/* Sleek horizontal divider line */}
+          <div className="border-t border-[#ff9933]/10 pt-2"></div>
         </div>
       </div>
 
@@ -211,15 +250,38 @@ export function SiteFooter() {
 
             {/* Social Media Icons */}
             <div className="flex items-center space-x-2.5">
-              {[Facebook, Instagram, Twitter, Youtube].map((Icon, index) => (
-                <a 
-                  key={index} 
-                  href="#" 
-                  className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-[#0d1b2a]/80 transition-all duration-300"
-                >
-                  <Icon size={14} className="text-primary" />
-                </a>
-              ))}
+              <a 
+                href="https://www.facebook.com/thenavdhya" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-[#0d1b2a]/80 transition-all duration-300"
+              >
+                <Facebook size={14} className="text-primary" />
+              </a>
+              <a 
+                href="https://www.instagram.com/thenavdhya" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-[#0d1b2a]/80 transition-all duration-300"
+              >
+                <Instagram size={14} className="text-primary" />
+              </a>
+              <a 
+                href="https://www.twitter.com/thenavdhya" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-[#0d1b2a]/80 transition-all duration-300"
+              >
+                <Twitter size={14} className="text-primary" />
+              </a>
+              <a 
+                href="https://www.youtube.com/thenavdhya" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-[#0d1b2a]/80 transition-all duration-300"
+              >
+                <Youtube size={14} className="text-primary" />
+              </a>
             </div>
 
             {/* App Download */}
