@@ -18,7 +18,7 @@ const TestLoading = () => {
   if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-background z-50">
-        <Preloader size="lg" className="text-primary" />
+        <Preloader size={70} className="text-primary" />
       </div>
     )
   }

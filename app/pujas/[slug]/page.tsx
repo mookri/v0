@@ -3,7 +3,7 @@ import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 import PujaDetailsClient from "./client"
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const puja = DATA[slug]
   
@@ -355,8 +355,8 @@ const DATA: Record<string, PujaData> = {
   }
 };
 
-export default function PujaDetailsPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function PujaDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const puja = DATA[slug];
   
   if (!puja) {
