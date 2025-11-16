@@ -16,25 +16,22 @@ import {
   ArrowRight,
   ChevronDown
 } from "lucide-react"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 import Link from "next/link"
 import { useState } from "react"
 
 // Schema markup for the services page
-const SERVICES_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "Service",
-  "name": "Puja Services",
-  "provider": {
-    "@type": "Organization",
-    "name": "Navdhya"
-  },
-  "description": "Authentic Hindu puja services performed by certified Vedic pandits in Delhi",
-  "breadcrumb": [
-    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.navdhya.com" },
-    { "@type": "ListItem", "position": 2, "name": "Services", "item": "https://www.navdhya.com/services" }
+const SERVICES_SCHEMA = seoManager.generateSchema({
+  type: "Service",
+  name: "Puja Services",
+  description: "Authentic Hindu puja services performed by certified Vedic pandits in Delhi",
+  path: "/services",
+  breadcrumbs: [
+    { name: "Home", url: "https://www.navdhya.com" },
+    { name: "Services", url: "https://www.navdhya.com/services" }
   ]
-}
+})
 
 // Service data for major categories with images
 const serviceCategories = [

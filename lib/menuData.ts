@@ -22,6 +22,14 @@ import {
   Compass,
   GraduationCap,
   MessageCircle,
+  Handshake,
+  Bell,
+  Calculator,
+  Download,
+  AudioLines,
+  FileText as FileTextIcon,
+  Video,
+  Lightbulb,
 } from "lucide-react";
 
 // 🕉️ Main Mobile Dock Navigation (Bottom Bar)
@@ -59,13 +67,13 @@ export const MENU_GROUPS = [
     description: "All Pujas, Dosha Nivaran, and Rituals for every occasion",
     items: [
       { label: "All Pujas", href: "/pujas", icon: Sparkles },
-      { label: "Home Pujas", href: "/pujas/home", icon: Home },
-      { label: "Temple Pujas", href: "/pujas/temple", icon: Calendar },
+      { label: "Occasion Pujas", href: "/pujas/occasions", icon: Gift },
+      { label: "Regional Pujas", href: "/pujas/regional", icon: Home },
+      { label: "Temple Offerings", href: "/pujas/temple", icon: Calendar },
+      { label: "Personalized Rituals", href: "/pujas/personalized", icon: BookOpen },
       { label: "Festival Pujas", href: "/pujas/festivals", icon: Calendar },
-      { label: "Special Occasions", href: "/pujas/occasions", icon: Gift },
       { label: "Dosha Nivaran", href: "/pujas/dosha-nivaran", icon: Users },
       { label: "Custom Puja Request", href: "/pujas/custom", icon: BookOpen },
-      { label: "Quick Book (3-step)", href: "/pujas/quick-book", icon: Sparkles },
     ],
   },
   {
@@ -108,6 +116,28 @@ export const MENU_GROUPS = [
       { label: "Mantras & Slokas", href: "/learn/mantras", icon: BookOpen },
       { label: "Video Library", href: "/learn/videos", icon: BookOpen },
       { label: "Testimonials", href: "/testimonials", icon: Star },
+    ],
+  },
+  {
+    group: "Resources",
+    description: "Articles, scriptures, tools, news, and digital library for your spiritual journey",
+    items: [
+      { label: "Articles & Blogs → SEO content", href: "/resources/blog", icon: BookOpen },
+      { label: "Scriptures & Texts → Rich spiritual library", href: "/resources/scriptures", icon: BookMarked },
+      { label: "Tools & Calculators → Horoscope, Muhurat, Panchang", href: "/resources/tools", icon: Calculator },
+      { label: "News & Updates → Real-time temple info", href: "/resources/news", icon: Bell },
+      { label: "Digital Library → Downloadable wisdom", href: "/resources/library", icon: Download },
+    ],
+  },
+  {
+    group: "Community",
+    description: "Connect with fellow spiritual seekers and participate in community initiatives",
+    items: [
+      { label: "Discussions → Forums", href: "/community/forums", icon: MessageCircle },
+      { label: "User Stories", href: "/community/stories", icon: BookOpen },
+      { label: "Volunteer Programs", href: "/community/volunteer", icon: Handshake },
+      { label: "Upcoming Events", href: "/community/events", icon: Calendar },
+      { label: "Join Navdhya", href: "/community/join", icon: Users },
     ],
   },
   {

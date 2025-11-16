@@ -1,52 +1,26 @@
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "Affiliate Disclosure | Navdhya",
+export const metadata = seoManager.generateMetadata({
+  title: "Affiliate Disclosure",
   description: "Navdhya's affiliate disclosure statement. Learn about our relationships with third-party products and services that may earn us commissions.",
-  keywords: "affiliate disclosure, affiliate links, commission disclosure, FTC compliance, affiliate marketing",
-  openGraph: {
-    title: "Affiliate Disclosure | Navdhya",
-    description: "Navdhya's affiliate disclosure statement. Learn about our relationships with third-party products and services that may earn us commissions.",
-    url: "https://www.navdhya.com/legal/affiliate-disclosure",
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Navdhya Affiliate Disclosure",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Affiliate Disclosure | Navdhya",
-    description: "Navdhya's affiliate disclosure statement. Learn about our relationships with third-party products and services that may earn us commissions.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/legal/affiliate-disclosure",
-  },
-}
+  path: "/legal/affiliate-disclosure",
+  keywords: ["affiliate disclosure", "affiliate links", "commission disclosure", "FTC compliance", "affiliate marketing"]
+})
 
 // Schema markup for the affiliate disclosure page
-const AFFILIATE_DISCLOSURE_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
+const AFFILIATE_DISCLOSURE_SCHEMA = seoManager.generateSchema({
+  type: "WebPage",
   name: "Affiliate Disclosure - Navdhya",
-  url: "https://www.navdhya.com/legal/affiliate-disclosure",
   description: "Navdhya's affiliate disclosure statement. Learn about our relationships with third-party products and services that may earn us commissions.",
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: "/legal/affiliate-disclosure",
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
     { name: "Affiliate Disclosure", url: "https://www.navdhya.com/legal/affiliate-disclosure" }
-  ])
-}
+  ]
+})
 
 export default function AffiliateDisclosurePage() {
   const affiliateDisclosureSchema = JSON.stringify(AFFILIATE_DISCLOSURE_SCHEMA)

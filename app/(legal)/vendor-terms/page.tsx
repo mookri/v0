@@ -1,52 +1,26 @@
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "Vendor / Partner Terms | Navdhya",
+export const metadata = seoManager.generateMetadata({
+  title: "Vendor / Partner Terms",
   description: "Terms and conditions for third-party vendors and partners working with Navdhya. Covers service agreements, responsibilities, and partnership guidelines.",
-  keywords: "vendor terms, partner agreement, third-party services, service provider terms, Navdhya partnerships",
-  openGraph: {
-    title: "Vendor / Partner Terms | Navdhya",
-    description: "Terms and conditions for third-party vendors and partners working with Navdhya. Covers service agreements, responsibilities, and partnership guidelines.",
-    url: "https://www.navdhya.com/legal/vendor-terms",
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Navdhya Vendor Terms",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Vendor / Partner Terms | Navdhya",
-    description: "Terms and conditions for third-party vendors and partners working with Navdhya. Covers service agreements, responsibilities, and partnership guidelines.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/legal/vendor-terms",
-  },
-}
+  path: "/legal/vendor-terms",
+  keywords: ["vendor terms", "partner agreement", "third-party services", "service provider terms", "Navdhya partnerships"]
+})
 
 // Schema markup for the vendor terms page
-const VENDOR_TERMS_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
+const VENDOR_TERMS_SCHEMA = seoManager.generateSchema({
+  type: "WebPage",
   name: "Vendor / Partner Terms - Navdhya",
-  url: "https://www.navdhya.com/legal/vendor-terms",
   description: "Terms and conditions for third-party vendors and partners working with Navdhya. Covers service agreements, responsibilities, and partnership guidelines.",
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: "/legal/vendor-terms",
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
     { name: "Vendor / Partner Terms", url: "https://www.navdhya.com/legal/vendor-terms" }
-  ])
-}
+  ]
+})
 
 export default function VendorTermsPage() {
   const vendorTermsSchema = JSON.stringify(VENDOR_TERMS_SCHEMA)

@@ -3,66 +3,54 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Phone, Mail, MessageCircle } from "lucide-react"
-import { SEO_CONFIG, LOCAL_BUSINESS_SCHEMA, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "Contact Us | Navdhya – Delhi's Trusted Puja & Spiritual Wellness",
+export const metadata = seoManager.generateMetadata({
+  title: "Contact Us",
   description: "Get in touch with Navdhya for authentic Puja and Spiritual Wellness services in Delhi. Book trusted pandits for Navdhya Puja, Grah Shanti, Vedic rituals, and home ceremonies.",
-  openGraph: {
-    title: "Contact Us | Navdhya – Delhi's Trusted Puja & Spiritual Wellness",
-    description: "Get in touch with Navdhya for authentic Puja and Spiritual Wellness services in Delhi. Book trusted pandits for Navdhya Puja, Grah Shanti, Vedic rituals, and home ceremonies.",
-    url: `https://www.navdhya.com/contact`,
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Contact Navdhya for Hindu Ritual Services",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Contact Us | Navdhya – Delhi's Trusted Puja & Spiritual Wellness",
-    description: "Get in touch with Navdhya for authentic Puja and Spiritual Wellness services in Delhi. Book trusted pandits for Navdhya Puja, Grah Shanti, Vedic rituals, and home ceremonies.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/contact",
-  },
-}
+  path: "/contact"
+})
 
 // Schema markup for the contact page
-const CONTACT_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "ContactPage",
+const CONTACT_SCHEMA = seoManager.generateSchema({
+  type: "ContactPage",
   name: "Contact Us - Navdhya",
-  url: `https://www.navdhya.com/contact`,
   description: "Get in touch with Navdhya for authentic Puja and Spiritual Wellness services in Delhi",
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: "/contact",
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
-    { name: "Contact Us", url: `https://www.navdhya.com/contact` }
-  ])
+    { name: "Contact Us", url: "https://www.navdhya.com/contact" }
+  ]
+})
+
+// Local business schema with address information
+const LOCAL_BUSINESS_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Navdhya",
+  "image": "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg",
+  "telephone": "+91-7289000377",
+  "email": "help@navdhya.com",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Pandav Nagar",
+    "addressLocality": "New Delhi",
+    "postalCode": "110092",
+    "addressCountry": "IN"
+  },
+  "url": "https://www.navdhya.com",
+  "sameAs": [
+    "https://www.facebook.com/navdhya",
+    "https://www.instagram.com/navdhya",
+    "https://twitter.com/navdhya"
+  ]
 }
 
 export default function ContactPage() {
   const contactSchema = JSON.stringify(CONTACT_SCHEMA)
-  const localBusinessSchema = JSON.stringify({
-    ...LOCAL_BUSINESS_SCHEMA,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "Pandav Nagar",
-      addressLocality: "New Delhi",
-      postalCode: "110092",
-      addressCountry: "IN"
-    }
-  })
+  const localBusinessSchema = JSON.stringify(LOCAL_BUSINESS_SCHEMA)
   
   return (
     <>

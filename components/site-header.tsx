@@ -39,8 +39,8 @@ export function SiteHeader() {
       href: '/'
     },
     {
-      name: 'Pujas & Rituals',
-      href: '#',
+      name: 'Book a Puja',
+      href: '/pujas',
       subItems: [
   {
     name: 'All Pujas', // Complete catalog of traditional and modern rituals
@@ -56,17 +56,16 @@ export function SiteHeader() {
   },
   {
     name: 'Temple Offerings', // Diwali, Navratri, Makar Sankranti, Temple Rituals
-    href: '/pujas/festival',
+    href: '/pujas/temple',
   },
   {
     name: 'Personalized Rituals', // Tailored rituals for individual or family needs
-    href: '/pujas/custom',
+    href: '/pujas/personalized',
   },
 ]
-
     },
     {
-      name: 'Pandits & Experts',
+      name: 'Find a Pandit',
       href: '/pandits',
       subItems: [
         { name: 'Find Pandit', href: '/pandits' },           // primary discovery landing

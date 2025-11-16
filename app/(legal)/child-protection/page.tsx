@@ -1,52 +1,26 @@
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "Child Protection / Minor Usage Policy | Navdhya",
+export const metadata = seoManager.generateMetadata({
+  title: "Child Protection / Minor Usage Policy",
   description: "Navdhya's commitment to protecting children and minors who access our platform. Learn about our policies for family services and educational content.",
-  keywords: "child protection, minor usage policy, family services, children's privacy, online safety, Navdhya child protection",
-  openGraph: {
-    title: "Child Protection / Minor Usage Policy | Navdhya",
-    description: "Navdhya's commitment to protecting children and minors who access our platform. Learn about our policies for family services and educational content.",
-    url: "https://www.navdhya.com/legal/child-protection",
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Navdhya Child Protection Policy",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Child Protection / Minor Usage Policy | Navdhya",
-    description: "Navdhya's commitment to protecting children and minors who access our platform. Learn about our policies for family services and educational content.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/legal/child-protection",
-  },
-}
+  path: "/legal/child-protection",
+  keywords: ["child protection", "minor usage policy", "family services", "children's privacy", "online safety", "Navdhya child protection"]
+})
 
 // Schema markup for the child protection page
-const CHILD_PROTECTION_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
+const CHILD_PROTECTION_SCHEMA = seoManager.generateSchema({
+  type: "WebPage",
   name: "Child Protection / Minor Usage Policy - Navdhya",
-  url: "https://www.navdhya.com/legal/child-protection",
   description: "Navdhya's commitment to protecting children and minors who access our platform. Learn about our policies for family services and educational content.",
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: "/legal/child-protection",
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
     { name: "Child Protection / Minor Usage Policy", url: "https://www.navdhya.com/legal/child-protection" }
-  ])
-}
+  ]
+})
 
 export default function ChildProtectionPage() {
   const childProtectionSchema = JSON.stringify(CHILD_PROTECTION_SCHEMA)

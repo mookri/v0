@@ -1,4 +1,4 @@
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { SEO_CONFIG } from "@/lib/seo-config"
 
 export const servicesMetadata = {
   title: "Puja Services | Navdhya – Delhi's Trusted Spiritual Wellness",

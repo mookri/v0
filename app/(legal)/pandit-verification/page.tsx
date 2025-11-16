@@ -1,52 +1,26 @@
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "Pandit Verification & Code of Conduct | Navdhya",
+export const metadata = seoManager.generateMetadata({
+  title: "Pandit Verification & Code of Conduct",
   description: "Learn about Navdhya's rigorous pandit verification process and code of conduct. We ensure all our pandits are thoroughly vetted and adhere to the highest professional standards.",
-  keywords: "pandit verification, pandit code of conduct, certified pandits, pandit background check, Navdhya pandits",
-  openGraph: {
-    title: "Pandit Verification & Code of Conduct | Navdhya",
-    description: "Learn about Navdhya's rigorous pandit verification process and code of conduct. We ensure all our pandits are thoroughly vetted and adhere to the highest professional standards.",
-    url: "https://www.navdhya.com/legal/pandit-verification",
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Navdhya Pandit Verification Process",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Pandit Verification & Code of Conduct | Navdhya",
-    description: "Learn about Navdhya's rigorous pandit verification process and code of conduct. We ensure all our pandits are thoroughly vetted and adhere to the highest professional standards.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/legal/pandit-verification",
-  },
-}
+  path: "/legal/pandit-verification",
+  keywords: ["pandit verification", "pandit code of conduct", "certified pandits", "pandit background check", "Navdhya pandits"]
+})
 
 // Schema markup for the pandit verification page
-const PANDIT_VERIFICATION_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
+const PANDIT_VERIFICATION_SCHEMA = seoManager.generateSchema({
+  type: "WebPage",
   name: "Pandit Verification & Code of Conduct - Navdhya",
-  url: "https://www.navdhya.com/legal/pandit-verification",
   description: "Learn about Navdhya's rigorous pandit verification process and code of conduct. We ensure all our pandits are thoroughly vetted and adhere to the highest professional standards.",
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: "/legal/pandit-verification",
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
     { name: "Pandit Verification & Code of Conduct", url: "https://www.navdhya.com/legal/pandit-verification" }
-  ])
-}
+  ]
+})
 
 export default function PanditVerificationPage() {
   const panditVerificationSchema = JSON.stringify(PANDIT_VERIFICATION_SCHEMA)

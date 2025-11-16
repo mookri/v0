@@ -4,57 +4,31 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar, Clock, Users, MapPin, Phone, Mail } from "lucide-react"
-import { SEO_CONFIG } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 import Link from "next/link"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "Book a Puja | Navdhya – Delhi's Trusted Spiritual Wellness",
+export const metadata = seoManager.generateMetadata({
+  title: "Book a Puja",
   description: "Schedule your authentic Hindu puja service with certified Vedic pandits in Delhi. Easy online booking for home pujas, temple ceremonies, and spiritual consultations.",
+  path: "/booking",
   keywords: [
     "Book Puja Delhi",
     "Online Puja Booking",
     "Vedic Pandit Booking",
     "Spiritual Service Booking",
     "Hindu Ritual Booking"
-  ],
-  openGraph: {
-    title: "Book a Puja | Navdhya – Delhi's Trusted Spiritual Wellness",
-    description: "Schedule your authentic Hindu puja service with certified Vedic pandits in Delhi. Easy online booking for home pujas, temple ceremonies, and spiritual consultations.",
-    url: `https://www.navdhya.com/booking`,
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Book a Puja with Navdhya - Authentic Hindu Rituals in Delhi",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Book a Puja | Navdhya – Delhi's Trusted Spiritual Wellness",
-    description: "Schedule your authentic Hindu puja service with certified Vedic pandits in Delhi. Easy online booking for home pujas, temple ceremonies, and spiritual consultations.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/booking",
-  },
-}
+  ]
+})
 
 // Schema markup for the booking page
-const BOOKING_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Book a Puja",
-  "description": "Schedule your authentic Hindu puja service with certified Vedic pandits in Delhi",
-  "url": "https://www.navdhya.com/booking"
-}
+const BOOKING_SCHEMA = seoManager.generateSchema({
+  type: "WebPage",
+  name: "Book a Puja",
+  description: "Schedule your authentic Hindu puja service with certified Vedic pandits in Delhi",
+  path: "/booking"
+})
 
 const serviceTypes = [
   { id: "home-puja", name: "Home Puja Service", description: "Pujas performed in the comfort of your home" },

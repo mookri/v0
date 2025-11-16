@@ -54,12 +54,12 @@ export function SiteFooter() {
             <ul className="space-y-1">
               {footerData.services.map((service, index) => (
                 <li key={index}>
-                  <a 
-                    href="#" 
+                  <Link 
+                    href={service.href} 
                     className="text-gray-300 hover:text-white transition-all duration-300 text-xs py-0.5 block"
                   >
-                    {service}
-                  </a>
+                    {service.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -71,12 +71,12 @@ export function SiteFooter() {
             <ul className="space-y-1">
               {footerData.astrology.map((item, index) => (
                 <li key={index}>
-                  <a 
-                    href="#" 
+                  <Link 
+                    href={item.href} 
                     className="text-gray-300 hover:text-white transition-all duration-300 text-xs py-0.5 block"
                   >
-                    {item}
-                  </a>
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -88,12 +88,12 @@ export function SiteFooter() {
             <ul className="space-y-1">
               {footerData.centers.map((city, index) => (
                 <li key={index}>
-                  <a 
-                    href="#" 
+                  <Link 
+                    href={city.href} 
                     className="text-gray-300 hover:text-white transition-all duration-300 text-xs py-0.5 block"
                   >
-                    {city}
-                  </a>
+                    {city.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -147,12 +147,12 @@ export function SiteFooter() {
               <ul className="space-y-1">
                 {footerData.services.map((service, index) => (
                   <li key={index}>
-                    <a 
-                      href="#" 
+                    <Link 
+                      href={service.href} 
                       className="text-gray-300 hover:text-white transition-all duration-300 text-xs py-0.5 block"
                     >
-                      {service}
-                    </a>
+                      {service.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -166,12 +166,12 @@ export function SiteFooter() {
               <ul className="space-y-1">
                 {footerData.astrology.map((item, index) => (
                   <li key={index}>
-                    <a 
-                      href="#" 
+                    <Link 
+                      href={item.href} 
                       className="text-gray-300 hover:text-white transition-all duration-300 text-xs py-0.5 block"
                     >
-                      {item}
-                    </a>
+                      {item.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -182,12 +182,12 @@ export function SiteFooter() {
               <ul className="space-y-1">
                 {footerData.centers.map((city, index) => (
                   <li key={index}>
-                    <a 
-                      href="#" 
+                    <Link 
+                      href={city.href} 
                       className="text-gray-300 hover:text-white transition-all duration-300 text-xs py-0.5 block"
                     >
-                      {city}
-                    </a>
+                      {city.label}
+                    </Link>
                   </li>
                 ))}
               </ul>

@@ -1,52 +1,26 @@
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "Cookie Policy | Navdhya",
+export const metadata = seoManager.generateMetadata({
+  title: "Cookie Policy",
   description: "Learn how Navdhya uses cookies and similar tracking technologies to enhance your browsing experience and provide personalized services.",
-  keywords: "cookie policy, cookies, tracking technologies, privacy, website cookies, Navdhya cookies",
-  openGraph: {
-    title: "Cookie Policy | Navdhya",
-    description: "Learn how Navdhya uses cookies and similar tracking technologies to enhance your browsing experience and provide personalized services.",
-    url: "https://www.navdhya.com/legal/cookie-policy",
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Navdhya Cookie Policy",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Cookie Policy | Navdhya",
-    description: "Learn how Navdhya uses cookies and similar tracking technologies to enhance your browsing experience and provide personalized services.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/legal/cookie-policy",
-  },
-}
+  path: "/legal/cookie-policy",
+  keywords: ["cookie policy", "cookies", "tracking technologies", "privacy", "website cookies", "Navdhya cookies"]
+})
 
 // Schema markup for the cookie policy page
-const COOKIE_POLICY_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
+const COOKIE_POLICY_SCHEMA = seoManager.generateSchema({
+  type: "WebPage",
   name: "Cookie Policy - Navdhya",
-  url: "https://www.navdhya.com/legal/cookie-policy",
   description: "Learn how Navdhya uses cookies and similar tracking technologies to enhance your browsing experience and provide personalized services.",
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: "/legal/cookie-policy",
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
     { name: "Cookie Policy", url: "https://www.navdhya.com/legal/cookie-policy" }
-  ])
-}
+  ]
+})
 
 export default function CookiePolicyPage() {
   const cookiePolicySchema = JSON.stringify(COOKIE_POLICY_SCHEMA)

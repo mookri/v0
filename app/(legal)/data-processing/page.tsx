@@ -1,52 +1,26 @@
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "Data Processing Addendum | Navdhya",
+export const metadata = seoManager.generateMetadata({
+  title: "Data Processing Addendum",
   description: "Navdhya's Data Processing Addendum for compliance with data protection laws. Learn about our data processing practices and third-party processor relationships.",
-  keywords: "data processing, DPA, GDPR compliance, data protection, third-party processors, privacy compliance",
-  openGraph: {
-    title: "Data Processing Addendum | Navdhya",
-    description: "Navdhya's Data Processing Addendum for compliance with data protection laws. Learn about our data processing practices and third-party processor relationships.",
-    url: "https://www.navdhya.com/legal/data-processing",
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Navdhya Data Processing Addendum",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Data Processing Addendum | Navdhya",
-    description: "Navdhya's Data Processing Addendum for compliance with data protection laws. Learn about our data processing practices and third-party processor relationships.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/legal/data-processing",
-  },
-}
+  path: "/legal/data-processing",
+  keywords: ["data processing", "DPA", "GDPR compliance", "data protection", "third-party processors", "privacy compliance"]
+})
 
 // Schema markup for the data processing page
-const DATA_PROCESSING_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
+const DATA_PROCESSING_SCHEMA = seoManager.generateSchema({
+  type: "WebPage",
   name: "Data Processing Addendum - Navdhya",
-  url: "https://www.navdhya.com/legal/data-processing",
   description: "Navdhya's Data Processing Addendum for compliance with data protection laws. Learn about our data processing practices and third-party processor relationships.",
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: "/legal/data-processing",
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
     { name: "Data Processing Addendum", url: "https://www.navdhya.com/legal/data-processing" }
-  ])
-}
+  ]
+})
 
 export default function DataProcessingPage() {
   const dataProcessingSchema = JSON.stringify(DATA_PROCESSING_SCHEMA)

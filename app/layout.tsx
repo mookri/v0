@@ -6,7 +6,7 @@ import { Suspense } from "react"
 import "./globals.css"
 import BottomMenu from "@/components/bottom-menu"
 import { SITE_METADATA, VIEWPORT_CONFIG } from "@/lib/metadata-config"
-import { SEO_CONFIG } from "@/lib/seo-config"
+import { SEO_CONFIG, WEBSITE_SCHEMA, ORGANIZATION_SCHEMA } from "@/lib/seo-config"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { LoadingProvider } from "@/context/LoadingContext"
@@ -45,38 +45,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const websiteSchema = JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "Navdhya",
-    url: "https://www.navdhya.com",
-    description: SITE_METADATA.description,
-    publisher: {
-      "@type": "Organization",
-      name: "Navdhya",
-      logo: {
-        "@type": "ImageObject",
-        url: "https://www.navdhya.com/favicon/android-chrome-512x512.png"
-      }
-    },
-    potentialAction: {
-      "@type": "SearchAction",
-      target: "https://www.navdhya.com/search?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  })
-
-  const organizationSchema = JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "Navdhya",
-    url: "https://www.navdhya.com",
-    logo: "https://www.navdhya.com/favicon/android-chrome-512x512.png",
-    description: SITE_METADATA.description,
-    sameAs: [
-      // Add social media links here when available
-    ]
-  })
+  const websiteSchema = JSON.stringify(WEBSITE_SCHEMA)
+  const organizationSchema = JSON.stringify(ORGANIZATION_SCHEMA)
 
   return (
     <html lang="en" className={`${albert.variable} antialiased`}>
@@ -110,57 +80,16 @@ export default function RootLayout({
           <Suspense
             fallback={
               <div className="fixed inset-0 flex items-center justify-center bg-background z-50">
-                <Preloader size={96} className="text-primary" />
+                <Preloader />
               </div>
             }
           >
-            {children}
-            <Analytics />
+            <main>{children}</main>
           </Suspense>
-          <BottomMenu />
           <SiteFooter />
+          <BottomMenu />
         </LoadingProvider>
-        
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              const isDevelopment = location.hostname === 'localhost' || 
-                                    location.hostname === '127.0.0.1' || 
-                                    location.hostname === '[::1]' ||
-                                    location.hostname.includes('.local');
-              
-              if (!isDevelopment && 'serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js', { scope: '/' })
-                    .then(function(registration) {
-                      console.log('SW registered: ', registration);
-                    })
-                    .catch(function(err) {
-                      console.log('SW registration failed: ', err);
-                    });
-                });
-                
-                window.addEventListener('online', function() {
-                  if (navigator.serviceWorker.controller) {
-                    navigator.serviceWorker.controller.postMessage({ type: 'ONLINE' });
-                  }
-                });
-                
-                window.addEventListener('offline', function() {
-                  if (navigator.serviceWorker.controller) {
-                    navigator.serviceWorker.controller.postMessage({ type: 'OFFLINE' });
-                  }
-                });
-                
-                navigator.serviceWorker.addEventListener('message', function(event) {
-                  if (event.data && event.data.type === 'ONLINE') {
-                    window.location.reload();
-                  }
-                });
-              }
-            `,
-          }}
-        />
+        <Analytics />
       </body>
     </html>
   )

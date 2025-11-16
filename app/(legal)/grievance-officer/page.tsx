@@ -1,52 +1,26 @@
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "Contact & Grievance Officer | Navdhya",
+export const metadata = seoManager.generateMetadata({
+  title: "Contact & Grievance Officer",
   description: "Contact information for Navdhya's Grievance Officer as mandated under Indian IT Rules, 2021. Reach out for complaints, concerns, or assistance with our services.",
-  keywords: "grievance officer, contact us, customer complaints, IT Rules 2021, Navdhya support, customer service",
-  openGraph: {
-    title: "Contact & Grievance Officer | Navdhya",
-    description: "Contact information for Navdhya's Grievance Officer as mandated under Indian IT Rules, 2021. Reach out for complaints, concerns, or assistance with our services.",
-    url: "https://www.navdhya.com/legal/grievance-officer",
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Navdhya Grievance Officer",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Contact & Grievance Officer | Navdhya",
-    description: "Contact information for Navdhya's Grievance Officer as mandated under Indian IT Rules, 2021. Reach out for complaints, concerns, or assistance with our services.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/legal/grievance-officer",
-  },
-}
+  path: "/legal/grievance-officer",
+  keywords: ["grievance officer", "contact us", "customer complaints", "IT Rules 2021", "Navdhya support", "customer service"]
+})
 
 // Schema markup for the grievance officer page
-const GRIEVANCE_OFFICER_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
+const GRIEVANCE_OFFICER_SCHEMA = seoManager.generateSchema({
+  type: "WebPage",
   name: "Contact & Grievance Officer - Navdhya",
-  url: "https://www.navdhya.com/legal/grievance-officer",
   description: "Contact information for Navdhya's Grievance Officer as mandated under Indian IT Rules, 2021. Reach out for complaints, concerns, or assistance with our services.",
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: "/legal/grievance-officer",
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
     { name: "Contact & Grievance Officer", url: "https://www.navdhya.com/legal/grievance-officer" }
-  ])
-}
+  ]
+})
 
 export default function GrievanceOfficerPage() {
   const grievanceOfficerSchema = JSON.stringify(GRIEVANCE_OFFICER_SCHEMA)

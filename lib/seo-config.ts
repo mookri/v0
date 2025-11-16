@@ -1,4 +1,6 @@
 // SEO Configuration and Schema Markup for Navdhya
+import { generateBreadcrumbSchema, generateFAQSchema, generateGenericSchema } from "@/lib/schema-utils"
+
 export const SEO_CONFIG = {
   siteName: "Navdhya",
   siteUrl: "https://www.navdhya.com",
@@ -74,30 +76,12 @@ export const LOCAL_BUSINESS_SCHEMA = {
 };
 
 // Breadcrumb Schema for internal pages
-export const BREADCRUMB_SCHEMA = (items: Array<{ name: string; url: string }>) => ({
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: items.map((item, index) => ({
-    "@type": "ListItem",
-    position: index + 1,
-    name: item.name,
-    item: item.url
-  }))
-});
+export const BREADCRUMB_SCHEMA = (items: Array<{ name: string; url: string }>) => 
+  generateBreadcrumbSchema(items);
 
 // FAQ Schema for FAQ pages
-export const FAQ_SCHEMA = (faqItems: Array<{ question: string; answer: string }>) => ({
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqItems.map(item => ({
-    "@type": "Question",
-    name: item.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: item.answer
-    }
-  }))
-});
+export const FAQ_SCHEMA = (faqItems: Array<{ question: string; answer: string }>) => 
+  generateFAQSchema(faqItems);
 
 // Service Schema for puja services
 export const SERVICE_SCHEMA = (service: {
@@ -106,27 +90,13 @@ export const SERVICE_SCHEMA = (service: {
   url: string;
   image?: string;
   price?: string;
-}) => ({
-  "@context": "https://schema.org",
-  "@type": "Service",
-  serviceType: "Hindu Ritual Services",
-  provider: {
-    "@type": "Organization",
-    name: "Navdhya"
-  },
+}) => generateGenericSchema({
+  type: "Service",
   name: service.name,
   description: service.description,
-  url: service.url,
-  ...(service.image && {
-    image: [service.image]
-  }),
-  ...(service.price && {
-    offers: {
-      "@type": "Offer",
-      priceCurrency: "INR",
-      price: service.price
-    }
-  })
+  path: service.url.replace("https://www.navdhya.com", ""),
+  image: service.image,
+  price: service.price
 });
 
 // Article Schema for blog posts
@@ -137,28 +107,12 @@ export const ARTICLE_SCHEMA = (article: {
   dateModified: string;
   author: string;
   image?: string;
-}) => ({
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: article.headline,
+}) => generateGenericSchema({
+  type: "Article",
+  name: article.headline,
   description: article.description,
-  datePublished: article.datePublished,
-  dateModified: article.dateModified,
-  author: {
-    "@type": "Person",
-    name: article.author
-  },
-  publisher: {
-    "@type": "Organization",
-    name: "Navdhya",
-    logo: {
-      "@type": "ImageObject",
-      url: "https://www.navdhya.com/favicon/android-chrome-512x512.png"
-    }
-  },
-  ...(article.image && {
-    image: article.image
-  })
+  path: `/blog/${article.headline.toLowerCase().replace(/\s+/g, '-')}`,
+  image: article.image
 });
 
 // Legal Page Schema Markup
@@ -166,14 +120,13 @@ export const LEGAL_PAGE_SCHEMA = (page: {
   name: string;
   url: string;
   description: string;
-}) => ({
-  "@context": "https://schema.org",
-  "@type": "WebPage",
+}) => generateGenericSchema({
+  type: "WebPage",
   name: page.name,
-  url: page.url,
   description: page.description,
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: page.url.replace("https://www.navdhya.com", ""),
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: page.name, url: page.url }
-  ])
+  ]
 });

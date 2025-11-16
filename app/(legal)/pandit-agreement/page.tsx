@@ -1,52 +1,26 @@
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "User Agreement for Pandits | Navdhya",
+export const metadata = seoManager.generateMetadata({
+  title: "User Agreement for Pandits",
   description: "Terms and conditions for pandits joining the Navdhya platform. Understand your rights and responsibilities as a spiritual service provider.",
-  keywords: "pandit agreement, pandit terms, spiritual service provider agreement, Navdhya pandit contract",
-  openGraph: {
-    title: "User Agreement for Pandits | Navdhya",
-    description: "Terms and conditions for pandits joining the Navdhya platform. Understand your rights and responsibilities as a spiritual service provider.",
-    url: "https://www.navdhya.com/legal/pandit-agreement",
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Navdhya Pandit Agreement",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "User Agreement for Pandits | Navdhya",
-    description: "Terms and conditions for pandits joining the Navdhya platform. Understand your rights and responsibilities as a spiritual service provider.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/legal/pandit-agreement",
-  },
-}
+  path: "/legal/pandit-agreement",
+  keywords: ["pandit agreement", "pandit terms", "spiritual service provider agreement", "Navdhya pandit contract"]
+})
 
 // Schema markup for the pandit agreement page
-const PANDIT_AGREEMENT_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
+const PANDIT_AGREEMENT_SCHEMA = seoManager.generateSchema({
+  type: "WebPage",
   name: "User Agreement for Pandits - Navdhya",
-  url: "https://www.navdhya.com/legal/pandit-agreement",
   description: "Terms and conditions for pandits joining the Navdhya platform. Understand your rights and responsibilities as a spiritual service provider.",
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: "/legal/pandit-agreement",
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
     { name: "User Agreement for Pandits", url: "https://www.navdhya.com/legal/pandit-agreement" }
-  ])
-}
+  ]
+})
 
 export default function PanditAgreementPage() {
   const panditAgreementSchema = JSON.stringify(PANDIT_AGREEMENT_SCHEMA)

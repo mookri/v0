@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 import PujaDetailsClient from "./client"
 
@@ -14,37 +14,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     }
   }
   
-  return {
-    title: `${puja.title} | Navdhya – Delhi's Trusted Spiritual Wellness`,
+  return seoManager.generateMetadata({
+    title: puja.title,
     description: puja.description,
-    keywords: [puja.title, "Puja Services in Delhi", "Hindu Rituals", "Vedic Pandits", "Spiritual Ceremonies"],
-    openGraph: {
-      title: `${puja.title} | Navdhya – Delhi's Trusted Spiritual Wellness`,
-      description: puja.description,
-      url: `https://www.navdhya.com/pujas/${slug}`,
-      siteName: SEO_CONFIG.siteName,
-      images: [
-        {
-          url: puja.image || SEO_CONFIG.defaultImage,
-          width: 1200,
-          height: 630,
-          alt: `${puja.title} - Navdhya Puja Services`,
-        },
-      ],
-      locale: SEO_CONFIG.locale,
-      type: "website",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${puja.title} | Navdhya – Delhi's Trusted Spiritual Wellness`,
-      description: puja.description,
-      images: [puja.image || SEO_CONFIG.defaultImage],
-      site: SEO_CONFIG.twitter.site,
-    },
-    alternates: {
-      canonical: `https://www.navdhya.com/pujas/${slug}`,
-    },
-  }
+    path: `/pujas/${slug}`,
+    image: puja.image,
+    keywords: [puja.title, "Puja Services in Delhi", "Hindu Rituals", "Vedic Pandits", "Spiritual Ceremonies"]
+  })
 }
 
 type PujaData = {
@@ -387,34 +363,19 @@ export default function PujaDetailsPage({ params }: { params: { slug: string } }
     notFound();
   }
   
-  const pujaSchema = JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": puja.title,
-    "description": puja.description,
-    "url": `https://www.navdhya.com/pujas/${slug}`,
-    "provider": {
-      "@type": "Organization",
-      "name": "Navdhya",
-      "url": "https://www.navdhya.com"
-    },
-    "offers": {
-      "@type": "Offer",
-      "priceCurrency": "INR",
-      "price": puja.price.split(" – ")[0].replace(/[₹,]/g, ""),
-      "priceSpecification": {
-        "@type": "PriceSpecification",
-        "minPrice": puja.price.split(" – ")[0].replace(/[₹,]/g, ""),
-        "maxPrice": puja.price.split(" – ")[1].replace(/[₹,]/g, ""),
-        "priceCurrency": "INR"
-      }
-    },
-    "breadcrumb": BREADCRUMB_SCHEMA([
+  const pujaSchema = JSON.stringify(seoManager.generateSchema({
+    type: "Service",
+    name: puja.title,
+    description: puja.description,
+    path: `/pujas/${slug}`,
+    price: puja.price.split(" – ")[0].replace(/[₹,]/g, ""),
+    currency: "INR",
+    breadcrumbs: [
       { name: "Home", url: "https://www.navdhya.com" },
       { name: "Puja Services", url: "https://www.navdhya.com/pujas" },
       { name: puja.title, url: `https://www.navdhya.com/pujas/${slug}` }
-    ])
-  });
+    ]
+  }));
   
   return (
     <>

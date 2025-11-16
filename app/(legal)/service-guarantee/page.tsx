@@ -1,52 +1,26 @@
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "Service Guarantee Policy | Navdhya",
+export const metadata = seoManager.generateMetadata({
+  title: "Service Guarantee Policy",
   description: "Navdhya's commitment to quality service delivery. Our Service Guarantee ensures exceptional ritual experiences with verified pandits, punctuality, and customer satisfaction.",
-  keywords: "service guarantee, quality assurance, ritual satisfaction, pandit promise, Navdhya guarantee",
-  openGraph: {
-    title: "Service Guarantee Policy | Navdhya",
-    description: "Navdhya's commitment to quality service delivery. Our Service Guarantee ensures exceptional ritual experiences with verified pandits, punctuality, and customer satisfaction.",
-    url: "https://www.navdhya.com/legal/service-guarantee",
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Navdhya Service Guarantee",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Service Guarantee Policy | Navdhya",
-    description: "Navdhya's commitment to quality service delivery. Our Service Guarantee ensures exceptional ritual experiences with verified pandits, punctuality, and customer satisfaction.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/legal/service-guarantee",
-  },
-}
+  path: "/legal/service-guarantee",
+  keywords: ["service guarantee", "quality assurance", "ritual satisfaction", "pandit promise", "Navdhya guarantee"]
+})
 
 // Schema markup for the service guarantee page
-const SERVICE_GUARANTEE_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
+const SERVICE_GUARANTEE_SCHEMA = seoManager.generateSchema({
+  type: "WebPage",
   name: "Service Guarantee Policy - Navdhya",
-  url: "https://www.navdhya.com/legal/service-guarantee",
   description: "Navdhya's commitment to quality service delivery. Our Service Guarantee ensures exceptional ritual experiences with verified pandits, punctuality, and customer satisfaction.",
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: "/legal/service-guarantee",
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
     { name: "Service Guarantee Policy", url: "https://www.navdhya.com/legal/service-guarantee" }
-  ])
-}
+  ]
+})
 
 export default function ServiceGuaranteePage() {
   const serviceGuaranteeSchema = JSON.stringify(SERVICE_GUARANTEE_SCHEMA)

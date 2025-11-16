@@ -1,52 +1,26 @@
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "Accessibility Statement | Navdhya",
+export const metadata = seoManager.generateMetadata({
+  title: "Accessibility Statement",
   description: "Navdhya's commitment to digital accessibility for all users. We strive to make our platform usable by everyone, regardless of abilities or disabilities.",
-  keywords: "accessibility, inclusive design, digital accessibility, web accessibility, Navdhya accessibility",
-  openGraph: {
-    title: "Accessibility Statement | Navdhya",
-    description: "Navdhya's commitment to digital accessibility for all users. We strive to make our platform usable by everyone, regardless of abilities or disabilities.",
-    url: "https://www.navdhya.com/legal/accessibility",
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Navdhya Accessibility Commitment",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Accessibility Statement | Navdhya",
-    description: "Navdhya's commitment to digital accessibility for all users. We strive to make our platform usable by everyone, regardless of abilities or disabilities.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/legal/accessibility",
-  },
-}
+  path: "/legal/accessibility",
+  keywords: ["accessibility", "inclusive design", "digital accessibility", "web accessibility", "Navdhya accessibility"]
+})
 
 // Schema markup for the accessibility statement page
-const ACCESSIBILITY_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
+const ACCESSIBILITY_SCHEMA = seoManager.generateSchema({
+  type: "WebPage",
   name: "Accessibility Statement - Navdhya",
-  url: "https://www.navdhya.com/legal/accessibility",
   description: "Navdhya's commitment to digital accessibility for all users. We strive to make our platform usable by everyone, regardless of abilities or disabilities.",
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: "/legal/accessibility",
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
     { name: "Accessibility Statement", url: "https://www.navdhya.com/legal/accessibility" }
-  ])
-}
+  ]
+})
 
 export default function AccessibilityPage() {
   const accessibilitySchema = JSON.stringify(ACCESSIBILITY_SCHEMA)

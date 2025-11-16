@@ -1,52 +1,35 @@
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 import { ShieldCheck, Grid, Users, Award, HeartHandshake, Zap, Leaf, Target } from "lucide-react"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "About Us | Navdhya – Delhi's Trusted Puja & Spiritual Wellness",
+export const metadata = seoManager.generateMetadata({
+  title: "About Us",
   description: "Navdhya is Delhi's premier spiritual wellness platform connecting families with certified Vedic pandits for authentic puja services, astrology consultation, and spiritual guidance. Professional, reliable, and culturally authentic.",
-  keywords: "Puja Services in Delhi, Online Puja Booking, Spiritual Wellness Experts, Vedic Pandits Delhi, Astrology Consultation, Hindu Ritual Services, Authentic Puja, Delhi Spiritual Services",
-  openGraph: {
-    title: "About Us | Navdhya – Delhi's Trusted Puja & Spiritual Wellness",
-    description: "Navdhya is Delhi's premier spiritual wellness platform connecting families with certified Vedic pandits for authentic puja services, astrology consultation, and spiritual guidance. Professional, reliable, and culturally authentic.",
-    url: `https://www.navdhya.com/about`,
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "About Navdhya - Delhi's Trusted Spiritual Wellness Experts",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "About Us | Navdhya – Delhi's Trusted Puja & Spiritual Wellness",
-    description: "Navdhya is Delhi's premier spiritual wellness platform connecting families with certified Vedic pandits for authentic puja services, astrology consultation, and spiritual guidance. Professional, reliable, and culturally authentic.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/about",
-  },
-}
+  path: "/about",
+  keywords: [
+    "Puja Services in Delhi", 
+    "Online Puja Booking", 
+    "Spiritual Wellness Experts", 
+    "Vedic Pandits Delhi", 
+    "Astrology Consultation", 
+    "Hindu Ritual Services", 
+    "Authentic Puja", 
+    "Delhi Spiritual Services"
+  ]
+})
 
 // Schema markup for the about page
-const ABOUT_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "AboutPage",
+const ABOUT_SCHEMA = seoManager.generateSchema({
+  type: "AboutPage",
   name: "About Us - Navdhya",
-  url: `https://www.navdhya.com/about`,
   description: "Navdhya is Delhi's premier spiritual wellness platform connecting families with certified Vedic pandits for authentic puja services, astrology consultation, and spiritual guidance. Professional, reliable, and culturally authentic.",
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: "/about",
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
-    { name: "About Us", url: `https://www.navdhya.com/about` }
-  ])
-}
+    { name: "About Us", url: "https://www.navdhya.com/about" }
+  ]
+})
 
 export default function AboutPage() {
   const aboutSchema = JSON.stringify(ABOUT_SCHEMA)

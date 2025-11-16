@@ -1,51 +1,25 @@
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "Privacy Policy | Navdhya",
+export const metadata = seoManager.generateMetadata({
+  title: "Privacy Policy",
   description: "Learn how Navdhya collects, uses, and protects your personal information. We are committed to safeguarding your privacy while providing authentic Hindu ritual services.",
-  keywords: "privacy policy, data protection, personal information, GDPR, IT Act, user privacy, Navdhya",
-  openGraph: {
-    title: "Privacy Policy | Navdhya",
-    description: "Learn how Navdhya collects, uses, and protects your personal information. We are committed to safeguarding your privacy while providing authentic Hindu ritual services.",
-    url: "https://www.navdhya.com/privacy-policy",
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Navdhya Privacy Policy",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Privacy Policy | Navdhya",
-    description: "Learn how Navdhya collects, uses, and protects your personal information. We are committed to safeguarding your privacy while providing authentic Hindu ritual services.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/privacy-policy",
-  },
-}
+  path: "/privacy-policy",
+  keywords: ["privacy policy", "data protection", "personal information", "GDPR", "IT Act", "user privacy", "Navdhya"]
+})
 
 // Schema markup for the privacy policy page
-const PRIVACY_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
+const PRIVACY_SCHEMA = seoManager.generateSchema({
+  type: "WebPage",
   name: "Privacy Policy - Navdhya",
-  url: "https://www.navdhya.com/privacy-policy",
   description: "Learn how Navdhya collects, uses, and protects your personal information. We are committed to safeguarding your privacy while providing authentic Hindu ritual services.",
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: "/privacy-policy",
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Privacy Policy", url: "https://www.navdhya.com/privacy-policy" }
-  ])
-}
+  ]
+})
 
 export default function PrivacyPolicyPage() {
   const privacySchema = JSON.stringify(PRIVACY_SCHEMA)
@@ -205,7 +179,7 @@ export default function PrivacyPolicyPage() {
             Changes to This Privacy Policy
           </h2>
           <p className="mt-3 text-muted-foreground">
-            We may update this Privacy Policy from time to time. The updated version will be indicated by an updated "Last Updated" date and the updated version will be effective as soon as it is accessible.
+            We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date.
           </p>
         </section>
 
@@ -214,13 +188,13 @@ export default function PrivacyPolicyPage() {
             Contact Us
           </h2>
           <p className="mt-3 text-muted-foreground">
-            If you have questions or comments about this Privacy Policy, please contact us at:
+            If you have any questions about this Privacy Policy, please contact us at:
           </p>
-          <p className="mt-3 text-muted-foreground">
-            Email: help@navdhya.com<br />
-            Phone: +91-7289000377<br />
-            Address: Pandav Nagar, New Delhi, 110092
-          </p>
+          <div className="mt-3 text-muted-foreground">
+            <p><strong>Email:</strong> help@navdhya.com</p>
+            <p><strong>Phone:</strong> +91-7289000377</p>
+            <p><strong>Address:</strong> Pandav Nagar, Delhi 110092</p>
+          </div>
         </section>
       </div>
     </>

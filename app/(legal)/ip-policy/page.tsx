@@ -1,52 +1,26 @@
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "Intellectual Property Policy | Navdhya",
+export const metadata = seoManager.generateMetadata({
+  title: "Intellectual Property Policy",
   description: "Navdhya's intellectual property policy. Learn how we protect our trademarks, content, recordings, and other proprietary assets.",
-  keywords: "intellectual property, IP policy, copyright, trademark, content protection, Navdhya IP",
-  openGraph: {
-    title: "Intellectual Property Policy | Navdhya",
-    description: "Navdhya's intellectual property policy. Learn how we protect our trademarks, content, recordings, and other proprietary assets.",
-    url: "https://www.navdhya.com/legal/ip-policy",
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Navdhya Intellectual Property Policy",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Intellectual Property Policy | Navdhya",
-    description: "Navdhya's intellectual property policy. Learn how we protect our trademarks, content, recordings, and other proprietary assets.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/legal/ip-policy",
-  },
-}
+  path: "/legal/ip-policy",
+  keywords: ["intellectual property", "IP policy", "copyright", "trademark", "content protection", "Navdhya IP"]
+})
 
 // Schema markup for the IP policy page
-const IP_POLICY_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
+const IP_POLICY_SCHEMA = seoManager.generateSchema({
+  type: "WebPage",
   name: "Intellectual Property Policy - Navdhya",
-  url: "https://www.navdhya.com/legal/ip-policy",
   description: "Navdhya's intellectual property policy. Learn how we protect our trademarks, content, recordings, and other proprietary assets.",
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: "/legal/ip-policy",
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
     { name: "Intellectual Property Policy", url: "https://www.navdhya.com/legal/ip-policy" }
-  ])
-}
+  ]
+})
 
 export default function IPPolicyPage() {
   const ipPolicySchema = JSON.stringify(IP_POLICY_SCHEMA)

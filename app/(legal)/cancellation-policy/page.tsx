@@ -1,51 +1,25 @@
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "Cancellation Policy | Navdhya",
+export const metadata = seoManager.generateMetadata({
+  title: "Cancellation Policy",
   description: "Learn about Navdhya's cancellation policy for puja bookings and spiritual services. Understand the terms and conditions for canceling your bookings.",
-  keywords: "cancellation policy, booking cancellation, service cancellation, Navdhya cancellation, puja cancellation",
-  openGraph: {
-    title: "Cancellation Policy | Navdhya",
-    description: "Learn about Navdhya's cancellation policy for puja bookings and spiritual services. Understand the terms and conditions for canceling your bookings.",
-    url: "https://www.navdhya.com/cancellation-policy",
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Navdhya Cancellation Policy",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Cancellation Policy | Navdhya",
-    description: "Learn about Navdhya's cancellation policy for puja bookings and spiritual services. Understand the terms and conditions for canceling your bookings.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/cancellation-policy",
-  },
-}
+  path: "/cancellation-policy",
+  keywords: ["cancellation policy", "booking cancellation", "service cancellation", "Navdhya cancellation", "puja cancellation"]
+})
 
 // Schema markup for the cancellation policy page
-const CANCELLATION_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
+const CANCELLATION_SCHEMA = seoManager.generateSchema({
+  type: "WebPage",
   name: "Cancellation Policy - Navdhya",
-  url: "https://www.navdhya.com/cancellation-policy",
   description: "Learn about Navdhya's cancellation policy for puja bookings and spiritual services. Understand the terms and conditions for canceling your bookings.",
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: "/cancellation-policy",
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Cancellation Policy", url: "https://www.navdhya.com/cancellation-policy" }
-  ])
-}
+  ]
+})
 
 export default function CancellationPolicyPage() {
   const cancellationSchema = JSON.stringify(CANCELLATION_SCHEMA)

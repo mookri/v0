@@ -4,14 +4,15 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar, Clock, BookOpen, Star, Heart, Users } from "lucide-react"
-import { SEO_CONFIG } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 import Link from "next/link"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "Astrology Consultation | Navdhya – Delhi's Trusted Spiritual Wellness",
+export const metadata = seoManager.generateMetadata({
+  title: "Astrology Consultation",
   description: "Get expert Vedic astrology guidance from certified pandits in Delhi. Kundli analysis, marriage compatibility, career guidance, and remedial solutions.",
+  path: "/consultation",
   keywords: [
     "Vedic Astrology Delhi",
     "Kundli Analysis",
@@ -19,47 +20,16 @@ export const metadata = {
     "Career Astrology",
     "Remedial Solutions",
     "Astrology Consultation"
-  ],
-  openGraph: {
-    title: "Astrology Consultation | Navdhya – Delhi's Trusted Spiritual Wellness",
-    description: "Get expert Vedic astrology guidance from certified pandits in Delhi. Kundli analysis, marriage compatibility, career guidance, and remedial solutions.",
-    url: `https://www.navdhya.com/consultation`,
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Astrology Consultation with Navdhya - Vedic Astrology in Delhi",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Astrology Consultation | Navdhya – Delhi's Trusted Spiritual Wellness",
-    description: "Get expert Vedic astrology guidance from certified pandits in Delhi. Kundli analysis, marriage compatibility, career guidance, and remedial solutions.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/consultation",
-  },
-}
+  ]
+})
 
 // Schema markup for the consultation page
-const CONSULTATION_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "Service",
-  "name": "Astrology Consultation",
-  "provider": {
-    "@type": "Organization",
-    "name": "Navdhya"
-  },
-  "description": "Expert Vedic astrology guidance from certified pandits in Delhi",
-  "url": "https://www.navdhya.com/consultation"
-}
+const CONSULTATION_SCHEMA = seoManager.generateSchema({
+  type: "Service",
+  name: "Astrology Consultation",
+  description: "Expert Vedic astrology guidance from certified pandits in Delhi",
+  path: "/consultation"
+})
 
 const consultationTypes = [
   { 

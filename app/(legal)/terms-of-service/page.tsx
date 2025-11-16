@@ -1,51 +1,25 @@
-import { SEO_CONFIG, BREADCRUMB_SCHEMA } from "@/lib/seo-config"
+import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 
 // Add page-specific metadata
-export const metadata = {
-  title: "Terms of Service | Navdhya",
+export const metadata = seoManager.generateMetadata({
+  title: "Terms of Service",
   description: "Read the terms and conditions that govern your use of Navdhya's platform for booking authentic Hindu rituals and spiritual wellness services.",
-  keywords: "terms of service, terms and conditions, user agreement, platform usage, Navdhya terms",
-  openGraph: {
-    title: "Terms of Service | Navdhya",
-    description: "Read the terms and conditions that govern your use of Navdhya's platform for booking authentic Hindu rituals and spiritual wellness services.",
-    url: "https://www.navdhya.com/terms-of-service",
-    siteName: SEO_CONFIG.siteName,
-    images: [
-      {
-        url: SEO_CONFIG.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Navdhya Terms of Service",
-      },
-    ],
-    locale: SEO_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Terms of Service | Navdhya",
-    description: "Read the terms and conditions that govern your use of Navdhya's platform for booking authentic Hindu rituals and spiritual wellness services.",
-    images: [SEO_CONFIG.defaultImage],
-    site: SEO_CONFIG.twitter.site,
-  },
-  alternates: {
-    canonical: "https://www.navdhya.com/terms-of-service",
-  },
-}
+  path: "/terms-of-service",
+  keywords: ["terms of service", "terms and conditions", "user agreement", "platform usage", "Navdhya terms"]
+})
 
 // Schema markup for the terms of service page
-const TERMS_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
+const TERMS_SCHEMA = seoManager.generateSchema({
+  type: "WebPage",
   name: "Terms of Service - Navdhya",
-  url: "https://www.navdhya.com/terms-of-service",
   description: "Read the terms and conditions that govern your use of Navdhya's platform for booking authentic Hindu rituals and spiritual wellness services.",
-  breadcrumb: BREADCRUMB_SCHEMA([
+  path: "/terms-of-service",
+  breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Terms of Service", url: "https://www.navdhya.com/terms-of-service" }
-  ])
-}
+  ]
+})
 
 export default function TermsOfServicePage() {
   const termsSchema = JSON.stringify(TERMS_SCHEMA)
@@ -71,46 +45,39 @@ export default function TermsOfServicePage() {
             Acceptance of Terms
           </h2>
           <p className="mt-3 text-muted-foreground">
-            By accessing or using the Navdhya website (https://www.navdhya.com) and services, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this site and our services.
-          </p>
-          <p className="mt-3 text-muted-foreground">
-            These terms apply to all visitors, users, and others who access or use our services. We reserve the right to update or change these Terms at any time without prior notice. Your continued use of the service after we post any modifications to the Terms constitutes acceptance of those changes.
+            By accessing or using the Navdhya website and services, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this site and our services.
           </p>
         </section>
 
-        <section aria-labelledby="service-description">
-          <h2 id="service-description" className="font-serif text-2xl">
-            Description of Service
+        <section aria-labelledby="services">
+          <h2 id="services" className="font-serif text-2xl">
+            Services Description
           </h2>
           <p className="mt-3 text-muted-foreground">
-            Navdhya provides a platform for booking authentic Hindu rituals, pujas, and spiritual wellness services performed by certified pandits. Our services include:
+            Navdhya provides a platform for connecting users with certified Vedic pandits for authentic Hindu rituals and spiritual wellness services. Our services include but are not limited to:
           </p>
           <ul className="mt-3 text-sm text-muted-foreground list-disc list-inside">
-            <li>Online and in-person puja bookings</li>
-            <li>Astrological consultations and kundli analysis</li>
-            <li>Sacred item sales (samagri, yantras, rudraksha)</li>
-            <li>Spiritual education and guidance</li>
-            <li>Vastu and muhurat consultations</li>
+            <li>Puja booking and scheduling</li>
+            <li>Astrology consultation services</li>
+            <li>Vastu consultation</li>
+            <li>Spiritual guidance and counseling</li>
+            <li>Online and in-person ritual services</li>
           </ul>
-          <p className="mt-3 text-muted-foreground">
-            We act as an intermediary between customers and pandits. We do not perform rituals ourselves but facilitate connections with qualified professionals.
-          </p>
         </section>
 
-        <section aria-labelledby="user-responsibilities">
-          <h2 id="user-responsibilities" className="font-serif text-2xl">
-            User Responsibilities
+        <section aria-labelledby="user-obligations">
+          <h2 id="user-obligations" className="font-serif text-2xl">
+            User Obligations
           </h2>
           <p className="mt-3 text-muted-foreground">
             As a user of our services, you agree to:
           </p>
           <ul className="mt-3 text-sm text-muted-foreground list-disc list-inside">
-            <li>Provide accurate, current, and complete information</li>
-            <li>Maintain the security of your account and password</li>
+            <li>Provide accurate and complete information when registering</li>
+            <li>Maintain the confidentiality of your account credentials</li>
             <li>Use the services only for lawful purposes</li>
-            <li>Not interfere with or disrupt the services or servers</li>
-            <li>Not use the services to transmit any harmful or malicious content</li>
-            <li>Respect the rights and dignity of pandits and other users</li>
+            <li>Respect the rights and dignity of our pandits and other users</li>
+            <li>Comply with all applicable laws and regulations</li>
           </ul>
         </section>
 
@@ -118,61 +85,8 @@ export default function TermsOfServicePage() {
           <h2 id="booking-payment" className="font-serif text-2xl">
             Booking and Payment Terms
           </h2>
-          <div className="mt-3 space-y-4">
-            <div>
-              <h3 className="font-serif text-xl">
-                Service Booking
-              </h3>
-              <p className="mt-3 text-muted-foreground text-sm">
-                All bookings are subject to pandit availability. We will confirm your booking within 24 hours of receipt. Bookings made less than 48 hours before the scheduled service may be subject to additional charges or may not be available.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-serif text-xl">
-                Payment Terms
-              </h3>
-              <p className="mt-3 text-muted-foreground text-sm">
-                Payment is required at the time of booking unless otherwise specified. We accept payments through secure third-party processors. All fees are quoted in Indian Rupees (INR).
-              </p>
-            </div>
-            <div>
-              <h3 className="font-serif text-xl">
-                Taxes
-              </h3>
-              <p className="mt-3 text-muted-foreground text-sm">
-                All fees displayed on our platform exclude applicable taxes. Taxes will be added to your total at checkout as required by law.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section aria-labelledby="cancellation-refund">
-          <h2 id="cancellation-refund" className="font-serif text-2xl">
-            Cancellation and Refund Policy
-          </h2>
           <p className="mt-3 text-muted-foreground">
-            Our cancellation and refund policy is detailed in our separate Cancellation & Refund Policy document. Please refer to that document for specific terms regarding cancellations and refunds.
-          </p>
-          <p className="mt-3 text-muted-foreground">
-            Generally, cancellations made more than 48 hours before the scheduled service may be eligible for a full or partial refund at our discretion. Cancellations made within 48 hours may not be eligible for refunds.
-          </p>
-        </section>
-
-        <section aria-labelledby="limitation-liability">
-          <h2 id="limitation-liability" className="font-serif text-2xl">
-            Limitation of Liability
-          </h2>
-          <p className="mt-3 text-muted-foreground">
-            To the maximum extent permitted by law, Navdhya shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from:
-          </p>
-          <ul className="mt-3 text-sm text-muted-foreground list-disc list-inside">
-            <li>Your access to or use of or inability to access or use the services</li>
-            <li>Any conduct or content of any third party on the services</li>
-            <li>Any content obtained from the services</li>
-            <li>Unauthorized access, use, or alteration of your transmissions or content</li>
-          </ul>
-          <p className="mt-3 text-muted-foreground">
-            In no event shall our total liability to you for all damages exceed the amount paid by you, if any, for accessing our services.
+            All bookings are subject to availability and confirmation by our pandits. Payment must be made through our secure payment gateway at the time of booking unless otherwise specified. Cancellation and refund policies are outlined in our separate Cancellation and Refund Policy document.
           </p>
         </section>
 
@@ -181,19 +95,16 @@ export default function TermsOfServicePage() {
             Intellectual Property
           </h2>
           <p className="mt-3 text-muted-foreground">
-            The service and its original content, features, and functionality are and will remain the exclusive property of Navdhya and its licensors. Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of Navdhya.
-          </p>
-          <p className="mt-3 text-muted-foreground">
-            All content provided on our platform, including texts, images, audio, video, and other materials, are protected by copyright and other intellectual property laws.
+            All content on the Navdhya website, including text, graphics, logos, images, and software, is the property of Navdhya or its content suppliers and is protected by Indian and international copyright laws. You may not reproduce, distribute, modify, or create derivative works of any content without our express written permission.
           </p>
         </section>
 
-        <section aria-labelledby="disclaimer">
-          <h2 id="disclaimer" className="font-serif text-2xl">
-            Disclaimer of Warranties
+        <section aria-labelledby="limitation-liability">
+          <h2 id="limitation-liability" className="font-serif text-2xl">
+            Limitation of Liability
           </h2>
           <p className="mt-3 text-muted-foreground">
-            Our services are provided on an "as is" and "as available" basis. We do not warrant that the services will be uninterrupted, timely, secure, or error-free. We do not warrant that the results obtained from the use of the services will be accurate or reliable.
+            Navdhya shall not be liable for any direct, indirect, incidental, special, or consequential damages arising out of or in connection with your use of our services. This includes but is not limited to damages for loss of profits, goodwill, use, data, or other intangible losses.
           </p>
         </section>
 
@@ -202,7 +113,16 @@ export default function TermsOfServicePage() {
             Indemnification
           </h2>
           <p className="mt-3 text-muted-foreground">
-            You agree to defend, indemnify, and hold harmless Navdhya and its affiliates, licensors, and service providers, and its and their respective officers, directors, employees, contractors, agents, licensors, suppliers, successors, and assigns from and against any claims, liabilities, damages, judgments, awards, losses, costs, expenses, or fees (including reasonable attorneys' fees) arising out of or relating to your violation of these Terms or your use of the services.
+            You agree to indemnify and hold harmless Navdhya, its affiliates, officers, directors, employees, and agents from any claims, liabilities, damages, losses, or expenses, including reasonable attorneys' fees, arising out of or in any way connected with your access to or use of the services or your violation of these Terms.
+          </p>
+        </section>
+
+        <section aria-labelledby="termination">
+          <h2 id="termination" className="font-serif text-2xl">
+            Termination
+          </h2>
+          <p className="mt-3 text-muted-foreground">
+            We may terminate or suspend your access to our services immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms. Upon termination, your right to use the services will immediately cease.
           </p>
         </section>
 
@@ -229,13 +149,13 @@ export default function TermsOfServicePage() {
             Contact Us
           </h2>
           <p className="mt-3 text-muted-foreground">
-            If you have any questions about these Terms, please contact us at:
+            If you have any questions about these Terms of Service, please contact us at:
           </p>
-          <p className="mt-3 text-muted-foreground">
-            Email: help@navdhya.com<br />
-            Phone: +91-7289000377<br />
-            Address: Pandav Nagar, New Delhi, 110092
-          </p>
+          <div className="mt-3 text-muted-foreground">
+            <p><strong>Email:</strong> help@navdhya.com</p>
+            <p><strong>Phone:</strong> +91-7289000377</p>
+            <p><strong>Address:</strong> Pandav Nagar, Delhi 110092</p>
+          </div>
         </section>
       </div>
     </>
