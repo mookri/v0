@@ -5,12 +5,76 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/compon
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Search, Phone, User, Heart, ShoppingCart, Menu, X, ChevronDown } from 'lucide-react'
+import { MENU_GROUPS } from "@/lib/menuData"
+
+// Function to transform MENU_GROUPS data into the format needed for site header
+const transformMenuData = () => {
+  // Create a map of group names to their items for quick lookup
+  const groupMap = MENU_GROUPS.reduce((acc, group) => {
+    acc[group.group] = group.items;
+    return acc;
+  }, {} as Record<string, typeof MENU_GROUPS[0]['items']>);
+
+  return [
+    {
+      name: 'Home',
+      href: '/'
+    },
+    {
+      name: 'Pujas',
+      href: '/pujas',
+      subItems: groupMap["Explore Rituals"]?.slice(0, 5).map(item => ({
+        name: item.label,
+        href: item.href
+      })) || []
+    },
+    {
+      name: 'Pandits',
+      href: '/pandits',
+      subItems: groupMap["Our Pandits"]?.map(item => ({
+        name: item.label,
+        href: item.href
+      })) || []
+    },
+    {
+      name: 'Learning',
+      href: '/learn',
+      subItems: groupMap["Learn & Spiritual Growth"]?.map(item => ({
+        name: item.label,
+        href: item.href
+      })) || []
+    },
+    {
+      name: 'Community',
+      href: '/community',
+      subItems: groupMap["Community"]?.map(item => ({
+        name: item.label,
+        href: item.href
+      })) || []
+    },
+    {
+      name: 'Resources',
+      href: '/resources',
+      subItems: groupMap["Resources"]?.map(item => ({
+        name: item.label,
+        href: item.href
+      })) || []
+    },
+    {
+      name: 'Contact',
+      href: '/contact'
+    }
+  ];
+};
 
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false) // control Sheet open for close-on-link
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [activeTab, setActiveTab] = useState('main') // 'main' or 'categories'
+  
+  // Transform menu data from single source
+  const menuData = transformMenuData();
   
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -31,132 +95,6 @@ export function SiteHeader() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  // Updated menu structure based on requirements
-  const menuData = [
-    {
-      name: 'Home',
-      href: '/'
-    },
-    {
-      name: 'Book a Puja',
-      href: '/pujas',
-      subItems: [
-  {
-    name: 'All Pujas', // Complete catalog of traditional and modern rituals
-    href: '/pujas/',
-  },
-  {
-    name: 'Occasion Pujas', // Griha Pravesh, Marriage, Health, Prosperity
-    href: '/pujas/occasions',
-  },
-  {
-    name: 'Regional Pujas', // South Indian, North Indian, Bengali, Tamil, etc.
-    href: '/pujas/regional',
-  },
-  {
-    name: 'Temple Offerings', // Diwali, Navratri, Makar Sankranti, Temple Rituals
-    href: '/pujas/temple',
-  },
-  {
-    name: 'Personalized Rituals', // Tailored rituals for individual or family needs
-    href: '/pujas/personalized',
-  },
-]
-    },
-    {
-      name: 'Find a Pandit',
-      href: '/pandits',
-      subItems: [
-        { name: 'Find Pandit', href: '/pandits' },           // primary discovery landing
-        { name: 'Book Consultation', href: '/pandits/book' },         // conversion-first flow
-        { name: 'Join as Pandit', href: '/pandits/join' },   // onboarding & B2B
-        { name: 'Insights', href: '/pandits/insights' }  // content & trust
-      ]
-    },
-    {
-      name: 'Learning',
-      href: '#',
-      subItems: [
-        {
-          name: 'Courses — Gita Studies, Meditation, Ritual Science',
-          href: '/learn/courses'
-        },
-        {
-          name: 'Workshops — Live sessions with spiritual mentors',
-          href: '/learn/workshops'
-        },
-        {
-          name: 'Self-Learning Library — Videos, PDFs, podcasts',
-          href: '/learn/library'
-        },
-        {
-          name: 'Certification Programs — Authorized cultural training',
-          href: '/learn/certified'
-        },
-        {
-          name: 'For Kids — Mythology & value-based learning modules',
-          href: '/learn/kids'
-        }
-      ]
-    },
-    {
-      name: 'Community',
-      href: '#',
-      subItems: [
-        {
-          name: 'Discussions → Forums with moderation',
-          href: '/community/forums'
-        },
-        {
-          name: 'User Stories → Authentic engagement',
-          href: '/community/stories'
-        },
-        {
-          name: 'Volunteer Programs → CSR & initiatives',
-          href: '/community/volunteer'
-        },
-        {
-          name: 'Upcoming Events → Calendar-based',
-          href: '/community/events'
-        },
-        {
-          name: 'Join Navdhya → Circle Membership gateway',
-          href: '/community/join'
-        }
-      ]
-    },
-    {
-      name: 'Resources',
-      href: '#',
-      subItems: [
-        {
-          name: 'Articles & Blogs → SEO content',
-          href: '/resources/blog'
-        },
-        {
-          name: 'Scriptures & Texts → Rich spiritual library',
-          href: '/resources/scriptures'
-        },
-        {
-          name: 'Tools & Calculators → Horoscope, Muhurat, Panchang',
-          href: '/resources/tools'
-        },
-        {
-          name: 'News & Updates → Real-time temple info',
-          href: '/resources/news'
-        },
-        {
-          name: 'Digital Library → Downloadable wisdom',
-          href: '/resources/library'
-        }
-      ]
-    },
-    {
-      name: 'Contact',
-      href: '/contact'
-    }
-  ];
 
   return (
     <div className="w-full bg-background">
