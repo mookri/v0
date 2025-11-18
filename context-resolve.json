@@ -1,0 +1,35 @@
+{
+  "contextResolution": {
+    "description": "Context resolution strategy for DLO-X architecture",
+    "serverComponents": {
+      "method": "resolveContext",
+      "location": "lib/context-resolver.ts",
+      "approach": "Attempt to resolve context from headers set by middleware, fallback to defaults if resolution fails",
+      "exampleUsage": "const context = await resolveContext('/');"
+    },
+    "clientComponents": {
+      "method": "getDefaultContext",
+      "location": "lib/context-resolver.ts",
+      "approach": "Use default context values since client components cannot access server headers directly",
+      "exampleUsage": "const context = getDefaultContext('/auth/login');"
+    },
+    "middlewareHeaders": [
+      "x-request-id",
+      "x-tenant-id",
+      "x-user-role",
+      "x-device",
+      "x-seed"
+    ],
+    "defaultValues": {
+      "tenantId": "default",
+      "userRole": "User",
+      "device": "desktop"
+    }
+  },
+  "implementationFiles": [
+    "lib/context-resolver.ts",
+    "app/page.tsx",
+    "app/auth/login/page.tsx",
+    "app/dashboard/page.tsx"
+  ]
+}

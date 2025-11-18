@@ -4,14 +4,11 @@ import { Albert_Sans } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import "./globals.css"
-import BottomMenu from "@/components/bottom-menu"
 import { SITE_METADATA, VIEWPORT_CONFIG } from "@/lib/metadata-config"
 import { SEO_CONFIG, WEBSITE_SCHEMA, ORGANIZATION_SCHEMA } from "@/lib/seo-config"
-import { SiteFooter } from "@/components/site-footer"
-import { SiteHeader } from "@/components/site-header"
+import Preloader from "@/components/ui/preloader"
 import { LoadingProvider } from "@/context/LoadingContext"
 import NavigationLoader from "@/components/NavigationLoader"
-import Preloader from "@/components/ui/preloader"
 
 const albert = Albert_Sans({
   subsets: ["latin"],
@@ -75,7 +72,6 @@ export default function RootLayout({
 
       <body className="font-sans bg-background text-foreground">
         <LoadingProvider>
-          <SiteHeader />
           <NavigationLoader />
           <Suspense
             fallback={
@@ -84,10 +80,8 @@ export default function RootLayout({
               </div>
             }
           >
-            <main>{children}</main>
+            {children}
           </Suspense>
-          <SiteFooter />
-          <BottomMenu />
         </LoadingProvider>
         <Analytics />
       </body>

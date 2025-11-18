@@ -1,6 +1,9 @@
 import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 import OnlinePujaClient from "./client"
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { resolveContext } from "@/lib/context-resolver"
 
 // Generate page metadata using SEO manager
 export const metadata = seoManager.generateMetadata({
@@ -23,16 +26,21 @@ const ONLINE_PUJA_SCHEMA = seoManager.generateSchema({
   ]
 })
 
-export default function OnlinePujaPage() {
+export default async function OnlinePujaPage() {
   const onlinePujaSchema = JSON.stringify(ONLINE_PUJA_SCHEMA)
   
+  // Resolve context using the new resolver
+  const context = await resolveContext('/pujas/online');
+  
   return (
-    <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: onlinePujaSchema }}
-      />
-      <OnlinePujaClient />
-    </>
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: onlinePujaSchema }}
+        />
+        <OnlinePujaClient />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
   )
 }

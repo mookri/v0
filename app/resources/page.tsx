@@ -1,5 +1,8 @@
-import ResourcesClient from './client'
 import { seoManager } from "@/lib/seo-manager"
+import ResourcesClient from './client'
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { resolveContext } from "@/lib/context-resolver"
 
 export async function generateMetadata() {
   return seoManager.generateMetadata({
@@ -10,6 +13,15 @@ export async function generateMetadata() {
   })
 }
 
-export default function ResourcesPage() {
-  return <ResourcesClient />
+export default async function ResourcesPage() {
+  // Resolve context using the new resolver
+  const context = await resolveContext('/resources');
+
+  return (
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <ResourcesClient />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
+  );
 }

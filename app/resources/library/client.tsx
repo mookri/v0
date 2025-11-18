@@ -150,7 +150,6 @@ const types = [
 ];
 
 export default function DigitalLibraryClient() {
-  const digitalLibrarySchema = JSON.stringify(DIGITAL_LIBRARY_SCHEMA)
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [typeFilter, setTypeFilter] = useState("All Types");
@@ -167,7 +166,21 @@ export default function DigitalLibraryClient() {
     <>
       <Script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: digitalLibrarySchema }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "name": "Digital Library - Navdhya",
+          "description": "Downloadable wisdom including spiritual texts, guided meditations, ritual instructions, and educational resources.",
+          "url": "https://www.navdhya.com/resources/library",
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.navdhya.com" },
+              { "@type": "ListItem", "position": 2, "name": "Resources", "item": "https://www.navdhya.com/resources" },
+              { "@type": "ListItem", "position": 3, "name": "Digital Library", "item": "https://www.navdhya.com/resources/library" }
+            ]
+          }
+        }) }}
       />
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}

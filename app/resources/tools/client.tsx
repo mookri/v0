@@ -91,7 +91,6 @@ const categories = [
 ];
 
 export default function ToolsClient() {
-  const toolsSchema = JSON.stringify(TOOLS_SCHEMA)
   const [categoryFilter, setCategoryFilter] = useState("All");
   
   const filteredTools = tools.filter(tool => 
@@ -102,7 +101,21 @@ export default function ToolsClient() {
     <>
       <Script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: toolsSchema }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "name": "Tools & Calculators - Navdhya",
+          "description": "Horoscope, Muhurat, and Panchang calculators for determining auspicious timings and astrological insights.",
+          "url": "https://www.navdhya.com/resources/tools",
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.navdhya.com" },
+              { "@type": "ListItem", "position": 2, "name": "Resources", "item": "https://www.navdhya.com/resources" },
+              { "@type": "ListItem", "position": 3, "name": "Tools & Calculators", "item": "https://www.navdhya.com/resources/tools" }
+            ]
+          }
+        }) }}
       />
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}

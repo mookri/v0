@@ -1,5 +1,8 @@
-import DigitalLibraryClient from './client'
 import { seoManager } from "@/lib/seo-manager"
+import DigitalLibraryClient from './client'
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { resolveContext } from "@/lib/context-resolver"
 
 // Generate page metadata using SEO manager
 export async function generateMetadata() {
@@ -11,6 +14,15 @@ export async function generateMetadata() {
   })
 }
 
-export default function DigitalLibraryPage() {
-  return <DigitalLibraryClient />
+export default async function DigitalLibraryPage() {
+  // Resolve context using the new resolver
+  const context = await resolveContext('/resources/library');
+
+  return (
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <DigitalLibraryClient />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
+  );
 }

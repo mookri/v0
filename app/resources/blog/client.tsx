@@ -108,7 +108,7 @@ const popularTags = [
   "Spirituality", "Traditions", "Science", "Consciousness", "Home", "Harmony", "Karma Yoga", "Philosophy", "Birth Chart", "Self-Awareness", "Stress Relief", "Mindfulness"
 ];
 
-export default function BlogClient({ blogSchema }: { blogSchema: string }) {
+export default function BlogClient() {
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [tagFilter, setTagFilter] = useState("All Tags");
@@ -125,7 +125,21 @@ export default function BlogClient({ blogSchema }: { blogSchema: string }) {
     <>
       <Script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: blogSchema }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "name": "Articles & Blogs - Navdhya",
+          "description": "SEO content covering spiritual topics, rituals, philosophy, and practical guidance for your spiritual journey.",
+          "url": "https://www.navdhya.com/resources/blog",
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.navdhya.com" },
+              { "@type": "ListItem", "position": 2, "name": "Resources", "item": "https://www.navdhya.com/resources" },
+              { "@type": "ListItem", "position": 3, "name": "Articles & Blogs", "item": "https://www.navdhya.com/resources/blog" }
+            ]
+          }
+        }) }}
       />
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}

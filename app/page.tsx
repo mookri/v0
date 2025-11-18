@@ -9,6 +9,9 @@ import { FAQ } from "@/components/sections/faq"
 import Hero from "@/components/sections/hero"
 import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { resolveContext } from "@/lib/context-resolver"
 
 // Generate page metadata using SEO manager
 export const metadata = seoManager.generateMetadata({
@@ -186,42 +189,47 @@ const SERVICE_SCHEMAS = [
   }
 ]
 
-export default function HomePage() {
+export default async function HomePage() {
   const homeSchema = JSON.stringify(HOME_SCHEMA)
   const organizationSchema = JSON.stringify(ORGANIZATION_SCHEMA)
   const localBusinessSchema = JSON.stringify(LOCAL_BUSINESS_SCHEMA)
   const serviceSchemas = JSON.stringify(SERVICE_SCHEMAS)
   
+  // Resolve context using the new resolver
+  const context = await resolveContext('/');
+  
   return (
-    <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: homeSchema }}
-      />
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: organizationSchema }}
-      />
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: localBusinessSchema }}
-      />
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: serviceSchemas }}
-      />
-      <main className="overflow-x-hidden w-full">
-        <Hero />
-        <FeaturedPujas />
-        <WhyChoose />
-        <ProcessSteps />
-        <Catalog />
-        <Testimonials />
-        <TrustStats />
-        <BlogPreview />
-        <FAQ />
-        {/* <Booking /> */}
-      </main>
-   </>
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: homeSchema }}
+        />
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: organizationSchema }}
+        />
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: localBusinessSchema }}
+        />
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: serviceSchemas }}
+        />
+        <main className="overflow-x-hidden w-full">
+          <Hero />
+          <FeaturedPujas />
+          <WhyChoose />
+          <ProcessSteps />
+          <Catalog />
+          <Testimonials />
+          <TrustStats />
+          <BlogPreview />
+          <FAQ />
+          {/* <Booking /> */}
+        </main>
+      </LayoutOrchestrator>
+    </ErrorBoundary>
   )
 }

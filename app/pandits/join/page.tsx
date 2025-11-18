@@ -1,6 +1,9 @@
 import { seoManager } from "@/lib/seo-manager"
 import JoinPanditClient from "./client"
 import Script from "next/script"
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { resolveContext } from "@/lib/context-resolver"
 
 // Schema markup for the join as pandit page
 const JOIN_PANDIT_SCHEMA = seoManager.generateSchema({
@@ -24,16 +27,21 @@ export async function generateMetadata() {
   })
 }
 
-export default function JoinPanditPage() {
+export default async function JoinPanditPage() {
   const joinSchema = JSON.stringify(JOIN_PANDIT_SCHEMA)
   
+  // Resolve context using the server function
+  const context = await resolveContext('/pandits/join');
+  
   return (
-    <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: joinSchema }}
-      />
-      <JoinPanditClient joinSchema={joinSchema} />
-    </>
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: joinSchema }}
+        />
+        <JoinPanditClient joinSchema={joinSchema} />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
   )
 }

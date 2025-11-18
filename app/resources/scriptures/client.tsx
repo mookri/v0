@@ -123,7 +123,6 @@ const languages = [
 ];
 
 export default function ScripturesClient() {
-  const scripturesSchema = JSON.stringify(SCRIPTURES_SCHEMA)
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [languageFilter, setLanguageFilter] = useState("All Languages");
@@ -140,7 +139,21 @@ export default function ScripturesClient() {
     <>
       <Script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: scripturesSchema }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "name": "Scriptures & Texts - Navdhya",
+          "description": "Rich spiritual library of ancient texts, scriptures, and sacred writings with translations and commentary.",
+          "url": "https://www.navdhya.com/resources/scriptures",
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.navdhya.com" },
+              { "@type": "ListItem", "position": 2, "name": "Resources", "item": "https://www.navdhya.com/resources" },
+              { "@type": "ListItem", "position": 3, "name": "Scriptures & Texts", "item": "https://www.navdhya.com/resources/scriptures" }
+            ]
+          }
+        }) }}
       />
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}
