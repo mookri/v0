@@ -196,7 +196,7 @@ export default function PanditsClient() {
       }
       
       return true;
-    });
+    }).sort((a, b) => b.rating - a.rating);
   }, [debouncedSearchQuery, filters]);
   
   // Pagination
