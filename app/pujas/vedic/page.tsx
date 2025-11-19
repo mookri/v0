@@ -5,6 +5,9 @@ import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
 import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
 import { resolveContext } from "@/lib/context-resolver"
 
+// Force dynamic rendering to ensure context is resolved per request
+export const dynamic = 'force-dynamic'
+
 // Generate page metadata using SEO manager
 export const metadata = seoManager.generateMetadata({
   title: "Vedic Rituals",
@@ -35,7 +38,7 @@ const VEDIC_RITUALS_SCHEMA = seoManager.generateSchema({
 export default async function VedicRitualsPage() {
   const vedicRitualsSchema = JSON.stringify(VEDIC_RITUALS_SCHEMA)
   
-  // Resolve context using the new resolver
+  // Resolve context per request for proper DLO-X orchestration
   const context = await resolveContext('/pujas/vedic');
   
   return (

@@ -1,16 +1,7 @@
 // lib/context-resolver.ts
 // Utility to resolve request context from headers or use defaults
 
-import { Role, Tenant, DeviceType } from '@/lib/dlo-x/types';
-
-export interface RequestContext {
-  requestId: string;
-  tenantId: Tenant;
-  userRole: Role;
-  device: DeviceType;
-  seed: string;
-  path: string;
-}
+import { Role, Tenant, DeviceType, RequestContext } from '@/lib/dlo-x/types';
 
 /**
  * Resolves the request context from headers or uses defaults

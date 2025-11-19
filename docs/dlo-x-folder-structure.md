@@ -36,7 +36,12 @@ project-root/
 │   └── dlo.ts                  # CLI tool
 ├── middleware.ts               # Next.js middleware
 └── docs/
+    ├── dlo-x-README.md
     ├── dlo-x-file-templates.md
     ├── dlo-x-folder-structure.md
-    └── dlo-x-naming-conventions.md
+    ├── dlo-x-naming-conventions.md
+    ├── dlo-x-predicate-registry.md
+    ├── dlo-x-testing-structure.md
+    ├── dlo-x-types.md
+    └── seo-strategy.md
 ```

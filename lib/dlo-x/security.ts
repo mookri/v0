@@ -3,9 +3,16 @@
 
 // Sanitize user input to prevent XSS attacks
 export function sanitizeInput(input: string): string {
-  const div = document.createElement('div');
-  div.textContent = input;
-  return div.innerHTML;
+  if (!input) return input;
+  
+  // Replace HTML special characters with their entities
+  return input
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;');
 }
 
 // Validate and sanitize headers

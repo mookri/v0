@@ -156,6 +156,7 @@ const FAQItem = ({ question, answer, isOpen, onClick }: { question: string; answ
         className={`overflow-hidden transition-all duration-200 ease-in-out ${
           isOpen ? 'max-h-96 opacity-100 pb-4' : 'max-h-0 opacity-0'
         }`}
+        aria-hidden={!isOpen}
       >
         <div className="px-4 text-muted-foreground text-sm">
           <p>{answer}</p>

@@ -71,14 +71,9 @@ const communitySections: CommunitySection[] = [
 ];
 
 export default function CommunityClient() {
-  const communitySchema = JSON.stringify(COMMUNITY_SCHEMA)
-  
+
   return (
     <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: communitySchema }}
-      />
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 mt-4">

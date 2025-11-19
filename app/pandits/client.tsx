@@ -135,8 +135,6 @@ const skills = [
 ];
 
 export default function PanditsClient() {
-  const panditsSchema = JSON.stringify(PANDITS_SCHEMA);
-  
   // State for filters
   const [filters, setFilters] = useState<FilterOptions>({
     location: [],
@@ -256,10 +254,6 @@ export default function PanditsClient() {
   
   return (
     <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: panditsSchema }}
-      />
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 mt-4">
@@ -768,7 +762,6 @@ export default function PanditsClient() {
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                   ))}
-                  <Star className="w-4 h-4 text-yellow-400" />
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">
                   "Our office puja conducted by Pandit Anil Verma brought tremendous positive energy to our workspace. Business has improved significantly since then. Truly grateful!"

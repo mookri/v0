@@ -16,6 +16,7 @@ export default function SignupClient() {
     phone: '',
     password: '',
     confirmPassword: '',
+    terms: false, // Add terms field
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   
@@ -50,6 +51,11 @@ export default function SignupClient() {
       newErrors.confirmPassword = 'Passwords do not match'
     }
     
+    // Validate terms checkbox
+    if (!formData.terms) {
+      newErrors.terms = 'You must agree to the Terms of Service and Privacy Policy'
+    }
+    
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -76,10 +82,11 @@ export default function SignupClient() {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    const { name, value, type, checked } = e.target
+    const newValue = type === 'checkbox' ? checked : value
+    setFormData(prev => ({ ...prev, [name]: newValue }))
     
-    // Clear error when user types
+    // Clear error when user types or checks
     if (errors[name]) {
       setErrors(prev => {
         const newErrors = { ...prev }
@@ -209,11 +216,8 @@ export default function SignupClient() {
                   }`}
                   placeholder="••••••••"
                 />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
+                <button type="button" aria-label={showPassword ? 'Hide password' : 'Show password'} className="absolute inset-y-0 right-0 pr-3 flex items-center" onClick={() => setShowPassword(prev => !prev)}>
+
                   {showPassword ? (
                     <EyeOff className="h-5 w-5 text-muted-foreground" />
                   ) : (
@@ -268,12 +272,17 @@ export default function SignupClient() {
               id="terms"
               name="terms"
               type="checkbox"
+              checked={formData.terms}
+              onChange={handleChange}
               className="h-4 w-4 text-[#0E3F2E] focus:ring-[#0E3F2E] border-border rounded"
             />
             <label htmlFor="terms" className="ml-2 block text-sm text-foreground">
               I agree to the <Link href="/legal/terms" className="text-[#0E3F2E] hover:underline">Terms of Service</Link> and <Link href="/legal/privacy" className="text-[#0E3F2E] hover:underline">Privacy Policy</Link>
             </label>
           </div>
+          {errors.terms && (
+            <p className="mt-1 text-sm text-destructive">{errors.terms}</p>
+          )}
 
           <div>
             <button

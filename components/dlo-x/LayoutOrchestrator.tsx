@@ -79,12 +79,12 @@ export async function LayoutOrchestrator({ children, context }: LayoutOrchestrat
         <div className="text-center p-8 bg-card rounded-lg border border-border max-w-md">
           <h1 className="text-2xl font-bold text-foreground mb-2">Layout Error</h1>
           <p className="text-muted-foreground mb-4">An error occurred while resolving the layout. Falling back to minimal layout.</p>
-          <button
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-            onClick={() => window.location.reload()}
+          <a
+            href=""
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors inline-block"
           >
             Refresh Page
-          </button>
+          </a>
           <div className="mt-4 text-xs text-muted-foreground">
             {children}
           </div>

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from "next/link"
-import { ChevronDown, Heart, Eye, ShoppingCart, Filter, X, ArrowRight, MapPin, Star, Award, Calendar, Users, Phone, Mail, Clock, BookOpen, Lightbulb, TrendingUp, Play, FileText, Video, Search, MessageCircle, ThumbsUp, Reply, Flag, MoreHorizontal, User, Star as StarIcon, Check, Plus, Settings } from "lucide-react"
+import { ChevronDown, Star, Check, ArrowRight, Calendar, Users, BookOpen, Heart, Lightbulb, MessageCircle, Settings, Star as StarIcon } from "lucide-react"
 
 // Custom puja benefits
 const benefits = [
@@ -49,7 +49,7 @@ const processSteps = [
   {
     id: 3,
     title: "Preparation",
-    description: "Gather all necessary materials and安排pandits",
+    description: "Gather all necessary materials and arrange pandits",
     icon: BookOpen
   },
   {

@@ -41,7 +41,9 @@ export async function resolveLayoutTree(context: RequestContext): Promise<Resolv
   let abTestVariant: 'A' | 'B' | undefined;
   if (selectedPolicy.abTest) {
     const hash = deterministicHash(`${context.seed}-${selectedPolicy.abTest.seed}`);
-    abTestVariant = hash < selectedPolicy.abTest.percentage ? 'A' : 'B';
+    // Normalize the bucket to 0-99 before comparing so 100% rollouts are respected
+    const normalizedHash = hash % 100;
+    abTestVariant = normalizedHash < selectedPolicy.abTest.percentage ? 'A' : 'B';
   }
   
   const resolvedLayout: ResolvedLayout = {

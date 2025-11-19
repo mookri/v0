@@ -6,7 +6,8 @@ class InMemoryCache {
   
   // Set a value with optional TTL in milliseconds
   set(key: string, value: any, ttl?: number) {
-    const expiry = ttl ? Date.now() + ttl : Infinity;
+    // Handle TTL properly: if ttl is provided (including 0), use it; otherwise use Infinity
+    const expiry = ttl !== undefined ? Date.now() + ttl : Infinity;
     this.cache.set(key, { value, expiry });
   }
   
@@ -80,7 +81,7 @@ export interface CacheInterface {
 //   }
 //   
 //   async get(key: string) {
-//     const value = await this.redisClient.get(key);
+//   const value = await this.redisClient.get(key);
 //     return value ? JSON.parse(value) : undefined;
 //   }
 //   

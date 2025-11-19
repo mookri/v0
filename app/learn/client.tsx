@@ -6,16 +6,6 @@ import Script from "next/script"
 import { ChevronDown, Heart, Eye, ShoppingCart, Filter, X, ArrowRight, MapPin, Star, Award, Calendar, Users, Phone, Mail, Clock, BookOpen, Lightbulb, TrendingUp, Play, FileText, Video, Baby, BookMarked, Sparkles, Gamepad2, GraduationCap } from "lucide-react"
 
 // Schema markup for the main learn page
-const LEARN_SCHEMA = seoManager.generateSchema({
-  type: "CollectionPage",
-  name: "Learning & Spiritual Growth - Navdhya",
-  description: "Expand your spiritual knowledge with our comprehensive learning resources. From beginner courses to advanced certification programs, discover pathways to deepen your understanding of Vedic wisdom.",
-  path: "/learn",
-  breadcrumbs: [
-    { name: "Home", url: "https://www.navdhya.com" },
-    { name: "Learning", url: "https://www.navdhya.com/learn" }
-  ]
-})
 
 interface LearningPath {
   id: number;
@@ -71,14 +61,9 @@ const learningPaths: LearningPath[] = [
 ];
 
 export default function LearnClient() {
-  const learnSchema = JSON.stringify(LEARN_SCHEMA)
-  
+
   return (
     <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: learnSchema }}
-      />
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 mt-4">
@@ -332,7 +317,6 @@ export default function LearnClient() {
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                   ))}
-                  <Star className="w-4 h-4 text-yellow-400" />
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">
                   "As a working professional, the flexible schedule of the meditation course was perfect for me. I've seen significant improvements in my focus and stress management since completing the course."

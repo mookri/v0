@@ -39,5 +39,5 @@
 
 ## CLI Commands
 
-- Use kebab-case: `dlo generate shell`, `dlo validate policies`
+- Use kebab-case: `dlo generate-shell`, `dlo validate-policies`
 - Be consistent: `dlo init`, `dlo inspect`, `dlo coverage`
