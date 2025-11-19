@@ -1,6 +1,9 @@
 import { seoManager } from "@/lib/seo-manager"
 import EventsClient from "./client"
 import Script from "next/script"
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { resolveContext } from "@/lib/context-resolver"
 
 // Schema markup for the events page
 const EVENTS_SCHEMA = seoManager.generateSchema({
@@ -24,16 +27,21 @@ export async function generateMetadata() {
   })
 }
 
-export default function EventsPage() {
+export default async function EventsPage() {
   const eventsSchema = JSON.stringify(EVENTS_SCHEMA)
   
+  // Resolve context using the server function
+  const context = await resolveContext('/community/events');
+  
   return (
-    <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: eventsSchema }}
-      />
-      <EventsClient eventsSchema={eventsSchema} />
-    </>
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: eventsSchema }}
+        />
+        <EventsClient eventsSchema={eventsSchema} />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
   )
 }

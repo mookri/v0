@@ -1,6 +1,9 @@
 import { seoManager } from "@/lib/seo-manager"
 import VolunteerClient from "./client"
 import Script from "next/script"
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { resolveContext } from "@/lib/context-resolver"
 
 // Schema markup for the volunteer programs page
 const VOLUNTEER_SCHEMA = seoManager.generateSchema({
@@ -24,16 +27,21 @@ export async function generateMetadata() {
   })
 }
 
-export default function VolunteerProgramsPage() {
+export default async function VolunteerProgramsPage() {
   const volunteerSchema = JSON.stringify(VOLUNTEER_SCHEMA)
   
+  // Resolve context using the server function
+  const context = await resolveContext('/community/volunteer');
+  
   return (
-    <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: volunteerSchema }}
-      />
-      <VolunteerClient volunteerSchema={volunteerSchema} />
-    </>
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: volunteerSchema }}
+        />
+        <VolunteerClient volunteerSchema={volunteerSchema} />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
   )
 }

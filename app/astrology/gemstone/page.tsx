@@ -1,6 +1,9 @@
 import { seoManager } from "@/lib/seo-manager"
 import GemstoneClient from "./client"
 import Script from "next/script"
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { resolveContext } from "@/lib/context-resolver"
 
 // Schema markup for the Gemstone page
 const GEMSTONE_SCHEMA = seoManager.generateSchema({
@@ -24,12 +27,21 @@ export async function generateMetadata() {
   })
 }
 
-export default function GemstonePage() {
+export default async function GemstonePage() {
   const gemstoneSchema = JSON.stringify(GEMSTONE_SCHEMA)
   
+  // Resolve context using the server function
+  const context = await resolveContext('/astrology/gemstone');
+  
   return (
-    <>
-      <GemstoneClient gemstoneSchema={gemstoneSchema} />
-    </>
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: gemstoneSchema }}
+        />
+        <GemstoneClient gemstoneSchema={gemstoneSchema} />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
   )
 }

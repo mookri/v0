@@ -60,6 +60,44 @@ const HOME_SCHEMA = seoManager.generateSchema({
   ]
 })
 
+// Breadcrumb list schema
+const BREADCRUMB_LIST_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Book a Pooja",
+      "item": "https://www.navdhya.com/book-pooja"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Find a Pandit",
+      "item": "https://www.navdhya.com/find-pandit"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Learn Rituals",
+      "item": "https://www.navdhya.com/learn"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Join the Community",
+      "item": "https://www.navdhya.com/community"
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "name": "Explore Resources",
+      "item": "https://www.navdhya.com/resources"
+    }
+  ]
+};
+
 // Additional Organization schema with site navigation
 const ORGANIZATION_SCHEMA = {
   "@context": "https://schema.org",
@@ -191,6 +229,7 @@ const SERVICE_SCHEMAS = [
 
 export default async function HomePage() {
   const homeSchema = JSON.stringify(HOME_SCHEMA)
+  const breadcrumbListSchema = JSON.stringify(BREADCRUMB_LIST_SCHEMA)
   const organizationSchema = JSON.stringify(ORGANIZATION_SCHEMA)
   const localBusinessSchema = JSON.stringify(LOCAL_BUSINESS_SCHEMA)
   const serviceSchemas = JSON.stringify(SERVICE_SCHEMAS)
@@ -204,6 +243,10 @@ export default async function HomePage() {
         <Script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: homeSchema }}
+        />
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: breadcrumbListSchema }}
         />
         <Script
           type="application/ld+json"

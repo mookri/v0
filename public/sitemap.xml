@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.navdhya.com/</loc>
-    <lastmod>2025-11-18</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -164,31 +164,31 @@
   </url>
   <url>
     <loc>https://www.navdhya.com/learn/workshops</loc>
-    <lastmod>2025-11-16</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/learn/library</loc>
-    <lastmod>2025-11-16</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/learn/kids</loc>
-    <lastmod>2025-11-16</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/learn/courses</loc>
-    <lastmod>2025-11-16</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/learn/certified</loc>
-    <lastmod>2025-11-16</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -205,8 +205,8 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.navdhya.com/debug-loading</loc>
-    <lastmod>2025-11-18</lastmod>
+    <loc>https://www.navdhya.com/find-pandit</loc>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -218,7 +218,7 @@
   </url>
   <url>
     <loc>https://www.navdhya.com/contact</loc>
-    <lastmod>2025-11-18</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -236,36 +236,36 @@
   </url>
   <url>
     <loc>https://www.navdhya.com/community/volunteer</loc>
-    <lastmod>2025-11-16</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/community/stories</loc>
-    <lastmod>2025-11-16</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/community/join</loc>
-    <lastmod>2025-11-16</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/community/forums</loc>
-    <lastmod>2025-11-16</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/community/events</loc>
-    <lastmod>2025-11-16</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.navdhya.com/booking</loc>
+    <loc>https://www.navdhya.com/book</loc>
     <lastmod>2025-11-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -296,13 +296,13 @@
   </url>
   <url>
     <loc>https://www.navdhya.com/astrology/remedies</loc>
-    <lastmod>2025-11-16</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/astrology/matchmaking</loc>
-    <lastmod>2025-11-16</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -314,13 +314,13 @@
   </url>
   <url>
     <loc>https://www.navdhya.com/astrology/horoscope</loc>
-    <lastmod>2025-11-16</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/astrology/gemstone</loc>
-    <lastmod>2025-11-16</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -422,49 +422,49 @@
   </url>
   <url>
     <loc>https://www.navdhya.com/pujas/griha-pravesh</loc>
-    <lastmod>2025-11-18</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/pujas/satyanarayan-katha</loc>
-    <lastmod>2025-11-18</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/pujas/lakshmi-ganesh-puja</loc>
-    <lastmod>2025-11-18</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/pujas/hindu-wedding</loc>
-    <lastmod>2025-11-18</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/pujas/baby-naming</loc>
-    <lastmod>2025-11-18</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/pujas/annaprashan</loc>
-    <lastmod>2025-11-18</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/pujas/vastu-shanti</loc>
-    <lastmod>2025-11-18</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.navdhya.com/pujas/navagraha-puja</loc>
-    <lastmod>2025-11-18</lastmod>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

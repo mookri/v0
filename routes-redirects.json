@@ -129,6 +129,16 @@
       "source": "/faq",
       "destination": "/help",
       "permanent": true
+    },
+    {
+      "source": "/booking",
+      "destination": "/book",
+      "permanent": true
+    },
+    {
+      "source": "/book-pooja",
+      "destination": "/book",
+      "permanent": true
     }
-  ]
+    ]
 }
