@@ -1,6 +1,9 @@
 import { seoManager } from "@/lib/seo-manager"
 import RemediesClient from "./client"
 import Script from "next/script"
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { resolveContext } from "@/lib/context-resolver"
 
 // Schema markup for the Remedies page
 const REMEDIES_SCHEMA = seoManager.generateSchema({
@@ -24,12 +27,21 @@ export async function generateMetadata() {
   })
 }
 
-export default function RemediesPage() {
+export default async function RemediesPage() {
   const remediesSchema = JSON.stringify(REMEDIES_SCHEMA)
   
+  // Resolve context using the server function
+  const context = await resolveContext('/astrology/remedies');
+  
   return (
-    <>
-      <RemediesClient remediesSchema={remediesSchema} />
-    </>
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: remediesSchema }}
+        />
+        <RemediesClient remediesSchema={remediesSchema} />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
   )
 }

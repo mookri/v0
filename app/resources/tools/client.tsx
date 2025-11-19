@@ -90,8 +90,7 @@ const categories = [
   "All", "Astrology", "Rituals", "Calendar", "Vastu"
 ];
 
-export default function ToolsClient() {
-  const toolsSchema = JSON.stringify(TOOLS_SCHEMA)
+export default function ToolsClient({ toolsSchema }: { toolsSchema: string }) {
   const [categoryFilter, setCategoryFilter] = useState("All");
   
   const filteredTools = tools.filter(tool => 

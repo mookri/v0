@@ -1,6 +1,9 @@
 import { seoManager } from "@/lib/seo-manager"
 import StoriesClient from "./client"
 import Script from "next/script"
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { resolveContext } from "@/lib/context-resolver"
 
 // Schema markup for the user stories page
 const USER_STORIES_SCHEMA = seoManager.generateSchema({
@@ -24,16 +27,21 @@ export async function generateMetadata() {
   })
 }
 
-export default function UserStoriesPage() {
+export default async function UserStoriesPage() {
   const userStoriesSchema = JSON.stringify(USER_STORIES_SCHEMA)
   
+  // Resolve context using the server function
+  const context = await resolveContext('/community/stories');
+  
   return (
-    <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: userStoriesSchema }}
-      />
-      <StoriesClient userStoriesSchema={userStoriesSchema} />
-    </>
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: userStoriesSchema }}
+        />
+        <StoriesClient userStoriesSchema={userStoriesSchema} />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
   )
 }

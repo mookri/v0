@@ -104,7 +104,6 @@ const sources = [
 ];
 
 export default function NewsClient() {
-  const newsSchema = JSON.stringify(NEWS_SCHEMA)
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [sourceFilter, setSourceFilter] = useState("All Sources");
@@ -121,7 +120,21 @@ export default function NewsClient() {
     <>
       <Script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: newsSchema }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "name": "News & Updates - Navdhya",
+          "description": "Real-time temple information, spiritual event updates, and latest developments in our community.",
+          "url": "https://www.navdhya.com/resources/news",
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.navdhya.com" },
+              { "@type": "ListItem", "position": 2, "name": "Resources", "item": "https://www.navdhya.com/resources" },
+              { "@type": "ListItem", "position": 3, "name": "News & Updates", "item": "https://www.navdhya.com/resources/news" }
+            ]
+          }
+        }) }}
       />
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}

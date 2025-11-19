@@ -1,6 +1,12 @@
 import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 import HelpClient from "./client"
+import { LayoutOrchestrator } from '@/components/dlo-x/LayoutOrchestrator'
+import { ErrorBoundary } from '@/components/dlo-x/ErrorBoundary'
+import { resolveContext } from '@/lib/context-resolver'
+
+// Force dynamic rendering to ensure context is resolved per request
+export const dynamic = 'force-dynamic'
 
 // Generate page metadata using SEO manager
 export const metadata = seoManager.generateMetadata({
@@ -22,16 +28,21 @@ const HELP_SCHEMA = seoManager.generateSchema({
   ]
 })
 
-export default function HelpPage() {
+export default async function HelpPage() {
   const helpSchema = JSON.stringify(HELP_SCHEMA)
   
+  // Resolve context per request for proper DLO-X orchestration
+  const context = await resolveContext('/help');
+
   return (
-    <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: helpSchema }}
-      />
-      <HelpClient />
-    </>
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: helpSchema }}
+        />
+        <HelpClient />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
   )
 }

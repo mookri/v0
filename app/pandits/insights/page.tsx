@@ -1,6 +1,9 @@
 import { seoManager } from "@/lib/seo-manager"
 import InsightsClient from "./client"
 import Script from "next/script"
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { resolveContext } from "@/lib/context-resolver"
 
 // Schema markup for the pandit insights page
 const PANDIT_INSIGHTS_SCHEMA = seoManager.generateSchema({
@@ -24,16 +27,21 @@ export async function generateMetadata() {
   })
 }
 
-export default function PanditInsightsPage() {
+export default async function PanditInsightsPage() {
   const insightsSchema = JSON.stringify(PANDIT_INSIGHTS_SCHEMA)
   
+  // Resolve context using the server function
+  const context = await resolveContext('/pandits/insights');
+  
   return (
-    <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: insightsSchema }}
-      />
-      <InsightsClient insightsSchema={insightsSchema} />
-    </>
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: insightsSchema }}
+        />
+        <InsightsClient insightsSchema={insightsSchema} />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
   )
 }

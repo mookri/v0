@@ -1,5 +1,8 @@
 import dynamic from "next/dynamic"
 import { seoManager } from "@/lib/seo-manager"
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { resolveContext } from "@/lib/context-resolver"
 
 // Dynamically import the client component
 const ServicesClient = dynamic(() => import("./client"), {
@@ -14,6 +17,15 @@ export const metadata = seoManager.generateMetadata({
   keywords: ["puja services", "vedic pandits", "hindu rituals", "spiritual services"]
 })
 
-export default function ServicesPage() {
-  return <ServicesClient />
+export default async function ServicesPage() {
+  // Resolve context using the new resolver
+  const context = await resolveContext('/services');
+  
+  return (
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <ServicesClient />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
+  )
 }

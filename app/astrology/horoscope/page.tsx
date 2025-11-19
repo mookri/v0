@@ -1,6 +1,9 @@
 import { seoManager } from "@/lib/seo-manager"
 import HoroscopeClient from "./client"
 import Script from "next/script"
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { resolveContext } from "@/lib/context-resolver"
 
 // Schema markup for the Horoscope page
 const HOROSCOPE_SCHEMA = seoManager.generateSchema({
@@ -24,12 +27,21 @@ export async function generateMetadata() {
   })
 }
 
-export default function HoroscopePage() {
+export default async function HoroscopePage() {
   const horoscopeSchema = JSON.stringify(HOROSCOPE_SCHEMA)
   
+  // Resolve context using the server function
+  const context = await resolveContext('/astrology/horoscope');
+  
   return (
-    <>
-      <HoroscopeClient horoscopeSchema={horoscopeSchema} />
-    </>
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: horoscopeSchema }}
+        />
+        <HoroscopeClient horoscopeSchema={horoscopeSchema} />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
   )
 }

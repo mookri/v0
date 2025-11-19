@@ -1,6 +1,9 @@
 import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 import LibraryClient from "./client"
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { resolveContext } from "@/lib/context-resolver"
 
 // Generate page metadata using SEO manager
 export const metadata = seoManager.generateMetadata({
@@ -23,16 +26,21 @@ const LIBRARY_SCHEMA = seoManager.generateSchema({
   ]
 })
 
-export default function LibraryPage() {
+export default async function LibraryPage() {
   const librarySchema = JSON.stringify(LIBRARY_SCHEMA)
   
+  // Resolve context using the server function
+  const context = await resolveContext('/learn/library');
+  
   return (
-    <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: librarySchema }}
-      />
-      <LibraryClient librarySchema={librarySchema} />
-    </>
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: librarySchema }}
+        />
+        <LibraryClient librarySchema={librarySchema} />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
   )
 }

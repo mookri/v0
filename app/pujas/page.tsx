@@ -1,6 +1,9 @@
 import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 import PujaCatalogClient from "./client"
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { getDefaultContext } from "@/lib/context-resolver"
 
 // Generate page metadata using SEO manager
 export const metadata = seoManager.generateMetadata({
@@ -28,16 +31,21 @@ const PUJA_CATALOG_SCHEMA = seoManager.generateSchema({
   ]
 })
 
-export default function PujaCatalogPage() {
+export default async function PujaCatalogPage() {
   const pujaSchema = JSON.stringify(PUJA_CATALOG_SCHEMA)
   
+  // Use default context for statically rendered page to avoid build-time context resolution
+  const context = getDefaultContext('/pujas');
+  
   return (
-    <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: pujaSchema }}
-      />
-      <PujaCatalogClient />
-    </>
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <Script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: pujaSchema }}
+        />
+        <PujaCatalogClient />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
   )
 }

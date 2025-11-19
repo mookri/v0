@@ -1,34 +1,14 @@
+'use client'
+
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar, Clock, Users, MapPin, Phone, Mail } from "lucide-react"
-import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 import Link from "next/link"
-
-// Add page-specific metadata
-export const metadata = seoManager.generateMetadata({
-  title: "Book a Puja",
-  description: "Schedule your authentic Hindu puja service with certified Vedic pandits in Delhi. Easy online booking for home pujas, temple ceremonies, and spiritual consultations.",
-  path: "/booking",
-  keywords: [
-    "Book Puja Delhi",
-    "Online Puja Booking",
-    "Vedic Pandit Booking",
-    "Spiritual Service Booking",
-    "Hindu Ritual Booking"
-  ]
-})
-
-// Schema markup for the booking page
-const BOOKING_SCHEMA = seoManager.generateSchema({
-  type: "WebPage",
-  name: "Book a Puja",
-  description: "Schedule your authentic Hindu puja service with certified Vedic pandits in Delhi",
-  path: "/booking"
-})
+import { useState } from "react"
 
 const serviceTypes = [
   { id: "home-puja", name: "Home Puja Service", description: "Pujas performed in the comfort of your home" },
@@ -50,9 +30,30 @@ const locations = [
   "Faridabad"
 ]
 
-export default function BookingPage() {
-  const bookingSchema = JSON.stringify(BOOKING_SCHEMA)
-  
+export default function BookingClient({ bookingSchema }: { bookingSchema: string }) {
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    serviceType: '',
+    date: '',
+    time: '',
+    participants: '1',
+    location: '',
+    requirements: ''
+  })
+
+  const handleChange = (name: string, value: string) => {
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    console.log('Booking data:', formData)
+    // In a real implementation, this would submit to an API
+    alert('Booking request submitted! In a real application, this would be sent to our servers.')
+  }
+
   return (
     <>
       <Script
@@ -75,13 +76,20 @@ export default function BookingPage() {
           {/* Booking Form */}
           <div className="md:col-span-2">
             <div className="bg-card border border-border rounded-xl p-6 md:p-8">
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div>
                   <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="name">Full Name *</Label>
-                      <Input id="name" placeholder="Enter your full name" required />
+                      <Input 
+                        id="name" 
+                        name="name"
+                        placeholder="Enter your full name" 
+                        required 
+                        value={formData.name}
+                        onChange={(e) => handleChange('name', e.target.value)}
+                      />
                     </div>
                     <div>
                       <Label htmlFor="phone">Phone Number *</Label>
@@ -89,13 +97,28 @@ export default function BookingPage() {
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <span className="text-muted-foreground text-sm">+91</span>
                         </div>
-                        <Input id="phone" placeholder="Enter 10-digit number" className="pl-12" required />
+                        <Input 
+                          id="phone" 
+                          name="phone"
+                          placeholder="Enter 10-digit number" 
+                          className="pl-12" 
+                          required 
+                          value={formData.phone}
+                          onChange={(e) => handleChange('phone', e.target.value)}
+                        />
                       </div>
                     </div>
                   </div>
                   <div className="mt-4">
                     <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" type="email" placeholder="Enter your email" />
+                    <Input 
+                      id="email" 
+                      name="email"
+                      type="email" 
+                      placeholder="Enter your email" 
+                      value={formData.email}
+                      onChange={(e) => handleChange('email', e.target.value)}
+                    />
                   </div>
                 </div>
                 
@@ -104,7 +127,7 @@ export default function BookingPage() {
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="service-type">Service Type *</Label>
-                      <Select>
+                      <Select value={formData.serviceType} onValueChange={(value) => handleChange('serviceType', value)}>
                         <SelectTrigger id="service-type">
                           <SelectValue placeholder="Select a service" />
                         </SelectTrigger>
@@ -116,6 +139,7 @@ export default function BookingPage() {
                           ))}
                         </SelectContent>
                       </Select>
+                      <input type="hidden" name="serviceType" value={formData.serviceType} />
                     </div>
                     <div>
                       <Label htmlFor="date">Preferred Date *</Label>
@@ -125,9 +149,12 @@ export default function BookingPage() {
                         </div>
                         <Input 
                           id="date" 
+                          name="date"
                           type="date" 
                           className="pl-10" 
                           required 
+                          value={formData.date}
+                          onChange={(e) => handleChange('date', e.target.value)}
                         />
                       </div>
                     </div>
@@ -142,9 +169,12 @@ export default function BookingPage() {
                         </div>
                         <Input 
                           id="time" 
+                          name="time"
                           type="time" 
                           className="pl-10" 
                           required 
+                          value={formData.time}
+                          onChange={(e) => handleChange('time', e.target.value)}
                         />
                       </div>
                     </div>
@@ -156,10 +186,13 @@ export default function BookingPage() {
                         </div>
                         <Input 
                           id="participants" 
+                          name="participants"
                           type="number" 
                           min="1" 
                           defaultValue="1"
                           className="pl-10" 
+                          value={formData.participants}
+                          onChange={(e) => handleChange('participants', e.target.value)}
                         />
                       </div>
                     </div>
@@ -171,7 +204,7 @@ export default function BookingPage() {
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <MapPin className="h-4 w-4 text-muted-foreground" />
                       </div>
-                      <Select>
+                      <Select value={formData.location} onValueChange={(value) => handleChange('location', value)}>
                         <SelectTrigger id="location" className="pl-10">
                           <SelectValue placeholder="Select location" />
                         </SelectTrigger>
@@ -183,6 +216,7 @@ export default function BookingPage() {
                           ))}
                         </SelectContent>
                       </Select>
+                      <input type="hidden" name="location" value={formData.location} />
                     </div>
                   </div>
                   
@@ -190,8 +224,11 @@ export default function BookingPage() {
                     <Label htmlFor="requirements">Special Requirements</Label>
                     <Textarea 
                       id="requirements" 
+                      name="requirements"
                       placeholder="Any specific requirements or customs you'd like us to follow..." 
                       rows={4}
+                      value={formData.requirements}
+                      onChange={(e) => handleChange('requirements', e.target.value)}
                     />
                   </div>
                 </div>

@@ -116,7 +116,7 @@ ${entries.map((entry: SitemapEntry) => generateSitemapEntryXml(entry)).join('')}
 };
 
 // Main function to generate sitemap
-const generateSitemap = () => {
+const generateSitemap = async () => {
   console.log('🔍 Discovering pages...');
   
   // Find all page.tsx files
@@ -189,4 +189,8 @@ const generateSitemap = () => {
   console.log('✅ Sitemap generated successfully at public/sitemap.xml');
 };
 
-generateSitemap();
+// Run the script
+generateSitemap().catch((error) => {
+  console.error('❌ Error generating sitemap:', error);
+  process.exit(1);
+});

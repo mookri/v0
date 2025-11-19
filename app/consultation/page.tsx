@@ -7,6 +7,9 @@ import { Calendar, Clock, BookOpen, Star, Heart, Users } from "lucide-react"
 import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 import Link from "next/link"
+import { LayoutOrchestrator } from '@/components/dlo-x/LayoutOrchestrator'
+import { ErrorBoundary } from '@/components/dlo-x/ErrorBoundary'
+import { resolveContext } from '@/lib/context-resolver'
 
 // Add page-specific metadata
 export const metadata = seoManager.generateMetadata({
@@ -80,7 +83,8 @@ const expertiseAreas = [
   "Legal Issues"
 ]
 
-export default function ConsultationPage() {
+// Main content component that will be wrapped by LayoutOrchestrator
+function ConsultationContent() {
   const consultationSchema = JSON.stringify(CONSULTATION_SCHEMA)
   
   return (
@@ -312,5 +316,18 @@ export default function ConsultationPage() {
         </div>
       </main>
     </>
+  )
+}
+
+export default async function ConsultationPage() {
+  // Resolve context using the new resolver
+  const context = await resolveContext('/consultation');
+
+  return (
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <ConsultationContent />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
   )
 }

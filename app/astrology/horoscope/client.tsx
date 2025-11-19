@@ -207,10 +207,6 @@ export default function HoroscopeClient({ horoscopeSchema }: { horoscopeSchema: 
 
   return (
     <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: horoscopeSchema }}
-      />
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 mt-4">

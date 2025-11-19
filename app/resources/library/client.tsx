@@ -5,19 +5,6 @@ import Script from "next/script"
 import { ChevronDown, Heart, Eye, ShoppingCart, Filter, X, ArrowRight, MapPin, Star, Award, Calendar, Users, Phone, Mail, Clock, BookOpen, Lightbulb, TrendingUp, Play, FileText, Video, Search, MessageCircle, ThumbsUp, Reply, Flag, MoreHorizontal, User, Download, BookMarked, AudioLines, File } from "lucide-react"
 import { seoManager } from "@/lib/seo-manager"
 
-// Schema markup for the digital library page
-const DIGITAL_LIBRARY_SCHEMA = seoManager.generateSchema({
-  type: "CollectionPage",
-  name: "Digital Library - Navdhya",
-  description: "Downloadable wisdom including spiritual texts, guided meditations, ritual instructions, and educational resources.",
-  path: "/resources/library",
-  breadcrumbs: [
-    { name: "Home", url: "https://www.navdhya.com" },
-    { name: "Resources", url: "https://www.navdhya.com/resources" },
-    { name: "Digital Library", url: "https://www.navdhya.com/resources/library" }
-  ]
-})
-
 interface LibraryItem {
   id: number;
   title: string;
@@ -149,8 +136,7 @@ const types = [
   "All Types", "PDF", "Video", "Audio"
 ];
 
-export default function DigitalLibraryClient() {
-  const digitalLibrarySchema = JSON.stringify(DIGITAL_LIBRARY_SCHEMA)
+export default function DigitalLibraryClient({ digitalLibrarySchema }: { digitalLibrarySchema: string }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [typeFilter, setTypeFilter] = useState("All Types");

@@ -71,13 +71,13 @@ const resourceSections: ResourceSection[] = [
 ];
 
 export default function ResourcesClient() {
-  const resourcesSchema = JSON.stringify(RESOURCES_SCHEMA)
+  const schema = JSON.stringify(RESOURCES_SCHEMA)
   
   return (
     <>
       <Script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: resourcesSchema }}
+        dangerouslySetInnerHTML={{ __html: schema }}
       />
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}

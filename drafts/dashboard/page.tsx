@@ -72,7 +72,7 @@ export default function DashboardPage() {
     // Simulate logout
     router.push('/auth/login')
   }
-
+  
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}

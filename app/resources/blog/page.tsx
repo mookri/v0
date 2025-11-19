@@ -1,6 +1,8 @@
 import { seoManager } from "@/lib/seo-manager"
 import BlogClient from "./client"
-import Script from "next/script"
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { resolveContext } from "@/lib/context-resolver"
 
 // Schema markup for the blog page
 const BLOG_SCHEMA = seoManager.generateSchema({
@@ -24,16 +26,15 @@ export async function generateMetadata() {
   })
 }
 
-export default function BlogPage() {
-  const blogSchema = JSON.stringify(BLOG_SCHEMA)
-  
+export default async function BlogPage() {
+  // Resolve context using the new resolver
+  const context = await resolveContext('/resources/blog');
+
   return (
-    <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: blogSchema }}
-      />
-      <BlogClient blogSchema={blogSchema} />
-    </>
-  )
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <BlogClient />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
+  );
 }

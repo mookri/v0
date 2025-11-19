@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from "next/link"
+import { LayoutOrchestrator } from '@/components/dlo-x/LayoutOrchestrator'
+import { ErrorBoundary } from '@/components/dlo-x/ErrorBoundary'
 import { ChevronDown, Heart, Eye, ShoppingCart, Filter, X, ArrowRight, MapPin, Star, Award, Calendar, Users, Phone, Mail, Clock, BookOpen, Lightbulb, TrendingUp, Play, FileText, Video, Search, MessageCircle, ThumbsUp, Reply, Flag, MoreHorizontal, User, HelpCircle, Shield, Lock, FileText as FileTextIcon, Home, Flame } from "lucide-react"
 
 // FAQ data organized by categories
@@ -199,17 +201,32 @@ const HelpTopicCard = ({ topic }: { topic: typeof helpTopics[0] }) => {
   );
 };
 
-export default function HelpClient() {
-  const [openFaqIndex, setOpenFaqIndex] = useState<{category: number, faq: number} | null>(null)
-  const [activeCategory, setActiveCategory] = useState("all");
+// Main content component
+const HelpContent = () => {
+  const [openCategoryId, setOpenCategoryId] = useState<string | null>(null);
+  const [openQuestionIndex, setOpenQuestionIndex] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const toggleFaq = (categoryIndex: number, faqIndex: number) => {
-    if (openFaqIndex?.category === categoryIndex && openFaqIndex?.faq === faqIndex) {
-      setOpenFaqIndex(null);
+  const toggleFAQ = (categoryId: string, questionIndex: number) => {
+    if (openCategoryId === categoryId && openQuestionIndex === questionIndex) {
+      setOpenCategoryId(null);
+      setOpenQuestionIndex(null);
     } else {
-      setOpenFaqIndex({ category: categoryIndex, faq: faqIndex });
+      setOpenCategoryId(categoryId);
+      setOpenQuestionIndex(questionIndex);
     }
   };
+
+  const filteredFAQs = faqCategories.map(category => {
+    const filteredFaqs = category.faqs.filter(faq => 
+      faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    return {
+      ...category,
+      faqs: filteredFaqs
+    };
+  }).filter(category => category.faqs.length > 0);
 
   return (
     <div className="min-h-screen bg-background">
@@ -223,23 +240,19 @@ export default function HelpClient() {
       </div>
 
       {/* Hero Banner */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-8">
-        <div className="text-center py-10">
-          <div className="w-16 h-16 rounded-full bg-[#0E3F2E]/10 text-[#0E3F2E] flex items-center justify-center mx-auto mb-6">
-            <HelpCircle className="w-8 h-8" />
-          </div>
-          <h1 className="text-3xl font-serif font-semibold mb-4">Help & Support</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-            Find answers to your questions and get help with our services
-          </p>
-          
-          <div className="relative max-w-xl mx-auto">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search help topics..."
-              className="w-full pl-10 pr-4 py-3 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-[#0E3F2E]"
-            />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-6">
+        <div 
+          className="relative h-48 rounded-lg overflow-hidden bg-cover bg-center flex items-center"
+          style={{
+            backgroundImage: "url('https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg')"
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/40"></div>
+          <div className="relative z-10 text-white p-8 max-w-3xl">
+            <h1 className="text-3xl font-serif font-semibold mb-4">Help & Support</h1>
+            <p className="text-lg">
+              Find answers to frequently asked questions about our puja services, pandit consultations, and spiritual guidance.
+            </p>
           </div>
         </div>
       </div>
@@ -248,104 +261,165 @@ export default function HelpClient() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-10">
         <div className="bg-card border border-border rounded-lg p-6 grid grid-cols-2 md:grid-cols-4 gap-6">
           <div className="text-center">
-            <div className="text-2xl font-bold text-[#0E3F2E] mb-2">24/7</div>
-            <div className="text-sm text-muted-foreground">Support Available</div>
-          </div>
-          <div className="text-center">
             <div className="text-2xl font-bold text-[#0E3F2E] mb-2">150+</div>
             <div className="text-sm text-muted-foreground">Help Articles</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-[#0E3F2E] mb-2">98%</div>
-            <div className="text-sm text-muted-foreground">Satisfaction Rate</div>
+            <div className="text-2xl font-bold text-[#0E3F2E] mb-2">95%</div>
+            <div className="text-sm text-muted-foreground">Resolution Rate</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-[#0E3F2E] mb-2">2h</div>
-            <div className="text-sm text-muted-foreground">Average Response</div>
+            <div className="text-2xl font-bold text-[#0E3F2E] mb-2">24/7</div>
+            <div className="text-sm text-muted-foreground">Support Available</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-[#0E3F2E] mb-2">50K+</div>
+            <div className="text-sm text-muted-foreground">Happy Customers</div>
           </div>
         </div>
       </div>
 
-      {/* Popular Help Topics */}
+      {/* Search */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-10">
+        <div className="bg-card border border-border rounded-lg p-6">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-serif font-semibold mb-2">How can we help you?</h2>
+            <p className="text-muted-foreground">
+              Search our knowledge base or browse topics below
+            </p>
+          </div>
+          
+          <div className="max-w-2xl mx-auto relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search help articles..."
+              className="w-full pl-10 pr-4 py-3 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-[#0E3F2E]"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Help Topics */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12">
         <div className="text-center mb-10">
-          <h2 className="text-2xl font-serif font-semibold mb-4">Popular Help Topics</h2>
+          <h2 className="text-2xl font-serif font-semibold mb-4">Browse Help Topics</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Explore our most frequently visited help topics
+            Explore our comprehensive guides and resources to find the information you need.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {helpTopics.map(topic => (
             <HelpTopicCard key={topic.id} topic={topic} />
           ))}
         </div>
       </div>
 
-      {/* Contact Support */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12">
-        <div className="bg-card border border-border rounded-lg p-8 text-center">
-          <div className="w-12 h-12 rounded-full bg-[#0E3F2E]/10 text-[#0E3F2E] flex items-center justify-center mx-auto mb-6">
-            <Phone className="w-6 h-6" />
-          </div>
-          <h2 className="text-2xl font-serif font-semibold mb-4">Still Need Help?</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
-            Our support team is available 24/7 to assist you with any questions or concerns you may have.
-          </p>
-          
-          <div className="flex flex-wrap justify-center gap-4">
-            <a 
-              href="tel:+91-7289000377" 
-              className="inline-flex items-center gap-2 bg-[#0E3F2E] hover:bg-[#0E3F2E]/90 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-sm"
-            >
-              <Phone className="w-4 h-4" />
-              <span>Call Us: +91-7289000377</span>
-            </a>
-            <a 
-              href="mailto:help@navdhya.com" 
-              className="inline-flex items-center gap-2 border border-border bg-background hover:bg-muted font-medium py-3 px-6 rounded-lg transition-all duration-300"
-            >
-              <Mail className="w-4 h-4" />
-              <span>Email: help@navdhya.com</span>
-            </a>
-          </div>
-        </div>
-      </div>
-
       {/* FAQ Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12">
         <div className="text-center mb-10">
           <h2 className="text-2xl font-serif font-semibold mb-4">Frequently Asked Questions</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Find answers to common questions about our services and processes
+            Find answers to common questions about our services and processes.
           </p>
         </div>
         
-        <div className="space-y-8">
-          {faqCategories.map((category, categoryIndex) => (
-            <div key={category.id}>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-lg bg-[#0E3F2E]/10 text-[#0E3F2E] flex items-center justify-center">
-                  <category.icon className="w-5 h-5" />
+        {filteredFAQs.length > 0 ? (
+          <div className="space-y-8">
+            {filteredFAQs.map(category => {
+              const IconComponent = category.icon;
+              return (
+                <div key={category.id}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 rounded-lg bg-[#0E3F2E]/10 text-[#0E3F2E] flex items-center justify-center">
+                      <IconComponent className="w-4 h-4" />
+                    </div>
+                    <h3 className="text-xl font-medium">{category.title}</h3>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    {category.faqs.map((faq, index) => (
+                      <FAQItem
+                        key={index}
+                        question={faq.question}
+                        answer={faq.answer}
+                        isOpen={openCategoryId === category.id && openQuestionIndex === index}
+                        onClick={() => toggleFAQ(category.id, index)}
+                      />
+                    ))}
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold">{category.title}</h3>
-              </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <HelpCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium mb-2">No FAQs found</h3>
+            <p className="text-muted-foreground mb-4">Try adjusting your search query</p>
+            <button
+              onClick={() => setSearchQuery('')}
+              className="px-4 py-2 bg-[#0E3F2E] hover:bg-[#0E3F2E]/90 text-white rounded-md transition-colors"
+            >
+              Clear search
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Contact Support */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12">
+        <div className="bg-card border border-border rounded-lg p-8 text-center">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-2xl font-serif font-semibold mb-4">Still need help?</h2>
+            <p className="text-muted-foreground mb-6">
+              Our support team is available 24/7 to assist you with any questions or concerns.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link 
+                href="/contact" 
+                className="px-6 py-3 bg-[#0E3F2E] hover:bg-[#0E3F2E]/90 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <Mail className="w-5 h-5" />
+                <span>Contact Us</span>
+              </Link>
               
-              <div className="space-y-4">
-                {category.faqs.map((faq, faqIndex) => (
-                  <FAQItem
-                    key={faqIndex}
-                    question={faq.question}
-                    answer={faq.answer}
-                    isOpen={openFaqIndex?.category === categoryIndex && openFaqIndex?.faq === faqIndex}
-                    onClick={() => toggleFaq(categoryIndex, faqIndex)}
-                  />
-                ))}
+              <a 
+                href="tel:+917289000377" 
+                className="px-6 py-3 border border-border rounded-lg font-medium transition-colors flex items-center justify-center gap-2 hover:bg-muted"
+              >
+                <Phone className="w-5 h-5" />
+                <span>+91 7289000377</span>
+              </a>
+            </div>
+            
+            <div className="mt-6 flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4" />
+                <span>24/7 Support</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4" />
+                <span>Secure Communication</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Lock className="w-4 h-4" />
+                <span>Privacy Guaranteed</span>
               </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </div>
+  )
+}
+
+export default function HelpClient() {
+  return (
+    <HelpContent />
   )
 }
