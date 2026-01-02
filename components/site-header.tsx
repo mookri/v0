@@ -72,10 +72,10 @@ export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false) // control Sheet open for close-on-link
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [activeTab, setActiveTab] = useState('main') // 'main' or 'categories'
-  
+
   // Transform menu data from single source
   const menuData = transformMenuData();
-  
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
     onScroll()
@@ -91,7 +91,7 @@ export function SiteHeader() {
         setIsSearchOpen(false);
       }
     };
-    
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -105,9 +105,7 @@ export function SiteHeader() {
             <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
             </svg>
-            <span className="text-gray-700">Limited time offer <span className="text-red-600 font-semibold">-15%</span> on all pujas</span>
-            <span className="mx-2 text-gray-400">⟶</span>
-            <a href="#catalog" className="text-gray-900 underline hover:text-red-600">View Pujas</a>
+            <span className="text-gray-700">We are Currently in Development Mode, Further Information You can call us</span>
           </div>
           <div className="hidden lg:flex items-center gap-6 text-gray-700">
             <a href="/about" className="hover:text-gray-900">About Us</a>
@@ -125,9 +123,9 @@ export function SiteHeader() {
             {/* Logo */}
             <div className="flex items-center gap-8">
               <Link href="/" className="flex items-center gap-2" aria-label="Navdhya Home">
-                <img 
-                  src="/navdhya-logo.png" 
-                  alt="Navdhya Ritual Services Logo" 
+                <img
+                  src="/navdhya-logo.png"
+                  alt="Navdhya Ritual Services Logo"
                   className="h-8 w-auto"
                 />
               </Link>
@@ -144,7 +142,7 @@ export function SiteHeader() {
                       <DropdownMenuContent className="w-[300px] sm:w-[400px] md:w-[500px] max-w-[calc(100vw-2rem)] bg-card border-border" align="start">
                         <div className="p-4 space-y-2">
                           {item.subItems.map((subItem, subIndex) => (
-                            <Link 
+                            <Link
                               key={subIndex}
                               href={subItem.href}
                               className="block py-2 text-muted-foreground hover:text-primary hover:underline text-sm"
@@ -156,9 +154,9 @@ export function SiteHeader() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   ) : (
-                    <Link 
+                    <Link
                       key={index}
-                      href={item.href} 
+                      href={item.href}
                       className="hover:text-primary transition-colors font-medium text-sm"
                     >
                       {item.name}
@@ -208,9 +206,9 @@ export function SiteHeader() {
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-6">
                       <Link href="/" className="flex items-center gap-2" aria-label="Navdhya Home">
-                        <img 
-                          src="/navdhya-logo.png" 
-                          alt="Navdhya Ritual Services Logo" 
+                        <img
+                          src="/navdhya-logo.png"
+                          alt="Navdhya Ritual Services Logo"
                           className="h-8 w-auto"
                         />
                       </Link>
@@ -222,13 +220,13 @@ export function SiteHeader() {
                     </div>
 
                     <div className="flex gap-2 mb-6">
-                      <button 
+                      <button
                         className={`flex-1 py-2 px-4 rounded-full text-sm font-medium ${activeTab === 'main' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}
                         onClick={() => setActiveTab('main')}
                       >
                         MAIN MENU
                       </button>
-                      <button 
+                      <button
                         className={`flex-1 py-2 px-4 rounded-full text-sm font-medium ${activeTab === 'categories' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}
                         onClick={() => setActiveTab('categories')}
                       >
@@ -251,7 +249,7 @@ export function SiteHeader() {
                                     <div className="py-2 space-y-2">
                                       {item.subItems.map((subItem, subIndex) => (
                                         <SheetClose asChild key={subIndex}>
-                                          <Link 
+                                          <Link
                                             href={subItem.href}
                                             className="block py-2 text-muted-foreground hover:text-primary hover:underline"
                                             onClick={() => setMobileOpen(false)}
@@ -267,8 +265,8 @@ export function SiteHeader() {
                             </div>
                           ) : (
                             <SheetClose asChild key={index}>
-                              <Link 
-                                href={item.href} 
+                              <Link
+                                href={item.href}
                                 className="block py-3 border-b border-border"
                                 onClick={() => setMobileOpen(false)}
                               >
@@ -286,8 +284,8 @@ export function SiteHeader() {
                           <div className="grid grid-cols-2 gap-2">
                             {menuData.slice(1, 4).map((item, index) => (
                               <SheetClose asChild key={index}>
-                                <Link 
-                                  href={item.href} 
+                                <Link
+                                  href={item.href}
                                   className="block py-2 px-3 rounded-lg bg-muted hover:bg-muted/80 text-sm"
                                   onClick={() => setMobileOpen(false)}
                                 >
@@ -305,7 +303,7 @@ export function SiteHeader() {
                         <Heart className="w-5 h-5" />
                         <span>Wishlist (0)</span>
                       </div>
-                      
+
                       {/* Language dropdown instead of buttons */}
                       <div className="mb-4">
                         <select className="w-full p-2 border border-input rounded bg-background text-foreground">
@@ -313,7 +311,7 @@ export function SiteHeader() {
                           <option>हिंदी</option>
                         </select>
                       </div>
-                      
+
                       <div className="flex gap-4">
                         <button className="text-sm text-muted-foreground hover:text-foreground">
                           ₹ INR
@@ -330,9 +328,9 @@ export function SiteHeader() {
               {/* Logo - Centered */}
               <div className="flex-1 flex justify-center">
                 <Link href="/" className="flex items-center gap-2" aria-label="Navdhya Home">
-                  <img 
-                    src="/navdhya-logo.png" 
-                    alt="Navdhya Ritual Services Logo" 
+                  <img
+                    src="/navdhya-logo.png"
+                    alt="Navdhya Ritual Services Logo"
                     className="h-10 w-auto"
                   />
                 </Link>
@@ -343,7 +341,7 @@ export function SiteHeader() {
                 <button className="p-2 hover:bg-muted rounded">
                   <User className="w-5 h-5" />
                 </button>
-                <button 
+                <button
                   className="p-2 hover:bg-muted rounded"
                   onClick={() => setIsSearchOpen(!isSearchOpen)}
                 >
