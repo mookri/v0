@@ -1,0 +1,91 @@
+   ▲ Next.js 16.0.10 (Turbopack)
+
+ ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 14.4s
+   Running TypeScript ...
+   Collecting page data using 7 workers ...
+   Generating static pages using 7 workers (0/67) ...
+   Generating static pages using 7 workers (16/67) 
+   Generating static pages using 7 workers (33/67) 
+   Generating static pages using 7 workers (50/67) 
+ ✓ Generating static pages using 7 workers (67/67) in 8.8s
+   Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /about
+├ ○ /accessibility
+├ ○ /affiliate-disclosure
+├ ○ /astrology/gemstone
+├ ○ /astrology/horoscope
+├ ○ /astrology/kundli
+├ ○ /astrology/matchmaking
+├ ○ /astrology/remedies
+├ ○ /auth/forgot-password
+├ ○ /auth/login
+├ ○ /auth/reset-password
+├ ○ /auth/signup
+├ ○ /book
+├ ○ /cancellation-policy
+├ ○ /child-protection
+├ ○ /community
+├ ○ /community/events
+├ ○ /community/forums
+├ ○ /community/join
+├ ○ /community/stories
+├ ○ /community/volunteer
+├ ○ /consultation
+├ ○ /contact
+├ ○ /cookie-policy
+├ ○ /data-processing
+├ ○ /find-pandit
+├ ○ /gallery
+├ ○ /grievance-officer
+├ ƒ /help
+├ ○ /ip-policy
+├ ○ /learn
+├ ○ /learn/certified
+├ ○ /learn/courses
+├ ○ /learn/kids
+├ ○ /learn/library
+├ ○ /learn/workshops
+├ ○ /pandit-agreement
+├ ○ /pandit-verification
+├ ○ /pandits
+├ ○ /pandits/book
+├ ○ /pandits/certified
+├ ○ /pandits/insights
+├ ○ /pandits/join
+├ ○ /privacy-policy
+├ ○ /pujas
+├ ƒ /pujas/[slug]
+├ ○ /pujas/custom
+├ ○ /pujas/havan
+├ ○ /pujas/home
+├ ○ /pujas/occasions
+├ ○ /pujas/online
+├ ○ /pujas/personalized
+├ ○ /pujas/regional
+├ ○ /pujas/temple
+├ ƒ /pujas/vedic
+├ ○ /refund-policy
+├ ○ /resources
+├ ○ /resources/blog
+├ ○ /resources/library
+├ ○ /resources/news
+├ ○ /resources/scriptures
+├ ○ /resources/tools
+├ ○ /service-guarantee
+├ ○ /services
+├ ○ /terms-of-service
+├ ○ /vastu
+└ ○ /vendor-terms
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
