@@ -253,26 +253,12 @@ export default async function AboutPage() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <h3 className="text-xl font-medium text-foreground mb-2">Rajesh Sharma</h3>
+                <h3 className="text-xl font-medium text-foreground mb-2">Mr. Vinod Sharma</h3>
                 <p className="text-primary font-medium mb-3">Founder & CEO</p>
-                <p className="text-muted-foreground text-sm">
-                  15+ years in Vedic traditions and spiritual services. Graduate of Kashi Vishwanath Temple's Pandit Training Program.
-                </p>
-              </div>
-              
-              <div className="bg-card rounded-2xl p-8 border border-border text-center hover:shadow-md transition-all duration-300">
-                <div className="w-24 h-24 rounded-full bg-muted mx-auto mb-6 overflow-hidden">
-                  <img 
-                    src="https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg" 
-                    alt="Team Member" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-xl font-medium text-foreground mb-2">Priya Devi</h3>
-                <p className="text-primary font-medium mb-3">Head of Operations</p>
-                <p className="text-muted-foreground text-sm">
-                  Expert in logistics and customer experience. Ensures seamless service delivery across Delhi NCR.
-                </p>
+<p className="text-muted-foreground text-sm">
+  Brings 15+ years of experience across leadership, operations, and organizational growth.
+</p>
+
               </div>
               
               <div className="bg-card rounded-2xl p-8 border border-border text-center hover:shadow-md transition-all duration-300">
@@ -283,11 +269,11 @@ export default async function AboutPage() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <h3 className="text-xl font-medium text-foreground mb-2">Amit Patel</h3>
-                <p className="text-primary font-medium mb-3">Pandit Relations</p>
-                <p className="text-muted-foreground text-sm">
-                  Manages our network of certified pandits. Ensures quality and authenticity in every service.
-                </p>
+<h3 className="text-xl font-medium text-foreground mb-2">Amit Kumar</h3>
+<p className="text-primary font-medium mb-3">Operations & Partnerships</p>
+<p className="text-muted-foreground text-sm">
+  Manages partner relationships and operational coordination, ensuring consistent quality and reliable service delivery.
+</p>
               </div>
             </div>
           </section>
