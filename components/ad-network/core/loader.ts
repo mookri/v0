@@ -392,7 +392,7 @@ export class AdLoader {
     }
     if (creative.html5BundleUrl) this.addPreloadHint(creative.html5BundleUrl, 'fetch');
     creative.trackingScripts?.forEach((script, i) => {
-      this.enqueue({ id: `${ad.id}_tracking_${i}`, url: script, type: 'script', priority: 'low', strategy: 'idle' });
+      this.enqueue({ id: `${ad.id}_tracking_${i}`, url: script, type: 'script', priority: 'low', strategy: 'prefetch' });
     });
   }
 

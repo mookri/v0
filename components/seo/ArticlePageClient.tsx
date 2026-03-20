@@ -17,7 +17,12 @@ import type { InternalLink } from "@/lib/linking/graph";
 import { BreadcrumbNav } from "./BreadcrumbNav";
 import { InternalLinks } from "./InternalLinks";
 import HeroImage from "./HeroImage";
-import AdSlot from "@/components/ad-network/AdSlot";
+import dynamic from "next/dynamic";
+const AdSlot = dynamic(
+  () => import("@/components/ad-network/AdSlot"),
+  { ssr: false, loading: () => null },
+);
+import { getHeroImage, resolveCategory } from "@/lib/Heroimagepool";
 import { AdRuntimeProvider, useAdRuntime } from "@/components/ad-network/runtime/AdRuntimeProvider";
 import type { ArticleAdBaseRequest } from "./article-ad-experience";
 
@@ -234,11 +239,21 @@ function ArticlePageBody({ page, clusterMeta, internalLinks, contentPlan, prefet
           <div className="mb-16">
             <div className="relative w-full max-w-full overflow-hidden border border-border/10 bg-muted/20 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.15)]">
               <div className="relative w-full h-[220px] sm:h-[300px] md:h-[380px] lg:h-[460px] xl:h-[520px]">
-                <HeroImage
-                  src={page.heroImage || "https://picsum.photos/1200/500"}
-                  alt={page.title}
-                  priority
-                />
+                {(() => {
+                  const category = resolveCategory(page.secondaryKeywords || []);
+                  const hero = page.heroImage 
+                    ? { src: page.heroImage, blurDataURL: undefined }
+                    : getHeroImage(page.slug, { category });
+                  
+                  return (
+                    <HeroImage
+                      src={hero.src}
+                      alt={page.title}
+                      blurDataURL={hero.blurDataURL}
+                      priority
+                    />
+                  );
+                })()}
               </div>
               <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-transparent pointer-events-none" />
               <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />

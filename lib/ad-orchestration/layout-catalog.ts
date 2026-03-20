@@ -731,7 +731,7 @@ export function getLayoutSpec(layout: AdLayout, placementHint?: AdPlacement): La
     template: inferTemplate(layout),
     density: inferDensity(layout),
     reservedSize: inferReservedSize(layout),
-    preferredPlacements: uniq([...preferredPlacementsForLayout(layout), ...placementDefaults]),
+    preferredPlacements: uniq([...preferredPlacementsForLayout(layout), ...(placementHint ? [placementHint] : [])]),
     lowBandwidthSafe: isLowBandwidthSafe(layout),
     requiresImage: requiresImage(layout),
     requiresVideo: requiresVideo(layout),

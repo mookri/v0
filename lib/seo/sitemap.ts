@@ -80,19 +80,19 @@ function inferChangeFrequency(route: string): SitemapEntry["changeFrequency"] {
 }
 
 function discoverStaticAppEntries(): SitemapEntry[] {
-  return collectPageFiles(APP_DIR)
-    .map((filePath) => {
-      const route = normalizeRouteFromPageFile(filePath);
-      if (!route) return null;
+  return collectPageFiles(APP_DIR).flatMap((filePath) => {
+    const route = normalizeRouteFromPageFile(filePath);
+    if (!route) return [];
 
-      return {
+    return [
+      {
         url: `${SITE_URL}${route}`,
         lastModified: new Date(statSync(filePath).mtime),
         changeFrequency: inferChangeFrequency(route),
         priority: inferPriority(route),
-      } satisfies SitemapEntry;
-    })
-    .filter((entry): entry is SitemapEntry => Boolean(entry));
+      },
+    ];
+  });
 }
 
 function discoverSeoContentEntries(): SitemapEntry[] {

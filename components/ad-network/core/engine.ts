@@ -572,6 +572,7 @@ export function resolveAdAdvanced(req: AdRequest, config: AdEngineConfig = {}): 
 
     return {
       ad: result.winner,
+      adId: result.winner?.id,
       requestId,
       resolvedAt: Date.now(),
       latencyMs: Date.now() - startedAt,
@@ -735,6 +736,7 @@ export class AdEngine {
       recordCircuitSuccess(cbKey, this._circuitBreakers);
       return {
         ad: result.winner,
+        adId: result.winner?.id,
         requestId: fullReq.requestId ?? `req_${Date.now()}`,
         resolvedAt: Date.now(),
         latencyMs: Date.now() - startTime,

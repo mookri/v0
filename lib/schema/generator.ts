@@ -89,6 +89,12 @@ function wordCount(page: SEOPage): number {
   return merged ? merged.split(/\s+/).filter(Boolean).length : 0;
 }
 
+function ensureArray(value: unknown): string[] {
+  if (Array.isArray(value)) return value;
+  if (typeof value === "string" && value.trim() !== "") return [value.trim()];
+  return [];
+}
+
 function buildKeywordThing(name: string): SchemaNode {
   return {
     "@type": "Thing",
@@ -155,6 +161,7 @@ function buildWebPageSchema(page: SEOPage, basePath: string): SchemaNode {
 
 function buildArticleSchema(page: SEOPage, basePath: string): SchemaNode {
   const url = pageUrl(basePath, page);
+  const secondaryKeywords = ensureArray(page.secondaryKeywords);
 
   return {
     "@context": "https://schema.org",
@@ -172,17 +179,18 @@ function buildArticleSchema(page: SEOPage, basePath: string): SchemaNode {
     publisher: { "@id": ORGANIZATION_ID },
     mainEntityOfPage: { "@id": `${url}#webpage` },
     image: buildImageObject(page.og?.ogImageUrl ?? page.heroImage),
-    keywords: [page.primaryKeyword, ...page.secondaryKeywords].join(", "),
+    keywords: [page.primaryKeyword, ...secondaryKeywords].join(", "),
     articleSection: page.outline,
     wordCount: wordCount(page),
     inLanguage: DEFAULT_LANGUAGE,
     about: [buildKeywordThing(page.primaryKeyword), { "@id": ORGANIZATION_ID }],
-    mentions: page.secondaryKeywords.map(buildKeywordThing),
+    mentions: secondaryKeywords.map(buildKeywordThing),
   };
 }
 
 function buildServiceSchema(page: SEOPage, basePath: string): SchemaNode {
   const url = pageUrl(basePath, page);
+  const secondaryKeywords = ensureArray(page.secondaryKeywords);
 
   return {
     "@context": "https://schema.org",
@@ -213,7 +221,7 @@ function buildServiceSchema(page: SEOPage, basePath: string): SchemaNode {
         ? "Families booking puja, pandit, or spiritual consultation services"
         : "General Hindu audience",
     },
-    category: [page.primaryKeyword, ...page.secondaryKeywords],
+    category: [page.primaryKeyword, ...secondaryKeywords],
     image: buildImageObject(page.og?.ogImageUrl ?? page.heroImage),
   };
 }

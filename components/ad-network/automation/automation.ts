@@ -461,7 +461,7 @@ export class AutomationEngine {
     const record: Record<string, unknown> = {
       ...ctx.metrics,
       adId: ctx.ad.id,
-      placement: ctx.ad.placement,
+      placements: ctx.ad.placements,
       status: ctx.ad.status,
     };
     let result = true;
@@ -543,7 +543,7 @@ export class AutomationEngine {
       if (!rule.enabled) return false;
       if (rule.maxFires && (rule.fireCount ?? 0) >= rule.maxFires) return false;
       if (rule.adIds?.length && !rule.adIds.includes(ctx.ad.id)) return false;
-      if (rule.placements?.length && !rule.placements.includes(ctx.ad.placement)) return false;
+      if (rule.placements?.length && !ctx.ad.placements.some(p => rule.placements?.includes(p))) return false;
       // Cooldown check
       const cooldownMs = (rule.trigger.cooldownMinutes ?? 0) * 60_000;
       if (cooldownMs > 0 && rule.lastFiredAt && now - rule.lastFiredAt < cooldownMs) return false;
@@ -731,7 +731,7 @@ export class TemplateLibrary {
         description: 'Maximum bid floor, high quality creative requirements',
         tags: ['premium', 'brand'],
         overrides: {
-          pricing: { model: 'cpm', bidFloor: 5.0, bidCeiling: 50.0 } as any,
+          budget: { model: 'cpm', bidFloor: 5.0, bidCeiling: 50.0 } as any,
           weight: 90,
           priority: 8,
         },
@@ -742,7 +742,7 @@ export class TemplateLibrary {
         description: 'CPC model with aggressive targeting',
         tags: ['performance', 'conversion'],
         overrides: {
-          pricing: { model: 'cpc', bidFloor: 0.5 } as any,
+          budget: { model: 'cpc', bidFloor: 0.5 } as any,
           weight: 70,
         },
       },

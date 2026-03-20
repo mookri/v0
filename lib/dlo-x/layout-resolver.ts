@@ -90,12 +90,19 @@ function findMatchingPolicies(context: RequestContext): LayoutPolicy[] {
 
 // Simple route pattern matching
 function matchesRoutePattern(pattern: string, path: string): boolean {
+  // Global catch-all
+  if (pattern === '*') return true;
+
+  // Normalize by removing trailing slashes for comparison (except for root /)
+  const normPattern = pattern.length > 1 && pattern.endsWith('/') ? pattern.slice(0, -1) : pattern;
+  const normPath = path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
+
   // Handle wildcard patterns like /auth/* or /dashboard/*
-  if (pattern.endsWith('/*')) {
-    const prefix = pattern.slice(0, -2); // Remove /*
-    return path.startsWith(prefix);
+  if (normPattern.endsWith('/*')) {
+    const prefix = normPattern.slice(0, -2); // Remove /*
+    return normPath.startsWith(prefix) || (prefix === '' && normPath === '/');
   }
   
   // Handle exact matches
-  return pattern === path;
+  return normPattern === normPath;
 }

@@ -67,14 +67,25 @@ function buildClientHints(): DecisionRequest["client"] {
 }
 
 function mergeBase(parent: DecisionBase | undefined, child: DecisionBase | undefined): DecisionBase {
-  return {
+  const merged: DecisionBase = {
     ...parent,
     ...child,
-    page: { ...parent?.page, ...child?.page },
-    user: { ...parent?.user, ...child?.user },
-    client: { ...parent?.client, ...child?.client },
-    session: { ...parent?.session, ...child?.session },
   };
+
+  if (parent?.page || child?.page) {
+    merged.page = { ...parent?.page, ...child?.page };
+  }
+  if (parent?.user || child?.user) {
+    merged.user = { ...parent?.user, ...child?.user };
+  }
+  if (parent?.client || child?.client) {
+    merged.client = { ...parent?.client, ...child?.client };
+  }
+  if (parent?.session || child?.session) {
+    merged.session = { ...parent?.session, ...child?.session } as any;
+  }
+
+  return merged;
 }
 
 function createDeferredDecision(opportunity: PlacementOpportunity): DeferredDecision {

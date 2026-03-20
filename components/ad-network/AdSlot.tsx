@@ -61,6 +61,7 @@ export type AdEngineProviderProps = AdRuntimeProviderProps;
 function toLegacyResolution(decision: DecisionResponse): AdResolution {
   return {
     ad: decision.ad,
+    adId: decision.ad?.id,
     requestId: decision.requestId,
     resolvedAt: Date.now(),
     latencyMs: 0,
@@ -239,14 +240,16 @@ export function AdSlot({
     } catch (caughtError) {
       if (signal?.aborted) {
         loadingRef.current = false;
-        setState(decisionRef.current?.ad ? "loaded" : "idle");
+        const currentAd = (decisionRef.current as DecisionResponse | null)?.ad;
+        setState(currentAd ? "loaded" : "idle");
         return;
       }
 
       const nextError = caughtError instanceof Error ? caughtError : new Error("Failed to load ad decision");
       if (nextError.message === "Decision request aborted") {
         loadingRef.current = false;
-        setState(decisionRef.current?.ad ? "loaded" : "idle");
+        const currentAd = (decisionRef.current as DecisionResponse | null)?.ad;
+        setState(currentAd ? "loaded" : "idle");
         return;
       }
 
@@ -314,14 +317,17 @@ export function AdSlot({
       element,
       { threshold: [0, 0.5, 1] },
       (entry) => {
+        const ad = decision?.ad;
+        if (!ad) return;
+
         if (entry.isIntersecting && !impressionRef.current) {
           impressionRef.current = true;
-          runtime.track.record(decision, "impression");
+          runtime.track.record(decision!, "impression");
           onImpression?.(legacyResolution);
         }
 
         if (entry.intersectionRatio >= 0.5 && !viewableRef.current) {
-          const visibleFor = decision.ad.type === "video" ? 2000 : 1000;
+          const visibleFor = ad.type === "video" ? 2000 : 1000;
           const startedAt = Date.now();
           if (viewabilityTimerRef.current) return;
           viewabilityTimerRef.current = window.setTimeout(() => {

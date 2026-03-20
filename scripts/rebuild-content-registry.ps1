@@ -6,7 +6,7 @@ $registryPath = Join-Path $root "content/registry.json"
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
 $clusters = [ordered]@{
-  brand = [ordered]@{ label = "Brand Knowledge"; basePath = "brand" }
+  brand = [ordered]@{ label = "Inside the Brand"; basePath = "explore" }
   services = [ordered]@{ label = "Puja Services"; basePath = "services" }
   ceremonies = [ordered]@{ label = "Hindu Ceremonies"; basePath = "ceremonies" }
   "ritual-guides" = [ordered]@{ label = "Ritual Guides"; basePath = "ritual-guides" }

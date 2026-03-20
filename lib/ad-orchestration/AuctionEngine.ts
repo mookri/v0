@@ -2,10 +2,10 @@ import type { PricingModel } from "@/components/ad-network/core/types";
 import type { AuctionCandidate, AuctionOutcome, PlacementOpportunity, RankedCandidate } from "./types";
 
 function priorityTierFor(model: PricingModel | undefined): AuctionCandidate["priorityTier"] {
-  if (model === "programmatic_guaranteed_cpm" || model === "guaranteed") {
+  if (model === "programmatic_guaranteed_cpm") {
     return "guaranteed";
   }
-  if (model === "preferred_deal_cpm" || model === "preferred_deal") {
+  if (model === "preferred_deal_cpm") {
     return "preferred";
   }
   return "auction";

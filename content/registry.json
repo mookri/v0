@@ -1,8 +1,8 @@
 {
     "clusters":  {
                      "brand":  {
-                                   "label":  "Brand Knowledge",
-                                   "basePath":  "brand"
+                                   "label":  "Inside the Brand",
+                                   "basePath":  "explore"
                                },
                      "services":  {
                                       "label":  "Puja Services",

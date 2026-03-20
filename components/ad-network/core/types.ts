@@ -488,7 +488,7 @@ export interface AdCreative {
   pixelDensity?: number;            // For DPI-aware serving
   safeArea?: { top: number; bottom: number; left: number; right: number };
   richMediaUrl?: string;            // VPAID / HTML5 rich media
-  trackingScripts?: string[];       // Third-party pixel scripts (not URLs)
+  trackingScripts?: string[];       // Third-party pixel scripts (as URLs)
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -633,6 +633,7 @@ export interface AuctionContext {
 
 export interface AdResolution {
   ad: Ad | null;
+  adId?: string;                     // ID of the winning ad (convenience)
   ads?: Ad[];                        // For grid/multi layouts
   requestId: string;
   resolvedAt: number;
@@ -1120,8 +1121,8 @@ export interface FlowExitCondition {
 
 export type AdapterType =
   | "google_ad_manager" | "meta_audience_network"
-  | "amazon_dsp" | "dv360"
-  | "trade_desk" | "xandr_appnexus"
+  | "amazon_aps" | "amazon_dsp" | "dv360"
+  | "the_trade_desk" | "trade_desk" | "xandr" | "xandr_appnexus"
   | "pubmatic" | "magnite"
   | "openx" | "rubicon"
   | "criteo" | "taboola"
@@ -1131,9 +1132,13 @@ export type AdapterType =
   | "verizon_media" | "smart_adserver"
   | "adform" | "mediamind"
   | "sizmek" | "flashtalking"
-  | "doubleclick" | "openrtb_custom"
+  | "doubleclick" | "openrtb_custom" | "open_rtb"
   | "prebid" | "sharethrough"
   | "triplelift" | "nativo"
+  | "vast_vpaid" | "amp"
+  | "segment" | "mparticle" | "rudderstack"
+  | "shopify" | "wordpress"
+  | "react_native" | "nextjs" | "nuxt" | "sveltekit"
   | "internal";
 
 export interface AdapterConfig {

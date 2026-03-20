@@ -885,12 +885,13 @@ export class ShopifyAdapter extends BaseAdapter {
   }
 
   renderAd(resolution: AdResolution, container: HTMLElement): void {
-    if (!resolution.ad?.creative?.imageUrl) return;
+    const ad = resolution.ad;
+    if (!ad?.creative?.imageUrl) return;
     const link = document.createElement('a');
-    link.href = resolution.ad.destinationUrl ?? '#';
+    link.href = ad.ctaUrl || '#';
     const img = document.createElement('img');
-    img.src = resolution.ad.creative.imageUrl;
-    img.alt = resolution.ad.creative.altText ?? '';
+    img.src = ad.creative.imageUrl;
+    img.alt = ad.creative.alt ?? '';
     link.appendChild(img);
     container.appendChild(link);
   }
@@ -961,9 +962,11 @@ export class ReactNativeAdapter extends BaseAdapter {
   }
 
   trackEvent(payload: AdapterEventPayload): void {
-    const msg = JSON.stringify({ type: 'adEvent', ...payload });
+    const { type: eventType, ...rest } = payload;
+    const event = { type: 'adEvent', eventType, ...rest };
+    const msg = JSON.stringify(event);
     (window as any).ReactNativeWebView?.postMessage?.(msg);
-    this.bridge?.({ type: 'adEvent', ...payload });
+    this.bridge?.(event);
   }
 
   renderAd(resolution: AdResolution, container: HTMLElement): void {
