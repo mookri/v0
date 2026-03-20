@@ -45,8 +45,8 @@ export function WhyChoose() {
             <span className="absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 w-20 h-0.5 bg-gradient-to-r from-primary to-[#0E3F2E] rounded-full"></span>
           </h2>
           <p className="text-muted-foreground mt-4 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-            Experience the divine difference with our authentic, professional, and comprehensive puja services
-            that honor tradition while embracing modern convenience
+            Verified priests, complete rituals, transparent pricing — Navdhya brings authentic Vedic puja services
+            to your home with the convenience modern families deserve
           </p>
         </div>
 

@@ -5,16 +5,16 @@ import { FAQ_SCHEMA } from "@/lib/seo-config"
 export function FAQ() {
   const faqs = [
     [
-      "How far in advance should I book?",
-      "We recommend 5–7 days in advance. Same-day bookings are possible subject to availability.",
+      "How far in advance should I book a puja with Navdhya?",
+      "We recommend booking 5\u20137 days in advance for the best availability. Same-day bookings are possible subject to pandit availability in your area.",
     ],
     [
-      "What is included in the puja package?",
-      "Experienced pandit, complete samagri, and basic setup. Mandap decoration available as an add-on.",
+      "What is included in Navdhya\u2019s puja package?",
+      "Every Navdhya puja package includes a verified pandit, complete samagri, and basic setup. Mandap decoration is available as an add-on. The full ritual follows prescribed Vedic vidhi.",
     ],
-    ["Can I customize the ritual?", "Yes, we respect regional traditions and can adapt rituals accordingly."],
-    ["Do pandits travel outside the city?", "Yes, we serve multiple cities with travel charges if applicable."],
-    ["What if I need to reschedule?", "You can reschedule up to 24 hours before the event."],
+    ["Can I customize the ritual?", "Yes. Navdhya respects regional traditions and can adapt rituals to match your family\u2019s specific customs and preferences."],
+    ["Does Navdhya serve areas outside Delhi-NCR?", "Yes. Navdhya offers live online puja services for families anywhere in India. For in-person home pujas, we currently serve Delhi-NCR with pan-India expansion underway."],
+    ["What if I need to reschedule?", "You can reschedule your Navdhya booking up to 24 hours before the ceremony at no additional charge."],
   ]
 
   // Create FAQ schema markup

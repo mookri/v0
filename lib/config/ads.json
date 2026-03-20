@@ -1,0 +1,37 @@
+{
+  "_comment": "MNC-grade multi-network ad configuration. Supports 'custom', 'google', 'medianet' types.",
+  "globalEnabled": true,
+  "slot1": {
+    "enabled": true,
+    "network": "custom",
+    "imageUrl": "https://pub.navdhya.com/ads/premium-pandit.jpg",
+    "title": "Book Experienced Delhi-NCR Pandits",
+    "description": "Ensure your rituals are performed with strict Vedic authenticity and precision.",
+    "ctaText": "Book Now",
+    "ctaUrl": "/book-pandit",
+    "badge": "Trusted Service"
+  },
+  "slot2": {
+    "enabled": true,
+    "network": "custom",
+    "imageUrl": "https://pub.navdhya.com/ads/astrology-consult.jpg",
+    "title": "Personalised Astrological Guidance",
+    "description": "Align your rituals with your Janam Kundali and planetary cycles for maximum auspiciousness.",
+    "ctaText": "Consult Now",
+    "ctaUrl": "/consult-astrologer",
+    "badge": "Expert Astrologers"
+  },
+  "_google": {
+    "_doc": "To use Google AdSense, set type to 'google' and fill these fields.",
+    "client": "ca-pub-XXXXXXXXXXXXXXXX",
+    "slot": "XXXXXXXXXX",
+    "format": "auto",
+    "responsive": true
+  },
+  "_medianet": {
+    "_doc": "To use Media.net, set type to 'medianet' and fill these fields.",
+    "cid": "XXXXXXXX",
+    "crid": "XXXXXXXX",
+    "size": "728x90"
+  }
+}

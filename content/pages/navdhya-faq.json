@@ -1,0 +1,76 @@
+{
+  "id": "nav-brand-navdhya-faq",
+  "slug": "navdhya-faq",
+  "cluster": "faq",
+  "title": "Navdhya Frequently Asked Questions",
+  "metaTitle": "Navdhya Frequently Asked Questions | Navdhya",
+  "metaDescription": "Find answers to common questions about Navdhya services, booking, online pujas, pricing, service areas, priest verification, and support.",
+  "primaryKeyword": "Navdhya FAQ",
+  "secondaryKeywords": [
+    "common questions about Navdhya",
+    "puja service FAQ",
+    "ritual booking questions",
+    "pandit booking FAQ",
+    "online puja FAQ"
+  ],
+  "searchIntent": "informational",
+  "schemaType": "FAQPage",
+  "content": "<h2>Why this FAQ exists</h2><p>Families often arrive with the same cluster of questions before they book a ritual service. They want to know what the platform actually does, how booking works, whether services are local or remote, and how trust is maintained across important ceremonies. Navdhya frequently asked questions exists to answer those concerns clearly so households can move into the booking journey with more confidence.</p><p>The goal is not only to reduce support volume. It is to reduce uncertainty. A service becomes easier to trust when the basic questions are answered openly and in language that feels practical rather than promotional. That is why this FAQ page covers the concerns families most often raise before and after booking.</p><h2>How to use this page</h2><p>The best way to use this page is to start with the question closest to your immediate concern. Some households are trying to understand the platform in general, while others need clarity on online puja, service area, priest verification, or pricing logic. The questions below are grouped around those common decision points so families can move quickly to the answer that matters most.</p><p>If a family still needs more context after reading the FAQ, the page should act as a starting point rather than a dead end. In that sense, it supports the same values as the broader platform: clearer information, lower confusion, and better ritual planning confidence.</p>",
+  "outline": [
+    "Why this FAQ exists",
+    "How to use this page"
+  ],
+  "relatedSlugs": [
+    "what-is-navdhya",
+    "navdhya-services",
+    "navdhya-priest-verification",
+    "navdhya-online-puja",
+    "navdhya-pricing-packages"
+  ],
+  "lastUpdated": "2026-03-19T00:00:00.000Z",
+  "author": "Navdhya Editorial Team",
+  "readingTime": 6,
+  "faqs": [
+    {
+      "question": "What is Navdhya?",
+      "answer": "Navdhya is a Vedic ritual services platform that helps families access home pujas, online pujas, consultations, and verified priest support with more clarity and structure."
+    },
+    {
+      "question": "Does Navdhya currently serve Delhi-NCR?",
+      "answer": "Yes. The platform currently serves Delhi-NCR for in-person ritual support and offers broader digital access through online and consultation services."
+    },
+    {
+      "question": "How does priest verification work?",
+      "answer": "The platform uses a structured verification process covering priest fit, ritual competence, and service readiness rather than relying only on informal referrals."
+    },
+    {
+      "question": "Can families book online puja services?",
+      "answer": "Yes. Online puja services help families stay connected to rituals when geography, travel, or health makes physical gathering difficult."
+    },
+    {
+      "question": "Does Navdhya offer astrology consultations?",
+      "answer": "Yes. Families can explore astrology consultations for timing guidance, reflection, and broader spiritual support."
+    },
+    {
+      "question": "How should I choose the right service?",
+      "answer": "Start with the ceremony or support need itself, then compare service paths based on preparation requirements, participation needs, and timing."
+    },
+    {
+      "question": "Are pricing details meant to be transparent?",
+      "answer": "Yes. The pricing experience is designed to clarify package structure and inclusions so families can compare options more intelligently."
+    },
+    {
+      "question": "Can relatives in other cities join a ceremony?",
+      "answer": "Yes. Remote participation and online support can help families stay connected across distance."
+    },
+    {
+      "question": "What if I am booking for the first time?",
+      "answer": "The platform is designed to help first-time bookers understand the process more clearly and prepare with less uncertainty."
+    },
+    {
+      "question": "Why do families choose a structured platform instead of informal referrals?",
+      "answer": "Many families value clearer booking steps, stronger trust signals, and better preparation support around important ceremonies."
+    }
+  ],
+  "howToSteps": []
+}

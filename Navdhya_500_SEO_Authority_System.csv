@@ -1,0 +1,51 @@
+﻿Category,Keyword,Type,Search_Volume_Tier,Intent,Cluster
+Brand,Navdhya,Entity,High,Navigational,1
+Brand,Navdhya puja services,Brand+Service,High,Transactional,1
+Brand,Navdhya pandit booking,Brand+Service,High,Transactional,1
+Brand,Navdhya Delhi rituals,Brand+Local,Medium,Transactional,1
+Brand,Navdhya online puja,Brand+Service,High,Transactional,1
+Brand,Navdhya spiritual platform,Brand+Category,Medium,Informational,1
+Brand,Navdhya astrology consultation,Brand+Service,Medium,Transactional,6
+Brand,Navdhya priest verification,Brand+Feature,Low,Informational,5
+Brand,Navdhya review,Brand+Reputation,Medium,Informational,1
+Brand,UPFLAME LLP Navdhya,Brand+Entity,Low,Informational,1
+Service,home puja service Delhi,Service+Local,High,Transactional,4
+Service,book pandit online India,Service,High,Transactional,5
+Service,online puja booking,Service,High,Transactional,4
+Service,pandit near me,Service+Local,Very High,Transactional,5
+Service,Hindu priest booking,Service,High,Transactional,5
+Service,Vedic astrology consultation online,Service,Medium,Transactional,6
+Service,puja service at home Delhi,Service+Local,High,Transactional,4
+Service,verified pandit booking,Service+Feature,Medium,Transactional,5
+Service,online pandit for puja,Service,High,Transactional,5
+Service,puja samagri delivery Delhi,Service+Local,Medium,Transactional,7
+Informational,what is Vedic ritual,Informational,Medium,Informational,2
+Informational,how to perform puja at home,How-To,High,Informational,4
+Informational,Hindu ceremony guide,Informational,Medium,Informational,3
+Informational,what is griha pravesh,Informational,High,Informational,3
+Informational,puja vidhi steps,Informational,High,Informational,4
+Informational,Vedic astrology basics,Informational,Medium,Informational,6
+Informational,mundan ceremony guide,Informational,Medium,Informational,3
+Informational,Satyanarayan puja vidhi,Informational,High,Informational,4
+Informational,what is kundali,Informational,High,Informational,6
+Informational,Diwali puja guide,Informational,Very High,Informational,8
+Long-tail,book pandit for griha pravesh Delhi,Long-tail,Medium,Transactional,5
+Long-tail,online astrology consultation Vedic India,Long-tail,Medium,Transactional,6
+Long-tail,how to perform Rudrabhishek at home,Long-tail,Low,Informational,4
+Long-tail,verified Hindu priest for wedding Delhi,Long-tail,Medium,Transactional,5
+Long-tail,Navratri nine day puja plan at home,Long-tail,Low,Informational,8
+Long-tail,puja samagri checklist for griha pravesh,Long-tail,Low,Informational,7
+Long-tail,astrology consultation for marriage India,Long-tail,Medium,Transactional,6
+Long-tail,daily puja routine for Hindu families,Long-tail,Low,Informational,9
+Long-tail,havan at home step by step guide,Long-tail,Medium,Informational,4
+Long-tail,what to ask before booking a pandit,Long-tail,Low,Informational,5
+Entity,Navdhya,Organization,N/A,Entity,1
+Entity,UPFLAME LLP,ParentOrg,N/A,Entity,1
+Entity,Vedic ritual,Concept,N/A,Entity,2
+Entity,Hindu ceremony,Concept,N/A,Entity,3
+Entity,Pandit,Occupation,N/A,Entity,5
+Entity,Puja,Concept,N/A,Entity,4
+Entity,Jyotish,Discipline,N/A,Entity,6
+Entity,Panchang,Tool,N/A,Entity,6
+Entity,Delhi,Location,N/A,Entity,1
+Entity,Griha Pravesh,Ceremony,N/A,Entity,3
