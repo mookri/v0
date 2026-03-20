@@ -139,7 +139,7 @@ export class GoogleAdManagerAdapter extends BaseAdapter {
 
   async bid(req: AdapterBidRequest): Promise<AdapterBidResponse | null> {
     if (!this.isAvailable()) return null;
-    const googletag = (window as any).googletag;
+    const googletag = window.googletag!;
     return new Promise((resolve) => {
       const timeout = this.config.timeoutMs ?? 2000;
       const timer = setTimeout(() => resolve(null), timeout);
@@ -174,7 +174,7 @@ export class GoogleAdManagerAdapter extends BaseAdapter {
 
   trackEvent(payload: AdapterEventPayload): void {
     if (!this.isAvailable()) return;
-    const googletag = (window as any).googletag;
+    const googletag = window.googletag!;
     googletag.cmd.push(() => {
       const pubads = googletag.pubads?.();
       if (!pubads) return;
@@ -193,7 +193,7 @@ export class GoogleAdManagerAdapter extends BaseAdapter {
 
   renderAd(resolution: AdResolution, container: HTMLElement): void {
     if (!this.isAvailable()) return;
-    const googletag = (window as any).googletag;
+    const googletag = window.googletag!;
     googletag.cmd.push(() => {
       container.id = `gam-${resolution.adId}`;
       googletag.display(container.id);
@@ -203,7 +203,7 @@ export class GoogleAdManagerAdapter extends BaseAdapter {
   /** Define all slots upfront for single-request mode */
   defineAllSlots(units: { path: string; sizes: [number, number][]; divId: string }[]): void {
     if (!this.isAvailable()) return;
-    const googletag = (window as any).googletag;
+    const googletag = window.googletag!;
     googletag.cmd.push(() => {
       units.forEach(u => googletag.defineSlot(u.path, u.sizes, u.divId)?.addService(googletag.pubads()));
       googletag.pubads().enableSingleRequest();
