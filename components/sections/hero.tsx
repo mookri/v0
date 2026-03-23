@@ -8,9 +8,9 @@ import Link from "next/link";
 const slides = [
   {
     id: 1,
-    title: "Experience the Divine Touch",
-    subtitle: "Authentic Hindu rituals performed by certified Vedic priests — bringing peace and prosperity to your home.",
-    label: "Divine Blessings",
+    title: "Authentic Vedic Pujas. Verified Priests.",
+    subtitle: "Navdhya connects you with credential-verified pandits for home pujas, online rituals, and Hindu ceremonies — performed with complete Vedic adherence.",
+    label: "Trusted by Families",
     image: "/hindu-puja-ceremony-peaceful-home-setting.jpg",
     cta: "Book a Puja",
     ctaLink: "/contact",
@@ -20,8 +20,8 @@ const slides = [
   {
     id: 2,
     title: "Tradition Meets Convenience",
-    subtitle: "Expert pandits, genuine samagri, and a seamless booking process for your sacred rituals.",
-    label: "Sacred Traditions",
+    subtitle: "Verified priests, genuine samagri, transparent pricing — a seamless booking experience for your sacred rituals across Delhi-NCR and India.",
+    label: "Verified Priests",
     image: "/hindu-puja-ceremony-peaceful-home-setting.jpg",
     cta: "Consult Expert",
     ctaLink: "/consultation",
@@ -31,8 +31,8 @@ const slides = [
   {
     id: 3,
     title: "Auspicious Beginnings",
-    subtitle: "From housewarmings to weddings — guided rituals for harmony and blessings.",
-    label: "Holy Ceremonies",
+    subtitle: "From Griha Pravesh to Satyanarayan Katha — guided rituals for harmony and blessings, conducted by verified Vedic pandits.",
+    label: "Sacred Ceremonies",
     image: "/hindu-puja-ceremony-peaceful-home-setting.jpg",
     cta: "Schedule Puja",
     ctaLink: "/booking",
@@ -171,7 +171,7 @@ export default function HeroCarousel() {
                   className="text-3xl md:text-4xl lg:text-6xl font-semibold leading-tight mb-4 tracking-tight text-white"
                 >
                   {slides[current].title.split(' ').map((word, index) => 
-                    word === "Divine" || word === "Traditional" || word === "Auspicious" ? (
+                    word === "Authentic" || word === "Traditional" || word === "Auspicious" ? (
                       <span key={index} className="text-primary">{word} </span>
                     ) : (
                       <span key={index}>{word} </span>
@@ -227,7 +227,7 @@ export default function HeroCarousel() {
                       </div>
                     ))}
                   </div>
-                  <span className="text-xs md:text-base leading-snug tracking-wide max-w-[150px] md:max-w-[200px] lg:max-w-none font-sans text-gray-200">Trusted by thousands of families worldwide</span>
+                  <span className="text-xs md:text-base leading-snug tracking-wide max-w-[150px] md:max-w-[200px] lg:max-w-none font-sans text-gray-200">Trusted by families across India</span>
                 </motion.div>
               </div>
             </div>

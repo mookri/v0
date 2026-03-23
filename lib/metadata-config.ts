@@ -3,29 +3,31 @@ import { SEO_CONFIG } from "@/lib/seo-config"
 import themeConfig from "@/lib/theme-config.json"
 
 export const SITE_METADATA = {
-  title: "Navdhya – Delhi's Trusted Puja & Spiritual Wellness | Experts Pandits for Every Occasion",
+  title: "Navdhya | Verified Pandit Booking & Vedic Puja Services — Home & Online",
   description:
-    "Experience authentic Puja and Spiritual Wellness in Delhi with Navdhya. Book trusted pandits for Navdhya Puja, Grah Shanti, Vedic rituals, and home ceremonies for peace and prosperity.",
+    "Book verified pandits for authentic home pujas, online rituals, astrology consultations, and Hindu ceremonies with Navdhya. Trusted by families across Delhi-NCR and expanding pan-India.",
   keywords: [
-    "Navdhya Puja in Delhi",
-    "Puja Services in Delhi",
-    "Spiritual Wellness",
-    "Vedic Rituals",
-    "Grah Shanti",
-    "Homam",
+    "Navdhya",
+    "Verified Pandit Booking",
+    "Vedic Puja Services",
+    "Home Puja Services",
+    "Online Puja Services",
     "Book Pandit Online",
-    "Trusted Pandits in Delhi",
-    "Hindu Puja",
-    "Puja for Peace and Prosperity",
+    "Hindu Ceremonies",
+    "Astrology Consultation",
+    "Spiritual Guidance",
+    "Vedic Rituals India",
+    "Pandit in Delhi-NCR",
+    "Puja Booking Platform",
   ],
   authors: [{ name: SEO_CONFIG.siteName }],
   creator: "Navdhya Team",
   publisher: SEO_CONFIG.siteName,
   formatDetection: { telephone: false },
   openGraph: {
-    title: "Navdhya – Delhi's Trusted Puja & Spiritual Wellness | Experts Pandits for Every Occasion",
+    title: "Navdhya | Verified Pandit Booking & Vedic Puja Services — Home & Online",
     description:
-      "Experience authentic Puja and Spiritual Wellness in Delhi with Navdhya. Book trusted pandits for Navdhya Puja, Grah Shanti, Vedic rituals, and home ceremonies for peace and prosperity.",
+      "Book verified pandits for authentic home pujas, online rituals, astrology consultations, and Hindu ceremonies with Navdhya. Trusted by families across Delhi-NCR and expanding pan-India.",
     url: SEO_CONFIG.siteUrl,
     siteName: SEO_CONFIG.siteName,
     images: [
@@ -41,9 +43,9 @@ export const SITE_METADATA = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Navdhya – Delhi's Trusted Puja & Spiritual Wellness | Experts Pandits for Every Occasion",
+    title: "Navdhya | Verified Pandit Booking & Vedic Puja Services — Home & Online",
     description:
-      "Experience authentic Puja and Spiritual Wellness in Delhi with Navdhya. Book trusted pandits for Navdhya Puja, Grah Shanti, Vedic rituals, and home ceremonies for peace and prosperity.",
+      "Book verified pandits for authentic home pujas, online rituals, astrology consultations, and Hindu ceremonies with Navdhya. Trusted by families across Delhi-NCR and expanding pan-India.",
     images: [SEO_CONFIG.defaultImage],
     site: SEO_CONFIG.twitter.site,
   },
@@ -64,6 +66,17 @@ export const SITE_METADATA = {
     capable: true,
     statusBarStyle: "default" as const,
     title: SEO_CONFIG.siteName,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large" as const,
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
   alternates: { canonical: "https://www.navdhya.com/" },
 }

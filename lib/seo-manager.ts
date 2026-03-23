@@ -2,6 +2,7 @@
 // Master-slave SEO strategy for dynamic metadata generation
 
 import { SEO_CONFIG } from "@/lib/seo-config"
+import { toAbsoluteUrl, withSiteName } from "@/lib/seo/site"
 
 // Master SEO template - acts as the base configuration
 const MASTER_SEO_TEMPLATE = {
@@ -33,18 +34,30 @@ export class SEOManager {
     modifiedTime?: string
   }) {
     const canonicalUrl = `${this.masterConfig.siteUrl}${pageData.path}`
-    const imageUrl = pageData.image || this.masterConfig.defaultImage
+    const imageUrl = toAbsoluteUrl(pageData.image || this.masterConfig.defaultImage)
+    const fullTitle = withSiteName(pageData.title)
     
     return {
-      title: `${pageData.title} | ${this.masterConfig.siteName}`,
+      title: fullTitle,
       description: pageData.description,
       keywords: [
         pageData.title,
         this.masterConfig.siteName,
         ...(pageData.keywords || [])
       ],
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-image-preview": "large" as const,
+          "max-snippet": -1,
+          "max-video-preview": -1,
+        },
+      },
       openGraph: {
-        title: `${pageData.title} | ${this.masterConfig.siteName}`,
+        title: fullTitle,
         description: pageData.description,
         url: canonicalUrl,
         siteName: this.masterConfig.siteName,
@@ -63,7 +76,7 @@ export class SEOManager {
       },
       twitter: {
         card: "summary_large_image",
-        title: `${pageData.title} | ${this.masterConfig.siteName}`,
+        title: fullTitle,
         description: pageData.description,
         images: [imageUrl],
         site: this.masterConfig.twitter.site,
@@ -87,11 +100,12 @@ export class SEOManager {
     currency?: string
   }) {
     const canonicalUrl = `${this.masterConfig.siteUrl}${schemaData.path}`
-    const imageUrl = schemaData.image || this.masterConfig.defaultImage
+    const imageUrl = toAbsoluteUrl(schemaData.image || this.masterConfig.defaultImage)
     
     const baseSchema = {
       "@context": "https://schema.org",
       "@type": schemaData.type,
+      "@id": `${canonicalUrl}#${String(schemaData.type).toLowerCase()}`,
       name: schemaData.name,
       url: canonicalUrl,
       description: schemaData.description,
@@ -140,9 +154,10 @@ export class SEOManager {
     // Add organization information
     (baseSchema as any).provider = {
       "@type": "Organization",
+      "@id": `${this.masterConfig.siteUrl}#organization`,
       name: this.masterConfig.organization.name,
       url: this.masterConfig.organization.url,
-      logo: this.masterConfig.organization.logo
+      logo: toAbsoluteUrl(this.masterConfig.organization.logo)
     }
 
     return baseSchema
@@ -203,18 +218,19 @@ export function generateJsonLd(schema: any): string {
 
 // Default SEO configuration for pages that don't need custom metadata
 export const DEFAULT_SEO = {
-  title: `Navdhya – Delhi's Trusted Puja & Spiritual Wellness | Experts Pandits for Every Occasion`,
-  description: `Experience authentic Puja and Spiritual Wellness in Delhi with Navdhya. Book trusted pandits for Navdhya Puja, Grah Shanti, Vedic rituals, and home ceremonies for peace and prosperity.`,
+  title: `Navdhya | Verified Pandit Booking & Vedic Puja Services — Home & Online`,
+  description: `Book verified pandits for authentic home pujas, online rituals, astrology consultations, and Hindu ceremonies with Navdhya. Trusted by families across Delhi-NCR and expanding pan-India.`,
   keywords: [
-    "Navdhya Puja in Delhi",
-    "Puja Services in Delhi",
-    "Spiritual Wellness",
-    "Vedic Rituals",
-    "Grah Shanti",
-    "Homam",
+    "Navdhya",
+    "Verified Pandit Booking",
+    "Vedic Puja Services",
+    "Home Puja Services",
+    "Online Puja Services",
     "Book Pandit Online",
-    "Trusted Pandits in Delhi",
-    "Hindu Puja",
-    "Puja for Peace and Prosperity",
+    "Hindu Ceremonies",
+    "Astrology Consultation",
+    "Spiritual Guidance",
+    "Vedic Rituals India",
+    "Pandit in Delhi-NCR",
   ],
 }

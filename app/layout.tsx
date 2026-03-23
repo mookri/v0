@@ -9,6 +9,7 @@ import { SEO_CONFIG, WEBSITE_SCHEMA, ORGANIZATION_SCHEMA } from "@/lib/seo-confi
 import Preloader from "@/components/ui/preloader"
 import { LoadingProvider } from "@/context/LoadingContext"
 import NavigationLoader from "@/components/NavigationLoader"
+import { AdProvider } from './providers';
 
 const albert = Albert_Sans({
   subsets: ["latin"],
@@ -51,13 +52,11 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="Navdhya" />
         <meta name="theme-color" content={VIEWPORT_CONFIG.themeColor} />
-        <meta name="robots" content="index, follow" />
         <meta name="geo.region" content="IN-DL" />
-        <meta name="geo.placename" content="Delhi" />
+        <meta name="geo.placename" content="Delhi-NCR" />
         <meta name="geo.position" content="28.6139;77.2090" />
         <meta name="ICBM" content="28.6139, 77.2090" />
         <link rel="manifest" href="/favicon/site.webmanifest" />
-        <link rel="canonical" href="https://www.navdhya.com/" />
 
         {/* Structured Data */}
         <script
@@ -73,15 +72,17 @@ export default function RootLayout({
       <body className="font-sans bg-background text-foreground">
         <LoadingProvider>
           <NavigationLoader />
-          <Suspense
-            fallback={
-              <div className="fixed inset-0 flex items-center justify-center bg-background z-50">
-                <Preloader />
-              </div>
-            }
-          >
-            {children}
-          </Suspense>
+          <AdProvider>
+            <Suspense
+              fallback={
+                <div className="fixed inset-0 flex items-center justify-center bg-background z-50">
+                  <Preloader />
+                </div>
+              }
+            >
+              {children}
+            </Suspense>
+          </AdProvider>
         </LoadingProvider>
         <Analytics />
       </body>

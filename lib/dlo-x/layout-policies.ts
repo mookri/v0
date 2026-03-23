@@ -28,7 +28,7 @@ export const layoutPolicies: LayoutPolicy[] = [
     
   PolicyBuilder.create()
     .id('pujas-page')
-    .path('/pujas')
+    .path('/pujas/*')
     .use('MainShell', 'PoojaShell')
     .priority(10)
     .build(),

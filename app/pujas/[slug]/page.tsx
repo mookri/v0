@@ -2,10 +2,20 @@ import { notFound } from "next/navigation"
 import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
 import PujaDetailsClient from "./client"
+import { getContentPage, getAllSlugs } from "@/lib/content-loader";
+
+export const dynamicParams = true;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const puja = DATA[slug]
+  let puja = DATA[slug] as any;
+  
+  if (!puja) {
+    const content = await getContentPage(slug);
+    if (content) {
+      puja = mapContentToPuja(content);
+    }
+  }
   
   if (!puja) {
     return {
@@ -21,6 +31,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     image: puja.image,
     keywords: [puja.title, "Puja Services in Delhi", "Hindu Rituals", "Vedic Pandits", "Spiritual Ceremonies"]
   })
+}
+
+function mapContentToPuja(content: any): PujaData {
+  return {
+    title: content.title,
+    description: content.metaDescription || "",
+    price: "₹2,500",
+    imgQuery: content.primaryKeyword || "",
+    highlights: content.secondaryKeywords || [],
+    longDescription: content.content || "",
+    benefits: [],
+    process: [],
+    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358800/Whisk_db05ba7c437e48abe6440798d2a33b09dr_bokdku.jpg",
+    includes: [],
+    faqs: content.faqs || []
+  };
 }
 
 type PujaData = {
@@ -355,20 +381,41 @@ const DATA: Record<string, PujaData> = {
   }
 };
 
+export async function generateStaticParams() {
+  const registrySlugs = await getAllSlugs();
+  const hardcodedSlugs = Object.keys(DATA);
+  const allSlugs = Array.from(new Set([...hardcodedSlugs, ...registrySlugs]));
+  return allSlugs.map((slug) => ({ slug }));
+}
+
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
+import { resolveContext } from "@/lib/context-resolver"
+
 export default async function PujaDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const puja = DATA[slug];
+  let puja = DATA[slug] as any;
+  
+  if (!puja) {
+    const content = await getContentPage(slug);
+    if (content) {
+      puja = mapContentToPuja(content);
+    }
+  }
   
   if (!puja) {
     notFound();
   }
   
+  const path = `/pujas/${slug}`;
+  const context = await resolveContext(path);
+  
   const pujaSchema = JSON.stringify(seoManager.generateSchema({
     type: "Service",
     name: puja.title,
     description: puja.description,
-    path: `/pujas/${slug}`,
-    price: puja.price.split(" – ")[0].replace(/[₹,]/g, ""),
+    path: path,
+    price: puja.price ? puja.price.split(" – ")[0].replace(/[₹,]/g, "") : "2500",
     currency: "INR",
     breadcrumbs: [
       { name: "Home", url: "https://www.navdhya.com" },
@@ -378,12 +425,15 @@ export default async function PujaDetailsPage({ params }: { params: Promise<{ sl
   }));
   
   return (
-    <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: pujaSchema }}
-      />
-      <PujaDetailsClient puja={puja} slug={slug} />
-    </>
+    <ErrorBoundary>
+      <LayoutOrchestrator context={context}>
+        <Script
+          id={`schema-${slug}`}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: pujaSchema }}
+        />
+        <PujaDetailsClient puja={puja} slug={slug} />
+      </LayoutOrchestrator>
+    </ErrorBoundary>
   )
 }
