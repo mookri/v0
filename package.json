@@ -9,7 +9,7 @@
     "prestart": "npm run sync:registry",
     "pretest": "npm run sync:registry",
     "build": "next build ",
-    "postinstall": "node scripts/postbuild.mjs"
+    "postinstall": "node scripts/postbuild.mjs",
     "dev": "next dev",
     "lint": "next lint",
     "start": "node server.js",
