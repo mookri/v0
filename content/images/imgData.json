@@ -4,7 +4,7 @@
         "schema": "navdhya-hero-pool-v3",
         "description": "Navdhya Enterprise Hero Image Pool — custom-hosted, Next.js native",
         "lastRefreshed": "2026-03-20T00:00:00.000Z",
-        "totalImages": 32,
+        "totalImages": 10,
         "shiftCycle": "weekly"
     },
     "hosting": {
@@ -61,11 +61,11 @@
         },
         "nature": {
             "label": "Sacred Nature",
-            "weight": 1.0
+            "weight": 1
         },
         "culture": {
             "label": "Indian Culture",
-            "weight": 1.0
+            "weight": 1
         },
         "spiritual": {
             "label": "Spirituality & Yoga",
@@ -78,785 +78,264 @@
     },
     "images": [
         {
-            "id": "ritual-001",
-            "slug": "diya-puja",
+            "id": "external-001",
+            "slug": "family-morning-puja",
             "category": "ritual",
-            "src": "/images/hero/ritual-001.webp",
+            "src": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774293677/Whisk_eceb2e9cc2cce599dd94a206b61fa400dr_1_z4ekba.jpg",
             "srcSet": {
-                "webp": "/images/hero/ritual-001.webp",
-                "avif": "/images/hero/ritual-001.avif",
-                "jpg": "/images/hero/ritual-001.jpg",
-                "thumb": "/images/hero/ritual-001-thumb.webp"
+                "webp": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774293677/Whisk_eceb2e9cc2cce599dd94a206b61fa400dr_1_z4ekba.jpg"
             },
             "width": 1200,
-            "height": 500,
-            "alt": "Glowing oil lamp diyas arranged during an evening puja ceremony",
+            "height": 800,
+            "alt": "Ultra-realistic photograph of an Indian family performing morning puja at home",
             "dominantColor": "#3d1f00",
             "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAADQAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/5A===",
             "tags": [
-                "diya",
-                "lamp",
+                "family",
                 "puja",
-                "flame",
-                "evening"
+                "morning",
+                "home",
+                "diya"
             ],
             "credit": {
-                "author": "Navdhya Media",
+                "author": "Cloudinary User",
                 "license": "proprietary"
             },
             "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
+            "addedAt": "2026-03-23T19:33:32.223Z"
         },
         {
-            "id": "ritual-002",
-            "slug": "flower-offering",
+            "id": "external-002",
+            "slug": "hindu-havan-ritual",
             "category": "ritual",
-            "src": "/images/hero/ritual-002.webp",
+            "src": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774293677/Whisk_0a664ec9162dc22b6994b645c972888cdr_1_ieab9q.jpg",
             "srcSet": {
-                "webp": "/images/hero/ritual-002.webp",
-                "avif": "/images/hero/ritual-002.avif",
-                "jpg": "/images/hero/ritual-002.jpg",
-                "thumb": "/images/hero/ritual-002-thumb.webp"
+                "webp": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774293677/Whisk_0a664ec9162dc22b6994b645c972888cdr_1_ieab9q.jpg"
             },
             "width": 1200,
-            "height": 500,
-            "alt": "Hands offering marigold flowers during a Hindu prayer ceremony",
+            "height": 800,
+            "alt": "Close-up realistic image of a Hindu havan ritual",
             "dominantColor": "#5c2d0a",
             "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAADQAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++pf/yf/d/6f/vf/5A===",
             "tags": [
-                "marigold",
-                "flowers",
-                "offering",
-                "hands",
-                "ceremony"
-            ],
-            "credit": {
-                "author": "Navdhya Media",
-                "license": "proprietary"
-            },
-            "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
-        },
-        {
-            "id": "ritual-003",
-            "slug": "sacred-fire",
-            "category": "ritual",
-            "src": "/images/hero/ritual-003.webp",
-            "srcSet": {
-                "webp": "/images/hero/ritual-003.webp",
-                "avif": "/images/hero/ritual-003.avif",
-                "jpg": "/images/hero/ritual-003.jpg",
-                "thumb": "/images/hero/ritual-003-thumb.webp"
-            },
-            "width": 1200,
-            "height": 500,
-            "alt": "Sacred fire and smoke rising during a Vedic homa ritual",
-            "dominantColor": "#2a1a0e",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAADQAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Kb/yP/d/6f/vf/5A===",
-            "tags": [
+                "havan",
+                "ritual",
                 "fire",
-                "homa",
-                "smoke",
-                "vedic",
-                "sacred"
+                "priest"
             ],
             "credit": {
-                "author": "Navdhya Media",
+                "author": "Cloudinary User",
                 "license": "proprietary"
             },
             "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
+            "addedAt": "2026-03-23T19:33:32.224Z"
         },
         {
-            "id": "ritual-004",
-            "slug": "rangoli-mandala",
-            "category": "ritual",
-            "src": "/images/hero/ritual-004.webp",
-            "srcSet": {
-                "webp": "/images/hero/ritual-004.webp",
-                "avif": "/images/hero/ritual-004.avif",
-                "jpg": "/images/hero/ritual-004.jpg",
-                "thumb": "/images/hero/ritual-004-thumb.webp"
-            },
-            "width": 1200,
-            "height": 500,
-            "alt": "Vibrant rangoli mandala drawn with coloured powder on a festival day",
-            "dominantColor": "#8b1a1a",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAADQAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Jb/yP/d/6f/vf/5A===",
-            "tags": [
-                "rangoli",
-                "mandala",
-                "coloured",
-                "floor-art",
-                "festive"
-            ],
-            "credit": {
-                "author": "Navdhya Media",
-                "license": "proprietary"
-            },
-            "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
-        },
-        {
-            "id": "ritual-005",
-            "slug": "kalash-ceremony",
-            "category": "ritual",
-            "src": "/images/hero/ritual-005.webp",
-            "srcSet": {
-                "webp": "/images/hero/ritual-005.webp",
-                "avif": "/images/hero/ritual-005.avif",
-                "jpg": "/images/hero/ritual-005.jpg",
-                "thumb": "/images/hero/ritual-005-thumb.webp"
-            },
-            "width": 1200,
-            "height": 500,
-            "alt": "Brass kalash pot decorated with mango leaves for a sacred pooja",
-            "dominantColor": "#7a4a00",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAADQAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/5B===",
-            "tags": [
-                "kalash",
-                "brass",
-                "mango-leaves",
-                "pooja",
-                "ceremony"
-            ],
-            "credit": {
-                "author": "Navdhya Media",
-                "license": "proprietary"
-            },
-            "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
-        },
-        {
-            "id": "temple-001",
-            "slug": "south-india-gopuram",
+            "id": "external-003",
+            "slug": "north-indian-hindu-temple",
             "category": "temple",
-            "src": "/images/hero/temple-001.webp",
+            "src": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774293678/Whisk_1aec9cb6d856a77bf7d485b1e8640941dr_1_j41yrq.jpg",
             "srcSet": {
-                "webp": "/images/hero/temple-001.webp",
-                "avif": "/images/hero/temple-001.avif",
-                "jpg": "/images/hero/temple-001.jpg",
-                "thumb": "/images/hero/temple-001-thumb.webp"
+                "webp": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774293678/Whisk_1aec9cb6d856a77bf7d485b1e8640941dr_1_j41yrq.jpg"
             },
             "width": 1200,
-            "height": 500,
-            "alt": "Ancient stone temple gopuram tower at sunrise in South India",
+            "height": 800,
+            "alt": "Realistic photograph of a North Indian Hindu temple during early morning",
             "dominantColor": "#3b2d1a",
             "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/6A===",
             "tags": [
-                "gopuram",
                 "temple",
-                "sunrise",
-                "stone",
-                "south-india"
+                "morning",
+                "devotees"
             ],
             "credit": {
-                "author": "Navdhya Media",
+                "author": "Cloudinary User",
                 "license": "proprietary"
             },
             "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
+            "addedAt": "2026-03-23T19:33:32.224Z"
         },
         {
-            "id": "temple-002",
-            "slug": "golden-spire",
-            "category": "temple",
-            "src": "/images/hero/temple-002.webp",
+            "id": "external-004",
+            "slug": "indian-pandit-performing-puja",
+            "category": "ritual",
+            "src": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774294126/Whisk_42dd2e3f8edfeebb06a44a60c9670734dr_1_fdwhb4.jpg",
             "srcSet": {
-                "webp": "/images/hero/temple-002.webp",
-                "avif": "/images/hero/temple-002.avif",
-                "jpg": "/images/hero/temple-002.jpg",
-                "thumb": "/images/hero/temple-002-thumb.webp"
+                "webp": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774294126/Whisk_42dd2e3f8edfeebb06a44a60c9670734dr_1_fdwhb4.jpg"
             },
             "width": 1200,
-            "height": 500,
-            "alt": "Golden temple spire reflecting in a sacred sarovar water tank",
-            "dominantColor": "#4a3000",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/7A===",
+            "height": 800,
+            "alt": "Indian pandit in traditional dhoti performing puja",
+            "dominantColor": "#7a4a00",
+            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/A===",
             "tags": [
-                "golden",
-                "spire",
-                "reflection",
-                "water",
-                "mandir"
+                "pandit",
+                "puja",
+                "dhoti",
+                "kalash"
             ],
             "credit": {
-                "author": "Navdhya Media",
+                "author": "Cloudinary User",
                 "license": "proprietary"
             },
             "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
+            "addedAt": "2026-03-23T19:33:32.224Z"
         },
         {
-            "id": "temple-003",
-            "slug": "stone-carvings",
-            "category": "temple",
-            "src": "/images/hero/temple-003.webp",
-            "srcSet": {
-                "webp": "/images/hero/temple-003.webp",
-                "avif": "/images/hero/temple-003.avif",
-                "jpg": "/images/hero/temple-003.jpg",
-                "thumb": "/images/hero/temple-003-thumb.webp"
-            },
-            "width": 1200,
-            "height": 500,
-            "alt": "Intricate sandstone carvings on the outer wall of a Rajasthani temple",
-            "dominantColor": "#5c4520",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/8A===",
-            "tags": [
-                "carvings",
-                "sandstone",
-                "rajasthan",
-                "architecture",
-                "heritage"
-            ],
-            "credit": {
-                "author": "Navdhya Media",
-                "license": "proprietary"
-            },
-            "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
-        },
-        {
-            "id": "temple-004",
-            "slug": "pilgrims-steps",
-            "category": "temple",
-            "src": "/images/hero/temple-004.webp",
-            "srcSet": {
-                "webp": "/images/hero/temple-004.webp",
-                "avif": "/images/hero/temple-004.avif",
-                "jpg": "/images/hero/temple-004.jpg",
-                "thumb": "/images/hero/temple-004-thumb.webp"
-            },
-            "width": 1200,
-            "height": 500,
-            "alt": "Pilgrims climbing stone steps to a hilltop temple at dusk",
-            "dominantColor": "#1a1a2e",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/9A===",
-            "tags": [
-                "pilgrims",
-                "steps",
-                "hilltop",
-                "dusk",
-                "devotion"
-            ],
-            "credit": {
-                "author": "Navdhya Media",
-                "license": "proprietary"
-            },
-            "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
-        },
-        {
-            "id": "festival-001",
-            "slug": "diwali-lights",
+            "id": "external-005",
+            "slug": "women-preparing-festival",
             "category": "festival",
-            "src": "/images/hero/festival-001.webp",
+            "src": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774294126/Whisk_5b988cbb720b63198df4435c805b4f55dr_hnkvle.jpg",
             "srcSet": {
-                "webp": "/images/hero/festival-001.webp",
-                "avif": "/images/hero/festival-001.avif",
-                "jpg": "/images/hero/festival-001.jpg",
-                "thumb": "/images/hero/festival-001-thumb.webp"
+                "webp": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774294126/Whisk_5b988cbb720b63198df4435c805b4f55dr_hnkvle.jpg"
             },
             "width": 1200,
-            "height": 500,
-            "alt": "Diwali night celebration with diyas, fireworks and glowing city skyline",
-            "dominantColor": "#1a0a00",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/AA===",
-            "tags": [
-                "diwali",
-                "fireworks",
-                "night",
-                "lights",
-                "celebration"
-            ],
-            "credit": {
-                "author": "Navdhya Media",
-                "license": "proprietary"
-            },
-            "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
-        },
-        {
-            "id": "festival-002",
-            "slug": "holi-colors",
-            "category": "festival",
-            "src": "/images/hero/festival-002.webp",
-            "srcSet": {
-                "webp": "/images/hero/festival-002.webp",
-                "avif": "/images/hero/festival-002.avif",
-                "jpg": "/images/hero/festival-002.jpg",
-                "thumb": "/images/hero/festival-002-thumb.webp"
-            },
-            "width": 1200,
-            "height": 500,
-            "alt": "Holi celebration with vibrant colour powder clouds in bright spring sunlight",
-            "dominantColor": "#9b2335",
+            "height": 800,
+            "alt": "Indian women preparing for a Hindu festival",
+            "dominantColor": "#8b1a1a",
             "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/BA===",
             "tags": [
-                "holi",
-                "color",
-                "powder",
-                "spring",
-                "celebration"
+                "women",
+                "festival",
+                "rangoli",
+                "preparation"
             ],
             "credit": {
-                "author": "Navdhya Media",
+                "author": "Cloudinary User",
                 "license": "proprietary"
             },
             "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
+            "addedAt": "2026-03-23T19:33:32.224Z"
         },
         {
-            "id": "festival-003",
-            "slug": "navratri-garba",
-            "category": "festival",
-            "src": "/images/hero/festival-003.webp",
+            "id": "external-006",
+            "slug": "man-meditating-temple",
+            "category": "spiritual",
+            "src": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774294127/Whisk_97a571d5d2361e2913846b7f0e938afddr_cdxf8z.jpg",
             "srcSet": {
-                "webp": "/images/hero/festival-003.webp",
-                "avif": "/images/hero/festival-003.avif",
-                "jpg": "/images/hero/festival-003.jpg",
-                "thumb": "/images/hero/festival-003-thumb.webp"
+                "webp": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774294127/Whisk_97a571d5d2361e2913846b7f0e938afddr_cdxf8z.jpg"
             },
             "width": 1200,
-            "height": 500,
-            "alt": "Navratri garba dance with women in vibrant traditional lehenga dress",
-            "dominantColor": "#6b2e0d",
+            "height": 800,
+            "alt": "Indian man meditating in a quiet temple corner",
+            "dominantColor": "#1a1020",
             "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/CA===",
             "tags": [
-                "navratri",
-                "garba",
-                "dance",
-                "traditional",
-                "lehenga"
+                "meditation",
+                "temple",
+                "man",
+                "peaceful"
             ],
             "credit": {
-                "author": "Navdhya Media",
+                "author": "Cloudinary User",
                 "license": "proprietary"
             },
             "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
+            "addedAt": "2026-03-23T19:33:32.224Z"
         },
         {
-            "id": "festival-004",
-            "slug": "durga-puja-pandal",
-            "category": "festival",
-            "src": "/images/hero/festival-004.webp",
+            "id": "external-007",
+            "slug": "flatlay-puja-items",
+            "category": "ritual",
+            "src": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774294129/Whisk_57fcfd1b311fa37a8ea4da0c47061b85dr_l3fa01.jpg",
             "srcSet": {
-                "webp": "/images/hero/festival-004.webp",
-                "avif": "/images/hero/festival-004.avif",
-                "jpg": "/images/hero/festival-004.jpg",
-                "thumb": "/images/hero/festival-004-thumb.webp"
+                "webp": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774294129/Whisk_57fcfd1b311fa37a8ea4da0c47061b85dr_l3fa01.jpg"
             },
             "width": 1200,
-            "height": 500,
-            "alt": "Durga Puja pandal decorated with marigolds and warm fairy lights",
-            "dominantColor": "#7a4500",
+            "height": 800,
+            "alt": "Top-down flat lay of Hindu puja items",
+            "dominantColor": "#5a3d1a",
             "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/DA===",
             "tags": [
-                "durga-puja",
-                "pandal",
-                "marigold",
-                "bengal",
-                "lights"
+                "flatlay",
+                "puja",
+                "items",
+                "rudraksha"
             ],
             "credit": {
-                "author": "Navdhya Media",
+                "author": "Cloudinary User",
                 "license": "proprietary"
             },
             "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
+            "addedAt": "2026-03-23T19:33:32.224Z"
         },
         {
-            "id": "nature-001",
-            "slug": "sacred-forest",
-            "category": "nature",
-            "src": "/images/hero/nature-001.webp",
+            "id": "external-008",
+            "slug": "evening-ganga-aarti",
+            "category": "spiritual",
+            "src": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774294130/Whisk_678e1b5f6f7f12a893b496c2738a9e79dr_h5s3j7.jpg",
             "srcSet": {
-                "webp": "/images/hero/nature-001.webp",
-                "avif": "/images/hero/nature-001.avif",
-                "jpg": "/images/hero/nature-001.jpg",
-                "thumb": "/images/hero/nature-001-thumb.webp"
+                "webp": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774294130/Whisk_678e1b5f6f7f12a893b496c2738a9e79dr_h5s3j7.jpg"
             },
             "width": 1200,
-            "height": 500,
-            "alt": "Sacred forest grove with golden sunbeams filtering through tall ancient trees",
-            "dominantColor": "#0a1f0a",
+            "height": 800,
+            "alt": "Realistic evening Ganga aarti scene",
+            "dominantColor": "#1a0800",
             "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/EA===",
             "tags": [
-                "forest",
-                "sunbeams",
-                "sacred",
-                "ancient",
-                "trees"
+                "ganga",
+                "aarti",
+                "priests",
+                "evening"
             ],
             "credit": {
-                "author": "Navdhya Media",
+                "author": "Cloudinary User",
                 "license": "proprietary"
             },
             "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
+            "addedAt": "2026-03-23T19:33:32.224Z"
         },
         {
-            "id": "nature-002",
-            "slug": "himalayan-valley",
-            "category": "nature",
-            "src": "/images/hero/nature-002.webp",
+            "id": "external-009",
+            "slug": "barefoot-devotee-temple",
+            "category": "temple",
+            "src": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774294128/Whisk_393005327f210fbba4744e49c2a5879adr_gbbnoe.jpg",
             "srcSet": {
-                "webp": "/images/hero/nature-002.webp",
-                "avif": "/images/hero/nature-002.avif",
-                "jpg": "/images/hero/nature-002.jpg",
-                "thumb": "/images/hero/nature-002-thumb.webp"
+                "webp": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774294128/Whisk_393005327f210fbba4744e49c2a5879adr_gbbnoe.jpg"
             },
             "width": 1200,
-            "height": 500,
-            "alt": "Misty Himalayan river valley with a pilgrimage trail through green meadows",
-            "dominantColor": "#1a3020",
+            "height": 800,
+            "alt": "Close-up of barefoot devotee stepping into temple entrance",
+            "dominantColor": "#3b2d1a",
             "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/FA===",
             "tags": [
-                "himalaya",
-                "valley",
-                "mist",
-                "pilgrimage",
-                "river"
+                "devotee",
+                "temple",
+                "entrance",
+                "barefoot"
             ],
             "credit": {
-                "author": "Navdhya Media",
+                "author": "Cloudinary User",
                 "license": "proprietary"
             },
             "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
+            "addedAt": "2026-03-23T19:33:32.224Z"
         },
         {
-            "id": "nature-003",
-            "slug": "lotus-pond",
-            "category": "nature",
-            "src": "/images/hero/nature-003.webp",
+            "id": "external-010",
+            "slug": "interior-hindu-temple",
+            "category": "temple",
+            "src": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774294125/Whisk_4fab9d78da4d1d2a36448e3e71a10dcddr_1_cidwnj.jpg",
             "srcSet": {
-                "webp": "/images/hero/nature-003.webp",
-                "avif": "/images/hero/nature-003.avif",
-                "jpg": "/images/hero/nature-003.jpg",
-                "thumb": "/images/hero/nature-003-thumb.webp"
+                "webp": "https://res.cloudinary.com/dufzctlaj/image/upload/v1774294125/Whisk_4fab9d78da4d1d2a36448e3e71a10dcddr_1_cidwnj.jpg"
             },
             "width": 1200,
-            "height": 500,
-            "alt": "Pink lotus flowers blooming on a sacred temple pond at golden hour",
-            "dominantColor": "#0d2d1a",
+            "height": 800,
+            "alt": "Interior of small Hindu temple room",
+            "dominantColor": "#4a3000",
             "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/GA===",
             "tags": [
-                "lotus",
-                "pond",
+                "interior",
                 "temple",
-                "golden-hour",
-                "pink"
+                "idols",
+                "diya"
             ],
             "credit": {
-                "author": "Navdhya Media",
+                "author": "Cloudinary User",
                 "license": "proprietary"
             },
             "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
-        },
-        {
-            "id": "nature-004",
-            "slug": "banyan-tree",
-            "category": "nature",
-            "src": "/images/hero/nature-004.webp",
-            "srcSet": {
-                "webp": "/images/hero/nature-004.webp",
-                "avif": "/images/hero/nature-004.avif",
-                "jpg": "/images/hero/nature-004.jpg",
-                "thumb": "/images/hero/nature-004-thumb.webp"
-            },
-            "width": 1200,
-            "height": 500,
-            "alt": "Ancient banyan tree with sweeping aerial roots at a village temple courtyard",
-            "dominantColor": "#1f3015",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/HA===",
-            "tags": [
-                "banyan",
-                "tree",
-                "roots",
-                "ancient",
-                "courtyard"
-            ],
-            "credit": {
-                "author": "Navdhya Media",
-                "license": "proprietary"
-            },
-            "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
-        },
-        {
-            "id": "culture-001",
-            "slug": "bharatanatyam",
-            "category": "culture",
-            "src": "/images/hero/culture-001.webp",
-            "srcSet": {
-                "webp": "/images/hero/culture-001.webp",
-                "avif": "/images/hero/culture-001.avif",
-                "jpg": "/images/hero/culture-001.jpg",
-                "thumb": "/images/hero/culture-001-thumb.webp"
-            },
-            "width": 1200,
-            "height": 500,
-            "alt": "Bharatanatyam classical dancer in traditional attire performing on stage",
-            "dominantColor": "#4a1500",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/IA===",
-            "tags": [
-                "bharatanatyam",
-                "dance",
-                "classical",
-                "stage",
-                "mudra"
-            ],
-            "credit": {
-                "author": "Navdhya Media",
-                "license": "proprietary"
-            },
-            "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
-        },
-        {
-            "id": "culture-002",
-            "slug": "palm-leaf-manuscript",
-            "category": "culture",
-            "src": "/images/hero/culture-002.webp",
-            "srcSet": {
-                "webp": "/images/hero/culture-002.webp",
-                "avif": "/images/hero/culture-002.avif",
-                "jpg": "/images/hero/culture-002.jpg",
-                "thumb": "/images/hero/culture-002-thumb.webp"
-            },
-            "width": 1200,
-            "height": 500,
-            "alt": "Ancient Sanskrit inscriptions on yellowed palm leaf manuscripts",
-            "dominantColor": "#5a3d1a",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/JA===",
-            "tags": [
-                "sanskrit",
-                "palm-leaf",
-                "manuscript",
-                "ancient",
-                "vedic"
-            ],
-            "credit": {
-                "author": "Navdhya Media",
-                "license": "proprietary"
-            },
-            "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
-        },
-        {
-            "id": "culture-003",
-            "slug": "ganesha-idol",
-            "category": "culture",
-            "src": "/images/hero/culture-003.webp",
-            "srcSet": {
-                "webp": "/images/hero/culture-003.webp",
-                "avif": "/images/hero/culture-003.avif",
-                "jpg": "/images/hero/culture-003.jpg",
-                "thumb": "/images/hero/culture-003-thumb.webp"
-            },
-            "width": 1200,
-            "height": 500,
-            "alt": "Hand-crafted bronze idol of Ganesha with intricate traditional ornamentation",
-            "dominantColor": "#6b4500",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/KA===",
-            "tags": [
-                "ganesha",
-                "idol",
-                "bronze",
-                "craft",
-                "deity"
-            ],
-            "credit": {
-                "author": "Navdhya Media",
-                "license": "proprietary"
-            },
-            "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
-        },
-        {
-            "id": "spiritual-001",
-            "slug": "sunrise-meditation",
-            "category": "spiritual",
-            "src": "/images/hero/spiritual-001.webp",
-            "srcSet": {
-                "webp": "/images/hero/spiritual-001.webp",
-                "avif": "/images/hero/spiritual-001.avif",
-                "jpg": "/images/hero/spiritual-001.jpg",
-                "thumb": "/images/hero/spiritual-001-thumb.webp"
-            },
-            "width": 1200,
-            "height": 500,
-            "alt": "Yogi meditating in lotus pose at sunrise on a cliff above a misty valley",
-            "dominantColor": "#1a1020",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/LA===",
-            "tags": [
-                "yoga",
-                "meditation",
-                "sunrise",
-                "lotus-pose",
-                "cliff"
-            ],
-            "credit": {
-                "author": "Navdhya Media",
-                "license": "proprietary"
-            },
-            "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
-        },
-        {
-            "id": "spiritual-002",
-            "slug": "ashram-monks",
-            "category": "spiritual",
-            "src": "/images/hero/spiritual-002.webp",
-            "srcSet": {
-                "webp": "/images/hero/spiritual-002.webp",
-                "avif": "/images/hero/spiritual-002.avif",
-                "jpg": "/images/hero/spiritual-002.jpg",
-                "thumb": "/images/hero/spiritual-002-thumb.webp"
-            },
-            "width": 1200,
-            "height": 500,
-            "alt": "Monks chanting together in the soft golden light of a hillside ashram at dawn",
-            "dominantColor": "#1f0d00",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/MA===",
-            "tags": [
-                "monks",
-                "chanting",
-                "ashram",
-                "dawn",
-                "golden-light"
-            ],
-            "credit": {
-                "author": "Navdhya Media",
-                "license": "proprietary"
-            },
-            "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
-        },
-        {
-            "id": "spiritual-003",
-            "slug": "rudraksha-mala",
-            "category": "spiritual",
-            "src": "/images/hero/spiritual-003.webp",
-            "srcSet": {
-                "webp": "/images/hero/spiritual-003.webp",
-                "avif": "/images/hero/spiritual-003.avif",
-                "jpg": "/images/hero/spiritual-003.jpg",
-                "thumb": "/images/hero/spiritual-003-thumb.webp"
-            },
-            "width": 1200,
-            "height": 500,
-            "alt": "Rudraksha mala prayer beads resting on a saffron-coloured cloth",
-            "dominantColor": "#5c2800",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/NA===",
-            "tags": [
-                "rudraksha",
-                "mala",
-                "beads",
-                "prayer",
-                "saffron"
-            ],
-            "credit": {
-                "author": "Navdhya Media",
-                "license": "proprietary"
-            },
-            "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
-        },
-        {
-            "id": "spiritual-004",
-            "slug": "ganges-aarti",
-            "category": "spiritual",
-            "src": "/images/hero/spiritual-004.webp",
-            "srcSet": {
-                "webp": "/images/hero/spiritual-004.webp",
-                "avif": "/images/hero/spiritual-004.avif",
-                "jpg": "/images/hero/spiritual-004.jpg",
-                "thumb": "/images/hero/spiritual-004-thumb.webp"
-            },
-            "width": 1200,
-            "height": 500,
-            "alt": "Evening Ganga aarti ceremony with diyas and lamps floating on the sacred river",
-            "dominantColor": "#1a0800",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/OA===",
-            "tags": [
-                "aarti",
-                "ganges",
-                "diya",
-                "lamp",
-                "varanasi",
-                "river"
-            ],
-            "credit": {
-                "author": "Navdhya Media",
-                "license": "proprietary"
-            },
-            "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
-        },
-        {
-            "id": "generic-001",
-            "slug": "heritage-sunrise",
-            "category": "generic",
-            "src": "/images/hero/generic-001.webp",
-            "srcSet": {
-                "webp": "/images/hero/generic-001.webp",
-                "avif": "/images/hero/generic-001.avif",
-                "jpg": "/images/hero/generic-001.jpg",
-                "thumb": "/images/hero/generic-001-thumb.webp"
-            },
-            "width": 1200,
-            "height": 500,
-            "alt": "Warm sunrise painting the sky over an ancient Indian heritage monument",
-            "dominantColor": "#3d2000",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/PA===",
-            "tags": [
-                "heritage",
-                "sunrise",
-                "monument",
-                "golden",
-                "india"
-            ],
-            "credit": {
-                "author": "Navdhya Media",
-                "license": "proprietary"
-            },
-            "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
-        },
-        {
-            "id": "generic-002",
-            "slug": "monument-blue-hour",
-            "category": "generic",
-            "src": "/images/hero/generic-002.webp",
-            "srcSet": {
-                "webp": "/images/hero/generic-002.webp",
-                "avif": "/images/hero/generic-002.avif",
-                "jpg": "/images/hero/generic-002.jpg",
-                "thumb": "/images/hero/generic-002-thumb.webp"
-            },
-            "width": 1200,
-            "height": 500,
-            "alt": "Wide blue-hour panorama of an ancient stone monument at twilight",
-            "dominantColor": "#0a0a2a",
-            "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAQCdASoUAAgAAUAmJZQCdAEO/gHOAAD++Lb/yP/d/6f/vf/QA===",
-            "tags": [
-                "blue-hour",
-                "monument",
-                "twilight",
-                "panorama",
-                "stone"
-            ],
-            "credit": {
-                "author": "Navdhya Media",
-                "license": "proprietary"
-            },
-            "active": true,
-            "addedAt": "2026-01-01T00:00:00.000Z"
+            "addedAt": "2026-03-23T19:33:32.224Z"
         }
     ]
 }

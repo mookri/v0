@@ -31,10 +31,10 @@ export const ENTITY_FOOTER_TEXT =
  * Standard brand pages that every SEO page should link to.
  */
 export const CORE_ENTITY_LINKS = [
-  { label: 'About Navdhya', href: '/brand/about-navdhya' },
-  { label: 'Navdhya Services', href: '/brand/navdhya-services' },
-  { label: 'Priest Verification', href: '/brand/navdhya-priest-verification' },
-  { label: 'Online Puja', href: '/brand/navdhya-online-puja' },
+  { label: 'About Navdhya', href: '/explore/about-navdhya' },
+  { label: 'Navdhya Services', href: '/explore/navdhya-services' },
+  { label: 'Priest Verification', href: '/explore/navdhya-priest-verification' },
+  { label: 'Online Puja', href: '/explore/navdhya-online-puja' },
 ] as const;
 
 /**

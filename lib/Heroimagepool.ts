@@ -14,7 +14,8 @@ import poolData from "@/content/images/imgData.json";
 
 const CDN = (process.env.NEXT_PUBLIC_CDN_URL ?? "").replace(/\/$/, "");
 
-function cdnUrl(path: string): string {
+function cdnUrl(path?: string): string {
+    if (!path) return "";
     if (path.startsWith("http")) return path;
     const normalizedPath = path.startsWith("/") ? path : `/${path}`;
     if (!CDN) return normalizedPath;
@@ -40,11 +41,11 @@ interface RawImage {
     slug: string;
     category: ImageCategory;
     src: string;
-    srcSet: {
-        webp: string;
-        avif: string;
-        jpg: string;
-        thumb: string;
+    srcSet?: {
+        webp?: string;
+        avif?: string;
+        jpg?: string;
+        thumb?: string;
     };
     width: number;
     height: number;
@@ -97,16 +98,17 @@ export interface PickResult {
 // ─── Pool hydration ───────────────────────────────────────────────────────────
 
 function resolve(raw: RawImage): HeroImage {
+    const srcSet = raw.srcSet || {};
     return {
         ...raw,
         src: cdnUrl(raw.src),
         srcSet: {
-            webp: cdnUrl(raw.srcSet.webp),
-            avif: cdnUrl(raw.srcSet.avif),
-            jpg: cdnUrl(raw.srcSet.jpg),
-            thumb: cdnUrl(raw.srcSet.thumb),
+            webp: cdnUrl(srcSet.webp || raw.src),
+            avif: cdnUrl(srcSet.avif || raw.src),
+            jpg: cdnUrl(srcSet.jpg || raw.src),
+            thumb: cdnUrl(srcSet.thumb || raw.src),
         },
-        thumbnailUrl: cdnUrl(raw.srcSet.thumb),
+        thumbnailUrl: cdnUrl(srcSet.thumb || raw.src),
     };
 }
 

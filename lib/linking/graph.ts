@@ -5,7 +5,7 @@
 
 import type { SEOPage, ContentCluster } from '@/lib/content/types';
 import { getPage } from '@/lib/content/loader';
-import { getSlugsByCluster, getRegistryEntry } from '@/lib/content/registry';
+import { getSlugsByCluster, getRegistryEntry, getClusterMeta } from '@/lib/content/registry';
 import { CORE_ENTITY_LINKS } from '@/lib/seo/entity';
 
 export interface InternalLink {
@@ -125,7 +125,8 @@ export function getRelatedPages(
     const entry = safeGetEntry(relSlug);
     if (!entry) continue;
 
-    addLink(relSlug, relPage.title, `/${entry.cluster}/${relSlug}`, entry.cluster);
+    const basePath = getClusterMeta(entry.cluster)?.basePath || entry.cluster;
+    addLink(relSlug, relPage.title, `/${basePath}/${relSlug}`, entry.cluster);
   }
 
   // 2. Same-cluster pages (fill remaining slots)
@@ -137,7 +138,8 @@ export function getRelatedPages(
       const cPage = safeGetPage(cSlug);
       if (!cPage) continue;
 
-      addLink(cSlug, cPage.title, `/${page.cluster}/${cSlug}`, page.cluster);
+      const basePath = getClusterMeta(page.cluster)?.basePath || page.cluster;
+      addLink(cSlug, cPage.title, `/${basePath}/${cSlug}`, page.cluster);
     }
   }
 

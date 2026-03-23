@@ -57,7 +57,7 @@ function inferPriority(route: string): number {
   if (route === "/") return 1;
   if (route === "/services" || route === "/pujas") return 0.95;
   if (route === "/about" || route === "/contact" || route === "/book") return 0.85;
-  if (route.startsWith("/brand/")) return 0.82;
+  if (route.startsWith("/explore/")) return 0.82;
   if (route.startsWith("/services/") || route.startsWith("/pandit-services/")) return 0.8;
   if (route.startsWith("/ceremonies/") || route.startsWith("/festival-rituals/")) return 0.78;
   if (route.startsWith("/ritual-guides/") || route.startsWith("/spiritual-guides/")) return 0.76;
@@ -71,7 +71,7 @@ function inferPriority(route: string): number {
 function inferChangeFrequency(route: string): SitemapEntry["changeFrequency"] {
   if (route === "/") return "daily";
   if (route.startsWith("/resources/news")) return "daily";
-  if (route.startsWith("/brand/") || route.startsWith("/services/") || route.startsWith("/ceremonies/")) {
+  if (route.startsWith("/explore/") || route.startsWith("/services/") || route.startsWith("/ceremonies/")) {
     return "weekly";
   }
   if (route.includes("policy") || route.includes("terms")) return "yearly";
