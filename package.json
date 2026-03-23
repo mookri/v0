@@ -2,7 +2,6 @@
   "name": "navdhya",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@9.15.5",
   "scripts": {
     "sync:registry": "npx tsx scripts/rebuild-content-registry.ts",
     "predev": "npm run sync:registry",
