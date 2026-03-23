@@ -116,6 +116,12 @@ const nextConfig: NextConfig = {
         protocol: 'http',
         hostname: 'localhost',
       },
+
+      // ── Cloudinary ─────────────────────────────────────────────────────────
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
     ],
   },
 
