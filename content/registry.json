@@ -1,1198 +1,1958 @@
 {
-  "clusters": {
-    "brand": {
-      "label": "Inside the Brand",
-      "basePath": "explore"
-    },
-    "services": {
-      "label": "Puja Services",
-      "basePath": "services"
-    },
-    "ceremonies": {
-      "label": "Hindu Ceremonies",
-      "basePath": "ceremonies"
-    },
-    "ritual-guides": {
-      "label": "Ritual Guides",
-      "basePath": "ritual-guides"
-    },
-    "pandit-services": {
-      "label": "Pandit Services",
-      "basePath": "pandit-services"
-    },
-    "festival-rituals": {
-      "label": "Festival Rituals",
-      "basePath": "festival-rituals"
-    },
-    "spiritual-guides": {
-      "label": "Spiritual Guides",
-      "basePath": "spiritual-guides"
-    },
-    "faq": {
-      "label": "Frequently Asked Questions",
-      "basePath": "faq"
-    },
-    "blog": {
-      "label": "Navdhya Journal",
-      "basePath": "blog"
-    }
-  },
-  "pages": {
-    "abhishek-ritual-home": {
-      "file": "abhishek-ritual-home.json",
-      "cluster": "ritual-guides"
-    },
-    "agni-sacred-fire-vedic": {
-      "file": "agni-sacred-fire-vedic.json",
-      "cluster": "ritual-guides"
-    },
-    "ahimsa-vedic-rituals": {
-      "file": "ahimsa-vedic-rituals.json",
-      "cluster": "spiritual-guides"
-    },
-    "annaprashan-ceremony-guide": {
-      "file": "annaprashan-ceremony-guide.json",
-      "cluster": "ceremonies"
-    },
-    "anusthan-at-home": {
-      "file": "anusthan-at-home.json",
-      "cluster": "ritual-guides"
-    },
-    "asthi-visarjan-ritual": {
-      "file": "asthi-visarjan-ritual.json",
-      "cluster": "ceremonies"
-    },
-    "astrology-career-guidance": {
-      "file": "astrology-career-guidance.json",
-      "cluster": "services"
-    },
-    "astrology-health-predictions": {
-      "file": "astrology-health-predictions.json",
-      "cluster": "spiritual-guides"
-    },
-    "astrology-hindu-marriage": {
-      "file": "astrology-hindu-marriage.json",
-      "cluster": "spiritual-guides"
-    },
-    "astrology-naming-ceremony": {
-      "file": "astrology-naming-ceremony.json",
-      "cluster": "spiritual-guides"
-    },
-    "astrology-remedies-mantras": {
-      "file": "astrology-remedies-mantras.json",
-      "cluster": "spiritual-guides"
-    },
-    "astrology-ritual-relationship": {
-      "file": "astrology-ritual-relationship.json",
-      "cluster": "spiritual-guides"
-    },
-    "banana-leaf-ritual": {
-      "file": "banana-leaf-ritual.json",
-      "cluster": "ritual-guides"
-    },
-    "barsi-ritual-guide": {
-      "file": "barsi-ritual-guide.json",
-      "cluster": "ceremonies"
-    },
-    "bell-conch-puja": {
-      "file": "bell-conch-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "benefits-regular-astrology": {
-      "file": "benefits-regular-astrology.json",
-      "cluster": "spiritual-guides"
-    },
-    "bhoomi-pujan-ceremony": {
-      "file": "bhoomi-pujan-ceremony.json",
-      "cluster": "ceremonies"
-    },
-    "bhumi-puja-renovation": {
-      "file": "bhumi-puja-renovation.json",
-      "cluster": "ceremonies"
-    },
-    "birth-time-kundali": {
-      "file": "birth-time-kundali.json",
-      "cluster": "spiritual-guides"
-    },
-    "book-astrology-consultation-online": {
-      "file": "book-astrology-consultation-online.json",
-      "cluster": "services"
-    },
-    "book-pandit-home-puja": {
-      "file": "book-pandit-home-puja.json",
-      "cluster": "pandit-services"
-    },
-    "brahmin-feast-vidhi": {
-      "file": "brahmin-feast-vidhi.json",
-      "cluster": "ceremonies"
-    },
-    "camphor-hindu-worship": {
-      "file": "camphor-hindu-worship.json",
-      "cluster": "ritual-guides"
-    },
-    "chandan-paste-puja": {
-      "file": "chandan-paste-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "chhat-puja-ceremony": {
-      "file": "chhat-puja-ceremony.json",
-      "cluster": "festival-rituals"
-    },
-    "choose-incense-puja": {
-      "file": "choose-incense-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "clean-puja-idols": {
-      "file": "clean-puja-idols.json",
-      "cluster": "ritual-guides"
-    },
-    "coconut-hindu-rituals": {
-      "file": "coconut-hindu-rituals.json",
-      "cluster": "ritual-guides"
-    },
-    "communicate-ritual-requirements": {
-      "file": "communicate-ritual-requirements.json",
-      "cluster": "pandit-services"
-    },
-    "cow-hindu-ritual-significance": {
-      "file": "cow-hindu-ritual-significance.json",
-      "cluster": "ritual-guides"
-    },
-    "dasha-mahadasha-vedic": {
-      "file": "dasha-mahadasha-vedic.json",
-      "cluster": "spiritual-guides"
-    },
-    "devi-puja-guide": {
-      "file": "devi-puja-guide.json",
-      "cluster": "ritual-guides"
-    },
-    "dharma-hindu-rituals": {
-      "file": "dharma-hindu-rituals.json",
-      "cluster": "spiritual-guides"
-    },
-    "dhoop-agarbatti-puja": {
-      "file": "dhoop-agarbatti-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "draw-swastika-puja": {
-      "file": "draw-swastika-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "durga-puja-ceremony-guide": {
-      "file": "durga-puja-ceremony-guide.json",
-      "cluster": "festival-rituals"
-    },
-    "durga-puja-vidhi-mantras": {
-      "file": "durga-puja-vidhi-mantras.json",
-      "cluster": "ritual-guides"
-    },
-    "eclipse-ritual-significance": {
-      "file": "eclipse-ritual-significance.json",
-      "cluster": "spiritual-guides"
-    },
-    "evaluate-pandit-ceremony": {
-      "file": "evaluate-pandit-ceremony.json",
-      "cluster": "pandit-services"
-    },
-    "family-havan-preparation": {
-      "file": "family-havan-preparation.json",
-      "cluster": "ritual-guides"
-    },
-    "feng-shui-vs-vastu": {
-      "file": "feng-shui-vs-vastu.json",
-      "cluster": "spiritual-guides"
-    },
-    "flowers-hindu-worship": {
-      "file": "flowers-hindu-worship.json",
-      "cluster": "ritual-guides"
-    },
-    "fold-offer-vastra": {
-      "file": "fold-offer-vastra.json",
-      "cluster": "ritual-guides"
-    },
-    "food-rules-puja-days": {
-      "file": "food-rules-puja-days.json",
-      "cluster": "ritual-guides"
-    },
-    "four-vedas-ritual-significance": {
-      "file": "four-vedas-ritual-significance.json",
-      "cluster": "ritual-guides"
-    },
-    "ganesh-puja-ceremony": {
-      "file": "ganesh-puja-ceremony.json",
-      "cluster": "ritual-guides"
-    },
-    "ganesh-puja-vidhi": {
-      "file": "ganesh-puja-vidhi.json",
-      "cluster": "ritual-guides"
-    },
-    "garbhadhan-pumsavana": {
-      "file": "garbhadhan-pumsavana.json",
-      "cluster": "ceremonies"
-    },
-    "gauna-ceremony-hindu-marriage": {
-      "file": "gauna-ceremony-hindu-marriage.json",
-      "cluster": "ceremonies"
-    },
-    "gayatri-mantra-explained": {
-      "file": "gayatri-mantra-explained.json",
-      "cluster": "ritual-guides"
-    },
-    "gemstone-therapy-astrology": {
-      "file": "gemstone-therapy-astrology.json",
-      "cluster": "spiritual-guides"
-    },
-    "gochara-vedic-astrology": {
-      "file": "gochara-vedic-astrology.json",
-      "cluster": "spiritual-guides"
-    },
-    "gotra-hindu-ceremonies": {
-      "file": "gotra-hindu-ceremonies.json",
-      "cluster": "ceremonies"
-    },
-    "griha-pravesh-ceremony-explained": {
-      "file": "griha-pravesh-ceremony-explained.json",
-      "cluster": "ceremonies"
-    },
-    "griha-pravesh-puja-vidhi": {
-      "file": "griha-pravesh-puja-vidhi.json",
-      "cluster": "ritual-guides"
-    },
-    "grihastha-dharma-rituals": {
-      "file": "grihastha-dharma-rituals.json",
-      "cluster": "spiritual-guides"
-    },
-    "guide-puja-at-home": {
-      "file": "guide-puja-at-home.json",
-      "cluster": "ritual-guides"
-    },
-    "hanuman-puja-guide": {
-      "file": "hanuman-puja-guide.json",
-      "cluster": "ritual-guides"
-    },
-    "havan-samagri-types": {
-      "file": "havan-samagri-types.json",
-      "cluster": "ritual-guides"
-    },
-    "hindu-funeral-rites": {
-      "file": "hindu-funeral-rites.json",
-      "cluster": "ceremonies"
-    },
-    "hindu-wedding-ceremony-guide": {
-      "file": "hindu-wedding-ceremony-guide.json",
-      "cluster": "ceremonies"
-    },
-    "history-vedic-ritual-india": {
-      "file": "history-vedic-ritual-india.json",
-      "cluster": "ritual-guides"
-    },
-    "home-puja-room-setup": {
-      "file": "home-puja-room-setup.json",
-      "cluster": "ritual-guides"
-    },
-    "how-navdhya-works": {
-      "file": "how-navdhya-works.json",
-      "cluster": "brand"
-    },
-    "how-to-do-aarti": {
-      "file": "how-to-do-aarti.json",
-      "cluster": "ritual-guides"
-    },
-    "importance-of-sraddha": {
-      "file": "importance-of-sraddha.json",
-      "cluster": "ritual-guides"
-    },
-    "incense-holder-types": {
-      "file": "incense-holder-types.json",
-      "cluster": "ritual-guides"
-    },
-    "introduction-vedic-astrology": {
-      "file": "introduction-vedic-astrology.json",
-      "cluster": "spiritual-guides"
-    },
-    "introduction-vedic-deities": {
-      "file": "introduction-vedic-deities.json",
-      "cluster": "ritual-guides"
-    },
-    "jupiter-transit-spiritual": {
-      "file": "jupiter-transit-spiritual.json",
-      "cluster": "spiritual-guides"
-    },
-    "kaal-sarp-dosh-puja": {
-      "file": "kaal-sarp-dosh-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "kalash-setup-puja": {
-      "file": "kalash-setup-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "kalash-sthapana-guide": {
-      "file": "kalash-sthapana-guide.json",
-      "cluster": "ritual-guides"
-    },
-    "kali-puja-vidhi": {
-      "file": "kali-puja-vidhi.json",
-      "cluster": "ritual-guides"
-    },
-    "kanya-puja-ceremony": {
-      "file": "kanya-puja-ceremony.json",
-      "cluster": "festival-rituals"
-    },
-    "karma-kanda-vedic": {
-      "file": "karma-kanda-vedic.json",
-      "cluster": "ritual-guides"
-    },
-    "karma-ritual-practice": {
-      "file": "karma-ritual-practice.json",
-      "cluster": "spiritual-guides"
-    },
-    "karva-chauth-puja": {
-      "file": "karva-chauth-puja.json",
-      "cluster": "festival-rituals"
-    },
-    "kundali-matching-marriage": {
-      "file": "kundali-matching-marriage.json",
-      "cluster": "spiritual-guides"
-    },
-    "lakshmi-puja-ceremony-guide": {
-      "file": "lakshmi-puja-ceremony-guide.json",
-      "cluster": "festival-rituals"
-    },
-    "lakshmi-puja-vidhi-diwali": {
-      "file": "lakshmi-puja-vidhi-diwali.json",
-      "cluster": "ritual-guides"
-    },
-    "make-kumkum-puja": {
-      "file": "make-kumkum-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "make-rangoli-puja": {
-      "file": "make-rangoli-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "mangal-dosh-remedies": {
-      "file": "mangal-dosh-remedies.json",
-      "cluster": "spiritual-guides"
-    },
-    "mangala-gauri-puja": {
-      "file": "mangala-gauri-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "mangalsutra-ceremony": {
-      "file": "mangalsutra-ceremony.json",
-      "cluster": "ceremonies"
-    },
-    "mantras-vedic-rituals": {
-      "file": "mantras-vedic-rituals.json",
-      "cluster": "ritual-guides"
-    },
-    "mehendi-ceremony-ritual": {
-      "file": "mehendi-ceremony-ritual.json",
-      "cluster": "ceremonies"
-    },
-    "monthly-planetary-transits-puja": {
-      "file": "monthly-planetary-transits-puja.json",
-      "cluster": "spiritual-guides"
-    },
-    "muhurta-selection-events": {
-      "file": "muhurta-selection-events.json",
-      "cluster": "services"
-    },
-    "mundan-ceremony-guide": {
-      "file": "mundan-ceremony-guide.json",
-      "cluster": "ceremonies"
-    },
-    "mundan-tirupati": {
-      "file": "mundan-tirupati.json",
-      "cluster": "ceremonies"
-    },
-    "naamkaran-jaatakarm": {
-      "file": "naamkaran-jaatakarm.json",
-      "cluster": "ceremonies"
-    },
-    "nakshatra-vedic-life": {
-      "file": "nakshatra-vedic-life.json",
-      "cluster": "spiritual-guides"
-    },
-    "namaskar-pranayam-puja": {
-      "file": "namaskar-pranayam-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "namkaran-ceremony-guide": {
-      "file": "namkaran-ceremony-guide.json",
-      "cluster": "ceremonies"
-    },
-    "what-is-navdhya": {
-      "file": "nav-brand-001.json",
-      "cluster": "brand"
-    },
-    "about-navdhya": {
-      "file": "nav-brand-002.json",
-      "cluster": "brand"
-    },
-    "navdhya-services": {
-      "file": "nav-brand-003.json",
-      "cluster": "brand"
-    },
-    "navdhya-priest-verification": {
-      "file": "nav-brand-004.json",
-      "cluster": "brand"
-    },
-    "navdhya-online-puja": {
-      "file": "nav-brand-005.json",
-      "cluster": "brand"
-    },
-    "navagraha-ritual-worship": {
-      "file": "navagraha-ritual-worship.json",
-      "cluster": "ritual-guides"
-    },
-    "navdhya-2023-launch": {
-      "file": "navdhya-2023-launch.json",
-      "cluster": "brand"
-    },
-    "navdhya-app-booking": {
-      "file": "navdhya-app-booking.json",
-      "cluster": "brand"
-    },
-    "navdhya-app-pandit-booking": {
-      "file": "navdhya-app-pandit-booking.json",
-      "cluster": "pandit-services"
-    },
-    "navdhya-astrology-consultation": {
-      "file": "navdhya-astrology-consultation.json",
-      "cluster": "services"
-    },
-    "navdhya-astrology-report": {
-      "file": "navdhya-astrology-report.json",
-      "cluster": "services"
-    },
-    "navdhya-astrology-service": {
-      "file": "navdhya-astrology-service.json",
-      "cluster": "services"
-    },
-    "navdhya-brand-identity": {
-      "file": "navdhya-brand-identity.json",
-      "cluster": "brand"
-    },
-    "navdhya-ceremony-booking": {
-      "file": "navdhya-ceremony-booking.json",
-      "cluster": "services"
-    },
-    "navdhya-core-offerings": {
-      "file": "navdhya-core-offerings.json",
-      "cluster": "services"
-    },
-    "navdhya-corporate-puja": {
-      "file": "navdhya-corporate-puja.json",
-      "cluster": "services"
-    },
-    "navdhya-customer-success": {
-      "file": "navdhya-customer-success.json",
-      "cluster": "brand"
-    },
-    "navdhya-customer-support": {
-      "file": "navdhya-customer-support.json",
-      "cluster": "brand"
-    },
-    "navdhya-delhi-spiritual-services": {
-      "file": "navdhya-delhi-spiritual-services.json",
-      "cluster": "services"
-    },
-    "navdhya-emergency-pandit": {
-      "file": "navdhya-emergency-pandit.json",
-      "cluster": "pandit-services"
-    },
-    "navdhya-faq": {
-      "file": "navdhya-faq.json",
-      "cluster": "faq"
-    },
-    "navdhya-for-modern-families": {
-      "file": "navdhya-for-modern-families.json",
-      "cluster": "brand"
-    },
-    "navdhya-griha-pravesh": {
-      "file": "navdhya-griha-pravesh.json",
-      "cluster": "services"
-    },
-    "navdhya-growth-plans": {
-      "file": "navdhya-growth-plans.json",
-      "cluster": "brand"
-    },
-    "navdhya-hindu-diaspora": {
-      "file": "navdhya-hindu-diaspora.json",
-      "cluster": "brand"
-    },
-    "navdhya-hindu-religious-ceremonies": {
-      "file": "navdhya-hindu-religious-ceremonies.json",
-      "cluster": "services"
-    },
-    "navdhya-language-support": {
-      "file": "navdhya-language-support.json",
-      "cluster": "brand"
-    },
-    "navdhya-navratri": {
-      "file": "navdhya-navratri.json",
-      "cluster": "festival-rituals"
-    },
-    "navdhya-pandit-booking-guide": {
-      "file": "navdhya-pandit-booking-guide.json",
-      "cluster": "pandit-services"
-    },
-    "navdhya-pandit-languages": {
-      "file": "navdhya-pandit-languages.json",
-      "cluster": "pandit-services"
-    },
-    "navdhya-pandit-livelihood": {
-      "file": "navdhya-pandit-livelihood.json",
-      "cluster": "pandit-services"
-    },
-    "navdhya-pandit-training": {
-      "file": "navdhya-pandit-training.json",
-      "cluster": "pandit-services"
-    },
-    "navdhya-pandit-verification-process": {
-      "file": "navdhya-pandit-verification-process.json",
-      "cluster": "pandit-services"
-    },
-    "navdhya-partner-priest": {
-      "file": "navdhya-partner-priest.json",
-      "cluster": "pandit-services"
-    },
-    "navdhya-pricing-packages": {
-      "file": "navdhya-pricing-packages.json",
-      "cluster": "services"
-    },
-    "navdhya-puja-material-delivery": {
-      "file": "navdhya-puja-material-delivery.json",
-      "cluster": "services"
-    },
-    "navdhya-quality-assurance": {
-      "file": "navdhya-quality-assurance.json",
-      "cluster": "brand"
-    },
-    "navdhya-ritual-materials": {
-      "file": "navdhya-ritual-materials.json",
-      "cluster": "services"
-    },
-    "navdhya-satyanarayan-puja": {
-      "file": "navdhya-satyanarayan-puja.json",
-      "cluster": "services"
-    },
-    "navdhya-senior-citizens": {
-      "file": "navdhya-senior-citizens.json",
-      "cluster": "brand"
-    },
-    "navdhya-service-area": {
-      "file": "navdhya-service-area.json",
-      "cluster": "services"
-    },
-    "navdhya-social-impact": {
-      "file": "navdhya-social-impact.json",
-      "cluster": "brand"
-    },
-    "navdhya-spiritual-guidance": {
-      "file": "navdhya-spiritual-guidance.json",
-      "cluster": "services"
-    },
-    "navdhya-spiritual-technology": {
-      "file": "navdhya-spiritual-technology.json",
-      "cluster": "brand"
-    },
-    "navdhya-trust-safety": {
-      "file": "navdhya-trust-safety.json",
-      "cluster": "brand"
-    },
-    "navdhya-upflame-llp": {
-      "file": "navdhya-upflame-llp.json",
-      "cluster": "brand"
-    },
-    "navdhya-vedic-authenticity": {
-      "file": "navdhya-vedic-authenticity.json",
-      "cluster": "brand"
-    },
-    "navdhya-vedic-tradition": {
-      "file": "navdhya-vedic-tradition.json",
-      "cluster": "brand"
-    },
-    "navdhya-verified-pandits": {
-      "file": "navdhya-verified-pandits.json",
-      "cluster": "pandit-services"
-    },
-    "navdhya-vs-traditional-pandit-booking": {
-      "file": "navdhya-vs-traditional-pandit-booking.json",
-      "cluster": "pandit-services"
-    },
-    "navgrah-puja-guide": {
-      "file": "navgrah-puja-guide.json",
-      "cluster": "ritual-guides"
-    },
-    "navratri-nine-day-puja-plan": {
-      "file": "navratri-nine-day-puja-plan.json",
-      "cluster": "ritual-guides"
-    },
-    "numerology-hindu-tradition": {
-      "file": "numerology-hindu-tradition.json",
-      "cluster": "spiritual-guides"
-    },
-    "office-puja-guide": {
-      "file": "office-puja-guide.json",
-      "cluster": "ritual-guides"
-    },
-    "oil-types-diyas": {
-      "file": "oil-types-diyas.json",
-      "cluster": "ritual-guides"
-    },
-    "online-kundali-analysis-navdhya": {
-      "file": "online-kundali-analysis-navdhya.json",
-      "cluster": "services"
-    },
-    "pandit-amavasya": {
-      "file": "pandit-amavasya.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-availability-booking": {
-      "file": "pandit-availability-booking.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-bhoomi-pujan": {
-      "file": "pandit-bhoomi-pujan.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-corporate-events": {
-      "file": "pandit-corporate-events.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-diwali-delhi": {
-      "file": "pandit-diwali-delhi.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-funeral-last-rites": {
-      "file": "pandit-funeral-last-rites.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-ganesh-chaturthi": {
-      "file": "pandit-ganesh-chaturthi.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-griha-pravesh-delhi": {
-      "file": "pandit-griha-pravesh-delhi.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-havan-ceremony": {
-      "file": "pandit-havan-ceremony.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-kali-puja": {
-      "file": "pandit-kali-puja.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-mundan-ceremony": {
-      "file": "pandit-mundan-ceremony.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-namkaran": {
-      "file": "pandit-namkaran.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-navratri-puja": {
-      "file": "pandit-navratri-puja.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-online-puja": {
-      "file": "pandit-online-puja.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-pitru-paksha": {
-      "file": "pandit-pitru-paksha.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-puja-delhi": {
-      "file": "pandit-puja-delhi.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-qualifications": {
-      "file": "pandit-qualifications.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-rudrabhishek": {
-      "file": "pandit-rudrabhishek.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-satyanarayan-katha": {
-      "file": "pandit-satyanarayan-katha.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-seemantonnayana": {
-      "file": "pandit-seemantonnayana.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-shravan-month": {
-      "file": "pandit-shravan-month.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-upanayana": {
-      "file": "pandit-upanayana.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-vivah-sanskar": {
-      "file": "pandit-vivah-sanskar.json",
-      "cluster": "pandit-services"
-    },
-    "pandit-wedding-delhi": {
-      "file": "pandit-wedding-delhi.json",
-      "cluster": "pandit-services"
-    },
-    "panigrahana-ritual": {
-      "file": "panigrahana-ritual.json",
-      "cluster": "ceremonies"
-    },
-    "perform-havan-at-home": {
-      "file": "perform-havan-at-home.json",
-      "cluster": "ritual-guides"
-    },
-    "pithi-ceremony-wedding": {
-      "file": "pithi-ceremony-wedding.json",
-      "cluster": "ceremonies"
-    },
-    "pitra-dosh-remedies": {
-      "file": "pitra-dosh-remedies.json",
-      "cluster": "spiritual-guides"
-    },
-    "pitru-paksha-ancestor-rites": {
-      "file": "pitru-paksha-ancestor-rites.json",
-      "cluster": "festival-rituals"
-    },
-    "pitru-tarpan-guide": {
-      "file": "pitru-tarpan-guide.json",
-      "cluster": "ritual-guides"
-    },
-    "planetary-offerings-days": {
-      "file": "planetary-offerings-days.json",
-      "cluster": "spiritual-guides"
-    },
-    "prepare-gangajal-rituals": {
-      "file": "prepare-gangajal-rituals.json",
-      "cluster": "ritual-guides"
-    },
-    "prepare-kund-havan": {
-      "file": "prepare-kund-havan.json",
-      "cluster": "ritual-guides"
-    },
-    "prepare-multi-day-ceremony": {
-      "file": "prepare-multi-day-ceremony.json",
-      "cluster": "ritual-guides"
-    },
-    "prepare-panchamrit-puja": {
-      "file": "prepare-panchamrit-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "prepare-prasad-deities": {
-      "file": "prepare-prasad-deities.json",
-      "cluster": "ritual-guides"
-    },
-    "prepare-wedding-ceremony": {
-      "file": "prepare-wedding-ceremony.json",
-      "cluster": "ritual-guides"
-    },
-    "priests-regional-traditions": {
-      "file": "priests-regional-traditions.json",
-      "cluster": "pandit-services"
-    },
-    "puja-child-health": {
-      "file": "puja-child-health.json",
-      "cluster": "ritual-guides"
-    },
-    "puja-ekadashi": {
-      "file": "puja-ekadashi.json",
-      "cluster": "ritual-guides"
-    },
-    "puja-exam-success": {
-      "file": "puja-exam-success.json",
-      "cluster": "ritual-guides"
-    },
-    "puja-maha-shivratri": {
-      "file": "puja-maha-shivratri.json",
-      "cluster": "ritual-guides"
-    },
-    "puja-marriage-blessings": {
-      "file": "puja-marriage-blessings.json",
-      "cluster": "ritual-guides"
-    },
-    "puja-new-business": {
-      "file": "puja-new-business.json",
-      "cluster": "ritual-guides"
-    },
-    "puja-new-vehicle": {
-      "file": "puja-new-vehicle.json",
-      "cluster": "ritual-guides"
-    },
-    "puja-prosperity-wealth": {
-      "file": "puja-prosperity-wealth.json",
-      "cluster": "ritual-guides"
-    },
-    "puja-remove-negative-energy": {
-      "file": "puja-remove-negative-energy.json",
-      "cluster": "ritual-guides"
-    },
-    "puja-samagri-checklist": {
-      "file": "puja-samagri-checklist.json",
-      "cluster": "ritual-guides"
-    },
-    "puja-samagri-shopping-list": {
-      "file": "puja-samagri-shopping-list.json",
-      "cluster": "ritual-guides"
-    },
-    "puja-thali-preparation": {
-      "file": "puja-thali-preparation.json",
-      "cluster": "ritual-guides"
-    },
-    "puja-timing-panchang": {
-      "file": "puja-timing-panchang.json",
-      "cluster": "ritual-guides"
-    },
-    "puja-vidhi-guide": {
-      "file": "puja-vidhi-guide.json",
-      "cluster": "ritual-guides"
-    },
-    "puja-vs-prayer": {
-      "file": "puja-vs-prayer.json",
-      "cluster": "faq"
-    },
-    "puja-without-pandit": {
-      "file": "puja-without-pandit.json",
-      "cluster": "ritual-guides"
-    },
-    "punyaha-vachanam-baby-shower": {
-      "file": "punyaha-vachanam-baby-shower.json",
-      "cluster": "ceremonies"
-    },
-    "purify-puja-space": {
-      "file": "purify-puja-space.json",
-      "cluster": "ritual-guides"
-    },
-    "purohit-vs-jyotishi": {
-      "file": "purohit-vs-jyotishi.json",
-      "cluster": "pandit-services"
-    },
-    "questions-ask-pandit": {
-      "file": "questions-ask-pandit.json",
-      "cluster": "pandit-services"
-    },
-    "rahu-ketu-shanti-puja": {
-      "file": "rahu-ketu-shanti-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "rahu-ketu-vedic-astrology": {
-      "file": "rahu-ketu-vedic-astrology.json",
-      "cluster": "spiritual-guides"
-    },
-    "read-vedic-birth-chart": {
-      "file": "read-vedic-birth-chart.json",
-      "cluster": "spiritual-guides"
-    },
-    "red-cloth-ritual": {
-      "file": "red-cloth-ritual.json",
-      "cluster": "ritual-guides"
-    },
-    "regional-pandit-traditions": {
-      "file": "regional-pandit-traditions.json",
-      "cluster": "pandit-services"
-    },
-    "ritual-bathing-snan": {
-      "file": "ritual-bathing-snan.json",
-      "cluster": "ritual-guides"
-    },
-    "role-of-flowers-hindu-puja": {
-      "file": "role-of-flowers-hindu-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "role-of-pandit-vedic-ceremonies": {
-      "file": "role-of-pandit-vedic-ceremonies.json",
-      "cluster": "pandit-services"
-    },
-    "rudrabhishek-at-home": {
-      "file": "rudrabhishek-at-home.json",
-      "cluster": "ceremonies"
-    },
-    "sacred-colours-hindu-ritual": {
-      "file": "sacred-colours-hindu-ritual.json",
-      "cluster": "ritual-guides"
-    },
-    "sacred-geometry-hindu-rituals": {
-      "file": "sacred-geometry-hindu-rituals.json",
-      "cluster": "ritual-guides"
-    },
-    "sacred-grains-ritual": {
-      "file": "sacred-grains-ritual.json",
-      "cluster": "ritual-guides"
-    },
-    "sacred-metals-ritual": {
-      "file": "sacred-metals-ritual.json",
-      "cluster": "ritual-guides"
-    },
-    "sacred-thread-janeu": {
-      "file": "sacred-thread-janeu.json",
-      "cluster": "ritual-guides"
-    },
-    "sagai-engagement-ceremony": {
-      "file": "sagai-engagement-ceremony.json",
-      "cluster": "ceremonies"
-    },
-    "sanskrit-pandit-requirements": {
-      "file": "sanskrit-pandit-requirements.json",
-      "cluster": "pandit-services"
-    },
-    "saptapadi-seven-steps": {
-      "file": "saptapadi-seven-steps.json",
-      "cluster": "ceremonies"
-    },
-    "saraswati-puja-ceremony": {
-      "file": "saraswati-puja-ceremony.json",
-      "cluster": "festival-rituals"
-    },
-    "saraswati-puja-vidhi": {
-      "file": "saraswati-puja-vidhi.json",
-      "cluster": "ritual-guides"
-    },
-    "saturn-shani-sade-sati": {
-      "file": "saturn-shani-sade-sati.json",
-      "cluster": "spiritual-guides"
-    },
-    "satyanarayan-puja-complete-guide": {
-      "file": "satyanarayan-puja-complete-guide.json",
-      "cluster": "ceremonies"
-    },
-    "science-vedic-ritual-timing": {
-      "file": "science-vedic-ritual-timing.json",
-      "cluster": "spiritual-guides"
-    },
-    "seemantonnayana-pregnancy-ritual": {
-      "file": "seemantonnayana-pregnancy-ritual.json",
-      "cluster": "ceremonies"
-    },
-    "shani-graha-shanti-puja": {
-      "file": "shani-graha-shanti-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "shiva-puja-monday": {
-      "file": "shiva-puja-monday.json",
-      "cluster": "ritual-guides"
-    },
-    "shivling-abhishek-ritual": {
-      "file": "shivling-abhishek-ritual.json",
-      "cluster": "ritual-guides"
-    },
-    "shodashopachara-puja-method": {
-      "file": "shodashopachara-puja-method.json",
-      "cluster": "ritual-guides"
-    },
-    "shradh-ceremony-guide": {
-      "file": "shradh-ceremony-guide.json",
-      "cluster": "ceremonies"
-    },
-    "sindoor-ceremony": {
-      "file": "sindoor-ceremony.json",
-      "cluster": "ceremonies"
-    },
-    "sindoor-preparation-rituals": {
-      "file": "sindoor-preparation-rituals.json",
-      "cluster": "ritual-guides"
-    },
-    "sohagini-puja": {
-      "file": "sohagini-puja.json",
-      "cluster": "ceremonies"
-    },
-    "solah-somvar-vrat-puja": {
-      "file": "solah-somvar-vrat-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "source-authentic-puja-materials": {
-      "file": "source-authentic-puja-materials.json",
-      "cluster": "ritual-guides"
-    },
-    "spiritual-consultation-vs-therapy": {
-      "file": "spiritual-consultation-vs-therapy.json",
-      "cluster": "spiritual-guides"
-    },
-    "spiritual-remedies-career-finance": {
-      "file": "spiritual-remedies-career-finance.json",
-      "cluster": "spiritual-guides"
-    },
-    "spiritual-retreat-meditation": {
-      "file": "spiritual-retreat-meditation.json",
-      "cluster": "spiritual-guides"
-    },
-    "store-organize-puja-items": {
-      "file": "store-organize-puja-items.json",
-      "cluster": "ritual-guides"
-    },
-    "sudarshana-puja-guide": {
-      "file": "sudarshana-puja-guide.json",
-      "cluster": "ritual-guides"
-    },
-    "sunsign-moonsign-vedic": {
-      "file": "sunsign-moonsign-vedic.json",
-      "cluster": "spiritual-guides"
-    },
-    "surya-namaskar-puja": {
-      "file": "surya-namaskar-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "sutak-post-birth-rituals": {
-      "file": "sutak-post-birth-rituals.json",
-      "cluster": "ceremonies"
-    },
-    "symbolism-diyas-hindu": {
-      "file": "symbolism-diyas-hindu.json",
-      "cluster": "ritual-guides"
-    },
-    "temple-vs-home-puja": {
-      "file": "temple-vs-home-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "tilak-ceremony-marriage": {
-      "file": "tilak-ceremony-marriage.json",
-      "cluster": "ceremonies"
-    },
-    "tirthas-sacred-water": {
-      "file": "tirthas-sacred-water.json",
-      "cluster": "ritual-guides"
-    },
-    "tulsi-hindu-worship": {
-      "file": "tulsi-hindu-worship.json",
-      "cluster": "ritual-guides"
-    },
-    "tulsi-vivah-puja": {
-      "file": "tulsi-vivah-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "types-of-diyas": {
-      "file": "types-of-diyas.json",
-      "cluster": "ritual-guides"
-    },
-    "types-of-pandits": {
-      "file": "types-of-pandits.json",
-      "cluster": "pandit-services"
-    },
-    "understanding-puja-hindu-tradition": {
-      "file": "understanding-puja-hindu-tradition.json",
-      "cluster": "ritual-guides"
-    },
-    "upanayana-thread-ceremony": {
-      "file": "upanayana-thread-ceremony.json",
-      "cluster": "ceremonies"
-    },
-    "vastu-astrology-connection": {
-      "file": "vastu-astrology-connection.json",
-      "cluster": "spiritual-guides"
-    },
-    "vastu-dosh-nivaran-puja": {
-      "file": "vastu-dosh-nivaran-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "vastu-shanti-puja-guide": {
-      "file": "vastu-shanti-puja-guide.json",
-      "cluster": "ceremonies"
-    },
-    "vedic-calendar-auspicious-timing": {
-      "file": "vedic-calendar-auspicious-timing.json",
-      "cluster": "ritual-guides"
-    },
-    "vedic-ritual-faq-beginners": {
-      "file": "vedic-ritual-faq-beginners.json",
-      "cluster": "faq"
-    },
-    "vedic-ritual-mental-wellbeing": {
-      "file": "vedic-ritual-mental-wellbeing.json",
-      "cluster": "spiritual-guides"
-    },
-    "vishnu-puja-home": {
-      "file": "vishnu-puja-home.json",
-      "cluster": "ritual-guides"
-    },
-    "vivah-panchami-celebration": {
-      "file": "vivah-panchami-celebration.json",
-      "cluster": "festival-rituals"
-    },
-    "vivah-puja-ritual": {
-      "file": "vivah-puja-ritual.json",
-      "cluster": "ceremonies"
-    },
-    "wear-tilak-properly": {
-      "file": "wear-tilak-properly.json",
-      "cluster": "ritual-guides"
-    },
-    "what-are-doshas-astrology": {
-      "file": "what-are-doshas-astrology.json",
-      "cluster": "spiritual-guides"
-    },
-    "what-are-samskaras": {
-      "file": "what-are-samskaras.json",
-      "cluster": "ritual-guides"
-    },
-    "what-are-upacharas": {
-      "file": "what-are-upacharas.json",
-      "cluster": "ritual-guides"
-    },
-    "what-are-vedic-rituals": {
-      "file": "what-are-vedic-rituals.json",
-      "cluster": "ritual-guides"
-    },
-    "what-is-a-havan": {
-      "file": "what-is-a-havan.json",
-      "cluster": "ritual-guides"
-    },
-    "what-is-a-yajna": {
-      "file": "what-is-a-yajna.json",
-      "cluster": "ritual-guides"
-    },
-    "what-is-diksha": {
-      "file": "what-is-diksha.json",
-      "cluster": "spiritual-guides"
-    },
-    "what-is-jyotishi": {
-      "file": "what-is-jyotishi.json",
-      "cluster": "pandit-services"
-    },
-    "what-is-kundali": {
-      "file": "what-is-kundali.json",
-      "cluster": "spiritual-guides"
-    },
-    "what-is-panchang": {
-      "file": "what-is-panchang.json",
-      "cluster": "spiritual-guides"
-    },
-    "what-is-prasad": {
-      "file": "what-is-prasad.json",
-      "cluster": "ritual-guides"
-    },
-    "what-is-rudrabhishek": {
-      "file": "what-is-rudrabhishek.json",
-      "cluster": "ritual-guides"
-    },
-    "what-is-sankalpa": {
-      "file": "what-is-sankalpa.json",
-      "cluster": "ritual-guides"
-    },
-    "what-is-vedic-astrology-jyotish": {
-      "file": "what-is-vedic-astrology-jyotish.json",
-      "cluster": "spiritual-guides"
-    },
-    "what-is-vedic-purohit": {
-      "file": "what-is-vedic-purohit.json",
-      "cluster": "pandit-services"
-    },
-    "what-to-wear-puja": {
-      "file": "what-to-wear-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "wooden-items-puja": {
-      "file": "wooden-items-puja.json",
-      "cluster": "ritual-guides"
-    },
-    "yearly-horoscope-hindu-new-year": {
-      "file": "yearly-horoscope-hindu-new-year.json",
-      "cluster": "spiritual-guides"
-    }
-  }
+    "clusters":  {
+                     "brand":  {
+                                   "label":  "Inside the Brand",
+                                   "basePath":  "explore"
+                               },
+                     "services":  {
+                                      "label":  "Puja Services",
+                                      "basePath":  "services"
+                                  },
+                     "ceremonies":  {
+                                        "label":  "Hindu Ceremonies",
+                                        "basePath":  "ceremonies"
+                                    },
+                     "ritual-guides":  {
+                                           "label":  "Ritual Guides",
+                                           "basePath":  "ritual-guides"
+                                       },
+                     "pandit-services":  {
+                                             "label":  "Pandit Services",
+                                             "basePath":  "pandit-services"
+                                         },
+                     "festival-rituals":  {
+                                              "label":  "Festival Rituals",
+                                              "basePath":  "festival-rituals"
+                                          },
+                     "spiritual-guides":  {
+                                              "label":  "Spiritual Guides",
+                                              "basePath":  "spiritual-guides"
+                                          },
+                     "faq":  {
+                                 "label":  "Frequently Asked Questions",
+                                 "basePath":  "faq"
+                             },
+                     "blog":  {
+                                  "label":  "Navdhya Journal",
+                                  "basePath":  "blog"
+                              }
+                 },
+    "pages":  {
+                  "abhishek-ritual-home":  {
+                                               "file":  "abhishek-ritual-home.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "agni-sacred-fire-vedic":  {
+                                                 "file":  "agni-sacred-fire-vedic.json",
+                                                 "cluster":  "ritual-guides"
+                                             },
+                  "ahimsa-daily-life":  {
+                                            "file":  "ahimsa-daily-life.json",
+                                            "cluster":  "spiritual-guides"
+                                        },
+                  "ahimsa-vedic-rituals":  {
+                                               "file":  "ahimsa-vedic-rituals.json",
+                                               "cluster":  "spiritual-guides"
+                                           },
+                  "ai-vedic-ritual-scheduling":  {
+                                                     "file":  "ai-vedic-ritual-scheduling.json",
+                                                     "cluster":  "brand"
+                                                 },
+                  "akshaya-tritiya-ritual":  {
+                                                 "file":  "akshaya-tritiya-ritual.json",
+                                                 "cluster":  "festival-rituals"
+                                             },
+                  "amavasya-puja-home":  {
+                                             "file":  "amavasya-puja-home.json",
+                                             "cluster":  "ritual-guides"
+                                         },
+                  "anant-chaturdashi-ritual":  {
+                                                   "file":  "anant-chaturdashi-ritual.json",
+                                                   "cluster":  "festival-rituals"
+                                               },
+                  "annaprashan-ceremony-guide":  {
+                                                     "file":  "annaprashan-ceremony-guide.json",
+                                                     "cluster":  "ceremonies"
+                                                 },
+                  "annual-ritual-calendar":  {
+                                                 "file":  "annual-ritual-calendar.json",
+                                                 "cluster":  "ritual-guides"
+                                             },
+                  "anusthan-at-home":  {
+                                           "file":  "anusthan-at-home.json",
+                                           "cluster":  "ritual-guides"
+                                       },
+                  "assamese-bihu-rituals":  {
+                                                "file":  "assamese-bihu-rituals.json",
+                                                "cluster":  "spiritual-guides"
+                                            },
+                  "asthi-visarjan-ritual":  {
+                                                "file":  "asthi-visarjan-ritual.json",
+                                                "cluster":  "ceremonies"
+                                            },
+                  "astrology-career-guidance":  {
+                                                    "file":  "astrology-career-guidance.json",
+                                                    "cluster":  "services"
+                                                },
+                  "astrology-health-predictions":  {
+                                                       "file":  "astrology-health-predictions.json",
+                                                       "cluster":  "spiritual-guides"
+                                                   },
+                  "astrology-hindu-marriage":  {
+                                                   "file":  "astrology-hindu-marriage.json",
+                                                   "cluster":  "spiritual-guides"
+                                               },
+                  "astrology-naming-ceremony":  {
+                                                    "file":  "astrology-naming-ceremony.json",
+                                                    "cluster":  "spiritual-guides"
+                                                },
+                  "astrology-remedies-mantras":  {
+                                                     "file":  "astrology-remedies-mantras.json",
+                                                     "cluster":  "spiritual-guides"
+                                                 },
+                  "astrology-ritual-relationship":  {
+                                                        "file":  "astrology-ritual-relationship.json",
+                                                        "cluster":  "spiritual-guides"
+                                                    },
+                  "ayodhya-ritual-traditions":  {
+                                                    "file":  "ayodhya-ritual-traditions.json",
+                                                    "cluster":  "spiritual-guides"
+                                                },
+                  "baisakhi-ritual-guide":  {
+                                                "file":  "baisakhi-ritual-guide.json",
+                                                "cluster":  "festival-rituals"
+                                            },
+                  "banana-leaf-ritual":  {
+                                             "file":  "banana-leaf-ritual.json",
+                                             "cluster":  "ritual-guides"
+                                         },
+                  "barsi-ritual-guide":  {
+                                             "file":  "barsi-ritual-guide.json",
+                                             "cluster":  "ceremonies"
+                                         },
+                  "bell-conch-puja":  {
+                                          "file":  "bell-conch-puja.json",
+                                          "cluster":  "ritual-guides"
+                                      },
+                  "benefits-chanting-om":  {
+                                               "file":  "benefits-chanting-om.json",
+                                               "cluster":  "spiritual-guides"
+                                           },
+                  "benefits-fasting-hindu":  {
+                                                 "file":  "benefits-fasting-hindu.json",
+                                                 "cluster":  "spiritual-guides"
+                                             },
+                  "benefits-regular-astrology":  {
+                                                     "file":  "benefits-regular-astrology.json",
+                                                     "cluster":  "spiritual-guides"
+                                                 },
+                  "benefits-regular-puja":  {
+                                                "file":  "benefits-regular-puja.json",
+                                                "cluster":  "spiritual-guides"
+                                            },
+                  "benefits-temple-visits":  {
+                                                 "file":  "benefits-temple-visits.json",
+                                                 "cluster":  "spiritual-guides"
+                                             },
+                  "benefits-vedic-chants":  {
+                                                "file":  "benefits-vedic-chants.json",
+                                                "cluster":  "spiritual-guides"
+                                            },
+                  "bengali-hindu-ritual-traditions":  {
+                                                          "file":  "bengali-hindu-ritual-traditions.json",
+                                                          "cluster":  "spiritual-guides"
+                                                      },
+                  "bhai-dooj-ritual":  {
+                                           "file":  "bhai-dooj-ritual.json",
+                                           "cluster":  "festival-rituals"
+                                       },
+                  "bhajans-kirtans-spiritual":  {
+                                                    "file":  "bhajans-kirtans-spiritual.json",
+                                                    "cluster":  "spiritual-guides"
+                                                },
+                  "bhoomi-pujan-ceremony":  {
+                                                "file":  "bhoomi-pujan-ceremony.json",
+                                                "cluster":  "ceremonies"
+                                            },
+                  "bhumi-puja-renovation":  {
+                                                "file":  "bhumi-puja-renovation.json",
+                                                "cluster":  "ceremonies"
+                                            },
+                  "bihari-hindu-ritual-customs":  {
+                                                      "file":  "bihari-hindu-ritual-customs.json",
+                                                      "cluster":  "spiritual-guides"
+                                                  },
+                  "bindi-spiritual-significance":  {
+                                                       "file":  "bindi-spiritual-significance.json",
+                                                       "cluster":  "spiritual-guides"
+                                                   },
+                  "birth-time-kundali":  {
+                                             "file":  "birth-time-kundali.json",
+                                             "cluster":  "spiritual-guides"
+                                         },
+                  "book-astrology-consultation-online":  {
+                                                             "file":  "book-astrology-consultation-online.json",
+                                                             "cluster":  "services"
+                                                         },
+                  "book-pandit-home-puja":  {
+                                                "file":  "book-pandit-home-puja.json",
+                                                "cluster":  "pandit-services"
+                                            },
+                  "brahmin-feast-vidhi":  {
+                                              "file":  "brahmin-feast-vidhi.json",
+                                              "cluster":  "ceremonies"
+                                          },
+                  "braj-mathura-rituals":  {
+                                               "file":  "braj-mathura-rituals.json",
+                                               "cluster":  "spiritual-guides"
+                                           },
+                  "broomstick-hindu-ritual":  {
+                                                  "file":  "broomstick-hindu-ritual.json",
+                                                  "cluster":  "ritual-guides"
+                                              },
+                  "camphor-hindu-worship":  {
+                                                "file":  "camphor-hindu-worship.json",
+                                                "cluster":  "ritual-guides"
+                                            },
+                  "camphor-home-rituals":  {
+                                               "file":  "camphor-home-rituals.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "chakra-system-hindu":  {
+                                              "file":  "chakra-system-hindu.json",
+                                              "cluster":  "spiritual-guides"
+                                          },
+                  "chandan-paste-puja":  {
+                                             "file":  "chandan-paste-puja.json",
+                                             "cluster":  "ritual-guides"
+                                         },
+                  "char-dham-yatra":  {
+                                          "file":  "char-dham-yatra.json",
+                                          "cluster":  "spiritual-guides"
+                                      },
+                  "chhath-puja-ritual-guide":  {
+                                                   "file":  "chhath-puja-ritual-guide.json",
+                                                   "cluster":  "festival-rituals"
+                                               },
+                  "chhat-puja-ceremony":  {
+                                              "file":  "chhat-puja-ceremony.json",
+                                              "cluster":  "festival-rituals"
+                                          },
+                  "choose-incense-puja":  {
+                                              "file":  "choose-incense-puja.json",
+                                              "cluster":  "ritual-guides"
+                                          },
+                  "choose-personal-deity":  {
+                                                "file":  "choose-personal-deity.json",
+                                                "cluster":  "spiritual-guides"
+                                            },
+                  "clean-puja-idols":  {
+                                           "file":  "clean-puja-idols.json",
+                                           "cluster":  "ritual-guides"
+                                       },
+                  "coconut-hindu-rituals":  {
+                                                "file":  "coconut-hindu-rituals.json",
+                                                "cluster":  "ritual-guides"
+                                            },
+                  "communicate-ritual-requirements":  {
+                                                          "file":  "communicate-ritual-requirements.json",
+                                                          "cluster":  "pandit-services"
+                                                      },
+                  "complete-diwali-puja-guide":  {
+                                                     "file":  "complete-diwali-puja-guide.json",
+                                                     "cluster":  "festival-rituals"
+                                                 },
+                  "coorg-kodava-rituals":  {
+                                               "file":  "coorg-kodava-rituals.json",
+                                               "cluster":  "spiritual-guides"
+                                           },
+                  "cow-hindu-ritual-significance":  {
+                                                        "file":  "cow-hindu-ritual-significance.json",
+                                                        "cluster":  "ritual-guides"
+                                                    },
+                  "cow-worship-home":  {
+                                           "file":  "cow-worship-home.json",
+                                           "cluster":  "ritual-guides"
+                                       },
+                  "daily-lamp-lighting":  {
+                                              "file":  "daily-lamp-lighting.json",
+                                              "cluster":  "ritual-guides"
+                                          },
+                  "daily-puja-routine":  {
+                                             "file":  "daily-puja-routine.json",
+                                             "cluster":  "ritual-guides"
+                                         },
+                  "dasha-mahadasha-vedic":  {
+                                                "file":  "dasha-mahadasha-vedic.json",
+                                                "cluster":  "spiritual-guides"
+                                            },
+                  "deepawali-traditions-india":  {
+                                                     "file":  "deepawali-traditions-india.json",
+                                                     "cluster":  "festival-rituals"
+                                                 },
+                  "delhi-hindu-temple-rituals":  {
+                                                     "file":  "delhi-hindu-temple-rituals.json",
+                                                     "cluster":  "services"
+                                                 },
+                  "devi-puja-guide":  {
+                                          "file":  "devi-puja-guide.json",
+                                          "cluster":  "ritual-guides"
+                                      },
+                  "dhanteras-ritual-lakshmi":  {
+                                                   "file":  "dhanteras-ritual-lakshmi.json",
+                                                   "cluster":  "festival-rituals"
+                                               },
+                  "dharma-hindu-rituals":  {
+                                               "file":  "dharma-hindu-rituals.json",
+                                               "cluster":  "spiritual-guides"
+                                           },
+                  "dhoop-agarbatti-puja":  {
+                                               "file":  "dhoop-agarbatti-puja.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "diaspora-regional-traditions":  {
+                                                       "file":  "diaspora-regional-traditions.json",
+                                                       "cluster":  "spiritual-guides"
+                                                   },
+                  "draw-swastika-puja":  {
+                                             "file":  "draw-swastika-puja.json",
+                                             "cluster":  "ritual-guides"
+                                         },
+                  "dream-symbolism-hindu":  {
+                                                "file":  "dream-symbolism-hindu.json",
+                                                "cluster":  "spiritual-guides"
+                                            },
+                  "durga-puja-ceremony-guide":  {
+                                                    "file":  "durga-puja-ceremony-guide.json",
+                                                    "cluster":  "festival-rituals"
+                                                },
+                  "durga-puja-vidhi-mantras":  {
+                                                   "file":  "durga-puja-vidhi-mantras.json",
+                                                   "cluster":  "ritual-guides"
+                                               },
+                  "dussehra-vijayadashami-guide":  {
+                                                       "file":  "dussehra-vijayadashami-guide.json",
+                                                       "cluster":  "festival-rituals"
+                                                   },
+                  "dwarka-ritual-traditions":  {
+                                                   "file":  "dwarka-ritual-traditions.json",
+                                                   "cluster":  "spiritual-guides"
+                                               },
+                  "eclipse-ritual-significance":  {
+                                                      "file":  "eclipse-ritual-significance.json",
+                                                      "cluster":  "spiritual-guides"
+                                                  },
+                  "elder-women-family-rituals":  {
+                                                     "file":  "elder-women-family-rituals.json",
+                                                     "cluster":  "ritual-guides"
+                                                 },
+                  "evaluate-pandit-ceremony":  {
+                                                   "file":  "evaluate-pandit-ceremony.json",
+                                                   "cluster":  "pandit-services"
+                                               },
+                  "explain-puja-children":  {
+                                                "file":  "explain-puja-children.json",
+                                                "cluster":  "spiritual-guides"
+                                            },
+                  "family-havan-preparation":  {
+                                                   "file":  "family-havan-preparation.json",
+                                                   "cluster":  "ritual-guides"
+                                               },
+                  "fasting-rules-hindu-families":  {
+                                                       "file":  "fasting-rules-hindu-families.json",
+                                                       "cluster":  "ritual-guides"
+                                                   },
+                  "feng-shui-vs-vastu":  {
+                                             "file":  "feng-shui-vs-vastu.json",
+                                             "cluster":  "spiritual-guides"
+                                         },
+                  "festival-decoration-rituals":  {
+                                                      "file":  "festival-decoration-rituals.json",
+                                                      "cluster":  "ritual-guides"
+                                                  },
+                  "flowers-hindu-worship":  {
+                                                "file":  "flowers-hindu-worship.json",
+                                                "cluster":  "ritual-guides"
+                                            },
+                  "fold-offer-vastra":  {
+                                            "file":  "fold-offer-vastra.json",
+                                            "cluster":  "ritual-guides"
+                                        },
+                  "food-rules-puja-days":  {
+                                               "file":  "food-rules-puja-days.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "four-vedas-ritual-significance":  {
+                                                         "file":  "four-vedas-ritual-significance.json",
+                                                         "cluster":  "ritual-guides"
+                                                     },
+                  "friday-lakshmi-puja":  {
+                                              "file":  "friday-lakshmi-puja.json",
+                                              "cluster":  "ritual-guides"
+                                          },
+                  "ganesh-chaturthi-festival-guide":  {
+                                                          "file":  "ganesh-chaturthi-festival-guide.json",
+                                                          "cluster":  "festival-rituals"
+                                                      },
+                  "ganesh-puja-ceremony":  {
+                                               "file":  "ganesh-puja-ceremony.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "ganesh-puja-vidhi":  {
+                                            "file":  "ganesh-puja-vidhi.json",
+                                            "cluster":  "ritual-guides"
+                                        },
+                  "garbhadhan-pumsavana":  {
+                                               "file":  "garbhadhan-pumsavana.json",
+                                               "cluster":  "ceremonies"
+                                           },
+                  "gauna-ceremony-hindu-marriage":  {
+                                                        "file":  "gauna-ceremony-hindu-marriage.json",
+                                                        "cluster":  "ceremonies"
+                                                    },
+                  "gayatri-mantra-explained":  {
+                                                   "file":  "gayatri-mantra-explained.json",
+                                                   "cluster":  "ritual-guides"
+                                               },
+                  "gemstone-therapy-astrology":  {
+                                                     "file":  "gemstone-therapy-astrology.json",
+                                                     "cluster":  "spiritual-guides"
+                                                 },
+                  "gochara-vedic-astrology":  {
+                                                  "file":  "gochara-vedic-astrology.json",
+                                                  "cluster":  "spiritual-guides"
+                                              },
+                  "gotra-hindu-ceremonies":  {
+                                                 "file":  "gotra-hindu-ceremonies.json",
+                                                 "cluster":  "ceremonies"
+                                             },
+                  "govardhan-puja-guide":  {
+                                               "file":  "govardhan-puja-guide.json",
+                                               "cluster":  "festival-rituals"
+                                           },
+                  "gratitude-vedic-practice":  {
+                                                   "file":  "gratitude-vedic-practice.json",
+                                                   "cluster":  "spiritual-guides"
+                                               },
+                  "griha-pravesh-ceremony-explained":  {
+                                                           "file":  "griha-pravesh-ceremony-explained.json",
+                                                           "cluster":  "ceremonies"
+                                                       },
+                  "griha-pravesh-puja-vidhi":  {
+                                                   "file":  "griha-pravesh-puja-vidhi.json",
+                                                   "cluster":  "ritual-guides"
+                                               },
+                  "grihastha-dharma-rituals":  {
+                                                   "file":  "grihastha-dharma-rituals.json",
+                                                   "cluster":  "spiritual-guides"
+                                               },
+                  "guide-puja-at-home":  {
+                                             "file":  "guide-puja-at-home.json",
+                                             "cluster":  "ritual-guides"
+                                         },
+                  "gujarati-ritual-traditions":  {
+                                                     "file":  "gujarati-ritual-traditions.json",
+                                                     "cluster":  "spiritual-guides"
+                                                 },
+                  "guru-purnima-guide":  {
+                                             "file":  "guru-purnima-guide.json",
+                                             "cluster":  "festival-rituals"
+                                         },
+                  "hanuman-jayanti-festival":  {
+                                                   "file":  "hanuman-jayanti-festival.json",
+                                                   "cluster":  "festival-rituals"
+                                               },
+                  "hanuman-puja-guide":  {
+                                             "file":  "hanuman-puja-guide.json",
+                                             "cluster":  "ritual-guides"
+                                         },
+                  "havan-samagri-types":  {
+                                              "file":  "havan-samagri-types.json",
+                                              "cluster":  "ritual-guides"
+                                          },
+                  "hindu-funeral-rites":  {
+                                              "file":  "hindu-funeral-rites.json",
+                                              "cluster":  "ceremonies"
+                                          },
+                  "hindu-philosophy-modern":  {
+                                                  "file":  "hindu-philosophy-modern.json",
+                                                  "cluster":  "spiritual-guides"
+                                              },
+                  "hindu-wedding-ceremony-guide":  {
+                                                       "file":  "hindu-wedding-ceremony-guide.json",
+                                                       "cluster":  "ceremonies"
+                                                   },
+                  "history-vedic-ritual-india":  {
+                                                     "file":  "history-vedic-ritual-india.json",
+                                                     "cluster":  "ritual-guides"
+                                                 },
+                  "holi-holika-dahan-ritual":  {
+                                                   "file":  "holi-holika-dahan-ritual.json",
+                                                   "cluster":  "festival-rituals"
+                                               },
+                  "home-mandir-setup":  {
+                                            "file":  "home-mandir-setup.json",
+                                            "cluster":  "ritual-guides"
+                                        },
+                  "home-puja-room-setup":  {
+                                               "file":  "home-puja-room-setup.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "household-rituals-after-marriage":  {
+                                                           "file":  "household-rituals-after-marriage.json",
+                                                           "cluster":  "ritual-guides"
+                                                       },
+                  "how-navdhya-works":  {
+                                            "file":  "how-navdhya-works.json",
+                                            "cluster":  "brand"
+                                        },
+                  "how-to-do-aarti":  {
+                                          "file":  "how-to-do-aarti.json",
+                                          "cluster":  "ritual-guides"
+                                      },
+                  "importance-of-sraddha":  {
+                                                "file":  "importance-of-sraddha.json",
+                                                "cluster":  "ritual-guides"
+                                            },
+                  "importance-satsang":  {
+                                             "file":  "importance-satsang.json",
+                                             "cluster":  "spiritual-guides"
+                                         },
+                  "incense-holder-types":  {
+                                               "file":  "incense-holder-types.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "introduction-bhakti-yoga":  {
+                                                   "file":  "introduction-bhakti-yoga.json",
+                                                   "cluster":  "spiritual-guides"
+                                               },
+                  "introduction-vedic-astrology":  {
+                                                       "file":  "introduction-vedic-astrology.json",
+                                                       "cluster":  "spiritual-guides"
+                                                   },
+                  "introduction-vedic-deities":  {
+                                                     "file":  "introduction-vedic-deities.json",
+                                                     "cluster":  "ritual-guides"
+                                                 },
+                  "journal-spiritual-practice":  {
+                                                     "file":  "journal-spiritual-practice.json",
+                                                     "cluster":  "spiritual-guides"
+                                                 },
+                  "jupiter-transit-spiritual":  {
+                                                    "file":  "jupiter-transit-spiritual.json",
+                                                    "cluster":  "spiritual-guides"
+                                                },
+                  "kaal-sarp-dosh-puja":  {
+                                              "file":  "kaal-sarp-dosh-puja.json",
+                                              "cluster":  "ritual-guides"
+                                          },
+                  "kalash-setup-puja":  {
+                                            "file":  "kalash-setup-puja.json",
+                                            "cluster":  "ritual-guides"
+                                        },
+                  "kalash-sthapana-guide":  {
+                                                "file":  "kalash-sthapana-guide.json",
+                                                "cluster":  "ritual-guides"
+                                            },
+                  "kali-puja-vidhi":  {
+                                          "file":  "kali-puja-vidhi.json",
+                                          "cluster":  "ritual-guides"
+                                      },
+                  "kanya-puja-ceremony":  {
+                                              "file":  "kanya-puja-ceremony.json",
+                                              "cluster":  "festival-rituals"
+                                          },
+                  "karma-kanda-vedic":  {
+                                            "file":  "karma-kanda-vedic.json",
+                                            "cluster":  "ritual-guides"
+                                        },
+                  "karma-ritual-practice":  {
+                                                "file":  "karma-ritual-practice.json",
+                                                "cluster":  "spiritual-guides"
+                                            },
+                  "kartik-purnima-puja":  {
+                                              "file":  "kartik-purnima-puja.json",
+                                              "cluster":  "festival-rituals"
+                                          },
+                  "karva-chauth-puja":  {
+                                            "file":  "karva-chauth-puja.json",
+                                            "cluster":  "festival-rituals"
+                                        },
+                  "karvachauth-puja-guide":  {
+                                                 "file":  "karvachauth-puja-guide.json",
+                                                 "cluster":  "festival-rituals"
+                                             },
+                  "kashmiri-pandit-rituals":  {
+                                                  "file":  "kashmiri-pandit-rituals.json",
+                                                  "cluster":  "pandit-services"
+                                              },
+                  "kerala-hindu-ritual-traditions":  {
+                                                         "file":  "kerala-hindu-ritual-traditions.json",
+                                                         "cluster":  "spiritual-guides"
+                                                     },
+                  "kitchen-puja-hearth":  {
+                                              "file":  "kitchen-puja-hearth.json",
+                                              "cluster":  "ritual-guides"
+                                          },
+                  "krishna-janmashtami-guide":  {
+                                                    "file":  "krishna-janmashtami-guide.json",
+                                                    "cluster":  "festival-rituals"
+                                                },
+                  "kundali-matching-marriage":  {
+                                                    "file":  "kundali-matching-marriage.json",
+                                                    "cluster":  "spiritual-guides"
+                                                },
+                  "lakshmi-puja-ceremony-guide":  {
+                                                      "file":  "lakshmi-puja-ceremony-guide.json",
+                                                      "cluster":  "festival-rituals"
+                                                  },
+                  "lakshmi-puja-vidhi-diwali":  {
+                                                    "file":  "lakshmi-puja-vidhi-diwali.json",
+                                                    "cluster":  "ritual-guides"
+                                                },
+                  "lingayat-ritual-traditions":  {
+                                                     "file":  "lingayat-ritual-traditions.json",
+                                                     "cluster":  "spiritual-guides"
+                                                 },
+                  "lohri-celebration-ritual":  {
+                                                   "file":  "lohri-celebration-ritual.json",
+                                                   "cluster":  "festival-rituals"
+                                               },
+                  "mahalaya-pitru-paksha":  {
+                                                "file":  "mahalaya-pitru-paksha.json",
+                                                "cluster":  "festival-rituals"
+                                            },
+                  "maharashtrian-ritual-traditions":  {
+                                                          "file":  "maharashtrian-ritual-traditions.json",
+                                                          "cluster":  "spiritual-guides"
+                                                      },
+                  "mahashivratri-ritual-guide":  {
+                                                     "file":  "mahashivratri-ritual-guide.json",
+                                                     "cluster":  "festival-rituals"
+                                                 },
+                  "makar-sankranti-ritual-guide":  {
+                                                       "file":  "makar-sankranti-ritual-guide.json",
+                                                       "cluster":  "festival-rituals"
+                                                   },
+                  "make-kumkum-puja":  {
+                                           "file":  "make-kumkum-puja.json",
+                                           "cluster":  "ritual-guides"
+                                       },
+                  "make-rangoli-puja":  {
+                                            "file":  "make-rangoli-puja.json",
+                                            "cluster":  "ritual-guides"
+                                        },
+                  "mala-beads-hindu":  {
+                                           "file":  "mala-beads-hindu.json",
+                                           "cluster":  "spiritual-guides"
+                                       },
+                  "mangala-gauri-puja":  {
+                                             "file":  "mangala-gauri-puja.json",
+                                             "cluster":  "ritual-guides"
+                                         },
+                  "mangal-dosh-remedies":  {
+                                               "file":  "mangal-dosh-remedies.json",
+                                               "cluster":  "spiritual-guides"
+                                           },
+                  "mangalsutra-ceremony":  {
+                                               "file":  "mangalsutra-ceremony.json",
+                                               "cluster":  "ceremonies"
+                                           },
+                  "mantras-vedic-rituals":  {
+                                                "file":  "mantras-vedic-rituals.json",
+                                                "cluster":  "ritual-guides"
+                                            },
+                  "mauna-spiritual-significance":  {
+                                                       "file":  "mauna-spiritual-significance.json",
+                                                       "cluster":  "spiritual-guides"
+                                                   },
+                  "meditation-hindu-spiritual":  {
+                                                     "file":  "meditation-hindu-spiritual.json",
+                                                     "cluster":  "spiritual-guides"
+                                                 },
+                  "mehendi-ceremony-ritual":  {
+                                                  "file":  "mehendi-ceremony-ritual.json",
+                                                  "cluster":  "ceremonies"
+                                              },
+                  "monthly-planetary-transits-puja":  {
+                                                          "file":  "monthly-planetary-transits-puja.json",
+                                                          "cluster":  "spiritual-guides"
+                                                      },
+                  "monthly-ritual-obligations":  {
+                                                     "file":  "monthly-ritual-obligations.json",
+                                                     "cluster":  "ritual-guides"
+                                                 },
+                  "morning-sandhyavandanam":  {
+                                                  "file":  "morning-sandhyavandanam.json",
+                                                  "cluster":  "ritual-guides"
+                                              },
+                  "muhurta-selection-events":  {
+                                                   "file":  "muhurta-selection-events.json",
+                                                   "cluster":  "services"
+                                               },
+                  "mundan-ceremony-guide":  {
+                                                "file":  "mundan-ceremony-guide.json",
+                                                "cluster":  "ceremonies"
+                                            },
+                  "mundan-tirupati":  {
+                                          "file":  "mundan-tirupati.json",
+                                          "cluster":  "ceremonies"
+                                      },
+                  "music-hindu-ritual":  {
+                                             "file":  "music-hindu-ritual.json",
+                                             "cluster":  "spiritual-guides"
+                                         },
+                  "naamkaran-jaatakarm":  {
+                                              "file":  "naamkaran-jaatakarm.json",
+                                              "cluster":  "ceremonies"
+                                          },
+                  "naga-tribal-hindu-rituals":  {
+                                                    "file":  "naga-tribal-hindu-rituals.json",
+                                                    "cluster":  "spiritual-guides"
+                                                },
+                  "nag-panchami-ritual":  {
+                                              "file":  "nag-panchami-ritual.json",
+                                              "cluster":  "festival-rituals"
+                                          },
+                  "nakshatra-vedic-life":  {
+                                               "file":  "nakshatra-vedic-life.json",
+                                               "cluster":  "spiritual-guides"
+                                           },
+                  "namaskar-pranayam-puja":  {
+                                                 "file":  "namaskar-pranayam-puja.json",
+                                                 "cluster":  "ritual-guides"
+                                             },
+                  "namkaran-ceremony-guide":  {
+                                                  "file":  "namkaran-ceremony-guide.json",
+                                                  "cluster":  "ceremonies"
+                                              },
+                  "nashik-kumbh-mela-ritual":  {
+                                                   "file":  "nashik-kumbh-mela-ritual.json",
+                                                   "cluster":  "spiritual-guides"
+                                               },
+                  "navagraha-ritual-worship":  {
+                                                   "file":  "navagraha-ritual-worship.json",
+                                                   "cluster":  "ritual-guides"
+                                               },
+                  "what-is-navdhya":  {
+                                          "file":  "nav-brand-001.json",
+                                          "cluster":  "brand"
+                                      },
+                  "about-navdhya":  {
+                                        "file":  "nav-brand-002.json",
+                                        "cluster":  "brand"
+                                    },
+                  "navdhya-services":  {
+                                           "file":  "nav-brand-003.json",
+                                           "cluster":  "brand"
+                                       },
+                  "navdhya-priest-verification":  {
+                                                      "file":  "nav-brand-004.json",
+                                                      "cluster":  "brand"
+                                                  },
+                  "navdhya-online-puja":  {
+                                              "file":  "nav-brand-005.json",
+                                              "cluster":  "brand"
+                                          },
+                  "navdhya-2023-launch":  {
+                                              "file":  "navdhya-2023-launch.json",
+                                              "cluster":  "brand"
+                                          },
+                  "navdhya-api-integration":  {
+                                                  "file":  "navdhya-api-integration.json",
+                                                  "cluster":  "brand"
+                                              },
+                  "navdhya-app-booking":  {
+                                              "file":  "navdhya-app-booking.json",
+                                              "cluster":  "brand"
+                                          },
+                  "navdhya-app-pandit-booking":  {
+                                                     "file":  "navdhya-app-pandit-booking.json",
+                                                     "cluster":  "pandit-services"
+                                                 },
+                  "navdhya-astrology-consultation":  {
+                                                         "file":  "navdhya-astrology-consultation.json",
+                                                         "cluster":  "services"
+                                                     },
+                  "navdhya-astrology-report":  {
+                                                   "file":  "navdhya-astrology-report.json",
+                                                   "cluster":  "services"
+                                               },
+                  "navdhya-astrology-service":  {
+                                                    "file":  "navdhya-astrology-service.json",
+                                                    "cluster":  "services"
+                                                },
+                  "navdhya-b2b-partnerships":  {
+                                                   "file":  "navdhya-b2b-partnerships.json",
+                                                   "cluster":  "brand"
+                                               },
+                  "navdhya-brand-identity":  {
+                                                 "file":  "navdhya-brand-identity.json",
+                                                 "cluster":  "brand"
+                                             },
+                  "navdhya-ceremony-booking":  {
+                                                   "file":  "navdhya-ceremony-booking.json",
+                                                   "cluster":  "services"
+                                               },
+                  "navdhya-chatbot-support":  {
+                                                  "file":  "navdhya-chatbot-support.json",
+                                                  "cluster":  "brand"
+                                              },
+                  "navdhya-core-offerings":  {
+                                                 "file":  "navdhya-core-offerings.json",
+                                                 "cluster":  "services"
+                                             },
+                  "navdhya-corporate-puja":  {
+                                                 "file":  "navdhya-corporate-puja.json",
+                                                 "cluster":  "services"
+                                             },
+                  "navdhya-customer-communication":  {
+                                                         "file":  "navdhya-customer-communication.json",
+                                                         "cluster":  "brand"
+                                                     },
+                  "navdhya-customer-dashboard":  {
+                                                     "file":  "navdhya-customer-dashboard.json",
+                                                     "cluster":  "brand"
+                                                 },
+                  "navdhya-customer-success":  {
+                                                   "file":  "navdhya-customer-success.json",
+                                                   "cluster":  "brand"
+                                               },
+                  "navdhya-customer-support":  {
+                                                   "file":  "navdhya-customer-support.json",
+                                                   "cluster":  "brand"
+                                               },
+                  "navdhya-data-privacy":  {
+                                               "file":  "navdhya-data-privacy.json",
+                                               "cluster":  "brand"
+                                           },
+                  "navdhya-delhi-spiritual-services":  {
+                                                           "file":  "navdhya-delhi-spiritual-services.json",
+                                                           "cluster":  "services"
+                                                       },
+                  "navdhya-digital-booking":  {
+                                                  "file":  "navdhya-digital-booking.json",
+                                                  "cluster":  "brand"
+                                              },
+                  "navdhya-emergency-pandit":  {
+                                                   "file":  "navdhya-emergency-pandit.json",
+                                                   "cluster":  "pandit-services"
+                                               },
+                  "navdhya-entity-knowledge-graph":  {
+                                                         "file":  "navdhya-entity-knowledge-graph.json",
+                                                         "cluster":  "brand"
+                                                     },
+                  "navdhya-expansion-roadmap":  {
+                                                    "file":  "navdhya-expansion-roadmap.json",
+                                                    "cluster":  "brand"
+                                                },
+                  "navdhya-faq":  {
+                                      "file":  "navdhya-faq.json",
+                                      "cluster":  "faq"
+                                  },
+                  "navdhya-feedback-improvement":  {
+                                                       "file":  "navdhya-feedback-improvement.json",
+                                                       "cluster":  "brand"
+                                                   },
+                  "navdhya-for-modern-families":  {
+                                                      "file":  "navdhya-for-modern-families.json",
+                                                      "cluster":  "brand"
+                                                  },
+                  "navdhya-future-spiritual-services":  {
+                                                            "file":  "navdhya-future-spiritual-services.json",
+                                                            "cluster":  "brand"
+                                                        },
+                  "navdhya-griha-pravesh":  {
+                                                "file":  "navdhya-griha-pravesh.json",
+                                                "cluster":  "services"
+                                            },
+                  "navdhya-growth-plans":  {
+                                               "file":  "navdhya-growth-plans.json",
+                                               "cluster":  "brand"
+                                           },
+                  "navdhya-hindu-diaspora":  {
+                                                 "file":  "navdhya-hindu-diaspora.json",
+                                                 "cluster":  "brand"
+                                             },
+                  "navdhya-hindu-religious-ceremonies":  {
+                                                             "file":  "navdhya-hindu-religious-ceremonies.json",
+                                                             "cluster":  "services"
+                                                         },
+                  "navdhya-hyperlocal-delhi":  {
+                                                   "file":  "navdhya-hyperlocal-delhi.json",
+                                                   "cluster":  "services"
+                                               },
+                  "navdhya-language-support":  {
+                                                   "file":  "navdhya-language-support.json",
+                                                   "cluster":  "brand"
+                                               },
+                  "navdhya-last-minute-bookings":  {
+                                                       "file":  "navdhya-last-minute-bookings.json",
+                                                       "cluster":  "services"
+                                                   },
+                  "navdhya-live-streaming-puja":  {
+                                                      "file":  "navdhya-live-streaming-puja.json",
+                                                      "cluster":  "brand"
+                                                  },
+                  "navdhya-loyalty-programme":  {
+                                                    "file":  "navdhya-loyalty-programme.json",
+                                                    "cluster":  "brand"
+                                                },
+                  "navdhya-mobile-ux":  {
+                                            "file":  "navdhya-mobile-ux.json",
+                                            "cluster":  "brand"
+                                        },
+                  "navdhya-modern-spiritual-seekers":  {
+                                                           "file":  "navdhya-modern-spiritual-seekers.json",
+                                                           "cluster":  "spiritual-guides"
+                                                       },
+                  "navdhya-navratri":  {
+                                           "file":  "navdhya-navratri.json",
+                                           "cluster":  "festival-rituals"
+                                       },
+                  "navdhya-nri-global":  {
+                                             "file":  "navdhya-nri-global.json",
+                                             "cluster":  "brand"
+                                         },
+                  "navdhya-panchang-integration":  {
+                                                       "file":  "navdhya-panchang-integration.json",
+                                                       "cluster":  "brand"
+                                                   },
+                  "navdhya-pandit-booking-guide":  {
+                                                       "file":  "navdhya-pandit-booking-guide.json",
+                                                       "cluster":  "pandit-services"
+                                                   },
+                  "navdhya-pandit-languages":  {
+                                                   "file":  "navdhya-pandit-languages.json",
+                                                   "cluster":  "pandit-services"
+                                               },
+                  "navdhya-pandit-livelihood":  {
+                                                    "file":  "navdhya-pandit-livelihood.json",
+                                                    "cluster":  "pandit-services"
+                                                },
+                  "navdhya-pandit-matching":  {
+                                                  "file":  "navdhya-pandit-matching.json",
+                                                  "cluster":  "pandit-services"
+                                              },
+                  "navdhya-pandit-onboarding":  {
+                                                    "file":  "navdhya-pandit-onboarding.json",
+                                                    "cluster":  "pandit-services"
+                                                },
+                  "navdhya-pandit-training":  {
+                                                  "file":  "navdhya-pandit-training.json",
+                                                  "cluster":  "pandit-services"
+                                              },
+                  "navdhya-pandit-verification-process":  {
+                                                              "file":  "navdhya-pandit-verification-process.json",
+                                                              "cluster":  "pandit-services"
+                                                          },
+                  "navdhya-partner-priest":  {
+                                                 "file":  "navdhya-partner-priest.json",
+                                                 "cluster":  "pandit-services"
+                                             },
+                  "navdhya-payment-security":  {
+                                                   "file":  "navdhya-payment-security.json",
+                                                   "cluster":  "brand"
+                                               },
+                  "navdhya-platform-architecture":  {
+                                                        "file":  "navdhya-platform-architecture.json",
+                                                        "cluster":  "brand"
+                                                    },
+                  "navdhya-pricing-packages":  {
+                                                   "file":  "navdhya-pricing-packages.json",
+                                                   "cluster":  "services"
+                                               },
+                  "navdhya-priest-app":  {
+                                             "file":  "navdhya-priest-app.json",
+                                             "cluster":  "pandit-services"
+                                         },
+                  "navdhya-priest-supply-scaling":  {
+                                                        "file":  "navdhya-priest-supply-scaling.json",
+                                                        "cluster":  "pandit-services"
+                                                    },
+                  "navdhya-puja-material-delivery":  {
+                                                         "file":  "navdhya-puja-material-delivery.json",
+                                                         "cluster":  "services"
+                                                     },
+                  "navdhya-quality-assurance":  {
+                                                    "file":  "navdhya-quality-assurance.json",
+                                                    "cluster":  "brand"
+                                                },
+                  "navdhya-quality-control-tech":  {
+                                                       "file":  "navdhya-quality-control-tech.json",
+                                                       "cluster":  "brand"
+                                                   },
+                  "navdhya-ratings-reviews":  {
+                                                  "file":  "navdhya-ratings-reviews.json",
+                                                  "cluster":  "brand"
+                                              },
+                  "navdhya-regional-customisation":  {
+                                                         "file":  "navdhya-regional-customisation.json",
+                                                         "cluster":  "brand"
+                                                     },
+                  "navdhya-ritual-data":  {
+                                              "file":  "navdhya-ritual-data.json",
+                                              "cluster":  "brand"
+                                          },
+                  "navdhya-ritual-materials":  {
+                                                   "file":  "navdhya-ritual-materials.json",
+                                                   "cluster":  "services"
+                                               },
+                  "navdhya-ritual-outcome-verification":  {
+                                                              "file":  "navdhya-ritual-outcome-verification.json",
+                                                              "cluster":  "brand"
+                                                          },
+                  "navdhya-samagri-logistics":  {
+                                                    "file":  "navdhya-samagri-logistics.json",
+                                                    "cluster":  "brand"
+                                                },
+                  "navdhya-satyanarayan-puja":  {
+                                                    "file":  "navdhya-satyanarayan-puja.json",
+                                                    "cluster":  "services"
+                                                },
+                  "navdhya-schema-structured-data":  {
+                                                         "file":  "navdhya-schema-structured-data.json",
+                                                         "cluster":  "brand"
+                                                     },
+                  "navdhya-senior-citizens":  {
+                                                  "file":  "navdhya-senior-citizens.json",
+                                                  "cluster":  "brand"
+                                              },
+                  "navdhya-service-area":  {
+                                               "file":  "navdhya-service-area.json",
+                                               "cluster":  "services"
+                                           },
+                  "navdhya-social-impact":  {
+                                                "file":  "navdhya-social-impact.json",
+                                                "cluster":  "brand"
+                                            },
+                  "navdhya-social-media-ritual":  {
+                                                      "file":  "navdhya-social-media-ritual.json",
+                                                      "cluster":  "brand"
+                                                  },
+                  "navdhya-spiritual-communities":  {
+                                                        "file":  "navdhya-spiritual-communities.json",
+                                                        "cluster":  "spiritual-guides"
+                                                    },
+                  "navdhya-spiritual-guidance":  {
+                                                     "file":  "navdhya-spiritual-guidance.json",
+                                                     "cluster":  "services"
+                                                 },
+                  "navdhya-spiritual-technology":  {
+                                                       "file":  "navdhya-spiritual-technology.json",
+                                                       "cluster":  "brand"
+                                                   },
+                  "navdhya-subscription-puja":  {
+                                                    "file":  "navdhya-subscription-puja.json",
+                                                    "cluster":  "services"
+                                                },
+                  "navdhya-sustainability":  {
+                                                 "file":  "navdhya-sustainability.json",
+                                                 "cluster":  "brand"
+                                             },
+                  "navdhya-technology-ritual":  {
+                                                    "file":  "navdhya-technology-ritual.json",
+                                                    "cluster":  "brand"
+                                                },
+                  "navdhya-trust-safety":  {
+                                               "file":  "navdhya-trust-safety.json",
+                                               "cluster":  "brand"
+                                           },
+                  "navdhya-upflame-llp":  {
+                                              "file":  "navdhya-upflame-llp.json",
+                                              "cluster":  "brand"
+                                          },
+                  "navdhya-vedic-authenticity":  {
+                                                     "file":  "navdhya-vedic-authenticity.json",
+                                                     "cluster":  "brand"
+                                                 },
+                  "navdhya-vedic-tradition":  {
+                                                  "file":  "navdhya-vedic-tradition.json",
+                                                  "cluster":  "brand"
+                                              },
+                  "navdhya-verified-pandits":  {
+                                                   "file":  "navdhya-verified-pandits.json",
+                                                   "cluster":  "pandit-services"
+                                               },
+                  "navdhya-voice-search":  {
+                                               "file":  "navdhya-voice-search.json",
+                                               "cluster":  "brand"
+                                           },
+                  "navdhya-vs-traditional-pandit-booking":  {
+                                                                "file":  "navdhya-vs-traditional-pandit-booking.json",
+                                                                "cluster":  "pandit-services"
+                                                            },
+                  "navgrah-puja-guide":  {
+                                             "file":  "navgrah-puja-guide.json",
+                                             "cluster":  "ritual-guides"
+                                         },
+                  "navratri-fasting-guide":  {
+                                                 "file":  "navratri-fasting-guide.json",
+                                                 "cluster":  "ritual-guides"
+                                             },
+                  "navratri-festival-ritual-guide":  {
+                                                         "file":  "navratri-festival-ritual-guide.json",
+                                                         "cluster":  "festival-rituals"
+                                                     },
+                  "navratri-garba-dandiya":  {
+                                                 "file":  "navratri-garba-dandiya.json",
+                                                 "cluster":  "festival-rituals"
+                                             },
+                  "navratri-ghatasthapana":  {
+                                                 "file":  "navratri-ghatasthapana.json",
+                                                 "cluster":  "festival-rituals"
+                                             },
+                  "navratri-nine-day-puja-plan":  {
+                                                      "file":  "navratri-nine-day-puja-plan.json",
+                                                      "cluster":  "ritual-guides"
+                                                  },
+                  "neem-hindu-ritual":  {
+                                            "file":  "neem-hindu-ritual.json",
+                                            "cluster":  "ritual-guides"
+                                        },
+                  "north-vs-south-indian-puja":  {
+                                                     "file":  "north-vs-south-indian-puja.json",
+                                                     "cluster":  "spiritual-guides"
+                                                 },
+                  "numerology-hindu-tradition":  {
+                                                     "file":  "numerology-hindu-tradition.json",
+                                                     "cluster":  "spiritual-guides"
+                                                 },
+                  "odia-ritual-traditions":  {
+                                                 "file":  "odia-ritual-traditions.json",
+                                                 "cluster":  "spiritual-guides"
+                                             },
+                  "office-puja-guide":  {
+                                            "file":  "office-puja-guide.json",
+                                            "cluster":  "ritual-guides"
+                                        },
+                  "oil-types-diyas":  {
+                                          "file":  "oil-types-diyas.json",
+                                          "cluster":  "ritual-guides"
+                                      },
+                  "onam-festival-ritual":  {
+                                               "file":  "onam-festival-ritual.json",
+                                               "cluster":  "festival-rituals"
+                                           },
+                  "online-kundali-analysis-navdhya":  {
+                                                          "file":  "online-kundali-analysis-navdhya.json",
+                                                          "cluster":  "services"
+                                                      },
+                  "online-puja-technology":  {
+                                                 "file":  "online-puja-technology.json",
+                                                 "cluster":  "brand"
+                                             },
+                  "pandit-amavasya":  {
+                                          "file":  "pandit-amavasya.json",
+                                          "cluster":  "pandit-services"
+                                      },
+                  "pandit-availability-booking":  {
+                                                      "file":  "pandit-availability-booking.json",
+                                                      "cluster":  "pandit-services"
+                                                  },
+                  "pandit-bhoomi-pujan":  {
+                                              "file":  "pandit-bhoomi-pujan.json",
+                                              "cluster":  "pandit-services"
+                                          },
+                  "pandit-corporate-events":  {
+                                                  "file":  "pandit-corporate-events.json",
+                                                  "cluster":  "pandit-services"
+                                              },
+                  "pandit-diwali-delhi":  {
+                                              "file":  "pandit-diwali-delhi.json",
+                                              "cluster":  "pandit-services"
+                                          },
+                  "pandit-funeral-last-rites":  {
+                                                    "file":  "pandit-funeral-last-rites.json",
+                                                    "cluster":  "pandit-services"
+                                                },
+                  "pandit-ganesh-chaturthi":  {
+                                                  "file":  "pandit-ganesh-chaturthi.json",
+                                                  "cluster":  "pandit-services"
+                                              },
+                  "pandit-griha-pravesh-delhi":  {
+                                                     "file":  "pandit-griha-pravesh-delhi.json",
+                                                     "cluster":  "pandit-services"
+                                                 },
+                  "pandit-havan-ceremony":  {
+                                                "file":  "pandit-havan-ceremony.json",
+                                                "cluster":  "pandit-services"
+                                            },
+                  "pandit-kali-puja":  {
+                                           "file":  "pandit-kali-puja.json",
+                                           "cluster":  "pandit-services"
+                                       },
+                  "pandit-mundan-ceremony":  {
+                                                 "file":  "pandit-mundan-ceremony.json",
+                                                 "cluster":  "pandit-services"
+                                             },
+                  "pandit-namkaran":  {
+                                          "file":  "pandit-namkaran.json",
+                                          "cluster":  "pandit-services"
+                                      },
+                  "pandit-navratri-puja":  {
+                                               "file":  "pandit-navratri-puja.json",
+                                               "cluster":  "pandit-services"
+                                           },
+                  "pandit-online-puja":  {
+                                             "file":  "pandit-online-puja.json",
+                                             "cluster":  "pandit-services"
+                                         },
+                  "pandit-pitru-paksha":  {
+                                              "file":  "pandit-pitru-paksha.json",
+                                              "cluster":  "pandit-services"
+                                          },
+                  "pandit-puja-delhi":  {
+                                            "file":  "pandit-puja-delhi.json",
+                                            "cluster":  "pandit-services"
+                                        },
+                  "pandit-qualifications":  {
+                                                "file":  "pandit-qualifications.json",
+                                                "cluster":  "pandit-services"
+                                            },
+                  "pandit-rudrabhishek":  {
+                                              "file":  "pandit-rudrabhishek.json",
+                                              "cluster":  "pandit-services"
+                                          },
+                  "pandit-satyanarayan-katha":  {
+                                                    "file":  "pandit-satyanarayan-katha.json",
+                                                    "cluster":  "pandit-services"
+                                                },
+                  "pandit-seemantonnayana":  {
+                                                 "file":  "pandit-seemantonnayana.json",
+                                                 "cluster":  "pandit-services"
+                                             },
+                  "pandit-shravan-month":  {
+                                               "file":  "pandit-shravan-month.json",
+                                               "cluster":  "pandit-services"
+                                           },
+                  "pandit-upanayana":  {
+                                           "file":  "pandit-upanayana.json",
+                                           "cluster":  "pandit-services"
+                                       },
+                  "pandit-vivah-sanskar":  {
+                                               "file":  "pandit-vivah-sanskar.json",
+                                               "cluster":  "pandit-services"
+                                           },
+                  "pandit-wedding-delhi":  {
+                                               "file":  "pandit-wedding-delhi.json",
+                                               "cluster":  "pandit-services"
+                                           },
+                  "panigrahana-ritual":  {
+                                             "file":  "panigrahana-ritual.json",
+                                             "cluster":  "ceremonies"
+                                         },
+                  "perform-havan-at-home":  {
+                                                "file":  "perform-havan-at-home.json",
+                                                "cluster":  "ritual-guides"
+                                            },
+                  "pilgrimage-yatra-guide":  {
+                                                 "file":  "pilgrimage-yatra-guide.json",
+                                                 "cluster":  "spiritual-guides"
+                                             },
+                  "pithi-ceremony-wedding":  {
+                                                 "file":  "pithi-ceremony-wedding.json",
+                                                 "cluster":  "ceremonies"
+                                             },
+                  "pitra-dosh-remedies":  {
+                                              "file":  "pitra-dosh-remedies.json",
+                                              "cluster":  "spiritual-guides"
+                                          },
+                  "pitru-paksha-ancestor-rites":  {
+                                                      "file":  "pitru-paksha-ancestor-rites.json",
+                                                      "cluster":  "festival-rituals"
+                                                  },
+                  "pitru-tarpan-guide":  {
+                                             "file":  "pitru-tarpan-guide.json",
+                                             "cluster":  "ritual-guides"
+                                         },
+                  "pitru-visarjan-mahalaya":  {
+                                                  "file":  "pitru-visarjan-mahalaya.json",
+                                                  "cluster":  "festival-rituals"
+                                              },
+                  "planetary-offerings-days":  {
+                                                   "file":  "planetary-offerings-days.json",
+                                                   "cluster":  "spiritual-guides"
+                                               },
+                  "pongal-festival-ritual":  {
+                                                 "file":  "pongal-festival-ritual.json",
+                                                 "cluster":  "festival-rituals"
+                                             },
+                  "post-illness-purification":  {
+                                                    "file":  "post-illness-purification.json",
+                                                    "cluster":  "ritual-guides"
+                                                },
+                  "pranayam-before-puja":  {
+                                               "file":  "pranayam-before-puja.json",
+                                               "cluster":  "spiritual-guides"
+                                           },
+                  "pran-pratishtha-home":  {
+                                               "file":  "pran-pratishtha-home.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "prayagraj-kumbh-mela-ritual":  {
+                                                      "file":  "prayagraj-kumbh-mela-ritual.json",
+                                                      "cluster":  "spiritual-guides"
+                                                  },
+                  "prepare-gangajal-rituals":  {
+                                                   "file":  "prepare-gangajal-rituals.json",
+                                                   "cluster":  "ritual-guides"
+                                               },
+                  "prepare-kund-havan":  {
+                                             "file":  "prepare-kund-havan.json",
+                                             "cluster":  "ritual-guides"
+                                         },
+                  "prepare-multi-day-ceremony":  {
+                                                     "file":  "prepare-multi-day-ceremony.json",
+                                                     "cluster":  "ritual-guides"
+                                                 },
+                  "prepare-panchamrit-puja":  {
+                                                  "file":  "prepare-panchamrit-puja.json",
+                                                  "cluster":  "ritual-guides"
+                                              },
+                  "prepare-prasad-deities":  {
+                                                 "file":  "prepare-prasad-deities.json",
+                                                 "cluster":  "ritual-guides"
+                                             },
+                  "prepare-wedding-ceremony":  {
+                                                   "file":  "prepare-wedding-ceremony.json",
+                                                   "cluster":  "ritual-guides"
+                                               },
+                  "priests-regional-traditions":  {
+                                                      "file":  "priests-regional-traditions.json",
+                                                      "cluster":  "pandit-services"
+                                                  },
+                  "puja-after-birth":  {
+                                           "file":  "puja-after-birth.json",
+                                           "cluster":  "ritual-guides"
+                                       },
+                  "puja-before-buying-property":  {
+                                                      "file":  "puja-before-buying-property.json",
+                                                      "cluster":  "ritual-guides"
+                                                  },
+                  "puja-child-health":  {
+                                            "file":  "puja-child-health.json",
+                                            "cluster":  "ritual-guides"
+                                        },
+                  "puja-ekadashi":  {
+                                        "file":  "puja-ekadashi.json",
+                                        "cluster":  "ritual-guides"
+                                    },
+                  "puja-exam-success":  {
+                                            "file":  "puja-exam-success.json",
+                                            "cluster":  "ritual-guides"
+                                        },
+                  "puja-home-protection":  {
+                                               "file":  "puja-home-protection.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "puja-maha-shivratri":  {
+                                              "file":  "puja-maha-shivratri.json",
+                                              "cluster":  "ritual-guides"
+                                          },
+                  "puja-marriage-blessings":  {
+                                                  "file":  "puja-marriage-blessings.json",
+                                                  "cluster":  "ritual-guides"
+                                              },
+                  "puja-menstruation-rules":  {
+                                                  "file":  "puja-menstruation-rules.json",
+                                                  "cluster":  "ritual-guides"
+                                              },
+                  "puja-new-business":  {
+                                            "file":  "puja-new-business.json",
+                                            "cluster":  "ritual-guides"
+                                        },
+                  "puja-new-rented-home":  {
+                                               "file":  "puja-new-rented-home.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "puja-new-vehicle":  {
+                                           "file":  "puja-new-vehicle.json",
+                                           "cluster":  "ritual-guides"
+                                       },
+                  "puja-prosperity-wealth":  {
+                                                 "file":  "puja-prosperity-wealth.json",
+                                                 "cluster":  "ritual-guides"
+                                             },
+                  "puja-reduces-stress":  {
+                                              "file":  "puja-reduces-stress.json",
+                                              "cluster":  "spiritual-guides"
+                                          },
+                  "puja-remove-negative-energy":  {
+                                                      "file":  "puja-remove-negative-energy.json",
+                                                      "cluster":  "ritual-guides"
+                                                  },
+                  "puja-safe-travel":  {
+                                           "file":  "puja-safe-travel.json",
+                                           "cluster":  "ritual-guides"
+                                       },
+                  "puja-samagri-checklist":  {
+                                                 "file":  "puja-samagri-checklist.json",
+                                                 "cluster":  "ritual-guides"
+                                             },
+                  "puja-samagri-shopping-list":  {
+                                                     "file":  "puja-samagri-shopping-list.json",
+                                                     "cluster":  "ritual-guides"
+                                                 },
+                  "puja-surya-grahan":  {
+                                            "file":  "puja-surya-grahan.json",
+                                            "cluster":  "festival-rituals"
+                                        },
+                  "puja-thali-preparation":  {
+                                                 "file":  "puja-thali-preparation.json",
+                                                 "cluster":  "ritual-guides"
+                                             },
+                  "puja-timing-panchang":  {
+                                               "file":  "puja-timing-panchang.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "puja-vidhi-guide":  {
+                                           "file":  "puja-vidhi-guide.json",
+                                           "cluster":  "ritual-guides"
+                                       },
+                  "puja-vs-prayer":  {
+                                         "file":  "puja-vs-prayer.json",
+                                         "cluster":  "faq"
+                                     },
+                  "puja-without-pandit":  {
+                                              "file":  "puja-without-pandit.json",
+                                              "cluster":  "ritual-guides"
+                                          },
+                  "punjabi-hindu-ritual-traditions":  {
+                                                          "file":  "punjabi-hindu-ritual-traditions.json",
+                                                          "cluster":  "spiritual-guides"
+                                                      },
+                  "punyaha-vachanam-baby-shower":  {
+                                                       "file":  "punyaha-vachanam-baby-shower.json",
+                                                       "cluster":  "ceremonies"
+                                                   },
+                  "purify-puja-space":  {
+                                            "file":  "purify-puja-space.json",
+                                            "cluster":  "ritual-guides"
+                                        },
+                  "puri-jagannath-rituals":  {
+                                                 "file":  "puri-jagannath-rituals.json",
+                                                 "cluster":  "spiritual-guides"
+                                             },
+                  "purnima-fasting-puja":  {
+                                               "file":  "purnima-fasting-puja.json",
+                                               "cluster":  "festival-rituals"
+                                           },
+                  "purohit-vs-jyotishi":  {
+                                              "file":  "purohit-vs-jyotishi.json",
+                                              "cluster":  "pandit-services"
+                                          },
+                  "questions-ask-pandit":  {
+                                               "file":  "questions-ask-pandit.json",
+                                               "cluster":  "pandit-services"
+                                           },
+                  "rahu-ketu-shanti-puja":  {
+                                                "file":  "rahu-ketu-shanti-puja.json",
+                                                "cluster":  "ritual-guides"
+                                            },
+                  "rahu-ketu-vedic-astrology":  {
+                                                    "file":  "rahu-ketu-vedic-astrology.json",
+                                                    "cluster":  "spiritual-guides"
+                                                },
+                  "rajasthani-ritual-customs":  {
+                                                    "file":  "rajasthani-ritual-customs.json",
+                                                    "cluster":  "spiritual-guides"
+                                                },
+                  "raksha-bandhan-ritual":  {
+                                                "file":  "raksha-bandhan-ritual.json",
+                                                "cluster":  "festival-rituals"
+                                            },
+                  "ram-navami-ritual-guide":  {
+                                                  "file":  "ram-navami-ritual-guide.json",
+                                                  "cluster":  "festival-rituals"
+                                              },
+                  "rath-yatra-festival-guide":  {
+                                                    "file":  "rath-yatra-festival-guide.json",
+                                                    "cluster":  "festival-rituals"
+                                                },
+                  "read-vedic-birth-chart":  {
+                                                 "file":  "read-vedic-birth-chart.json",
+                                                 "cluster":  "spiritual-guides"
+                                             },
+                  "red-cloth-ritual":  {
+                                           "file":  "red-cloth-ritual.json",
+                                           "cluster":  "ritual-guides"
+                                       },
+                  "regional-pandit-traditions":  {
+                                                     "file":  "regional-pandit-traditions.json",
+                                                     "cluster":  "pandit-services"
+                                                 },
+                  "regional-traditions-ceremony-choice":  {
+                                                              "file":  "regional-traditions-ceremony-choice.json",
+                                                              "cluster":  "pandit-services"
+                                                          },
+                  "ritual-bathing-snan":  {
+                                              "file":  "ritual-bathing-snan.json",
+                                              "cluster":  "ritual-guides"
+                                          },
+                  "ritual-first-entry-home":  {
+                                                  "file":  "ritual-first-entry-home.json",
+                                                  "cluster":  "ritual-guides"
+                                              },
+                  "rituals-create-community":  {
+                                                   "file":  "rituals-create-community.json",
+                                                   "cluster":  "spiritual-guides"
+                                               },
+                  "rituals-ganga-river":  {
+                                              "file":  "rituals-ganga-river.json",
+                                              "cluster":  "spiritual-guides"
+                                          },
+                  "rituals-new-school-year":  {
+                                                  "file":  "rituals-new-school-year.json",
+                                                  "cluster":  "ritual-guides"
+                                              },
+                  "rituals-pregnancy-hindu":  {
+                                                  "file":  "rituals-pregnancy-hindu.json",
+                                                  "cluster":  "ritual-guides"
+                                              },
+                  "role-of-flowers-hindu-puja":  {
+                                                     "file":  "role-of-flowers-hindu-puja.json",
+                                                     "cluster":  "ritual-guides"
+                                                 },
+                  "role-of-pandit-vedic-ceremonies":  {
+                                                          "file":  "role-of-pandit-vedic-ceremonies.json",
+                                                          "cluster":  "pandit-services"
+                                                      },
+                  "rudrabhishek-at-home":  {
+                                               "file":  "rudrabhishek-at-home.json",
+                                               "cluster":  "ceremonies"
+                                           },
+                  "rudraksha-spiritual-significance":  {
+                                                           "file":  "rudraksha-spiritual-significance.json",
+                                                           "cluster":  "spiritual-guides"
+                                                       },
+                  "sacred-colours-hindu-ritual":  {
+                                                      "file":  "sacred-colours-hindu-ritual.json",
+                                                      "cluster":  "ritual-guides"
+                                                  },
+                  "sacred-geometry-hindu-rituals":  {
+                                                        "file":  "sacred-geometry-hindu-rituals.json",
+                                                        "cluster":  "ritual-guides"
+                                                    },
+                  "sacred-grains-ritual":  {
+                                               "file":  "sacred-grains-ritual.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "sacred-metals-ritual":  {
+                                               "file":  "sacred-metals-ritual.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "sacred-plants-hindu":  {
+                                              "file":  "sacred-plants-hindu.json",
+                                              "cluster":  "spiritual-guides"
+                                          },
+                  "sacred-thread-janeu":  {
+                                              "file":  "sacred-thread-janeu.json",
+                                              "cluster":  "ritual-guides"
+                                          },
+                  "sagai-engagement-ceremony":  {
+                                                    "file":  "sagai-engagement-ceremony.json",
+                                                    "cluster":  "ceremonies"
+                                                },
+                  "sanskrit-pandit-requirements":  {
+                                                       "file":  "sanskrit-pandit-requirements.json",
+                                                       "cluster":  "pandit-services"
+                                                   },
+                  "saptapadi-seven-steps":  {
+                                                "file":  "saptapadi-seven-steps.json",
+                                                "cluster":  "ceremonies"
+                                            },
+                  "saraswati-puja-ceremony":  {
+                                                  "file":  "saraswati-puja-ceremony.json",
+                                                  "cluster":  "festival-rituals"
+                                              },
+                  "saraswati-puja-vidhi":  {
+                                               "file":  "saraswati-puja-vidhi.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "sattvic-diet-spiritual":  {
+                                                 "file":  "sattvic-diet-spiritual.json",
+                                                 "cluster":  "spiritual-guides"
+                                             },
+                  "saturn-shani-sade-sati":  {
+                                                 "file":  "saturn-shani-sade-sati.json",
+                                                 "cluster":  "spiritual-guides"
+                                             },
+                  "satyanarayan-puja-at-home":  {
+                                                    "file":  "satyanarayan-puja-at-home.json",
+                                                    "cluster":  "ritual-guides"
+                                                },
+                  "satyanarayan-puja-complete-guide":  {
+                                                           "file":  "satyanarayan-puja-complete-guide.json",
+                                                           "cluster":  "ceremonies"
+                                                       },
+                  "science-vedic-ritual-timing":  {
+                                                      "file":  "science-vedic-ritual-timing.json",
+                                                      "cluster":  "spiritual-guides"
+                                                  },
+                  "seemantonnayana-pregnancy-ritual":  {
+                                                           "file":  "seemantonnayana-pregnancy-ritual.json",
+                                                           "cluster":  "ceremonies"
+                                                       },
+                  "shaiva-vaishnava-ritual-differences":  {
+                                                              "file":  "shaiva-vaishnava-ritual-differences.json",
+                                                              "cluster":  "spiritual-guides"
+                                                          },
+                  "shakta-ritual-traditions":  {
+                                                   "file":  "shakta-ritual-traditions.json",
+                                                   "cluster":  "spiritual-guides"
+                                               },
+                  "shani-graha-shanti-puja":  {
+                                                  "file":  "shani-graha-shanti-puja.json",
+                                                  "cluster":  "ritual-guides"
+                                              },
+                  "sharad-purnima-ritual":  {
+                                                "file":  "sharad-purnima-ritual.json",
+                                                "cluster":  "festival-rituals"
+                                            },
+                  "shirdi-sai-baba-rituals":  {
+                                                  "file":  "shirdi-sai-baba-rituals.json",
+                                                  "cluster":  "spiritual-guides"
+                                              },
+                  "shiva-puja-monday":  {
+                                            "file":  "shiva-puja-monday.json",
+                                            "cluster":  "ritual-guides"
+                                        },
+                  "shivling-abhishek-ritual":  {
+                                                   "file":  "shivling-abhishek-ritual.json",
+                                                   "cluster":  "ritual-guides"
+                                               },
+                  "shodashopachara-puja-method":  {
+                                                      "file":  "shodashopachara-puja-method.json",
+                                                      "cluster":  "ritual-guides"
+                                                  },
+                  "shradh-ceremony-guide":  {
+                                                "file":  "shradh-ceremony-guide.json",
+                                                "cluster":  "ceremonies"
+                                            },
+                  "significance-108":  {
+                                           "file":  "significance-108.json",
+                                           "cluster":  "spiritual-guides"
+                                       },
+                  "sindhi-hindu-ritual-traditions":  {
+                                                         "file":  "sindhi-hindu-ritual-traditions.json",
+                                                         "cluster":  "spiritual-guides"
+                                                     },
+                  "sindoor-ceremony":  {
+                                           "file":  "sindoor-ceremony.json",
+                                           "cluster":  "ceremonies"
+                                       },
+                  "sindoor-preparation-rituals":  {
+                                                      "file":  "sindoor-preparation-rituals.json",
+                                                      "cluster":  "ritual-guides"
+                                                  },
+                  "skanda-sashti-ritual":  {
+                                               "file":  "skanda-sashti-ritual.json",
+                                               "cluster":  "festival-rituals"
+                                           },
+                  "smarta-tradition-hindu":  {
+                                                 "file":  "smarta-tradition-hindu.json",
+                                                 "cluster":  "spiritual-guides"
+                                             },
+                  "sohagini-puja":  {
+                                        "file":  "sohagini-puja.json",
+                                        "cluster":  "ceremonies"
+                                    },
+                  "solah-somvar-vrat-puja":  {
+                                                 "file":  "solah-somvar-vrat-puja.json",
+                                                 "cluster":  "ritual-guides"
+                                             },
+                  "somvar-fast-at-home":  {
+                                              "file":  "somvar-fast-at-home.json",
+                                              "cluster":  "ritual-guides"
+                                          },
+                  "source-authentic-puja-materials":  {
+                                                          "file":  "source-authentic-puja-materials.json",
+                                                          "cluster":  "ritual-guides"
+                                                      },
+                  "south-indian-brahmin-rituals":  {
+                                                       "file":  "south-indian-brahmin-rituals.json",
+                                                       "cluster":  "pandit-services"
+                                                   },
+                  "spiritual-consultation-vs-therapy":  {
+                                                            "file":  "spiritual-consultation-vs-therapy.json",
+                                                            "cluster":  "spiritual-guides"
+                                                        },
+                  "spirituality-financial-wellbeing":  {
+                                                           "file":  "spirituality-financial-wellbeing.json",
+                                                           "cluster":  "spiritual-guides"
+                                                       },
+                  "spiritual-morning-routine":  {
+                                                    "file":  "spiritual-morning-routine.json",
+                                                    "cluster":  "spiritual-guides"
+                                                },
+                  "spiritual-practices-modern-life":  {
+                                                          "file":  "spiritual-practices-modern-life.json",
+                                                          "cluster":  "spiritual-guides"
+                                                      },
+                  "spiritual-remedies-career-finance":  {
+                                                            "file":  "spiritual-remedies-career-finance.json",
+                                                            "cluster":  "spiritual-guides"
+                                                        },
+                  "spiritual-retreat-meditation":  {
+                                                       "file":  "spiritual-retreat-meditation.json",
+                                                       "cluster":  "spiritual-guides"
+                                                   },
+                  "start-japa-practice":  {
+                                              "file":  "start-japa-practice.json",
+                                              "cluster":  "spiritual-guides"
+                                          },
+                  "store-organize-puja-items":  {
+                                                    "file":  "store-organize-puja-items.json",
+                                                    "cluster":  "ritual-guides"
+                                                },
+                  "sudarshana-puja-guide":  {
+                                                "file":  "sudarshana-puja-guide.json",
+                                                "cluster":  "ritual-guides"
+                                            },
+                  "sunsign-moonsign-vedic":  {
+                                                 "file":  "sunsign-moonsign-vedic.json",
+                                                 "cluster":  "spiritual-guides"
+                                             },
+                  "surya-namaskar-puja":  {
+                                              "file":  "surya-namaskar-puja.json",
+                                              "cluster":  "ritual-guides"
+                                          },
+                  "sutak-after-death":  {
+                                            "file":  "sutak-after-death.json",
+                                            "cluster":  "ritual-guides"
+                                        },
+                  "sutak-post-birth-rituals":  {
+                                                   "file":  "sutak-post-birth-rituals.json",
+                                                   "cluster":  "ceremonies"
+                                               },
+                  "symbolism-diyas-hindu":  {
+                                                "file":  "symbolism-diyas-hindu.json",
+                                                "cluster":  "ritual-guides"
+                                            },
+                  "tamil-hindu-ritual-traditions":  {
+                                                        "file":  "tamil-hindu-ritual-traditions.json",
+                                                        "cluster":  "pandit-services"
+                                                    },
+                  "teej-festival-ritual":  {
+                                               "file":  "teej-festival-ritual.json",
+                                               "cluster":  "festival-rituals"
+                                           },
+                  "temple-vs-home-puja":  {
+                                              "file":  "temple-vs-home-puja.json",
+                                              "cluster":  "ritual-guides"
+                                          },
+                  "threshold-rituals-home":  {
+                                                 "file":  "threshold-rituals-home.json",
+                                                 "cluster":  "ritual-guides"
+                                             },
+                  "thursday-vishnu-puja":  {
+                                               "file":  "thursday-vishnu-puja.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "tilak-ceremony-marriage":  {
+                                                  "file":  "tilak-ceremony-marriage.json",
+                                                  "cluster":  "ceremonies"
+                                              },
+                  "tirthas-sacred-water":  {
+                                               "file":  "tirthas-sacred-water.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "tirupati-balaji-rituals":  {
+                                                  "file":  "tirupati-balaji-rituals.json",
+                                                  "cluster":  "spiritual-guides"
+                                              },
+                  "tribal-folk-deity-worship":  {
+                                                    "file":  "tribal-folk-deity-worship.json",
+                                                    "cluster":  "spiritual-guides"
+                                                },
+                  "tulsi-hindu-worship":  {
+                                              "file":  "tulsi-hindu-worship.json",
+                                              "cluster":  "ritual-guides"
+                                          },
+                  "tulsi-puja-daily":  {
+                                           "file":  "tulsi-puja-daily.json",
+                                           "cluster":  "ritual-guides"
+                                       },
+                  "tulsi-vivah-puja":  {
+                                           "file":  "tulsi-vivah-puja.json",
+                                           "cluster":  "ritual-guides"
+                                       },
+                  "types-of-diyas":  {
+                                         "file":  "types-of-diyas.json",
+                                         "cluster":  "ritual-guides"
+                                     },
+                  "types-of-pandits":  {
+                                           "file":  "types-of-pandits.json",
+                                           "cluster":  "pandit-services"
+                                       },
+                  "ugadi-new-year-ritual":  {
+                                                "file":  "ugadi-new-year-ritual.json",
+                                                "cluster":  "festival-rituals"
+                                            },
+                  "understanding-puja-hindu-tradition":  {
+                                                             "file":  "understanding-puja-hindu-tradition.json",
+                                                             "cluster":  "ritual-guides"
+                                                         },
+                  "upanayana-thread-ceremony":  {
+                                                    "file":  "upanayana-thread-ceremony.json",
+                                                    "cluster":  "ceremonies"
+                                                },
+                  "uttarakhandi-devbhoomi-rituals":  {
+                                                         "file":  "uttarakhandi-devbhoomi-rituals.json",
+                                                         "cluster":  "spiritual-guides"
+                                                     },
+                  "varanasi-kashi-rituals":  {
+                                                 "file":  "varanasi-kashi-rituals.json",
+                                                 "cluster":  "spiritual-guides"
+                                             },
+                  "vasant-panchami-ritual":  {
+                                                 "file":  "vasant-panchami-ritual.json",
+                                                 "cluster":  "festival-rituals"
+                                             },
+                  "vastu-astrology-connection":  {
+                                                     "file":  "vastu-astrology-connection.json",
+                                                     "cluster":  "spiritual-guides"
+                                                 },
+                  "vastu-dosh-nivaran-puja":  {
+                                                  "file":  "vastu-dosh-nivaran-puja.json",
+                                                  "cluster":  "ritual-guides"
+                                              },
+                  "vastu-puja-room-placement":  {
+                                                    "file":  "vastu-puja-room-placement.json",
+                                                    "cluster":  "ritual-guides"
+                                                },
+                  "vastu-shanti-puja-guide":  {
+                                                  "file":  "vastu-shanti-puja-guide.json",
+                                                  "cluster":  "ceremonies"
+                                              },
+                  "vedic-calendar-auspicious-timing":  {
+                                                           "file":  "vedic-calendar-auspicious-timing.json",
+                                                           "cluster":  "ritual-guides"
+                                                       },
+                  "vedic-ritual-faq-beginners":  {
+                                                     "file":  "vedic-ritual-faq-beginners.json",
+                                                     "cluster":  "faq"
+                                                 },
+                  "vedic-ritual-mental-wellbeing":  {
+                                                        "file":  "vedic-ritual-mental-wellbeing.json",
+                                                        "cluster":  "spiritual-guides"
+                                                    },
+                  "vedic-rituals-north-india":  {
+                                                    "file":  "vedic-rituals-north-india.json",
+                                                    "cluster":  "spiritual-guides"
+                                                },
+                  "vijaya-dashami-shastra-puja":  {
+                                                      "file":  "vijaya-dashami-shastra-puja.json",
+                                                      "cluster":  "festival-rituals"
+                                                  },
+                  "vishnu-puja-home":  {
+                                           "file":  "vishnu-puja-home.json",
+                                           "cluster":  "ritual-guides"
+                                       },
+                  "vivah-panchami-celebration":  {
+                                                     "file":  "vivah-panchami-celebration.json",
+                                                     "cluster":  "festival-rituals"
+                                                 },
+                  "vivah-puja-ritual":  {
+                                            "file":  "vivah-puja-ritual.json",
+                                            "cluster":  "ceremonies"
+                                        },
+                  "water-rituals-home":  {
+                                             "file":  "water-rituals-home.json",
+                                             "cluster":  "ritual-guides"
+                                         },
+                  "wear-tilak-properly":  {
+                                              "file":  "wear-tilak-properly.json",
+                                              "cluster":  "ritual-guides"
+                                          },
+                  "wedding-rituals-indian-regions":  {
+                                                         "file":  "wedding-rituals-indian-regions.json",
+                                                         "cluster":  "ceremonies"
+                                                     },
+                  "weekly-ritual-calendar":  {
+                                                 "file":  "weekly-ritual-calendar.json",
+                                                 "cluster":  "ritual-guides"
+                                             },
+                  "what-are-doshas-astrology":  {
+                                                    "file":  "what-are-doshas-astrology.json",
+                                                    "cluster":  "spiritual-guides"
+                                                },
+                  "what-are-samskaras":  {
+                                             "file":  "what-are-samskaras.json",
+                                             "cluster":  "ritual-guides"
+                                         },
+                  "what-are-upacharas":  {
+                                             "file":  "what-are-upacharas.json",
+                                             "cluster":  "ritual-guides"
+                                         },
+                  "what-are-vedic-rituals":  {
+                                                 "file":  "what-are-vedic-rituals.json",
+                                                 "cluster":  "ritual-guides"
+                                             },
+                  "what-is-a-havan":  {
+                                          "file":  "what-is-a-havan.json",
+                                          "cluster":  "ritual-guides"
+                                      },
+                  "what-is-a-yajna":  {
+                                          "file":  "what-is-a-yajna.json",
+                                          "cluster":  "ritual-guides"
+                                      },
+                  "what-is-diksha":  {
+                                         "file":  "what-is-diksha.json",
+                                         "cluster":  "spiritual-guides"
+                                     },
+                  "what-is-jyotishi":  {
+                                           "file":  "what-is-jyotishi.json",
+                                           "cluster":  "pandit-services"
+                                       },
+                  "what-is-kundali":  {
+                                          "file":  "what-is-kundali.json",
+                                          "cluster":  "spiritual-guides"
+                                      },
+                  "what-is-panchang":  {
+                                           "file":  "what-is-panchang.json",
+                                           "cluster":  "spiritual-guides"
+                                       },
+                  "what-is-prasad":  {
+                                         "file":  "what-is-prasad.json",
+                                         "cluster":  "ritual-guides"
+                                     },
+                  "what-is-rudrabhishek":  {
+                                               "file":  "what-is-rudrabhishek.json",
+                                               "cluster":  "ritual-guides"
+                                           },
+                  "what-is-sankalpa":  {
+                                           "file":  "what-is-sankalpa.json",
+                                           "cluster":  "ritual-guides"
+                                       },
+                  "what-is-vedic-astrology-jyotish":  {
+                                                          "file":  "what-is-vedic-astrology-jyotish.json",
+                                                          "cluster":  "spiritual-guides"
+                                                      },
+                  "what-is-vedic-purohit":  {
+                                                "file":  "what-is-vedic-purohit.json",
+                                                "cluster":  "pandit-services"
+                                            },
+                  "what-to-wear-puja":  {
+                                            "file":  "what-to-wear-puja.json",
+                                            "cluster":  "ritual-guides"
+                                        },
+                  "wooden-items-puja":  {
+                                            "file":  "wooden-items-puja.json",
+                                            "cluster":  "ritual-guides"
+                                        },
+                  "write-ritual-brief-navdhya":  {
+                                                     "file":  "write-ritual-brief-navdhya.json",
+                                                     "cluster":  "services"
+                                                 },
+                  "yearly-horoscope-hindu-new-year":  {
+                                                          "file":  "yearly-horoscope-hindu-new-year.json",
+                                                          "cluster":  "spiritual-guides"
+                                                      },
+                  "yoga-vedic-ritual":  {
+                                            "file":  "yoga-vedic-ritual.json",
+                                            "cluster":  "spiritual-guides"
+                                        }
+              }
 }

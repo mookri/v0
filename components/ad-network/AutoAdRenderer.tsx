@@ -329,15 +329,17 @@ function TickerLayout({ ad, layout }: AutoAdRendererProps) {
           flexWrap: "wrap",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0, flex: 1 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0, flex: "1 1 240px" }}>
           <SponsorRow ad={ad} muted="rgba(255,255,255,0.62)" />
-          <div style={{ minWidth: 0, paddingLeft: 2 }}>
-            <div style={{ color: "rgba(255,255,255,0.94)", fontFamily: css(V.fontBody), fontSize: 13.5, fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ color: "rgba(255,255,255,0.94)", fontFamily: css(V.fontBody), fontSize: 13.5, fontWeight: 700, lineHeight: 1.4, whiteSpace: "normal", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
               {ad.title}
             </div>
           </div>
         </div>
-        <CTAButton ad={ad} accent="transparent" foreground="rgba(255,255,255,0.96)" compact />
+        <div style={{ display: "flex", alignItems: "center", flex: "1 1 auto", justifyContent: "flex-end" }}>
+          <CTAButton ad={ad} accent="transparent" foreground="rgba(255,255,255,0.96)" compact />
+        </div>
       </div>
     </DarkPanel>
   );

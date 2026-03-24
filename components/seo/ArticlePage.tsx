@@ -377,13 +377,13 @@ function ArticlePageInner({
                 <div dangerouslySetInnerHTML={{ __html: node.html }} />
 
                 {i === firstAdIndex && (
-                  <div className="not-prose my-8 sm:my-10">
+                  <div className="not-prose my-8 sm:my-10 w-full overflow-hidden flex justify-center">
                     <AdSlot placement="article_inline_1" layout="native_in_content" />
                   </div>
                 )}
 
                 {i === secondAdIndex && (
-                  <div className="not-prose my-10 sm:my-12">
+                  <div className="not-prose my-10 sm:my-12 w-full overflow-hidden flex justify-center">
                     <AdSlot placement="article_inline_2" layout="inline_text" />
                   </div>
                 )}

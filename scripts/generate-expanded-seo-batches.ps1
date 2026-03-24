@@ -4,7 +4,12 @@
     "content/sources/puja-guide-pages.tsv",
     "content/sources/pandit-service-pages.tsv",
     "content/sources/astrology-consultation-pages.tsv",
-    "content/sources/ritual-prep-pages.tsv"
+    "content/sources/ritual-prep-pages.tsv",
+    "content/sources/festival-ritual-pages.tsv",
+    "content/sources/household-ritual-pages.tsv",
+    "content/sources/spiritual-lifestyle-pages.tsv",
+    "content/sources/regional-tradition-pages.tsv",
+    "content/sources/platform-technology-pages.tsv"
   )
 )
 
@@ -56,6 +61,14 @@ function Get-AuthorForEntry {
 
   if ($Entry.contentFamily -like "ritual-prep-*") {
     return "Navdhya Ritual Preparation Team"
+  }
+
+  if ($Entry.contentFamily -like "regional-*") {
+    return "Navdhya Regional Traditions Team"
+  }
+
+  if ($Entry.contentFamily -like "platform-tech*") {
+    return "Navdhya Platform Team"
   }
 
   switch ($Entry.cluster) {
@@ -258,6 +271,15 @@ function Get-CoreRelatedSlugs {
     $related += "navdhya-verified-pandits"
     $related += "navdhya-priest-verification"
   }
+  if ($topicText -match "(?i)north india|bengali|tamil|maharashtrian|rajasthani|kashmiri|punjabi|gujarati|odia|assamese|kerala|bihari|uttarakhand|braj|mathura|varanasi|kashi|ayodhya|kodava|sindhi|tribal|folk deity|lingayat|smarta|shaiva|vaishnava|shakta|ganga river|tirupati|jagannath|dwarka|regional tradition|regional custom") {
+    $related += "regional-pandit-traditions"
+    $related += "priests-regional-traditions"
+  }
+  if ($topicText -match "(?i)platform|technology|digital booking|data privacy|review system|dashboard|live streaming|panchang integration|customer communication|subscription|chatbot|knowledge graph|schema markup|api|integration|mobile ux|payment|analytics|booking system|ritual brief") {
+    $related += "navdhya-spiritual-technology"
+    $related += "how-navdhya-works"
+    $related += "navdhya-app-booking"
+  }
   if ($topicText -match "(?i)delhi|ncr") {
     $related += "navdhya-delhi-spiritual-services"
     $related += "navdhya-service-area"
@@ -386,6 +408,106 @@ function New-HowToSteps {
   param($Entry)
 
   $pair = Get-SecondaryPair $Entry
+
+  if ($Entry.contentFamily -eq "festival-howto") {
+    return @(
+      @{
+        name = "Confirm the festival timing and devotional focus"
+        text = "Begin by identifying the exact day, tithi, or watch of time linked to the observance so the household knows what the festival is centering on."
+      },
+      @{
+        name = "Prepare the altar, offerings, and fasting plan"
+        text = "Arrange the lamp, flowers, prasad, and festival-specific items linked with $pair, and confirm any fasting or food discipline before the main observance starts."
+      },
+      @{
+        name = "Follow the main puja or observance sequence"
+        text = "Perform the key invocation, sankalpa, offering, and prayer sequence in order so the festival keeps its devotional structure rather than becoming rushed or fragmentary."
+      },
+      @{
+        name = "Observe the time-sensitive ritual moment carefully"
+        text = "Complete the moon, sunrise, midnight, immersion, or concluding act at the appropriate time if the festival tradition requires it."
+      },
+      @{
+        name = "Close with aarti, prasad, and family participation"
+        text = "Finish with aarti, distribution of prasad, and the household gestures that complete the seasonal observance with clarity and gratitude."
+      }
+    )
+  }
+
+  if ($Entry.contentFamily -eq "household-howto") {
+    return @(
+      @{
+        name = "Prepare the space and define the household intention"
+        text = "Settle the puja space, gather the basic items, and decide the exact devotional focus of the observance before beginning."
+      },
+      @{
+        name = "Arrange the materials in the right order"
+        text = "Keep the lamp, water, flowers, offerings, and any festival-specific items ready so the household can move through the rite calmly."
+      },
+      @{
+        name = "Begin with invocation and sankalpa"
+        text = "Start with a short invocation, state the sankalpa clearly, and orient the family around the purpose of the ritual."
+      },
+      @{
+        name = "Perform the core home ritual sequence"
+        text = "Complete the main offerings, recitation, or observance steps in a steady order suited to the household setting."
+      },
+      @{
+        name = "Close with aarti, prayer, and prasad"
+        text = "End with aarti, closing prayer, and prasad or blessings so the home observance feels complete and repeatable."
+      }
+    )
+  }
+
+  if ($Entry.contentFamily -eq "spiritual-howto") {
+    return @(
+      @{
+        name = "Set a clear spiritual intention"
+        text = "Begin by deciding whether the practice is for calm, devotion, mantra discipline, breath awareness, or daily consistency."
+      },
+      @{
+        name = "Create a quiet and orderly practice setting"
+        text = "Choose a clean, distraction-light place and keep any supporting items such as a mat, mala, or lamp within reach."
+      },
+      @{
+        name = "Start with steady breath and posture"
+        text = "Settle the body and breath before the main practice so the mind is less scattered and easier to focus."
+      },
+      @{
+        name = "Perform the core spiritual practice with attention"
+        text = "Follow the main sequence carefully, whether it involves mantra, meditation, pranayam, or a short devotional observance."
+      },
+      @{
+        name = "Close with reflection and continuity"
+        text = "End with a short prayer, gratitude, or reflection so the practice can be repeated with more steadiness over time."
+      }
+    )
+  }
+
+  if ($Entry.contentFamily -eq "platform-tech-howto") {
+    return @(
+      @{
+        name = "Define the ritual request clearly"
+        text = "Start by naming the exact ceremony, ritual purpose, and preferred date window so Navdhya can interpret the request without guesswork."
+      },
+      @{
+        name = "Add family and regional preferences"
+        text = "Include the city, language, sampradaya or regional custom, and participant details that may affect pandit matching or ceremony structure."
+      },
+      @{
+        name = "List support and material needs"
+        text = "Mention whether samagri, muhurta input, live-stream support, or space-preparation help is needed so the brief reaches the right workflow."
+      },
+      @{
+        name = "Capture logistical constraints"
+        text = "Note building access, timing limits, elder support needs, and any special ceremony sensitivities that must be planned around early."
+      },
+      @{
+        name = "Review and submit the brief"
+        text = "Read the request once as if you were the assigned pandit and confirm that the ritual goal, expectations, and logistics are all explicit before sending it to Navdhya."
+      }
+    )
+  }
 
   return @(
     @{
@@ -630,7 +752,7 @@ function New-ArticleData {
       $sections = @(
         (New-Section "Why $keyword remains central to festival observance" @(
           "$title belongs to the rhythm of Hindu festival worship, where calendar, devotion, household preparation, and community memory come together. Navdhya explains the ceremony in that wider frame so the observance feels spiritually grounded. $summary",
-          "Festival rites often endure because they combine atmosphere and discipline. A family does not simply celebrate; it prepares, offers, remembers, and repeats with intention.",
+          "Festival rites endure because they combine atmosphere and discipline.",
           "Navdhya treats this combination of joy and ritual order as one of the most important things readers should understand."
         )),
         (New-Section "How families prepare for the observance" @(
@@ -1069,6 +1191,74 @@ function New-ArticleData {
         ))
       )
     }
+    "regional-tradition" {
+      $sections = @(
+        (New-Section "Why $keyword matters within India's ritual diversity" @(
+          "$title matters because Hindu ritual life has never been uniform across the subcontinent. Navdhya explains regional traditions by showing how geography, language, temple culture, priestly lineages, and local devotional memory shape practice. $summary",
+          "This matters for families because what feels normal in one region can look quite different in another while still belonging to recognizable Hindu tradition.",
+          "Navdhya therefore treats regional explanation as a way to strengthen both understanding and ritual confidence."
+        )),
+        (New-Section "What gives this regional tradition its distinctive character" @(
+          "$keyword is often associated with $secondaryPhrase. Navdhya explains these elements not as isolated curiosities, but as part of a broader regional ritual grammar built over time.",
+          "That grammar may include specific festival emphases, distinctive puja styles, household observances, local temple rhythms, or community-preferred ceremonial forms.",
+          "A clearer view of those patterns helps readers understand why regional customs remain so emotionally important."
+        )),
+        (New-Section "How family, temple, and local community shape the practice" @(
+          "Regional traditions are usually sustained through a combination of household habit, temple-centered observance, and community repetition. Navdhya explains this because a regional ritual culture is rarely preserved by texts alone.",
+          "It survives through songs, food, timing, processions, local deities, seasonal observances, and the practical knowledge carried by elders and priests.",
+          "That living continuity is one reason regional ritual identity remains so strong across generations."
+        )),
+        (New-Section "Where the tradition differs from other Hindu regions" @(
+          "Navdhya highlights comparative differences carefully so readers can see what is structurally distinctive without turning regional identity into a hierarchy. The point is to clarify difference, not rank it.",
+          "One region may emphasize temple liturgy, another household vrata, another public festival processions, and another localized deity traditions.",
+          "These differences help explain why ceremony planning often requires regional sensitivity rather than one-size-fits-all assumptions."
+        )),
+        (New-Section "Why regional awareness matters for modern families" @(
+          "Many urban households now live far from their ancestral region, which makes explanation more important than ever. Navdhya writes these guides so families can preserve regional identity even when the surrounding social environment has changed.",
+          "This is especially relevant for weddings, samskaras, annual festivals, and temple-linked observances where family expectations may be deeply regional.",
+          "A better explained tradition is easier to carry forward with confidence."
+        )),
+        (New-Section "How Navdhya approaches regional ritual authenticity" @(
+          "Navdhya treats regional tradition as a real part of ritual authenticity, not a decorative add-on. Families often need ceremonies that feel recognizably their own, and that requires attention to language, sequence, priest fit, and inherited custom.",
+          "That is why pages like this connect cultural explanation to practical ritual planning rather than leaving the topic at the level of folklore.",
+          "The stronger the regional understanding, the easier it becomes to preserve continuity without confusion."
+        ))
+      )
+    }
+    "platform-tech" {
+      $sections = @(
+        (New-Section "Why $keyword matters in a ritual services platform" @(
+          "$title matters because spiritual services only benefit from technology when the system reduces confusion without flattening the sacred context of the ritual. Navdhya explains the platform in that practical way. $summary",
+          "This means the technology has to support trust, clarity, and coordination rather than behaving like a generic commerce tool.",
+          "Navdhya therefore frames platform technology as service infrastructure around ritual life, not as an end in itself."
+        )),
+        (New-Section "Which operational problem the platform is solving" @(
+          "Navdhya explains $keyword by connecting it to real service problems such as priest matching, booking clarity, customer communication, scheduling logic, and post-ceremony follow-through.",
+          "That operational framing matters because readers usually care less about abstract tech language than about whether the system actually improves the family experience.",
+          "A useful platform explanation therefore begins with the ritual coordination problem, not with the feature list."
+        )),
+        (New-Section "How digital systems support trust and consistency" @(
+          "$keyword often sits alongside concerns such as $secondaryPhrase. Navdhya explains how those digital layers help create a more consistent service journey for families, pandits, and internal coordination teams.",
+          "This is especially important in ritual services, where communication gaps or expectation mismatches can affect the ceremony itself.",
+          "Technology becomes meaningful here when it improves reliability rather than adding noise."
+        )),
+        (New-Section "Where human judgment still remains essential" @(
+          "Navdhya does not describe its platform as a replacement for priest expertise, family preference, or service judgment. The system is there to organize information, support matching, and reduce operational friction.",
+          "That distinction matters because rituals are contextual. Human interpretation and communication remain central even when the supporting systems become more sophisticated.",
+          "A strong platform therefore balances automation with informed human intervention."
+        )),
+        (New-Section "Why the platform matters to modern users" @(
+          "Modern users expect the booking journey to be clear, responsive, and transparent, even when the underlying service is deeply traditional. Navdhya writes platform pages so readers can understand how those expectations are met without sacrificing ritual seriousness.",
+          "This is particularly relevant for online participation, mobile access, global users, repeat bookings, and time-sensitive ceremonies.",
+          "A better explained platform usually feels more trustworthy before the user ever submits a request."
+        )),
+        (New-Section "How Navdhya uses platform explanation strategically" @(
+          "Navdhya treats platform-technology content as both educational and trust-building. Families want to know how booking works, how support is coordinated, and how service quality is maintained beyond the marketing layer.",
+          "That is why the platform is explained in concrete operational terms rather than as empty innovation language.",
+          "The goal is to make the digital side of spiritual service legible, credible, and easier to evaluate."
+        ))
+      )
+    }
     default {
       $sections = @(
         (New-Section "Why $keyword matters in living Hindu practice" @(
@@ -1116,6 +1306,112 @@ function New-HowToData {
   $secondaryPhrase = Get-SecondaryPhrase $Entry
 
   switch ($Entry.contentFamily) {
+    "household-howto" {
+      $sections = @(
+        (New-Section "Why families need a usable $keyword routine" @(
+          "Families usually search for a clear $keyword guide because household rituals work only when they are practical enough to repeat. Navdhya writes these pages to help families establish a stable home practice without losing devotional seriousness. $summary",
+          "That means focusing on sequence, readiness, and the small practical decisions that make a home observance sustainable.",
+          "A good household guide should therefore feel simple enough to use and complete enough to trust.",
+          "This is especially important for homes balancing devotion with work, school, and limited time."
+        )),
+        (New-Section "What to prepare before beginning" @(
+          "$keyword becomes easier when the home space, offerings, and family roles are prepared in advance. Navdhya emphasizes this because confusion usually starts before the ritual itself, not during the prayer.",
+          "The materials often include items linked with $secondaryPhrase, along with a clean altar or puja corner and a settled sense of the ritual objective.",
+          "Preparation supports calm, and calm supports devotion.",
+          "Even a small amount of order can change how confidently the family participates."
+        )),
+        (New-Section "How the home sequence usually unfolds" @(
+          "Most forms of $keyword move through a compact household pattern of invocation, sankalpa, the main offering or observance, and respectful completion. Navdhya explains this flow so the practice can be repeated consistently.",
+          "This is especially important for busy homes where the ritual must remain meaningful without becoming unmanageably long.",
+          "A clearer structure usually leads to better participation by everyone in the household.",
+          "It also helps younger family members learn the rhythm of the observance more naturally."
+        )),
+        (New-Section "How to adapt the practice for daily life" @(
+          "Navdhya writes these guides for real homes, workday schedules, and mixed-generation families. The point is not to make the ritual casual, but to make it genuinely workable.",
+          "That means clarifying the essential sequence and helping the household avoid overcomplicating a practice that should build steadiness over time.",
+          "A repeatable practice almost always serves the family better than an elaborate routine that cannot be sustained.",
+          "Consistency matters more than drama in long-term household ritual life."
+        )),
+        (New-Section "Why Navdhya treats household ritual guidance seriously" @(
+          "Household ritual is where most people actually live their spiritual life. Navdhya therefore treats pages like this as practical religious infrastructure, not filler content.",
+          "The stronger the household routine becomes, the easier it is for tradition to remain active across months and years.",
+          "That is the long-term value of a clear home-ritual guide.",
+          "It turns scattered intention into a rhythm the family can actually keep."
+        ))
+      )
+    }
+    "spiritual-howto" {
+      $sections = @(
+        (New-Section "Why people need a practical $keyword framework" @(
+          "Readers usually search for a clear $keyword guide because spiritual intentions often fail when the practice is too vague to repeat. Navdhya writes these pages to turn aspiration into a stable method. $summary",
+          "This matters because spiritual discipline is rarely built by inspiration alone. It usually depends on a clear structure that can survive ordinary life.",
+          "A good guide therefore has to be both reflective and practical.",
+          "That balance is what allows a practice to deepen instead of fading quickly."
+        )),
+        (New-Section "How to prepare mind, body, and setting" @(
+          "$keyword is easier when posture, breath, timing, and the practice setting are chosen deliberately. Navdhya emphasizes this preparation stage because spiritual steadiness usually begins before the main exercise starts.",
+          "The reader may also need simple supports linked with $secondaryPhrase depending on the exact practice.",
+          "That small amount of preparation often makes the whole routine feel more coherent.",
+          "It also reduces the mental friction that keeps many practices from becoming regular."
+        )),
+        (New-Section "How the core practice should be approached" @(
+          "Most forms of $keyword are strongest when they follow a simple but repeatable pattern. Navdhya explains the sequence so readers can understand what should happen first, what should hold the center, and how the practice should close.",
+          "That structure is especially important for beginners who want sincerity without confusion.",
+          "Clarity usually produces better consistency than intensity.",
+          "A smaller practice done well often produces more benefit than a larger one done rarely."
+        )),
+        (New-Section "How to make the practice sustainable" @(
+          "Navdhya writes these guides for modern schedules, limited attention, and real household life. The aim is not to create a heroic one-day routine, but a spiritually useful practice that can actually continue.",
+          "This is why pacing, simplicity, and realistic repetition matter so much.",
+          "A small stable practice generally deepens faster than a demanding routine that gets abandoned.",
+          "That is the practical logic behind nearly every durable spiritual habit."
+        )),
+        (New-Section "Why Navdhya publishes modern spiritual method guides" @(
+          "Pages like this help readers connect Hindu spiritual language to everyday practice in a way that is disciplined but not obscure. Navdhya treats that bridge as important because many modern seekers need structure more than inspiration.",
+          "A better method usually leads to better continuity, stronger reflection, and more grounded spiritual growth.",
+          "That is why practical spiritual guides remain central to the Navdhya knowledge base.",
+          "They make inner practice easier to begin, understand, and sustain."
+        ))
+      )
+    }
+    "platform-tech-howto" {
+      $sections = @(
+        (New-Section "Why families need a clear $keyword process" @(
+          "Families usually search for a usable $keyword guide because platform workflows help only when the ritual requirement is described clearly enough for accurate coordination. Navdhya writes this guide as operational ritual support rather than as form-filling advice. $summary",
+          "A strong brief reduces mismatch between family expectation, pandit preparation, and ceremony-day execution.",
+          "That is why Navdhya treats the briefing step as part of service quality.",
+          "The more clearly the ritual is described at the start, the easier it becomes for every later stage of the booking to stay aligned."
+        )),
+        (New-Section "What to gather before writing the request" @(
+          "The brief becomes stronger when the family first confirms the ceremony type, intended date, locality, participant details, and whether the observance follows a regional or sampradaya-specific format.",
+          "Navdhya highlights this preparation because vague requests usually slow matching and create avoidable follow-up questions.",
+          "The clearer the inputs, the smoother the service coordination usually becomes.",
+          "This preparation stage also helps the family notice any missing decisions before the request reaches the operations team."
+        )),
+        (New-Section "How the brief should be structured" @(
+          "A useful $keyword document usually moves from ritual objective to household context, then to logistics, then to any special preparation needs. Navdhya recommends that structure because it mirrors how the service team and pandit evaluate readiness.",
+          "This approach also helps the family separate essential ritual information from optional background detail.",
+          "Order matters because operational clarity depends on readable sequencing.",
+          "When the information is structured well, the brief becomes easier to review, easier to assign, and easier to act on."
+        )),
+        (New-Section "Which mistakes reduce briefing quality" @(
+          "Common problems include naming the ceremony too broadly, skipping regional preferences, forgetting time constraints, or assuming the pandit will infer material or participant details later.",
+          "Navdhya addresses those gaps directly because they are among the fastest ways to create service friction.",
+          "A stronger brief usually prevents clarification loops before they start.",
+          "It also reduces the chance that the family and the assigned pandit arrive with different assumptions about the same ceremony."
+        )),
+        (New-Section "Why Navdhya uses ritual briefs as coordination tools" @(
+          "Navdhya treats ritual briefs as working documents that align booking, priest assignment, material readiness, and family expectations around one shared view of the ceremony.",
+          "That makes the digital process more trustworthy because the user can see how their information improves the real-world ritual outcome.",
+          "In that sense, better briefing is not administrative overhead. It is part of better ritual delivery."
+        )),
+        (New-Section "How a stronger brief improves the ceremony day itself" @(
+          "The quality of the ceremony day often depends on information gathered days earlier. Navdhya therefore connects better briefing directly to better readiness on the ground.",
+          "When the pandit already understands the family context, regional preference, and logistical constraints, less time is wasted clarifying basics after arrival.",
+          "That improvement matters because a calmer beginning usually leads to a more focused and more respectful ritual experience."
+        ))
+      )
+    }
     "astrology-remedy-howto" {
       $sections = @(
         (New-Section "Why families look for a clear $keyword process" @(
@@ -1147,6 +1443,40 @@ function New-HowToData {
           "Navdhya writes remedy guides so families can approach graha-related observances with composure, realism, and better ritual understanding. The goal is not only to increase discoverability, but to reduce misinformation around sensitive astrology topics.",
           "When the ritual logic is clearer, the family can choose the right next step with more confidence.",
           "That is the real value of a strong astrology remedy guide."
+        ))
+      )
+    }
+    "festival-howto" {
+      $sections = @(
+        (New-Section "Why families need a clear $keyword festival sequence" @(
+          "Families usually search for a strong $keyword guide because festival observances often stretch across several steps, several watches of the day, or even several days. Navdhya explains the process with a practical festival rhythm in mind so the household can follow it more confidently. $summary",
+          "This matters because festival worship combines devotion, preparation, timing, and family participation in a way that is easy to dilute if the order is unclear.",
+          "Navdhya therefore treats festival how-to pages as both ritual instruction and seasonal household planning."
+        )),
+        (New-Section "What to prepare before the observance begins" @(
+          "$keyword becomes easier when fasting rules, altar readiness, offerings, lamps, and family roles are settled in advance. Navdhya highlights this stage because festival observances are often disrupted by small preparation gaps rather than by major ritual errors.",
+          "The setup usually includes items connected with $secondaryPhrase, along with a clean space, festival-specific food or prasad planning, and a clear sense of the day's devotional center.",
+          "A well-prepared beginning helps the festival feel intentional rather than rushed."
+        )),
+        (New-Section "How the festival sequence usually unfolds" @(
+          "Most forms of $keyword follow a recognizable festival pattern of preparation, sankalpa, core puja or observance, aarti or offering, and meaningful completion. Navdhya explains that flow so the family can see how one stage of the day leads into the next.",
+          "This is especially useful for observances that include fasting, moon or sunrise timing, day-by-day variation, or evening household rituals.",
+          "A clearer sequence makes the observance easier to repeat every year with less uncertainty."
+        )),
+        (New-Section "How fasting, timing, and symbolism fit together" @(
+          "Festival rituals are often shaped by time-sensitive acts, dietary discipline, and symbolic offerings. Navdhya explains how those parts work together so the observance does not feel like a collection of disconnected customs.",
+          "This matters because festival worship often reaches its deepest meaning when households understand not only what to do, but why the order and symbolism matter.",
+          "That deeper clarity helps the ritual remain devotional instead of purely performative."
+        )),
+        (New-Section "Common mistakes households make during festival pujas" @(
+          "Readers often struggle with late preparation, unclear fasting rules, missing items, or uncertainty about what must happen at a specific time. Navdhya addresses these issues directly because they are common across many seasonal observances.",
+          "A stronger guide helps the family protect the emotional tone of the festival while still adapting to modern schedules.",
+          "That kind of clarity is often what makes an annual observance sustainable over the long term."
+        )),
+        (New-Section "Why Navdhya publishes detailed seasonal guides" @(
+          "Festival pages matter because families usually return to them year after year. Navdhya writes $keyword guides to function as repeat-use ritual references rather than one-time informational pages.",
+          "That helps preserve continuity, improves search discoverability, and makes the seasonal observance easier to teach within the household.",
+          "In that sense, a strong festival how-to page becomes part of the family ritual calendar itself."
         ))
       )
     }
@@ -1221,7 +1551,7 @@ function New-HowToData {
   }
 
   return [ordered]@{
-    sections = @($sections + (Get-ExtendedSections $Entry))
+    sections = if ($Entry.contentFamily -in @("festival-howto","household-howto","spiritual-howto","platform-tech-howto")) { @($sections) } else { @($sections + (Get-ExtendedSections $Entry)) }
     howToSteps = New-HowToSteps $Entry
   }
 }
@@ -1321,6 +1651,49 @@ function New-ServiceData {
         ))
       )
     }
+    "platform-tech-service" {
+      $sections = @(
+        (New-Section "Why families consider $keyword through Navdhya" @(
+          "$title reflects a platform-led service need: the household wants predictable recurring support without restarting the booking journey every time. Navdhya explains the service as operational continuity around ritual life. $summary",
+          "This matters because regular puja planning often breaks down on scheduling, coordination, and follow-through rather than devotional intent alone.",
+          "Navdhya therefore presents subscription-style support as a trust and consistency tool.",
+          "The service is meant to reduce planning fatigue while keeping the ritual itself serious and well prepared."
+        )),
+        (New-Section "What the recurring service usually covers" @(
+          "Families considering $keyword usually want to know whether the plan covers priest assignment, repeat scheduling, reminders, and ceremony-type flexibility. Navdhya explains scope in those practical terms.",
+          "That clarity matters because recurring ritual support works best when expectations are defined before the first booking is confirmed.",
+          "A strong explanation also helps the family judge whether a subscription fits their actual practice rhythm.",
+          "This is especially useful for homes balancing weekly devotion with work calendars, school schedules, and elder participation."
+        )),
+        (New-Section "How scheduling and priest continuity are handled" @(
+          "Navdhya explains the service in terms of recurring date planning, ceremony cadence, and whether the household prefers continuity of priest, broad availability, or a mix of both.",
+          "This is important because repeat services create a different expectation from one-time bookings.",
+          "The system has to support continuity without becoming rigid.",
+          "A recurring model succeeds only when the household can depend on the schedule without feeling trapped by it."
+        )),
+        (New-Section "How families should prepare before enrolment" @(
+          "A good $keyword experience begins with a realistic sense of ritual frequency, preferred puja type, household timing constraints, and whether samagri or reminder support is also needed.",
+          "Navdhya recommends thinking through those factors early because subscription services are strongest when they fit lived household patterns.",
+          "Better setup decisions usually reduce cancellations and confusion later.",
+          "Preparation at the start also makes it easier to scale the plan up or down as the family routine changes."
+        )),
+        (New-Section "Why Navdhya explains recurring services carefully" @(
+          "Navdhya treats recurring puja services as part of long-term ritual discipline rather than as a generic membership product. The point is to help families keep worship consistent, organised, and easier to sustain.",
+          "That is why the service is explained through ritual continuity, operational clarity, and household usability instead of promotional language alone.",
+          "A clearer service model usually leads to better repeat engagement and a steadier devotional routine."
+        )),
+        (New-Section "How recurring service design supports household discipline" @(
+          "A recurring ritual service works best when the digital system supports the family's devotional habits rather than competing with them. Navdhya therefore ties reminders, history, and scheduling logic back to practice continuity.",
+          "This matters because many households do not struggle with intent. They struggle with repetition, preparation, and keeping the calendar organized over time.",
+          "By reducing those operational burdens, the service can make regular worship more sustainable without making the household feel dependent on opaque systems."
+        )),
+        (New-Section "Why this matters for long-term trust in Navdhya" @(
+          "Families judge recurring services over months, not minutes. Navdhya therefore explains subscription support in terms of predictability, responsive coordination, and whether the system keeps delivering what was promised after the first booking.",
+          "That longer time horizon makes service design, reminder quality, and priest continuity more important than on a one-time ritual page.",
+          "A recurring plan becomes credible only when the family can see that the platform is helping them maintain a meaningful rhythm of worship."
+        ))
+      )
+    }
     default {
       $sections = @(
         (New-Section "Why families book $keyword through Navdhya" @(
@@ -1357,7 +1730,8 @@ function New-ServiceData {
     }
   }
 
-  return Render-Sections @($sections + (Get-ExtendedSections $Entry))
+  $finalSections = if ($Entry.contentFamily -eq "platform-tech-service") { @($sections) } else { @($sections + (Get-ExtendedSections $Entry)) }
+  return Render-Sections $finalSections
 }
 
 function New-LocalBusinessData {

@@ -28,7 +28,7 @@ describe("SEO catalog rollout", () => {
   const rolloutSlugs = getAllSlugs().filter((slug) => !BASE_SLUGS.has(slug));
 
   it("registers the full requested rollout", () => {
-    expect(rolloutSlugs.length).toBeGreaterThanOrEqual(286);
+    expect(rolloutSlugs.length).toBeGreaterThanOrEqual(476);
   });
 
   it("loads every rollout page with required fields", () => {
