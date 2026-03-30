@@ -15,7 +15,7 @@ import { resolveContext } from "@/lib/context-resolver"
 
 // Generate page metadata using SEO manager
 export const metadata = seoManager.generateMetadata({
-  title: "Navdhya — Verified Pandit Booking & Authentic Vedic Puja Services",
+  title: "Navdhya | Book Pandit for Puja, Vedic Rituals & Ceremonies in Delhi NCR",
   description: "Book verified pandits for authentic home pujas, online rituals, astrology consultations, and Hindu ceremonies with Navdhya. Trusted by families across Delhi-NCR and expanding pan-India.",
   path: "/",
   keywords: [
