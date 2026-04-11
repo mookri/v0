@@ -7,8 +7,8 @@ import { resolveContext } from "@/lib/context-resolver"
 
 // Add page-specific metadata
 export const metadata = seoManager.generateMetadata({
-  title: "About Us",
-  description: "Navdhya is Delhi's premier spiritual wellness platform connecting families with certified Vedic pandits for authentic puja services, astrology consultation, and spiritual guidance. Professional, reliable, and culturally authentic.",
+  title: "About Navdhya, Our Team & Spiritual Services",
+  description: "Learn about Navdhya, our team, and how we connect families with verified pandits, authentic rituals, and practical spiritual support.",
   path: "/about",
   keywords: [
     "Puja Services in Delhi", 

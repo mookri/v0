@@ -223,7 +223,7 @@ export default function ServicesClient() {
           </p>
           <div className="flex flex-wrap justify-center gap-2">
             <Button asChild size="sm" className="px-4 py-2 rounded-md text-xs">
-              <Link href="/booking">Book a Puja</Link>
+              <Link href="/book">Book a Puja</Link>
             </Button>
             <Button asChild variant="outline" size="sm" className="px-4 py-2 rounded-md text-xs border-2">
               <Link href="/consultation">Consult an Expert</Link>
@@ -273,7 +273,7 @@ export default function ServicesClient() {
           </p>
           <div className="flex flex-wrap justify-center gap-2">
             <Button asChild size="sm" className="px-4 py-2 rounded-md text-xs">
-              <Link href="/booking">Schedule</Link>
+              <Link href="/book">Schedule</Link>
             </Button>
             <Button asChild variant="outline" size="sm" className="px-4 py-2 rounded-md text-xs border-2">
               <Link href="/contact">Contact</Link>

@@ -5,6 +5,13 @@ import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
 import { resolveContext } from "@/lib/context-resolver"
 import PanditsClient from './client'
 
+export const metadata = seoManager.generateMetadata({
+  title: "Verified Pandits for Puja, Rituals & Guidance",
+  description: "Browse verified Navdhya pandits for home pujas, ceremonies, astrology guidance, and ritual support across Delhi NCR.",
+  path: "/pandits",
+  keywords: ["verified pandits", "book pandit", "puja priest", "astrology expert", "Navdhya pandits"],
+})
+
 // Schema markup for the main pandits page
 const PANDITS_SCHEMA = seoManager.generateSchema({
   type: "CollectionPage",

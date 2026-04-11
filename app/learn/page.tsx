@@ -5,6 +5,13 @@ import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
 import { resolveContext } from "@/lib/context-resolver"
 import LearnClient from './client'
 
+export const metadata = seoManager.generateMetadata({
+  title: "Learn Vedic Rituals, Gita & Spiritual Practice",
+  description: "Learn with Navdhya through courses, workshops, spiritual resources, and family-friendly learning paths for Hindu rituals and traditions.",
+  path: "/learn",
+  keywords: ["learn Vedic rituals", "Bhagavad Gita learning", "spiritual workshops", "Navdhya learning", "Hindu traditions"],
+})
+
 // Schema markup for the main learn page
 const LEARN_SCHEMA = seoManager.generateSchema({
   type: "CollectionPage",

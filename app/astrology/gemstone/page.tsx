@@ -21,8 +21,8 @@ const GEMSTONE_SCHEMA = seoManager.generateSchema({
 export async function generateMetadata() {
   return seoManager.generateMetadata({
     path: "/astrology/gemstone",
-    title: "Gemstone Recommendations - Navdhya",
-    description: "Personalized Vedic gemstone recommendations based on your birth chart for enhanced positive energies and protection.",
+    title: "Gemstone Recommendations for Your Birth Chart",
+    description: "Get Vedic gemstone recommendations from Navdhya based on your birth chart, planetary balance, and protection needs.",
     keywords: ["gemstone recommendations", "vedic gemstones", "birth chart analysis", "astrology"]
   })
 }

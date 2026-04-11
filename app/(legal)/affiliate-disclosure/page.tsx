@@ -3,9 +3,9 @@ import Script from "next/script"
 
 // Add page-specific metadata
 export const metadata = seoManager.generateMetadata({
-  title: "Affiliate Disclosure",
+  title: "Affiliate Disclosure & Partner Links",
   description: "Navdhya's affiliate disclosure statement. Learn about our relationships with third-party products and services that may earn us commissions.",
-  path: "/legal/affiliate-disclosure",
+  path: "/affiliate-disclosure",
   keywords: ["affiliate disclosure", "affiliate links", "commission disclosure", "FTC compliance", "affiliate marketing"]
 })
 
@@ -14,11 +14,11 @@ const AFFILIATE_DISCLOSURE_SCHEMA = seoManager.generateSchema({
   type: "WebPage",
   name: "Affiliate Disclosure - Navdhya",
   description: "Navdhya's affiliate disclosure statement. Learn about our relationships with third-party products and services that may earn us commissions.",
-  path: "/legal/affiliate-disclosure",
+  path: "/affiliate-disclosure",
   breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
-    { name: "Affiliate Disclosure", url: "https://www.navdhya.com/legal/affiliate-disclosure" }
+    { name: "Affiliate Disclosure", url: "https://www.navdhya.com/affiliate-disclosure" }
   ]
 })
 

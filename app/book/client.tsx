@@ -70,7 +70,31 @@ export default function BookingClient({ bookingSchema }: { bookingSchema: string
             Schedule an authentic Hindu puja with our certified Vedic pandits. 
             Simply fill out the form below and we'll contact you to confirm details.
           </p>
+          <p className="mt-4 text-sm text-muted-foreground max-w-2xl mx-auto">
+            Use this page to request home pujas, festival rituals, life-event ceremonies, or astrology guidance. If you are still deciding, review our <Link href="/consultation" className="text-primary hover:underline">consultation services</Link> or <Link href="/contact" className="text-primary hover:underline">talk to the team</Link> first.
+          </p>
         </div>
+
+        <section className="mb-10 grid gap-4 rounded-xl border border-border bg-card/60 p-6 md:grid-cols-3">
+          <div>
+            <h2 className="text-lg font-semibold">What we need from you</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Share your ceremony type, preferred date, location, and any family customs we should note before matching the right pandit.
+            </p>
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold">What happens next</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Our team reviews your request, confirms the ritual flow, and follows up with timing, materials, and booking details.
+            </p>
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold">Helpful links</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Explore <Link href="/pandits" className="text-primary hover:underline">verified pandits</Link>, read <Link href="/explore/how-navdhya-works" className="text-primary hover:underline">how Navdhya works</Link>, or visit <Link href="/about" className="text-primary hover:underline">about Navdhya</Link>.
+            </p>
+          </div>
+        </section>
         
         <div className="grid md:grid-cols-3 gap-8">
           {/* Booking Form */}
@@ -293,6 +317,24 @@ export default function BookingClient({ bookingSchema }: { bookingSchema: string
                   <li className="flex items-start">
                     <span className="text-primary mr-2">•</span>
                     <span>Cancellations require 48 hours notice</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-border">
+                <h3 className="font-medium mb-3">Before you submit</h3>
+                <ul className="text-sm text-muted-foreground space-y-2">
+                  <li className="flex items-start">
+                    <span className="text-primary mr-2">&bull;</span>
+                    <span>Keep your preferred ceremony date flexible if you need a specific priest or muhurta.</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-primary mr-2">&bull;</span>
+                    <span>Add regional customs, samagri needs, or family preferences in the notes field so the booking is accurate.</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-primary mr-2">&bull;</span>
+                    <span>Need help first? Visit <Link href="/consultation" className="text-primary hover:underline">consultation</Link> or <Link href="/contact" className="text-primary hover:underline">contact us</Link>.</span>
                   </li>
                 </ul>
               </div>

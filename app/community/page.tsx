@@ -5,6 +5,13 @@ import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
 import { resolveContext } from "@/lib/context-resolver"
 import CommunityClient from './client'
 
+export const metadata = seoManager.generateMetadata({
+  title: "Navdhya Community Stories, Events & Forums",
+  description: "Explore the Navdhya community through stories, moderated forums, volunteer opportunities, and upcoming spiritual events.",
+  path: "/community",
+  keywords: ["Navdhya community", "spiritual forums", "community events", "volunteer programs", "user stories"],
+})
+
 // Schema markup for the main community page
 const COMMUNITY_SCHEMA = seoManager.generateSchema({
   type: "CollectionPage",

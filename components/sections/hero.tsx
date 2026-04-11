@@ -35,7 +35,7 @@ const slides = [
     label: "Sacred Ceremonies",
     image: "/hindu-puja-ceremony-peaceful-home-setting.jpg",
     cta: "Schedule Puja",
-    ctaLink: "/booking",
+    ctaLink: "/book",
     secondaryCta: "Learn More",
     secondaryCtaLink: "#about",
   },

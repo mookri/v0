@@ -6,7 +6,7 @@ import { resolveContext } from '@/lib/context-resolver'
 
 // Add page-specific metadata
 export const metadata = seoManager.generateMetadata({
-  title: "Cookie Policy",
+  title: "Cookie Policy & Website Tracking Notice",
   description: "Learn how Navdhya uses cookies and similar tracking technologies to enhance your browsing experience and provide personalized services.",
   path: "/cookie-policy",
   keywords: ["cookie policy", "cookies", "tracking technologies", "privacy", "website cookies", "Navdhya cookies"]

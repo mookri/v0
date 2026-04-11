@@ -13,8 +13,8 @@ import { ContactForm, ContactMap } from '@/components/sections/contact'
 
 // Add page-specific metadata
 export const metadata = seoManager.generateMetadata({
-  title: "Contact Us - Premium Spiritual Services | Navdhya",
-  description: "Get in touch with Navdhya for authentic Puja and Spiritual Wellness services in Delhi NCR. Book trusted pandits for Navdhya Puja, Grah Shanti, Vedic rituals, and home ceremonies. 24/7 support available.",
+  title: "Contact Navdhya for Puja Booking & Support",
+  description: "Contact Navdhya for puja booking support, astrology guidance, partnership questions, and ceremony planning help across Delhi NCR.",
   path: "/contact",
   keywords: [
     "Contact Navdhya",
@@ -94,6 +94,22 @@ export default async function ContactPage() {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: localBusinessSchema }}
         />
+        <main className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8">
+          <section className="max-w-3xl space-y-4">
+            <p className="text-sm font-medium uppercase tracking-[0.18em] text-primary">
+              Contact
+            </p>
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              Talk to Navdhya about your ritual, booking, or support request
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              Reach our team for booking help, astrology support, priest coordination, partnership questions, or follow-up after a ceremony.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Start with <a href="/book" className="text-primary hover:underline">book a puja</a>, review our <a href="/consultation" className="text-primary hover:underline">consultation options</a>, or learn more <a href="/about" className="text-primary hover:underline">about Navdhya</a>.
+            </p>
+          </section>
+        </main>
         <ContactForm />
         <ContactMap />
       </LayoutOrchestrator>

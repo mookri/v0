@@ -12,7 +12,9 @@ const config: Config = {
     '^@/components/(.*)$': '<rootDir>/components/$1',
     '^@/lib/(.*)$': '<rootDir>/lib/$1',
   },
+  modulePathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/websec/', '<rootDir>/drafts/'],
   testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/', '<rootDir>/websec/', '<rootDir>/drafts/'],
+  watchPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/websec/', '<rootDir>/drafts/'],
 };
 
 export default createJestConfig(config);

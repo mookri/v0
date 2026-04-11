@@ -5,7 +5,7 @@ import Script from "next/script"
 export const metadata = seoManager.generateMetadata({
   title: "Intellectual Property Policy",
   description: "Navdhya's intellectual property policy. Learn how we protect our trademarks, content, recordings, and other proprietary assets.",
-  path: "/legal/ip-policy",
+  path: "/ip-policy",
   keywords: ["intellectual property", "IP policy", "copyright", "trademark", "content protection", "Navdhya IP"]
 })
 
@@ -14,11 +14,11 @@ const IP_POLICY_SCHEMA = seoManager.generateSchema({
   type: "WebPage",
   name: "Intellectual Property Policy - Navdhya",
   description: "Navdhya's intellectual property policy. Learn how we protect our trademarks, content, recordings, and other proprietary assets.",
-  path: "/legal/ip-policy",
+  path: "/ip-policy",
   breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
-    { name: "Intellectual Property Policy", url: "https://www.navdhya.com/legal/ip-policy" }
+    { name: "Intellectual Property Policy", url: "https://www.navdhya.com/ip-policy" }
   ]
 })
 

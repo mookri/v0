@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Mail, Phone, MapPin, Heart, Shield, Lock } from "lucide-react";
 import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 import Link from "next/link";
@@ -240,10 +241,12 @@ export function SiteFooter() {
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="flex flex-col md:flex-row justify-between items-center gap-3">
             {/* Company Logo */}
-            <div className="flex items-center">
-              <img 
-                src="/navdhya-logo.png" 
-                alt="Navdhya Ritual Services Logo" 
+              <div className="flex items-center">
+              <Image
+                src="/navdhya-logo.png"
+                alt="Navdhya Ritual Services Logo"
+                width={192}
+                height={64}
                 className="h-12 w-auto"
               />
             </div>
@@ -290,12 +293,12 @@ export function SiteFooter() {
               <div style={{display: "flex", alignItems: "center", flexWrap: "wrap", gap: "3px", flex: "1 0 0%", border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
                 <div style={{display: "flex", alignItems: "center", flexShrink: 0, border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
                   <a href="" style={{textDecoration: "none", color: "rgb(0, 103, 178)", display: "flex", alignItems: "center", border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
-                    <img src="/payments/google-white.png" style={{maxHeight: "20px", maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
+                    <Image src="/payments/google-white.png" alt="Google Play" width={96} height={20} style={{maxHeight: "20px", maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
                   </a>
                 </div>
                 <div style={{display: "flex", alignItems: "center", flexShrink: 0, border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
                   <a href="" style={{textDecoration: "none", color: "rgb(0, 103, 178)", display: "flex", alignItems: "center", border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
-                    <img src="/payments/apple-white.png" style={{maxHeight: "20px", maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
+                    <Image src="/payments/apple-white.png" alt="App Store" width={96} height={20} style={{maxHeight: "20px", maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
                   </a>
                 </div>
               </div>
@@ -319,19 +322,19 @@ export function SiteFooter() {
             <div className="flex items-center space-x-3">
               <div className="flex items-center space-x-2.5">
                 <div style={{border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
-                  <img src="/payments/payment.svg" alt="payment" style={{maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
+                  <Image src="/payments/payment.svg" alt="Payment method 1" width={36} height={22} style={{maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
                 </div>
                 <div style={{border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
-                  <img src="/payments/payment2.svg" alt="payment" style={{maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
+                  <Image src="/payments/payment2.svg" alt="Payment method 2" width={36} height={22} style={{maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
                 </div>
                 <div style={{border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
-                  <img src="/payments/payment3.svg" alt="payment" style={{maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
+                  <Image src="/payments/payment3.svg" alt="Payment method 3" width={36} height={22} style={{maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
                 </div>
                 <div style={{border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
-                  <img src="/payments/payment4.svg" alt="payment" style={{maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
+                  <Image src="/payments/payment4.svg" alt="Payment method 4" width={36} height={22} style={{maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
                 </div>
                 <div style={{border: "0px solid rgb(229, 231, 235)", boxSizing: "border-box"}}>
-                  <img src="/payments/klarna-white.webp" alt="payment" style={{maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
+                  <Image src="/payments/klarna-white.webp" alt="Payment method 5" width={36} height={22} style={{maxWidth: "100%", height: "auto", imageRendering: "-webkit-optimize-contrast", border: "0px solid rgb(229, 231, 235)", verticalAlign: "middle", boxSizing: "border-box"}} />
                 </div>
               </div>
             </div>

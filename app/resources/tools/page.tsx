@@ -4,6 +4,13 @@ import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator"
 import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
 import { resolveContext } from "@/lib/context-resolver"
 
+export const metadata = seoManager.generateMetadata({
+  title: "Spiritual Tools, Muhurat & Panchang Calculators",
+  description: "Use Navdhya tools for horoscope checks, muhurat planning, panchang guidance, kundli matching, and spiritual planning support.",
+  path: "/resources/tools",
+  keywords: ["muhurat calculator", "panchang tool", "horoscope calculator", "kundli matching", "Navdhya tools"],
+})
+
 // Schema markup for the tools page
 const TOOLS_SCHEMA = seoManager.generateSchema({
   type: "CollectionPage",

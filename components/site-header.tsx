@@ -1,4 +1,5 @@
 "use client"
+import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -123,9 +124,11 @@ export function SiteHeader() {
             {/* Logo */}
             <div className="flex items-center gap-8">
               <Link href="/" className="flex items-center gap-2" aria-label="Navdhya Home">
-                <img
+                <Image
                   src="/navdhya-logo.png"
                   alt="Navdhya Ritual Services Logo"
+                  width={160}
+                  height={48}
                   className="h-8 w-auto"
                 />
               </Link>
@@ -206,9 +209,11 @@ export function SiteHeader() {
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-6">
                       <Link href="/" className="flex items-center gap-2" aria-label="Navdhya Home">
-                        <img
+                        <Image
                           src="/navdhya-logo.png"
                           alt="Navdhya Ritual Services Logo"
+                          width={160}
+                          height={48}
                           className="h-8 w-auto"
                         />
                       </Link>
@@ -328,9 +333,11 @@ export function SiteHeader() {
               {/* Logo - Centered */}
               <div className="flex-1 flex justify-center">
                 <Link href="/" className="flex items-center gap-2" aria-label="Navdhya Home">
-                  <img
+                  <Image
                     src="/navdhya-logo.png"
                     alt="Navdhya Ritual Services Logo"
+                    width={180}
+                    height={56}
                     className="h-10 w-auto"
                   />
                 </Link>

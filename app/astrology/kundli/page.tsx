@@ -6,8 +6,8 @@ import { resolveContext } from "@/lib/context-resolver"
 
 // Generate page metadata using SEO manager
 export const metadata = seoManager.generateMetadata({
-  title: "Kundli Analysis",
-  description: "Get expert interpretation of your birth chart for life guidance. Our certified astrologers provide detailed kundli analysis for career, marriage, and health predictions.",
+  title: "Kundli Analysis, Birth Chart Reading & Remedies",
+  description: "Get kundli analysis, birth chart interpretation, and practical Vedic remedies from Navdhya for career, marriage, health, and timing questions.",
   path: "/astrology/kundli",
   keywords: [
     "kundli analysis",
@@ -75,7 +75,7 @@ export default async function KundliAnalysisPage() {
                   Get expert interpretation of your birth chart for comprehensive life guidance. Our certified astrologers provide detailed kundli analysis for career, marriage, and health predictions.
                 </p>
                 <a 
-                  href="/booking"
+                  href="/book"
                   className="inline-flex items-center gap-2 bg-white text-[#0E3F2E] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-sm"
                 >
                   <span>Book Consultation</span>

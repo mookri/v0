@@ -21,8 +21,8 @@ const REMEDIES_SCHEMA = seoManager.generateSchema({
 export async function generateMetadata() {
   return seoManager.generateMetadata({
     path: "/astrology/remedies",
-    title: "Astrological Remedies - Navdhya",
-    description: "Personalized Vedic astrological remedies to overcome challenges and enhance positive planetary influences in your life.",
+    title: "Astrological Remedies for Planets, Doshas & Life Goals",
+    description: "Explore personalized Vedic remedies from Navdhya for doshas, difficult planetary periods, and practical life challenges.",
     keywords: ["astrological remedies", "vedic remedies", "planetary remedies", "mantra remedies"]
   })
 }

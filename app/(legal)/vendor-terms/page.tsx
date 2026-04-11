@@ -5,7 +5,7 @@ import Script from "next/script"
 export const metadata = seoManager.generateMetadata({
   title: "Vendor / Partner Terms",
   description: "Terms and conditions for third-party vendors and partners working with Navdhya. Covers service agreements, responsibilities, and partnership guidelines.",
-  path: "/legal/vendor-terms",
+  path: "/vendor-terms",
   keywords: ["vendor terms", "partner agreement", "third-party services", "service provider terms", "Navdhya partnerships"]
 })
 
@@ -14,11 +14,11 @@ const VENDOR_TERMS_SCHEMA = seoManager.generateSchema({
   type: "WebPage",
   name: "Vendor / Partner Terms - Navdhya",
   description: "Terms and conditions for third-party vendors and partners working with Navdhya. Covers service agreements, responsibilities, and partnership guidelines.",
-  path: "/legal/vendor-terms",
+  path: "/vendor-terms",
   breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
-    { name: "Vendor / Partner Terms", url: "https://www.navdhya.com/legal/vendor-terms" }
+    { name: "Vendor / Partner Terms", url: "https://www.navdhya.com/vendor-terms" }
   ]
 })
 

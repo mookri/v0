@@ -3,9 +3,9 @@ import Script from "next/script"
 
 // Add page-specific metadata
 export const metadata = seoManager.generateMetadata({
-  title: "Child Protection / Minor Usage Policy",
+  title: "Child Protection & Minor Usage Policy",
   description: "Navdhya's commitment to protecting children and minors who access our platform. Learn about our policies for family services and educational content.",
-  path: "/legal/child-protection",
+  path: "/child-protection",
   keywords: ["child protection", "minor usage policy", "family services", "children's privacy", "online safety", "Navdhya child protection"]
 })
 
@@ -14,11 +14,11 @@ const CHILD_PROTECTION_SCHEMA = seoManager.generateSchema({
   type: "WebPage",
   name: "Child Protection / Minor Usage Policy - Navdhya",
   description: "Navdhya's commitment to protecting children and minors who access our platform. Learn about our policies for family services and educational content.",
-  path: "/legal/child-protection",
+  path: "/child-protection",
   breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
-    { name: "Child Protection / Minor Usage Policy", url: "https://www.navdhya.com/legal/child-protection" }
+    { name: "Child Protection / Minor Usage Policy", url: "https://www.navdhya.com/child-protection" }
   ]
 })
 

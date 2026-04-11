@@ -5,7 +5,7 @@ import Script from "next/script"
 export const metadata = seoManager.generateMetadata({
   title: "Pandit Verification & Code of Conduct",
   description: "Learn about Navdhya's rigorous pandit verification process and code of conduct. We ensure all our pandits are thoroughly vetted and adhere to the highest professional standards.",
-  path: "/legal/pandit-verification",
+  path: "/pandit-verification",
   keywords: ["pandit verification", "pandit code of conduct", "certified pandits", "pandit background check", "Navdhya pandits"]
 })
 
@@ -14,11 +14,11 @@ const PANDIT_VERIFICATION_SCHEMA = seoManager.generateSchema({
   type: "WebPage",
   name: "Pandit Verification & Code of Conduct - Navdhya",
   description: "Learn about Navdhya's rigorous pandit verification process and code of conduct. We ensure all our pandits are thoroughly vetted and adhere to the highest professional standards.",
-  path: "/legal/pandit-verification",
+  path: "/pandit-verification",
   breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
-    { name: "Pandit Verification & Code of Conduct", url: "https://www.navdhya.com/legal/pandit-verification" }
+    { name: "Pandit Verification & Code of Conduct", url: "https://www.navdhya.com/pandit-verification" }
   ]
 })
 

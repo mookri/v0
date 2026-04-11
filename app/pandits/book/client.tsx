@@ -254,7 +254,7 @@ export default function BookConsultationClient({ consultationSchema }: { consult
                 <p className="text-sm text-muted-foreground mb-4">
                   We guarantee satisfaction with every service. If you're not completely happy with your consultation, we'll work with you to make it right or provide a full refund.
                 </p>
-                <Link href="/legal/service-guarantee" className="text-sm text-[#0E3F2E] hover:underline">
+                <Link href="/service-guarantee" className="text-sm text-[#0E3F2E] hover:underline">
                   View Service Guarantee →
                 </Link>
               </div>

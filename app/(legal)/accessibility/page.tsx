@@ -3,9 +3,9 @@ import Script from "next/script"
 
 // Add page-specific metadata
 export const metadata = seoManager.generateMetadata({
-  title: "Accessibility Statement",
+  title: "Accessibility Statement & Website Support",
   description: "Navdhya's commitment to digital accessibility for all users. We strive to make our platform usable by everyone, regardless of abilities or disabilities.",
-  path: "/legal/accessibility",
+  path: "/accessibility",
   keywords: ["accessibility", "inclusive design", "digital accessibility", "web accessibility", "Navdhya accessibility"]
 })
 
@@ -14,11 +14,11 @@ const ACCESSIBILITY_SCHEMA = seoManager.generateSchema({
   type: "WebPage",
   name: "Accessibility Statement - Navdhya",
   description: "Navdhya's commitment to digital accessibility for all users. We strive to make our platform usable by everyone, regardless of abilities or disabilities.",
-  path: "/legal/accessibility",
+  path: "/accessibility",
   breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
-    { name: "Accessibility Statement", url: "https://www.navdhya.com/legal/accessibility" }
+    { name: "Accessibility Statement", url: "https://www.navdhya.com/accessibility" }
   ]
 })
 

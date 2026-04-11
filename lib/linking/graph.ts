@@ -129,17 +129,40 @@ export function getRelatedPages(
     addLink(relSlug, relPage.title, `/${basePath}/${relSlug}`, entry.cluster);
   }
 
-  // 2. Same-cluster pages (fill remaining slots)
+  // 2. Same-cluster pages (fill remaining slots with nearby pages so the
+  // internal link graph is distributed more evenly across the cluster)
   if (links.length < limit) {
     const clusterSlugs = safeGetClusterSlugs(page.cluster);
-    for (const cSlug of clusterSlugs) {
-      if (links.length >= limit) break;
+    const basePath = getClusterMeta(page.cluster)?.basePath || page.cluster;
+    const currentIndex = clusterSlugs.indexOf(page.slug);
 
-      const cPage = safeGetPage(cSlug);
-      if (!cPage) continue;
+    if (currentIndex >= 0) {
+      for (let offset = 1; offset < clusterSlugs.length && links.length < limit; offset += 1) {
+        const candidates = [
+          clusterSlugs[currentIndex - offset],
+          clusterSlugs[currentIndex + offset],
+        ].filter((slug): slug is string => Boolean(slug));
 
-      const basePath = getClusterMeta(page.cluster)?.basePath || page.cluster;
-      addLink(cSlug, cPage.title, `/${basePath}/${cSlug}`, page.cluster);
+        for (const cSlug of candidates) {
+          if (links.length >= limit) break;
+
+          const cPage = safeGetPage(cSlug);
+          if (!cPage) continue;
+
+          addLink(cSlug, cPage.title, `/${basePath}/${cSlug}`, page.cluster);
+        }
+      }
+    }
+
+    if (links.length < limit) {
+      for (const cSlug of clusterSlugs) {
+        if (links.length >= limit) break;
+
+        const cPage = safeGetPage(cSlug);
+        if (!cPage) continue;
+
+        addLink(cSlug, cPage.title, `/${basePath}/${cSlug}`, page.cluster);
+      }
     }
   }
 

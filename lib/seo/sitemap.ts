@@ -4,8 +4,10 @@ import type { MetadataRoute } from "next";
 import { getAllPages } from "@/lib/content/loader";
 import { getClusterMeta, getRegistryEntry } from "@/lib/content/registry";
 import { SITE_URL } from "@/lib/seo/site";
+import { normalizePublicPath, toPublicUrl } from "@/lib/seo/routes";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
+export const SITEMAP_CHUNK_SIZE = 40;
 
 const APP_DIR = join(process.cwd(), "app");
 const PUJA_DETAILS_SOURCE = join(APP_DIR, "pujas", "[slug]", "page.tsx");
@@ -86,7 +88,7 @@ function discoverStaticAppEntries(): SitemapEntry[] {
 
     return [
       {
-        url: `${SITE_URL}${route}`,
+        url: toPublicUrl(route),
         lastModified: new Date(statSync(filePath).mtime),
         changeFrequency: inferChangeFrequency(route),
         priority: inferPriority(route),
@@ -105,10 +107,10 @@ function discoverSeoContentEntries(): SitemapEntry[] {
     const clusterMeta = getClusterMeta(entry.cluster);
     if (!clusterMeta) return [];
 
-    const route = `/${clusterMeta.basePath}/${page.slug}`;
+    const route = normalizePublicPath(`/${clusterMeta.basePath}/${page.slug}`);
 
     return [{
-      url: `${SITE_URL}${route}`,
+      url: toPublicUrl(route),
       lastModified: new Date(page.automation?.generatedAt ?? page.lastUpdated),
       changeFrequency: inferChangeFrequency(route),
       priority: inferPriority(route),
@@ -133,7 +135,7 @@ function discoverPujaDetailEntries(): SitemapEntry[] {
   return discoverPujaDetailSlugs().map((slug) => {
     const route = `/pujas/${slug}`;
     return {
-      url: `${SITE_URL}${route}`,
+      url: toPublicUrl(route),
       lastModified,
       changeFrequency: "weekly",
       priority: 0.84,
@@ -157,6 +159,39 @@ export function buildSitemapEntries(): MetadataRoute.Sitemap {
     ...discoverSeoContentEntries(),
     ...discoverPujaDetailEntries(),
   ]);
+}
+
+export function buildSitemapChunks(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap[] {
+  const chunks: MetadataRoute.Sitemap[] = [];
+
+  for (let index = 0; index < entries.length; index += SITEMAP_CHUNK_SIZE) {
+    chunks.push(entries.slice(index, index + SITEMAP_CHUNK_SIZE));
+  }
+
+  return chunks;
+}
+
+export function buildSitemapIndexXml(entries: MetadataRoute.Sitemap): string {
+  const chunks = buildSitemapChunks(entries);
+  const sitemapNodes = chunks.map((chunk, index) => {
+    const lastModified = formatLastModified(
+      chunk.reduce<Date | undefined>((latest, entry) => {
+        const current = entry.lastModified ? new Date(entry.lastModified) : undefined;
+        if (!current || Number.isNaN(current.getTime())) return latest;
+        if (!latest || current > latest) return current;
+        return latest;
+      }, undefined),
+    );
+
+    return [
+      "  <sitemap>",
+      `    <loc>${SITE_URL}/sitemaps/${index}.xml</loc>`,
+      lastModified ? `    <lastmod>${lastModified}</lastmod>` : "",
+      "  </sitemap>",
+    ].filter(Boolean).join("\n");
+  }).join("\n");
+
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapNodes}\n</sitemapindex>\n`;
 }
 
 function formatLastModified(date?: string | Date): string | undefined {
