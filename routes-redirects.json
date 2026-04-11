@@ -136,6 +136,81 @@
       "permanent": true
     },
     {
+      "source": "/legal/accessibility",
+      "destination": "/accessibility",
+      "permanent": true
+    },
+    {
+      "source": "/legal/affiliate-disclosure",
+      "destination": "/affiliate-disclosure",
+      "permanent": true
+    },
+    {
+      "source": "/legal/cancellation-policy",
+      "destination": "/cancellation-policy",
+      "permanent": true
+    },
+    {
+      "source": "/legal/child-protection",
+      "destination": "/child-protection",
+      "permanent": true
+    },
+    {
+      "source": "/legal/cookie-policy",
+      "destination": "/cookie-policy",
+      "permanent": true
+    },
+    {
+      "source": "/legal/data-processing",
+      "destination": "/data-processing",
+      "permanent": true
+    },
+    {
+      "source": "/legal/grievance-officer",
+      "destination": "/grievance-officer",
+      "permanent": true
+    },
+    {
+      "source": "/legal/ip-policy",
+      "destination": "/ip-policy",
+      "permanent": true
+    },
+    {
+      "source": "/legal/pandit-agreement",
+      "destination": "/pandit-agreement",
+      "permanent": true
+    },
+    {
+      "source": "/legal/pandit-verification",
+      "destination": "/pandit-verification",
+      "permanent": true
+    },
+    {
+      "source": "/legal/privacy-policy",
+      "destination": "/privacy-policy",
+      "permanent": true
+    },
+    {
+      "source": "/legal/refund-policy",
+      "destination": "/refund-policy",
+      "permanent": true
+    },
+    {
+      "source": "/legal/service-guarantee",
+      "destination": "/service-guarantee",
+      "permanent": true
+    },
+    {
+      "source": "/legal/terms-of-service",
+      "destination": "/terms-of-service",
+      "permanent": true
+    },
+    {
+      "source": "/legal/vendor-terms",
+      "destination": "/vendor-terms",
+      "permanent": true
+    },
+    {
       "source": "/book-pooja",
       "destination": "/book",
       "permanent": true

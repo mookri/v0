@@ -5,7 +5,7 @@ import Script from "next/script"
 export const metadata = seoManager.generateMetadata({
   title: "Contact & Grievance Officer",
   description: "Contact information for Navdhya's Grievance Officer as mandated under Indian IT Rules, 2021. Reach out for complaints, concerns, or assistance with our services.",
-  path: "/legal/grievance-officer",
+  path: "/grievance-officer",
   keywords: ["grievance officer", "contact us", "customer complaints", "IT Rules 2021", "Navdhya support", "customer service"]
 })
 
@@ -14,11 +14,11 @@ const GRIEVANCE_OFFICER_SCHEMA = seoManager.generateSchema({
   type: "WebPage",
   name: "Contact & Grievance Officer - Navdhya",
   description: "Contact information for Navdhya's Grievance Officer as mandated under Indian IT Rules, 2021. Reach out for complaints, concerns, or assistance with our services.",
-  path: "/legal/grievance-officer",
+  path: "/grievance-officer",
   breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
-    { name: "Contact & Grievance Officer", url: "https://www.navdhya.com/legal/grievance-officer" }
+    { name: "Contact & Grievance Officer", url: "https://www.navdhya.com/grievance-officer" }
   ]
 })
 

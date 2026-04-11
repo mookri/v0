@@ -3,9 +3,9 @@ import Script from "next/script"
 
 // Add page-specific metadata
 export const metadata = seoManager.generateMetadata({
-  title: "Data Processing Addendum",
+  title: "Data Processing Addendum for Partners",
   description: "Navdhya's Data Processing Addendum for compliance with data protection laws. Learn about our data processing practices and third-party processor relationships.",
-  path: "/legal/data-processing",
+  path: "/data-processing",
   keywords: ["data processing", "DPA", "GDPR compliance", "data protection", "third-party processors", "privacy compliance"]
 })
 
@@ -14,11 +14,11 @@ const DATA_PROCESSING_SCHEMA = seoManager.generateSchema({
   type: "WebPage",
   name: "Data Processing Addendum - Navdhya",
   description: "Navdhya's Data Processing Addendum for compliance with data protection laws. Learn about our data processing practices and third-party processor relationships.",
-  path: "/legal/data-processing",
+  path: "/data-processing",
   breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
-    { name: "Data Processing Addendum", url: "https://www.navdhya.com/legal/data-processing" }
+    { name: "Data Processing Addendum", url: "https://www.navdhya.com/data-processing" }
   ]
 })
 

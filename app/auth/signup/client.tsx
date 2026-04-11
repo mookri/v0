@@ -277,7 +277,7 @@ export default function SignupClient() {
               className="h-4 w-4 text-[#0E3F2E] focus:ring-[#0E3F2E] border-border rounded"
             />
             <label htmlFor="terms" className="ml-2 block text-sm text-foreground">
-              I agree to the <Link href="/legal/terms" className="text-[#0E3F2E] hover:underline">Terms of Service</Link> and <Link href="/legal/privacy" className="text-[#0E3F2E] hover:underline">Privacy Policy</Link>
+              I agree to the <Link href="/terms-of-service" className="text-[#0E3F2E] hover:underline">Terms of Service</Link> and <Link href="/privacy-policy" className="text-[#0E3F2E] hover:underline">Privacy Policy</Link>
             </label>
           </div>
           {errors.terms && (

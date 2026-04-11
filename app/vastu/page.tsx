@@ -65,7 +65,7 @@ export default function VastuPage() {
                 Expert Vastu consultation for homes and businesses to create harmonious environments that promote health, wealth, and happiness.
               </p>
               <a 
-                href="/booking"
+                href="/book"
                 className="inline-flex items-center gap-2 bg-white text-[#0E3F2E] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-sm"
               >
                 <span>Book Consultation</span>

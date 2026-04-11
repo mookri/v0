@@ -2,6 +2,7 @@
 // Utility functions for generating schema markup without circular dependencies
 
 import { SEO_CONFIG } from "@/lib/seo-config"
+import { toPublicUrl } from "@/lib/seo/routes"
 
 // Generate breadcrumb schema
 export const generateBreadcrumbSchema = (items: Array<{ name: string; url: string }>) => {
@@ -45,7 +46,7 @@ export const generateGenericSchema = (schemaData: {
   price?: string
   currency?: string
 }) => {
-  const canonicalUrl = `${SEO_CONFIG.siteUrl}${schemaData.path}`
+  const canonicalUrl = toPublicUrl(schemaData.path)
   const imageUrl = schemaData.image || SEO_CONFIG.defaultImage
   
   const baseSchema = {
@@ -88,11 +89,11 @@ export const generateGenericSchema = (schemaData: {
   }
 
   // Add organization information
-  (baseSchema as any).provider = {
-    "@type": "Organization",
-    name: SEO_CONFIG.organization.name,
-    url: SEO_CONFIG.organization.url,
-    logo: SEO_CONFIG.organization.logo
+    (baseSchema as any).provider = {
+      "@type": "Organization",
+      name: SEO_CONFIG.organization.name,
+      url: SEO_CONFIG.organization.url,
+      logo: SEO_CONFIG.organization.logo
   }
 
   return baseSchema

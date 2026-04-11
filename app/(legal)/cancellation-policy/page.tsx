@@ -6,7 +6,7 @@ import { resolveContext } from '@/lib/context-resolver'
 
 // Add page-specific metadata
 export const metadata = seoManager.generateMetadata({
-  title: "Cancellation Policy",
+  title: "Cancellation Policy for Bookings & Ritual Services",
   description: "Learn about Navdhya's cancellation policy for puja bookings and spiritual services. Understand the terms and conditions for canceling your bookings.",
   path: "/cancellation-policy",
   keywords: ["cancellation policy", "booking cancellation", "service cancellation", "Navdhya cancellation", "puja cancellation"]

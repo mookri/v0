@@ -7,6 +7,20 @@ const redirectsConfig = JSON.parse(
   readFileSync(join(process.cwd(), 'routes-redirects.json'), 'utf8')
 );
 
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'self'",
+  "form-action 'self' https://wa.me",
+  "img-src 'self' data: blob: https://res.cloudinary.com https://www.navdhya.com https://navdhya.com https://cdn.navdhya.com",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+  "connect-src 'self' data: blob: https://res.cloudinary.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://www.navdhya.com https://navdhya.com",
+  "frame-src 'self'",
+].join("; ");
+
 const nextConfig: NextConfig = {
 
   // ── Build ──────────────────────────────────────────────────────────────────
@@ -151,6 +165,7 @@ const nextConfig: NextConfig = {
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'origin-when-cross-origin' },
           { key: 'X-XSS-Protection', value: '1; mode=block' },
+          { key: 'Content-Security-Policy', value: contentSecurityPolicy },
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',

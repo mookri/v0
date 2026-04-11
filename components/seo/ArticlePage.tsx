@@ -246,13 +246,8 @@ function ArticlePageInner({
       onBookRitual();
       return;
     }
-    /*
-     * BUG FIX: page.title was embedded directly in the URL without encoding.
-     * If the title contains &, #, or non-ASCII chars the URL was malformed.
-     * encodeURIComponent ensures safe encoding.
-     */
-    const message = encodeURIComponent(`Book ${page.title}`);
-    window.open(`https://wa.me/?text=${message}`, "_blank", "noopener,noreferrer");
+    const service = encodeURIComponent(page.title);
+    window.location.assign(`/book?service=${service}`);
   }, [onBookRitual, page.title]);
 
   const publishedDate = page.lastUpdated

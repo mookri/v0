@@ -21,8 +21,8 @@ const HOROSCOPE_MATCHING_SCHEMA = seoManager.generateSchema({
 export async function generateMetadata() {
   return seoManager.generateMetadata({
     path: "/astrology/matchmaking",
-    title: "Horoscope Matching - Navdhya",
-    description: "Expert Vedic astrology horoscope matching for marriage compatibility and relationship harmony.",
+    title: "Horoscope Matching for Marriage Compatibility",
+    description: "Review marriage compatibility with Navdhya horoscope matching, kundli milan guidance, and relationship-focused Vedic insights.",
     keywords: ["horoscope matching", "kundli milan", "marriage compatibility", "vedic astrology"]
   })
 }

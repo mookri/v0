@@ -3,6 +3,7 @@
 
 import { SEO_CONFIG } from "@/lib/seo-config"
 import { toAbsoluteUrl, withSiteName } from "@/lib/seo/site"
+import { normalizePublicPath, toPublicUrl } from "@/lib/seo/routes"
 
 // Master SEO template - acts as the base configuration
 const MASTER_SEO_TEMPLATE = {
@@ -33,7 +34,7 @@ export class SEOManager {
     publishedTime?: string
     modifiedTime?: string
   }) {
-    const canonicalUrl = `${this.masterConfig.siteUrl}${pageData.path}`
+    const canonicalUrl = toPublicUrl(pageData.path)
     const imageUrl = toAbsoluteUrl(pageData.image || this.masterConfig.defaultImage)
     const fullTitle = withSiteName(pageData.title)
     
@@ -84,6 +85,9 @@ export class SEOManager {
       alternates: {
         canonical: canonicalUrl,
       },
+      other: {
+        "x-canonical-path": normalizePublicPath(pageData.path),
+      },
     }
   }
 
@@ -99,7 +103,7 @@ export class SEOManager {
     price?: string
     currency?: string
   }) {
-    const canonicalUrl = `${this.masterConfig.siteUrl}${schemaData.path}`
+    const canonicalUrl = toPublicUrl(schemaData.path)
     const imageUrl = toAbsoluteUrl(schemaData.image || this.masterConfig.defaultImage)
     
     const baseSchema = {

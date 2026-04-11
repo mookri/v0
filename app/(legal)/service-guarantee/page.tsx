@@ -5,7 +5,7 @@ import Script from "next/script"
 export const metadata = seoManager.generateMetadata({
   title: "Service Guarantee Policy",
   description: "Navdhya's commitment to quality service delivery. Our Service Guarantee ensures exceptional ritual experiences with verified pandits, punctuality, and customer satisfaction.",
-  path: "/legal/service-guarantee",
+  path: "/service-guarantee",
   keywords: ["service guarantee", "quality assurance", "ritual satisfaction", "pandit promise", "Navdhya guarantee"]
 })
 
@@ -14,11 +14,11 @@ const SERVICE_GUARANTEE_SCHEMA = seoManager.generateSchema({
   type: "WebPage",
   name: "Service Guarantee Policy - Navdhya",
   description: "Navdhya's commitment to quality service delivery. Our Service Guarantee ensures exceptional ritual experiences with verified pandits, punctuality, and customer satisfaction.",
-  path: "/legal/service-guarantee",
+  path: "/service-guarantee",
   breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
-    { name: "Service Guarantee Policy", url: "https://www.navdhya.com/legal/service-guarantee" }
+    { name: "Service Guarantee Policy", url: "https://www.navdhya.com/service-guarantee" }
   ]
 })
 

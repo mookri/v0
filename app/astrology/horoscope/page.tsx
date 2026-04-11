@@ -21,8 +21,8 @@ const HOROSCOPE_SCHEMA = seoManager.generateSchema({
 export async function generateMetadata() {
   return seoManager.generateMetadata({
     path: "/astrology/horoscope",
-    title: "Daily Horoscope - Navdhya",
-    description: "Accurate daily, weekly, and monthly horoscope predictions based on Vedic astrology for guidance in all aspects of life.",
+    title: "Daily Horoscope with Weekly & Monthly Insights",
+    description: "Read daily horoscope guidance with weekly and monthly Vedic astrology insights from Navdhya for work, relationships, and wellbeing.",
     keywords: ["daily horoscope", "weekly horoscope", "monthly horoscope", "vedic astrology predictions"]
   })
 }

@@ -294,7 +294,7 @@ export default function RemediesClient({ remediesSchema }: { remediesSchema: str
                 Personalized Vedic astrological remedies to overcome challenges and enhance positive planetary influences in your life.
               </p>
               <Link 
-                href="/booking"
+                href="/book"
                 className="inline-flex items-center gap-2 bg-white text-[#0E3F2E] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-sm"
               >
                 <span>Get Remedies</span>

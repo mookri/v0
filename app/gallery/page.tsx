@@ -5,6 +5,13 @@ import { ErrorBoundary } from '@/components/dlo-x/ErrorBoundary'
 import { resolveContext } from '@/lib/context-resolver'
 import GalleryClient from './client'
 
+export const metadata = seoManager.generateMetadata({
+  title: "Navdhya Gallery of Rituals, Events & Community Moments",
+  description: "Browse the Navdhya gallery for ritual photos, community moments, festival highlights, and spiritual event coverage.",
+  path: "/gallery",
+  keywords: ["Navdhya gallery", "ritual photos", "festival gallery", "community images", "spiritual events"],
+})
+
 // Schema markup for the gallery page
 const GALLERY_SCHEMA = seoManager.generateSchema({
   type: "CollectionPage",

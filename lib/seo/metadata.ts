@@ -14,6 +14,7 @@ import {
   toAbsoluteUrl,
   withSiteName,
 } from "@/lib/seo/site";
+import { normalizePublicPath, toPublicUrl } from "@/lib/seo/routes";
 
 function resolveOpenGraphType(page: SEOPage): "article" | "website" {
   switch (page.schemaType) {
@@ -31,10 +32,10 @@ function resolveOpenGraphType(page: SEOPage): "article" | "website" {
  */
 export function buildCanonicalUrl(basePath: string, slug: string, canonicalOverride?: string): string {
   if (canonicalOverride?.trim()) {
-    return toAbsoluteUrl(canonicalOverride.trim());
+    return toPublicUrl(canonicalOverride.trim());
   }
 
-  return `${SITE_URL}/${basePath}/${slug}`;
+  return toPublicUrl(`/${basePath}/${slug}`);
 }
 
 /**
@@ -45,6 +46,7 @@ export function generatePageMetadata(page: SEOPage, basePath: string): Metadata 
   const fullTitle = withSiteName(page.og?.ogTitle ?? page.metaTitle);
   const description = page.og?.ogDescription ?? page.metaDescription;
   const imageUrl = toAbsoluteUrl(page.og?.ogImageUrl ?? page.heroImage ?? DEFAULT_OG_IMAGE);
+  const normalizedCanonicalPath = normalizePublicPath(canonicalUrl);
   const robots = page.noindex
     ? {
       index: false,
@@ -115,6 +117,7 @@ export function generatePageMetadata(page: SEOPage, basePath: string): Metadata 
       "article:modified_time": page.lastUpdated,
       "og:locale": DEFAULT_LOCALE,
       "content-language": DEFAULT_LANGUAGE,
+      "x-canonical-path": normalizedCanonicalPath,
     },
   };
 }

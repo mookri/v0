@@ -5,7 +5,7 @@ import Script from "next/script"
 export const metadata = seoManager.generateMetadata({
   title: "User Agreement for Pandits",
   description: "Terms and conditions for pandits joining the Navdhya platform. Understand your rights and responsibilities as a spiritual service provider.",
-  path: "/legal/pandit-agreement",
+  path: "/pandit-agreement",
   keywords: ["pandit agreement", "pandit terms", "spiritual service provider agreement", "Navdhya pandit contract"]
 })
 
@@ -14,11 +14,11 @@ const PANDIT_AGREEMENT_SCHEMA = seoManager.generateSchema({
   type: "WebPage",
   name: "User Agreement for Pandits - Navdhya",
   description: "Terms and conditions for pandits joining the Navdhya platform. Understand your rights and responsibilities as a spiritual service provider.",
-  path: "/legal/pandit-agreement",
+  path: "/pandit-agreement",
   breadcrumbs: [
     { name: "Home", url: "https://www.navdhya.com" },
     { name: "Legal", url: "https://www.navdhya.com/legal" },
-    { name: "User Agreement for Pandits", url: "https://www.navdhya.com/legal/pandit-agreement" }
+    { name: "User Agreement for Pandits", url: "https://www.navdhya.com/pandit-agreement" }
   ]
 })
 

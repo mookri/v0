@@ -23,7 +23,13 @@ export function toAbsoluteUrl(pathOrUrl: string): string {
 }
 
 export function withSiteName(title: string): string {
-  const normalized = title.trim().toLowerCase();
-  const suffix = `| ${SITE_NAME.toLowerCase()}`;
-  return normalized.endsWith(suffix) ? title.trim() : `${title.trim()} | ${SITE_NAME}`;
+  const cleanTitle = title
+    .replace(/\s+/g, " ")
+    .replace(/\s*(?:\||-)\s*navdhya\s*$/i, "")
+    .trim();
+
+  if (!cleanTitle) return SITE_NAME;
+  if (cleanTitle.toLowerCase() === SITE_NAME.toLowerCase()) return SITE_NAME;
+
+  return `${cleanTitle} | ${SITE_NAME}`;
 }

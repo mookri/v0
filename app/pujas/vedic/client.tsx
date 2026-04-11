@@ -267,7 +267,7 @@ export default function VedicRitualsClient() {
               Authentic Vedic rituals performed by certified scholars for spiritual growth, purification, and divine blessings.
             </p>
             <Link 
-              href="/booking"
+              href="/book"
               className="inline-flex items-center gap-2 bg-white text-[#0E3F2E] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-sm"
             >
               <span>Book Now</span>

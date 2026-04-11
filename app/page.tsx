@@ -15,8 +15,8 @@ import { resolveContext } from "@/lib/context-resolver"
 
 // Generate page metadata using SEO manager
 export const metadata = seoManager.generateMetadata({
-  title: "Navdhya | Book Pandit for Puja, Vedic Rituals & Ceremonies in Delhi NCR",
-  description: "Book verified pandits for authentic home pujas, online rituals, astrology consultations, and Hindu ceremonies with Navdhya. Trusted by families across Delhi-NCR and expanding pan-India.",
+  title: "Verified Pandit Booking & Vedic Puja Services",
+  description: "Book verified pandits for home pujas, online rituals, astrology consultations, and Hindu ceremonies with Navdhya across Delhi NCR and beyond.",
   path: "/",
   keywords: [
     "Navdhya",
@@ -36,7 +36,7 @@ export const metadata = seoManager.generateMetadata({
 // Enhanced schema markup for the homepage with additional structured data
 const HOME_SCHEMA = seoManager.generateSchema({
   type: "WebSite",
-  name: "Navdhya — Verified Pandit Booking & Authentic Vedic Puja Services",
+  name: "Navdhya - Verified Pandit Booking & Authentic Vedic Puja Services",
   description: "Navdhya is a Vedic ritual services platform that connects families with verified Hindu priests for authentic home pujas, online ceremonies, astrology consultations, and spiritual guidance across Delhi-NCR and India.",
   path: "/",
   breadcrumbs: [
@@ -69,32 +69,8 @@ const BREADCRUMB_LIST_SCHEMA = {
     {
       "@type": "ListItem",
       "position": 1,
-      "name": "Book a Pooja",
-      "item": "https://www.navdhya.com/book-pooja"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Find a Pandit",
-      "item": "https://www.navdhya.com/find-pandit"
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "name": "Learn Rituals",
-      "item": "https://www.navdhya.com/learn"
-    },
-    {
-      "@type": "ListItem",
-      "position": 4,
-      "name": "Join the Community",
-      "item": "https://www.navdhya.com/community"
-    },
-    {
-      "@type": "ListItem",
-      "position": 5,
-      "name": "Explore Resources",
-      "item": "https://www.navdhya.com/resources"
+      "name": "Home",
+      "item": "https://www.navdhya.com"
     }
   ]
 };
@@ -174,74 +150,73 @@ const LOCAL_BUSINESS_SCHEMA = {
   },
   "telephone": "+91-7289000377",
   "description": "Verified pandit booking and authentic Vedic puja services across Delhi-NCR. Home pujas, online rituals, astrology consultations, and Hindu ceremonies by Navdhya.",
-  "priceRange": "₹500-₹5000",
+  "priceRange": "INR 500-INR 5000",
   "openingHours": "Mo-Su 08:00-20:00"
 }
 
 // Service schemas for rich results
-const SERVICE_SCHEMAS = [
-  {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "serviceType": "Home Puja Services",
-    "name": "Book a Puja",
-    "description": "Professionally conducted home puja services by verified Vedic priests — Satyanarayan Katha, Griha Pravesh, Navgraha Shanti, and more across Delhi-NCR.",
-    "url": "https://www.navdhya.com/pujas",
-    "areaServed": [
-      { "@type": "Place", "name": "Delhi-NCR" },
-      { "@type": "Country", "name": "India" }
-    ],
-    "provider": {
-      "@type": "Organization",
-      "name": "Navdhya",
-      "url": "https://www.navdhya.com"
+const SERVICE_SCHEMAS = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Service",
+      "serviceType": "Home Puja Services",
+      "name": "Book a Puja",
+      "description": "Professionally conducted home puja services by verified Vedic priests - Satyanarayan Katha, Griha Pravesh, Navgraha Shanti, and more across Delhi-NCR.",
+      "url": "https://www.navdhya.com/pujas",
+      "areaServed": [
+        { "@type": "Place", "name": "Delhi-NCR" },
+        { "@type": "Country", "name": "India" }
+      ],
+      "provider": {
+        "@type": "Organization",
+        "name": "Navdhya",
+        "url": "https://www.navdhya.com"
+      }
+    },
+    {
+      "@type": "Service",
+      "serviceType": "Verified Pandit Booking",
+      "name": "Find a Pandit",
+      "description": "Connect with verified Hindu priests screened for scriptural knowledge, mantra proficiency, and professional conduct through the Navdhya platform.",
+      "url": "https://www.navdhya.com/pandits",
+      "areaServed": [
+        { "@type": "Place", "name": "Delhi-NCR" },
+        { "@type": "Country", "name": "India" }
+      ],
+      "provider": {
+        "@type": "Organization",
+        "name": "Navdhya",
+        "url": "https://www.navdhya.com"
+      }
+    },
+    {
+      "@type": "Service",
+      "serviceType": "Vedic Astrology Services",
+      "name": "Kundli & Astrology",
+      "description": "Personalized Vedic astrology consultations, muhurat selection, vastu guidance, and spiritual counselling by experienced practitioners.",
+      "url": "https://www.navdhya.com/astrology/kundli",
+      "areaServed": { "@type": "Country", "name": "India" },
+      "provider": {
+        "@type": "Organization",
+        "name": "Navdhya",
+        "url": "https://www.navdhya.com"
+      }
+    },
+    {
+      "@type": "Service",
+      "serviceType": "Digital Spiritual Resources",
+      "name": "Digital Library",
+      "description": "A curated library of spiritual texts, Vedic learning material, and practical ritual resources from Navdhya.",
+      "url": "https://www.navdhya.com/resources/library",
+      "provider": {
+        "@type": "Organization",
+        "name": "Navdhya",
+        "url": "https://www.navdhya.com"
+      }
     }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "serviceType": "Verified Pandit Booking",
-    "name": "Find a Pandit",
-    "description": "Connect with verified Hindu priests screened for scriptural knowledge, mantra proficiency, and professional conduct through the Navdhya platform.",
-    "url": "https://www.navdhya.com/pandits",
-    "areaServed": [
-      { "@type": "Place", "name": "Delhi-NCR" },
-      { "@type": "Country", "name": "India" }
-    ],
-    "provider": {
-      "@type": "Organization",
-      "name": "Navdhya",
-      "url": "https://www.navdhya.com"
-    }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "serviceType": "Vedic Astrology Services",
-    "name": "Kundli & Astrology",
-    "description": "Personalised Vedic astrology consultations — Kundli analysis, muhurat selection, Vastu guidance, and spiritual counselling by experienced Jyotish practitioners.",
-    "url": "https://www.navdhya.com/astrology/kundli",
-    "areaServed": { "@type": "Country", "name": "India" },
-    "provider": {
-      "@type": "Organization",
-      "name": "Navdhya",
-      "url": "https://www.navdhya.com"
-    }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "serviceType": "Digital Spiritual Resources",
-    "name": "Digital Library",
-    "description": "Comprehensive collection of spiritual texts, Vedic scriptures, and educational materials curated by Navdhya for families and spiritual seekers.",
-    "url": "https://www.navdhya.com/resources/library",
-    "provider": {
-      "@type": "Organization",
-      "name": "Navdhya",
-      "url": "https://www.navdhya.com"
-    }
-  }
-]
+  ]
+}
 
 export default async function HomePage() {
   const homeSchema = JSON.stringify(HOME_SCHEMA)
@@ -292,3 +267,4 @@ export default async function HomePage() {
     </ErrorBoundary>
   )
 }
+
