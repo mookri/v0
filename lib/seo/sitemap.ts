@@ -5,9 +5,9 @@ import { getAllPages } from "@/lib/content/loader";
 import { getClusterMeta, getRegistryEntry } from "@/lib/content/registry";
 import { SITE_URL } from "@/lib/seo/site";
 import { normalizePublicPath, toPublicUrl } from "@/lib/seo/routes";
+import { SITEMAP_CHUNK_SIZE } from "@/lib/seo/sitemap.constants";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
-export const SITEMAP_CHUNK_SIZE = 40;
 
 const APP_DIR = join(process.cwd(), "app");
 const PUJA_DETAILS_SOURCE = join(APP_DIR, "pujas", "[slug]", "page.tsx");
