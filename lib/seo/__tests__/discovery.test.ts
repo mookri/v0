@@ -1,5 +1,6 @@
 import { buildRobotsPolicy } from "@/lib/seo/robots";
-import { buildSitemapChunks, buildSitemapEntries, buildSitemapIndexXml, SITEMAP_CHUNK_SIZE } from "@/lib/seo/sitemap";
+import { buildSitemapChunks, buildSitemapEntries, buildSitemapIndexXml } from "@/lib/seo/sitemap";
+import { SITEMAP_CHUNK_SIZE } from "@/lib/seo/sitemap.constants";
 
 describe("SEO discovery", () => {
   it("includes core, SEO content, and puja detail routes in the sitemap", () => {
