@@ -1,6 +1,5 @@
 import { seoManager } from "@/lib/seo-manager"
 import Script from "next/script"
-import { LayoutOrchestrator } from '@/components/dlo-x/LayoutOrchestrator'
 import { ErrorBoundary } from '@/components/dlo-x/ErrorBoundary'
 import { resolveContext } from '@/lib/context-resolver'
 
@@ -32,7 +31,6 @@ export default async function TermsOfServicePage() {
   
   return (
     <ErrorBoundary>
-      <LayoutOrchestrator context={context}>
         <Script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: termsSchema }}
@@ -165,7 +163,6 @@ export default async function TermsOfServicePage() {
             </div>
           </section>
         </div>
-      </LayoutOrchestrator>
     </ErrorBoundary>
   )
 }
