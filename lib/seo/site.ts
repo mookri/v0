@@ -1,6 +1,6 @@
 export const SITE_URL = "https://www.navdhya.com";
 export const SITE_NAME = "Navdhya";
-export const DEFAULT_OG_IMAGE = "/favicon/android-chrome-512x512.png";
+export const DEFAULT_OG_IMAGE = "/og/navdhya-default-og.png";
 export const DEFAULT_OG_IMAGE_WIDTH = 1200;
 export const DEFAULT_OG_IMAGE_HEIGHT = 630;
 export const DEFAULT_LOCALE = "en_IN";

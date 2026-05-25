@@ -52,8 +52,14 @@ describe("generatePageMetadata", () => {
       "brand",
     );
 
+    const openGraphImages = Array.isArray(metadata.openGraph?.images)
+      ? metadata.openGraph.images
+      : metadata.openGraph?.images
+        ? [metadata.openGraph.images]
+        : [];
+
     expect(metadata.alternates?.canonical).toBe("https://www.navdhya.com/brand/custom-canonical");
-    expect(metadata.openGraph?.images?.[0]).toMatchObject({
+    expect(openGraphImages[0]).toMatchObject({
       url: "https://www.navdhya.com/navdhya-logo.png",
     });
     expect(metadata.twitter?.images).toContain("https://www.navdhya.com/navdhya-logo.png");

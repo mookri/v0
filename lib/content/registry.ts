@@ -18,7 +18,8 @@ const PAGES_DIR = join(CONTENT_DIR, "pages");
 const REGISTRY_PATH = join(CONTENT_DIR, "registry.json");
 
 const DEFAULT_CLUSTERS: Record<ContentCluster, ClusterMeta> = {
-  brand: { label: "Brand Knowledge", basePath: "brand" },
+  brand: { label: "Brand Knowledge", basePath: "explore" },
+  pujas: { label: "Delhi NCR Puja Services", basePath: "pujas" },
   services: { label: "Puja Services", basePath: "services" },
   ceremonies: { label: "Hindu Ceremonies", basePath: "ceremonies" },
   "ritual-guides": { label: "Ritual Guides", basePath: "ritual-guides" },
@@ -27,6 +28,10 @@ const DEFAULT_CLUSTERS: Record<ContentCluster, ClusterMeta> = {
   "spiritual-guides": { label: "Spiritual Guides", basePath: "spiritual-guides" },
   faq: { label: "Frequently Asked Questions", basePath: "faq" },
   blog: { label: "Navdhya Journal", basePath: "blog" },
+  compare: { label: "Delhi NCR Comparisons", basePath: "compare" },
+  centers: { label: "Service Centers", basePath: "centers" },
+  astrology: { label: "Astrology Guides", basePath: "astrology" },
+  vastu: { label: "Vastu Guides", basePath: "vastu" },
 };
 
 let _cache: ContentRegistry | null = null;

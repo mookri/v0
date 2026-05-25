@@ -5,6 +5,7 @@
 /** Valid content clusters for topic grouping */
 export type ContentCluster =
   | 'brand'
+  | 'pujas'
   | 'services'
   | 'ceremonies'
   | 'ritual-guides'
@@ -12,7 +13,11 @@ export type ContentCluster =
   | 'festival-rituals'
   | 'spiritual-guides'
   | 'faq'
-  | 'blog';
+  | 'blog'
+  | 'compare'
+  | 'centers'
+  | 'astrology'
+  | 'vastu';
 
 /** Valid JSON-LD schema types for structured data */
 export type SchemaType =
@@ -47,6 +52,35 @@ export type AdPlacement =
 export interface FAQEntry {
   question: string;
   answer: string;
+}
+
+export type ComparisonTableRow = Record<string, string>;
+
+export interface ServiceProcessStep {
+  step: string;
+  description: string;
+}
+
+export interface ServicePackage {
+  name: string;
+  description: string;
+  price: string;
+  duration?: string;
+}
+
+export interface ServiceDetails {
+  summary?: string;
+  priceRange?: string;
+  image?: string;
+  galleryImages?: string[];
+  packages?: ServicePackage[];
+  highlights?: string[];
+  benefits?: string[];
+  process?: ServiceProcessStep[];
+  includes?: string[];
+  serviceProof?: string[];
+  bookingLeadTime?: string;
+  serviceAreas?: string[];
 }
 
 /** HowTo step used in HowTo schema */
@@ -127,6 +161,9 @@ export interface SEOPage {
   /** Secondary/supporting keywords */
   secondaryKeywords: string[];
 
+  /** Hyperlocal, transliterated, and supporting keyword variants */
+  keywordVariants?: string[];
+
   /** Search intent classification */
   searchIntent: SearchIntent;
 
@@ -145,8 +182,14 @@ export interface SEOPage {
   /** ISO date of last update */
   lastUpdated: string;
 
+  /** Optional editorial review date */
+  lastReviewed?: string;
+
   /** Author name */
   author: string;
+
+  /** Optional reviewer or subject-matter expert */
+  reviewedBy?: string;
 
   /** Estimated reading time in minutes */
   readingTime: number;
@@ -157,8 +200,35 @@ export interface SEOPage {
   /** Optional HowTo steps for HowTo schema */
   howToSteps?: HowToStep[];
 
+  /** Optional excerpt / short summary for listings and previews */
+  excerpt?: string;
+
   /** Optional hero image URL */
   heroImage?: string;
+
+  /** Optional proof points used for trust and summary modules */
+  proofPoints?: string[];
+
+  /** Optional comparison rows for competitor and pricing pages */
+  comparisonTable?: ComparisonTableRow[];
+
+  /** Optional service-page specific structured details */
+  serviceDetails?: ServiceDetails;
+
+  /** Optional editorial pricing note shown in content and schema */
+  pricingNote?: string;
+
+  /** Optional Delhi NCR angle or locality framing */
+  localAngle?: string;
+
+  /** Optional cities or subregions the page explicitly targets */
+  targetCities?: string[];
+
+  /** Optional internal links that must appear on the page */
+  requiredInternalLinks?: string[];
+
+  /** Optional anchor texts editors should prefer when linking in */
+  recommendedAnchorTexts?: string[];
 
   /**
    * Optional native ad slot 1 — mid-article placement.

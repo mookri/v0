@@ -22,7 +22,6 @@ export const metadata: Metadata = {
   description: SITE_METADATA.description,
   generator: "Upflame",
   applicationName: SEO_CONFIG.siteName,
-  keywords: SITE_METADATA.keywords,
   authors: SITE_METADATA.authors,
   creator: SITE_METADATA.creator,
   publisher: SITE_METADATA.publisher,

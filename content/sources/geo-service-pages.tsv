@@ -1,0 +1,121 @@
+slug	serviceSlug	serviceName	city	citySlug	primaryKeyword	searchIntent
+griha-pravesh-delhi	griha-pravesh	Griha Pravesh Puja	Delhi	delhi	griha pravesh puja delhi	transactional
+griha-pravesh-south-delhi	griha-pravesh	Griha Pravesh Puja	South Delhi	south-delhi	griha pravesh puja south delhi	transactional
+griha-pravesh-west-delhi	griha-pravesh	Griha Pravesh Puja	West Delhi	west-delhi	griha pravesh puja west delhi	transactional
+griha-pravesh-east-delhi	griha-pravesh	Griha Pravesh Puja	East Delhi	east-delhi	griha pravesh puja east delhi	transactional
+griha-pravesh-north-delhi	griha-pravesh	Griha Pravesh Puja	North Delhi	north-delhi	griha pravesh puja north delhi	transactional
+griha-pravesh-dwarka	griha-pravesh	Griha Pravesh Puja	Dwarka	dwarka	griha pravesh puja dwarka	transactional
+griha-pravesh-rohini	griha-pravesh	Griha Pravesh Puja	Rohini	rohini	griha pravesh puja rohini	transactional
+griha-pravesh-noida	griha-pravesh	Griha Pravesh Puja	Noida	noida	griha pravesh puja noida	transactional
+griha-pravesh-gurgaon	griha-pravesh	Griha Pravesh Puja	Gurgaon	gurgaon	griha pravesh puja gurgaon	transactional
+griha-pravesh-ghaziabad	griha-pravesh	Griha Pravesh Puja	Ghaziabad	ghaziabad	griha pravesh puja ghaziabad	transactional
+havan-delhi	havan	Havan at Home	Delhi	delhi	havan at home delhi	transactional
+havan-south-delhi	havan	Havan at Home	South Delhi	south-delhi	havan at home south delhi	transactional
+havan-west-delhi	havan	Havan at Home	West Delhi	west-delhi	havan at home west delhi	transactional
+havan-east-delhi	havan	Havan at Home	East Delhi	east-delhi	havan at home east delhi	transactional
+havan-north-delhi	havan	Havan at Home	North Delhi	north-delhi	havan at home north delhi	transactional
+havan-dwarka	havan	Havan at Home	Dwarka	dwarka	havan at home dwarka	transactional
+havan-rohini	havan	Havan at Home	Rohini	rohini	havan at home rohini	transactional
+havan-noida	havan	Havan at Home	Noida	noida	havan at home noida	transactional
+havan-gurgaon	havan	Havan at Home	Gurgaon	gurgaon	havan at home gurgaon	transactional
+havan-ghaziabad	havan	Havan at Home	Ghaziabad	ghaziabad	havan at home ghaziabad	transactional
+satyanarayan-katha-delhi	satyanarayan-katha	Satyanarayan Katha	Delhi	delhi	satyanarayan katha delhi	transactional
+satyanarayan-katha-south-delhi	satyanarayan-katha	Satyanarayan Katha	South Delhi	south-delhi	satyanarayan katha south delhi	transactional
+satyanarayan-katha-west-delhi	satyanarayan-katha	Satyanarayan Katha	West Delhi	west-delhi	satyanarayan katha west delhi	transactional
+satyanarayan-katha-east-delhi	satyanarayan-katha	Satyanarayan Katha	East Delhi	east-delhi	satyanarayan katha east delhi	transactional
+satyanarayan-katha-north-delhi	satyanarayan-katha	Satyanarayan Katha	North Delhi	north-delhi	satyanarayan katha north delhi	transactional
+satyanarayan-katha-dwarka	satyanarayan-katha	Satyanarayan Katha	Dwarka	dwarka	satyanarayan katha dwarka	transactional
+satyanarayan-katha-rohini	satyanarayan-katha	Satyanarayan Katha	Rohini	rohini	satyanarayan katha rohini	transactional
+satyanarayan-katha-noida	satyanarayan-katha	Satyanarayan Katha	Noida	noida	satyanarayan katha noida	transactional
+satyanarayan-katha-gurgaon	satyanarayan-katha	Satyanarayan Katha	Gurgaon	gurgaon	satyanarayan katha gurgaon	transactional
+satyanarayan-katha-ghaziabad	satyanarayan-katha	Satyanarayan Katha	Ghaziabad	ghaziabad	satyanarayan katha ghaziabad	transactional
+lakshmi-ganesh-puja-delhi	lakshmi-ganesh-puja	Lakshmi Ganesh Puja	Delhi	delhi	lakshmi ganesh puja delhi	transactional
+lakshmi-ganesh-puja-south-delhi	lakshmi-ganesh-puja	Lakshmi Ganesh Puja	South Delhi	south-delhi	lakshmi ganesh puja south delhi	transactional
+lakshmi-ganesh-puja-west-delhi	lakshmi-ganesh-puja	Lakshmi Ganesh Puja	West Delhi	west-delhi	lakshmi ganesh puja west delhi	transactional
+lakshmi-ganesh-puja-east-delhi	lakshmi-ganesh-puja	Lakshmi Ganesh Puja	East Delhi	east-delhi	lakshmi ganesh puja east delhi	transactional
+lakshmi-ganesh-puja-north-delhi	lakshmi-ganesh-puja	Lakshmi Ganesh Puja	North Delhi	north-delhi	lakshmi ganesh puja north delhi	transactional
+lakshmi-ganesh-puja-dwarka	lakshmi-ganesh-puja	Lakshmi Ganesh Puja	Dwarka	dwarka	lakshmi ganesh puja dwarka	transactional
+lakshmi-ganesh-puja-rohini	lakshmi-ganesh-puja	Lakshmi Ganesh Puja	Rohini	rohini	lakshmi ganesh puja rohini	transactional
+lakshmi-ganesh-puja-noida	lakshmi-ganesh-puja	Lakshmi Ganesh Puja	Noida	noida	lakshmi ganesh puja noida	transactional
+lakshmi-ganesh-puja-gurgaon	lakshmi-ganesh-puja	Lakshmi Ganesh Puja	Gurgaon	gurgaon	lakshmi ganesh puja gurgaon	transactional
+lakshmi-ganesh-puja-ghaziabad	lakshmi-ganesh-puja	Lakshmi Ganesh Puja	Ghaziabad	ghaziabad	lakshmi ganesh puja ghaziabad	transactional
+navagraha-puja-delhi	navagraha-puja	Navagraha Puja	Delhi	delhi	navagraha puja delhi	transactional
+navagraha-puja-south-delhi	navagraha-puja	Navagraha Puja	South Delhi	south-delhi	navagraha puja south delhi	transactional
+navagraha-puja-west-delhi	navagraha-puja	Navagraha Puja	West Delhi	west-delhi	navagraha puja west delhi	transactional
+navagraha-puja-east-delhi	navagraha-puja	Navagraha Puja	East Delhi	east-delhi	navagraha puja east delhi	transactional
+navagraha-puja-north-delhi	navagraha-puja	Navagraha Puja	North Delhi	north-delhi	navagraha puja north delhi	transactional
+navagraha-puja-dwarka	navagraha-puja	Navagraha Puja	Dwarka	dwarka	navagraha puja dwarka	transactional
+navagraha-puja-rohini	navagraha-puja	Navagraha Puja	Rohini	rohini	navagraha puja rohini	transactional
+navagraha-puja-noida	navagraha-puja	Navagraha Puja	Noida	noida	navagraha puja noida	transactional
+navagraha-puja-gurgaon	navagraha-puja	Navagraha Puja	Gurgaon	gurgaon	navagraha puja gurgaon	transactional
+navagraha-puja-ghaziabad	navagraha-puja	Navagraha Puja	Ghaziabad	ghaziabad	navagraha puja ghaziabad	transactional
+bhoomi-pujan-delhi	bhoomi-pujan	Bhoomi Pujan	Delhi	delhi	bhoomi pujan delhi	transactional
+bhoomi-pujan-south-delhi	bhoomi-pujan	Bhoomi Pujan	South Delhi	south-delhi	bhoomi pujan south delhi	transactional
+bhoomi-pujan-west-delhi	bhoomi-pujan	Bhoomi Pujan	West Delhi	west-delhi	bhoomi pujan west delhi	transactional
+bhoomi-pujan-east-delhi	bhoomi-pujan	Bhoomi Pujan	East Delhi	east-delhi	bhoomi pujan east delhi	transactional
+bhoomi-pujan-north-delhi	bhoomi-pujan	Bhoomi Pujan	North Delhi	north-delhi	bhoomi pujan north delhi	transactional
+bhoomi-pujan-dwarka	bhoomi-pujan	Bhoomi Pujan	Dwarka	dwarka	bhoomi pujan dwarka	transactional
+bhoomi-pujan-rohini	bhoomi-pujan	Bhoomi Pujan	Rohini	rohini	bhoomi pujan rohini	transactional
+bhoomi-pujan-noida	bhoomi-pujan	Bhoomi Pujan	Noida	noida	bhoomi pujan noida	transactional
+bhoomi-pujan-gurgaon	bhoomi-pujan	Bhoomi Pujan	Gurgaon	gurgaon	bhoomi pujan gurgaon	transactional
+bhoomi-pujan-ghaziabad	bhoomi-pujan	Bhoomi Pujan	Ghaziabad	ghaziabad	bhoomi pujan ghaziabad	transactional
+vastu-shanti-delhi	vastu-shanti	Vastu Shanti Puja	Delhi	delhi	vastu shanti puja delhi	transactional
+vastu-shanti-south-delhi	vastu-shanti	Vastu Shanti Puja	South Delhi	south-delhi	vastu shanti puja south delhi	transactional
+vastu-shanti-west-delhi	vastu-shanti	Vastu Shanti Puja	West Delhi	west-delhi	vastu shanti puja west delhi	transactional
+vastu-shanti-east-delhi	vastu-shanti	Vastu Shanti Puja	East Delhi	east-delhi	vastu shanti puja east delhi	transactional
+vastu-shanti-north-delhi	vastu-shanti	Vastu Shanti Puja	North Delhi	north-delhi	vastu shanti puja north delhi	transactional
+vastu-shanti-dwarka	vastu-shanti	Vastu Shanti Puja	Dwarka	dwarka	vastu shanti puja dwarka	transactional
+vastu-shanti-rohini	vastu-shanti	Vastu Shanti Puja	Rohini	rohini	vastu shanti puja rohini	transactional
+vastu-shanti-noida	vastu-shanti	Vastu Shanti Puja	Noida	noida	vastu shanti puja noida	transactional
+vastu-shanti-gurgaon	vastu-shanti	Vastu Shanti Puja	Gurgaon	gurgaon	vastu shanti puja gurgaon	transactional
+vastu-shanti-ghaziabad	vastu-shanti	Vastu Shanti Puja	Ghaziabad	ghaziabad	vastu shanti puja ghaziabad	transactional
+hindu-wedding-delhi	hindu-wedding	Hindu Wedding Rituals	Delhi	delhi	hindu wedding rituals delhi	transactional
+hindu-wedding-south-delhi	hindu-wedding	Hindu Wedding Rituals	South Delhi	south-delhi	hindu wedding rituals south delhi	transactional
+hindu-wedding-west-delhi	hindu-wedding	Hindu Wedding Rituals	West Delhi	west-delhi	hindu wedding rituals west delhi	transactional
+hindu-wedding-east-delhi	hindu-wedding	Hindu Wedding Rituals	East Delhi	east-delhi	hindu wedding rituals east delhi	transactional
+hindu-wedding-north-delhi	hindu-wedding	Hindu Wedding Rituals	North Delhi	north-delhi	hindu wedding rituals north delhi	transactional
+hindu-wedding-dwarka	hindu-wedding	Hindu Wedding Rituals	Dwarka	dwarka	hindu wedding rituals dwarka	transactional
+hindu-wedding-rohini	hindu-wedding	Hindu Wedding Rituals	Rohini	rohini	hindu wedding rituals rohini	transactional
+hindu-wedding-noida	hindu-wedding	Hindu Wedding Rituals	Noida	noida	hindu wedding rituals noida	transactional
+hindu-wedding-gurgaon	hindu-wedding	Hindu Wedding Rituals	Gurgaon	gurgaon	hindu wedding rituals gurgaon	transactional
+hindu-wedding-ghaziabad	hindu-wedding	Hindu Wedding Rituals	Ghaziabad	ghaziabad	hindu wedding rituals ghaziabad	transactional
+namkaran-delhi	namkaran	Namkaran Ceremony	Delhi	delhi	namkaran ceremony delhi	transactional
+namkaran-south-delhi	namkaran	Namkaran Ceremony	South Delhi	south-delhi	namkaran ceremony south delhi	transactional
+namkaran-west-delhi	namkaran	Namkaran Ceremony	West Delhi	west-delhi	namkaran ceremony west delhi	transactional
+namkaran-east-delhi	namkaran	Namkaran Ceremony	East Delhi	east-delhi	namkaran ceremony east delhi	transactional
+namkaran-north-delhi	namkaran	Namkaran Ceremony	North Delhi	north-delhi	namkaran ceremony north delhi	transactional
+namkaran-dwarka	namkaran	Namkaran Ceremony	Dwarka	dwarka	namkaran ceremony dwarka	transactional
+namkaran-rohini	namkaran	Namkaran Ceremony	Rohini	rohini	namkaran ceremony rohini	transactional
+namkaran-noida	namkaran	Namkaran Ceremony	Noida	noida	namkaran ceremony noida	transactional
+namkaran-gurgaon	namkaran	Namkaran Ceremony	Gurgaon	gurgaon	namkaran ceremony gurgaon	transactional
+namkaran-ghaziabad	namkaran	Namkaran Ceremony	Ghaziabad	ghaziabad	namkaran ceremony ghaziabad	transactional
+mundan-delhi	mundan	Mundan Ceremony	Delhi	delhi	mundan ceremony delhi	transactional
+mundan-south-delhi	mundan	Mundan Ceremony	South Delhi	south-delhi	mundan ceremony south delhi	transactional
+mundan-west-delhi	mundan	Mundan Ceremony	West Delhi	west-delhi	mundan ceremony west delhi	transactional
+mundan-east-delhi	mundan	Mundan Ceremony	East Delhi	east-delhi	mundan ceremony east delhi	transactional
+mundan-north-delhi	mundan	Mundan Ceremony	North Delhi	north-delhi	mundan ceremony north delhi	transactional
+mundan-dwarka	mundan	Mundan Ceremony	Dwarka	dwarka	mundan ceremony dwarka	transactional
+mundan-rohini	mundan	Mundan Ceremony	Rohini	rohini	mundan ceremony rohini	transactional
+mundan-noida	mundan	Mundan Ceremony	Noida	noida	mundan ceremony noida	transactional
+mundan-gurgaon	mundan	Mundan Ceremony	Gurgaon	gurgaon	mundan ceremony gurgaon	transactional
+mundan-ghaziabad	mundan	Mundan Ceremony	Ghaziabad	ghaziabad	mundan ceremony ghaziabad	transactional
+annaprashan-delhi	annaprashan	Annaprashan Ceremony	Delhi	delhi	annaprashan ceremony delhi	transactional
+annaprashan-south-delhi	annaprashan	Annaprashan Ceremony	South Delhi	south-delhi	annaprashan ceremony south delhi	transactional
+annaprashan-west-delhi	annaprashan	Annaprashan Ceremony	West Delhi	west-delhi	annaprashan ceremony west delhi	transactional
+annaprashan-east-delhi	annaprashan	Annaprashan Ceremony	East Delhi	east-delhi	annaprashan ceremony east delhi	transactional
+annaprashan-north-delhi	annaprashan	Annaprashan Ceremony	North Delhi	north-delhi	annaprashan ceremony north delhi	transactional
+annaprashan-dwarka	annaprashan	Annaprashan Ceremony	Dwarka	dwarka	annaprashan ceremony dwarka	transactional
+annaprashan-rohini	annaprashan	Annaprashan Ceremony	Rohini	rohini	annaprashan ceremony rohini	transactional
+annaprashan-noida	annaprashan	Annaprashan Ceremony	Noida	noida	annaprashan ceremony noida	transactional
+annaprashan-gurgaon	annaprashan	Annaprashan Ceremony	Gurgaon	gurgaon	annaprashan ceremony gurgaon	transactional
+annaprashan-ghaziabad	annaprashan	Annaprashan Ceremony	Ghaziabad	ghaziabad	annaprashan ceremony ghaziabad	transactional
+office-opening-delhi	office-opening	Office Opening Puja	Delhi	delhi	office opening puja delhi	transactional
+office-opening-south-delhi	office-opening	Office Opening Puja	South Delhi	south-delhi	office opening puja south delhi	transactional
+office-opening-west-delhi	office-opening	Office Opening Puja	West Delhi	west-delhi	office opening puja west delhi	transactional
+office-opening-east-delhi	office-opening	Office Opening Puja	East Delhi	east-delhi	office opening puja east delhi	transactional
+office-opening-north-delhi	office-opening	Office Opening Puja	North Delhi	north-delhi	office opening puja north delhi	transactional
+office-opening-dwarka	office-opening	Office Opening Puja	Dwarka	dwarka	office opening puja dwarka	transactional
+office-opening-rohini	office-opening	Office Opening Puja	Rohini	rohini	office opening puja rohini	transactional
+office-opening-noida	office-opening	Office Opening Puja	Noida	noida	office opening puja noida	transactional
+office-opening-gurgaon	office-opening	Office Opening Puja	Gurgaon	gurgaon	office opening puja gurgaon	transactional
+office-opening-ghaziabad	office-opening	Office Opening Puja	Ghaziabad	ghaziabad	office opening puja ghaziabad	transactional

@@ -19,7 +19,7 @@ const testimonials: Testimonial[] = [
     location: "Mumbai",
     rating: 5,
     title: "Divine Blessings for Our New Home",
-    content: "The Grihapravesh ceremony conducted by Navdhara was truly divine. The priests were knowledgeable and guided us through every ritual with utmost care. Our new home is filled with positive energy.",
+    content: "The Grihapravesh ceremony conducted by Navdhya was truly divine. The priests were knowledgeable and guided us through every ritual with utmost care. Our new home is filled with positive energy.",
     timeAgo: "2 weeks ago"
   },
   {
@@ -28,7 +28,7 @@ const testimonials: Testimonial[] = [
     location: "Delhi",
     rating: 5,
     title: "Perfect Wedding Ceremony",
-    content: "Our wedding ceremony was a beautiful blend of traditions and spirituality. The Navdhara team ensured every detail was perfect, allowing us to focus on our special day without any stress.",
+    content: "Our wedding ceremony was a beautiful blend of traditions and spirituality. The Navdhya team ensured every detail was perfect, allowing us to focus on our special day without any stress.",
     timeAgo: "1 month ago"
   },
   {
@@ -37,7 +37,7 @@ const testimonials: Testimonial[] = [
     location: "Bangalore",
     rating: 5,
     title: "Ganesh Chaturthi Celebration",
-    content: "The Ganesh Chaturthi celebration organized by Navdhara brought our community together. The arrangements were impeccable and the divine atmosphere was exactly what we hoped for.",
+    content: "The Ganesh Chaturthi celebration organized by Navdhya brought our community together. The arrangements were impeccable and the divine atmosphere was exactly what we hoped for.",
     timeAgo: "3 months ago"
   },
   {

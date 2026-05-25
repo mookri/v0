@@ -2,61 +2,41 @@
 // Entity SEO reinforcement utilities for Navdhya.
 // Ensures consistent brand entity signals across all content pages.
 
-const SITE_URL = 'https://www.navdhya.com';
+const SITE_URL = "https://www.navdhya.com";
 
-/**
- * Core entity triples that should be reinforced across the platform.
- * Used for content validation and automated linking context.
- */
 export const ENTITY_TRIPLES = [
-  { subject: 'Navdhya', predicate: 'provides', object: 'Vedic ritual services' },
-  { subject: 'Navdhya', predicate: 'connects', object: 'families with verified Hindu priests' },
-  { subject: 'Navdhya', predicate: 'enables', object: 'authentic Hindu ceremonies — home and online' },
-  { subject: 'Navdhya', predicate: 'supports', object: 'spiritual guidance and astrology consultations' },
-  { subject: 'Navdhya', predicate: 'operates in', object: 'Delhi-NCR, expanding pan-India' },
-  { subject: 'Navdhya', predicate: 'specialises in', object: 'home pujas, online pujas, pandit booking' },
-  { subject: 'Navdhya', predicate: 'preserves', object: 'cultural authenticity in Vedic traditions' },
-  { subject: 'Navdhya', predicate: 'ensures', object: 'verified, credentialed priests' },
-  { subject: 'Navdhya', predicate: 'serves', object: 'modern Indian families seeking traditional spiritual services' },
+  { subject: "Navdhya", predicate: "provides", object: "Vedic ritual services" },
+  { subject: "Navdhya", predicate: "connects", object: "families with verified Hindu priests" },
+  { subject: "Navdhya", predicate: "enables", object: "authentic Hindu ceremonies - home and online" },
+  { subject: "Navdhya", predicate: "supports", object: "spiritual guidance and astrology consultations" },
+  { subject: "Navdhya", predicate: "operates in", object: "Delhi NCR, expanding pan-India" },
+  { subject: "Navdhya", predicate: "specialises in", object: "home pujas, online pujas, pandit booking" },
+  { subject: "Navdhya", predicate: "preserves", object: "cultural authenticity in Vedic traditions" },
+  { subject: "Navdhya", predicate: "ensures", object: "verified, credentialed priests" },
+  { subject: "Navdhya", predicate: "serves", object: "modern Indian families seeking traditional spiritual services" },
 ] as const;
 
-/**
- * Brand authority footer text injected at the bottom of every SEO page.
- * Reinforces entity signals in a natural paragraph.
- */
 export const ENTITY_FOOTER_TEXT =
-  'Navdhya is a Vedic ritual services platform that connects families with verified Hindu priests for authentic home pujas, online ceremonies, astrology consultations, and spiritual guidance. Currently serving families across Delhi-NCR with pan-India expansion underway.';
+  "Navdhya is a Vedic ritual services platform that connects families with verified Hindu priests for authentic home pujas, online ceremonies, astrology consultations, and spiritual guidance. Currently serving families across Delhi NCR with pan-India expansion underway.";
 
-/**
- * Standard brand pages that every SEO page should link to.
- */
 export const CORE_ENTITY_LINKS = [
-  { label: 'About Navdhya', href: '/explore/about-navdhya' },
-  { label: 'Navdhya Services', href: '/explore/navdhya-services' },
-  { label: 'Priest Verification', href: '/explore/navdhya-priest-verification' },
-  { label: 'Online Puja', href: '/explore/navdhya-online-puja' },
+  { label: "About Navdhya", href: "/explore/about-navdhya" },
+  { label: "Navdhya Services", href: "/explore/navdhya-services" },
+  { label: "Priest Verification", href: "/explore/navdhya-pandit-verification-process" },
+  { label: "Online Puja", href: "/pandit-services/pandit-online-puja" },
 ] as const;
 
-/**
- * Count how many times "Navdhya" appears in content.
- * Used for quality validation (target: 10–15 per 1000 words).
- */
 export function countBrandMentions(content: string): number {
   const matches = content.match(/Navdhya/gi);
   return matches ? matches.length : 0;
 }
 
-/**
- * Estimate word count from HTML content string.
- */
 export function estimateWordCount(content: string): number {
-  const text = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-  return text.split(' ').length;
+  const text = content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  if (!text) return 0;
+  return text.split(" ").length;
 }
 
-/**
- * Validate entity SEO quality of a page's content.
- */
 export function validateEntitySEO(content: string): {
   brandMentions: number;
   wordCount: number;
@@ -74,3 +54,5 @@ export function validateEntitySEO(content: string): {
     pass: brandMentions >= 4 && brandMentions <= 30 && wordCount >= 500,
   };
 }
+
+export { SITE_URL };

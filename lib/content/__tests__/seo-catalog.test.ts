@@ -101,9 +101,6 @@ describe("SEO catalog rollout", () => {
       const schemaTypes = schemas.map((schema) => schema["@type"]);
       expect(schemaTypes).toContain("WebPage");
       expect(schemaTypes).toContain("BreadcrumbList");
-      if (page.schemaType === "FAQPage") {
-        expect(schemaTypes).toContain("FAQPage");
-      }
       if (page.schemaType === "HowTo") {
         expect(schemaTypes).toContain("HowTo");
       }
@@ -116,9 +113,7 @@ describe("SEO catalog rollout", () => {
       if (page.schemaType === "LocalBusiness") {
         expect(schemaTypes).toContain("LocalBusiness");
       }
-      if ((page.faqs ?? []).length > 0) {
-        expect(schemaTypes).toContain("FAQPage");
-      }
+      expect(schemaTypes).not.toContain("FAQPage");
     }
   });
 

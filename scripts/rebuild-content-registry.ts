@@ -7,6 +7,7 @@ const registryPath = path.join(root, 'content/registry.json');
 
 const clusters = {
   brand: { label: "Inside the Brand", basePath: "explore" },
+  pujas: { label: "Delhi NCR Puja Services", basePath: "pujas" },
   services: { label: "Puja Services", basePath: "services" },
   ceremonies: { label: "Hindu Ceremonies", basePath: "ceremonies" },
   "ritual-guides": { label: "Ritual Guides", basePath: "ritual-guides" },
@@ -15,6 +16,10 @@ const clusters = {
   "spiritual-guides": { label: "Spiritual Guides", basePath: "spiritual-guides" },
   faq: { label: "Frequently Asked Questions", basePath: "faq" },
   blog: { label: "Navdhya Journal", basePath: "blog" },
+  compare: { label: "Delhi NCR Comparisons", basePath: "compare" },
+  centers: { label: "Service Centers", basePath: "centers" },
+  astrology: { label: "Astrology Guides", basePath: "astrology" },
+  vastu: { label: "Vastu Guides", basePath: "vastu" },
 };
 
 const pages: Record<string, { file: string; cluster: string }> = {};

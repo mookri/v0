@@ -1,7 +1,7 @@
 export const footerData = {
   contact: {
     title: "Contact Us",
-    address: "Pandav Nagar Delhi 110092",
+    address: "New Delhi, India",
     phone: "+91-7289000377",
     email: "help@navdhya.com"
   },
@@ -31,10 +31,8 @@ export const footerData = {
   ],
   centers: [
     { label: "New Delhi", href: "/centers/delhi" },
-    { label: "Mumbai", href: "/centers/mumbai" },
-    { label: "Bangalore", href: "/centers/bangalore" },
-    { label: "Chennai", href: "/centers/chennai" },
-    { label: "Kolkata", href: "/centers/kolkata" },
-    { label: "Hyderabad", href: "/centers/hyderabad" }
+    { label: "Gurgaon", href: "/centers/gurgaon" },
+    { label: "Noida", href: "/centers/noida" },
+    { label: "Ghaziabad", href: "/centers/ghaziabad" }
   ]
 };

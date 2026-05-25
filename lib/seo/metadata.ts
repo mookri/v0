@@ -71,10 +71,14 @@ export function generatePageMetadata(page: SEOPage, basePath: string): Metadata 
       },
     };
 
+  const keywordSet = Array.from(
+    new Set([page.primaryKeyword, ...page.secondaryKeywords, ...(page.keywordVariants ?? [])].filter(Boolean)),
+  );
+
   return {
     title: fullTitle,
     description,
-    keywords: [page.primaryKeyword, ...page.secondaryKeywords],
+    keywords: keywordSet,
     authors: [{ name: page.author }],
     creator: page.author,
     publisher: SITE_NAME,

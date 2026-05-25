@@ -177,7 +177,7 @@ export default function PersonalizedRitualsClient() {
           </div>
           
           <h3 className="font-medium hover:text-[#0E3F2E] transition-colors line-clamp-2 text-xs flex-grow">
-            <a href="#">{puja.name}</a>
+            <Link href={`/pujas/${puja.slug}`}>{puja.name}</Link>
           </h3>
           
           <p className="text-[10px] text-muted-foreground line-clamp-2">

@@ -27,14 +27,14 @@ const basePage: SEOPage = {
 };
 
 describe("generateSchemas", () => {
-  it("emits breadcrumb, webpage, article, and faq nodes for article pages with FAQs", () => {
+  it("emits breadcrumb, webpage, and article nodes for article pages", () => {
     const schemas = generateSchemas(basePage, "brand", "Brand Knowledge");
     const schemaTypes = schemas.map((schema) => schema["@type"]);
 
     expect(schemaTypes).toContain("BreadcrumbList");
     expect(schemaTypes).toContain("WebPage");
     expect(schemaTypes).toContain("Article");
-    expect(schemaTypes).toContain("FAQPage");
+    expect(schemaTypes).not.toContain("FAQPage");
   });
 
   it("emits HowTo schema for how-to pages", () => {
