@@ -1,26 +1,25 @@
-// SEO Configuration and Schema Markup for Navdhya
-import { generateBreadcrumbSchema, generateFAQSchema, generateGenericSchema } from "@/lib/schema-utils"
+import { generateBreadcrumbSchema, generateFAQSchema, generateGenericSchema } from "@/lib/schema-utils";
 
 export const SEO_CONFIG = {
   siteName: "Navdhya",
   siteUrl: "https://www.navdhya.com",
-  defaultTitle: "Navdhya | Verified Pandit Booking & Vedic Puja Services — Home & Online",
-  defaultDescription: "Book verified pandits for authentic home pujas, online rituals, astrology consultations, and Hindu ceremonies with Navdhya. Trusted by families across Delhi-NCR and expanding pan-India.",
-  defaultImage: "/favicon/android-chrome-512x512.png",
+  defaultTitle: "Navdhya | Book Verified Pandits for Home Puja Services in Delhi NCR",
+  defaultDescription:
+    "Navdhya helps families book verified pandits in Delhi NCR for home pujas, havan, wedding rituals, astrology consultations, and online ceremonies.",
+  defaultImage: "/og/navdhya-default-og.png",
   locale: "en_IN",
   type: "website",
   twitter: {
     site: "@navdhya",
-    cardType: "summary_large_image"
+    cardType: "summary_large_image",
   },
   organization: {
     name: "Navdhya",
     url: "https://www.navdhya.com",
-    logo: "/favicon/android-chrome-512x512.png"
-  }
+    logo: "/navdhya-logo.png",
+  },
 };
 
-// Schema Markup for the main website
 export const WEBSITE_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "WebSite",
@@ -28,94 +27,100 @@ export const WEBSITE_SCHEMA = {
   name: "Navdhya",
   url: "https://www.navdhya.com",
   inLanguage: "en-IN",
-  description: "Navdhya is a Vedic ritual services platform offering verified pandit booking, home and online puja services, astrology consultations, and spiritual guidance across India.",
+  description:
+    "Navdhya is a Delhi NCR ritual booking platform for verified pandit booking, home puja services, online ceremonies, and spiritual guidance.",
   publisher: {
     "@type": "Organization",
     "@id": "https://www.navdhya.com#organization",
     name: "Navdhya",
     logo: {
       "@type": "ImageObject",
-      url: "https://www.navdhya.com/favicon/android-chrome-512x512.png"
-    }
-  }
+      url: "https://www.navdhya.com/navdhya-logo.png",
+    },
+  },
 };
 
-// Organization Schema Markup
 export const ORGANIZATION_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "Organization",
   "@id": "https://www.navdhya.com#organization",
   name: "Navdhya",
   url: "https://www.navdhya.com",
-  logo: "https://www.navdhya.com/favicon/android-chrome-512x512.png",
-  description: "Navdhya is a Vedic ritual services platform offering verified pandit booking, home and online puja services, astrology consultations, and spiritual guidance across India.",
+  logo: "https://www.navdhya.com/navdhya-logo.png",
+  description:
+    "Navdhya is a Delhi NCR ritual booking platform for verified pandit booking, home puja services, online ceremonies, and astrology consultations.",
   foundingDate: "2023",
   knowsAbout: [
     "Vedic ritual services",
-    "Home puja booking",
+    "Verified pandit booking",
+    "Home puja services",
     "Online puja services",
-    "Pandit verification",
     "Vedic astrology",
-    "Hindu ceremonies"
+    "Hindu ceremonies",
   ],
   areaServed: [
-    { "@type": "Place", name: "Delhi-NCR" },
-    { "@type": "Country", name: "India" }
+    { "@type": "Place", name: "Delhi NCR" },
+    { "@type": "Country", name: "India" },
   ],
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "Customer Service",
-    availableLanguage: ["English", "Hindi"]
+    telephone: "+91-7289000377",
+    email: "help@navdhya.com",
+    availableLanguage: ["English", "Hindi"],
   },
-  sameAs: []
+  sameAs: [
+    "https://www.facebook.com/thenavdhya",
+    "https://www.instagram.com/thenavdhya",
+    "https://www.youtube.com/@thenavdhya",
+  ],
 };
 
-// Local Business Schema (if applicable)
 export const LOCAL_BUSINESS_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  name: "Navdhya",
-  image: "https://www.navdhya.com/favicon/android-chrome-512x512.png",
+  name: "Navdhya Ritual Services",
+  image: "https://www.navdhya.com/og/navdhya-default-og.png",
   "@id": "https://www.navdhya.com",
   url: "https://www.navdhya.com",
   telephone: "+91-7289000377",
+  email: "help@navdhya.com",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "",
+    streetAddress: "Pandav Nagar",
     addressLocality: "Delhi",
-    addressRegion: "Delhi-NCR",
-    postalCode: "",
-    addressCountry: "IN"
+    addressRegion: "Delhi",
+    postalCode: "110092",
+    addressCountry: "IN",
   },
-  description: "Verified pandit booking and authentic Vedic puja services across Delhi-NCR. Home pujas, online rituals, astrology consultations, and Hindu ceremonies by Navdhya.",
-  priceRange: "$$"
+  description:
+    "Verified pandit booking and authentic Vedic puja services across Delhi NCR. Home pujas, online rituals, astrology consultations, and Hindu ceremonies by Navdhya.",
+  areaServed: "Delhi NCR",
+  priceRange: "Rs. 2,500 - Rs. 7,500",
 };
 
-// Breadcrumb Schema for internal pages
-export const BREADCRUMB_SCHEMA = (items: Array<{ name: string; url: string }>) => 
+export const BREADCRUMB_SCHEMA = (items: Array<{ name: string; url: string }>) =>
   generateBreadcrumbSchema(items);
 
-// FAQ Schema for FAQ pages
-export const FAQ_SCHEMA = (faqItems: Array<{ question: string; answer: string }>) => 
+export const FAQ_SCHEMA = (faqItems: Array<{ question: string; answer: string }>) =>
   generateFAQSchema(faqItems);
 
-// Service Schema for puja services
 export const SERVICE_SCHEMA = (service: {
   name: string;
   description: string;
   url: string;
   image?: string;
   price?: string;
-}) => generateGenericSchema({
-  type: "Service",
-  name: service.name,
-  description: service.description,
-  path: service.url.replace("https://www.navdhya.com", ""),
-  image: service.image,
-  price: service.price
-});
+}) =>
+  generateGenericSchema({
+    type: "Service",
+    name: service.name,
+    description: service.description,
+    path: service.url.replace("https://www.navdhya.com", ""),
+    image: service.image,
+    price: service.price,
+  });
 
-// Article Schema for blog posts
 export const ARTICLE_SCHEMA = (article: {
   headline: string;
   description: string;
@@ -123,26 +128,27 @@ export const ARTICLE_SCHEMA = (article: {
   dateModified: string;
   author: string;
   image?: string;
-}) => generateGenericSchema({
-  type: "Article",
-  name: article.headline,
-  description: article.description,
-  path: `/blog/${article.headline.toLowerCase().replace(/\s+/g, '-')}`,
-  image: article.image
-});
+}) =>
+  generateGenericSchema({
+    type: "Article",
+    name: article.headline,
+    description: article.description,
+    path: `/blog/${article.headline.toLowerCase().replace(/\s+/g, "-")}`,
+    image: article.image,
+  });
 
-// Legal Page Schema Markup
 export const LEGAL_PAGE_SCHEMA = (page: {
   name: string;
   url: string;
   description: string;
-}) => generateGenericSchema({
-  type: "WebPage",
-  name: page.name,
-  description: page.description,
-  path: page.url.replace("https://www.navdhya.com", ""),
-  breadcrumbs: [
-    { name: "Home", url: "https://www.navdhya.com" },
-    { name: page.name, url: page.url }
-  ]
-});
+}) =>
+  generateGenericSchema({
+    type: "WebPage",
+    name: page.name,
+    description: page.description,
+    path: page.url.replace("https://www.navdhya.com", ""),
+    breadcrumbs: [
+      { name: "Home", url: "https://www.navdhya.com" },
+      { name: page.name, url: page.url },
+    ],
+  });

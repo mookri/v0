@@ -26,7 +26,8 @@
   ],
   "relatedSlugs": [
     "about-navdhya",
-    "navdhya-services"
+    "navdhya-services",
+    "navdhya-priest-verification"
   ],
   "lastUpdated": "2024-05-15T00:00:00.000Z",
   "author": "Navdhya Team",
@@ -39,6 +40,10 @@
     {
       "question": "Are the priests at Navdhya verified?",
       "answer": "Yes, every pandit on the Navdhya platform undergoes strict background and knowledge verification to ensure authentic and proper conduct of rituals."
+    },
+    {
+      "question": "Who is Navdhya for?",
+      "answer": "Navdhya is designed for families who want clearer ritual guidance, verified pandit support, and a more practical booking path for home and online ceremonies."
     }
   ],
   "adSlot1": {

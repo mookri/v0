@@ -25,19 +25,27 @@ const ORGANIZATION: SchemaNode = {
   url: SITE_URL,
   logo: {
     "@type": "ImageObject",
-    url: toAbsoluteUrl(DEFAULT_OG_IMAGE),
-    width: DEFAULT_OG_IMAGE_WIDTH,
-    height: DEFAULT_OG_IMAGE_HEIGHT,
+    url: toAbsoluteUrl("/navdhya-logo.png"),
+    width: 2157,
+    height: 570,
   },
   foundingDate: "2023",
   areaServed: [
-    { "@type": "Place", name: "Delhi-NCR" },
+    { "@type": "Place", name: "Delhi NCR" },
     { "@type": "Country", name: "India" },
   ],
   sameAs: [
-    "https://www.instagram.com/navdhya",
-    "https://www.facebook.com/navdhya",
+    "https://www.instagram.com/thenavdhya",
+    "https://www.facebook.com/thenavdhya",
+    "https://www.youtube.com/@thenavdhya",
   ],
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "Customer Service",
+    telephone: "+91-7289000377",
+    email: "help@navdhya.com",
+    availableLanguage: ["English", "Hindi"],
+  },
   knowsAbout: [
     "Vedic rituals",
     "Pandit booking",
@@ -54,8 +62,6 @@ function pageUrl(basePath: string, page: SEOPage): string {
 
 function primaryEntityId(page: SEOPage, url: string): string {
   switch (page.schemaType) {
-    case "FAQPage":
-      return `${url}#faq`;
     case "HowTo":
       return `${url}#howto`;
     case "Service":
@@ -90,9 +96,15 @@ function wordCount(page: SEOPage): number {
 }
 
 function ensureArray(value: unknown): string[] {
-  if (Array.isArray(value)) return value;
+  if (Array.isArray(value)) return value.filter(Boolean);
   if (typeof value === "string" && value.trim() !== "") return [value.trim()];
   return [];
+}
+
+function describeComparisonRow(row: Record<string, string>): string {
+  return Object.entries(row)
+    .map(([key, value]) => `${key}: ${value}`)
+    .join(" | ");
 }
 
 function buildKeywordThing(name: string): SchemaNode {
@@ -102,11 +114,34 @@ function buildKeywordThing(name: string): SchemaNode {
   };
 }
 
-function buildBreadcrumb(
-  basePath: string,
-  clusterLabel: string,
-  page: SEOPage,
-): SchemaNode {
+function extractPriceNumbers(priceRange?: string): { lowPrice?: string; highPrice?: string } {
+  if (!priceRange) return {};
+  const matches = priceRange.match(/\d[\d,]*/g)?.map((match) => match.replace(/,/g, ""));
+  if (!matches || matches.length === 0) return {};
+
+  return {
+    lowPrice: matches[0],
+    highPrice: matches.length > 1 ? matches[matches.length - 1] : matches[0],
+  };
+}
+
+function buildServiceOffer(page: SEOPage, url: string): SchemaNode | undefined {
+  const priceRange = page.serviceDetails?.priceRange;
+  const { lowPrice, highPrice } = extractPriceNumbers(priceRange);
+  if (!lowPrice) return undefined;
+
+  return {
+    "@type": "AggregateOffer",
+    priceCurrency: "INR",
+    lowPrice,
+    highPrice: highPrice ?? lowPrice,
+    offerCount: page.serviceDetails?.packages?.length ?? 1,
+    availability: "https://schema.org/InStock",
+    url,
+  };
+}
+
+function buildBreadcrumb(basePath: string, clusterLabel: string, page: SEOPage): SchemaNode {
   const url = pageUrl(basePath, page);
 
   return {
@@ -152,7 +187,7 @@ function buildWebPageSchema(page: SEOPage, basePath: string): SchemaNode {
     breadcrumb: { "@id": `${url}#breadcrumb` },
     about: [buildKeywordThing(page.primaryKeyword), { "@id": ORGANIZATION_ID }],
     publisher: { "@id": ORGANIZATION_ID },
-    primaryImageOfPage: buildImageObject(page.og?.ogImageUrl ?? page.heroImage),
+    primaryImageOfPage: buildImageObject(page.og?.ogImageUrl ?? page.heroImage ?? page.serviceDetails?.image),
     datePublished: page.automation?.generatedAt ?? page.lastUpdated,
     dateModified: page.lastUpdated,
     mainEntity: { "@id": primaryEntityId(page, url) },
@@ -162,6 +197,8 @@ function buildWebPageSchema(page: SEOPage, basePath: string): SchemaNode {
 function buildArticleSchema(page: SEOPage, basePath: string): SchemaNode {
   const url = pageUrl(basePath, page);
   const secondaryKeywords = ensureArray(page.secondaryKeywords);
+  const keywordVariants = ensureArray(page.keywordVariants);
+  const allKeywords = [page.primaryKeyword, ...secondaryKeywords, ...keywordVariants];
 
   return {
     "@context": "https://schema.org",
@@ -176,21 +213,37 @@ function buildArticleSchema(page: SEOPage, basePath: string): SchemaNode {
       "@type": "Organization",
       name: page.author || SITE_NAME,
     },
+    ...(page.reviewedBy
+      ? {
+          reviewedBy: {
+            "@type": "Person",
+            name: page.reviewedBy,
+          },
+        }
+      : {}),
     publisher: { "@id": ORGANIZATION_ID },
     mainEntityOfPage: { "@id": `${url}#webpage` },
-    image: buildImageObject(page.og?.ogImageUrl ?? page.heroImage),
-    keywords: [page.primaryKeyword, ...secondaryKeywords].join(", "),
+    image: buildImageObject(page.og?.ogImageUrl ?? page.heroImage ?? page.serviceDetails?.image),
+    keywords: allKeywords.join(", "),
     articleSection: page.outline,
     wordCount: wordCount(page),
     inLanguage: DEFAULT_LANGUAGE,
     about: [buildKeywordThing(page.primaryKeyword), { "@id": ORGANIZATION_ID }],
-    mentions: secondaryKeywords.map(buildKeywordThing),
+    mentions: [...secondaryKeywords, ...keywordVariants].map(buildKeywordThing),
   };
 }
 
 function buildServiceSchema(page: SEOPage, basePath: string): SchemaNode {
   const url = pageUrl(basePath, page);
   const secondaryKeywords = ensureArray(page.secondaryKeywords);
+  const keywordVariants = ensureArray(page.keywordVariants);
+  const targetCities = ensureArray(page.targetCities);
+  const serviceAreas = ensureArray(page.serviceDetails?.serviceAreas);
+  const areaServed = [
+    { "@type": "Place", name: "Delhi NCR" },
+    { "@type": "Country", name: "India" },
+    ...Array.from(new Set([...targetCities, ...serviceAreas])).map((city) => ({ "@type": "Place", name: city })),
+  ];
 
   return {
     "@context": "https://schema.org",
@@ -202,17 +255,14 @@ function buildServiceSchema(page: SEOPage, basePath: string): SchemaNode {
     url,
     provider: { "@id": ORGANIZATION_ID },
     brand: { "@id": ORGANIZATION_ID },
-    areaServed: [
-      { "@type": "Place", name: "Delhi-NCR" },
-      { "@type": "Country", name: "India" },
-    ],
+    areaServed,
     availableChannel: {
       "@type": "ServiceChannel",
       serviceUrl: url,
       availableLanguage: ["English", "Hindi"],
       serviceLocation: {
         "@type": "Place",
-        name: "Delhi-NCR and online",
+        name: "Delhi NCR and online",
       },
     },
     audience: {
@@ -221,25 +271,10 @@ function buildServiceSchema(page: SEOPage, basePath: string): SchemaNode {
         ? "Families booking puja, pandit, or spiritual consultation services"
         : "General Hindu audience",
     },
-    category: [page.primaryKeyword, ...secondaryKeywords],
-    image: buildImageObject(page.og?.ogImageUrl ?? page.heroImage),
-  };
-}
-
-function buildFAQSchema(page: SEOPage, basePath: string): SchemaNode | undefined {
-  if (!page.faqs || page.faqs.length === 0) return undefined;
-
-  const url = pageUrl(basePath, page);
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "@id": `${url}#faq`,
-    mainEntity: page.faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: { "@type": "Answer", text: faq.answer },
-    })),
+    category: [page.primaryKeyword, ...secondaryKeywords, ...keywordVariants],
+    image: buildImageObject(page.og?.ogImageUrl ?? page.heroImage ?? page.serviceDetails?.image),
+    ...(page.serviceDetails?.summary ? { slogan: page.serviceDetails.summary } : {}),
+    ...(buildServiceOffer(page, url) ? { offers: buildServiceOffer(page, url) } : {}),
   };
 }
 
@@ -255,14 +290,14 @@ function buildHowToSchema(page: SEOPage, basePath: string): SchemaNode | undefin
     name: page.title,
     description: page.metaDescription,
     url,
-    image: buildImageObject(page.og?.ogImageUrl ?? page.heroImage),
+    image: buildImageObject(page.og?.ogImageUrl ?? page.heroImage ?? page.serviceDetails?.image),
     totalTime: `PT${Math.max(page.readingTime, 5)}M`,
-    step: page.howToSteps.map((step, i) => ({
+    step: page.howToSteps.map((step, index) => ({
       "@type": "HowToStep",
-      position: i + 1,
+      position: index + 1,
       name: step.name,
       text: step.text,
-      url: `${url}#step-${i + 1}`,
+      url: `${url}#step-${index + 1}`,
       ...(step.imageUrl ? { image: buildImageObject(step.imageUrl) } : {}),
     })),
   };
@@ -282,99 +317,106 @@ function buildOrganizationSchema(page: SEOPage, basePath: string): SchemaNode {
 
 function buildLocalBusinessSchema(page: SEOPage, basePath: string): SchemaNode {
   const url = pageUrl(basePath, page);
+  const targetCities = ensureArray(page.targetCities);
+  const serviceAreas = ensureArray(page.serviceDetails?.serviceAreas);
+  const priceRange = page.serviceDetails?.priceRange ?? "Rs. 2,500 - Rs. 5,500";
+  const locationNodes = Array.from(new Set([...targetCities, ...serviceAreas])).map((city) => ({
+    "@type": "Place",
+    name: city,
+  }));
 
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": `${url}#localbusiness`,
-    name: `${SITE_NAME} Delhi-NCR`,
+    name: `${SITE_NAME} Delhi NCR`,
     url,
     description: page.metaDescription,
-    image: buildImageObject(page.og?.ogImageUrl ?? page.heroImage),
-    priceRange: "$$",
+    image: buildImageObject(page.og?.ogImageUrl ?? page.heroImage ?? page.serviceDetails?.image),
+    priceRange,
     areaServed: [
-      { "@type": "Place", name: "Delhi-NCR" },
+      { "@type": "Place", name: "Delhi NCR" },
       { "@type": "Country", name: "India" },
+      ...locationNodes,
     ],
     serviceArea: [
-      { "@type": "Place", name: "Delhi-NCR" },
+      { "@type": "Place", name: "Delhi NCR" },
       { "@type": "Country", name: "India" },
+      ...locationNodes,
     ],
     address: {
       "@type": "PostalAddress",
+      streetAddress: "Pandav Nagar",
       addressLocality: "Delhi",
-      addressRegion: "Delhi-NCR",
+      addressRegion: "Delhi",
+      postalCode: "110092",
       addressCountry: "IN",
     },
+    telephone: "+91-7289000377",
+    email: "help@navdhya.com",
     availableLanguage: ["English", "Hindi"],
     brand: { "@id": ORGANIZATION_ID },
     parentOrganization: { "@id": ORGANIZATION_ID },
   };
 }
 
-/**
- * Generate all applicable schemas for a page.
- * Returns an array of valid schema objects ready for injection as JSON-LD.
- */
-export function generateSchemas(
-  page: SEOPage,
-  basePath: string,
-  clusterLabel: string,
-): SchemaNode[] {
+function buildItemListSchema(page: SEOPage, basePath: string): SchemaNode | undefined {
+  const rows = page.comparisonTable ?? [];
+  if (rows.length === 0) return undefined;
+
+  const url = pageUrl(basePath, page);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": `${url}#itemlist`,
+    name: `${page.title} comparison snapshot`,
+    itemListElement: rows.map((row, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: row.feature ?? row.topic ?? row.name ?? `Comparison point ${index + 1}`,
+      description: describeComparisonRow(row),
+      url: `${url}#comparison-${index + 1}`,
+    })),
+  };
+}
+
+export function generateSchemas(page: SEOPage, basePath: string, clusterLabel: string): SchemaNode[] {
   if (page.noindex) return [];
 
   const schemas: SchemaNode[] = [];
-
   schemas.push(buildBreadcrumb(basePath, clusterLabel, page));
   schemas.push(buildWebPageSchema(page, basePath));
 
   switch (page.schemaType) {
-    case "Article": {
+    case "Article":
       schemas.push(buildArticleSchema(page, basePath));
       break;
-    }
-
-    case "Service": {
+    case "Service":
       schemas.push(buildServiceSchema(page, basePath));
       break;
-    }
-
-    case "FAQPage": {
-      const faq = buildFAQSchema(page, basePath);
-      if (faq) schemas.push(faq);
+    case "FAQPage":
       schemas.push(buildArticleSchema(page, basePath));
       break;
-    }
-
     case "HowTo": {
       const howTo = buildHowToSchema(page, basePath);
       if (howTo) schemas.push(howTo);
       schemas.push(buildArticleSchema(page, basePath));
       break;
     }
-
-    case "Organization": {
+    case "Organization":
       schemas.push(buildOrganizationSchema(page, basePath));
       break;
-    }
-
-    case "LocalBusiness": {
+    case "LocalBusiness":
       schemas.push(buildLocalBusinessSchema(page, basePath));
       break;
-    }
-
-    default: {
+    default:
       schemas.push(buildArticleSchema(page, basePath));
       break;
-    }
   }
 
-  if (page.schemaType !== "FAQPage") {
-    const faq = buildFAQSchema(page, basePath);
-    if (faq) schemas.push(faq);
-  }
+  const itemList = buildItemListSchema(page, basePath);
+  if (itemList) schemas.push(itemList);
 
-  return schemas.filter(
-    (schema): schema is SchemaNode => schema !== null && schema !== undefined,
-  );
+  return schemas.filter((schema): schema is SchemaNode => schema !== null && schema !== undefined);
 }

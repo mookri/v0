@@ -4,6 +4,10 @@
       "label": "Inside the Brand",
       "basePath": "explore"
     },
+    "pujas": {
+      "label": "Delhi NCR Puja Services",
+      "basePath": "pujas"
+    },
     "services": {
       "label": "Puja Services",
       "basePath": "services"
@@ -35,9 +39,33 @@
     "blog": {
       "label": "Navdhya Journal",
       "basePath": "blog"
+    },
+    "compare": {
+      "label": "Delhi NCR Comparisons",
+      "basePath": "compare"
+    },
+    "centers": {
+      "label": "Service Centers",
+      "basePath": "centers"
+    },
+    "astrology": {
+      "label": "Astrology Guides",
+      "basePath": "astrology"
+    },
+    "vastu": {
+      "label": "Vastu Guides",
+      "basePath": "vastu"
     }
   },
   "pages": {
+    "16-sanskars": {
+      "file": "16-sanskars.json",
+      "cluster": "ceremonies"
+    },
+    "99pandit-alternatives-delhi": {
+      "file": "99pandit-alternatives-delhi.json",
+      "cluster": "compare"
+    },
     "abhishek-ritual-home": {
       "file": "abhishek-ritual-home.json",
       "cluster": "ritual-guides"
@@ -74,6 +102,54 @@
       "file": "annaprashan-ceremony-guide.json",
       "cluster": "ceremonies"
     },
+    "annaprashan-delhi": {
+      "file": "annaprashan-delhi.json",
+      "cluster": "services"
+    },
+    "annaprashan-dwarka": {
+      "file": "annaprashan-dwarka.json",
+      "cluster": "services"
+    },
+    "annaprashan-east-delhi": {
+      "file": "annaprashan-east-delhi.json",
+      "cluster": "services"
+    },
+    "annaprashan-ghaziabad": {
+      "file": "annaprashan-ghaziabad.json",
+      "cluster": "services"
+    },
+    "annaprashan-gurgaon": {
+      "file": "annaprashan-gurgaon.json",
+      "cluster": "services"
+    },
+    "annaprashan-noida": {
+      "file": "annaprashan-noida.json",
+      "cluster": "services"
+    },
+    "annaprashan-north-delhi": {
+      "file": "annaprashan-north-delhi.json",
+      "cluster": "services"
+    },
+    "annaprashan-price-delhi-ncr": {
+      "file": "annaprashan-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "annaprashan-rohini": {
+      "file": "annaprashan-rohini.json",
+      "cluster": "services"
+    },
+    "annaprashan-south-delhi": {
+      "file": "annaprashan-south-delhi.json",
+      "cluster": "services"
+    },
+    "annaprashan-west-delhi": {
+      "file": "annaprashan-west-delhi.json",
+      "cluster": "services"
+    },
+    "annaprashan": {
+      "file": "annaprashan.json",
+      "cluster": "pujas"
+    },
     "annual-ritual-calendar": {
       "file": "annual-ritual-calendar.json",
       "cluster": "ritual-guides"
@@ -81,6 +157,54 @@
     "anusthan-at-home": {
       "file": "anusthan-at-home.json",
       "cluster": "ritual-guides"
+    },
+    "apartment-annaprashan-delhi-ncr": {
+      "file": "apartment-annaprashan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-bhoomi-pujan-delhi-ncr": {
+      "file": "apartment-bhoomi-pujan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-griha-pravesh-delhi-ncr": {
+      "file": "apartment-griha-pravesh-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-havan-delhi-ncr": {
+      "file": "apartment-havan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-hindu-wedding-delhi-ncr": {
+      "file": "apartment-hindu-wedding-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-lakshmi-ganesh-puja-delhi-ncr": {
+      "file": "apartment-lakshmi-ganesh-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-mundan-delhi-ncr": {
+      "file": "apartment-mundan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-namkaran-delhi-ncr": {
+      "file": "apartment-namkaran-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-navagraha-puja-delhi-ncr": {
+      "file": "apartment-navagraha-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-office-opening-delhi-ncr": {
+      "file": "apartment-office-opening-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-satyanarayan-katha-delhi-ncr": {
+      "file": "apartment-satyanarayan-katha-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-vastu-shanti-delhi-ncr": {
+      "file": "apartment-vastu-shanti-delhi-ncr.json",
+      "cluster": "services"
     },
     "assamese-bihu-rituals": {
       "file": "assamese-bihu-rituals.json",
@@ -114,9 +238,61 @@
       "file": "astrology-ritual-relationship.json",
       "cluster": "spiritual-guides"
     },
+    "at-home-annaprashan-delhi-ncr": {
+      "file": "at-home-annaprashan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-bhoomi-pujan-delhi-ncr": {
+      "file": "at-home-bhoomi-pujan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-griha-pravesh-delhi-ncr": {
+      "file": "at-home-griha-pravesh-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-havan-delhi-ncr": {
+      "file": "at-home-havan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-hindu-wedding-delhi-ncr": {
+      "file": "at-home-hindu-wedding-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-lakshmi-ganesh-puja-delhi-ncr": {
+      "file": "at-home-lakshmi-ganesh-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-mundan-delhi-ncr": {
+      "file": "at-home-mundan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-namkaran-delhi-ncr": {
+      "file": "at-home-namkaran-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-navagraha-puja-delhi-ncr": {
+      "file": "at-home-navagraha-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-office-opening-delhi-ncr": {
+      "file": "at-home-office-opening-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-satyanarayan-katha-delhi-ncr": {
+      "file": "at-home-satyanarayan-katha-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-vastu-shanti-delhi-ncr": {
+      "file": "at-home-vastu-shanti-delhi-ncr.json",
+      "cluster": "services"
+    },
     "ayodhya-ritual-traditions": {
       "file": "ayodhya-ritual-traditions.json",
       "cluster": "spiritual-guides"
+    },
+    "baby-naming": {
+      "file": "baby-naming.json",
+      "cluster": "pujas"
     },
     "baisakhi-ritual-guide": {
       "file": "baisakhi-ritual-guide.json",
@@ -162,6 +338,10 @@
       "file": "bengali-hindu-ritual-traditions.json",
       "cluster": "spiritual-guides"
     },
+    "best-pandit-booking-delhi": {
+      "file": "best-pandit-booking-delhi.json",
+      "cluster": "compare"
+    },
     "bhai-dooj-ritual": {
       "file": "bhai-dooj-ritual.json",
       "cluster": "festival-rituals"
@@ -173,6 +353,54 @@
     "bhoomi-pujan-ceremony": {
       "file": "bhoomi-pujan-ceremony.json",
       "cluster": "ceremonies"
+    },
+    "bhoomi-pujan-delhi": {
+      "file": "bhoomi-pujan-delhi.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-dwarka": {
+      "file": "bhoomi-pujan-dwarka.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-east-delhi": {
+      "file": "bhoomi-pujan-east-delhi.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-ghaziabad": {
+      "file": "bhoomi-pujan-ghaziabad.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-gurgaon": {
+      "file": "bhoomi-pujan-gurgaon.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-noida": {
+      "file": "bhoomi-pujan-noida.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-north-delhi": {
+      "file": "bhoomi-pujan-north-delhi.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-price-delhi-ncr": {
+      "file": "bhoomi-pujan-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "bhoomi-pujan-rohini": {
+      "file": "bhoomi-pujan-rohini.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-south-delhi": {
+      "file": "bhoomi-pujan-south-delhi.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-west-delhi": {
+      "file": "bhoomi-pujan-west-delhi.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan": {
+      "file": "bhoomi-pujan.json",
+      "cluster": "pujas"
     },
     "bhumi-puja-renovation": {
       "file": "bhumi-puja-renovation.json",
@@ -294,6 +522,10 @@
       "file": "delhi-hindu-temple-rituals.json",
       "cluster": "services"
     },
+    "delhi": {
+      "file": "delhi.json",
+      "cluster": "centers"
+    },
     "devi-puja-guide": {
       "file": "devi-puja-guide.json",
       "cluster": "ritual-guides"
@@ -353,6 +585,54 @@
     "explain-puja-children": {
       "file": "explain-puja-children.json",
       "cluster": "spiritual-guides"
+    },
+    "family-ceremony-annaprashan-delhi-ncr": {
+      "file": "family-ceremony-annaprashan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-bhoomi-pujan-delhi-ncr": {
+      "file": "family-ceremony-bhoomi-pujan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-griha-pravesh-delhi-ncr": {
+      "file": "family-ceremony-griha-pravesh-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-havan-delhi-ncr": {
+      "file": "family-ceremony-havan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-hindu-wedding-delhi-ncr": {
+      "file": "family-ceremony-hindu-wedding-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-lakshmi-ganesh-puja-delhi-ncr": {
+      "file": "family-ceremony-lakshmi-ganesh-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-mundan-delhi-ncr": {
+      "file": "family-ceremony-mundan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-namkaran-delhi-ncr": {
+      "file": "family-ceremony-namkaran-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-navagraha-puja-delhi-ncr": {
+      "file": "family-ceremony-navagraha-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-office-opening-delhi-ncr": {
+      "file": "family-ceremony-office-opening-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-satyanarayan-katha-delhi-ncr": {
+      "file": "family-ceremony-satyanarayan-katha-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-vastu-shanti-delhi-ncr": {
+      "file": "family-ceremony-vastu-shanti-delhi-ncr.json",
+      "cluster": "services"
     },
     "family-havan-preparation": {
       "file": "family-havan-preparation.json",
@@ -418,6 +698,10 @@
       "file": "gemstone-therapy-astrology.json",
       "cluster": "spiritual-guides"
     },
+    "ghaziabad": {
+      "file": "ghaziabad.json",
+      "cluster": "centers"
+    },
     "gochara-vedic-astrology": {
       "file": "gochara-vedic-astrology.json",
       "cluster": "spiritual-guides"
@@ -438,9 +722,61 @@
       "file": "griha-pravesh-ceremony-explained.json",
       "cluster": "ceremonies"
     },
+    "griha-pravesh-delhi": {
+      "file": "griha-pravesh-delhi.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-dwarka": {
+      "file": "griha-pravesh-dwarka.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-east-delhi": {
+      "file": "griha-pravesh-east-delhi.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-ghaziabad": {
+      "file": "griha-pravesh-ghaziabad.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-gurgaon": {
+      "file": "griha-pravesh-gurgaon.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-noida": {
+      "file": "griha-pravesh-noida.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-north-delhi": {
+      "file": "griha-pravesh-north-delhi.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-price-delhi-ncr": {
+      "file": "griha-pravesh-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "griha-pravesh-price-delhi": {
+      "file": "griha-pravesh-price-delhi.json",
+      "cluster": "blog"
+    },
     "griha-pravesh-puja-vidhi": {
       "file": "griha-pravesh-puja-vidhi.json",
       "cluster": "ritual-guides"
+    },
+    "griha-pravesh-rohini": {
+      "file": "griha-pravesh-rohini.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-south-delhi": {
+      "file": "griha-pravesh-south-delhi.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-west-delhi": {
+      "file": "griha-pravesh-west-delhi.json",
+      "cluster": "services"
+    },
+    "griha-pravesh": {
+      "file": "griha-pravesh.json",
+      "cluster": "pujas"
     },
     "grihastha-dharma-rituals": {
       "file": "grihastha-dharma-rituals.json",
@@ -454,6 +790,10 @@
       "file": "gujarati-ritual-traditions.json",
       "cluster": "spiritual-guides"
     },
+    "gurgaon": {
+      "file": "gurgaon.json",
+      "cluster": "centers"
+    },
     "guru-purnima-guide": {
       "file": "guru-purnima-guide.json",
       "cluster": "festival-rituals"
@@ -466,9 +806,61 @@
       "file": "hanuman-puja-guide.json",
       "cluster": "ritual-guides"
     },
+    "havan-delhi": {
+      "file": "havan-delhi.json",
+      "cluster": "services"
+    },
+    "havan-dwarka": {
+      "file": "havan-dwarka.json",
+      "cluster": "services"
+    },
+    "havan-east-delhi": {
+      "file": "havan-east-delhi.json",
+      "cluster": "services"
+    },
+    "havan-ghaziabad": {
+      "file": "havan-ghaziabad.json",
+      "cluster": "services"
+    },
+    "havan-gurgaon": {
+      "file": "havan-gurgaon.json",
+      "cluster": "services"
+    },
+    "havan-noida": {
+      "file": "havan-noida.json",
+      "cluster": "services"
+    },
+    "havan-north-delhi": {
+      "file": "havan-north-delhi.json",
+      "cluster": "services"
+    },
+    "havan-price-delhi-ncr": {
+      "file": "havan-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "havan-price-delhi": {
+      "file": "havan-price-delhi.json",
+      "cluster": "blog"
+    },
+    "havan-rohini": {
+      "file": "havan-rohini.json",
+      "cluster": "services"
+    },
     "havan-samagri-types": {
       "file": "havan-samagri-types.json",
       "cluster": "ritual-guides"
+    },
+    "havan-south-delhi": {
+      "file": "havan-south-delhi.json",
+      "cluster": "services"
+    },
+    "havan-west-delhi": {
+      "file": "havan-west-delhi.json",
+      "cluster": "services"
+    },
+    "havan": {
+      "file": "havan.json",
+      "cluster": "pujas"
     },
     "hindu-funeral-rites": {
       "file": "hindu-funeral-rites.json",
@@ -482,6 +874,54 @@
       "file": "hindu-wedding-ceremony-guide.json",
       "cluster": "ceremonies"
     },
+    "hindu-wedding-delhi": {
+      "file": "hindu-wedding-delhi.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-dwarka": {
+      "file": "hindu-wedding-dwarka.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-east-delhi": {
+      "file": "hindu-wedding-east-delhi.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-ghaziabad": {
+      "file": "hindu-wedding-ghaziabad.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-gurgaon": {
+      "file": "hindu-wedding-gurgaon.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-noida": {
+      "file": "hindu-wedding-noida.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-north-delhi": {
+      "file": "hindu-wedding-north-delhi.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-price-delhi-ncr": {
+      "file": "hindu-wedding-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "hindu-wedding-rohini": {
+      "file": "hindu-wedding-rohini.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-south-delhi": {
+      "file": "hindu-wedding-south-delhi.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-west-delhi": {
+      "file": "hindu-wedding-west-delhi.json",
+      "cluster": "services"
+    },
+    "hindu-wedding": {
+      "file": "hindu-wedding.json",
+      "cluster": "pujas"
+    },
     "history-vedic-ritual-india": {
       "file": "history-vedic-ritual-india.json",
       "cluster": "ritual-guides"
@@ -489,6 +929,10 @@
     "holi-holika-dahan-ritual": {
       "file": "holi-holika-dahan-ritual.json",
       "cluster": "festival-rituals"
+    },
+    "home-guide": {
+      "file": "home-guide.json",
+      "cluster": "vastu"
     },
     "home-mandir-setup": {
       "file": "home-mandir-setup.json",
@@ -509,6 +953,10 @@
     "how-to-do-aarti": {
       "file": "how-to-do-aarti.json",
       "cluster": "ritual-guides"
+    },
+    "how-to-verify-pandit": {
+      "file": "how-to-verify-pandit.json",
+      "cluster": "blog"
     },
     "importance-of-sraddha": {
       "file": "importance-of-sraddha.json",
@@ -602,6 +1050,54 @@
       "file": "kundali-matching-marriage.json",
       "cluster": "spiritual-guides"
     },
+    "lakshmi-ganesh-puja-delhi": {
+      "file": "lakshmi-ganesh-puja-delhi.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-dwarka": {
+      "file": "lakshmi-ganesh-puja-dwarka.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-east-delhi": {
+      "file": "lakshmi-ganesh-puja-east-delhi.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-ghaziabad": {
+      "file": "lakshmi-ganesh-puja-ghaziabad.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-gurgaon": {
+      "file": "lakshmi-ganesh-puja-gurgaon.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-noida": {
+      "file": "lakshmi-ganesh-puja-noida.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-north-delhi": {
+      "file": "lakshmi-ganesh-puja-north-delhi.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-price-delhi-ncr": {
+      "file": "lakshmi-ganesh-puja-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "lakshmi-ganesh-puja-rohini": {
+      "file": "lakshmi-ganesh-puja-rohini.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-south-delhi": {
+      "file": "lakshmi-ganesh-puja-south-delhi.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-west-delhi": {
+      "file": "lakshmi-ganesh-puja-west-delhi.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja": {
+      "file": "lakshmi-ganesh-puja.json",
+      "cluster": "pujas"
+    },
     "lakshmi-puja-ceremony-guide": {
       "file": "lakshmi-puja-ceremony-guide.json",
       "cluster": "festival-rituals"
@@ -686,6 +1182,10 @@
       "file": "morning-sandhyavandanam.json",
       "cluster": "ritual-guides"
     },
+    "muhurat-2026": {
+      "file": "muhurat-2026.json",
+      "cluster": "astrology"
+    },
     "muhurta-selection-events": {
       "file": "muhurta-selection-events.json",
       "cluster": "services"
@@ -694,9 +1194,57 @@
       "file": "mundan-ceremony-guide.json",
       "cluster": "ceremonies"
     },
+    "mundan-delhi": {
+      "file": "mundan-delhi.json",
+      "cluster": "services"
+    },
+    "mundan-dwarka": {
+      "file": "mundan-dwarka.json",
+      "cluster": "services"
+    },
+    "mundan-east-delhi": {
+      "file": "mundan-east-delhi.json",
+      "cluster": "services"
+    },
+    "mundan-ghaziabad": {
+      "file": "mundan-ghaziabad.json",
+      "cluster": "services"
+    },
+    "mundan-gurgaon": {
+      "file": "mundan-gurgaon.json",
+      "cluster": "services"
+    },
+    "mundan-noida": {
+      "file": "mundan-noida.json",
+      "cluster": "services"
+    },
+    "mundan-north-delhi": {
+      "file": "mundan-north-delhi.json",
+      "cluster": "services"
+    },
+    "mundan-price-delhi-ncr": {
+      "file": "mundan-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "mundan-rohini": {
+      "file": "mundan-rohini.json",
+      "cluster": "services"
+    },
+    "mundan-south-delhi": {
+      "file": "mundan-south-delhi.json",
+      "cluster": "services"
+    },
     "mundan-tirupati": {
       "file": "mundan-tirupati.json",
       "cluster": "ceremonies"
+    },
+    "mundan-west-delhi": {
+      "file": "mundan-west-delhi.json",
+      "cluster": "services"
+    },
+    "mundan": {
+      "file": "mundan.json",
+      "cluster": "pujas"
     },
     "music-hindu-ritual": {
       "file": "music-hindu-ritual.json",
@@ -726,6 +1274,54 @@
       "file": "namkaran-ceremony-guide.json",
       "cluster": "ceremonies"
     },
+    "namkaran-delhi": {
+      "file": "namkaran-delhi.json",
+      "cluster": "services"
+    },
+    "namkaran-dwarka": {
+      "file": "namkaran-dwarka.json",
+      "cluster": "services"
+    },
+    "namkaran-east-delhi": {
+      "file": "namkaran-east-delhi.json",
+      "cluster": "services"
+    },
+    "namkaran-ghaziabad": {
+      "file": "namkaran-ghaziabad.json",
+      "cluster": "services"
+    },
+    "namkaran-gurgaon": {
+      "file": "namkaran-gurgaon.json",
+      "cluster": "services"
+    },
+    "namkaran-noida": {
+      "file": "namkaran-noida.json",
+      "cluster": "services"
+    },
+    "namkaran-north-delhi": {
+      "file": "namkaran-north-delhi.json",
+      "cluster": "services"
+    },
+    "namkaran-price-delhi-ncr": {
+      "file": "namkaran-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "namkaran-rohini": {
+      "file": "namkaran-rohini.json",
+      "cluster": "services"
+    },
+    "namkaran-south-delhi": {
+      "file": "namkaran-south-delhi.json",
+      "cluster": "services"
+    },
+    "namkaran-west-delhi": {
+      "file": "namkaran-west-delhi.json",
+      "cluster": "services"
+    },
+    "namkaran": {
+      "file": "namkaran.json",
+      "cluster": "pujas"
+    },
     "nashik-kumbh-mela-ritual": {
       "file": "nashik-kumbh-mela-ritual.json",
       "cluster": "spiritual-guides"
@@ -749,6 +1345,54 @@
     "navdhya-online-puja": {
       "file": "nav-brand-005.json",
       "cluster": "brand"
+    },
+    "navagraha-puja-delhi": {
+      "file": "navagraha-puja-delhi.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-dwarka": {
+      "file": "navagraha-puja-dwarka.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-east-delhi": {
+      "file": "navagraha-puja-east-delhi.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-ghaziabad": {
+      "file": "navagraha-puja-ghaziabad.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-gurgaon": {
+      "file": "navagraha-puja-gurgaon.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-noida": {
+      "file": "navagraha-puja-noida.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-north-delhi": {
+      "file": "navagraha-puja-north-delhi.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-price-delhi-ncr": {
+      "file": "navagraha-puja-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "navagraha-puja-rohini": {
+      "file": "navagraha-puja-rohini.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-south-delhi": {
+      "file": "navagraha-puja-south-delhi.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-west-delhi": {
+      "file": "navagraha-puja-west-delhi.json",
+      "cluster": "services"
+    },
+    "navagraha-puja": {
+      "file": "navagraha-puja.json",
+      "cluster": "pujas"
     },
     "navagraha-ritual-worship": {
       "file": "navagraha-ritual-worship.json",
@@ -1078,9 +1722,29 @@
       "file": "navdhya-voice-search.json",
       "cluster": "brand"
     },
+    "navdhya-vs-99pandit": {
+      "file": "navdhya-vs-99pandit.json",
+      "cluster": "compare"
+    },
+    "navdhya-vs-bookmypooja": {
+      "file": "navdhya-vs-bookmypooja.json",
+      "cluster": "compare"
+    },
+    "navdhya-vs-harivara": {
+      "file": "navdhya-vs-harivara.json",
+      "cluster": "compare"
+    },
+    "navdhya-vs-smartpuja": {
+      "file": "navdhya-vs-smartpuja.json",
+      "cluster": "compare"
+    },
     "navdhya-vs-traditional-pandit-booking": {
       "file": "navdhya-vs-traditional-pandit-booking.json",
       "cluster": "pandit-services"
+    },
+    "navdhya-vs-vidhipujan": {
+      "file": "navdhya-vs-vidhipujan.json",
+      "cluster": "compare"
     },
     "navgrah-puja-guide": {
       "file": "navgrah-puja-guide.json",
@@ -1110,6 +1774,10 @@
       "file": "neem-hindu-ritual.json",
       "cluster": "ritual-guides"
     },
+    "noida": {
+      "file": "noida.json",
+      "cluster": "centers"
+    },
     "north-vs-south-indian-puja": {
       "file": "north-vs-south-indian-puja.json",
       "cluster": "spiritual-guides"
@@ -1121,6 +1789,58 @@
     "odia-ritual-traditions": {
       "file": "odia-ritual-traditions.json",
       "cluster": "spiritual-guides"
+    },
+    "office-opening-delhi": {
+      "file": "office-opening-delhi.json",
+      "cluster": "services"
+    },
+    "office-opening-dwarka": {
+      "file": "office-opening-dwarka.json",
+      "cluster": "services"
+    },
+    "office-opening-east-delhi": {
+      "file": "office-opening-east-delhi.json",
+      "cluster": "services"
+    },
+    "office-opening-ghaziabad": {
+      "file": "office-opening-ghaziabad.json",
+      "cluster": "services"
+    },
+    "office-opening-gurgaon": {
+      "file": "office-opening-gurgaon.json",
+      "cluster": "services"
+    },
+    "office-opening-noida": {
+      "file": "office-opening-noida.json",
+      "cluster": "services"
+    },
+    "office-opening-north-delhi": {
+      "file": "office-opening-north-delhi.json",
+      "cluster": "services"
+    },
+    "office-opening-price-delhi-ncr": {
+      "file": "office-opening-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "office-opening-price-delhi": {
+      "file": "office-opening-price-delhi.json",
+      "cluster": "blog"
+    },
+    "office-opening-rohini": {
+      "file": "office-opening-rohini.json",
+      "cluster": "services"
+    },
+    "office-opening-south-delhi": {
+      "file": "office-opening-south-delhi.json",
+      "cluster": "services"
+    },
+    "office-opening-west-delhi": {
+      "file": "office-opening-west-delhi.json",
+      "cluster": "services"
+    },
+    "office-opening": {
+      "file": "office-opening.json",
+      "cluster": "pujas"
     },
     "office-puja-guide": {
       "file": "office-puja-guide.json",
@@ -1142,6 +1862,10 @@
       "file": "online-puja-technology.json",
       "cluster": "brand"
     },
+    "online-puja-vs-home-puja": {
+      "file": "online-puja-vs-home-puja.json",
+      "cluster": "blog"
+    },
     "pandit-amavasya": {
       "file": "pandit-amavasya.json",
       "cluster": "pandit-services"
@@ -1153,6 +1877,14 @@
     "pandit-bhoomi-pujan": {
       "file": "pandit-bhoomi-pujan.json",
       "cluster": "pandit-services"
+    },
+    "pandit-booking-pricing-delhi-ncr": {
+      "file": "pandit-booking-pricing-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "pandit-booking-pricing-delhi": {
+      "file": "pandit-booking-pricing-delhi.json",
+      "cluster": "compare"
     },
     "pandit-corporate-events": {
       "file": "pandit-corporate-events.json",
@@ -1282,6 +2014,10 @@
       "file": "post-illness-purification.json",
       "cluster": "ritual-guides"
     },
+    "post-puja-clean-up-after-home-puja": {
+      "file": "post-puja-clean-up-after-home-puja.json",
+      "cluster": "blog"
+    },
     "pran-pratishtha-home": {
       "file": "pran-pratishtha-home.json",
       "cluster": "ritual-guides"
@@ -1333,6 +2069,10 @@
     "puja-child-health": {
       "file": "puja-child-health.json",
       "cluster": "ritual-guides"
+    },
+    "puja-cost-guide-delhi": {
+      "file": "puja-cost-guide-delhi.json",
+      "cluster": "blog"
     },
     "puja-ekadashi": {
       "file": "puja-ekadashi.json",
@@ -1554,6 +2294,58 @@
       "file": "sagai-engagement-ceremony.json",
       "cluster": "ceremonies"
     },
+    "same-day-annaprashan-delhi-ncr": {
+      "file": "same-day-annaprashan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-bhoomi-pujan-delhi-ncr": {
+      "file": "same-day-bhoomi-pujan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-griha-pravesh-delhi-ncr": {
+      "file": "same-day-griha-pravesh-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-havan-delhi-ncr": {
+      "file": "same-day-havan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-hindu-wedding-delhi-ncr": {
+      "file": "same-day-hindu-wedding-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-lakshmi-ganesh-puja-delhi-ncr": {
+      "file": "same-day-lakshmi-ganesh-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-mundan-delhi-ncr": {
+      "file": "same-day-mundan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-namkaran-delhi-ncr": {
+      "file": "same-day-namkaran-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-navagraha-puja-delhi-ncr": {
+      "file": "same-day-navagraha-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-office-opening-delhi-ncr": {
+      "file": "same-day-office-opening-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-pandit-booking-delhi": {
+      "file": "same-day-pandit-booking-delhi.json",
+      "cluster": "blog"
+    },
+    "same-day-satyanarayan-katha-delhi-ncr": {
+      "file": "same-day-satyanarayan-katha-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-vastu-shanti-delhi-ncr": {
+      "file": "same-day-vastu-shanti-delhi-ncr.json",
+      "cluster": "services"
+    },
     "sanskrit-pandit-requirements": {
       "file": "sanskrit-pandit-requirements.json",
       "cluster": "pandit-services"
@@ -1577,6 +2369,54 @@
     "saturn-shani-sade-sati": {
       "file": "saturn-shani-sade-sati.json",
       "cluster": "spiritual-guides"
+    },
+    "satyanarayan-katha-delhi": {
+      "file": "satyanarayan-katha-delhi.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-dwarka": {
+      "file": "satyanarayan-katha-dwarka.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-east-delhi": {
+      "file": "satyanarayan-katha-east-delhi.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-ghaziabad": {
+      "file": "satyanarayan-katha-ghaziabad.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-gurgaon": {
+      "file": "satyanarayan-katha-gurgaon.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-noida": {
+      "file": "satyanarayan-katha-noida.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-north-delhi": {
+      "file": "satyanarayan-katha-north-delhi.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-price-delhi-ncr": {
+      "file": "satyanarayan-katha-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "satyanarayan-katha-rohini": {
+      "file": "satyanarayan-katha-rohini.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-south-delhi": {
+      "file": "satyanarayan-katha-south-delhi.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-west-delhi": {
+      "file": "satyanarayan-katha-west-delhi.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha": {
+      "file": "satyanarayan-katha.json",
+      "cluster": "pujas"
     },
     "satyanarayan-puja-at-home": {
       "file": "satyanarayan-puja-at-home.json",
@@ -1798,6 +2638,54 @@
       "file": "upanayana-thread-ceremony.json",
       "cluster": "ceremonies"
     },
+    "urgent-annaprashan-delhi-ncr": {
+      "file": "urgent-annaprashan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-bhoomi-pujan-delhi-ncr": {
+      "file": "urgent-bhoomi-pujan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-griha-pravesh-delhi-ncr": {
+      "file": "urgent-griha-pravesh-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-havan-delhi-ncr": {
+      "file": "urgent-havan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-hindu-wedding-delhi-ncr": {
+      "file": "urgent-hindu-wedding-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-lakshmi-ganesh-puja-delhi-ncr": {
+      "file": "urgent-lakshmi-ganesh-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-mundan-delhi-ncr": {
+      "file": "urgent-mundan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-namkaran-delhi-ncr": {
+      "file": "urgent-namkaran-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-navagraha-puja-delhi-ncr": {
+      "file": "urgent-navagraha-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-office-opening-delhi-ncr": {
+      "file": "urgent-office-opening-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-satyanarayan-katha-delhi-ncr": {
+      "file": "urgent-satyanarayan-katha-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-vastu-shanti-delhi-ncr": {
+      "file": "urgent-vastu-shanti-delhi-ncr.json",
+      "cluster": "services"
+    },
     "uttarakhandi-devbhoomi-rituals": {
       "file": "uttarakhandi-devbhoomi-rituals.json",
       "cluster": "spiritual-guides"
@@ -1822,9 +2710,57 @@
       "file": "vastu-puja-room-placement.json",
       "cluster": "ritual-guides"
     },
+    "vastu-shanti-delhi": {
+      "file": "vastu-shanti-delhi.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-dwarka": {
+      "file": "vastu-shanti-dwarka.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-east-delhi": {
+      "file": "vastu-shanti-east-delhi.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-ghaziabad": {
+      "file": "vastu-shanti-ghaziabad.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-gurgaon": {
+      "file": "vastu-shanti-gurgaon.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-noida": {
+      "file": "vastu-shanti-noida.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-north-delhi": {
+      "file": "vastu-shanti-north-delhi.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-price-delhi-ncr": {
+      "file": "vastu-shanti-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
     "vastu-shanti-puja-guide": {
       "file": "vastu-shanti-puja-guide.json",
       "cluster": "ceremonies"
+    },
+    "vastu-shanti-rohini": {
+      "file": "vastu-shanti-rohini.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-south-delhi": {
+      "file": "vastu-shanti-south-delhi.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-west-delhi": {
+      "file": "vastu-shanti-west-delhi.json",
+      "cluster": "services"
+    },
+    "vastu-shanti": {
+      "file": "vastu-shanti.json",
+      "cluster": "pujas"
     },
     "vedic-calendar-auspicious-timing": {
       "file": "vedic-calendar-auspicious-timing.json",
@@ -1869,6 +2805,54 @@
     "wedding-rituals-indian-regions": {
       "file": "wedding-rituals-indian-regions.json",
       "cluster": "ceremonies"
+    },
+    "weekend-annaprashan-delhi-ncr": {
+      "file": "weekend-annaprashan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-bhoomi-pujan-delhi-ncr": {
+      "file": "weekend-bhoomi-pujan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-griha-pravesh-delhi-ncr": {
+      "file": "weekend-griha-pravesh-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-havan-delhi-ncr": {
+      "file": "weekend-havan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-hindu-wedding-delhi-ncr": {
+      "file": "weekend-hindu-wedding-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-lakshmi-ganesh-puja-delhi-ncr": {
+      "file": "weekend-lakshmi-ganesh-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-mundan-delhi-ncr": {
+      "file": "weekend-mundan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-namkaran-delhi-ncr": {
+      "file": "weekend-namkaran-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-navagraha-puja-delhi-ncr": {
+      "file": "weekend-navagraha-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-office-opening-delhi-ncr": {
+      "file": "weekend-office-opening-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-satyanarayan-katha-delhi-ncr": {
+      "file": "weekend-satyanarayan-katha-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-vastu-shanti-delhi-ncr": {
+      "file": "weekend-vastu-shanti-delhi-ncr.json",
+      "cluster": "services"
     },
     "weekly-ritual-calendar": {
       "file": "weekly-ritual-calendar.json",

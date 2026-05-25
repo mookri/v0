@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync, statSync } from "fs";
+import { existsSync, readdirSync, statSync } from "fs";
 import { dirname, join, relative, sep } from "path";
 import type { MetadataRoute } from "next";
 import { getAllPages } from "@/lib/content/loader";
@@ -10,7 +10,6 @@ import { SITEMAP_CHUNK_SIZE } from "@/lib/seo/sitemap.constants";
 type SitemapEntry = MetadataRoute.Sitemap[number];
 
 const APP_DIR = join(process.cwd(), "app");
-const PUJA_DETAILS_SOURCE = join(APP_DIR, "pujas", "[slug]", "page.tsx");
 const EXCLUDED_TOP_LEVEL_SEGMENTS = new Set(["api", "auth"]);
 const EXCLUDED_STATIC_ROUTES = new Set(["/robots", "/sitemap"]);
 
@@ -18,7 +17,6 @@ function collectPageFiles(dir: string): string[] {
   if (!existsSync(dir)) return [];
 
   const files: string[] = [];
-
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const fullPath = join(dir, entry.name);
 
@@ -58,11 +56,16 @@ function normalizeRouteFromPageFile(filePath: string): string | null {
 function inferPriority(route: string): number {
   if (route === "/") return 1;
   if (route === "/services" || route === "/pujas") return 0.95;
+  if (route.startsWith("/pujas/")) return 0.84;
+  if (route.startsWith("/compare/")) return 0.88;
+  if (route.startsWith("/centers/")) return 0.84;
   if (route === "/about" || route === "/contact" || route === "/book") return 0.85;
   if (route.startsWith("/explore/")) return 0.82;
   if (route.startsWith("/services/") || route.startsWith("/pandit-services/")) return 0.8;
+  if (route.startsWith("/astrology/") || route.startsWith("/vastu/")) return 0.79;
   if (route.startsWith("/ceremonies/") || route.startsWith("/festival-rituals/")) return 0.78;
   if (route.startsWith("/ritual-guides/") || route.startsWith("/spiritual-guides/")) return 0.76;
+  if (route.startsWith("/blog/")) return 0.75;
   if (route.startsWith("/faq/")) return 0.72;
   if (route.includes("policy") || route.includes("terms")) return 0.35;
 
@@ -73,6 +76,9 @@ function inferPriority(route: string): number {
 function inferChangeFrequency(route: string): SitemapEntry["changeFrequency"] {
   if (route === "/") return "daily";
   if (route.startsWith("/resources/news")) return "daily";
+  if (route.startsWith("/pujas/")) return "weekly";
+  if (route.startsWith("/compare/") || route.startsWith("/blog/")) return "weekly";
+  if (route.startsWith("/centers/")) return "monthly";
   if (route.startsWith("/explore/") || route.startsWith("/services/") || route.startsWith("/ceremonies/")) {
     return "weekly";
   }
@@ -86,14 +92,12 @@ function discoverStaticAppEntries(): SitemapEntry[] {
     const route = normalizeRouteFromPageFile(filePath);
     if (!route) return [];
 
-    return [
-      {
-        url: toPublicUrl(route),
-        lastModified: new Date(statSync(filePath).mtime),
-        changeFrequency: inferChangeFrequency(route),
-        priority: inferPriority(route),
-      },
-    ];
+    return [{
+      url: toPublicUrl(route),
+      lastModified: new Date(statSync(filePath).mtime),
+      changeFrequency: inferChangeFrequency(route),
+      priority: inferPriority(route),
+    }];
   });
 }
 
@@ -108,7 +112,6 @@ function discoverSeoContentEntries(): SitemapEntry[] {
     if (!clusterMeta) return [];
 
     const route = normalizePublicPath(`/${clusterMeta.basePath}/${page.slug}`);
-
     return [{
       url: toPublicUrl(route),
       lastModified: new Date(page.automation?.generatedAt ?? page.lastUpdated),
@@ -118,34 +121,8 @@ function discoverSeoContentEntries(): SitemapEntry[] {
   });
 }
 
-function discoverPujaDetailSlugs(): string[] {
-  if (!existsSync(PUJA_DETAILS_SOURCE)) return [];
-
-  const source = readFileSync(PUJA_DETAILS_SOURCE, "utf-8");
-  return Array.from(new Set(
-    Array.from(source.matchAll(/^\s{2}"([^"]+)":\s*\{/gm), (match) => match[1]),
-  )).sort();
-}
-
-function discoverPujaDetailEntries(): SitemapEntry[] {
-  if (!existsSync(PUJA_DETAILS_SOURCE)) return [];
-
-  const lastModified = new Date(statSync(PUJA_DETAILS_SOURCE).mtime);
-
-  return discoverPujaDetailSlugs().map((slug) => {
-    const route = `/pujas/${slug}`;
-    return {
-      url: toPublicUrl(route),
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.84,
-    } satisfies SitemapEntry;
-  });
-}
-
 function dedupeEntries(entries: SitemapEntry[]): SitemapEntry[] {
   const byUrl = new Map<string, SitemapEntry>();
-
   for (const entry of entries) {
     byUrl.set(entry.url, entry);
   }
@@ -157,7 +134,6 @@ export function buildSitemapEntries(): MetadataRoute.Sitemap {
   return dedupeEntries([
     ...discoverStaticAppEntries(),
     ...discoverSeoContentEntries(),
-    ...discoverPujaDetailEntries(),
   ]);
 }
 
@@ -169,6 +145,12 @@ export function buildSitemapChunks(entries: MetadataRoute.Sitemap): MetadataRout
   }
 
   return chunks;
+}
+
+function formatLastModified(date?: string | Date): string | undefined {
+  if (!date) return undefined;
+  const value = date instanceof Date ? date : new Date(date);
+  return Number.isNaN(value.getTime()) ? undefined : value.toISOString();
 }
 
 export function buildSitemapIndexXml(entries: MetadataRoute.Sitemap): string {
@@ -192,13 +174,6 @@ export function buildSitemapIndexXml(entries: MetadataRoute.Sitemap): string {
   }).join("\n");
 
   return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapNodes}\n</sitemapindex>\n`;
-}
-
-function formatLastModified(date?: string | Date): string | undefined {
-  if (!date) return undefined;
-
-  const value = date instanceof Date ? date : new Date(date);
-  return Number.isNaN(value.getTime()) ? undefined : value.toISOString();
 }
 
 export function generateSitemapXml(entries: MetadataRoute.Sitemap): string {

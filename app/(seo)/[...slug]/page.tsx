@@ -9,6 +9,7 @@ import { getRegistryEntry, getClusterMeta } from '@/lib/content/registry';
 import { generatePageMetadata } from '@/lib/seo/metadata';
 import { ArticlePage } from '@/components/seo/ArticlePage';
 import { getPageLinks } from '@/lib/linking/graph';
+import { generateSchemas } from '@/lib/schema/generator';
 
 // ISR cache time — 1 hour. Individual pages can override via automation.revalidateAfter.
 export const revalidate = 3600;
@@ -87,12 +88,22 @@ export default async function SEOContentPage({ params }: PageProps) {
   if (page.noindex) notFound();
 
   const internalLinks = getPageLinks(page);
+  const schemas = generateSchemas(page, clusterMeta.basePath, clusterMeta.label);
 
   return (
-    <ArticlePage
-      page={page}
-      clusterMeta={clusterMeta}
-      internalLinks={internalLinks}
-    />
+    <>
+      {schemas.map((schema, index) => (
+        <script
+          key={`${page.slug}-schema-${index}`}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
+      <ArticlePage
+        page={page}
+        clusterMeta={clusterMeta}
+        internalLinks={internalLinks}
+      />
+    </>
   );
 }

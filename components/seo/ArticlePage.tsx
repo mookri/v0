@@ -14,9 +14,7 @@ import {
 import { ArrowRight, ArrowUp } from "lucide-react";
 import type { SEOPage, ClusterMeta } from "@/lib/content/types";
 import { BreadcrumbNav } from "./BreadcrumbNav";
-import { SchemaScript } from "./SchemaScript";
 import { InternalLinks } from "./InternalLinks";
-import { generateSchemas } from "@/lib/schema/generator";
 import type { InternalLink } from "@/lib/linking/graph";
 import { CORE_ENTITY_LINKS } from "@/lib/seo/entity";
 import HeroImage from "./HeroImage";
@@ -82,7 +80,8 @@ class ArticleErrorBoundary extends Component<
 
 type ContentNode =
   | { type: "heading"; html: string }
-  | { type: "paragraph"; html: string };
+  | { type: "paragraph"; html: string }
+  | { type: "block"; html: string };
 
 type TocItem = { level: number; text: string; id: string };
 
@@ -108,15 +107,21 @@ function processContent(html: string): {
   );
 
   const nodes: ContentNode[] = [];
-  const tokenRe = /(<h[23][^>]*>[\s\S]*?<\/h[23]>)|(<p[\s\S]*?<\/p>)/gi;
+  const tokenRe =
+    /(<h[23][^>]*>[\s\S]*?<\/h[23]>)|(<p[\s\S]*?<\/p>)|(<(?:ul|ol)[\s\S]*?<\/(?:ul|ol)>)|(<table[\s\S]*?<\/table>)|(<blockquote[\s\S]*?<\/blockquote>)/gi;
   let match: RegExpExecArray | null;
 
   while ((match = tokenRe.exec(withIds)) !== null) {
-    const [, headingHtml, paraHtml] = match;
+    const [, headingHtml, paraHtml, listHtml, tableHtml, blockquoteHtml] = match;
     if (headingHtml) {
       nodes.push({ type: "heading", html: headingHtml });
     } else if (paraHtml && paraHtml.replace(/<[^>]+>/g, "").trim()) {
       nodes.push({ type: "paragraph", html: paraHtml });
+    } else {
+      const blockHtml = listHtml || tableHtml || blockquoteHtml;
+      if (blockHtml && blockHtml.replace(/<[^>]+>/g, "").trim()) {
+        nodes.push({ type: "block", html: blockHtml });
+      }
     }
   }
 
@@ -184,12 +189,6 @@ function ArticlePageInner({
   internalLinks,
   onBookRitual,
 }: ArticlePageProps) {
-  // generateSchemas already handles noindex guard and null filtering internally
-  const schemas = useMemo(
-    () => generateSchemas(page, clusterMeta.basePath, clusterMeta.label),
-    [page, clusterMeta],
-  );
-
   const [progress, setProgress] = useState(0);
   const [showTop, setShowTop] = useState(false);
   const [activeId, setActiveId] = useState("");
@@ -252,10 +251,10 @@ function ArticlePageInner({
 
   const publishedDate = page.lastUpdated
     ? new Date(page.lastUpdated).toLocaleDateString("en-IN", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
     : "";
 
   return (
@@ -265,8 +264,6 @@ function ArticlePageInner({
      * Wrapping again here created two nested providers with competing engine instances.
      */
     <>
-      <SchemaScript schemas={schemas} />
-
       {/* Reading progress bar */}
       <div
         aria-hidden="true"
@@ -330,6 +327,12 @@ function ArticlePageInner({
             <time dateTime={page.lastUpdated}>{publishedDate}</time>
             <span aria-hidden="true">•</span>
             <span>{page.readingTime} min read</span>
+            {page.reviewedBy ? (
+              <>
+                <span aria-hidden="true">•</span>
+                <span>Reviewed by {page.reviewedBy}</span>
+              </>
+            ) : null}
           </div>
         </div>
       </section>

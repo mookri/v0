@@ -1,33 +1,20 @@
-// /lib/metadata-config.ts
-import { SEO_CONFIG } from "@/lib/seo-config"
-import themeConfig from "@/lib/theme-config.json"
+import { SEO_CONFIG } from "@/lib/seo-config";
+import themeConfig from "@/lib/theme-config.json";
+
+const HOME_TITLE = "Navdhya | Book Verified Pandits for Home Puja Services in Delhi NCR";
+const HOME_DESCRIPTION =
+  "Navdhya helps families book verified pandits in Delhi NCR for home pujas, havan, wedding rituals, astrology consultations, and online ceremonies.";
 
 export const SITE_METADATA = {
-  title: "Navdhya | Verified Pandit Booking & Vedic Puja Services — Home & Online",
-  description:
-    "Book verified pandits for authentic home pujas, online rituals, astrology consultations, and Hindu ceremonies with Navdhya. Trusted by families across Delhi-NCR and expanding pan-India.",
-  keywords: [
-    "Navdhya",
-    "Verified Pandit Booking",
-    "Vedic Puja Services",
-    "Home Puja Services",
-    "Online Puja Services",
-    "Book Pandit Online",
-    "Hindu Ceremonies",
-    "Astrology Consultation",
-    "Spiritual Guidance",
-    "Vedic Rituals India",
-    "Pandit in Delhi-NCR",
-    "Puja Booking Platform",
-  ],
+  title: HOME_TITLE,
+  description: HOME_DESCRIPTION,
   authors: [{ name: SEO_CONFIG.siteName }],
   creator: "Navdhya Team",
   publisher: SEO_CONFIG.siteName,
   formatDetection: { telephone: false },
   openGraph: {
-    title: "Navdhya | Verified Pandit Booking & Vedic Puja Services — Home & Online",
-    description:
-      "Book verified pandits for authentic home pujas, online rituals, astrology consultations, and Hindu ceremonies with Navdhya. Trusted by families across Delhi-NCR and expanding pan-India.",
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
     url: SEO_CONFIG.siteUrl,
     siteName: SEO_CONFIG.siteName,
     images: [
@@ -35,7 +22,7 @@ export const SITE_METADATA = {
         url: SEO_CONFIG.defaultImage,
         width: 1200,
         height: 630,
-        alt: SEO_CONFIG.siteName,
+        alt: "Navdhya verified pandit booking and puja services in Delhi NCR",
       },
     ],
     locale: SEO_CONFIG.locale,
@@ -43,9 +30,8 @@ export const SITE_METADATA = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Navdhya | Verified Pandit Booking & Vedic Puja Services — Home & Online",
-    description:
-      "Book verified pandits for authentic home pujas, online rituals, astrology consultations, and Hindu ceremonies with Navdhya. Trusted by families across Delhi-NCR and expanding pan-India.",
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
     images: [SEO_CONFIG.defaultImage],
     site: SEO_CONFIG.twitter.site,
   },
@@ -79,11 +65,10 @@ export const SITE_METADATA = {
     },
   },
   alternates: { canonical: "https://www.navdhya.com/" },
-}
+};
 
 export const VIEWPORT_CONFIG = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
   themeColor: themeConfig.themeColor,
-}
+};

@@ -110,7 +110,7 @@ export function SiteHeader() {
           </div>
           <div className="hidden lg:flex items-center gap-6 text-gray-700">
             <a href="/about" className="hover:text-gray-900">About Us</a>
-            <a href="#blog" className="hover:text-gray-900">Blog</a>
+            <a href="/resources/blog" className="hover:text-gray-900">Blog</a>
             <a href="/contact" className="hover:text-gray-900">Contact</a>
           </div>
         </div>
