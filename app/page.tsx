@@ -1,3 +1,10 @@
+import { seoManager } from "@/lib/seo-manager";
+import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator";
+import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary";
+import { resolveContext } from "@/lib/context-resolver";
+import { NavdhyaMarketplaceHome } from "@/components/product/NavdhyaMarketplaceHome";
+import Hero from "@/components/sections/hero";
+import { QuickActions } from "@/components/sections/quick";
 import { FeaturedPujas } from "@/components/sections/featured-pujas";
 import { WhyChoose } from "@/components/sections/why-choose";
 import { ProcessSteps } from "@/components/sections/process-steps";
@@ -6,11 +13,6 @@ import { Testimonials } from "@/components/sections/testimonials";
 import { TrustStats } from "@/components/sections/trust-stats";
 import { BlogPreview } from "@/components/sections/blog";
 import { FAQ } from "@/components/sections/faq";
-import Hero from "@/components/sections/hero";
-import { seoManager } from "@/lib/seo-manager";
-import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator";
-import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary";
-import { resolveContext } from "@/lib/context-resolver";
 
 export const metadata = seoManager.generateMetadata({
   title: "Navdhya | Book Verified Pandits for Home Puja Services in Delhi NCR",
@@ -178,6 +180,7 @@ export default async function HomePage() {
         />
         <main className="w-full overflow-x-hidden">
           <Hero />
+          <QuickActions />
           <FeaturedPujas />
           <WhyChoose />
           <ProcessSteps />

@@ -33,25 +33,28 @@ export function WhyChoose() {
   ];
 
   return (
-    <section aria-labelledby="why-choose" className="bg-background py-12 lg:py-16">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Enhanced Header */}
-        <div className="text-center mb-10">
-          <h2
-            id="why-choose"
-            className="font-serif text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-foreground relative inline-block mb-3"
-          >
-            Why Choose Navdhya
-            <span className="absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 w-20 h-0.5 bg-gradient-to-r from-primary to-[#0E3F2E] rounded-full"></span>
-          </h2>
-          <p className="text-muted-foreground mt-4 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-            Verified priests, complete rituals, transparent pricing — Navdhya brings authentic Vedic puja services
-            to your home with the convenience modern families deserve
-          </p>
-        </div>
+    <section aria-labelledby="why-choose" className="bg-background py-16 lg:py-24 w-full overflow-hidden">
+      <div className="mx-auto w-full px-4 md:px-8 xl:px-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+          
+          {/* Left Column (Shift-4) - Sticky Title */}
+          <div className="lg:col-span-4 lg:sticky lg:top-32 text-left z-10">
+            <h2
+              id="why-choose"
+              className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground relative inline-block mb-3"
+            >
+              Why Choose Navdhya
+              <span className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-primary to-[#0E3F2E] rounded-full"></span>
+            </h2>
+            <p className="text-muted-foreground mt-6 text-base md:text-lg leading-relaxed max-w-md">
+              Verified priests, complete rituals, transparent pricing — Navdhya brings authentic Vedic puja services
+              to your home with the convenience modern families deserve.
+            </p>
+          </div>
 
-        {/* Enhanced Grid Layout */}
-        <div className="mt-8 grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Right Column (Shift-8) - Feature Grid */}
+          <div className="lg:col-span-8 w-full">
+            <div className="grid gap-5 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
           {points.map((point, index) => (
             <div
               key={point.title}
@@ -90,6 +93,8 @@ export function WhyChoose() {
               </div>
             </div>
           ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

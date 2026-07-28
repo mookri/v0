@@ -11,6 +11,81 @@
       "permanent": true
     },
     {
+      "source": "/auth/login",
+      "destination": "/login",
+      "permanent": true
+    },
+    {
+      "source": "/auth/signup",
+      "destination": "/signup",
+      "permanent": true
+    },
+    {
+      "source": "/auth/forgot-password",
+      "destination": "/forgot-password",
+      "permanent": true
+    },
+    {
+      "source": "/auth/reset-password",
+      "destination": "/reset-password",
+      "permanent": true
+    },
+    {
+      "source": "/auth/verify",
+      "destination": "/verify",
+      "permanent": true
+    },
+    {
+      "source": "/auth/select-role",
+      "destination": "/select-role",
+      "permanent": true
+    },
+    {
+      "source": "/auth/complete-profile",
+      "destination": "/complete-profile",
+      "permanent": true
+    },
+    {
+      "source": "/auth/invite-accept",
+      "destination": "/invite",
+      "permanent": true
+    },
+    {
+      "source": "/auth/pandit-application",
+      "destination": "/apply/pandit",
+      "permanent": true
+    },
+    {
+      "source": "/auth/vendor-application",
+      "destination": "/apply/vendor",
+      "permanent": true
+    },
+    {
+      "source": "/dashboard/user/:path*",
+      "destination": "/user/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/dashboard/pandit/:path*",
+      "destination": "/pandit/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/dashboard/vendor/:path*",
+      "destination": "/vendor/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/dashboard/manager/:path*",
+      "destination": "/manager/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/user/overview",
+      "permanent": false
+    },
+    {
       "source": "/puja",
       "destination": "/pujas",
       "permanent": true

@@ -1,0 +1,572 @@
+[
+  {
+    "slug": "griha-pravesh",
+    "title": "griha-pravesh",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "griha pravesh",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "havan",
+    "title": "havan",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "havan",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "satyanarayan-katha",
+    "title": "satyanarayan-katha",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "satyanarayan katha",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "vastu-shanti",
+    "title": "vastu-shanti",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "vastu shanti",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "office-opening",
+    "title": "office-opening",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "office opening",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "bhoomi-pujan",
+    "title": "bhoomi-pujan",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "bhoomi pujan",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "namkaran",
+    "title": "namkaran",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "namkaran",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "mundan",
+    "title": "mundan",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "mundan",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "annaprashan",
+    "title": "annaprashan",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "annaprashan",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "navagraha-puja",
+    "title": "navagraha-puja",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "navagraha puja",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "lakshmi-ganesh-puja",
+    "title": "lakshmi-ganesh-puja",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "lakshmi ganesh puja",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "hindu-wedding",
+    "title": "hindu-wedding",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "hindu wedding",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "griha-pravesh-delhi",
+    "title": "griha-pravesh-delhi",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "griha pravesh delhi",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "havan-delhi",
+    "title": "havan-delhi",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "havan delhi",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "satyanarayan-katha-delhi",
+    "title": "satyanarayan-katha-delhi",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "satyanarayan katha delhi",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "vastu-shanti-delhi",
+    "title": "vastu-shanti-delhi",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "vastu shanti delhi",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "office-opening-delhi",
+    "title": "office-opening-delhi",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "office opening delhi",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "bhoomi-pujan-delhi",
+    "title": "bhoomi-pujan-delhi",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "bhoomi pujan delhi",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "namkaran-delhi",
+    "title": "namkaran-delhi",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "namkaran delhi",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "mundan-delhi",
+    "title": "mundan-delhi",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "mundan delhi",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "annaprashan-delhi",
+    "title": "annaprashan-delhi",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "annaprashan delhi",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "pandit-puja-delhi",
+    "title": "pandit-puja-delhi",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "pandit puja delhi",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "pandit-griha-pravesh-delhi",
+    "title": "pandit-griha-pravesh-delhi",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "pandit griha pravesh delhi",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "pandit-satyanarayan-katha",
+    "title": "pandit-satyanarayan-katha",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "pandit satyanarayan katha",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "pandit-havan-ceremony",
+    "title": "pandit-havan-ceremony",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "pandit havan ceremony",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "pandit-bhoomi-pujan",
+    "title": "pandit-bhoomi-pujan",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "pandit bhoomi pujan",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "pandit-wedding-delhi",
+    "title": "pandit-wedding-delhi",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "pandit wedding delhi",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "book-astrology-consultation-online",
+    "title": "book-astrology-consultation-online",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "book astrology consultation online",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "same-day-pandit-booking-delhi",
+    "title": "same-day-pandit-booking-delhi",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "same day pandit booking delhi",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  },
+  {
+    "slug": "write-ritual-brief-navdhya",
+    "title": "write-ritual-brief-navdhya",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "write ritual brief navdhya",
+    "secondaryKeywords": [],
+    "keywordVariants": [],
+    "pageFamily": "refreshed-core-service",
+    "audienceRegion": "india",
+    "summary": "",
+    "relatedSlugs": [],
+    "requiredInternalLinks": [],
+    "conversionPath": [],
+    "sourceNotes": [
+      "Existing service page scheduled for v2 refresh."
+    ]
+  }
+]

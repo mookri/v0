@@ -293,7 +293,7 @@ export const QuickBook: React.FC<QuickBookProps> = ({ open, onClose, prefill }) 
                     <input
                       value={mobile}
                       onChange={(e) => setMobile(e.target.value)}
-                      placeholder="+91 98765 43210"
+                      placeholder="+91 00000 00000"
                       className="w-full py-3 px-4 rounded-xl border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0E3F2E]/30 focus:border-[#0E3F2E]"
                     />
                   </div>

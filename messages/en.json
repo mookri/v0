@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "home": "Home",
+    "pujas": "Pujas",
+    "findPandit": "Find a Pandit",
+    "forPandits": "For Pandits",
+    "forVendors": "For Vendors",
+    "login": "Log in",
+    "signup": "Sign up",
+    "dashboard": "Dashboard"
+  },
+  "common": {
+    "learnMore": "Learn more",
+    "bookNow": "Book now",
+    "getQuote": "Get a quote",
+    "loading": "Loading...",
+    "error": "Something went wrong. Please try again.",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "home": {
+    "hero": {
+      "title": "Authentic Hindu rituals, with verified pandits",
+      "subtitle": "Book a pandit for griha pravesh, wedding, satyanarayan katha, and 40+ other ceremonies — in your home, at the temple, or live online.",
+      "ctaPrimary": "Find a Pandit",
+      "ctaSecondary": "Browse Pujas"
+    },
+    "trust": {
+      "verifiedPandits": "Verified pandits",
+      "householdsServed": "Households served",
+      "cities": "Cities in India + diaspora"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to manage your bookings, saved pandits, and rituals.",
+      "emailLabel": "Email or phone",
+      "emailPlaceholder": "+91 00000 00000",
+      "submit": "Send OTP",
+      "switchToSignup": "New here? Create an account"
+    },
+    "signup": {
+      "title": "Create your account",
+      "subtitle": "It takes 30 seconds. We never share your details.",
+      "nameLabel": "Your name",
+      "phoneLabel": "Phone number",
+      "submit": "Continue",
+      "switchToLogin": "Already have an account? Log in"
+    }
+  },
+  "pujas": {
+    "title": "Pujas and ceremonies",
+    "subtitle": "Browse {count} rituals across India and the diaspora",
+    "duration": "Duration",
+    "priceFrom": "From {price}",
+    "languages": "Languages"
+  },
+  "findPandit": {
+    "title": "Find a pandit",
+    "subtitle": "Verified pandits near you — filter by language, ceremony, and date",
+    "filters": {
+      "city": "City",
+      "ceremony": "Ceremony",
+      "language": "Language",
+      "date": "Date"
+    },
+    "noResults": "No pandits match your filters. Try widening the date or city."
+  },
+  "footer": {
+    "tagline": "Sacred rituals, made simple",
+    "company": "Company",
+    "about": "About us",
+    "careers": "Careers",
+    "press": "Press",
+    "support": "Support",
+    "helpCenter": "Help center",
+    "whatsapp": "WhatsApp us",
+    "legal": "Legal",
+    "privacy": "Privacy policy",
+    "terms": "Terms of service",
+    "refunds": "Refund policy"
+  }
+}

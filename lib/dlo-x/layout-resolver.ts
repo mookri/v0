@@ -12,7 +12,7 @@ export async function resolveLayoutTree(context: RequestContext): Promise<Resolv
   // Check cache first
   const cachedResult = layoutCache.get(cacheKey);
   if (cachedResult) {
-    return cachedResult;
+    return cachedResult as ResolvedLayout;
   }
   
   // Find matching policies
@@ -98,11 +98,17 @@ function matchesRoutePattern(pattern: string, path: string): boolean {
   const normPath = path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
 
   // Handle wildcard patterns like /auth/* or /dashboard/*
+  // P1 audit fix: the previous version used `startsWith(prefix)`
+  // without a path-separator boundary, so `/pandit/*` was matching
+  // `/pandits` (the public directory) — wrong. Now we require either
+  // an exact match of the prefix (e.g. `/pandit` for `/pandit`) or
+  // a `/` boundary after the prefix (e.g. `/pandit/x` for `/pandit/*`).
   if (normPattern.endsWith('/*')) {
     const prefix = normPattern.slice(0, -2); // Remove /*
-    return normPath.startsWith(prefix) || (prefix === '' && normPath === '/');
+    if (prefix === '') return normPath === '/';
+    return normPath === prefix || normPath.startsWith(`${prefix}/`);
   }
-  
+
   // Handle exact matches
   return normPattern === normPath;
 }

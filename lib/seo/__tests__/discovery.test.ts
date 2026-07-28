@@ -2,9 +2,10 @@ import { buildRobotsPolicy } from "@/lib/seo/robots";
 import { buildSitemapChunks, buildSitemapEntries, buildSitemapIndexXml } from "@/lib/seo/sitemap";
 import { SITEMAP_CHUNK_SIZE } from "@/lib/seo/sitemap.constants";
 
+let entries = buildSitemapEntries();
+
 describe("SEO discovery", () => {
   it("includes core, SEO content, and puja detail routes in the sitemap", () => {
-    const entries = buildSitemapEntries();
     const urls = entries.map((entry) => entry.url);
 
     expect(urls).toContain("https://www.navdhya.com/");
@@ -14,12 +15,13 @@ describe("SEO discovery", () => {
   });
 
   it("does not duplicate sitemap URLs", () => {
-    const urls = buildSitemapEntries().map((entry) => entry.url);
+    const urls = entries.map((entry) => entry.url);
     expect(new Set(urls).size).toBe(urls.length);
+    expect(urls).not.toContain("https://www.navdhya.com/auth/login");
+    expect(urls).not.toContain("https://www.navdhya.com/dashboard");
   });
 
   it("splits sitemap output into deterministic chunks of at most 40 URLs", () => {
-    const entries = buildSitemapEntries();
     const chunks = buildSitemapChunks(entries);
 
     expect(chunks.length).toBeGreaterThan(0);
@@ -28,7 +30,7 @@ describe("SEO discovery", () => {
   });
 
   it("builds a sitemap index that points to child sitemap files", () => {
-    const xml = buildSitemapIndexXml(buildSitemapEntries());
+    const xml = buildSitemapIndexXml(entries);
 
     expect(xml).toContain("<sitemapindex");
     expect(xml).toContain("https://www.navdhya.com/sitemaps/0.xml");
@@ -40,7 +42,7 @@ describe("SEO discovery", () => {
 
     expect(robots.sitemap).toContain("https://www.navdhya.com/sitemap.xml");
     expect(rules[0].disallow).toEqual(
-      expect.arrayContaining(["/api/", "/auth/", "/drafts/", "/admin/"]),
+      expect.arrayContaining(["/api/", "/auth/", "/dashboard/", "/drafts/", "/admin/"]),
     );
   });
 });

@@ -6,6 +6,7 @@ import { getClusterMeta, getRegistryEntry } from "@/lib/content/registry";
 import { SITE_URL } from "@/lib/seo/site";
 import { normalizePublicPath, toPublicUrl } from "@/lib/seo/routes";
 import { SITEMAP_CHUNK_SIZE } from "@/lib/seo/sitemap.constants";
+import { isIndexableRoute } from "@/lib/routes/metadata";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 
@@ -50,7 +51,8 @@ function normalizeRouteFromPageFile(filePath: string): string | null {
   }
 
   const route = publicSegments.length === 0 ? "/" : `/${publicSegments.join("/")}`;
-  return EXCLUDED_STATIC_ROUTES.has(route) ? null : route;
+  if (EXCLUDED_STATIC_ROUTES.has(route)) return null;
+  return isIndexableRoute(route) ? route : null;
 }
 
 function inferPriority(route: string): number {

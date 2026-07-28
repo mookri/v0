@@ -4,9 +4,23 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+  font-family: "Moon 2.0";
+  src: url("/fonts/Moon2.0-Regular.otf") format("opentype");
+  font-display: swap;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Moon 2.0";
+  src: url("/fonts/Moon2.0-Bold.otf") format("opentype");
+  font-display: swap;
+  font-weight: 700;
+}
+
 :root {
   --background: #fff8f0;
-  --foreground: #1c1917;
+  --foreground: #000000;
 
   --card: #fff8f0;
   --card-foreground: #1c1917;
@@ -14,16 +28,20 @@
   --popover: #fff8f0;
   --popover-foreground: #1c1917;
 
-  --primary: #d97706; /* Deep Saffron */
+  --primary: #d97706;
+  /* Deep Saffron */
   --primary-foreground: #fff8f0;
 
-  --secondary: #881337; /* Rich Maroon */
+  --secondary: #881337;
+  /* Rich Maroon */
   --secondary-foreground: #fff8f0;
 
-  --accent: #b45309; /* Warm Gold */
+  --accent: #b45309;
+  /* Warm Gold */
   --accent-foreground: #fff8f0;
 
-  --muted: #f6eadf; /* softer cream for subtle surfaces */
+  --muted: #f6eadf;
+  /* softer cream for subtle surfaces */
   --muted-foreground: #4a423e;
 
   --destructive: #c2410c;
@@ -36,7 +54,8 @@
   --chart-1: #d97706;
   --chart-2: #881337;
   --chart-3: #b45309;
-  --chart-4: #dc8665; /* Soft Terracotta (supporting) */
+  --chart-4: #dc8665;
+  /* Soft Terracotta (supporting) */
   --chart-5: #1c1917;
 
   --radius: 0.625rem;
@@ -61,10 +80,12 @@
   --popover: #1f1b19;
   --popover-foreground: #fff8f0;
 
-  --primary: #f6ad55; /* lighter saffron on dark */
+  --primary: #f6ad55;
+  /* lighter saffron on dark */
   --primary-foreground: #1c1917;
 
-  --secondary: #be123c; /* lighter maroon on dark */
+  --secondary: #be123c;
+  /* lighter maroon on dark */
   --secondary-foreground: #1c1917;
 
   --accent: #f59e0b;
@@ -97,7 +118,7 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-albert);
+  --font-sans: var(--font-albert), system-ui, sans-serif;
   --font-serif: var(--font-playfair);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -137,146 +158,853 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
+* {
+  border-color: var(--border);
+  outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-albert), system-ui, sans-serif;
+}
+
+.font-sacred-display {
+  font-family: "Moon 2.0", var(--font-albert), system-ui, sans-serif;
+  font-weight: 700;
+}
+
+/* ── Ultra-Premium Editorial Typography ── */
+.prose-editorial {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  /* Subtle entrance for the whole block */
+  animation: editorial-fade-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.prose-editorial h1 {
+  font-family: var(--font-serif);
+  font-weight: 800;
+  font-size: clamp(2.25rem, 6vw, 3.75rem);
+  line-height: 1.05;
+  margin-bottom: 3rem;
+  color: var(--foreground);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.prose-editorial h2 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  line-height: 1.15;
+  margin-top: 8rem;
+  /* Museum Grade Rhythm */
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--border), transparent 95%);
+  color: var(--foreground);
+  letter-spacing: -0.01em;
+}
+
+.prose-editorial h3 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  line-height: 1.25;
+  margin-top: 5rem;
+  margin-bottom: 2rem;
+  color: var(--foreground);
+  letter-spacing: -0.01em;
+}
+
+.prose-editorial p {
+  font-family: var(--font-sans);
+  font-size: clamp(1.0625rem, 1.15vw, 1.2rem);
+  line-height: 1.85;
+  margin-bottom: 2.25rem;
+  color: color-mix(in srgb, var(--foreground), transparent 30%);
+  letter-spacing: -0.005em;
+}
+
+.prose-editorial ul,
+.prose-editorial ol {
+  margin-bottom: 3.5rem;
+  padding-left: 1.75rem;
+}
+
+.prose-editorial li {
+  font-family: var(--font-sans);
+  font-size: clamp(1.0625rem, 1.15vw, 1.2rem);
+  line-height: 1.85;
+  margin-bottom: 1.5rem;
+  color: color-mix(in srgb, var(--foreground), transparent 30%);
+}
+
+.prose-editorial blockquote {
+  border-left: 2px solid color-mix(in srgb, var(--primary), transparent 40%);
+  background: color-mix(in srgb, var(--muted), transparent 95%);
+  padding: 1.5rem 0 1.5rem 3rem;
+  margin: 6rem 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+  font-style: italic;
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--foreground), transparent 40%);
+  letter-spacing: -0.01em;
+}
+
+.prose-editorial img {
+  width: 100%;
+  height: auto;
+  margin: 6rem 0;
+  border-radius: 4px;
+  border: 1px solid color-mix(in srgb, var(--border), transparent 95%);
+  box-shadow: 0 50px 100px -30px rgba(0, 0, 0, 0.03);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.prose-editorial img:hover {
+  transform: translateY(-4px);
+}
+
+.prose-editorial iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 6rem 0;
+  border-radius: 4px;
+  border: 0;
+  background: var(--muted);
+  opacity: 0.95;
+}
+
+@media (min-width: 1024px) {
+  .prose-editorial {
+    margin-left: 0;
+    margin-right: 0;
   }
 }
 
-@layer components {
-  /* ── Ultra-Premium Editorial Typography ── */
-  .prose-editorial {
-    max-width: 720px;
-    margin-left: auto;
-    margin-right: auto;
-    /* Subtle entrance for the whole block */
-    animation: editorial-fade-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
+/* ── Navdhya Auth Components ── */
+.auth-card {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
 
-  .prose-editorial h1 {
-    font-family: var(--font-serif);
-    font-weight: 800;
-    font-size: clamp(2.25rem, 6vw, 3.75rem);
-    line-height: 1.05;
-    margin-bottom: 3rem;
-    color: var(--foreground);
-    letter-spacing: -0.03em;
-    text-wrap: balance;
+@media (min-width: 640px) {
+  .auth-card {
+    padding: 2.5rem;
   }
+}
 
-  .prose-editorial h2 {
-    font-family: var(--font-serif);
-    font-weight: 700;
-    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-    line-height: 1.15;
-    margin-top: 8rem; /* Museum Grade Rhythm */
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid color-mix(in srgb, var(--border), transparent 95%);
-    color: var(--foreground);
-    letter-spacing: -0.01em;
-  }
+.auth-bg-decoration {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.07;
+}
 
-  .prose-editorial h3 {
-    font-family: var(--font-serif);
-    font-weight: 700;
-    font-size: clamp(1.5rem, 2.5vw, 2rem);
-    line-height: 1.25;
-    margin-top: 5rem;
-    margin-bottom: 2rem;
-    color: var(--foreground);
-    letter-spacing: -0.01em;
-  }
+/* ── Premium Auth Input States ── */
+.auth-input {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
 
-  .prose-editorial p {
-    font-family: var(--font-sans);
-    font-size: clamp(1.0625rem, 1.15vw, 1.2rem);
-    line-height: 1.85;
-    margin-bottom: 2.25rem;
-    color: color-mix(in srgb, var(--foreground), transparent 30%);
-    letter-spacing: -0.005em;
-  }
+.auth-input:focus {
+  border-color: var(--foreground);
+  box-shadow: 0 0 0 1px var(--foreground);
+}
 
-  .prose-editorial ul, .prose-editorial ol {
-    margin-bottom: 3.5rem;
-    padding-left: 1.75rem;
-  }
+/* ── Navdhya Form Elements ── */
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
+  margin-bottom: 0.375rem;
+}
 
-  .prose-editorial li {
-    font-family: var(--font-sans);
-    font-size: clamp(1.0625rem, 1.15vw, 1.2rem);
-    line-height: 1.85;
-    margin-bottom: 1.5rem;
-    color: color-mix(in srgb, var(--foreground), transparent 30%);
-  }
+.form-input {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid var(--input);
+  background-color: var(--background);
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--foreground);
+  transition: all 0.2s;
+  outline: none;
+}
 
-  .prose-editorial blockquote {
-    border-left: 2px solid color-mix(in srgb, var(--primary), transparent 40%);
-    background: color-mix(in srgb, var(--muted), transparent 95%);
-    padding: 1.5rem 0 1.5rem 3rem;
-    margin: 6rem 0;
-    font-family: var(--font-serif);
-    font-size: clamp(1.35rem, 2.2vw, 1.75rem);
-    font-style: italic;
-    line-height: 1.65;
-    color: color-mix(in srgb, var(--foreground), transparent 40%);
-    letter-spacing: -0.01em;
-  }
+.form-input::placeholder {
+  color: var(--muted-foreground);
+}
 
-  .prose-editorial img {
-    width: 100%;
-    height: auto;
-    margin: 6rem 0;
-    border-radius: 4px;
-    border: 1px solid color-mix(in srgb, var(--border), transparent 95%);
-    box-shadow: 0 50px 100px -30px rgba(0,0,0,0.03);
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  
-  .prose-editorial img:hover {
-    transform: translateY(-4px);
-  }
+.form-input:focus {
+  box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2);
+  border-color: var(--primary);
+}
 
-  .prose-editorial iframe {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    margin: 6rem 0;
-    border-radius: 4px;
-    border: 0;
-    background: var(--muted);
-    opacity: 0.95;
-  }
+.form-input-error {
+  border-color: var(--destructive);
+}
 
-  @media (min-width: 1024px) {
-    .prose-editorial {
-      margin-left: 0;
-      margin-right: 0;
-    }
+.form-input-error:focus {
+  box-shadow: 0 0 0 2px rgba(194, 65, 12, 0.2);
+  border-color: var(--destructive);
+}
+
+.form-checkbox {
+  height: 1rem;
+  width: 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--input);
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.form-checkbox:focus {
+  box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2);
+  outline: none;
+}
+
+.form-error {
+  margin-top: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--destructive);
+}
+
+.form-hint {
+  margin-top: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+/* ── Navdhya Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  outline: none;
+  cursor: pointer;
+}
+
+.btn:focus {
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--primary);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  transition: all 0.2s;
+  cursor: pointer;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--primary);
+  outline: none;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  background-color: var(--muted);
+}
+
+.btn-outline:focus {
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--primary);
+  outline: none;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  background: transparent;
+  border: none;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-ghost:hover {
+  background-color: var(--muted);
+  color: var(--foreground);
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background-color: var(--destructive);
+  color: white;
+  border: none;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  opacity: 0.9;
+}
+
+.btn-success {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background-color: #059669;
+  color: white;
+  border: none;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-success:hover {
+  background-color: #047857;
+}
+
+/* ── Navdhya Dashboard Sidebar ── */
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  transition: colors 0.2s;
+  text-decoration: none;
+}
+
+.sidebar-nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.sidebar-nav-item-active {
+  background-color: var(--primary);
+  color: white;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.sidebar-nav-label {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ── Navdhya Dashboard Topbar ── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  height: 4rem;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--card);
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .topbar {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
+}
+
+/* ── Navdhya Dashboard Widgets ── */
+.stat-card {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  transition: box-shadow 0.2s;
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.data-table {
+  width: 100%;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.data-table th {
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--border);
+  background-color: rgba(246, 234, 223, 0.5);
+}
+
+.data-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Navdhya Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-success {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #d1fae5;
+  color: #15803d;
+}
+
+.dark .badge-success {
+  background-color: rgba(6, 78, 59, 0.3);
+  color: #34d399;
+}
+
+.badge-warning {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.dark .badge-warning {
+  background-color: rgba(120, 53, 15, 0.3);
+  color: #fbbf24;
+}
+
+.badge-danger {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.dark .badge-danger {
+  background-color: rgba(127, 29, 29, 0.3);
+  color: #f87171;
+}
+
+.badge-info {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.dark .badge-info {
+  background-color: rgba(12, 74, 110, 0.3);
+  color: #38bdf8;
+}
+
+.badge-neutral {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+}
+
+/* ── Navdhya Dropdown ── */
+.dropdown {
+  position: absolute;
+  right: 0;
+  margin-top: 0.5rem;
+  width: 14rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  padding: 0.25rem 0;
+  z-index: 50;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  transition: background-color 0.15s;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.dropdown-item:hover {
+  background-color: var(--muted);
+}
+
+.dropdown-divider {
+  border-top: 1px solid var(--border);
+  margin: 0.25rem 0;
 }
 
 @keyframes editorial-fade-in {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@layer utilities {
-  .animate-looping-arrow {
-    animation: looping-arrow 1.5s infinite linear;
-  }
+.animate-looping-arrow {
+  animation: looping-arrow 1.5s infinite linear;
 }
 
 @keyframes looping-arrow {
   0% {
     transform: translateX(0);
   }
+
   50% {
     transform: translateX(4px);
   }
+
   100% {
     transform: translateX(0);
   }
+}
+
+/* ── Auth Tab Animations ── */
+@keyframes auth-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-animate-in {
+  animation: auth-slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── OTP Input Pulse ── */
+@keyframes otp-pulse {
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.otp-dot-pulse {
+  animation: otp-pulse 1.5s ease-in-out infinite;
+}
+
+/* ── Phone Input Focus Ring ── */
+/* color: var(--muted-foreground);
+  border-bottom: 1px solid var(--border);
+  background-color: rgba(246, 234, 223, 0.5);
+} */
+
+.data-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Navdhya Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-success {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #d1fae5;
+  color: #15803d;
+}
+
+.dark .badge-success {
+  background-color: rgba(6, 78, 59, 0.3);
+  color: #34d399;
+}
+
+.badge-warning {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.dark .badge-warning {
+  background-color: rgba(120, 53, 15, 0.3);
+  color: #fbbf24;
+}
+
+.badge-danger {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.dark .badge-danger {
+  background-color: rgba(127, 29, 29, 0.3);
+  color: #f87171;
+}
+
+.badge-info {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.dark .badge-info {
+  background-color: rgba(12, 74, 110, 0.3);
+  color: #38bdf8;
+}
+
+.badge-neutral {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+}
+
+/* ── Navdhya Dropdown ── */
+.dropdown {
+  position: absolute;
+  right: 0;
+  margin-top: 0.5rem;
+  width: 14rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  padding: 0.25rem 0;
+  z-index: 50;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  transition: background-color 0.15s;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.dropdown-item:hover {
+  background-color: var(--muted);
+}
+
+.dropdown-divider {
+  border-top: 1px solid var(--border);
+  margin: 0.25rem 0;
+}
+
+@keyframes editorial-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-looping-arrow {
+  animation: looping-arrow 1.5s infinite linear;
+}
+
+@keyframes looping-arrow {
+  0% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(4px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* ── Auth Tab Animations ── */
+@keyframes auth-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-animate-in {
+  animation: auth-slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── OTP Input Pulse ── */
+@keyframes otp-pulse {
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.otp-dot-pulse {
+  animation: otp-pulse 1.5s ease-in-out infinite;
+}
+
+/* ── Phone Input Focus Ring ── */
+.phone-input-focused {
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.08);
+  border-color: var(--primary);
+}
+
+/* ── Button Press Effect ── */
+.btn-press:active {
+  transform: scale(0.98);
+}
+
+/* ── Hide Scrollbar Utility ── */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

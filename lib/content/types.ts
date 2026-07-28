@@ -31,6 +31,43 @@ export type SchemaType =
 /** Valid search intents */
 export type SearchIntent = 'informational' | 'transactional' | 'navigational';
 
+/** Editorial families for the v2 SEO pipeline */
+export type PageFamily =
+  | 'legacy'
+  | 'service-intent'
+  | 'ceremony-decision'
+  | 'pandit-journey'
+  | 'consultation-intent'
+  | 'trust-comparison'
+  | 'voice-faq'
+  | 'intl-country-hub'
+  | 'intl-city-hub'
+  | 'intl-service'
+  | 'refreshed-core-service'
+  | 'refreshed-global-brand';
+
+/** Audience or market framing for the page */
+export type AudienceRegion =
+  | 'india'
+  | 'global'
+  | 'global-diaspora'
+  | 'US'
+  | 'UK'
+  | 'Australia'
+  | 'Ireland'
+  | 'Germany';
+
+/** Delivery mode used to keep service claims safe and explicit */
+export type DeliveryMode =
+  | 'in-person'
+  | 'online'
+  | 'hybrid'
+  | 'remote-guided'
+  | 'india-coordination';
+
+/** Editorial verification status for factual and claim-safe content */
+export type ClaimReviewStatus = 'draft' | 'reviewed' | 'approved' | 'restricted';
+
 /** Ad layout identifiers aligned with the ad-network component API */
 export type AdLayout =
   | 'native_in_content'
@@ -52,6 +89,10 @@ export type AdPlacement =
 export interface FAQEntry {
   question: string;
   answer: string;
+}
+
+export interface SpeakableFAQEntry extends FAQEntry {
+  summary?: string;
 }
 
 export type ComparisonTableRow = Record<string, string>;
@@ -188,6 +229,27 @@ export interface SEOPage {
   /** Author name */
   author: string;
 
+  /** Editorial family for deterministic v2 generation */
+  pageFamily?: PageFamily;
+
+  /** Market / audience region the page is written for */
+  audienceRegion?: AudienceRegion;
+
+  /** Optional ISO-like business country code used for international clusters */
+  countryCode?: string;
+
+  /** Optional city name used for geo-specific pages */
+  cityName?: string;
+
+  /** Explicit service delivery mode */
+  deliveryMode?: DeliveryMode;
+
+  /** Editorial review status for factual and claim-safe content */
+  claimReviewStatus?: ClaimReviewStatus;
+
+  /** Notes about source assumptions, restrictions, or factual guardrails */
+  sourceNotes?: string[];
+
   /** Optional reviewer or subject-matter expert */
   reviewedBy?: string;
 
@@ -196,6 +258,9 @@ export interface SEOPage {
 
   /** Optional FAQ entries for FAQPage schema */
   faqs?: FAQEntry[];
+
+  /** Optional short-form FAQs suitable for voice and AEO surfaces */
+  speakableFaqs?: SpeakableFAQEntry[];
 
   /** Optional HowTo steps for HowTo schema */
   howToSteps?: HowToStep[];
@@ -229,6 +294,9 @@ export interface SEOPage {
 
   /** Optional anchor texts editors should prefer when linking in */
   recommendedAnchorTexts?: string[];
+
+  /** Explicit next-step journey for readers and booking flows */
+  conversionPath?: string[];
 
   /**
    * Optional native ad slot 1 — mid-article placement.

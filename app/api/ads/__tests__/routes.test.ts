@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { POST as decide } from "@/app/api/ads/decision/route";
 import { POST as track } from "@/app/api/ads/track/route";
 import { POST as trackBeacon } from "@/app/api/ads/track-beacon/route";

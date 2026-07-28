@@ -10,8 +10,22 @@
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1600px;
+  padding: 0 1rem;
   margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .process-wrapper {
+    padding: 0 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .process-wrapper {
+    padding: 0 3rem;
+  }
 }
 
 .process-left {

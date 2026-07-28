@@ -6,7 +6,7 @@ import { LayoutPolicy, Role, Tenant, DeviceType, ShellName } from './types';
 export const layoutPolicySchema = z.object({
   id: z.string().min(1),
   path: z.string().min(1),
-  role: z.enum(['Admin', 'User', 'Pandit', 'Vendor', 'Manager']).optional(),
+  role: z.enum(['Admin', 'User', 'Pandit', 'Vendor', 'Manager', 'SuperAdmin']).optional(),
   tenant: z.enum(['default', 'tenant2']).optional(),
   device: z.enum(['mobile', 'desktop', 'tablet']).optional(),
   shells: z.array(z.enum([

@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import type { RequestContext, Role, Tenant, DeviceType } from '@/lib/dlo-x/types';
+import { deriveStableSeed } from '@/lib/dlo-x/stable-seed';
 
 /**
  * MNC-Grade Proxy for Next.js 16 (replacing deprecated middleware).
@@ -10,12 +11,12 @@ import type { RequestContext, Role, Tenant, DeviceType } from '@/lib/dlo-x/types
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const userAgent = request.headers.get('user-agent') || '';
-  
+
   // 1. Detect Request Context
   const requestId = request.headers.get('x-request-id') || crypto.randomUUID();
   const tenantId = (request.headers.get('x-tenant-id') as Tenant) || 'default';
   const userRole = (request.headers.get('x-user-role') as Role) || 'User';
-  
+
   let device: DeviceType = 'desktop';
   if (/mobile|android|iphone|ipod|iemobile/i.test(userAgent)) {
     device = 'mobile';
@@ -23,7 +24,7 @@ export function proxy(request: NextRequest) {
     device = 'tablet';
   }
 
-  const seed = request.headers.get('x-seed') || crypto.randomUUID();
+  const seed = deriveStableSeed(request.headers);
 
   // 2. Prepare Context
   const context: RequestContext = {
@@ -47,11 +48,25 @@ export function proxy(request: NextRequest) {
   requestHeaders.set('x-seed', context.seed);
   requestHeaders.set('x-url', request.url);
 
-  return NextResponse.next({
+  const response = NextResponse.next({
     request: {
       headers: requestHeaders,
     },
   });
+
+  // Persist seed in a cookie so subsequent requests in the same day skip the
+  // hash computation and stay in the same A/B bucket.
+  if (!/(?:^|;\s*)navdhya-seed=/.test(request.headers.get('cookie') ?? '')) {
+    response.cookies.set('navdhya-seed', seed, {
+      httpOnly: false,
+      sameSite: 'lax',
+      secure: true,
+      path: '/',
+      maxAge: 60 * 60 * 24,
+    });
+  }
+
+  return response;
 }
 
 // Matcher configuration

@@ -1,0 +1,207 @@
+[
+  {
+    "slug": "navdhya-us",
+    "title": "Navdhya for Hindu families in United States",
+    "cluster": "brand",
+    "schemaType": "Organization",
+    "searchIntent": "navigational",
+    "primaryKeyword": "Navdhya United States",
+    "secondaryKeywords": [
+      "online puja United States",
+      "Hindu family support United States",
+      "NRI ritual guidance United States"
+    ],
+    "keywordVariants": [
+      "navdhya us",
+      "United States Hindu ritual support"
+    ],
+    "pageFamily": "intl-country-hub",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "deliveryMode": "online",
+    "summary": "Country hub for United States households exploring remote-guided rituals, online consultations, and India-side family coordination with Navdhya.",
+    "relatedSlugs": [
+      "navdhya-nri-global",
+      "navdhya-hindu-diaspora",
+      "how-navdhya-works"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-new-york",
+      "/explore/navdhya-nri-global",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-new-york",
+      "/book",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "International country hub limited to supported remote and India-coordination claims."
+    ]
+  },
+  {
+    "slug": "navdhya-uk",
+    "title": "Navdhya for Hindu families in United Kingdom",
+    "cluster": "brand",
+    "schemaType": "Organization",
+    "searchIntent": "navigational",
+    "primaryKeyword": "Navdhya United Kingdom",
+    "secondaryKeywords": [
+      "online puja United Kingdom",
+      "Hindu family support United Kingdom",
+      "NRI ritual guidance United Kingdom"
+    ],
+    "keywordVariants": [
+      "navdhya uk",
+      "United Kingdom Hindu ritual support"
+    ],
+    "pageFamily": "intl-country-hub",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "deliveryMode": "online",
+    "summary": "Country hub for United Kingdom households exploring remote-guided rituals, online consultations, and India-side family coordination with Navdhya.",
+    "relatedSlugs": [
+      "navdhya-nri-global",
+      "navdhya-hindu-diaspora",
+      "how-navdhya-works"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-london",
+      "/explore/navdhya-nri-global",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-london",
+      "/book",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "International country hub limited to supported remote and India-coordination claims."
+    ]
+  },
+  {
+    "slug": "navdhya-australia",
+    "title": "Navdhya for Hindu families in Australia",
+    "cluster": "brand",
+    "schemaType": "Organization",
+    "searchIntent": "navigational",
+    "primaryKeyword": "Navdhya Australia",
+    "secondaryKeywords": [
+      "online puja Australia",
+      "Hindu family support Australia",
+      "NRI ritual guidance Australia"
+    ],
+    "keywordVariants": [
+      "navdhya australia",
+      "Australia Hindu ritual support"
+    ],
+    "pageFamily": "intl-country-hub",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "deliveryMode": "online",
+    "summary": "Country hub for Australia households exploring remote-guided rituals, online consultations, and India-side family coordination with Navdhya.",
+    "relatedSlugs": [
+      "navdhya-nri-global",
+      "navdhya-hindu-diaspora",
+      "how-navdhya-works"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-sydney",
+      "/explore/navdhya-nri-global",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-sydney",
+      "/book",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "International country hub limited to supported remote and India-coordination claims."
+    ]
+  },
+  {
+    "slug": "navdhya-ireland",
+    "title": "Navdhya for Hindu families in Ireland",
+    "cluster": "brand",
+    "schemaType": "Organization",
+    "searchIntent": "navigational",
+    "primaryKeyword": "Navdhya Ireland",
+    "secondaryKeywords": [
+      "online puja Ireland",
+      "Hindu family support Ireland",
+      "NRI ritual guidance Ireland"
+    ],
+    "keywordVariants": [
+      "navdhya ireland",
+      "Ireland Hindu ritual support"
+    ],
+    "pageFamily": "intl-country-hub",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "deliveryMode": "online",
+    "summary": "Country hub for Ireland households exploring remote-guided rituals, online consultations, and India-side family coordination with Navdhya.",
+    "relatedSlugs": [
+      "navdhya-nri-global",
+      "navdhya-hindu-diaspora",
+      "how-navdhya-works"
+    ],
+    "requiredInternalLinks": [
+      "/centers/ireland-dublin",
+      "/explore/navdhya-nri-global",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/ireland-dublin",
+      "/book",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "International country hub limited to supported remote and India-coordination claims."
+    ]
+  },
+  {
+    "slug": "navdhya-germany",
+    "title": "Navdhya for Hindu families in Germany",
+    "cluster": "brand",
+    "schemaType": "Organization",
+    "searchIntent": "navigational",
+    "primaryKeyword": "Navdhya Germany",
+    "secondaryKeywords": [
+      "online puja Germany",
+      "Hindu family support Germany",
+      "NRI ritual guidance Germany"
+    ],
+    "keywordVariants": [
+      "navdhya germany",
+      "Germany Hindu ritual support"
+    ],
+    "pageFamily": "intl-country-hub",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "deliveryMode": "online",
+    "summary": "Country hub for Germany households exploring remote-guided rituals, online consultations, and India-side family coordination with Navdhya.",
+    "relatedSlugs": [
+      "navdhya-nri-global",
+      "navdhya-hindu-diaspora",
+      "how-navdhya-works"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-berlin",
+      "/explore/navdhya-nri-global",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-berlin",
+      "/book",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "International country hub limited to supported remote and India-coordination claims."
+    ]
+  }
+]

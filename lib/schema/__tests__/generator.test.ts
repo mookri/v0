@@ -66,4 +66,45 @@ describe("generateSchemas", () => {
 
     expect(schemas.map((schema) => schema["@type"])).toContain("LocalBusiness");
   });
+
+  it("emits FAQPage schema for FAQ content", () => {
+    const schemas = generateSchemas(
+      {
+        ...basePage,
+        schemaType: "FAQPage",
+      },
+      "faq",
+      "Frequently Asked Questions",
+    );
+
+    expect(schemas.map((schema) => schema["@type"])).toContain("FAQPage");
+  });
+
+  it("adds international service context for supported remote pages", () => {
+    const schemas = generateSchemas(
+      {
+        ...basePage,
+        schemaType: "Service",
+        audienceRegion: "US",
+        countryCode: "US",
+        cityName: "New York",
+        targetCities: ["New York"],
+        deliveryMode: "online",
+        serviceDetails: {
+          summary: "Remote ritual support for overseas households.",
+        },
+      },
+      "services",
+      "Puja Services",
+    );
+
+    const service = schemas.find((schema) => schema["@type"] === "Service");
+    expect(service?.serviceMode).toBe("online");
+    expect(service?.areaServed).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ "@type": "Country", name: "United States" }),
+        expect.objectContaining({ "@type": "Place", name: "New York" }),
+      ]),
+    );
+  });
 });

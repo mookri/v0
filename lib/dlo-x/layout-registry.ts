@@ -11,6 +11,7 @@ import { VendorShell } from '../../components/dlo-x/shells/VendorShell';
 import { PoojaShell } from '../../components/dlo-x/shells/PoojaShell';
 import { MobileShell } from '../../components/dlo-x/shells/MobileShell';
 import { ChromeShell } from '../../components/dlo-x/shells/ChromeShell';
+import { PlatformShell } from '../../components/dlo-x/shells/PlatformShell';
 
 // This registry maps shell names to their actual component implementations
 export const layoutRegistry: Record<ShellName, React.ComponentType<any>> = {
@@ -22,7 +23,8 @@ export const layoutRegistry: Record<ShellName, React.ComponentType<any>> = {
   VendorShell,
   PoojaShell,
   MobileShell,
-  ChromeShell
+  ChromeShell,
+  PlatformShell
 };
 
 // Function to register a shell component

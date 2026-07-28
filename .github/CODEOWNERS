@@ -1,0 +1,63 @@
+# CODEOWNERS — Navdhya review routing
+# Maps paths to the engineer (or team) that owns that area.
+# GitHub will auto-assign reviewers and require their approval before merge
+# on protected branches once the rule-set is enabled in repo settings.
+#
+# Engineers (see planning-04june.md §VI Part VI):
+#   @eng-a: auth, security, finops, ops
+#   @eng-b: dashboards, UX, content
+#   @eng-c: directory, AI/search, i18n, infra
+#   @platform-lead: cross-cutting decisions, governance, ADRs
+
+# Default — anyone on the team can review small changes
+*                                       @eng-a @eng-b @eng-c
+
+# Auth, security, payments (high-risk)
+lib/auth/                               @eng-a
+lib/dlo-x/security.ts                   @eng-a
+lib/infra/                              @eng-a
+/app/api/ads/                           @eng-a
+/app/api/revalidate/                    @eng-a
+/app/\(auth\)/                          @eng-a
+components/auth/                        @eng-a
+components/dev/                         @eng-a
+next.config.ts                          @eng-a
+proxy.ts                                @eng-a
+
+# Dashboards + UX
+/app/user/                              @eng-b
+/app/pandit/                            @eng-b
+/app/vendor/                            @eng-b
+/app/manager/                           @eng-b
+/app/admin/                             @eng-b
+/app/platform/                          @eng-b
+components/dashboard/                   @eng-b
+components/dlo-x/                       @eng-b
+components/product/                     @eng-b
+
+# SEO, AI, i18n, content
+/app/\(seo\)/                           @eng-c
+/app/llms.txt/                          @eng-c
+/app/llms-full.txt/                     @eng-c
+content/                                @eng-c
+content/registry.json                   @eng-c
+lib/seo/                                @eng-c
+lib/schema/                             @eng-c
+lib/content/                            @eng-c
+scripts/backfill-speakable-faqs.ts      @eng-c
+scripts/generate-seo-v2.ts              @eng-c
+scripts/audit-seo.ts                    @eng-c
+
+# Docs + planning
+planning-*.md                           @platform-lead
+audit-*.md                              @platform-lead
+CHANGELOG.md                            @platform-lead
+/docs/                                  @platform-lead
+
+# CI/CD + infra
+/.github/                               @eng-a
+/.gitleaks.toml                         @eng-a
+/.githooks/                             @eng-a
+package.json                            @eng-a
+tsconfig.json                           @eng-a
+jest.config.ts                          @eng-a

@@ -1,138 +1,34 @@
 'use client'
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from "next/link"
-import { seoManager } from "@/lib/seo-manager"
-import Script from "next/script"
 import { ChevronDown, Heart, Eye, ShoppingCart, Filter, X, ArrowRight, MapPin, Star, Award, Calendar, Users, Phone, Mail, Clock, BookOpen, Lightbulb, TrendingUp, Play, FileText, Video, Search, SlidersHorizontal, Shield } from "lucide-react"
+import {
+  MOCK_PANDITS,
+  PANDIT_EXPERIENCE_OPTIONS,
+  PANDIT_LOCATIONS,
+  PANDIT_SPECIALIZATIONS,
+  type Pandit,
+  type PanditFilterOptions as FilterOptions,
+} from "@/lib/pandits"
 
-// Schema markup for the main pandits page
-const PANDITS_SCHEMA = seoManager.generateSchema({
-  type: "CollectionPage",
-  name: "Pandits & Experts - Navdhya",
-  description: "Connect with verified and experienced Vedic pandits in Delhi NCR. Book authentic puja services, astrology consultations, and spiritual guidance from certified experts.",
-  path: "/pandits",
-  breadcrumbs: [
-    { name: "Home", url: "https://www.navdhya.com" },
-    { name: "Pandits & Experts", url: "https://www.navdhya.com/pandits" }
-  ]
-})
+// Schema markup for the main pandits page is rendered by
+// `app/pandits/page.tsx` (server component). The old in-client
+// `seoManager.generateSchema` was duplicated, used
+// `dangerouslySetInnerHTML`, and shipped schema-gen JS to the
+// client. See PR 0.8 audit closure (P1).
 
-interface Pandit {
-  id: number;
-  name: string;
-  specialization: string;
-  location: string;
-  experience: string;
-  rating: number;
-  image: string;
-  skills: string[];
-  price: string;
-  languages: string[];
-}
+// Pandit and FilterOptions are now imported from @/lib/pandits.
 
-interface FilterOptions {
-  location: string[];
-  specialization: string[];
-  rating: number | null;
-  experience: string[];
-  searchQuery: string;
-}
-
-// Mock data for pandits
-const mockPandits: Pandit[] = [
-  {
-    id: 1,
-    name: "Pandit Rajesh Sharma",
-    specialization: "Vedic Rituals & Astrology Specialist",
-    location: "Delhi",
-    experience: "15+ years",
-    rating: 4.9,
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg",
-    skills: ["Griha Pravesh", "Kundli Analysis", "Satyanarayan Katha"],
-    price: "₹1,500/session",
-    languages: ["Hindi", "English"]
-  },
-  {
-    id: 2,
-    name: "Pandit Anil Verma",
-    specialization: "Business & Prosperity Rituals",
-    location: "Gurgaon",
-    experience: "18+ years",
-    rating: 4.9,
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg",
-    skills: ["Lakshmi Puja", "Vastu Shanti", "Navagraha Homa"],
-    price: "₹2,000/session",
-    languages: ["Hindi", "English", "Punjabi"]
-  },
-  {
-    id: 3,
-    name: "Pandit Suresh Iyer",
-    specialization: "South Indian Rituals Specialist",
-    location: "Noida",
-    experience: "12+ years",
-    rating: 4.8,
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg",
-    skills: ["Pongal", "Ganesh Puja", "Annaprashan"],
-    price: "₹1,800/session",
-    languages: ["Tamil", "Telugu", "English"]
-  },
-  {
-    id: 4,
-    name: "Pandit Ramesh Patel",
-    specialization: "Wedding & Life Event Ceremonies",
-    location: "Delhi",
-    experience: "20+ years",
-    rating: 4.7,
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg",
-    skills: ["Wedding Rituals", "Upanayana", "Naming Ceremony"],
-    price: "₹2,500/session",
-    languages: ["Hindi", "Gujarati", "English"]
-  },
-  {
-    id: 5,
-    name: "Pandit Kavita Menon",
-    specialization: "Women's Wellness & Fertility Rituals",
-    location: "Gurgaon",
-    experience: "10+ years",
-    rating: 4.9,
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg",
-    skills: ["Ganesh Homa", "Lakshmi Puja", "Navratri Special"],
-    price: "₹1,700/session",
-    languages: ["Malayalam", "Tamil", "English"]
-  },
-  {
-    id: 6,
-    name: "Pandit Vikram Singh",
-    specialization: "Health & Healing Ceremonies",
-    location: "Noida",
-    experience: "14+ years",
-    rating: 4.6,
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg",
-    skills: ["Rudra Abhishek", "Maha Mrityunjaya Jaap", "Ayurvedic Rituals"],
-    price: "₹2,200/session",
-    languages: ["Hindi", "English"]
-  }
-];
-
-// Unique filter options
-const locations = ["Delhi", "Gurgaon", "Noida"];
-const specializations = [
-  "Vedic Rituals & Astrology Specialist",
-  "Business & Prosperity Rituals", 
-  "South Indian Rituals Specialist",
-  "Wedding & Life Event Ceremonies",
-  "Women's Wellness & Fertility Rituals",
-  "Health & Healing Ceremonies"
-];
-const experienceOptions = ["5+ years", "10+ years", "15+ years", "20+ years"];
-const skills = [
-  "Griha Pravesh", "Kundli Analysis", "Satyanarayan Katha",
-  "Lakshmi Puja", "Vastu Shanti", "Navagraha Homa",
-  "Pongal", "Ganesh Puja", "Annaprashan",
-  "Wedding Rituals", "Upanayana", "Naming Ceremony",
-  "Ganesh Homa", "Lakshmi Puja", "Navratri Special",
-  "Rudra Abhishek", "Maha Mrityunjaya Jaap", "Ayurvedic Rituals"
-];
+// Mock data for pandits is now sourced from @/lib/pandits — single
+// source of truth shared with app/find-pandit. Dev-only seed data
+// until the real Drizzle/Postgres backend lands in PR 11.
+const mockPandits: Pandit[] = MOCK_PANDITS as unknown as Pandit[];
+const locations: readonly string[] = PANDIT_LOCATIONS;
+const specializations: readonly string[] = PANDIT_SPECIALIZATIONS;
+const experienceOptions: readonly string[] = PANDIT_EXPERIENCE_OPTIONS;
+const skills: readonly string[] = Array.from(
+  new Set(MOCK_PANDITS.flatMap((p) => p.skills)),
+);
 
 export default function PanditsClient() {
   // State for filters

@@ -1,0 +1,35 @@
+   ▲ Next.js 16.0.10 (Turbopack)
+   - Local:         http://localhost:4105
+   - Network:       http://172.17.209.171:4105
+
+ ✓ Starting...
+ ✓ Ready in 38.7s
+ ○ Compiling / ...
+[Telemetry] layout.resolve: {
+  policyId: 'home-page',
+  shells: [ 'MainShell' ],
+  abTestVariant: undefined,
+  path: '/',
+  tenantId: 'default',
+  userRole: 'User'
+}
+ GET / 200 in 46s (compile: 43s, proxy.ts: 1081ms, render: 2.4s)
+[Telemetry] layout.resolve: {
+  policyId: 'home-page',
+  shells: [ 'MainShell' ],
+  abTestVariant: undefined,
+  path: '/',
+  tenantId: 'default',
+  userRole: 'User'
+}
+ GET / 200 in 808ms (compile: 53ms, proxy.ts: 10ms, render: 744ms)
+[Telemetry] layout.resolve: {
+  policyId: 'home-page',
+  shells: [ 'MainShell' ],
+  abTestVariant: undefined,
+  path: '/',
+  tenantId: 'default',
+  userRole: 'User'
+}
+ GET / 200 in 1648ms (compile: 13ms, proxy.ts: 10ms, render: 1625ms)
+[?25h

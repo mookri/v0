@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import Link from "next/link"
-import Script from "next/script"
 import { ChevronDown, Heart, Eye, ShoppingCart, Filter, X, ArrowRight, MapPin, Star, Award, Calendar, Users, Phone, Mail, Clock, BookOpen, Lightbulb, TrendingUp, Play, FileText, Video, Search, MessageCircle, ThumbsUp, Reply, Flag, MoreHorizontal, User, Shield, Check, Plus, Leaf } from "lucide-react"
 
 // Types of remedies
@@ -250,7 +249,7 @@ function Flame(props: React.SVGProps<SVGSVGElement>) {
   )
 }
 
-export default function RemediesClient({ remediesSchema }: { remediesSchema: string }) {
+export default function RemediesClient() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null)
   const [selectedPackage, setSelectedPackage] = useState(2); // Default to Comprehensive
 
@@ -260,10 +259,6 @@ export default function RemediesClient({ remediesSchema }: { remediesSchema: str
 
   return (
     <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: remediesSchema }}
-      />
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 mt-4">

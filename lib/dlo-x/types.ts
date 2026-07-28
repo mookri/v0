@@ -1,5 +1,5 @@
 // lib/dlo-x/types.ts
-export type Role = 'Admin' | 'User' | 'Pandit' | 'Vendor' | 'Manager';
+export type Role = 'Admin' | 'User' | 'Pandit' | 'Vendor' | 'Manager' | 'SuperAdmin';
 export type Tenant = 'default' | 'tenant2';
 export type DeviceType = 'mobile' | 'desktop' | 'tablet';
 export type ShellName = 
@@ -11,7 +11,8 @@ export type ShellName =
   | 'VendorShell'
   | 'PoojaShell'
   | 'MobileShell'
-  | 'ChromeShell';
+  | 'ChromeShell'
+  | 'PlatformShell';
 
 export interface LayoutPolicy {
   id: string;

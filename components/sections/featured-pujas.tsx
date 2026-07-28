@@ -231,19 +231,35 @@ export function FeaturedPujas() {
   }
 
   return (
-    <section aria-labelledby="featured-pujas" className="bg-muted/50">
-      <div className="mx-auto max-w-7xl px-4 py-12 overflow-x-hidden w-full">
-        <div className="text-center mb-6">
-          <h2 id="featured-pujas" className="font-bold text-2xl md:text-3xl">  
-            Featured Pujas
-          </h2>
-          <p className="text-muted-foreground mt-2.5 text-sm md:text-base max-w-2xl mx-auto font-sans">
-            Explore our most popular rituals performed by certified pandits
-          </p>
-        </div>
+    <section aria-labelledby="featured-pujas" className="bg-muted/50 w-full overflow-hidden">
+      <div className="mx-auto w-full px-4 md:px-8 xl:px-12 py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          
+          {/* Left Column (Shift-4) - Sticky Title */}
+          <div className="lg:col-span-4 lg:sticky lg:top-32 text-left z-10">
+            <h2 id="featured-pujas" className="font-bold text-3xl md:text-4xl text-foreground relative inline-block">  
+              Featured Pujas
+              <div className="absolute -bottom-2 left-0 h-1 w-16 bg-gradient-to-r from-[#0E3F2E] to-primary rounded-full"></div>
+            </h2>
+            <p className="text-muted-foreground mt-6 text-base md:text-lg font-sans leading-relaxed">
+              Explore our most popular rituals performed by certified pandits. Authentic Vedic ceremonies curated for modern families.
+            </p>
+            
+            <div className="hidden lg:block mt-10">
+              <Link
+                href="/pujas"
+                className="inline-block px-8 py-3 bg-[#0E3F2E] text-white font-sans font-semibold text-base rounded-md border-2 border-[#0E3F2E] shadow-md shadow-[#0E3F2E]/20 hover:shadow-lg hover:shadow-[#0E3F2E]/40 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-[#0E3F2E]/40"
+              >
+                View All Rituals
+              </Link>
+            </div>
+          </div>
+
+          {/* Right Column (Shift-8) - Interactive Slider & Mobile Grid */}
+          <div className="lg:col-span-8 w-full">
         
         {/* Mobile layout - 2x2 grid with circular cards and row dividers */}
-        <div className="mt-5 sm:hidden">
+        <div className="mt-2 sm:hidden">
           {isLoading ? (
             <div className="space-y-6">
               {Array.from({ length: 3 }).map((_, rowIndex) => (
@@ -343,7 +359,7 @@ export function FeaturedPujas() {
         </div>
         
         {/* Desktop layout - horizontal slider with drag support */}
-        <div className="mt-5 w-full hidden sm:block relative">
+        <div className="w-full hidden sm:block relative">
           {isLoading ? (
             <div 
               className="flex gap-4 pb-8 overflow-x-auto scrollbar-hide"
@@ -447,14 +463,17 @@ export function FeaturedPujas() {
         </div>
 
         {/* View All button for mobile */}
-        <div className="mt-8 text-center sm:hidden">
+        <div className="mt-10 text-center lg:hidden">
           <Link
             href="/pujas"
-            className="inline-block px-6 py-2 bg-[#0E3F2E] text-white font-sans font-semibold text-base rounded-md border-2 border-[#0E3F2E] shadow-md shadow-[#0E3F2E]/30 hover:shadow-lg hover:shadow-[#0E3F2E]/50 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#0E3F2E]/40"
+            className="inline-block px-8 py-3 bg-[#0E3F2E] text-white font-sans font-semibold text-base rounded-md border-2 border-[#0E3F2E] shadow-md shadow-[#0E3F2E]/20 hover:shadow-lg hover:shadow-[#0E3F2E]/40 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-[1.02]"
           >
-            View All 25+ Rituals
+            View All Rituals
           </Link>
         </div>
+
+        </div> {/* End of Right Column */}
+        </div> {/* End of Grid */}
       </div>
       
       <style jsx global>{`

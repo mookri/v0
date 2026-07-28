@@ -1,7 +1,6 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Albert_Sans } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import "./globals.css"
 import { SITE_METADATA, VIEWPORT_CONFIG } from "@/lib/metadata-config"
@@ -83,7 +82,6 @@ export default function RootLayout({
             </Suspense>
           </AdProvider>
         </LoadingProvider>
-        <Analytics />
       </body>
     </html>
   )

@@ -1,0 +1,95 @@
+name: ci
+
+on:
+  push:
+    branches: [main, minus]
+  pull_request:
+    branches: [main, minus]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_TELEMETRY_DISABLED: 1
+
+jobs:
+  # ── 1. Install + type-check + lint + unit tests ──────────────────────────
+  validate:
+    name: Validate (typecheck + lint + test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci --no-audit --no-fund --prefer-offline
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint -- --max-warnings=0
+
+      - name: Test
+        run: npm test -- --ci --maxWorkers=2
+
+      - name: Coverage summary
+        if: always()
+        run: npx jest --coverage --coverageReporters=text-summary || true
+
+  # ── 2. Secret scan (gitleaks) ────────────────────────────────────────────
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml
+
+  # ── 3. Build verification ───────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    needs: [validate, secrets]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci --no-audit --no-fund --prefer-offline
+
+      - name: Build
+        env:
+          NEXT_PUBLIC_SITE_URL: https://www.navdhya.com
+        run: npm run build
+
+      - name: Upload build artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-standalone-${{ github.sha }}
+          path: .next/standalone
+          retention-days: 7

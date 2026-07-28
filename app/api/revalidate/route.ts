@@ -1,74 +1,84 @@
 // /app/api/revalidate/route.ts
-// On-demand ISR revalidation endpoint — v2
+// On-demand ISR revalidation endpoint — v3
 //
-// Fixes:
-//   1. Timing-attack: secret comparison now uses timingSafeEqual via a
-//      Web Crypto HMAC verify pattern (constant-time).
-//   2. Rate limiting: max 30 revalidations per minute per IP.
-//   3. Batch revalidation: accepts { slugs: string[] } in addition to { slug }.
-//   4. Cache invalidation: calls invalidatePageCache() from graph.ts so the
-//      in-process link cache is cleared alongside the Next.js page cache.
-//   5. Proper error typing and structured JSON responses.
+// Fixes vs v2:
+//   1. Per-payload rate limit cost (slugs.length), not 1 token per
+//      request. Prevents DoS by sending 100K slugs in one request.
+//   2. Hard cap on `slugs.length` (100) and on each slug's length
+//      (200 chars). Prevents a single big request from skipping the
+//      rate limit and exhausting the registry.
+//   3. Slug format validation: no leading slash, no `..`, no control
+//      chars, no `//`, no `\\`. Stops path-traversal attempts.
+//   4. Reuses `lib/security/rate-limit.ts` so the next route that
+//      needs this gets it for free.
+//   5. Slug deduplication capped at 100 entries (no point deduping
+//      beyond the cap — we will reject the request anyway).
 
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { getRegistryEntry, getClusterMeta } from '@/lib/content/registry';
 import { invalidatePageCache } from '@/lib/linking/graph';
+import { InProcessRateLimiter, clientIp } from '@/lib/security/rate-limit';
+import { validateCsrfToken, extractCsrfToken } from '@/lib/security/csrf';
 
 // ---------------------------------------------------------------------------
-// Rate limiter — simple in-process token bucket (resets on cold start)
+// Rate limiter — per-IP token bucket, charged by slug count.
 // ---------------------------------------------------------------------------
 
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_MAX = 30;
-const RATE_LIMIT_WINDOW_MS = 60_000;
+const rateLimiter = new InProcessRateLimiter(
+  { limit: 30, windowMs: 60_000 },
+  { maxKeys: 50_000 },
+);
 
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const bucket = rateLimitMap.get(ip);
-
-  if (!bucket || now > bucket.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return false;
-  }
-
-  if (bucket.count >= RATE_LIMIT_MAX) return true;
-
-  bucket.count += 1;
-  return false;
-}
+// Hard caps
+const MAX_SLUGS_PER_REQUEST = 100;
+const MAX_SLUG_LENGTH = 200;
+const SLUG_FORMAT = /^[a-z0-9](?:[a-z0-9-]{0,198}[a-z0-9])?$/i;
 
 // ---------------------------------------------------------------------------
-// Timing-safe secret comparison
-// Uses Web Crypto HMAC so comparison time is constant regardless of content.
+// Timing-safe secret comparison — Web Crypto HMAC, constant time.
 // ---------------------------------------------------------------------------
 
 async function verifySecret(provided: string, expected: string): Promise<boolean> {
+  if (!expected) return false;
+  if (provided.length !== expected.length) {
+    // Even length-mismatch should be a no-op for the secret.
+    // We still run a verify to keep timing flat.
+  }
   try {
     const enc = new TextEncoder();
+    const paddedExpected = expected.padEnd(provided.length || 1, "\0");
     const key = await crypto.subtle.importKey(
       'raw',
-      enc.encode(expected),
+      enc.encode(paddedExpected),
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['sign'],
     );
-
-    // Sign both values with the same key and compare signatures
-    const [sigA, sigB] = await Promise.all([
-      crypto.subtle.sign('HMAC', key, enc.encode(provided)),
-      crypto.subtle.sign('HMAC', key, enc.encode(expected)),
-    ]);
-
-    const a = new Uint8Array(sigA);
+    const sig = await crypto.subtle.sign('HMAC', key, enc.encode(provided));
+    const sigB = await crypto.subtle.sign('HMAC', key, enc.encode(paddedExpected));
+    const a = new Uint8Array(sig);
     const b = new Uint8Array(sigB);
     if (a.length !== b.length) return false;
     let diff = 0;
     for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
-    return diff === 0;
+    return diff === 0 && provided.length === expected.length;
   } catch {
     return false;
   }
+}
+
+// ---------------------------------------------------------------------------
+// Slug validation
+// ---------------------------------------------------------------------------
+
+function isValidSlug(slug: string): boolean {
+  if (typeof slug !== "string") return false;
+  if (slug.length === 0 || slug.length > MAX_SLUG_LENGTH) return false;
+  if (slug.startsWith("/") || slug.startsWith("\\")) return false;
+  if (slug.includes("//") || slug.includes("\\\\") || slug.includes("..")) return false;
+  if (/[\u0000-\u001F\u007F]/.test(slug)) return false;
+  return SLUG_FORMAT.test(slug);
 }
 
 // ---------------------------------------------------------------------------
@@ -77,12 +87,15 @@ async function verifySecret(provided: string, expected: string): Promise<boolean
 
 interface RevalidateResult {
   slug: string;
-  status: 'ok' | 'not_found' | 'error';
+  status: 'ok' | 'not_found' | 'error' | 'invalid';
   path?: string;
   message?: string;
 }
 
 function revalidateSlug(slug: string): RevalidateResult {
+  if (!isValidSlug(slug)) {
+    return { slug, status: 'invalid', message: 'Slug failed format validation' };
+  }
   try {
     const entry = getRegistryEntry(slug);
     if (!entry) {
@@ -97,7 +110,7 @@ function revalidateSlug(slug: string): RevalidateResult {
     const path = `/${clusterMeta.basePath}/${slug}`;
 
     revalidatePath(path);
-    invalidatePageCache(slug); // clear in-process link cache too
+    invalidatePageCache(slug);
 
     return { slug, status: 'ok', path };
   } catch (err) {
@@ -111,17 +124,33 @@ function revalidateSlug(slug: string): RevalidateResult {
 // ---------------------------------------------------------------------------
 
 export async function POST(req: NextRequest) {
-  // Rate limiting
-  const ip =
-    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
-    req.headers.get('x-real-ip') ??
-    'unknown';
-
-  if (isRateLimited(ip)) {
+  // Rate limiting — cost = 1 base + (slugs.length) once we know it
+  const ip = clientIp(req.headers);
+  const early = rateLimiter.check(ip, 1);
+  if (!early.allowed) {
     return NextResponse.json(
       { message: 'Rate limit exceeded. Max 30 revalidations per minute.' },
-      { status: 429 },
+      { status: 429, headers: rateLimiter.toHeaders(early) },
     );
+  }
+
+  // CSRF check (P-ARCH follow-up, PR 0.8). The token comes from
+  // a cookie issued by `issueCsrfToken()`; the client is expected
+  // to echo the same value in the `X-CSRF-Token` header. SameSite=Lax
+  // cookies already provide some protection; this is defence in depth.
+  // In dev (no CSRF_SECRET), skip the check so the dev tools work.
+  if (process.env.NODE_ENV === 'production' || process.env.CSRF_SECRET) {
+    const { cookie, header } = extractCsrfToken({
+      headers: req.headers,
+      cookies: req.cookies,
+    });
+    const csrf = validateCsrfToken(cookie, header);
+    if (!csrf.ok) {
+      return NextResponse.json(
+        { message: 'CSRF validation failed', reason: csrf.reason },
+        { status: 403 },
+      );
+    }
   }
 
   let body: unknown;
@@ -162,15 +191,34 @@ export async function POST(req: NextRequest) {
   }
 
   if (Array.isArray(slugs)) {
+    if (slugs.length > MAX_SLUGS_PER_REQUEST) {
+      return NextResponse.json(
+        { message: `Too many slugs in one request. Max ${MAX_SLUGS_PER_REQUEST}.` },
+        { status: 400 },
+      );
+    }
     for (const s of slugs) {
-      if (typeof s === 'string' && s.trim() && !slugList.includes(s.trim())) {
-        slugList.push(s.trim());
-      }
+      if (typeof s !== 'string') continue;
+      const t = s.trim();
+      if (!t) continue;
+      if (slugList.includes(t)) continue;
+      slugList.push(t);
     }
   }
 
   if (slugList.length === 0) {
     return NextResponse.json({ message: 'No slugs provided' }, { status: 400 });
+  }
+
+  // Charge the additional cost of the slug count to the rate limiter.
+  // The base 1 was already charged above; this represents the
+  // "expensive" part of the request.
+  const final = rateLimiter.check(ip, slugList.length);
+  if (!final.allowed) {
+    return NextResponse.json(
+      { message: 'Rate limit exceeded. Max 30 revalidations per minute.' },
+      { status: 429, headers: rateLimiter.toHeaders(final) },
+    );
   }
 
   // Revalidate each slug
@@ -182,10 +230,11 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(
     {
       revalidated: results.filter((r) => r.status === 'ok').length,
+      invalid: results.filter((r) => r.status === 'invalid').length,
       total: results.length,
       results,
       now: Date.now(),
     },
-    { status },
+    { status, headers: rateLimiter.toHeaders(final) },
   );
 }

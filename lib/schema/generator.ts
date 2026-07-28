@@ -12,6 +12,7 @@ import {
   SITE_URL,
   toAbsoluteUrl,
 } from "@/lib/seo/site";
+import { generateAEO } from "@/lib/seo/aeo";
 
 type SchemaNode = Record<string, unknown>;
 
@@ -101,6 +102,44 @@ function ensureArray(value: unknown): string[] {
   return [];
 }
 
+function audienceLanguages(page: SEOPage): string[] {
+  switch (page.audienceRegion) {
+    case "US":
+    case "UK":
+    case "Australia":
+    case "Ireland":
+    case "Germany":
+    case "global":
+    case "global-diaspora":
+      return ["English", "Hindi"];
+    default:
+      return ["English", "Hindi"];
+  }
+}
+
+function areaServedNodes(page: SEOPage): SchemaNode[] {
+  const cities = ensureArray(page.targetCities);
+  const countryName = page.countryCode
+    ? ({
+        US: "United States",
+        UK: "United Kingdom",
+        AU: "Australia",
+        IE: "Ireland",
+        DE: "Germany",
+      } as Record<string, string>)[page.countryCode] ?? page.countryCode
+    : undefined;
+
+  const nodes: SchemaNode[] = [];
+  if (countryName) {
+    nodes.push({ "@type": "Country", name: countryName });
+  }
+  if (!countryName) {
+    nodes.push({ "@type": "Place", name: "Delhi NCR" }, { "@type": "Country", name: "India" });
+  }
+  cities.forEach((city) => nodes.push({ "@type": "Place", name: city }));
+  return nodes;
+}
+
 function describeComparisonRow(row: Record<string, string>): string {
   return Object.entries(row)
     .map(([key, value]) => `${key}: ${value}`)
@@ -138,6 +177,23 @@ function buildServiceOffer(page: SEOPage, url: string): SchemaNode | undefined {
     offerCount: page.serviceDetails?.packages?.length ?? 1,
     availability: "https://schema.org/InStock",
     url,
+  };
+}
+
+function buildOfferCatalog(page: SEOPage): SchemaNode | undefined {
+  const packages = page.serviceDetails?.packages ?? [];
+  if (packages.length === 0) return undefined;
+
+  return {
+    "@type": "OfferCatalog",
+    name: `${page.title} packages`,
+    itemListElement: packages.map((pkg) => ({
+      "@type": "Offer",
+      name: pkg.name,
+      description: pkg.description,
+      price: pkg.price,
+      priceCurrency: "INR",
+    })),
   };
 }
 
@@ -191,6 +247,14 @@ function buildWebPageSchema(page: SEOPage, basePath: string): SchemaNode {
     datePublished: page.automation?.generatedAt ?? page.lastUpdated,
     dateModified: page.lastUpdated,
     mainEntity: { "@id": primaryEntityId(page, url) },
+    ...(page.speakableFaqs && page.speakableFaqs.length > 0
+      ? {
+          speakable: {
+            "@type": "SpeakableSpecification",
+            xpath: page.speakableFaqs.slice(0, 3).map((_, index) => `/html/body/main/section[${index + 1}]`),
+          },
+        }
+      : {}),
   };
 }
 
@@ -230,6 +294,14 @@ function buildArticleSchema(page: SEOPage, basePath: string): SchemaNode {
     inLanguage: DEFAULT_LANGUAGE,
     about: [buildKeywordThing(page.primaryKeyword), { "@id": ORGANIZATION_ID }],
     mentions: [...secondaryKeywords, ...keywordVariants].map(buildKeywordThing),
+    ...(page.speakableFaqs && page.speakableFaqs.length > 0
+      ? {
+          speakable: {
+            "@type": "SpeakableSpecification",
+            cssSelector: ["main h2", "main h3", "main p"].slice(0, page.speakableFaqs.length),
+          },
+        }
+      : {}),
   };
 }
 
@@ -237,13 +309,9 @@ function buildServiceSchema(page: SEOPage, basePath: string): SchemaNode {
   const url = pageUrl(basePath, page);
   const secondaryKeywords = ensureArray(page.secondaryKeywords);
   const keywordVariants = ensureArray(page.keywordVariants);
-  const targetCities = ensureArray(page.targetCities);
-  const serviceAreas = ensureArray(page.serviceDetails?.serviceAreas);
-  const areaServed = [
-    { "@type": "Place", name: "Delhi NCR" },
-    { "@type": "Country", name: "India" },
-    ...Array.from(new Set([...targetCities, ...serviceAreas])).map((city) => ({ "@type": "Place", name: city })),
-  ];
+  const areaServed = areaServedNodes(page);
+  const aggregateOffer = buildServiceOffer(page, url);
+  const offerCatalog = buildOfferCatalog(page);
 
   return {
     "@context": "https://schema.org",
@@ -256,25 +324,32 @@ function buildServiceSchema(page: SEOPage, basePath: string): SchemaNode {
     provider: { "@id": ORGANIZATION_ID },
     brand: { "@id": ORGANIZATION_ID },
     areaServed,
+    availableLanguage: audienceLanguages(page),
     availableChannel: {
       "@type": "ServiceChannel",
       serviceUrl: url,
-      availableLanguage: ["English", "Hindi"],
+      availableLanguage: audienceLanguages(page),
       serviceLocation: {
         "@type": "Place",
-        name: "Delhi NCR and online",
+        name: page.cityName && page.countryCode
+          ? `${page.cityName}, ${page.countryCode}`
+          : "Delhi NCR and online",
       },
     },
     audience: {
       "@type": "Audience",
-      audienceType: page.searchIntent === "transactional"
-        ? "Families booking puja, pandit, or spiritual consultation services"
-        : "General Hindu audience",
+      audienceType: page.audienceRegion && page.audienceRegion !== "india"
+        ? `Hindu families in ${page.audienceRegion} seeking supported ritual guidance`
+        : page.searchIntent === "transactional"
+          ? "Families booking puja, pandit, or spiritual consultation services"
+          : "General Hindu audience",
     },
     category: [page.primaryKeyword, ...secondaryKeywords, ...keywordVariants],
     image: buildImageObject(page.og?.ogImageUrl ?? page.heroImage ?? page.serviceDetails?.image),
+    ...(page.deliveryMode ? { serviceMode: page.deliveryMode } : {}),
     ...(page.serviceDetails?.summary ? { slogan: page.serviceDetails.summary } : {}),
-    ...(buildServiceOffer(page, url) ? { offers: buildServiceOffer(page, url) } : {}),
+    ...(aggregateOffer ? { offers: aggregateOffer } : {}),
+    ...(offerCatalog ? { hasOfferCatalog: offerCatalog } : {}),
   };
 }
 
@@ -317,13 +392,8 @@ function buildOrganizationSchema(page: SEOPage, basePath: string): SchemaNode {
 
 function buildLocalBusinessSchema(page: SEOPage, basePath: string): SchemaNode {
   const url = pageUrl(basePath, page);
-  const targetCities = ensureArray(page.targetCities);
-  const serviceAreas = ensureArray(page.serviceDetails?.serviceAreas);
   const priceRange = page.serviceDetails?.priceRange ?? "Rs. 2,500 - Rs. 5,500";
-  const locationNodes = Array.from(new Set([...targetCities, ...serviceAreas])).map((city) => ({
-    "@type": "Place",
-    name: city,
-  }));
+  const locationNodes = areaServedNodes(page);
 
   return {
     "@context": "https://schema.org",
@@ -334,29 +404,42 @@ function buildLocalBusinessSchema(page: SEOPage, basePath: string): SchemaNode {
     description: page.metaDescription,
     image: buildImageObject(page.og?.ogImageUrl ?? page.heroImage ?? page.serviceDetails?.image),
     priceRange,
-    areaServed: [
-      { "@type": "Place", name: "Delhi NCR" },
-      { "@type": "Country", name: "India" },
-      ...locationNodes,
-    ],
-    serviceArea: [
-      { "@type": "Place", name: "Delhi NCR" },
-      { "@type": "Country", name: "India" },
-      ...locationNodes,
-    ],
+    areaServed: locationNodes,
+    serviceArea: locationNodes,
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Pandav Nagar",
-      addressLocality: "Delhi",
-      addressRegion: "Delhi",
-      postalCode: "110092",
-      addressCountry: "IN",
+      streetAddress: page.countryCode ? "Remote support and India-side coordination" : "Pandav Nagar",
+      addressLocality: page.cityName ?? "Delhi",
+      addressRegion: page.countryCode ?? "Delhi",
+      postalCode: page.countryCode ? "000000" : "110092",
+      addressCountry: page.countryCode ?? "IN",
     },
     telephone: "+91-7289000377",
     email: "help@navdhya.com",
-    availableLanguage: ["English", "Hindi"],
+    availableLanguage: audienceLanguages(page),
     brand: { "@id": ORGANIZATION_ID },
     parentOrganization: { "@id": ORGANIZATION_ID },
+  };
+}
+
+function buildFaqSchema(page: SEOPage, basePath: string): SchemaNode | undefined {
+  const faqs = page.faqs ?? [];
+  if (faqs.length === 0) return undefined;
+
+  const url = pageUrl(basePath, page);
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": `${url}#faq`,
+    url,
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
   };
 }
 
@@ -385,6 +468,9 @@ export function generateSchemas(page: SEOPage, basePath: string, clusterLabel: s
   if (page.noindex) return [];
 
   const schemas: SchemaNode[] = [];
+  const url = pageUrl(basePath, page);
+  const aeo = generateAEO({ page, url });
+
   schemas.push(buildBreadcrumb(basePath, clusterLabel, page));
   schemas.push(buildWebPageSchema(page, basePath));
 
@@ -396,6 +482,7 @@ export function generateSchemas(page: SEOPage, basePath: string, clusterLabel: s
       schemas.push(buildServiceSchema(page, basePath));
       break;
     case "FAQPage":
+      if (buildFaqSchema(page, basePath)) schemas.push(buildFaqSchema(page, basePath)!);
       schemas.push(buildArticleSchema(page, basePath));
       break;
     case "HowTo": {
@@ -417,6 +504,10 @@ export function generateSchemas(page: SEOPage, basePath: string, clusterLabel: s
 
   const itemList = buildItemListSchema(page, basePath);
   if (itemList) schemas.push(itemList);
+
+  if (aeo.keyFacts) schemas.push(aeo.keyFacts);
+  if (aeo.tldr) schemas.push(aeo.tldr);
+  if (aeo.claimReview) schemas.push(aeo.claimReview);
 
   return schemas.filter((schema): schema is SchemaNode => schema !== null && schema !== undefined);
 }

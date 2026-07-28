@@ -1,151 +1,42 @@
 'use client'
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from "next/link"
-import { seoManager } from "@/lib/seo-manager"
-import Script from "next/script"
 import { ChevronDown, Heart, Eye, ShoppingCart, Filter, X, ArrowRight, MapPin, Star, Award, Calendar, Users, Phone, Mail, Clock, BookOpen, Lightbulb, TrendingUp, Play, FileText, Video, Search, SlidersHorizontal, Shield, User, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  MOCK_PANDITS,
+  PANDIT_EXPERIENCE_OPTIONS,
+  PANDIT_LANGUAGES,
+  PANDIT_LOCATIONS,
+  PANDIT_SPECIALIZATIONS,
+  type Pandit,
+  type PanditFilterOptions as FilterOptions,
+} from "@/lib/pandits"
 
-// Schema markup for the find pandit page
-const FIND_PANDIT_SCHEMA = seoManager.generateSchema({
-  type: "CollectionPage",
-  name: "Find Qualified Pandits - Navdhya",
-  description: "Browse and book qualified Vedic pandits for your spiritual rituals and pujas. Connect with verified experts in Delhi NCR for authentic Hindu ceremonies and consultations.",
-  path: "/find-pandit",
-  breadcrumbs: [
-    { name: "Home", url: "https://www.navdhya.com" },
-    { name: "Find Pandit", url: "https://www.navdhya.com/find-pandit" }
-  ]
-})
+// Schema markup for the find pandit page is rendered by
+// `app/find-pandit/page.tsx` (server component) so it ships in the
+// initial HTML instead of being regenerated client-side. The old
+// in-client `seoManager.generateSchema` call was:
+//   - Wasted JS in the client bundle
+//   - Used `dangerouslySetInnerHTML` (avoidable XSS surface)
+//   - Could not be cached by Next's static optimisation since the
+//     schema string lived in client component state
+// See PR 0.8 audit closure (P1).
 
-interface Pandit {
-  id: number;
-  name: string;
-  specialization: string;
-  location: string;
-  experience: string;
-  rating: number;
-  image: string;
-  skills: string[];
-  price: string;
-  languages: string[];
-  about: string;
-  certifications: string[];
-}
-
-interface FilterOptions {
-  location: string[];
-  specialization: string[];
-  rating: number | null;
-  experience: string[];
-  searchQuery: string;
-  language: string[];
-}
-
-// Mock data for pandits
-const mockPandits: Pandit[] = [
-  {
-    id: 1,
-    name: "Pandit Rajesh Sharma",
-    specialization: "Vedic Rituals & Astrology Specialist",
-    location: "Delhi",
-    experience: "15+ years",
-    rating: 4.9,
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg",
-    skills: ["Griha Pravesh", "Kundli Analysis", "Satyanarayan Katha"],
-    price: "₹1,500/session",
-    languages: ["Hindi", "English"],
-    about: "Specializes in Vedic rituals and astrological consultations with over 15 years of experience. Certified in Advanced Jyotish from Kashi Vidya Peeth.",
-    certifications: ["Advanced Jyotish Certification", "Vedic Rituals Mastery"]
-  },
-  {
-    id: 2,
-    name: "Pandit Anil Verma",
-    specialization: "Business & Prosperity Rituals",
-    location: "Gurgaon",
-    experience: "18+ years",
-    rating: 4.9,
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg",
-    skills: ["Lakshmi Puja", "Vastu Shanti", "Navagraha Homa"],
-    price: "₹2,000/session",
-    languages: ["Hindi", "English", "Punjabi"],
-    about: "Expert in business prosperity rituals and Vastu consultations. Has conducted rituals for Fortune 500 companies and successful entrepreneurs.",
-    certifications: ["Business Astrology Certification", "Vastu Consultant Certification"]
-  },
-  {
-    id: 3,
-    name: "Pandit Suresh Iyer",
-    specialization: "South Indian Rituals Specialist",
-    location: "Noida",
-    experience: "12+ years",
-    rating: 4.8,
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg",
-    skills: ["Pongal", "Ganesh Puja", "Annaprashan"],
-    price: "₹1,800/session",
-    languages: ["Tamil", "Telugu", "English"],
-    about: "Specialist in South Indian traditions and rituals. Conducts authentic ceremonies following traditional methods passed down through generations.",
-    certifications: ["South Indian Rituals Certification", "Sanskrit Scholar"]
-  },
-  {
-    id: 4,
-    name: "Pandit Ramesh Patel",
-    specialization: "Wedding & Life Event Ceremonies",
-    location: "Delhi",
-    experience: "20+ years",
-    rating: 4.7,
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg",
-    skills: ["Wedding Rituals", "Upanayana", "Naming Ceremony"],
-    price: "₹2,500/session",
-    languages: ["Hindi", "Gujarati", "English"],
-    about: "Master of wedding and life event ceremonies with over 20 years of experience. Known for conducting elaborate and meaningful rituals.",
-    certifications: ["Wedding Ceremony Specialist", "Upanayana Ritual Master"]
-  },
-  {
-    id: 5,
-    name: "Pandit Kavita Menon",
-    specialization: "Women's Wellness & Fertility Rituals",
-    location: "Gurgaon",
-    experience: "10+ years",
-    rating: 4.9,
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg",
-    skills: ["Ganesh Homa", "Lakshmi Puja", "Navratri Special"],
-    price: "₹1,700/session",
-    languages: ["Malayalam", "Tamil", "English"],
-    about: "Specializes in women's wellness and fertility rituals. Combines traditional knowledge with a modern understanding of women's health.",
-    certifications: ["Women's Wellness Specialist", "Fertility Rituals Certification"]
-  },
-  {
-    id: 6,
-    name: "Pandit Vikram Singh",
-    specialization: "Health & Healing Ceremonies",
-    location: "Noida",
-    experience: "14+ years",
-    rating: 4.6,
-    image: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg",
-    skills: ["Rudra Abhishek", "Maha Mrityunjaya Jaap", "Ayurvedic Rituals"],
-    price: "₹2,200/session",
-    languages: ["Hindi", "English"],
-    about: "Expert in healing ceremonies and Ayurvedic rituals. Focuses on holistic well-being through spiritual practices and traditional healing methods.",
-    certifications: ["Healing Rituals Specialist", "Ayurvedic Practitioner"]
-  }
-];
-
-// Unique filter options
-const locations = ["Delhi", "Gurgaon", "Noida"];
-const specializations = [
-  "Vedic Rituals & Astrology Specialist",
-  "Business & Prosperity Rituals", 
-  "South Indian Rituals Specialist",
-  "Wedding & Life Event Ceremonies",
-  "Women's Wellness & Fertility Rituals",
-  "Health & Healing Ceremonies"
-];
-const experienceOptions = ["5+ years", "10+ years", "15+ years", "20+ years"];
-const languages = ["Hindi", "English", "Tamil", "Telugu", "Malayalam", "Punjabi", "Gujarati"];
+// Mock data for pandits is now sourced from @/lib/pandits — single
+// source of truth shared with app/pandits. This module is the
+// data layer for the directory; the seed data here will become
+// dev-only when the real Drizzle/Postgres backend lands (PR 11).
+// Cast to Required<...> because find-pandit shows the extended card
+// UI (`about`, `certifications`) — all 6 seed pandits have them.
+const mockPandits = MOCK_PANDITS as unknown as (Pandit &
+  Required<{ about: string; certifications: string[] }>)[];
+const locations: readonly string[] = PANDIT_LOCATIONS;
+const specializations: readonly string[] = PANDIT_SPECIALIZATIONS;
+const experienceOptions: readonly string[] = PANDIT_EXPERIENCE_OPTIONS;
+const languages: readonly string[] = PANDIT_LANGUAGES;
 
 export default function FindPanditClient() {
-  const findPanditSchema = JSON.stringify(FIND_PANDIT_SCHEMA);
-  
   // State for filters
   const [filters, setFilters] = useState<FilterOptions>({
     location: [],
@@ -158,7 +49,9 @@ export default function FindPanditClient() {
   
   // State for UI
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedPandit, setSelectedPandit] = useState<Pandit | null>(null);
+  const [selectedPandit, setSelectedPandit] = useState<
+    (Pandit & Required<{ about: string; certifications: string[] }>) | null
+  >(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -216,7 +109,7 @@ export default function FindPanditClient() {
       }
       
       // Language filter
-      if (filters.language.length > 0 && !filters.language.some(lang => pandit.languages.includes(lang))) {
+      if (filters.language!.length > 0 && !filters.language!.some(lang => pandit.languages.includes(lang))) {
         return false;
       }
       
@@ -291,13 +184,17 @@ export default function FindPanditClient() {
   };
   
   // View pandit details
-  const viewPanditDetails = (pandit: Pandit) => {
+  const viewPanditDetails = (
+    pandit: Pandit & Required<{ about: string; certifications: string[] }>,
+  ) => {
     setSelectedPandit(pandit);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
   // Book pandit
-  const bookPandit = (pandit: Pandit) => {
+  const bookPandit = (
+    pandit: Pandit & Required<{ about: string; certifications: string[] }>,
+  ) => {
     setSelectedPandit(pandit);
     setShowBookingForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -305,10 +202,6 @@ export default function FindPanditClient() {
   
   return (
     <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: findPanditSchema }}
-      />
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 mt-4">
@@ -720,7 +613,7 @@ export default function FindPanditClient() {
                             <input
                               type="checkbox"
                               id={`language-${language}`}
-                              checked={filters.language.includes(language)}
+                              checked={filters.language!.includes(language)}
                               onChange={() => handleFilterChange('language', language)}
                               className="h-4 w-4 text-[#0E3F2E] border-border rounded focus:ring-[#0E3F2E]"
                             />
@@ -740,7 +633,7 @@ export default function FindPanditClient() {
                 filters.specialization.length > 0 || 
                 filters.rating !== null || 
                 filters.experience.length > 0 ||
-                filters.language.length > 0) && (
+                filters.language!.length > 0) && (
                 <div className="flex flex-wrap gap-2 mb-4">
                   {filters.location.map(location => (
                     <span key={location} className="flex items-center bg-muted px-3 py-1 rounded-full text-sm">
@@ -790,7 +683,7 @@ export default function FindPanditClient() {
                     </span>
                   ))}
                   
-                  {filters.language.map(lang => (
+                  {filters.language!.map(lang => (
                     <span key={lang} className="flex items-center bg-muted px-3 py-1 rounded-full text-sm">
                       {lang}
                       <button 

@@ -1,0 +1,131 @@
+{
+  "id": "seo-v2-navdhya-us",
+  "slug": "navdhya-us",
+  "cluster": "brand",
+  "title": "Navdhya for Hindu families in United States",
+  "metaTitle": "Navdhya for Hindu families in United States | Navdhya",
+  "metaDescription": "Country hub for United States households exploring remote-guided rituals, online consultations, and India-side family coordination with Navdhya for United States households with claim-safe guidance.",
+  "primaryKeyword": "Navdhya United States",
+  "secondaryKeywords": [
+    "online puja United States",
+    "Hindu family support United States",
+    "NRI ritual guidance United States"
+  ],
+  "keywordVariants": [
+    "navdhya us",
+    "United States Hindu ritual support"
+  ],
+  "searchIntent": "navigational",
+  "schemaType": "Organization",
+  "content": "<p>Navdhya for Hindu families in United States is a country-level entry point for diaspora households that want clearer ritual support without inflated local claims.</p><p>Country hub for United States households exploring remote-guided rituals, online consultations, and India-side family coordination with Navdhya. The page is written to make the market structure legible: what is supported remotely, what is coordinated in India, and what should happen next.</p><h2>How ritual support is framed for United States</h2><p>The country hub sets expectations before the reader ever opens a service page. It makes the support model explicit so the household can quickly tell whether remote guidance, India-side coordination, or a consultation path is the right fit.</p><p>That is especially important for international SEO because the safest page is often the clearest one, not the broadest one.</p><h2>What households abroad usually need first</h2><p>Many readers want an answer to one of three questions: can family members join remotely, can planning happen across time zones, and can rituals in India be coordinated from abroad.</p><p>A strong country hub names those needs directly and then routes each one to the correct lower-level page family.</p><h2>What the next level of navigation should look like</h2><p>Useful next steps usually include <a href=\"/centers/us-new-york\">Centers Us New York</a>, <a href=\"/explore/navdhya-nri-global\">Explore Navdhya Nri Global</a>, <a href=\"/book\">Book</a> so the reader can move from general interest into the exact booking or planning path that fits the household.</p><p>This keeps the country hub useful for both discovery and conversion without pretending to be the final answer for every market-specific scenario.</p><h2>Common questions</h2><h3>What does Navdhya offer for households in United States?</h3><p>Navdhya positions these pages around online guidance and India-side coordination, not unsupported local on-ground service claims.</p><h3>Why does the page avoid broad local coverage language?</h3><p>Because the content is intentionally claim-safe and limited to delivery modes the product can clearly support.</p><h3>Who is this page for?</h3><p>It is for Hindu families abroad who want clearer remote participation, planning, or India-linked coordination options.</p><h3>What should the reader open next?</h3><p>The next step is usually a city hub or one of the service-family pages written for the same country market.</p>",
+  "outline": [
+    "How ritual support is framed for United States",
+    "What households abroad usually need first",
+    "What the next level of navigation should look like",
+    "Common questions"
+  ],
+  "relatedSlugs": [
+    "navdhya-nri-global",
+    "navdhya-hindu-diaspora",
+    "how-navdhya-works"
+  ],
+  "lastUpdated": "2026-05-27",
+  "lastReviewed": "2026-05-27",
+  "author": "Navdhya Editorial Team",
+  "pageFamily": "intl-country-hub",
+  "audienceRegion": "US",
+  "countryCode": "US",
+  "deliveryMode": "online",
+  "claimReviewStatus": "approved",
+  "sourceNotes": [
+    "International country hub limited to supported remote and India-coordination claims."
+  ],
+  "reviewedBy": "Navdhya Editorial Review",
+  "readingTime": 7,
+  "faqs": [
+    {
+      "question": "What does Navdhya offer for households in United States?",
+      "answer": "Navdhya positions these pages around online guidance and India-side coordination, not unsupported local on-ground service claims."
+    },
+    {
+      "question": "Why does the page avoid broad local coverage language?",
+      "answer": "Because the content is intentionally claim-safe and limited to delivery modes the product can clearly support."
+    },
+    {
+      "question": "Who is this page for?",
+      "answer": "It is for Hindu families abroad who want clearer remote participation, planning, or India-linked coordination options."
+    },
+    {
+      "question": "What should the reader open next?",
+      "answer": "The next step is usually a city hub or one of the service-family pages written for the same country market."
+    }
+  ],
+  "speakableFaqs": [
+    {
+      "question": "What does Navdhya offer for households in United States?",
+      "answer": "Navdhya positions these pages around online guidance and India-side coordination, not unsupported local on-ground service claims.",
+      "summary": "Navdhya positions these pages around online guidance and India-side coordination, not unsupported local on-ground service claims"
+    },
+    {
+      "question": "Why does the page avoid broad local coverage language?",
+      "answer": "Because the content is intentionally claim-safe and limited to delivery modes the product can clearly support.",
+      "summary": "Because the content is intentionally claim-safe and limited to delivery modes the product can clearly support"
+    },
+    {
+      "question": "Who is this page for?",
+      "answer": "It is for Hindu families abroad who want clearer remote participation, planning, or India-linked coordination options.",
+      "summary": "It is for Hindu families abroad who want clearer remote participation, planning, or India-linked coordination options"
+    }
+  ],
+  "excerpt": "Country hub for United States households exploring remote-guided rituals, online consultations, and India-side family coordination with Navdhya.",
+  "proofPoints": [
+    "Built from the v2 editorial source layer.",
+    "Reviewed against claim-safe international and comparison rules.",
+    "Aligned to route-aware conversion paths and schema output."
+  ],
+  "serviceDetails": {
+    "summary": "Country hub for United States households exploring remote-guided rituals, online consultations, and India-side family coordination with Navdhya.",
+    "highlights": [
+      "Country hub for United States households exploring remote-guided rituals, online consultations, and India-side family coordination with Navdhya."
+    ],
+    "benefits": [
+      "Editorial structure tuned for real planning questions.",
+      "Fewer assumptions and clearer next-step choices.",
+      "Claim-safe positioning that does not overstate availability."
+    ],
+    "includes": [
+      "Intent-specific guidance",
+      "Decision support rather than vague category copy",
+      "Internal links into booking and support paths"
+    ],
+    "bookingLeadTime": "A few days helps the family align time zones and participation.",
+    "serviceAreas": [
+      "Delhi NCR",
+      "India"
+    ]
+  },
+  "targetCities": [
+    "Delhi NCR"
+  ],
+  "requiredInternalLinks": [
+    "/centers/us-new-york",
+    "/explore/navdhya-nri-global",
+    "/book"
+  ],
+  "recommendedAnchorTexts": [
+    "Navdhya United States",
+    "online puja United States",
+    "Hindu family support United States"
+  ],
+  "conversionPath": [
+    "/centers/us-new-york",
+    "/book",
+    "/contact"
+  ],
+  "automation": {
+    "contentHash": "3cbe5bc945a45746bb543e5aa7479baddd64011de35f4f73a2d3323eb4f331eb",
+    "generatedAt": "2026-05-27T00:00:00.000Z",
+    "pipelineVersion": "seo-v2-editorial-pipeline",
+    "revalidateAfter": 86400
+  }
+}
