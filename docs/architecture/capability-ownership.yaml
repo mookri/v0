@@ -47,6 +47,13 @@ capabilities:
       - booking_items
       - booking_status_history
 
+  payment:
+    owner: payment-domain
+    description: Payment intents, capture, refunds, idempotent webhooks (provider-agnostic port)
+    tables:
+      - payments
+      - payment_events
+
   search:
     owner: search-domain
     description: Discovery and search orchestration across capabilities

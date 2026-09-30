@@ -8,6 +8,7 @@ completed:
   - 3-web-extraction
   - 4-foundations
   - 5-capabilities-partial
+  - 5F-payment-package
   - 6-infrastructure
   - 7-dlo-x
   - 8-ads
@@ -18,7 +19,6 @@ completed:
   - 13-bff
   - 14-api-platform
 partial:
-  - 5-payment-package-missing
   - 17-edge-session-decision
   - 19-staging-deploy
   - 20-perf-baseline
@@ -32,5 +32,6 @@ not-started:
   - 28-admin-operations
   - 29-readiness-scoring
 baselines:
-  architecture-tests: 28 files / 82 passing
+  architecture-tests: 29 files / 83 passing
+  unit-suites: 53 files / 220 passing
   branch: architecture/phase-3-web-extraction
