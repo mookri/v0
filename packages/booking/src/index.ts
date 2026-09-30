@@ -7,6 +7,7 @@ export * from './domain/BookingCustomer';
 export * from './domain/booking-rules';
 
 export * from './contracts/CreateBooking';
+export * from './contracts/BookingIntent';
 export * from './contracts/BookingSummary';
 export * from './contracts/BookingDetails';
 export * from './contracts/BookingStatus';
