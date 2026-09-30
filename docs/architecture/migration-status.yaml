@@ -21,11 +21,11 @@ completed:
   - 17-edge-session-decision
   - 19-staging-deploy
   - 20-perf-baseline
+  - 21-book-split
   - 26-strangler
   - 27-partner-migration
   - 29-readiness-scoring
-partial:
-  - 21-book-split
+partial: []
 not-started:
   - 22-payment-hardening
   - 24-realtime
@@ -33,5 +33,5 @@ not-started:
   - 28-admin-operations
 baselines:
   architecture-tests: 30 files / 84 passing
-  unit-suites: 58 files / 231 passing
+  unit-suites: 60 files / 234 passing
   branch: architecture/phase-3-web-extraction

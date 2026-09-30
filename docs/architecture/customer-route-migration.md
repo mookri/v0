@@ -6,7 +6,7 @@
 | `/settings` | customer prefs | `/settings` | Customer | User | IN_PROGRESS | Web settings | gate §12.111 |
 | `/user/profile` | profile | `/profile` | Customer | User | IN_PROGRESS | Web profile | gate §12.111 |
 | `/user/notifications` | notifications | `/notifications` | Customer | Notification | IN_PROGRESS | Web | gate §12.111 |
-| `/book` | booking entry | split entry | Web + Customer | Booking | IN_PROGRESS (intent handoff contract) | Web `/book` | intent handoff |
+| `/book` | booking entry | split entry | Web + Customer | Booking | WIRED (emitter + receiver; client-form integration follow-up) | Web `/book` | intent handoff |
 | `/pujas/[slug]` | discovery | Web | Web | Puja | Remains Web | — | — |
 
 Rule: old Web routes stay live until Customer route + session handoff + rollback are proven. No deletions in Phase 12.
