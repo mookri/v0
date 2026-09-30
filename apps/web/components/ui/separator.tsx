@@ -1,1 +1,1 @@
-export * from "@navdhya/design-system";
+export { Separator } from "@navdhya/design-system";

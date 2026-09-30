@@ -1,1 +1,1 @@
-export * from "@navdhya/design-system";
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@navdhya/design-system";

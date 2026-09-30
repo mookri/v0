@@ -1,1 +1,1 @@
-export * from "@navdhya/design-system";
+export { Label } from "@navdhya/design-system";

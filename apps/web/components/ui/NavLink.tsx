@@ -1,1 +1,1 @@
-export * from "@navdhya/design-system";
+export { NavLink as default } from "@navdhya/design-system";

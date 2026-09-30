@@ -1,1 +1,1 @@
-export * from "@navdhya/design-system";
+export { Sheet, SheetPortal, SheetOverlay, SheetTrigger, SheetClose, SheetContent, SheetHeader, SheetFooter, SheetTitle, SheetDescription } from "@navdhya/design-system";

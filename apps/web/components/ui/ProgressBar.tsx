@@ -1,1 +1,1 @@
-export * from "@navdhya/design-system";
+export { ProgressBar as default } from "@navdhya/design-system";
