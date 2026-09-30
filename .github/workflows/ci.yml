@@ -31,7 +31,7 @@ jobs:
           cache: npm
 
       - name: Install
-        run: npm ci --no-audit --no-fund --prefer-offline
+        run: corepack enable && pnpm install --frozen-lockfile
 
       - name: Type check
         run: npx tsc --noEmit
@@ -40,11 +40,14 @@ jobs:
         run: npm run lint -- --max-warnings=0
 
       - name: Test
-        run: npm test -- --ci --maxWorkers=2
+        run: pnpm test -- --ci --maxWorkers=2
 
       - name: Coverage summary
         if: always()
         run: npx jest --coverage --coverageReporters=text-summary || true
+
+      - name: Validate Turbo graph
+        run: pnpm exec turbo run typecheck lint test --dry
 
   # ── 2. Secret scan (gitleaks) ────────────────────────────────────────────
   secrets:
@@ -80,12 +83,15 @@ jobs:
           cache: npm
 
       - name: Install
-        run: npm ci --no-audit --no-fund --prefer-offline
+        run: corepack enable && pnpm install --frozen-lockfile
 
       - name: Build
         env:
           NEXT_PUBLIC_SITE_URL: https://www.navdhya.com
-        run: npm run build
+        run: pnpm run build
+
+      - name: Validate Turbo build graph
+        run: pnpm exec turbo run build --dry
 
       - name: Upload build artefacts
         uses: actions/upload-artifact@v4
