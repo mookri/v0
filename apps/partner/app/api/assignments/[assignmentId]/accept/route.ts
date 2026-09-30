@@ -7,7 +7,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ assignm
   const actor = resolvePartnerActor(req.headers);
   if (!actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
   const idempotencyKey = req.headers.get('Idempotency-Key') ?? `ik_${requestId}`;
-  // TODO(phase-24): load the offer from fulfillment via repository, persist on accept.
+  // TODO(fulfillment-repo): load the offer from fulfillment via repository, persist on accept.
   const result = acceptOffer(null, actor.partnerId, new Date().toISOString(), idempotencyKey);
   if (!result.ok && result.reason === 'NOT_FOUND') {
     return Response.json(err('ASSIGNMENT_NOT_FOUND', 'Assignment not found.', requestId), { status: 404 });
