@@ -16,3 +16,4 @@ export * from "./events/envelope";
 export * from "./messaging/outbox";
 export * from "./storage/object-storage";
 export * from "./search/search-index";
+export * from "./governance/manifest";
