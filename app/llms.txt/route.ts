@@ -11,8 +11,6 @@ import { getPage } from "@/lib/content/loader";
 import { buildCanonicalUrl } from "@/lib/seo/metadata";
 import { SITE_NAME, SITE_URL } from "@/lib/seo/site";
 
-export const revalidate = 3600;
-export const dynamic = "force-static";
 
 interface ClusterSection {
   label: string;

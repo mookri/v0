@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
-import { Albert_Sans } from "next/font/google"
+import { Albert_Sans, Playfair_Display } from "next/font/google"
 import { Suspense } from "react"
 import "./globals.css"
 import { SITE_METADATA, VIEWPORT_CONFIG } from "@/lib/metadata-config"
@@ -13,6 +13,12 @@ import { AdProvider } from './providers';
 const albert = Albert_Sans({
   subsets: ["latin"],
   variable: "--font-albert",
+  display: "swap",
+})
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
   display: "swap",
 })
 
@@ -45,7 +51,7 @@ export default function RootLayout({
   const organizationSchema = JSON.stringify(ORGANIZATION_SCHEMA)
 
   return (
-    <html lang="en" className={`${albert.variable} antialiased`}>
+    <html lang="en" className={`${albert.variable} ${playfair.variable} antialiased`}>
       <head>
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="Navdhya" />
@@ -73,7 +79,7 @@ export default function RootLayout({
           <AdProvider>
             <Suspense
               fallback={
-                <div className="fixed inset-0 flex items-center justify-center bg-background z-50">
+                <div className="fixed inset-0 flex items-center justify-center z-50">
                   <Preloader />
                 </div>
               }

@@ -13,7 +13,7 @@ const contentSecurityPolicy = [
   "object-src 'none'",
   "frame-ancestors 'self'",
   "form-action 'self' https://wa.me",
-  "img-src 'self' data: blob: https://res.cloudinary.com https://www.navdhya.com https://navdhya.com https://cdn.navdhya.com https://navdhya-assets.s3.ap-south-1.amazonaws.com",
+  "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://www.navdhya.com https://navdhya.com https://cdn.navdhya.com https://navdhya-assets.s3.ap-south-1.amazonaws.com",
   "font-src 'self' data: https://fonts.gstatic.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
@@ -22,6 +22,8 @@ const contentSecurityPolicy = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  // ── Architecture ──────────────────────────────────────────────────────────
+  cacheComponents: true, // Enables Next.js 16+ use cache primitives
 
   // ── Build ──────────────────────────────────────────────────────────────────
   typescript: {
@@ -137,6 +139,11 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
+      },
+      // ── Unsplash ─────────────────────────────────────────────────────────
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
       },
     ],
   },

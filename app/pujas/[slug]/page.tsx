@@ -10,8 +10,6 @@ import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator";
 import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary";
 import { resolveContext } from "@/lib/context-resolver";
 
-export const revalidate = 3600;
-export const dynamicParams = false;
 
 type PageProps = {
   params: Promise<{ slug: string }>;

@@ -2,10 +2,8 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Search, Phone, User, Heart, ShoppingCart, Menu, X, ChevronDown } from 'lucide-react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from "@/components/ui/dropdown-menu"
+import { Search, Phone, User, ShoppingCart, ChevronDown, Bell, MapPin } from 'lucide-react'
 import { MENU_GROUPS } from "@/lib/menuData"
 
 // Function to transform MENU_GROUPS data into the format needed for site header
@@ -70,9 +68,7 @@ const transformMenuData = () => {
 
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false) // control Sheet open for close-on-link
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState('main') // 'main' or 'categories'
+  const [selectedLocation, setSelectedLocation] = useState("Delhi NCR")
 
   // Transform menu data from single source
   const menuData = transformMenuData();
@@ -84,13 +80,10 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-  // Close mobile menu when resizing to desktop
+  // Close any overlays on resize if added later
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) { // md breakpoint
-        setMobileOpen(false);
-        setIsSearchOpen(false);
-      }
+      // 
     };
 
     window.addEventListener("resize", handleResize);
@@ -98,278 +91,120 @@ export function SiteHeader() {
   }, []);
 
   return (
-    <div className="w-full bg-background">
-      {/* Top Promotional Banner */}
-      <div className="bg-red-50 border-b border-red-100">
-        <div className="container mx-auto px-4 py-2 flex items-center justify-between text-sm">
-          <div className="flex items-center gap-2">
-            <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-            </svg>
-            <span className="text-gray-700">We are Currently in Development Mode, Further Information You can call us</span>
-          </div>
-          <div className="hidden lg:flex items-center gap-6 text-gray-700">
-            <a href="/about" className="hover:text-gray-900">About Us</a>
-            <a href="/resources/blog" className="hover:text-gray-900">Blog</a>
-            <a href="/contact" className="hover:text-gray-900">Contact</a>
-          </div>
-        </div>
-      </div>
-
+    <div className="w-full bg-transparent">
       {/* Main Header */}
       <div className="border-b border-border">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-6 md:px-8 py-4">
           {/* Desktop Layout */}
-          <div className="hidden lg:flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center gap-8">
-              <Link href="/" className="flex items-center gap-2" aria-label="Navdhya Home">
-                <Image
-                  src="/navdhya-logo.png"
-                  alt="Navdhya Ritual Services Logo"
-                  width={160}
-                  height={48}
-                  className="h-8 w-auto"
-                />
-              </Link>
+          <div className="hidden lg:flex items-center gap-3 xl:gap-5 w-full">
+            {/* 1. Logo */}
+            <Link href="/" className="flex items-center shrink-0 mr-2" aria-label="Navdhya Home">
+              <Image
+                src="/navdhya-logo.png"
+                alt="Navdhya Ritual Services Logo"
+                width={160}
+                height={48}
+                className="h-8 w-auto"
+              />
+            </Link>
 
-              {/* Desktop Navigation Links */}
-              <nav className="flex items-center gap-5 text-sm">
-                {menuData.map((item, index) => (
-                  item.subItems ? (
-                    <DropdownMenu key={index}>
-                      <DropdownMenuTrigger className="hover:text-primary outline-none font-medium flex items-center gap-1 text-sm">
-                        {item.name}
-                        <ChevronDown className="w-4 h-4" />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-[300px] sm:w-[400px] md:w-[500px] max-w-[calc(100vw-2rem)] bg-card border-border" align="start">
-                        <div className="p-4 space-y-2">
-                          {item.subItems.map((subItem, subIndex) => (
-                            <Link
-                              key={subIndex}
-                              href={subItem.href}
-                              className="block py-2 text-muted-foreground hover:text-primary hover:underline text-sm"
-                            >
-                              {subItem.name}
-                            </Link>
-                          ))}
-                        </div>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  ) : (
-                    <Link
-                      key={index}
-                      href={item.href}
-                      className="hover:text-primary transition-colors font-medium text-sm"
-                    >
-                      {item.name}
-                    </Link>
-                  )
-                ))}
-              </nav>
+            {/* 2. Location Dropdown */}
+            <div className="shrink-0">
+              <DropdownMenu>
+                <DropdownMenuTrigger className="flex items-center gap-2 rounded-sm border border-border bg-transparent px-3 py-2 text-[13px] transition-colors hover:bg-muted outline-none">
+                  <MapPin className="h-4 w-4 text-[#2563EB]" />
+                  <span className="font-semibold text-foreground">{selectedLocation}</span>
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-[180px]">
+                  <DropdownMenuItem onClick={() => setSelectedLocation("Delhi NCR")} className="cursor-pointer">
+                    Delhi NCR
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSelectedLocation("Mumbai")} className="cursor-pointer">
+                    Mumbai
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSelectedLocation("Bangalore")} className="cursor-pointer">
+                    Bangalore
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSelectedLocation("Hyderabad")} className="cursor-pointer">
+                    Hyderabad
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
-            {/* Right Actions (Search hidden on desktop) */}
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm">
-                <Phone className="w-4 h-4" />
-                <div>
-                  <div className="text-muted-foreground">Need help?</div>
-                  <div className="font-semibold">+91 7289000377</div>
-                </div>
+            {/* 3. Search Bar */}
+            <div className="flex-1 max-w-[450px]">
+              <div className="relative flex items-center w-full">
+                <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Search for puja, pandit, temple or festival..."
+                  className="w-full rounded-sm border border-border bg-transparent pl-9 pr-4 py-2 text-[13px] focus:border-[#FF4500] focus:outline-none focus:ring-1 focus:ring-[#FF4500]"
+                />
+              </div>
+            </div>
+
+            {/* Right Actions */}
+            <div className="flex items-center gap-3 xl:gap-4 ml-auto shrink-0">
+              {/* 6. Auth Buttons */}
+              <div className="flex items-center gap-2">
+                <button className="hidden xl:block text-[13px] font-semibold text-gray-700 hover:text-[#FF4500] transition-colors">
+                  Login / Signup
+                </button>
+                <button className="p-1.5 hover:bg-muted rounded-full transition-colors" aria-label="User Account">
+                  <User className="w-[18px] h-[18px] text-gray-600" />
+                </button>
               </div>
 
-              <button className="p-2 hover:bg-muted rounded">
-                <User className="w-5 h-5" />
-              </button>
+              {/* 5. Notifications */}
+              <div className="border-l border-border pl-3 xl:pl-4">
+                <button className="p-2 hover:bg-muted rounded-full relative transition-colors" aria-label="Notifications">
+                  <Bell className="w-5 h-5 text-gray-700" strokeWidth={1.5} />
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#FF4500] rounded-full border border-white"></span>
+                </button>
+              </div>
 
-              <button className="p-2 hover:bg-muted rounded relative">
-                <Heart className="w-5 h-5" />
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center">0</span>
-              </button>
-
-              <button className="p-2 hover:bg-muted rounded relative">
-                <ShoppingCart className="w-5 h-5" />
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center">0</span>
-              </button>
+              {/* 7. Book Pooja Button */}
+              <Link href="/book" className="ml-1">
+                <button className="bg-[#FF4500] hover:bg-[#E63E00] text-white px-5 py-2 rounded-sm text-[13px] font-semibold transition-colors">
+                  Book Pooja
+                </button>
+              </Link>
             </div>
           </div>
 
           {/* Mobile Layout */}
           <div className="lg:hidden">
             <div className="flex items-center justify-between">
-              {/* Hamburger Menu */}
-              <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-                <SheetTrigger asChild>
-                  <button className="p-2">
-                    {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                  </button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-full max-w-xs sm:max-w-sm p-0 border-border bg-background">
-                  <div className="p-4">
-                    <div className="flex items-center justify-between mb-6">
-                      <Link href="/" className="flex items-center gap-2" aria-label="Navdhya Home">
-                        <Image
-                          src="/navdhya-logo.png"
-                          alt="Navdhya Ritual Services Logo"
-                          width={160}
-                          height={48}
-                          className="h-8 w-auto"
-                        />
-                      </Link>
-                      <SheetClose asChild>
-                        <button>
-                          <X className="w-6 h-6" />
-                        </button>
-                      </SheetClose>
-                    </div>
-
-                    <div className="flex gap-2 mb-6">
-                      <button
-                        className={`flex-1 py-2 px-4 rounded-full text-sm font-medium ${activeTab === 'main' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}
-                        onClick={() => setActiveTab('main')}
-                      >
-                        MAIN MENU
-                      </button>
-                      <button
-                        className={`flex-1 py-2 px-4 rounded-full text-sm font-medium ${activeTab === 'categories' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}
-                        onClick={() => setActiveTab('categories')}
-                      >
-                        CATEGORIES
-                      </button>
-                    </div>
-
-                    {/* Tab Content */}
-                    {activeTab === 'main' ? (
-                      <nav className="space-y-1">
-                        {menuData.map((item, index) => (
-                          item.subItems ? (
-                            <div key={index} className="py-2 border-b border-border">
-                              <Accordion type="single" collapsible className="w-full" defaultValue="">
-                                <AccordionItem value={`item-${index}`} className="border-none">
-                                  <AccordionTrigger className="py-3 text-base px-0 hover:no-underline font-medium flex justify-between items-center">
-                                    <span>{item.name}</span>
-                                  </AccordionTrigger>
-                                  <AccordionContent className="pb-0">
-                                    <div className="py-2 space-y-2">
-                                      {item.subItems.map((subItem, subIndex) => (
-                                        <SheetClose asChild key={subIndex}>
-                                          <Link
-                                            href={subItem.href}
-                                            className="block py-2 text-muted-foreground hover:text-primary hover:underline"
-                                            onClick={() => setMobileOpen(false)}
-                                          >
-                                            {subItem.name}
-                                          </Link>
-                                        </SheetClose>
-                                      ))}
-                                    </div>
-                                  </AccordionContent>
-                                </AccordionItem>
-                              </Accordion>
-                            </div>
-                          ) : (
-                            <SheetClose asChild key={index}>
-                              <Link
-                                href={item.href}
-                                className="block py-3 border-b border-border"
-                                onClick={() => setMobileOpen(false)}
-                              >
-                                {item.name}
-                              </Link>
-                            </SheetClose>
-                          )
-                        ))}
-                      </nav>
-                    ) : (
-                      /* Categories Tab - Show all pujas */
-                      <nav className="space-y-4">
-                        <div className="border-b border-border pb-4">
-                          <h3 className="font-medium text-foreground mb-3">Quick Links</h3>
-                          <div className="grid grid-cols-2 gap-2">
-                            {menuData.slice(1, 4).map((item, index) => (
-                              <SheetClose asChild key={index}>
-                                <Link
-                                  href={item.href}
-                                  className="block py-2 px-3 rounded-lg bg-muted hover:bg-muted/80 text-sm"
-                                  onClick={() => setMobileOpen(false)}
-                                >
-                                  {item.name}
-                                </Link>
-                              </SheetClose>
-                            ))}
-                          </div>
-                        </div>
-                      </nav>
-                    )}
-
-                    <div className="mt-8 pt-6 border-t border-border">
-                      <div className="flex items-center gap-2 text-sm mb-4">
-                        <Heart className="w-5 h-5" />
-                        <span>Wishlist (0)</span>
-                      </div>
-
-                      {/* Language dropdown instead of buttons */}
-                      <div className="mb-4">
-                        <select className="w-full p-2 border border-input rounded bg-background text-foreground">
-                          <option>English</option>
-                          <option>हिंदी</option>
-                        </select>
-                      </div>
-
-                      <div className="flex gap-4">
-                        <button className="text-sm text-muted-foreground hover:text-foreground">
-                          ₹ INR
-                        </button>
-                        <button className="text-sm text-muted-foreground hover:text-foreground">
-                          $ USD
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </SheetContent>
-              </Sheet>
-
-              {/* Logo - Centered */}
-              <div className="flex-1 flex justify-center">
-                <Link href="/" className="flex items-center gap-2" aria-label="Navdhya Home">
+              {/* Left Side: Logo */}
+              <div className="flex items-center gap-2">
+                {/* Logo - Left aligned */}
+                <Link href="/" className="flex items-center" aria-label="Navdhya Home">
                   <Image
                     src="/navdhya-logo.png"
                     alt="Navdhya Ritual Services Logo"
                     width={180}
                     height={56}
-                    className="h-10 w-auto"
+                    className="h-9 w-auto object-contain"
                   />
                 </Link>
               </div>
 
-              {/* Auth and Search Icons - Right */}
-              <div className="flex items-center gap-2">
-                <button className="p-2 hover:bg-muted rounded">
-                  <User className="w-5 h-5" />
+              {/* Right Side: Auth and Notification Icons (Circular BG) */}
+              <div className="flex items-center gap-3">
+                {/* Notification Icon (Just next to Profile) */}
+                <button className="flex items-center justify-center w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors relative">
+                  <Bell className="w-4 h-4 text-gray-700" />
+                  <span className="absolute top-2 right-2.5 w-1.5 h-1.5 bg-[#FF4500] rounded-full"></span>
                 </button>
-                <button
-                  className="p-2 hover:bg-muted rounded"
-                  onClick={() => setIsSearchOpen(!isSearchOpen)}
-                >
-                  <Search className="w-5 h-5" />
-                </button>
+                
+                {/* Profile / Auth Icon (Right-most) */}
+                <Link href="/settings" className="flex items-center justify-center w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors overflow-hidden border border-gray-200">
+                  <User className="w-4 h-4 text-gray-700" />
+                </Link>
               </div>
             </div>
-
-            {/* Mobile Search */}
-            {isSearchOpen && (
-              <div className="mt-4">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search for pujas"
-                    className="w-full px-4 py-2 pr-10 border border-input rounded-lg focus:outline-none focus:border-primary bg-background"
-                  />
-                  <Search className="absolute right-3 top-2.5 w-5 h-5 text-muted-foreground" />
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

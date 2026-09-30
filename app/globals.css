@@ -19,13 +19,13 @@
 }
 
 :root {
-  --background: #fff8f0;
+  --background: #ffffff;
   --foreground: #000000;
 
-  --card: #fff8f0;
+  --card: #ffffff;
   --card-foreground: #1c1917;
 
-  --popover: #fff8f0;
+  --popover: #ffffff;
   --popover-foreground: #1c1917;
 
   --primary: #d97706;
@@ -47,9 +47,9 @@
   --destructive: #c2410c;
   --destructive-foreground: #fff8f0;
 
-  --border: #e9d8c8;
-  --input: #e9d8c8;
-  --ring: #d97706;
+  --border: #f3f4f6;
+  --input: #f3f4f6;
+  --ring: #FF4500;
 
   --chart-1: #d97706;
   --chart-2: #881337;

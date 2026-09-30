@@ -1,18 +1,31 @@
+import { Suspense } from "react";
+import dynamic from "next/dynamic";
 import { seoManager } from "@/lib/seo-manager";
 import { LayoutOrchestrator } from "@/components/dlo-x/LayoutOrchestrator";
 import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary";
 import { resolveContext } from "@/lib/context-resolver";
-import { NavdhyaMarketplaceHome } from "@/components/product/NavdhyaMarketplaceHome";
+
+// Critical above-the-fold components loaded normally for LCP optimization
 import Hero from "@/components/sections/hero";
-import { QuickActions } from "@/components/sections/quick";
-import { FeaturedPujas } from "@/components/sections/featured-pujas";
-import { WhyChoose } from "@/components/sections/why-choose";
-import { ProcessSteps } from "@/components/sections/process-steps";
-import { Catalog } from "@/components/sections/catalog";
-import { Testimonials } from "@/components/sections/testimonials";
-import { TrustStats } from "@/components/sections/trust-stats";
-import { BlogPreview } from "@/components/sections/blog";
-import { FAQ } from "@/components/sections/faq";
+import MobileHome from "@/components/mobile/home/MobileHome";
+
+// Lazy-loaded components for better performance & reduced initial JS payload
+const QuickActions = dynamic(() => import("@/components/sections/quick").then((mod) => mod.QuickActions));
+const FeaturedPujas = dynamic(() => import("@/components/sections/featured-pujas").then((mod) => mod.FeaturedPujas));
+const WhyChoose = dynamic(() => import("@/components/sections/why-choose").then((mod) => mod.WhyChoose));
+const ProcessSteps = dynamic(() => import("@/components/sections/process-steps").then((mod) => mod.ProcessSteps));
+const Catalog = dynamic(() => import("@/components/sections/catalog").then((mod) => mod.Catalog));
+const Testimonials = dynamic(() => import("@/components/sections/testimonials").then((mod) => mod.Testimonials));
+const TrustStats = dynamic(() => import("@/components/sections/trust-stats").then((mod) => mod.TrustStats));
+const BlogPreview = dynamic(() => import("@/components/sections/blog").then((mod) => mod.BlogPreview));
+const FAQ = dynamic(() => import("@/components/sections/faq").then((mod) => mod.FAQ));
+
+export const viewport = {
+  themeColor: "#023020",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 export const metadata = seoManager.generateMetadata({
   title: "Navdhya | Book Verified Pandits for Home Puja Services in Delhi NCR",
@@ -155,40 +168,51 @@ const SERVICE_SCHEMAS = {
   ],
 };
 
+// HomePage component
 export default async function HomePage() {
   const context = await resolveContext("/");
 
   return (
     <ErrorBoundary>
       <LayoutOrchestrator context={context}>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(HOME_SCHEMA) }} />
+        {/* Optimized JSON-LD Injection - batched into a single script tag */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(BREADCRUMB_LIST_SCHEMA) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([
+              HOME_SCHEMA,
+              BREADCRUMB_LIST_SCHEMA,
+              ORGANIZATION_SCHEMA,
+              LOCAL_BUSINESS_SCHEMA,
+              SERVICE_SCHEMAS,
+            ]),
+          }}
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_SCHEMA) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(LOCAL_BUSINESS_SCHEMA) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(SERVICE_SCHEMAS) }}
-        />
-        <main className="w-full overflow-x-hidden">
+
+        <div className="block w-full md:hidden">
+          {/* Mobile Home is critical for mobile LCP, loaded normally */}
+          <MobileHome />
+        </div>
+        
+        <main className="hidden w-full overflow-x-hidden md:block">
+          {/* Hero is critical for desktop LCP, loaded normally */}
           <Hero />
-          <QuickActions />
-          <FeaturedPujas />
-          <WhyChoose />
-          <ProcessSteps />
-          <Catalog />
-          <Testimonials />
-          <TrustStats />
-          <BlogPreview />
-          <FAQ />
+          
+          {/* Below-the-fold components are lazy loaded with Suspense for non-blocking rendering */}
+          <Suspense fallback={<div className="h-24 w-full animate-pulse bg-gray-100" />}>
+            <QuickActions />
+          </Suspense>
+          
+          <Suspense fallback={<div className="h-96 w-full animate-pulse bg-gray-50" />}>
+            <FeaturedPujas />
+            <WhyChoose />
+            <ProcessSteps />
+            <Catalog />
+            <Testimonials />
+            <TrustStats />
+            <BlogPreview />
+            <FAQ />
+          </Suspense>
         </main>
       </LayoutOrchestrator>
     </ErrorBoundary>

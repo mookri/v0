@@ -4,7 +4,6 @@ import { LayoutOrchestrator } from '@/components/dlo-x/LayoutOrchestrator'
 import { ErrorBoundary } from '@/components/dlo-x/ErrorBoundary'
 import { resolveContext } from '@/lib/context-resolver'
 
-export const dynamic = 'force-dynamic'
 
 export const metadata = seoManager.generateMetadata({
   title: "Help and Support",

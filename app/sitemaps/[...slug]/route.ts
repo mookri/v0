@@ -10,7 +10,6 @@ import { generateSitemapXml } from "@/lib/seo/sitemap";
 
 // Force dynamic — never let Next.js statically bake this at build time.
 // The in-process cache (sitemap-cache.server.ts) handles freshness instead.
-export const dynamic = "force-dynamic";
 
 interface RouteContext {
   params: Promise<{ slug?: string[] }>;

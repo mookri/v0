@@ -12,11 +12,8 @@ import { getPageLinks } from '@/lib/linking/graph';
 import { generateSchemas } from '@/lib/schema/generator';
 
 // ISR cache time — 1 hour. Individual pages can override via automation.revalidateAfter.
-export const revalidate = 3600;
-export const dynamicParams = false;
 
 // Hint to Next.js that this route uses dynamic params for better streaming
-export const dynamic = 'auto';
 
 interface PageProps {
   params: Promise<{ slug: string[] }>;

@@ -1,6 +1,9 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+    ChevronLeft,
+    ChevronRight,
+} from "lucide-react";
 
 interface Props {
     onPrev: () => void;
@@ -11,93 +14,46 @@ export default function CarouselControls({
     onPrev,
     onNext,
 }: Props) {
+    const baseClass = `
+    flex
+    h-7
+    w-7
+    items-center
+    justify-center
+    rounded-md
+    border
+    border-neutral-200
+    bg-white
+    text-neutral-500
+    transition-colors
+    duration-150
+    hover:border-neutral-300
+    hover:bg-neutral-50
+    hover:text-neutral-900
+    focus-visible:outline-none
+    focus-visible:ring-2
+    focus-visible:ring-orange-500/20
+  `;
+
     return (
-        <>
-            {/* Left */}
-
+        <div className="flex items-center gap-1">
             <button
-                aria-label="Previous"
+                type="button"
+                aria-label="Previous pujas"
                 onClick={onPrev}
-                className="
-          absolute
-          left-0
-          top-1/2
-          z-30
-          -translate-y-1/2
-
-          hidden
-          lg:flex
-
-          h-11
-          w-11
-          items-center
-          justify-center
-
-          rounded-full
-
-          border
-          border-neutral-200
-
-          bg-white/90
-          backdrop-blur-xl
-
-          shadow-lg
-
-          transition-all
-          duration-300
-
-          hover:scale-105
-          hover:bg-white
-
-          dark:border-white/10
-          dark:bg-neutral-900/90
-        "
+                className={baseClass}
             >
-                <ChevronLeft className="h-5 w-5" />
+                <ChevronLeft className="h-3.5 w-3.5" />
             </button>
-
-            {/* Right */}
 
             <button
-                aria-label="Next"
+                type="button"
+                aria-label="Next pujas"
                 onClick={onNext}
-                className="
-          absolute
-          right-0
-          top-1/2
-          z-30
-          -translate-y-1/2
-
-          hidden
-          lg:flex
-
-          h-11
-          w-11
-          items-center
-          justify-center
-
-          rounded-full
-
-          border
-          border-neutral-200
-
-          bg-white/90
-          backdrop-blur-xl
-
-          shadow-lg
-
-          transition-all
-          duration-300
-
-          hover:scale-105
-          hover:bg-white
-
-          dark:border-white/10
-          dark:bg-neutral-900/90
-        "
+                className={baseClass}
             >
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className="h-3.5 w-3.5" />
             </button>
-        </>
+        </div>
     );
 }

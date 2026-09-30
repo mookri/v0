@@ -6,7 +6,6 @@ import { ErrorBoundary } from "@/components/dlo-x/ErrorBoundary"
 import { resolveContext } from "@/lib/context-resolver"
 
 // Force dynamic rendering to ensure context is resolved per request
-export const dynamic = 'force-dynamic'
 
 // Generate page metadata using SEO manager
 export const metadata = seoManager.generateMetadata({

@@ -2,15 +2,16 @@ export interface Service {
     title: string;
     subtitle: string;
     href: string;
-    imgQuery: string;
-    gradient: string;
-    featured?: boolean;
+    image: string;
+    price?: string;
+    duration?: string;
+    badge?: string;
 }
 
 export interface Festival {
     title: string;
-    date: string;
     status: string;
+    date: string;
     bookings: string;
     image: string;
     href: string;

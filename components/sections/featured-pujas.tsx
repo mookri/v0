@@ -1,486 +1,81 @@
-'use client'
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import Image from "next/image"
-import { useState, useEffect, useRef } from "react"
+import Link from "next/link";
+import { ArrowRight, CalendarDays, ShieldCheck, UsersRound, IndianRupee } from "lucide-react";
+import { getFeaturedPujas } from "@/dal/catalog";
+import { FeaturedPujasCarousel } from "./featured-pujas-carousel";
 
-const items = [
+const trustPoints = [
   {
-    slug: "griha-pravesh",
-    title: "Grihapravesh Puja",
-    desc: "Traditional housewarming ceremony for new homes with complete rituals and blessings for prosperity, harmony, and divine protection in your new dwelling.",
-    price: "₹4,999",
-    tag: "Most Booked",
-    imgQuery: "griha%20pravesh%20home%20ritual%20mandap",
-    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358800/Whisk_12d1d962f45c56a89444ef5b3cc2f267dr_fzoivd.jpg"
+    icon: ShieldCheck,
+    title: "Verified Pandits",
+    description: "Identity & experience verified",
   },
   {
-    slug: "lakshmi-ganesh-puja",
-    title: "Lakshmi Ganesh Puja",
-    desc: "Powerful combination ritual to invoke blessings from Lord Ganesha and Goddess Lakshmi for removal of obstacles, wealth, and overall prosperity in life.",
-    price: "₹2,999",
-    tag: "Popular",
-    imgQuery: "lakshmi%20ganesh%20puja%20ritual",
-    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg"
+    icon: IndianRupee,
+    title: "Transparent Pricing",
+    description: "Clear packages, no hidden charges",
   },
   {
-    slug: "satyanarayan-katha",
-    title: "Satyanarayan Puja",
-    desc: "Devotional ritual dedicated to Lord Vishnu for prosperity, peace, and fulfillment of sincere wishes with complete katha recitation and aarti.",
-    price: "₹3,999",
-    tag: undefined,
-    imgQuery: "satyanarayan%20katha%20ritual",
-    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358798/Whisk_7a093de03fbc3bab93949b075483d783dr_zwnihl.jpg"
+    icon: CalendarDays,
+    title: "Flexible Scheduling",
+    description: "At your home, temple or venue",
   },
   {
-    slug: "hindu-wedding",
-    title: "Wedding Ceremony",
-    desc: "Complete traditional Hindu wedding rituals with experienced Vedic pandits, mandap setup, and all essential samagri for your special day.",
-    price: "₹24,999",
-    tag: "Life Event",
-    imgQuery: "hindu%20wedding%20ceremony%20mandap",
-    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg"
+    icon: UsersRound,
+    title: "Personalized Support",
+    description: "From planning to completion",
   },
-  {
-    slug: "office-opening",
-    title: "Office Opening Puja",
-    desc: "Bless your new business space with divine energy for success, prosperity, and protection. Includes Ganesha Puja, Lakshmi Puja, and space sanctification.",
-    price: "₹3,500",
-    tag: "Business Special",
-    imgQuery: "office%20opening%20puja%20business%20blessing",
-    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1760358799/Whisk_d461026b0de4446b8f7406fdbf51bff7dr_ao407y.jpg"
-  },
-  {
-    slug: "baby-naming",
-    title: "Baby Naming Ceremony",
-    desc: "Traditional Namkaran ceremony with auspicious name selection based on nakshatra and divine blessings for your child's health and future.",
-    price: "₹2,500",
-    tag: "Life Milestone",
-    imgQuery: "baby%20naming%20ceremony%20hindu",
-    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg"
-  },
-  {
-    slug: "annaprashan",
-    title: "Annaprashan Ceremony",
-    desc: "The first feeding of solid food to your child, marking an important milestone in their growth and development with divine blessings.",
-    price: "₹2,000",
-    tag: "Life Milestone",
-    imgQuery: "annaprashan%20ceremony%20baby%20first%20food",
-    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761679730/Whisk_e8aade6d734184789c64dedc33fec8c2dr_livh1r.jpg"
-  },
-  {
-    slug: "vastu-shanti",
-    title: "Vastu Shanti Puja",
-    desc: "Harmonize your living or working space with Vastu principles for positive energy flow and removal of negative influences.",
-    price: "₹3,000",
-    tag: "Business Special",
-    imgQuery: "vastu%20shanti%20puja%20ritual",
-    imageUrl: "https://res.cloudinary.com/dufzctlaj/image/upload/v1761960096/Whisk_9080931cbd0a4e69592487dd741d9b57dr_m8c7b7.jpg"
-  }
-]
+];
 
-// Skeleton loader component
-function SkeletonCard() {
-  return (
-    <div className="flex flex-col items-center animate-pulse">
-      <div className="relative w-full aspect-square max-w-[140px] mx-auto">
-        <div className="w-full h-full rounded-full bg-muted overflow-hidden border border-primary/10"></div>
-      </div>
-      <div className="mt-2 flex items-center justify-center gap-1 w-full">
-        <div className="h-3 bg-muted rounded-full w-24"></div>
-        <div className="h-3 w-3 bg-muted rounded-full"></div>
-      </div>
-      <div className="mt-1 text-center">
-        <div className="h-2.5 bg-muted rounded-full w-32 mx-auto"></div>
-        <div className="mt-2 h-6 bg-muted rounded-md w-20 mx-auto"></div>
-      </div>
-    </div>
-  )
-}
-
-// Desktop skeleton loader
-function DesktopSkeletonCard() {
-  return (
-    <div className="group overflow-hidden rounded-lg border bg-card animate-pulse flex-shrink-0 shadow-sm" style={{ width: "220px" }}>
-      <div className="relative w-full aspect-[4/3] bg-muted"></div>
-      <div className="p-2 flex flex-col h-full">
-        <div className="h-3 bg-muted rounded w-3/4 mb-1"></div>
-        <div className="h-2 bg-muted rounded w-full mb-1"></div>
-        <div className="h-2 bg-muted rounded w-2/3 mb-1"></div>
-        <div className="h-2.5 bg-muted rounded w-1/2 mt-1"></div>
-      </div>
-      <div className="flex items-center gap-1 px-2 pb-2">
-        <div className="h-6 bg-muted rounded w-full"></div>
-      </div>
-    </div>
-  )
-}
-
-export function FeaturedPujas() {
-  const [isLoading, setIsLoading] = useState(true)
-  const [activeSlideIndex, setActiveSlideIndex] = useState(0)
-  const [isDragging, setIsDragging] = useState(false)
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const autoPlayRef = useRef<NodeJS.Timeout | null>(null)
-  const dragStartX = useRef(0)
-  const scrollStartLeft = useRef(0)
-  
-  useEffect(() => {
-    // Simulate loading time
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 1500)
-    
-    return () => clearTimeout(timer)
-  }, [])
-
-  // Update active slide index based on scroll position
-  useEffect(() => {
-    const handleScroll = () => {
-      if (scrollContainerRef.current && !isDragging) {
-        const container = scrollContainerRef.current
-        const scrollLeft = container.scrollLeft
-        const cardWidth = 220 + 16 // width + gap
-        const newIndex = Math.round(scrollLeft / cardWidth)
-        setActiveSlideIndex(Math.min(newIndex, items.length - 1))
-      }
-    }
-
-    const container = scrollContainerRef.current
-    if (container) {
-      container.addEventListener('scroll', handleScroll, { passive: true })
-      return () => container.removeEventListener('scroll', handleScroll)
-    }
-  }, [isDragging])
-
-  // Auto-play functionality
-  useEffect(() => {
-    if (!isLoading && scrollContainerRef.current) {
-      const startAutoPlay = () => {
-        autoPlayRef.current = setInterval(() => {
-          setActiveSlideIndex(prevIndex => {
-            const nextIndex = (prevIndex + 1) % items.length
-            scrollToSlide(nextIndex)
-            return nextIndex
-          })
-        }, 5000)
-      }
-
-      const stopAutoPlay = () => {
-        if (autoPlayRef.current) {
-          clearInterval(autoPlayRef.current)
-          autoPlayRef.current = null
-        }
-      }
-
-      startAutoPlay()
-
-      const container = scrollContainerRef.current
-      container.addEventListener('mouseenter', stopAutoPlay)
-      container.addEventListener('mouseleave', startAutoPlay)
-
-      return () => {
-        stopAutoPlay()
-        container.removeEventListener('mouseenter', stopAutoPlay)
-        container.removeEventListener('mouseleave', startAutoPlay)
-      }
-    }
-  }, [isLoading])
-
-  const scrollToSlide = (index: number) => {
-    if (scrollContainerRef.current) {
-      const cardWidth = 220 + 16
-      scrollContainerRef.current.scrollTo({
-        left: index * cardWidth,
-        behavior: 'smooth'
-      })
-    }
-  }
-
-  // Mouse drag handlers
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!scrollContainerRef.current) return
-    setIsDragging(true)
-    dragStartX.current = e.pageX - scrollContainerRef.current.offsetLeft
-    scrollStartLeft.current = scrollContainerRef.current.scrollLeft
-    scrollContainerRef.current.style.cursor = 'grabbing'
-  }
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !scrollContainerRef.current) return
-    e.preventDefault()
-    const x = e.pageX - scrollContainerRef.current.offsetLeft
-    const walk = (x - dragStartX.current) * 2
-    scrollContainerRef.current.scrollLeft = scrollStartLeft.current - walk
-  }
-
-  const handleMouseUp = () => {
-    setIsDragging(false)
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.style.cursor = 'grab'
-    }
-  }
-
-  const handleMouseLeave = () => {
-    if (isDragging) {
-      setIsDragging(false)
-      if (scrollContainerRef.current) {
-        scrollContainerRef.current.style.cursor = 'grab'
-      }
-    }
-  }
+export async function FeaturedPujas() {
+  // Fetch data using the cached DAL (Rule #05 & #24)
+  const pujas = await getFeaturedPujas();
 
   return (
-    <section aria-labelledby="featured-pujas" className="bg-muted/50 w-full overflow-hidden">
-      <div className="mx-auto w-full px-4 md:px-8 xl:px-12 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          
-          {/* Left Column (Shift-4) - Sticky Title */}
-          <div className="lg:col-span-4 lg:sticky lg:top-32 text-left z-10">
-            <h2 id="featured-pujas" className="font-bold text-3xl md:text-4xl text-foreground relative inline-block">  
-              Featured Pujas
-              <div className="absolute -bottom-2 left-0 h-1 w-16 bg-gradient-to-r from-[#0E3F2E] to-primary rounded-full"></div>
-            </h2>
-            <p className="text-muted-foreground mt-6 text-base md:text-lg font-sans leading-relaxed">
-              Explore our most popular rituals performed by certified pandits. Authentic Vedic ceremonies curated for modern families.
-            </p>
-            
-            <div className="hidden lg:block mt-10">
-              <Link
-                href="/pujas"
-                className="inline-block px-8 py-3 bg-[#0E3F2E] text-white font-sans font-semibold text-base rounded-md border-2 border-[#0E3F2E] shadow-md shadow-[#0E3F2E]/20 hover:shadow-lg hover:shadow-[#0E3F2E]/40 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-[#0E3F2E]/40"
-              >
-                View All Rituals
-              </Link>
-            </div>
+    <section className="w-full bg-[#fcfaf7] py-9 md:py-11 overflow-hidden">
+      <div className="w-full max-w-[1720px] mx-auto px-4 md:px-10 xl:px-20 flex flex-col md:flex-row gap-8 md:gap-12 xl:gap-[140px] items-start">
+        {/* LEFT CONTENT (Static Server Rendered) */}
+        <aside className="min-w-0 md:w-[260px] xl:w-[340px] flex-shrink-0">
+          <h2 className="text-[#10263f] text-3xl md:text-4xl lg:text-[42px] font-semibold leading-[1.05] tracking-[-0.025em]">
+            Featured Pujas
+          </h2>
+
+          <p className="max-w-[320px] mt-4 text-[#66717d] text-sm leading-relaxed">
+            Explore our most popular rituals performed by verified pandits. Authentic Vedic ceremonies for life's important moments.
+          </p>
+
+          <div className="flex flex-col gap-4 mt-6">
+            {trustPoints.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  className={`flex items-center gap-3 group ${idx > 2 ? "hidden md:flex" : ""}`}
+                  key={item.title}
+                >
+                  <div className="w-[34px] h-[34px] flex-none flex items-center justify-center rounded-full bg-[#faeedc] text-[#a96634] group-hover:scale-[1.15] group-hover:bg-[#f0e1c6] transition-all duration-250">
+                    <Icon className="w-4 h-4" strokeWidth={1.9} />
+                  </div>
+
+                  <div>
+                    <h3 className="text-[#1d2e3f] text-[13px] font-bold leading-tight m-0">{item.title}</h3>
+                    <p className="text-[#7a838c] text-[11px] leading-[1.3] mt-0.5 m-0">{item.description}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
-          {/* Right Column (Shift-8) - Interactive Slider & Mobile Grid */}
-          <div className="lg:col-span-8 w-full">
-        
-        {/* Mobile layout - 2x2 grid with circular cards and row dividers */}
-        <div className="mt-2 sm:hidden">
-          {isLoading ? (
-            <div className="space-y-6">
-              {Array.from({ length: 3 }).map((_, rowIndex) => (
-                <div key={rowIndex}>
-                  <div className="grid grid-cols-2 gap-5">
-                    <SkeletonCard />
-                    <SkeletonCard />
-                  </div>
-                  {rowIndex < 2 && (
-                    <div className="border-t border-muted mt-6 mb-2 mx-auto w-16"></div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {Array.from({ length: Math.ceil(items.length / 2) }).map((_, rowIndex) => (
-                <div key={rowIndex}>
-                  <div className="grid grid-cols-2 gap-5">
-                    {items.slice(rowIndex * 2, rowIndex * 2 + 2).map((it) => (
-                      <div
-                        key={it.title}
-                        className="group flex flex-col items-center"
-                      >
-                        <Link href={`/pujas/${it.slug}`} className="block w-full">
-                          <div className="relative w-full aspect-square max-w-[140px] mx-auto">
-                            <div className="w-full h-full rounded-full overflow-hidden border border-primary/20 flex items-center justify-center">
-                              {it.imageUrl ? (
-                                <div className="relative w-full h-full">
-                                  <Image
-                                    src={it.imageUrl}
-                                    alt={`${it.title} representative image`}
-                                    fill
-                                    className="object-cover"
-                                    sizes="(max-width: 640px) 50vw"
-                                    priority={it.tag === "Most Booked"}
-                                  />
-                                </div>
-                              ) : (
-                                <div className="relative w-full h-full">
-                                  <Image
-                                    src={`/.jpg?key=s7bpr&height=320&width=480&query=${it.imgQuery}`}
-                                    alt={`${it.title} representative image`}
-                                    fill
-                                    className="object-cover"
-                                    sizes="(max-width: 640px) 50vw"
-                                    priority={it.tag === "Most Booked"}
-                                  />
-                                </div>
-                              )}
-                            </div>
-                            {it.tag ? (
-                              <span className="absolute left-1.5 top-1.5 rounded-[3px] bg-[#0E3F2E] px-1 py-0.5 text-[7px] font-semibold text-white max-w-[calc(100%-0.75rem)] overflow-hidden z-10 shadow-xs">
-                                {it.tag}
-                              </span>
-                            ) : null}
-                          </div>
-                          <div className="mt-2 flex items-center justify-center gap-1 w-full">
-                            <h3 className="font-sans text-sm font-semibold leading-tight text-center">{it.title}</h3>
-                            <svg 
-                              xmlns="http://www.w3.org/2000/svg" 
-                              width="10" 
-                              height="10" 
-                              viewBox="0 0 24 24" 
-                              fill="none" 
-                              stroke="currentColor" 
-                              strokeWidth="2" 
-                              strokeLinecap="round" 
-                              strokeLinejoin="round" 
-                              className="text-primary"
-                            >
-                              <line x1="5" y1="12" x2="19" y2="12"></line>
-                              <polyline points="12 5 19 12 12 19"></polyline>
-                            </svg>
-                          </div>
-                          <div className="mt-1 text-center">
-                            <p className="text-xs text-muted-foreground font-sans line-clamp-2 leading-relaxed">{it.desc}</p>
-                          </div>
-                        </Link>
-                        <div className="mt-2.5">
-                          <Link href={`/pujas/${it.slug}`}>
-                            <Button className="bg-[#0E3F2E] text-white font-sans text-sm h-10 hover:bg-[#0E3F2E]/90 border-2 border-[#0E3F2E] hover:scale-[1.02] transition-transform duration-200 shadow-xs px-6" size="sm">
-                              Book Now
-                            </Button>
-                          </Link>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  {rowIndex < Math.ceil(items.length / 2) - 1 && (
-                    <div className="border-t border-muted mt-6 mb-2 mx-auto w-16"></div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        
-        {/* Desktop layout - horizontal slider with drag support */}
-        <div className="w-full hidden sm:block relative">
-          {isLoading ? (
-            <div 
-              className="flex gap-4 pb-8 overflow-x-auto scrollbar-hide"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              {Array.from({ length: 6 }).map((_, index) => (
-                <DesktopSkeletonCard key={index} />
-              ))}
-            </div>
-          ) : (
-            <>
-              {/* Draggable card carousel */}
-              <div 
-                ref={scrollContainerRef}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseLeave}
-                className="flex gap-4 pb-8 overflow-x-auto scrollbar-hide select-none"
-                style={{ 
-                  scrollbarWidth: 'none', 
-                  msOverflowStyle: 'none',
-                  cursor: isDragging ? 'grabbing' : 'grab'
-                }}
-              >
-                {items.map((it) => (
-                  <div
-                    key={it.title}
-                    className="group overflow-hidden rounded-lg border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm flex-shrink-0 shadow-xs flex flex-col h-full"
-                    style={{ width: "220px" }}
-                  >
-                    <Link href={`/pujas/${it.slug}`} className="block pointer-events-none flex-grow flex flex-col">
-                      <div className="relative w-full aspect-[4/3] flex-shrink-0">
-                        {it.imageUrl ? (
-                          <Image
-                            src={it.imageUrl}
-                            alt={`${it.title} representative image`}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                            priority={it.tag === "Most Booked"}
-                            draggable={false}
-                          />
-                        ) : (
-                          <Image
-                            src={`/.jpg?key=s7bpr&height=320&width=480&query=${it.imgQuery}`}
-                            alt={`${it.title} representative image`}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                            priority={it.tag === "Most Booked"}
-                            draggable={false}
-                          />
-                        )}
-                        {it.tag ? (
-                          <span className="absolute left-2 top-2 rounded-[3px] bg-[#0E3F2E] px-1.5 py-0.5 text-[8px] font-semibold text-white max-w-[calc(100%-1rem)] overflow-hidden z-10 shadow-xs">
-                            {it.tag}
-                          </span>
-                        ) : null}
-                      </div>
-                      <div className="p-2 flex flex-col flex-grow">
-                        <h3 className="font-sans text-sm font-bold">{it.title}</h3>
-                        <p className="mt-1 text-xs text-muted-foreground flex-grow font-sans line-clamp-2">{it.desc}</p>
-                        <p className="mt-1.5 text-xs font-sans">
-                          Starting from <span className="font-bold text-primary">{it.price}</span>
-                        </p>
-                      </div>
-                    </Link>
-                    <div className="flex items-center gap-1 px-2 pb-2 pointer-events-auto mt-auto">
-                      <Link href={`/pujas/${it.slug}`} className="flex-1" onClick={(e) => e.stopPropagation()}>
-                        <Button className="w-full bg-[#0E3F2E] text-white font-sans text-xs hover:bg-[#0E3F2E]/90 border-2 border-[#0E3F2E] hover:scale-[1.02] transition-transform duration-200 shadow-xs h-6" size="sm">
-                          Book Now
-                        </Button>
-                      </Link>
-                      <Link href={`/pujas/${it.slug}`} className="shrink-0 text-xs hover:text-primary font-sans" onClick={(e) => e.stopPropagation()}>
-                        Learn More →
-                      </Link>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              {/* Slide indicators */}
-              <div className="flex justify-center mt-4 items-center gap-6">
-                <div className="flex gap-1.5 bg-muted/50 px-2.5 py-1.5 rounded-full">
-                  {items.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        setActiveSlideIndex(index)
-                        scrollToSlide(index)
-                      }}
-                      className={`w-6 h-0.5 transition-all duration-300 rounded-full ${index === activeSlideIndex ? 'bg-primary' : 'bg-muted-foreground/30'}`}
-                      aria-label={`Go to slide ${index + 1}`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* View All button for mobile */}
-        <div className="mt-10 text-center lg:hidden">
           <Link
             href="/pujas"
-            className="inline-block px-8 py-3 bg-[#0E3F2E] text-white font-sans font-semibold text-base rounded-md border-2 border-[#0E3F2E] shadow-md shadow-[#0E3F2E]/20 hover:shadow-lg hover:shadow-[#0E3F2E]/40 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-[1.02]"
+            className="w-[180px] h-11 mt-6 flex items-center justify-center gap-2.5 rounded-md bg-[#0d4d40] text-white text-[13px] font-bold shadow-[0_4px_12px_rgba(13,77,64,0.2)] hover:-translate-y-[2px] hover:shadow-[0_8px_20px_rgba(13,77,64,0.3)] transition-all duration-200 group"
           >
-            View All Rituals
+            <span>View All Rituals</span>
+            <ArrowRight className="w-4 h-4 transition-transform duration-250 group-hover:translate-x-1" />
           </Link>
-        </div>
+        </aside>
 
-        </div> {/* End of Right Column */}
-        </div> {/* End of Grid */}
+        {/* RIGHT CONTENT (Interactive Client Component) */}
+        <FeaturedPujasCarousel pujas={pujas} />
       </div>
-      
-      <style jsx global>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </section>
-  )
+  );
 }
