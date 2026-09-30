@@ -13,6 +13,7 @@ export * from "./booking/booking-summary";
 export * from "./payment/payment-status";
 export * from "./payment/gateway";
 export * from "./events/envelope";
+export * from "./events/registry";
 export * from "./messaging/outbox";
 export * from "./storage/object-storage";
 export * from "./search/search-index";
