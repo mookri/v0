@@ -4,7 +4,7 @@
 import Link, { LinkProps } from "next/link"
 import { useRouter } from "next/navigation"
 import React from "react"
-import { useLoading } from "@/context/LoadingContext"
+import { useLoading } from "../context/LoadingContext"
 
 type NavLinkProps = LinkProps & {
   children?: React.ReactNode
@@ -15,7 +15,7 @@ type NavLinkProps = LinkProps & {
  * NavLink -> wraps Next.js Link and triggers loading.start immediately onClick for instant feedback.
  * Use it for header/nav/button links to avoid click ambiguity.
  */
-export default function NavLink({ children, triggerLoading = true, ...props }: NavLinkProps) {
+export function NavLink({ children, triggerLoading = true, ...props }: NavLinkProps) {
   const { start } = useLoading()
   const router = useRouter()
 

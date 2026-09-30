@@ -1,4 +1,4 @@
-import type { Locale } from "@/i18n";
+import type { Locale } from "./locale";
 
 /**
  * Locale-aware formatters. All use the built-in Intl APIs so we

@@ -5,7 +5,7 @@ import {
   LOCALE_LABELS,
   localePrefix,
   type Locale,
-} from "@/i18n";
+} from "./constants";
 
 export { DEFAULT_LOCALE, LOCALES, LOCALE_LABELS, localePrefix, HREFLANG_BY_LOCALE };
 export type { Locale };

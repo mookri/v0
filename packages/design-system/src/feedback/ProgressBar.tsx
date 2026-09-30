@@ -3,9 +3,9 @@
 
 import { motion, useAnimation } from "framer-motion"
 import { useEffect } from "react"
-import { useLoading } from "@/context/LoadingContext"
+import { useLoading } from "../context/LoadingContext"
 
-export default function ProgressBar() {
+export function ProgressBar() {
   const { isLoading } = useLoading()
   const controls = useAnimation()
 
