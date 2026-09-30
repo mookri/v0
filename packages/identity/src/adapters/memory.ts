@@ -1,5 +1,18 @@
 import { Session, SessionAudience } from '@navdhya/identity/src/domain/session';
-import { SessionStore } from '@navdhya/identity/src/ports/stores';
+import { Identity } from '@navdhya/identity/src/domain/identity';
+import { IdentityRepository, SessionStore } from '@navdhya/identity/src/ports/stores';
+
+export class MemoryIdentityRepository implements IdentityRepository {
+  private readonly map = new Map<string, Identity>();
+
+  async findById(id: string): Promise<Identity | null> {
+    return this.map.get(id) ?? null;
+  }
+
+  async save(identity: Identity): Promise<void> {
+    this.map.set(identity.id, identity);
+  }
+}
 
 export class MemorySessionStore implements SessionStore {
   private readonly map = new Map<string, Session>();

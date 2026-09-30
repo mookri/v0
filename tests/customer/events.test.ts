@@ -2,9 +2,11 @@ import { test, expect } from 'vitest';
 import { formatSSE, parseSSEData, userChannel } from '@navdhya/notifications/src/events/live';
 import { MemoryEventBus } from '@navdhya/notifications/src/adapters/memory-bus';
 import { mintActorToken, INSECURE_DEV_SECRET } from '@navdhya/identity/src/application/token-actor';
+import { __issueTestToken } from '@apps/customer/server/auth';
 import { GET, __eventsBusForTests } from '@apps/customer/app/api/events/route';
 
-const bearer = (userId: string) =>
+const bearer = async (userId: string) => `Bearer ${await __issueTestToken(userId)}`;
+const staleBearer = (userId: string) =>
   `Bearer ${mintActorToken(INSECURE_DEV_SECRET, { userId, sessionId: `staging_${userId}`, roles: ['customer'] }, new Date().toISOString(), 3600)}`;
 
 const NOW = '2026-10-01T00:00:00.000Z';
@@ -40,13 +42,18 @@ test('memory bus fans out and replays per channel', async () => {
 test('bearer tokens authenticate the events route', async () => {
   const anon = await GET(new Request('https://app.navdhya.com/api/events'));
   expect(anon.status).toBe(401);
+  // Stateless token with no session: signature valid, handshake rejects.
+  const ghost = await GET(
+    new Request('https://app.navdhya.com/api/events?channel=user%3Au2', { headers: { authorization: staleBearer('u1') } }),
+  );
+  expect(ghost.status).toBe(401);
   const foreign = await GET(
-    new Request('https://app.navdhya.com/api/events?channel=user%3Au2', { headers: { authorization: bearer('u1') } }),
+    new Request('https://app.navdhya.com/api/events?channel=user%3Au2', { headers: { authorization: await bearer('u1') } }),
   );
   expect(foreign.status).toBe(403);
   const bus = __eventsBusForTests();
   await bus.publish(evt({ id: 'seed-1' }));
-  const res = await GET(new Request('https://app.navdhya.com/api/events', { headers: { authorization: bearer('u1') } }));
+  const res = await GET(new Request('https://app.navdhya.com/api/events', { headers: { authorization: await bearer('u1') } }));
   expect(res.status).toBe(200);
   expect(res.headers.get('Content-Type')).toBe('text/event-stream');
   const reader = res.body!.getReader();

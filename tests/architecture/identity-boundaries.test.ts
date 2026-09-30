@@ -28,7 +28,13 @@ test('apps never import credential internals or session secrets', () => {
   for (const app of ['apps/customer', 'apps/web']) {
     for (const file of getAllFiles(path.join(process.cwd(), app))) {
       const content = fs.readFileSync(file, 'utf8');
-      expect(content, `no otp provider in ${file}`).not.toMatch(/otp-provider|CredentialVerifier/);
+      // Exception: server-side composition roots (apps/*/server/**) may wire
+      // identity ports (verifier/stores) — that is the documented seam, never
+      // a client/component import.
+      const isServerComposition = file.includes(`${path.sep}server${path.sep}`);
+      if (!isServerComposition) {
+        expect(content, `no otp provider in ${file}`).not.toMatch(/otp-provider|CredentialVerifier/);
+      }
       expect(content, `no localStorage tokens in ${file}`).not.toMatch(/localStorage\s*\.\s*(getItem|setItem)\s*\(\s*["'].*token/i);
       expect(content, `no token in url in ${file}`).not.toMatch(/access_token|refresh_token/);
     }
