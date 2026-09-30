@@ -1,0 +1,1 @@
+export type PujaId = string;
