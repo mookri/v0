@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import type { RequestContext, Role, Tenant, DeviceType } from '@/lib/dlo-x/types';
 import { deriveStableSeed } from '@/lib/dlo-x/stable-seed';
+import { stranglerTarget, stranglerFlagsFromEnv } from '@/lib/strangler/route-map';
 
 /**
  * MNC-Grade Proxy for Next.js 16 (replacing deprecated middleware).
@@ -10,6 +11,18 @@ import { deriveStableSeed } from '@/lib/dlo-x/stable-seed';
  */
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Strangler: redirect cut-over classes to their app origin. Flag-gated;
+  // default off (serve-local everywhere) so this is a no-op until cutover.
+  const decision = stranglerTarget(
+    pathname,
+    stranglerFlagsFromEnv(process.env as Record<string, string | undefined>),
+  );
+  if (decision.action === 'redirect') {
+    const target = new URL(decision.target);
+    target.search = request.nextUrl.search;
+    return NextResponse.redirect(target, 307);
+  }
   const userAgent = request.headers.get('user-agent') || '';
 
   // 1. Detect Request Context

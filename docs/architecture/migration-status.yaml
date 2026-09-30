@@ -19,6 +19,7 @@ completed:
   - 13-bff
   - 14-api-platform
   - 17-edge-session-decision
+  - 26-strangler
 partial:
   - 19-staging-deploy
   - 20-perf-baseline
@@ -32,6 +33,6 @@ not-started:
   - 28-admin-operations
   - 29-readiness-scoring
 baselines:
-  architecture-tests: 29 files / 83 passing
+  architecture-tests: 30 files / 84 passing
   unit-suites: 53 files / 220 passing
   branch: architecture/phase-3-web-extraction
