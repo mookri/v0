@@ -1,3 +1,36 @@
-status: pending
-phase: 0
-current_step: Freeze the existing system
+status: in-progress
+phase: 14
+current_step: Extraction readiness + cleanup
+completed:
+  - 0-freeze-baseline
+  - 1-governance
+  - 2-monorepo
+  - 3-web-extraction
+  - 4-foundations
+  - 5-capabilities-partial
+  - 6-infrastructure
+  - 7-dlo-x
+  - 8-ads
+  - 9-content-seo
+  - 10-customer-app
+  - 11-customer-shell
+  - 12-customer-routes
+  - 13-bff
+  - 14-api-platform
+partial:
+  - 5-payment-package-missing
+  - 17-edge-session-decision
+  - 19-staging-deploy
+  - 20-perf-baseline
+  - 21-book-split
+  - 26-strangler
+  - 27-partner-migration
+not-started:
+  - 22-payment-hardening
+  - 24-realtime
+  - 25-production-cutover
+  - 28-admin-operations
+  - 29-readiness-scoring
+baselines:
+  architecture-tests: 28 files / 82 passing
+  branch: architecture/phase-3-web-extraction
