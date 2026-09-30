@@ -20,6 +20,7 @@ completed:
   - 14-api-platform
   - 17-edge-session-decision
   - 26-strangler
+  - 29-readiness-scoring
 partial:
   - 19-staging-deploy
   - 20-perf-baseline
