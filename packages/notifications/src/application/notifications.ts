@@ -1,4 +1,4 @@
-import { Notification } from '../domain/notification';
+import { Notification } from '@navdhya/notifications/src/domain/notification';
 
 export interface NotificationRepository {
   save(n: Notification): Promise<void>;

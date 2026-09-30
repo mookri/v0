@@ -1,4 +1,4 @@
-import { AdFormat } from '../creative/Creative';
+import { AdFormat } from '@navdhya/ads/src/domain/creative/Creative';
 
 export interface Placement {
   id: string;

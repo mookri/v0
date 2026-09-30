@@ -1,4 +1,4 @@
-import type { SearchIndex, SearchIndexDoc } from '../../../packages/contracts/src/search/search-index';
+import type { SearchIndex, SearchIndexDoc } from '@navdhya/contracts/src/search/search-index';
 
 // Postgres-shaped today (LIKE semantics), swappable for OpenSearch/Meilisearch
 // later without changing @navdhya/search.

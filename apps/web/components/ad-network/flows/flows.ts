@@ -4,7 +4,7 @@
    Auto-adaptation · Exit conditions · KPI tracking
    ═══════════════════════════════════════════════════════════════════════════════ */
 
-import { PrebuiltFlow, PrebuiltFlowType, FlowStep, FlowTrigger, FlowExitCondition } from "../core/types";
+import { PrebuiltFlow, PrebuiltFlowType, FlowStep, FlowTrigger, FlowExitCondition } from "@/components/ad-network/core/types";
 
 export type FlowDefinition = PrebuiltFlow;
 

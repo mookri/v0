@@ -1,6 +1,6 @@
-import { newRequestId, ok, err } from '../../../application/api-envelope';
-import { anonymousContext } from '../../../application/request-context';
-import { getDiscoverFeed } from '../../../application/discover/discover-feed';
+import { newRequestId, ok, err } from '@/application/api-envelope';
+import { anonymousContext } from '@/application/request-context';
+import { getDiscoverFeed } from '@/application/discover/discover-feed';
 
 export async function GET() {
   const requestId = newRequestId();

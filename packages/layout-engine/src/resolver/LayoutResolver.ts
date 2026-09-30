@@ -1,8 +1,8 @@
-import { LayoutContext } from '../core/LayoutContext';
-import { LayoutDecision } from '../core/LayoutDecision';
-import { LAYOUT_POLICY_VERSION } from '../core/LayoutMode';
-import { Policy } from '../policy/Policy';
-import { evaluatePolicies } from '../policy/PolicyEvaluator';
+import { LayoutContext } from '@navdhya/layout-engine/src/core/LayoutContext';
+import { LayoutDecision } from '@navdhya/layout-engine/src/core/LayoutDecision';
+import { LAYOUT_POLICY_VERSION } from '@navdhya/layout-engine/src/core/LayoutMode';
+import { Policy } from '@navdhya/layout-engine/src/policy/Policy';
+import { evaluatePolicies } from '@navdhya/layout-engine/src/policy/PolicyEvaluator';
 
 export interface DecisionExplanation {
   decision: LayoutDecision;

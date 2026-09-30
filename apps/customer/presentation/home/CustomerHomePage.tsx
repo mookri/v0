@@ -1,4 +1,4 @@
-import { CustomerHomeViewModel } from '../../application/home/get-customer-home';
+import { CustomerHomeViewModel } from '@/application/home/get-customer-home';
 
 export function CustomerHomePage({ home }: { home: CustomerHomeViewModel }) {
   return (

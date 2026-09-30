@@ -1,14 +1,14 @@
-import type { Cache } from '../../packages/contracts/src/common/cache';
-import type { TransactionManager } from '../../packages/contracts/src/common/transaction';
-import type { PaymentGateway } from '../../packages/contracts/src/payment/gateway';
-import type { BookingRepository } from '../../packages/booking/src/ports/BookingRepository';
-import { createNoopDbClient } from '../database/postgres/client';
-import { PostgresTransactionManager } from '../database/postgres/transaction';
-import { PostgresBookingRepository } from '../database/postgres/repositories/PostgresBookingRepository';
-import { PostgresPujaRepository } from '../database/postgres/repositories/PostgresPujaRepository';
-import { MemoryCache } from '../cache/memory/MemoryCache';
-import { MemoryOutboxStore } from '../messaging/outbox/MemoryOutboxStore';
-import { createPaymentGateway } from '../payments/providers/providers';
+import type { Cache } from '@navdhya/contracts/src/common/cache';
+import type { TransactionManager } from '@navdhya/contracts/src/common/transaction';
+import type { PaymentGateway } from '@navdhya/contracts/src/payment/gateway';
+import type { BookingRepository } from '@navdhya/booking/src/ports/BookingRepository';
+import { createNoopDbClient } from '@infra/database/postgres/client';
+import { PostgresTransactionManager } from '@infra/database/postgres/transaction';
+import { PostgresBookingRepository } from '@infra/database/postgres/repositories/PostgresBookingRepository';
+import { PostgresPujaRepository } from '@infra/database/postgres/repositories/PostgresPujaRepository';
+import { MemoryCache } from '@infra/cache/memory/MemoryCache';
+import { MemoryOutboxStore } from '@infra/messaging/outbox/MemoryOutboxStore';
+import { createPaymentGateway } from '@infra/payments/providers/providers';
 
 export interface Platform {
   bookingRepository: BookingRepository;

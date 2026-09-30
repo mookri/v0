@@ -1,10 +1,10 @@
 import { test, expect } from 'vitest';
-import { canTransitionFulfillment } from '../../packages/fulfillment/src/domain/fulfillment-order';
-import { transitionOrder } from '../../packages/fulfillment/src/ports/gateways';
-import { isOfferAcceptable, rankCandidates } from '../../packages/fulfillment/src/assignment/assignment';
-import { stableExceptionKey } from '../../packages/fulfillment/src/exceptions/exception';
-import { overlaps, withBuffer, hasConflict } from '../../packages/scheduling/src/schedule';
-import { commitSchedule } from '../../packages/scheduling/src/application';
+import { canTransitionFulfillment } from '@navdhya/fulfillment/src/domain/fulfillment-order';
+import { transitionOrder } from '@navdhya/fulfillment/src/ports/gateways';
+import { isOfferAcceptable, rankCandidates } from '@navdhya/fulfillment/src/assignment/assignment';
+import { stableExceptionKey } from '@navdhya/fulfillment/src/exceptions/exception';
+import { overlaps, withBuffer, hasConflict } from '@navdhya/scheduling/src/schedule';
+import { commitSchedule } from '@navdhya/scheduling/src/application';
 
 const order = (status: 'READY' | 'ASSIGNMENT_PENDING' | 'COMPLETED' = 'READY') => ({
   id: 'f1', bookingId: 'b1', status, serviceDate: '2026-10-05', timezone: 'Asia/Kolkata', recipeVersion: 3, version: 2,

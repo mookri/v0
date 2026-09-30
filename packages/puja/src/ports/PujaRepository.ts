@@ -1,6 +1,6 @@
-import { Puja } from '../domain/Puja';
-import { PujaId } from '../domain/PujaId';
-import { PujaCategory } from '../domain/PujaCategory';
+import { Puja } from '@navdhya/puja/src/domain/Puja';
+import { PujaId } from '@navdhya/puja/src/domain/PujaId';
+import { PujaCategory } from '@navdhya/puja/src/domain/PujaCategory';
 
 export interface PujaRepository {
   findById(id: PujaId): Promise<Puja | null>;

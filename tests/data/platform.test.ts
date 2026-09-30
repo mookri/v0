@@ -1,8 +1,8 @@
 import { test, expect } from 'vitest';
-import { validateEnvelope, dedupKey, lookupEvent } from '../../packages/events/src/index';
-import { AnalyticsClient, CORE_METRICS } from '../../packages/analytics/src/index';
-import { assignVariant } from '../../packages/experimentation/src/index';
-import { joinAttribution } from '../../packages/attribution/src/index';
+import { validateEnvelope, dedupKey, lookupEvent } from '@navdhya/events/src/index';
+import { AnalyticsClient, CORE_METRICS } from '@navdhya/analytics/src/index';
+import { assignVariant } from '@navdhya/experimentation/src/index';
+import { joinAttribution } from '@navdhya/attribution/src/index';
 
 const base = {
   eventId: 'e1', eventType: 'BookingConfirmed', eventVersion: 1,

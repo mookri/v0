@@ -1,10 +1,10 @@
 import { test, expect } from 'vitest';
-import { validateDisplayName, profileStatus } from '../../packages/customer-profile/src/domain/profile';
-import { resolvePreference } from '../../packages/customer-profile/src/domain/preferences';
-import { saveKey } from '../../packages/customer-profile/src/domain/saved';
-import { resolveLifecycle } from '../../packages/customer-profile/src/domain/lifecycle';
-import { composeSelfView } from '../../packages/customer-profile/src/application/customer-360';
-import { resolveDecision } from '../../packages/personalization/src/index';
+import { validateDisplayName, profileStatus } from '@navdhya/customer-profile/src/domain/profile';
+import { resolvePreference } from '@navdhya/customer-profile/src/domain/preferences';
+import { saveKey } from '@navdhya/customer-profile/src/domain/saved';
+import { resolveLifecycle } from '@navdhya/customer-profile/src/domain/lifecycle';
+import { composeSelfView } from '@navdhya/customer-profile/src/application/customer-360';
+import { resolveDecision } from '@navdhya/personalization/src/index';
 
 const NOW = '2026-09-30T00:00:00.000Z';
 

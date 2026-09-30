@@ -1,6 +1,6 @@
-import { BookingRepository } from '../ports/BookingRepository';
-import { CreateBookingInput } from '../contracts/CreateBooking';
-import { Booking } from '../domain/Booking';
+import { BookingRepository } from '@navdhya/booking/src/ports/BookingRepository';
+import { CreateBookingInput } from '@navdhya/booking/src/contracts/CreateBooking';
+import { Booking } from '@navdhya/booking/src/domain/Booking';
 
 export async function createBooking(repo: BookingRepository, input: CreateBookingInput): Promise<Booking> {
   const now = new Date();

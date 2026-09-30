@@ -1,6 +1,6 @@
-import { newRequestId, err } from '../../../../../application/api-envelope';
-import { anonymousContext } from '../../../../../application/request-context';
-import { rescheduleCustomerBooking } from '../../../../../application/bookings/reschedule-customer-booking';
+import { newRequestId, err } from '@/application/api-envelope';
+import { anonymousContext } from '@/application/request-context';
+import { rescheduleCustomerBooking } from '@/application/bookings/reschedule-customer-booking';
 
 export async function POST(req: Request, { params }: { params: { bookingId: string } }) {
   const requestId = newRequestId();

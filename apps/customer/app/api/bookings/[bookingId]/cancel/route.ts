@@ -1,7 +1,7 @@
-import { newRequestId, err, ok } from '../../../../../application/api-envelope';
-import { anonymousContext } from '../../../../../application/request-context';
-import { cancelCustomerBooking } from '../../../../../application/bookings/cancel-customer-booking';
-import { scopedIdempotencyKey } from '../../../../../application/idempotency';
+import { newRequestId, err, ok } from '@/application/api-envelope';
+import { anonymousContext } from '@/application/request-context';
+import { cancelCustomerBooking } from '@/application/bookings/cancel-customer-booking';
+import { scopedIdempotencyKey } from '@/application/idempotency';
 
 export async function POST(req: Request, { params }: { params: { bookingId: string } }) {
   const requestId = newRequestId();

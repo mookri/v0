@@ -1,4 +1,4 @@
-import { Quote } from '../domain/Quote';
+import { Quote } from '@navdhya/pricing/src/domain/Quote';
 
 export interface QuoteRepository {
   save(quote: Quote): Promise<void>;

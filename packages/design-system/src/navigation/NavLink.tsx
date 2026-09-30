@@ -4,7 +4,7 @@
 import Link, { LinkProps } from "next/link"
 import { useRouter } from "next/navigation"
 import React from "react"
-import { useLoading } from "../context/LoadingContext"
+import { useLoading } from "@navdhya/design-system/src/context/LoadingContext"
 
 type NavLinkProps = LinkProps & {
   children?: React.ReactNode

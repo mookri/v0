@@ -1,4 +1,4 @@
-import type { TransactionContext, TransactionManager } from '../../../packages/contracts/src/common/transaction';
+import type { TransactionContext, TransactionManager } from '@navdhya/contracts/src/common/transaction';
 import type { DbClient } from './client';
 
 export class PostgresTransactionManager implements TransactionManager {

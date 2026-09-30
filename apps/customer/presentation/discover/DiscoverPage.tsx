@@ -1,4 +1,4 @@
-import { DiscoverFeed } from '../../application/discover/discover-feed';
+import { DiscoverFeed } from '@/application/discover/discover-feed';
 
 export function DiscoverPageView({ feed }: { feed: DiscoverFeed }) {
   return (

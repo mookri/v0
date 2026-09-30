@@ -1,4 +1,4 @@
-import { CampaignCandidate } from '../Candidate';
+import { CampaignCandidate } from '@navdhya/ads/src/decision/Candidate';
 
 export interface ScoredCandidate {
   candidate: CampaignCandidate;

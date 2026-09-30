@@ -1,7 +1,7 @@
-import { AdRequest } from '../contracts/AdRequest';
-import { AdDecision } from '../contracts/AdDecision';
-import { CandidateSource } from '../ports/CandidateSource';
-import { decide } from '../decision/decision-engine/decide';
+import { AdRequest } from '@navdhya/ads/src/contracts/AdRequest';
+import { AdDecision } from '@navdhya/ads/src/contracts/AdDecision';
+import { CandidateSource } from '@navdhya/ads/src/ports/CandidateSource';
+import { decide } from '@navdhya/ads/src/decision/decision-engine/decide';
 
 export async function decideAd(
   source: CandidateSource,

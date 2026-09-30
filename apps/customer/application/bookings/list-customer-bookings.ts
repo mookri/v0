@@ -1,4 +1,4 @@
-import type { BookingSummary } from '../../../../packages/booking/src/contracts/BookingSummary';
+import type { BookingSummary } from '@navdhya/booking/src/contracts/BookingSummary';
 
 export interface CustomerBookingCard {
   id: string;

@@ -1,4 +1,4 @@
-import type { Cache, CacheOptions } from '../../../packages/contracts/src/common/cache';
+import type { Cache, CacheOptions } from '@navdhya/contracts/src/common/cache';
 
 export interface RedisLikeClient {
   get(key: string): Promise<string | null>;

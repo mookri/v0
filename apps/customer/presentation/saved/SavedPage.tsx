@@ -1,4 +1,4 @@
-import { SavedItemCard } from '../../application/saved/saved-items';
+import { SavedItemCard } from '@/application/saved/saved-items';
 
 export function SavedPageView({ items }: { items: SavedItemCard[] }) {
   if (items.length === 0) {

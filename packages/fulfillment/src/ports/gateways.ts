@@ -1,4 +1,4 @@
-import { FulfillmentOrder, canTransitionFulfillment } from '../domain/fulfillment-order';
+import { FulfillmentOrder, canTransitionFulfillment } from '@navdhya/fulfillment/src/domain/fulfillment-order';
 
 export interface FulfillmentRepository {
   getById(id: string): Promise<FulfillmentOrder | null>;

@@ -1,5 +1,5 @@
-import { PanditId } from '../domain/PanditId';
-import { VerificationStatus } from '../domain/VerificationStatus';
+import { PanditId } from '@navdhya/pandit/src/domain/PanditId';
+import { VerificationStatus } from '@navdhya/pandit/src/domain/VerificationStatus';
 
 export interface PanditSummary {
   id: PanditId;

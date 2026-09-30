@@ -1,4 +1,4 @@
-import { Quantity } from '../domain/resource';
+import { Quantity } from '@navdhya/resource-management/src/domain/resource';
 
 export type PurchaseStatus = 'DRAFT' | 'REQUESTED' | 'APPROVED' | 'ORDERED' | 'CONFIRMED' | 'PARTIALLY_RECEIVED' | 'RECEIVED' | 'CANCELLED' | 'REJECTED';
 

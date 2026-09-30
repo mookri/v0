@@ -1,6 +1,6 @@
-import { Identity } from '../domain/identity';
-import { Session, SessionAudience } from '../domain/session';
-import { IdentityRepository, SessionStore } from '../ports/stores';
+import { Identity } from '@navdhya/identity/src/domain/identity';
+import { Session, SessionAudience } from '@navdhya/identity/src/domain/session';
+import { IdentityRepository, SessionStore } from '@navdhya/identity/src/ports/stores';
 
 export function hashCode(code: string): string {
   let h = 0;

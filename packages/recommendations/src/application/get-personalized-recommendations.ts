@@ -1,5 +1,5 @@
-import { RecommendationSource } from '../ports/RecommendationSource';
-import { RecommendationResponse } from '../contracts/RecommendationResponse';
+import { RecommendationSource } from '@navdhya/recommendations/src/ports/RecommendationSource';
+import { RecommendationResponse } from '@navdhya/recommendations/src/contracts/RecommendationResponse';
 
 export async function getPersonalizedRecommendations(
   source: RecommendationSource,

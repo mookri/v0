@@ -1,6 +1,6 @@
-import { BookingRepository } from '../ports/BookingRepository';
-import { BookingId } from '../domain/BookingId';
-import { Booking } from '../domain/Booking';
+import { BookingRepository } from '@navdhya/booking/src/ports/BookingRepository';
+import { BookingId } from '@navdhya/booking/src/domain/BookingId';
+import { Booking } from '@navdhya/booking/src/domain/Booking';
 
 export async function getBooking(repo: BookingRepository, id: BookingId): Promise<Booking | null> {
   return repo.findById(id);

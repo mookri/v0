@@ -1,10 +1,10 @@
 import { test, expect } from 'vitest';
-import { canTransitionIncident, Incident } from '../../packages/incident/src/domain/incident';
-import { fingerprintKey, groupAlerts } from '../../packages/incident/src/domain/alert';
-import { isControlLive } from '../../packages/incident/src/domain/control';
-import { toPublicStatus } from '../../packages/incident/src/domain/status';
-import { errorBudgetRemaining } from '../../packages/incident/src/reliability/slo';
-import { transitionIncident } from '../../packages/incident/src/application/incidents';
+import { canTransitionIncident, Incident } from '@navdhya/incident/src/domain/incident';
+import { fingerprintKey, groupAlerts } from '@navdhya/incident/src/domain/alert';
+import { isControlLive } from '@navdhya/incident/src/domain/control';
+import { toPublicStatus } from '@navdhya/incident/src/domain/status';
+import { errorBudgetRemaining } from '@navdhya/incident/src/reliability/slo';
+import { transitionIncident } from '@navdhya/incident/src/application/incidents';
 
 const NOW = '2026-09-30T00:00:00.000Z';
 const incident = (over: Partial<Incident> = {}): Incident => ({

@@ -1,7 +1,7 @@
 import { test, expect } from 'vitest';
-import { normalizeAddress, isValidCoordinate } from '../../packages/geography/src/domain/location';
-import { canonicalRegionId, ancestors } from '../../packages/geography/src/domain/region';
-import { evaluateServiceability, batchEvaluate } from '../../packages/geography/src/domain/serviceability';
+import { normalizeAddress, isValidCoordinate } from '@navdhya/geography/src/domain/location';
+import { canonicalRegionId, ancestors } from '@navdhya/geography/src/domain/region';
+import { evaluateServiceability, batchEvaluate } from '@navdhya/geography/src/domain/serviceability';
 
 test('addresses normalize without inventing precision', () => {
   const n = normalizeAddress({ line1: '  23,  MG Road ', city: 'Gurugram', postalCode: '122 001', countryCode: 'in' });

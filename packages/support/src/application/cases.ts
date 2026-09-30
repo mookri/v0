@@ -1,4 +1,4 @@
-import { SupportCase, canTransitionCase } from '../domain/case';
+import { SupportCase, canTransitionCase } from '@navdhya/support/src/domain/case';
 
 export interface CaseRepository {
   getById(id: string): Promise<SupportCase | null>;

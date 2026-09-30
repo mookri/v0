@@ -1,5 +1,5 @@
-import { User } from '../domain/User';
-import { UserId } from '../domain/UserId';
+import { User } from '@navdhya/user/src/domain/User';
+import { UserId } from '@navdhya/user/src/domain/UserId';
 
 export interface UserRepository {
   findById(id: UserId): Promise<User | null>;

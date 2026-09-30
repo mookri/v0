@@ -1,4 +1,4 @@
-import type { AdRequest } from '../../../../packages/ads/src/contracts/AdRequest';
+import type { AdRequest } from '@navdhya/ads/src/contracts/AdRequest';
 
 // Translates Next.js transport concerns into a normalized AdRequest.
 // Ads core never sees NextRequest, cookies, or DB records.

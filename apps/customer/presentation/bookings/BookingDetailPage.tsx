@@ -1,4 +1,4 @@
-import { CustomerBookingDetails } from '../../application/bookings/get-customer-booking-details';
+import { CustomerBookingDetails } from '@/application/bookings/get-customer-booking-details';
 
 export function BookingDetailPage({ details, error }: { details: CustomerBookingDetails | null; error?: string }) {
   if (error) {

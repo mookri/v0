@@ -1,5 +1,5 @@
-import { LayoutDecision } from '../core/LayoutDecision';
-import { LayoutContext } from '../core/LayoutContext';
+import { LayoutDecision } from '@navdhya/layout-engine/src/core/LayoutDecision';
+import { LayoutContext } from '@navdhya/layout-engine/src/core/LayoutContext';
 
 export interface LayoutTelemetryEvent {
   event: 'layout_decision';

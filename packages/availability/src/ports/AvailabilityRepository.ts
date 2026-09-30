@@ -1,5 +1,5 @@
-import { AvailabilitySlot } from '../domain/AvailabilitySlot';
-import { SlotId } from '../domain/SlotId';
+import { AvailabilitySlot } from '@navdhya/availability/src/domain/AvailabilitySlot';
+import { SlotId } from '@navdhya/availability/src/domain/SlotId';
 
 export interface AvailabilityRepository {
   findSlots(resourceId: string, start: Date, end: Date): Promise<AvailabilitySlot[]>;

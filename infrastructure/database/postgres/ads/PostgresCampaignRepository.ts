@@ -1,5 +1,5 @@
-import type { Campaign } from '../../../packages/ads/src/domain/campaign/Campaign';
-import type { CampaignRepository } from '../../../packages/ads/src/ports/CampaignRepository';
+import type { Campaign } from '@infra/packages/ads/src/domain/campaign/Campaign';
+import type { CampaignRepository } from '@infra/packages/ads/src/ports/CampaignRepository';
 
 // Owns: campaigns, campaign_flights, campaign_targeting.
 export class PostgresCampaignRepository implements CampaignRepository {

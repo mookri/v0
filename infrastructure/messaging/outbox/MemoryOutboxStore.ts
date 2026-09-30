@@ -1,4 +1,4 @@
-import type { OutboxRecord, OutboxStore } from '../../../packages/contracts/src/messaging/outbox';
+import type { OutboxRecord, OutboxStore } from '@navdhya/contracts/src/messaging/outbox';
 
 export class MemoryOutboxStore implements OutboxStore {
   private readonly records = new Map<string, OutboxRecord>();

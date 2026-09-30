@@ -1,11 +1,11 @@
 import { test, expect } from 'vitest';
-import { isIdentityUsable } from '../../packages/identity/src/domain/identity';
-import { isSessionLive } from '../../packages/identity/src/domain/session';
-import { validateHandoff } from '../../packages/identity/src/domain/handoff';
-import { createSession, rotateSession } from '../../packages/identity/src/application/sessions';
-import { MemorySessionStore, MemoryHandoffStore } from '../../packages/identity/src/adapters/memory';
-import { authorize, permissionsForRoles } from '../../packages/authorization/src/index';
-import { validateReturnPath, SESSION_COOKIES } from '../../packages/security/src/cookies';
+import { isIdentityUsable } from '@navdhya/identity/src/domain/identity';
+import { isSessionLive } from '@navdhya/identity/src/domain/session';
+import { validateHandoff } from '@navdhya/identity/src/domain/handoff';
+import { createSession, rotateSession } from '@navdhya/identity/src/application/sessions';
+import { MemorySessionStore, MemoryHandoffStore } from '@navdhya/identity/src/adapters/memory';
+import { authorize, permissionsForRoles } from '@navdhya/authorization/src/index';
+import { validateReturnPath, SESSION_COOKIES } from '@navdhya/security/src/cookies';
 
 const NOW = '2026-09-30T00:00:00.000Z';
 

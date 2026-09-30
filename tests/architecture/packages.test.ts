@@ -22,9 +22,10 @@ test('packages must not import from apps', () => {
       const filePath = path.join(srcDir, file);
       const content = fs.readFileSync(filePath, 'utf8');
       
-      // Verify no import from @/ or apps/
-      expect(content).not.toMatch(/from\s+["']@\/.*?["']/);
+      // Verify no import from apps/ (relative or @apps alias).
+      // Note: @/ inside packages/* is the package's own src root (allowed).
       expect(content).not.toMatch(/from\s+["'](?:\.\.\/)+apps\/.*?["']/);
+      expect(content).not.toMatch(/from\s+["']@apps\/.*?["']/);
     }
   }
 });

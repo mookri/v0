@@ -1,3 +1,3 @@
 'use client'
 
-export { OtpInput } from '../auth/OtpInput'
+export { OtpInput } from '@/components/auth/OtpInput'

@@ -1,9 +1,9 @@
-import { AdRequest } from '../../contracts/AdRequest';
-import { CampaignCandidate } from '../Candidate';
-import { isCampaignActive } from '../../domain/campaign/campaign-rules';
-import { isCreativeServable } from '../../domain/creative/creative-rules';
-import { checkConsent } from '../../policies/ConsentPolicy';
-import { checkSafety } from '../../policies/SafetyPolicy';
+import { AdRequest } from '@navdhya/ads/src/contracts/AdRequest';
+import { CampaignCandidate } from '@navdhya/ads/src/decision/Candidate';
+import { isCampaignActive } from '@navdhya/ads/src/domain/campaign/campaign-rules';
+import { isCreativeServable } from '@navdhya/ads/src/domain/creative/creative-rules';
+import { checkConsent } from '@navdhya/ads/src/policies/ConsentPolicy';
+import { checkSafety } from '@navdhya/ads/src/policies/SafetyPolicy';
 
 export interface EligibilityResult {
   eligible: CampaignCandidate[];

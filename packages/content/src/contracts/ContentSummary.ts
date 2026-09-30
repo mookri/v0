@@ -1,5 +1,5 @@
-import { ContentId } from '../domain/ContentId';
-import { ContentType } from '../domain/ContentType';
+import { ContentId } from '@navdhya/content/src/domain/ContentId';
+import { ContentType } from '@navdhya/content/src/domain/ContentType';
 
 export interface ContentSummary {
   id: ContentId;

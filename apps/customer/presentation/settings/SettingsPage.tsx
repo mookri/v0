@@ -1,4 +1,4 @@
-import { customerSettingsSections } from '../../application/settings/settings';
+import { customerSettingsSections } from '@/application/settings/settings';
 
 export function SettingsPageView() {
   return (

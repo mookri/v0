@@ -1,4 +1,4 @@
-import type { OutboxStore } from '../../packages/contracts/src/messaging/outbox';
+import type { OutboxStore } from '@navdhya/contracts/src/messaging/outbox';
 
 export interface OutboxDispatcher {
   dispatch(record: { id: string; type: string; payload: unknown }): Promise<void>;

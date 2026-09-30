@@ -6,7 +6,7 @@ import type {
   RefundRequest,
   RefundResult,
   VerifyPaymentRequest,
-} from '../../../packages/contracts/src/payment/gateway';
+} from '@navdhya/contracts/src/payment/gateway';
 
 // Deterministic stand-in satisfying the PaymentGateway contract in tests and
 // local dev. Provider adapters (Razorpay/…) implement the same interface.

@@ -1,8 +1,8 @@
-import type { Puja } from '../../../../packages/puja/src/domain/Puja';
-import type { PujaId } from '../../../../packages/puja/src/domain/PujaId';
-import type { PujaCategory } from '../../../../packages/puja/src/domain/PujaCategory';
-import type { PujaRepository } from '../../../../packages/puja/src/ports/PujaRepository';
-import type { DbClient } from '../client';
+import type { Puja } from '@navdhya/puja/src/domain/Puja';
+import type { PujaId } from '@navdhya/puja/src/domain/PujaId';
+import type { PujaCategory } from '@navdhya/puja/src/domain/PujaCategory';
+import type { PujaRepository } from '@navdhya/puja/src/ports/PujaRepository';
+import type { DbClient } from '@infra/database/postgres/client';
 
 // Owns: pujas, categories, rituals. Backed by static catalog until Postgres
 // tables are provisioned; the port stays stable either way.

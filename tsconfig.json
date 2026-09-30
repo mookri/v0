@@ -11,7 +11,8 @@
     "baseUrl": ".",
     "paths": {
       "@navdhya/*": ["./packages/*"],
-      "@infra/*": ["./infrastructure/*"]
+      "@infra/*": ["./infrastructure/*"],
+      "@apps/*": ["./apps/*"]
     }
   }
 }

@@ -1,11 +1,11 @@
 import { test, expect } from 'vitest';
-import { isEntitlementUsable, remainingQuantity } from '../../packages/commerce/src/domain/entitlement';
-import { isMembershipActive } from '../../packages/commerce/src/domain/membership';
-import { reserveCredit, consumeHeldCredit } from '../../packages/commerce/src/domain/credit';
-import { rebuildWalletBalance, canSpend } from '../../packages/commerce/src/domain/wallet';
-import { redeemGiftCard } from '../../packages/commerce/src/domain/gift-card';
-import { rebuildPointsBalance, canQualifyReferral } from '../../packages/commerce/src/domain/loyalty';
-import { resolveCommerceDecision, BENEFIT_APPLICATION_ORDER } from '../../packages/commerce/src/application/commerce-context';
+import { isEntitlementUsable, remainingQuantity } from '@navdhya/commerce/src/domain/entitlement';
+import { isMembershipActive } from '@navdhya/commerce/src/domain/membership';
+import { reserveCredit, consumeHeldCredit } from '@navdhya/commerce/src/domain/credit';
+import { rebuildWalletBalance, canSpend } from '@navdhya/commerce/src/domain/wallet';
+import { redeemGiftCard } from '@navdhya/commerce/src/domain/gift-card';
+import { rebuildPointsBalance, canQualifyReferral } from '@navdhya/commerce/src/domain/loyalty';
+import { resolveCommerceDecision, BENEFIT_APPLICATION_ORDER } from '@navdhya/commerce/src/application/commerce-context';
 
 const NOW = '2026-09-30T00:00:00.000Z';
 const INR = 'INR';

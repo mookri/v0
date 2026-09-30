@@ -1,6 +1,6 @@
-import { BookingItem } from '../domain/BookingItem';
-import { BookingSchedule } from '../domain/BookingSchedule';
-import { BookingCustomer } from '../domain/BookingCustomer';
+import { BookingItem } from '@navdhya/booking/src/domain/BookingItem';
+import { BookingSchedule } from '@navdhya/booking/src/domain/BookingSchedule';
+import { BookingCustomer } from '@navdhya/booking/src/domain/BookingCustomer';
 
 export interface CreateBookingInput {
   customer: BookingCustomer;

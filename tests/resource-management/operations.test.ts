@@ -1,9 +1,9 @@
 import { test, expect } from 'vitest';
-import { availableOf, projectBalance } from '../../packages/resource-management/src/domain/inventory';
-import { reserveStock, buildResourcePlan } from '../../packages/resource-management/src/application/inventory';
-import { isReservationLive, consumptionVariance } from '../../packages/resource-management/src/domain/reservation';
-import { recipeActive } from '../../packages/resource-management/src/domain/recipe';
-import { belowReorderPoint } from '../../packages/resource-management/src/domain/procurement';
+import { availableOf, projectBalance } from '@navdhya/resource-management/src/domain/inventory';
+import { reserveStock, buildResourcePlan } from '@navdhya/resource-management/src/application/inventory';
+import { isReservationLive, consumptionVariance } from '@navdhya/resource-management/src/domain/reservation';
+import { recipeActive } from '@navdhya/resource-management/src/domain/recipe';
+import { belowReorderPoint } from '@navdhya/resource-management/src/domain/procurement';
 
 const NOW = '2026-09-30T00:00:00.000Z';
 

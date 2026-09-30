@@ -15,7 +15,7 @@ import type {
   AdLayout,
   PricingModel,
   AdapterType,
-} from '../core/types';
+} from '@/components/ad-network/core/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Base Adapter Interface

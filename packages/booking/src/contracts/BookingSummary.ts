@@ -1,5 +1,5 @@
-import { BookingId } from '../domain/BookingId';
-import { BookingStatus } from '../domain/BookingStatus';
+import { BookingId } from '@navdhya/booking/src/domain/BookingId';
+import { BookingStatus } from '@navdhya/booking/src/domain/BookingStatus';
 
 export interface BookingSummary {
   id: BookingId;

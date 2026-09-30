@@ -1,1 +1,1 @@
-export type { Placement } from '../domain/placement/Placement';
+export type { Placement } from '@navdhya/ads/src/domain/placement/Placement';

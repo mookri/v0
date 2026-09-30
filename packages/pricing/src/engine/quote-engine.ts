@@ -1,7 +1,7 @@
-import { MoneyMinor, add } from '../domain/MoneyMinor';
-import { Quote, QuoteLine, quoteTotals, assertQuoteValid } from '../domain/Quote';
-import { Promotion, promotionEligible, promotionDiscount, selectPromotions } from '../promotions/promotion-engine';
-import { TaxRule, applicableTaxRule, calculateTax } from '../tax/tax-engine';
+import { MoneyMinor, add } from '@navdhya/pricing/src/domain/MoneyMinor';
+import { Quote, QuoteLine, quoteTotals, assertQuoteValid } from '@navdhya/pricing/src/domain/Quote';
+import { Promotion, promotionEligible, promotionDiscount, selectPromotions } from '@navdhya/pricing/src/promotions/promotion-engine';
+import { TaxRule, applicableTaxRule, calculateTax } from '@navdhya/pricing/src/tax/tax-engine';
 
 export interface QuoteEngineInput {
   quoteId: string;

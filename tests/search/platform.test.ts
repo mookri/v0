@@ -1,12 +1,12 @@
 import { test, expect } from 'vitest';
-import { normalizeQueryText } from '../../packages/search/src/domain/CanonicalQuery';
-import { isEligible } from '../../packages/search/src/domain/SearchDocument';
-import { expandSynonyms, suggestCorrection } from '../../packages/search/src/domain/Synonyms';
-import { scoreDocument, rankDeterministic, DEFAULT_RANKING_POLICY } from '../../packages/search/src/ranking/ranking';
-import { shouldApplyIndexEvent } from '../../packages/search/src/ports/SearchEngine';
-import { emptyResult } from '../../packages/search/src/domain/SearchResultContract';
-import { composeSurface } from '../../packages/discovery/src/index';
-import { InMemorySearchEngine } from '../../infrastructure/search/InMemorySearchEngine';
+import { normalizeQueryText } from '@navdhya/search/src/domain/CanonicalQuery';
+import { isEligible } from '@navdhya/search/src/domain/SearchDocument';
+import { expandSynonyms, suggestCorrection } from '@navdhya/search/src/domain/Synonyms';
+import { scoreDocument, rankDeterministic, DEFAULT_RANKING_POLICY } from '@navdhya/search/src/ranking/ranking';
+import { shouldApplyIndexEvent } from '@navdhya/search/src/ports/SearchEngine';
+import { emptyResult } from '@navdhya/search/src/domain/SearchResultContract';
+import { composeSurface } from '@navdhya/discovery/src/index';
+import { InMemorySearchEngine } from '@infra/search/InMemorySearchEngine';
 
 const doc = (over: Record<string, unknown> = {}) => ({
   id: 'p1',

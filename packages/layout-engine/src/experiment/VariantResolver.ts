@@ -1,4 +1,4 @@
-import { LayoutContext } from '../core/LayoutContext';
+import { LayoutContext } from '@navdhya/layout-engine/src/core/LayoutContext';
 
 // Engine consumes assignments; it never runs hashing/experiment platform logic.
 export function resolveVariant(ctx: LayoutContext, experimentId: string): string | undefined {

@@ -1,7 +1,7 @@
-import { BookingRepository } from '../ports/BookingRepository';
-import { BookingId } from '../domain/BookingId';
-import { BookingSchedule } from '../domain/BookingSchedule';
-import { canReschedule } from '../domain/booking-rules';
+import { BookingRepository } from '@navdhya/booking/src/ports/BookingRepository';
+import { BookingId } from '@navdhya/booking/src/domain/BookingId';
+import { BookingSchedule } from '@navdhya/booking/src/domain/BookingSchedule';
+import { canReschedule } from '@navdhya/booking/src/domain/booking-rules';
 
 export async function rescheduleBooking(
   repo: BookingRepository,

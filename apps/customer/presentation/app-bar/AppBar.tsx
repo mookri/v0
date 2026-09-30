@@ -1,4 +1,4 @@
-import { AppBarConfig } from '../shells/shell-contract';
+import { AppBarConfig } from '@/presentation/shells/shell-contract';
 
 export function AppBar({ config }: { config: AppBarConfig }) {
   return (

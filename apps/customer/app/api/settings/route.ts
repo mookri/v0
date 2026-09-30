@@ -1,6 +1,6 @@
-import { newRequestId, ok, err } from '../../../application/api-envelope';
-import { anonymousContext } from '../../../application/request-context';
-import { customerSettingsSections } from '../../../application/settings/settings';
+import { newRequestId, ok, err } from '@/application/api-envelope';
+import { anonymousContext } from '@/application/request-context';
+import { customerSettingsSections } from '@/application/settings/settings';
 
 export async function GET() {
   const requestId = newRequestId();

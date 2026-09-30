@@ -1,4 +1,4 @@
-import type { FrequencyStore } from '../../../packages/ads/src/ports/FrequencyStore';
+import type { FrequencyStore } from '@infra/packages/ads/src/ports/FrequencyStore';
 
 export class MemoryFrequencyStore implements FrequencyStore {
   private readonly counts = new Map<string, number>();

@@ -1,4 +1,4 @@
-import type { UserSummary } from '../../../../packages/user/src/contracts/UserSummary';
+import type { UserSummary } from '@navdhya/user/src/contracts/UserSummary';
 
 export interface CustomerProfileViewModel {
   id: string;

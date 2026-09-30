@@ -1,8 +1,8 @@
 import { test, expect } from 'vitest';
-import { resolveLayout } from '../../packages/layout-engine/src/resolver/LayoutResolver';
-import { resolveLayoutContext } from '../../packages/layout-engine/src/resolver/ContextResolver';
-import { webPolicies } from '../../apps/web/presentation/layout-config/web';
-import { customerPolicies } from '../../apps/web/presentation/layout-config/customer';
+import { resolveLayout } from '@navdhya/layout-engine/src/resolver/LayoutResolver';
+import { resolveLayoutContext } from '@navdhya/layout-engine/src/resolver/ContextResolver';
+import { webPolicies } from '@apps/web/presentation/layout-config/web';
+import { customerPolicies } from '@apps/web/presentation/layout-config/customer';
 
 const baseRoute = { id: 'home', category: 'content', intent: 'view' };
 const locale = { language: 'en' };

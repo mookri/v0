@@ -1,4 +1,4 @@
-import { Price } from '../domain/Price';
+import { Price } from '@navdhya/pricing/src/domain/Price';
 
 export interface PriceQuote {
   quoteId: string;

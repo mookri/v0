@@ -1,5 +1,5 @@
-import { LayoutContext } from '../core/LayoutContext';
-import { Policy } from '../policy/Policy';
+import { LayoutContext } from '@navdhya/layout-engine/src/core/LayoutContext';
+import { Policy } from '@navdhya/layout-engine/src/policy/Policy';
 import { resolveLayoutContext, RawRequestInput } from './ContextResolver';
 import { resolveLayout, DecisionExplanation } from './LayoutResolver';
 

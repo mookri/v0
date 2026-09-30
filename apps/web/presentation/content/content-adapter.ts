@@ -1,4 +1,4 @@
-import type { ContentDocument } from '../../../../packages/content/src/domain/ContentDocument';
+import type { ContentDocument } from '@navdhya/content/src/domain/ContentDocument';
 
 // Source corpus stays at apps/web/content; this adapter maps raw JSON rows
 // into the canonical ContentDocument without mutating the source.

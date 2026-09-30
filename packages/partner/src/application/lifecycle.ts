@@ -1,4 +1,4 @@
-import { Partner, PartnerStatus } from '../domain/partner';
+import { Partner, PartnerStatus } from '@navdhya/partner/src/domain/partner';
 
 export interface PartnerRepository {
   findById(id: string): Promise<Partner | null>;

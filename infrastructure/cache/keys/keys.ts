@@ -1,4 +1,4 @@
-import { cacheKey } from '../../../packages/contracts/src/common/cache';
+import { cacheKey } from '@navdhya/contracts/src/common/cache';
 
 export const BookingCacheKeys = {
   booking: (id: string) => cacheKey('booking', 'v1', id),

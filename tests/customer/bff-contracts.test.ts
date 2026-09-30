@@ -1,7 +1,7 @@
 import { test, expect } from 'vitest';
-import { ok, err } from '../../apps/customer/application/api-envelope';
-import { anonymousContext } from '../../apps/customer/application/request-context';
-import { apiRoutes } from '../../apps/customer/application/api-routes';
+import { ok, err } from '@apps/customer/application/api-envelope';
+import { anonymousContext } from '@apps/customer/application/request-context';
+import { apiRoutes } from '@apps/customer/application/api-routes';
 
 test('error envelope never leaks internals', () => {
   const e = err('BOOKING_NOT_FOUND', 'Booking could not be found.', 'req1');

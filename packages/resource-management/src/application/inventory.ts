@@ -1,6 +1,6 @@
-import { StockPosition, availableOf } from '../domain/inventory';
-import { InventoryReservation } from '../domain/reservation';
-import { FulfillmentRecipe, FulfillmentResourcePlan, recipeActive } from '../domain/recipe';
+import { StockPosition, availableOf } from '@navdhya/resource-management/src/domain/inventory';
+import { InventoryReservation } from '@navdhya/resource-management/src/domain/reservation';
+import { FulfillmentRecipe, FulfillmentResourcePlan, recipeActive } from '@navdhya/resource-management/src/domain/recipe';
 
 export interface StockStore {
   get(itemId: string, locationId: string): Promise<StockPosition | null>;

@@ -1,9 +1,9 @@
 import { test, expect } from 'vitest';
-import { canTransitionCase, SupportCase } from '../../packages/support/src/domain/case';
-import { visibleToCustomer, visibleToPartner } from '../../packages/support/src/domain/conversation';
-import { computeSlaDue, isSlaBreached } from '../../packages/support/src/domain/tasks';
-import { transitionCase, customerOwnsCase } from '../../packages/support/src/application/cases';
-import { canTransitionDispute } from '../../packages/support/src/dispute/dispute';
+import { canTransitionCase, SupportCase } from '@navdhya/support/src/domain/case';
+import { visibleToCustomer, visibleToPartner } from '@navdhya/support/src/domain/conversation';
+import { computeSlaDue, isSlaBreached } from '@navdhya/support/src/domain/tasks';
+import { transitionCase, customerOwnsCase } from '@navdhya/support/src/application/cases';
+import { canTransitionDispute } from '@navdhya/support/src/dispute/dispute';
 
 const kase = (over: Partial<SupportCase> = {}): SupportCase => ({
   id: 'c1', reference: 'NAV-1024', type: 'COMPLAINT', category: 'BOOKING',

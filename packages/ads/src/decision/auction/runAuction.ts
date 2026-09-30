@@ -1,4 +1,4 @@
-import { ScoredCandidate } from '../ranking/rankCandidates';
+import { ScoredCandidate } from '@navdhya/ads/src/decision/ranking/rankCandidates';
 
 // First-price, deterministic: highest score wins. Ties break by campaign id.
 export function runAuction(ranked: ScoredCandidate[]): ScoredCandidate | null {

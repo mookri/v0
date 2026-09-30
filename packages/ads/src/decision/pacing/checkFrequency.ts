@@ -1,4 +1,4 @@
-import { FrequencyStore } from '../../ports/FrequencyStore';
+import { FrequencyStore } from '@navdhya/ads/src/ports/FrequencyStore';
 
 export async function checkFrequency(
   store: FrequencyStore,

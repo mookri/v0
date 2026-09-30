@@ -1,7 +1,7 @@
 import { test, expect } from 'vitest';
-import { customerRoutes, routeById } from '../../apps/customer/application/routes';
-import { bookingSection } from '../../packages/booking/src/ui/booking-display';
-import { analyticsEvent, CUSTOMER_EVENTS } from '../../apps/customer/adapters/analytics/events';
+import { customerRoutes, routeById } from '@apps/customer/application/routes';
+import { bookingSection } from '@navdhya/booking/src/ui/booking-display';
+import { analyticsEvent, CUSTOMER_EVENTS } from '@apps/customer/adapters/analytics/events';
 
 test('route registry covers all customer routes with access + analytics', () => {
   for (const key of ['home', 'bookings', 'bookingDetail', 'discover', 'saved', 'profile', 'notifications', 'settings', 'support']) {

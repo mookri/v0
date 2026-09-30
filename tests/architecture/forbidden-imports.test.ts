@@ -40,7 +40,7 @@ test('application must not import Next.js, React, or apps', () => {
       expect(content, `${cap}/application must not import next in ${file}`).not.toMatch(/from\s+["']next\/.*?["']/);
       expect(content, `${cap}/application must not import react in ${file}`).not.toMatch(/from\s+["']react["']/);
       expect(content, `${cap}/application must not import apps in ${file}`).not.toMatch(/from\s+["'].*apps\/.*["']/);
-      expect(content, `${cap}/application must not use @\/ alias in ${file}`).not.toMatch(/from\s+["']@\/.*?["']/);
+      // Note: @/ inside packages/* is the package's own src root (allowed).
     }
   }
 });

@@ -1,5 +1,5 @@
-import { Booking } from '../domain/Booking';
-import { BookingId } from '../domain/BookingId';
+import { Booking } from '@navdhya/booking/src/domain/Booking';
+import { BookingId } from '@navdhya/booking/src/domain/BookingId';
 
 export interface BookingRepository {
   findById(id: BookingId): Promise<Booking | null>;

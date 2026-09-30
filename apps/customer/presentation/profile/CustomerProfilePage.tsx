@@ -1,4 +1,4 @@
-import { CustomerProfileViewModel } from '../../application/profile/customer-profile';
+import { CustomerProfileViewModel } from '@/application/profile/customer-profile';
 
 export function CustomerProfilePage({ profile, error }: { profile: CustomerProfileViewModel | null; error?: string }) {
   if (error) {

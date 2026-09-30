@@ -1,5 +1,5 @@
 import type React from 'react';
-import { SurfaceRequest } from '../shells/shell-contract';
+import { SurfaceRequest } from '@/presentation/shells/shell-contract';
 
 export function GlobalSurfaceHost({ surfaces }: { surfaces: SurfaceRequest[] }) {
   return (

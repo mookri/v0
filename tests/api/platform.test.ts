@@ -1,7 +1,7 @@
 import { test, expect } from 'vitest';
-import { statusFor } from '../../packages/api-contracts/src/common/envelope';
-import { scopedIdempotencyKey, samePayloadHash } from '../../apps/customer/application/idempotency';
-import { isRetryableStatus } from '../../apps/customer/application/api-policy';
+import { statusFor } from '@navdhya/api-contracts/src/common/envelope';
+import { scopedIdempotencyKey, samePayloadHash } from '@apps/customer/application/idempotency';
+import { isRetryableStatus } from '@apps/customer/application/api-policy';
 
 test('status map is consistent', () => {
   expect(statusFor('BOOKING_NOT_FOUND')).toBe(404);

@@ -1,4 +1,4 @@
-import type { CustomerBookingCard } from '../bookings/list-customer-bookings';
+import type { CustomerBookingCard } from '@/application/bookings/list-customer-bookings';
 
 export interface QuickAction {
   id: string;

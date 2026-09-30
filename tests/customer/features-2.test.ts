@@ -1,14 +1,14 @@
 import { test, expect } from 'vitest';
-import { rescheduleCustomerBooking } from '../../apps/customer/application/bookings/reschedule-customer-booking';
-import { listSavedItems } from '../../apps/customer/application/saved/saved-items';
-import { getDiscoverFeed } from '../../apps/customer/application/discover/discover-feed';
+import { rescheduleCustomerBooking } from '@apps/customer/application/bookings/reschedule-customer-booking';
+import { listSavedItems } from '@apps/customer/application/saved/saved-items';
+import { getDiscoverFeed } from '@apps/customer/application/discover/discover-feed';
 import {
   markNotificationRead,
   resolveRouteReference,
-} from '../../apps/customer/application/notifications/notifications';
-import { customerSettingsSections } from '../../apps/customer/application/settings/settings';
-import { validateSupportRequest } from '../../apps/customer/application/support/support';
-import type { Booking } from '../../packages/booking/src/domain/Booking';
+} from '@apps/customer/application/notifications/notifications';
+import { customerSettingsSections } from '@apps/customer/application/settings/settings';
+import { validateSupportRequest } from '@apps/customer/application/support/support';
+import type { Booking } from '@navdhya/booking/src/domain/Booking';
 
 function booking(over: Partial<Booking> = {}): Booking {
   return {

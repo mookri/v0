@@ -1,5 +1,5 @@
-import { Session, SessionAudience } from '../domain/session';
-import { SessionStore } from '../ports/stores';
+import { Session, SessionAudience } from '@navdhya/identity/src/domain/session';
+import { SessionStore } from '@navdhya/identity/src/ports/stores';
 
 export class MemorySessionStore implements SessionStore {
   private readonly map = new Map<string, Session>();

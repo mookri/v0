@@ -1,5 +1,5 @@
-import { Policy } from '../../../../packages/layout-engine/src/policy/Policy';
-import { PRECEDENCE } from '../../../../packages/layout-engine/src/policy/PolicyRule';
+import { Policy } from '@navdhya/layout-engine/src/policy/Policy';
+import { PRECEDENCE } from '@navdhya/layout-engine/src/policy/PolicyRule';
 
 // Web product policies. viewport=mobile changes regions/layout — never product.
 export const webPolicies: Policy[] = [

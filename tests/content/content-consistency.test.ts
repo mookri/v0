@@ -1,9 +1,9 @@
 import { test, expect } from 'vitest';
-import { toCanonicalDocument } from '../../apps/web/presentation/content/content-adapter';
-import { resolveCanonicalUrl } from '../../packages/seo/src/canonical/resolveCanonical';
-import { resolveMetadata } from '../../packages/seo/src/metadata/resolveMetadata';
-import { buildJsonLd } from '../../packages/seo/src/schema/buildJsonLd';
-import { buildLlmsTxt, AeoDocument } from '../../packages/aeo/src/Aeo';
+import { toCanonicalDocument } from '@apps/web/presentation/content/content-adapter';
+import { resolveCanonicalUrl } from '@navdhya/seo/src/canonical/resolveCanonical';
+import { resolveMetadata } from '@navdhya/seo/src/metadata/resolveMetadata';
+import { buildJsonLd } from '@navdhya/seo/src/schema/buildJsonLd';
+import { buildLlmsTxt, AeoDocument } from '@navdhya/aeo/src/Aeo';
 
 const SITE = 'https://www.navdhya.com';
 

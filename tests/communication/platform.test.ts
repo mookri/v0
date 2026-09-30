@@ -1,9 +1,9 @@
 import { test, expect } from 'vitest';
-import { isChannelAllowed } from '../../packages/notifications/src/domain/notification-preference';
-import { unreadCount } from '../../packages/notifications/src/application/notifications';
-import { renderTemplate, dedupKey, classifyProviderError, backoffMs } from '../../packages/communication/src/domain/templates';
-import { selectChannel, fallbackChannel, routeProvider } from '../../packages/communication/src/orchestration/dispatch';
-import { FakeChannelProvider } from '../../packages/communication/src/adapters/fake-provider';
+import { isChannelAllowed } from '@navdhya/notifications/src/domain/notification-preference';
+import { unreadCount } from '@navdhya/notifications/src/application/notifications';
+import { renderTemplate, dedupKey, classifyProviderError, backoffMs } from '@navdhya/communication/src/domain/templates';
+import { selectChannel, fallbackChannel, routeProvider } from '@navdhya/communication/src/orchestration/dispatch';
+import { FakeChannelProvider } from '@navdhya/communication/src/adapters/fake-provider';
 
 const NOW = '2026-09-30T00:00:00.000Z';
 

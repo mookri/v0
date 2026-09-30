@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { SiteHeader } from '../site-header';
+import { SiteHeader } from '@/components/site-header';
 import '@testing-library/jest-dom';
 
 // Mock next/link

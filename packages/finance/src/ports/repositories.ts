@@ -1,4 +1,4 @@
-import { JournalEntry, JournalReversal } from '../domain/ledger';
+import { JournalEntry, JournalReversal } from '@navdhya/finance/src/domain/ledger';
 
 export interface LedgerRepository {
   save(entry: JournalEntry): Promise<void>;

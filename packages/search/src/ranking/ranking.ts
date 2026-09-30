@@ -1,4 +1,4 @@
-import { SearchDocument } from '../domain/SearchDocument';
+import { SearchDocument } from '@navdhya/search/src/domain/SearchDocument';
 
 export interface RankingFeatures {
   textScore: number;

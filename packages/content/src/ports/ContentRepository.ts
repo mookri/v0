@@ -1,5 +1,5 @@
-import { ContentDocument } from '../domain/ContentDocument';
-import { ContentId } from '../domain/ContentId';
+import { ContentDocument } from '@navdhya/content/src/domain/ContentDocument';
+import { ContentId } from '@navdhya/content/src/domain/ContentId';
 
 export interface ContentRepository {
   findById(id: ContentId): Promise<ContentDocument | null>;

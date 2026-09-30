@@ -1,4 +1,4 @@
-import { Pandit } from '../domain/Pandit';
+import { Pandit } from '@navdhya/pandit/src/domain/Pandit';
 
 export interface PanditDetails {
   pandit: Pandit;

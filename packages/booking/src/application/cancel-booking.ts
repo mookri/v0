@@ -1,6 +1,6 @@
-import { BookingRepository } from '../ports/BookingRepository';
-import { BookingId } from '../domain/BookingId';
-import { canCancel } from '../domain/booking-rules';
+import { BookingRepository } from '@navdhya/booking/src/ports/BookingRepository';
+import { BookingId } from '@navdhya/booking/src/domain/BookingId';
+import { canCancel } from '@navdhya/booking/src/domain/booking-rules';
 
 export async function cancelBooking(repo: BookingRepository, id: BookingId): Promise<void> {
   const booking = await repo.findById(id);

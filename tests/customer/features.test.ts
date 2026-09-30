@@ -1,10 +1,10 @@
 import { test, expect } from 'vitest';
-import { listCustomerBookings } from '../../apps/customer/application/bookings/list-customer-bookings';
-import { authorizeBooking, toCustomerBookingDetails } from '../../apps/customer/application/bookings/get-customer-booking-details';
-import { cancelCustomerBooking } from '../../apps/customer/application/bookings/cancel-customer-booking';
-import { validateProfileUpdate } from '../../apps/customer/application/profile/customer-profile';
-import { getCustomerHome } from '../../apps/customer/application/home/get-customer-home';
-import type { Booking } from '../../packages/booking/src/domain/Booking';
+import { listCustomerBookings } from '@apps/customer/application/bookings/list-customer-bookings';
+import { authorizeBooking, toCustomerBookingDetails } from '@apps/customer/application/bookings/get-customer-booking-details';
+import { cancelCustomerBooking } from '@apps/customer/application/bookings/cancel-customer-booking';
+import { validateProfileUpdate } from '@apps/customer/application/profile/customer-profile';
+import { getCustomerHome } from '@apps/customer/application/home/get-customer-home';
+import type { Booking } from '@navdhya/booking/src/domain/Booking';
 
 function booking(over: Partial<Booking> = {}): Booking {
   return {

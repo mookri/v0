@@ -1,4 +1,4 @@
-import type { ObjectStorage, StoredObject } from '../../../packages/contracts/src/storage/object-storage';
+import type { ObjectStorage, StoredObject } from '@navdhya/contracts/src/storage/object-storage';
 
 export class MemoryObjectStorage implements ObjectStorage {
   private readonly store = new Map<string, Uint8Array>();

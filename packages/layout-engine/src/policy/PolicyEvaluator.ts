@@ -1,4 +1,4 @@
-import { LayoutContext } from '../core/LayoutContext';
+import { LayoutContext } from '@navdhya/layout-engine/src/core/LayoutContext';
 import { Policy, matchesPolicy } from './Policy';
 
 export interface PolicyMatch {

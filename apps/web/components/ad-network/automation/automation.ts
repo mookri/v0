@@ -4,7 +4,7 @@
  * creative rotation, bid management, and campaign lifecycle automation.
  */
 
-import type { Ad, AdRequest, AdEvent, PricingModel, AdPlacement, AdLayout } from '../core/types';
+import type { Ad, AdRequest, AdEvent, PricingModel, AdPlacement, AdLayout } from '@/components/ad-network/core/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DSL Types

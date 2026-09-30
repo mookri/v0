@@ -1,6 +1,6 @@
-import { SearchDocument } from '../../packages/search/src/domain/SearchDocument';
-import { SearchQuery, normalizeQueryText } from '../../packages/search/src/domain/CanonicalQuery';
-import { SearchEngine } from '../../packages/search/src/ports/SearchEngine';
+import { SearchDocument } from '@navdhya/search/src/domain/SearchDocument';
+import { SearchQuery, normalizeQueryText } from '@navdhya/search/src/domain/CanonicalQuery';
+import { SearchEngine } from '@navdhya/search/src/ports/SearchEngine';
 
 // Lexical in-memory engine for local/dev/test. Production providers implement
 // the same SearchEngine port (OpenSearch/Typesense/Meilisearch later).

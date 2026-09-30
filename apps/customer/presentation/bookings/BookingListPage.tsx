@@ -1,4 +1,4 @@
-import { CustomerBookingCard } from '../../application/bookings/list-customer-bookings';
+import { CustomerBookingCard } from '@/application/bookings/list-customer-bookings';
 
 export function BookingListPage({ bookings, error }: { bookings: CustomerBookingCard[]; error?: string }) {
   if (error) {

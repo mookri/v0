@@ -1,5 +1,5 @@
-import type { PaymentGateway } from '../../../packages/contracts/src/payment/gateway';
-import { NoopPaymentGateway } from '../gateways/NoopPaymentGateway';
+import type { PaymentGateway } from '@navdhya/contracts/src/payment/gateway';
+import { NoopPaymentGateway } from '@infra/payments/gateways/NoopPaymentGateway';
 
 export interface PaymentProviderConfig {
   provider: 'noop' | 'razorpay';

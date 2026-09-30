@@ -1,4 +1,4 @@
-import { MoneyMinor } from '../domain/MoneyMinor';
+import { MoneyMinor } from '@navdhya/pricing/src/domain/MoneyMinor';
 
 export interface TaxRule {
   id: string;

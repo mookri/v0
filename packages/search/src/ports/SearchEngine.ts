@@ -1,5 +1,5 @@
-import { SearchDocument } from '../domain/SearchDocument';
-import { SearchQuery } from '../domain/CanonicalQuery';
+import { SearchDocument } from '@navdhya/search/src/domain/SearchDocument';
+import { SearchQuery } from '@navdhya/search/src/domain/CanonicalQuery';
 
 export interface EngineResult {
   documents: SearchDocument[];

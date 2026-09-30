@@ -1,4 +1,4 @@
-const requiredServerEnv = [
+const requiredServerEnv: string[] = [
   // "DATABASE_URL",
   // "SESSION_SIGNING_KEY",
 ];

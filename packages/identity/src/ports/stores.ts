@@ -1,5 +1,5 @@
-import { Identity } from '../domain/identity';
-import { Session, SessionAudience } from '../domain/session';
+import { Identity } from '@navdhya/identity/src/domain/identity';
+import { Session, SessionAudience } from '@navdhya/identity/src/domain/session';
 
 export interface IdentityRepository {
   findById(id: string): Promise<Identity | null>;

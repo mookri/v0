@@ -1,4 +1,4 @@
-import { BookingStatus } from '../domain/BookingStatus';
+import { BookingStatus } from '@navdhya/booking/src/domain/BookingStatus';
 
 export type BookingSection = 'upcoming' | 'active' | 'completed' | 'cancelled';
 

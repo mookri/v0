@@ -1,11 +1,11 @@
 import { test, expect } from 'vitest';
-import { canTransitionPartner } from '../../packages/partner/src/application/lifecycle';
-import { isPartnerWorkEligible } from '../../packages/partner/src/domain/partner';
-import { canSubmitApplication } from '../../packages/partner/src/domain/partner-application';
-import { isPublicProfile } from '../../packages/partner/src/domain/partner-profile';
-import { evaluateReadiness } from '../../packages/partner/src/application/readiness';
-import { isDocumentUsable } from '../../packages/partner/src/verification/verification';
-import { acceptOffer, rejectOffer } from '../../apps/partner/application/assignments';
+import { canTransitionPartner } from '@navdhya/partner/src/application/lifecycle';
+import { isPartnerWorkEligible } from '@navdhya/partner/src/domain/partner';
+import { canSubmitApplication } from '@navdhya/partner/src/domain/partner-application';
+import { isPublicProfile } from '@navdhya/partner/src/domain/partner-profile';
+import { evaluateReadiness } from '@navdhya/partner/src/application/readiness';
+import { isDocumentUsable } from '@navdhya/partner/src/verification/verification';
+import { acceptOffer, rejectOffer } from '@apps/partner/application/assignments';
 
 const NOW = '2026-09-30T00:00:00.000Z';
 

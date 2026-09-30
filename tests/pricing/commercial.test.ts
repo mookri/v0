@@ -1,11 +1,11 @@
 import { test, expect } from 'vitest';
-import { createQuote } from '../../packages/pricing/src/engine/quote-engine';
-import { redeemCoupon, Coupon, RedemptionLedger } from '../../packages/pricing/src/promotions/coupon';
-import { promotionEligible } from '../../packages/pricing/src/promotions/promotion-engine';
-import { applicableTaxRule } from '../../packages/pricing/src/tax/tax-engine';
-import { assertQuoteValid } from '../../packages/pricing/src/domain/Quote';
-import { toCustomerQuote } from '../../packages/pricing/src/contracts/QuoteResponse';
-import { add, percentOf } from '../../packages/pricing/src/domain/MoneyMinor';
+import { createQuote } from '@navdhya/pricing/src/engine/quote-engine';
+import { redeemCoupon, Coupon, RedemptionLedger } from '@navdhya/pricing/src/promotions/coupon';
+import { promotionEligible } from '@navdhya/pricing/src/promotions/promotion-engine';
+import { applicableTaxRule } from '@navdhya/pricing/src/tax/tax-engine';
+import { assertQuoteValid } from '@navdhya/pricing/src/domain/Quote';
+import { toCustomerQuote } from '@navdhya/pricing/src/contracts/QuoteResponse';
+import { add, percentOf } from '@navdhya/pricing/src/domain/MoneyMinor';
 
 const NOW = '2026-10-01T00:00:00.000Z';
 const promo = (over: Record<string, unknown> = {}) => ({

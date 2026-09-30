@@ -1,5 +1,5 @@
-import { PRODUCT_ID } from '../config/application';
-import { ProductionSessionAdapter } from '../adapters/session';
+import { PRODUCT_ID } from '@/config/application';
+import { ProductionSessionAdapter } from '@/adapters/session';
 
 export interface CustomerPlatform {
   product: typeof PRODUCT_ID;

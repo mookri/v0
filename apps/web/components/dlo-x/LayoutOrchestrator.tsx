@@ -2,11 +2,11 @@
 'use server'
 
 import { ReactNode } from 'react';
-import { resolveLayoutTree } from '../../lib/dlo-x/layout-resolver';
-import { RequestContext, ResolvedLayout } from '../../lib/dlo-x/types';
-import { layoutRegistry } from '../../lib/dlo-x/layout-registry';
-import { TelemetryService } from '../../lib/dlo-x/telemetry';
-import { validateShellName, validatePolicyId, validatePath } from '../../lib/dlo-x/security';
+import { resolveLayoutTree } from '@/lib/dlo-x/layout-resolver';
+import { RequestContext, ResolvedLayout } from '@/lib/dlo-x/types';
+import { layoutRegistry } from '@/lib/dlo-x/layout-registry';
+import { TelemetryService } from '@/lib/dlo-x/telemetry';
+import { validateShellName, validatePolicyId, validatePath } from '@/lib/dlo-x/security';
 
 interface LayoutOrchestratorProps {
   children: ReactNode;

@@ -1,6 +1,6 @@
-import { CustomerProfile } from '../domain/profile';
-import { Preference, InferredPreference } from '../domain/preferences';
-import { SavedItem } from '../domain/saved';
+import { CustomerProfile } from '@navdhya/customer-profile/src/domain/profile';
+import { Preference, InferredPreference } from '@navdhya/customer-profile/src/domain/preferences';
+import { SavedItem } from '@navdhya/customer-profile/src/domain/saved';
 
 export interface ProfileRepository {
   get(customerId: string): Promise<CustomerProfile | null>;

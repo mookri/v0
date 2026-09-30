@@ -1,7 +1,7 @@
-import { SessionAudience } from '../domain/session';
-import { validateHandoff } from '../domain/handoff';
-import { HandoffStore } from '../ports/stores';
-import { hashCode } from '../application/sessions';
+import { SessionAudience } from '@navdhya/identity/src/domain/session';
+import { validateHandoff } from '@navdhya/identity/src/domain/handoff';
+import { HandoffStore } from '@navdhya/identity/src/ports/stores';
+import { hashCode } from '@navdhya/identity/src/application/sessions';
 
 export interface IdentityGateway {
   getSession(sessionId: string): Promise<{ sessionId: string; userId: string; audience: SessionAudience } | null>;

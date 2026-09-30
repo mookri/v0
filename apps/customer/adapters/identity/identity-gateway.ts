@@ -1,6 +1,6 @@
-import type { SessionAudience } from '../../../../packages/identity/src/domain/session';
-import { MemoryHandoffStore } from '../../../../packages/identity/src/adapters/memory';
-import { LocalIdentityGateway } from '../../../../packages/identity/src/adapters/local-gateway';
+import type { SessionAudience } from '@navdhya/identity/src/domain/session';
+import { MemoryHandoffStore } from '@navdhya/identity/src/adapters/memory';
+import { LocalIdentityGateway } from '@navdhya/identity/src/adapters/local-gateway';
 
 export interface HandoffRequest {
   subject: string;

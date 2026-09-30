@@ -1,4 +1,4 @@
-import { CustomerNotification, resolveRouteReference } from '../../application/notifications/notifications';
+import { CustomerNotification, resolveRouteReference } from '@/application/notifications/notifications';
 
 export function NotificationsPageView({ items, error }: { items: CustomerNotification[]; error?: string }) {
   if (error) {

@@ -1,6 +1,6 @@
-import { Review } from '../domain/review';
-import { isValidRating } from '../domain/rating';
-import { evaluateEligibility } from '../eligibility/eligibility';
+import { Review } from '@navdhya/feedback/src/domain/review';
+import { isValidRating } from '@navdhya/feedback/src/domain/rating';
+import { evaluateEligibility } from '@navdhya/feedback/src/eligibility/eligibility';
 
 export interface ReviewRepository {
   findById(id: string): Promise<Review | null>;

@@ -3,7 +3,7 @@
 
 import { motion, useAnimation } from "framer-motion"
 import { useEffect } from "react"
-import { useLoading } from "../context/LoadingContext"
+import { useLoading } from "@navdhya/design-system/src/context/LoadingContext"
 
 export function ProgressBar() {
   const { isLoading } = useLoading()

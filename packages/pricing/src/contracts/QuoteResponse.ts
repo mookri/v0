@@ -1,4 +1,4 @@
-import { Quote, QuoteLine } from '../domain/Quote';
+import { Quote, QuoteLine } from '@navdhya/pricing/src/domain/Quote';
 
 export interface CustomerQuoteResponse {
   quoteId: string;

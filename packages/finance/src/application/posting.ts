@@ -1,4 +1,4 @@
-import { JournalEntry, isBalanced } from '../domain/ledger';
+import { JournalEntry, isBalanced } from '@navdhya/finance/src/domain/ledger';
 
 export interface PostingProposal {
   sourceEventId: string;

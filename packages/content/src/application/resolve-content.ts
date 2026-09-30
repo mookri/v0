@@ -1,6 +1,6 @@
-import { ContentRepository } from '../ports/ContentRepository';
-import { ContentDocument } from '../domain/ContentDocument';
-import { isPublic } from '../domain/content-rules';
+import { ContentRepository } from '@navdhya/content/src/ports/ContentRepository';
+import { ContentDocument } from '@navdhya/content/src/domain/ContentDocument';
+import { isPublic } from '@navdhya/content/src/domain/content-rules';
 
 export async function resolveContent(
   repo: ContentRepository,

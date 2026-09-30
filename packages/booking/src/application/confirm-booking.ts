@@ -1,6 +1,6 @@
-import { BookingRepository } from '../ports/BookingRepository';
-import { BookingId } from '../domain/BookingId';
-import { canTransition } from '../domain/booking-rules';
+import { BookingRepository } from '@navdhya/booking/src/ports/BookingRepository';
+import { BookingId } from '@navdhya/booking/src/domain/BookingId';
+import { canTransition } from '@navdhya/booking/src/domain/booking-rules';
 
 export async function confirmBooking(repo: BookingRepository, id: BookingId): Promise<void> {
   const booking = await repo.findById(id);

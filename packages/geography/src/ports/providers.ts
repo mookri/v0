@@ -1,4 +1,4 @@
-import { Address, NormalizedAddress, LocationReference } from '../domain/location';
+import { Address, NormalizedAddress, LocationReference } from '@navdhya/geography/src/domain/location';
 
 export interface GeocodingProvider {
   geocode(address: NormalizedAddress): Promise<{ latitude: number; longitude: number; precision: string } | null>;

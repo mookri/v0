@@ -1,5 +1,5 @@
-import { Policy } from '../../../../packages/layout-engine/src/policy/Policy';
-import { PRECEDENCE } from '../../../../packages/layout-engine/src/policy/PolicyRule';
+import { Policy } from '@navdhya/layout-engine/src/policy/Policy';
+import { PRECEDENCE } from '@navdhya/layout-engine/src/policy/PolicyRule';
 
 // Proves product=customer resolves independently without building apps/customer yet.
 // A customer on navdhya.com still gets web (see decision tests); only product=customer gets customer-app.

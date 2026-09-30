@@ -1,17 +1,20 @@
 {
-    "extends":  "../../tsconfig.json",
-    "compilerOptions":  {
-                            "baseUrl":  ".",
-                            "paths":  {
-                                          "@navdhya/config/*":  [
-                                                                    "./src/*"
-                                                                ],
-                                          "@/*":  [
-                                                      "./src/*"
-                                                  ]
-                                      }
-                        },
-    "include":  [
-                    "src"
-                ]
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ],
+            "@navdhya/*": [
+                "../../packages/*"
+            ],
+            "@infra/*": [
+                "../../infrastructure/*"
+            ]
+        }
+    },
+    "include": [
+        "src"
+    ]
 }

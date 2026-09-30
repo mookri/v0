@@ -1,6 +1,6 @@
-import { PricingRepository } from '../ports/PricingRepository';
-import { PricingContext } from '../contracts/PricingContext';
-import { PriceQuote } from '../contracts/PriceQuote';
+import { PricingRepository } from '@navdhya/pricing/src/ports/PricingRepository';
+import { PricingContext } from '@navdhya/pricing/src/contracts/PricingContext';
+import { PriceQuote } from '@navdhya/pricing/src/contracts/PriceQuote';
 
 export async function calculateQuote(repo: PricingRepository, ctx: PricingContext): Promise<PriceQuote> {
   const base = await repo.getBasePrice(ctx.pujaId);

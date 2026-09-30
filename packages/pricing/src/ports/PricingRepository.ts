@@ -1,4 +1,4 @@
-import { PriceRule } from '../domain/PriceRule';
+import { PriceRule } from '@navdhya/pricing/src/domain/PriceRule';
 
 export interface PricingRepository {
   getBasePrice(pujaId: string): Promise<number>;

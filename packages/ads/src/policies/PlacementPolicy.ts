@@ -1,4 +1,4 @@
-import { Campaign } from '../domain/campaign/Campaign';
+import { Campaign } from '@navdhya/ads/src/domain/campaign/Campaign';
 
 export interface ProductAdPolicy {
   product: string;

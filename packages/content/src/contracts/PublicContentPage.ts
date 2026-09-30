@@ -1,6 +1,6 @@
-import { ContentDocument } from '../domain/ContentDocument';
+import { ContentDocument } from '@navdhya/content/src/domain/ContentDocument';
 import { ContentSummary } from './ContentSummary';
-import { EntityReference } from '../domain/ContentDocument';
+import { EntityReference } from '@navdhya/content/src/domain/ContentDocument';
 
 export interface Breadcrumb {
   label: string;

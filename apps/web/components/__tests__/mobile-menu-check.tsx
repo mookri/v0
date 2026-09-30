@@ -1,7 +1,7 @@
 // Simple test to verify mobile menu structure
 import React from 'react';
 import { render } from '@testing-library/react';
-import { SiteHeader } from '../site-header';
+import { SiteHeader } from '@/components/site-header';
 
 // Mock next/link
 jest.mock('next/link', () => {

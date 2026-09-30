@@ -1,7 +1,7 @@
-import type { Booking } from '../../../packages/booking/src/domain/Booking';
-import type { BookingId } from '../../../packages/booking/src/domain/BookingId';
-import type { BookingRepository } from '../../../packages/booking/src/ports/BookingRepository';
-import type { DbClient } from '../client';
+import type { Booking } from '@infra/packages/booking/src/domain/Booking';
+import type { BookingId } from '@infra/packages/booking/src/domain/BookingId';
+import type { BookingRepository } from '@infra/packages/booking/src/ports/BookingRepository';
+import type { DbClient } from '@infra/database/postgres/client';
 
 // Capability-owned tables: bookings, booking_items, booking_status_history.
 // No cross-capability JOIN writes here — Puja/Pandit/Pricing come via contracts.

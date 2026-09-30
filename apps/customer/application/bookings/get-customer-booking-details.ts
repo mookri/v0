@@ -1,5 +1,5 @@
-import type { Booking } from '../../../../packages/booking/src/domain/Booking';
-import { getBookingActions } from '../../../../packages/booking/src/domain/booking-rules';
+import type { Booking } from '@navdhya/booking/src/domain/Booking';
+import { getBookingActions } from '@navdhya/booking/src/domain/booking-rules';
 
 export type BookingAction = 'cancel' | 'reschedule' | 'confirm' | 'view-puja' | 'contact-support' | 'book-again';
 

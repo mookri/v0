@@ -1,4 +1,4 @@
-import { Review, ReviewStatus } from '../domain/review';
+import { Review, ReviewStatus } from '@navdhya/feedback/src/domain/review';
 
 export type ModerationReason =
   | 'SPAM' | 'ABUSE' | 'PERSONAL_DATA' | 'OFF_TOPIC' | 'MANIPULATION' | 'DUPLICATE' | 'POLICY_VIOLATION';

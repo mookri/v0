@@ -1,5 +1,5 @@
-import { CommunicationChannel } from '../domain/message';
-import { ChannelProvider } from '../ports/providers';
+import { CommunicationChannel } from '@navdhya/communication/src/domain/message';
+import { ChannelProvider } from '@navdhya/communication/src/ports/providers';
 
 // Deterministic fake for CI: no network, scripted outcomes per channel.
 export class FakeChannelProvider implements ChannelProvider {

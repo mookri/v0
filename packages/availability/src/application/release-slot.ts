@@ -1,5 +1,5 @@
-import { AvailabilityRepository } from '../ports/AvailabilityRepository';
-import { SlotId } from '../domain/SlotId';
+import { AvailabilityRepository } from '@navdhya/availability/src/ports/AvailabilityRepository';
+import { SlotId } from '@navdhya/availability/src/domain/SlotId';
 
 export async function releaseSlot(repo: AvailabilityRepository, id: SlotId): Promise<void> {
   const slot = await repo.findById(id);

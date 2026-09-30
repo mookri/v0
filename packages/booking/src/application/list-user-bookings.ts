@@ -1,5 +1,5 @@
-import { BookingRepository } from '../ports/BookingRepository';
-import { BookingSummary } from '../contracts/BookingSummary';
+import { BookingRepository } from '@navdhya/booking/src/ports/BookingRepository';
+import { BookingSummary } from '@navdhya/booking/src/contracts/BookingSummary';
 
 export async function listUserBookings(repo: BookingRepository, userId: string): Promise<BookingSummary[]> {
   const bookings = await repo.listByUser(userId);

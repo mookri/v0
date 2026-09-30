@@ -1,4 +1,4 @@
-import { acceptOffer } from '../../../../../application/assignments';
+import { acceptOffer } from '@/application/assignments';
 
 function err(code: string, message: string, requestId: string) {
   return { error: { code, message, requestId } };

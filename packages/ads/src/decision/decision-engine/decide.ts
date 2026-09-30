@@ -1,9 +1,9 @@
-import { AdRequest } from '../../contracts/AdRequest';
-import { AdDecision } from '../../contracts/AdDecision';
-import { CampaignCandidate } from '../Candidate';
-import { checkEligibility } from '../eligibility/checkEligibility';
-import { rankCandidates } from '../ranking/rankCandidates';
-import { runAuction } from '../auction/runAuction';
+import { AdRequest } from '@navdhya/ads/src/contracts/AdRequest';
+import { AdDecision } from '@navdhya/ads/src/contracts/AdDecision';
+import { CampaignCandidate } from '@navdhya/ads/src/decision/Candidate';
+import { checkEligibility } from '@navdhya/ads/src/decision/eligibility/checkEligibility';
+import { rankCandidates } from '@navdhya/ads/src/decision/ranking/rankCandidates';
+import { runAuction } from '@navdhya/ads/src/decision/auction/runAuction';
 
 export interface DecisionDeps {
   placementFormats: string[];

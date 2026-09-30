@@ -1,5 +1,5 @@
-import { CommunicationChannel } from '../domain/message';
-import { ChannelProvider } from '../ports/providers';
+import { CommunicationChannel } from '@navdhya/communication/src/domain/message';
+import { ChannelProvider } from '@navdhya/communication/src/ports/providers';
 
 export interface OrchestratedDispatch {
   channel: CommunicationChannel;

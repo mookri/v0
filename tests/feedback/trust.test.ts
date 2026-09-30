@@ -1,10 +1,10 @@
 import { test, expect } from 'vitest';
-import { isValidRating } from '../../packages/feedback/src/domain/rating';
-import { sanitizeBody, isPublicReview } from '../../packages/feedback/src/domain/review';
-import { evaluateEligibility } from '../../packages/feedback/src/eligibility/eligibility';
-import { applyModeration, restoreReview } from '../../packages/feedback/src/moderation/moderation';
-import { emptyAggregate, addRating, averageRating, isBadgeActive } from '../../packages/feedback/src/quality/quality';
-import { submitReview, ReviewRepository } from '../../packages/feedback/src/application/reviews';
+import { isValidRating } from '@navdhya/feedback/src/domain/rating';
+import { sanitizeBody, isPublicReview } from '@navdhya/feedback/src/domain/review';
+import { evaluateEligibility } from '@navdhya/feedback/src/eligibility/eligibility';
+import { applyModeration, restoreReview } from '@navdhya/feedback/src/moderation/moderation';
+import { emptyAggregate, addRating, averageRating, isBadgeActive } from '@navdhya/feedback/src/quality/quality';
+import { submitReview, ReviewRepository } from '@navdhya/feedback/src/application/reviews';
 
 const NOW = '2026-09-30T00:00:00.000Z';
 

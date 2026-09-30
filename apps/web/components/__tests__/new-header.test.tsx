@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { SiteHeader } from '../site-header';
+import { SiteHeader } from '@/components/site-header';
 
 // Mock next/link
 jest.mock('next/link', () => {

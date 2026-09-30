@@ -1,1 +1,1 @@
-export type { BookingStatus } from '../domain/BookingStatus';
+export type { BookingStatus } from '@navdhya/booking/src/domain/BookingStatus';

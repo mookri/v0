@@ -1,6 +1,6 @@
-import { ProfileRepository, SavedRepository, PreferenceRepository } from '../ports/repositories';
-import { resolveLifecycle } from '../domain/lifecycle';
-import { CustomerSelfView } from '../ports/repositories';
+import { ProfileRepository, SavedRepository, PreferenceRepository } from '@navdhya/customer-profile/src/ports/repositories';
+import { resolveLifecycle } from '@navdhya/customer-profile/src/domain/lifecycle';
+import { CustomerSelfView } from '@navdhya/customer-profile/src/ports/repositories';
 
 // Parallel fan-out with per-section degradation: one source failing never fails the view.
 export async function composeSelfView(deps: {

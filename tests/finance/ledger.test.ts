@@ -1,11 +1,11 @@
 import { test, expect } from 'vitest';
-import { validatePosting, journalTotals } from '../../packages/finance/src/domain/ledger';
-import { invoiceTotals } from '../../packages/finance/src/domain/invoice';
-import { allocatePayment } from '../../packages/finance/src/domain/receivable';
-import { holdPayable, releasePayable, validatePayout } from '../../packages/finance/src/domain/payable';
-import { canRefund, consumeCredit, cumulativeRefunded } from '../../packages/finance/src/domain/refund';
-import { reconcileAmounts } from '../../packages/finance/src/domain/reconciliation';
-import { postJournalEntry } from '../../packages/finance/src/application/posting';
+import { validatePosting, journalTotals } from '@navdhya/finance/src/domain/ledger';
+import { invoiceTotals } from '@navdhya/finance/src/domain/invoice';
+import { allocatePayment } from '@navdhya/finance/src/domain/receivable';
+import { holdPayable, releasePayable, validatePayout } from '@navdhya/finance/src/domain/payable';
+import { canRefund, consumeCredit, cumulativeRefunded } from '@navdhya/finance/src/domain/refund';
+import { reconcileAmounts } from '@navdhya/finance/src/domain/reconciliation';
+import { postJournalEntry } from '@navdhya/finance/src/application/posting';
 
 const INR = 'INR';
 const m = (amountMinor: number) => ({ amountMinor, currency: INR });

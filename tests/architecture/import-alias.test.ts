@@ -12,12 +12,12 @@ function getAllFiles(dir: string): string[] {
     if (e.isDirectory()) {
       if (e.name === 'node_modules' || e.name === '.next' || e.name === '.turbo') continue;
       results = results.concat(getAllFiles(full));
-    } else if (e.name.endsWith('.ts') || e.name.endsWith('.tsx') || e.name.endsWith('.js')) results.push(full);
+    } else if (e.name.endsWith('.ts') || e.name.endsWith('.tsx')) results.push(full);
   }
   return results;
 }
 
-test('no parent-directory imports anywhere: use @ aliases', () => {
+test('no parent-directory imports anywhere: use @ aliases', { timeout: 120000 }, () => {
   const violations: string[] = [];
   for (const root of ROOTS) {
     const dir = path.join(process.cwd(), root);

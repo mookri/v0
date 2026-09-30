@@ -1,4 +1,4 @@
-import { Incident, canTransitionIncident } from '../domain/incident';
+import { Incident, canTransitionIncident } from '@navdhya/incident/src/domain/incident';
 
 export interface IncidentRepository {
   getById(id: string): Promise<Incident | null>;

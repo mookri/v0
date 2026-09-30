@@ -1,4 +1,4 @@
-import { HelpArticle } from '../../application/support/support';
+import { HelpArticle } from '@/application/support/support';
 
 export function SupportPageView({ articles }: { articles: HelpArticle[] }) {
   return (

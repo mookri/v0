@@ -1,7 +1,7 @@
 import { test, expect } from 'vitest';
-import { decide } from '../../packages/ads/src/decision/decision-engine/decide';
-import { AdRequest } from '../../packages/ads/src/contracts/AdRequest';
-import { CampaignCandidate } from '../../packages/ads/src/decision/Candidate';
+import { decide } from '@navdhya/ads/src/decision/decision-engine/decide';
+import { AdRequest } from '@navdhya/ads/src/contracts/AdRequest';
+import { CampaignCandidate } from '@navdhya/ads/src/decision/Candidate';
 
 function req(over: Partial<AdRequest> = {}): AdRequest {
   return {

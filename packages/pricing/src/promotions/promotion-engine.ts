@@ -1,4 +1,4 @@
-import { MoneyMinor } from '../domain/MoneyMinor';
+import { MoneyMinor } from '@navdhya/pricing/src/domain/MoneyMinor';
 
 export type PromotionStatus = 'DRAFT' | 'SCHEDULED' | 'ACTIVE' | 'PAUSED' | 'EXPIRED';
 export type Stacking = 'STACKABLE' | 'NON_STACKABLE' | 'EXCLUSIVE';

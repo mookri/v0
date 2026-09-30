@@ -1,5 +1,5 @@
-import type { Booking } from '../../../../packages/booking/src/domain/Booking';
-import { canCancel } from '../../../../packages/booking/src/domain/booking-rules';
+import type { Booking } from '@navdhya/booking/src/domain/Booking';
+import { canCancel } from '@navdhya/booking/src/domain/booking-rules';
 
 export interface CancelResult {
   ok: boolean;

@@ -1,4 +1,4 @@
-import { CommunicationChannel } from '../domain/message';
+import { CommunicationChannel } from '@navdhya/communication/src/domain/message';
 
 export interface ProviderCapabilities {
   templates: boolean;

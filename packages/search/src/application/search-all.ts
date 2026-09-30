@@ -1,8 +1,8 @@
-import { SearchRequest } from '../contracts/SearchRequest';
-import { SearchResponse } from '../contracts/SearchResponse';
-import { PujaSearchSource } from '../ports/PujaSearchSource';
-import { PanditSearchSource } from '../ports/PanditSearchSource';
-import { ContentSearchSource } from '../ports/ContentSearchSource';
+import { SearchRequest } from '@navdhya/search/src/contracts/SearchRequest';
+import { SearchResponse } from '@navdhya/search/src/contracts/SearchResponse';
+import { PujaSearchSource } from '@navdhya/search/src/ports/PujaSearchSource';
+import { PanditSearchSource } from '@navdhya/search/src/ports/PanditSearchSource';
+import { ContentSearchSource } from '@navdhya/search/src/ports/ContentSearchSource';
 
 export interface SearchSources {
   puja: PujaSearchSource;

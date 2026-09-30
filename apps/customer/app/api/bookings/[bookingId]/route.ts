@@ -1,7 +1,7 @@
-import { newRequestId, ok, err } from '../../../../application/api-envelope';
-import { anonymousContext } from '../../../../application/request-context';
-import { authorizeBooking } from '../../../../application/bookings/get-customer-booking-details';
-import { toCustomerBookingDetails } from '../../../../application/bookings/get-customer-booking-details';
+import { newRequestId, ok, err } from '@/application/api-envelope';
+import { anonymousContext } from '@/application/request-context';
+import { authorizeBooking } from '@/application/bookings/get-customer-booking-details';
+import { toCustomerBookingDetails } from '@/application/bookings/get-customer-booking-details';
 
 export async function GET(_req: Request, { params }: { params: { bookingId: string } }) {
   const requestId = newRequestId();
