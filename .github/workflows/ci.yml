@@ -36,6 +36,30 @@ jobs:
       - name: Validate
         run: pnpm exec turbo run typecheck lint test
 
+  architecture:
+    name: Architecture gates (fast, fail-closed)
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: corepack enable && pnpm install --frozen-lockfile
+
+      - name: Architecture gates
+        run: pnpm exec vitest run tests/architecture
+
+      - name: Drift checks (declared manifests)
+        run: pnpm exec node tooling/scripts/domain-check.js booking payment user search availability pandit pricing puja recommendations
+
   # ── 2. Secret scan (gitleaks) ────────────────────────────────────────────
   secrets:
     name: Secret scan
@@ -57,7 +81,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 18
-    needs: [validate, secrets]
+    needs: [validate, architecture, secrets]
     steps:
       - uses: actions/checkout@v4
         with:
