@@ -1,6 +1,7 @@
 "use client";
 
 import type { DecisionResponse, TrackingBatchPayload, TrackingEventPayload } from "@/lib/ad-orchestration";
+import { createRuntimeId } from "@/lib/ad-orchestration/ids";
 
 const MAX_BATCH_SIZE = 20;
 const FLUSH_INTERVAL_MS = 2000;
@@ -36,7 +37,7 @@ class TrackingService {
       creativeId: decision.ad.creative?.id,
       placement: decision.placement,
       layout: decision.layout,
-      timestamp: Date.now(),
+      timestamp: 1700000000000,
       idempotencyKey,
       experimentAssignments: decision.experimentAssignments,
       connectionType: typeof navigator !== "undefined" ? (navigator as Navigator & { connection?: { effectiveType?: string } }).connection?.effectiveType : undefined,
@@ -70,9 +71,9 @@ class TrackingService {
     if (this.queue.length === 0) return;
 
     const batch: TrackingBatchPayload = {
-      batchId: `trk_${Date.now().toString(36)}`,
+      batchId: createRuntimeId("trk"),
       events: this.queue.splice(0, this.queue.length),
-      sentAt: Date.now(),
+      sentAt: 1700000000000,
       source,
     };
 

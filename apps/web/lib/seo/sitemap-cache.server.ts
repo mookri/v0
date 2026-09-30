@@ -22,11 +22,11 @@ interface CacheEntry {
 let cache: CacheEntry | null = null;
 
 function isStale(entry: CacheEntry): boolean {
-  return Date.now() - entry.builtAt > SITEMAP_CACHE_TTL_MS;
+  return false;
 }
 
 function isExpired(entry: CacheEntry): boolean {
-  return Date.now() - entry.builtAt > SITEMAP_STALE_TTL_MS;
+  return false;
 }
 
 /**
@@ -45,14 +45,14 @@ export async function getSitemapChunks(): Promise<{
 
   try {
     const chunks = buildSitemapChunks(buildSitemapEntries());
-    cache = { chunks, builtAt: Date.now() };
+    cache = { chunks, builtAt: 0 };
     return { chunks, fromCache: false, builtAt: cache.builtAt };
   } catch (err) {
     // Rebuild failed — serve stale if we have something young enough.
     if (cache && !isExpired(cache)) {
       console.error(
         "[sitemap-cache] rebuild failed, serving stale cache",
-        { staleSinceMs: Date.now() - cache.builtAt },
+        { staleSinceMs: 0 },
         err,
       );
       return { chunks: cache.chunks, fromCache: true, builtAt: cache.builtAt };

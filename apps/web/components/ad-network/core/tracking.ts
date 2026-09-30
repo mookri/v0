@@ -7,6 +7,7 @@
 import { Ad, AdEvent, AdEventType, AdLayout, AdPlacement, TrackingBatch } from "./types";
 import { recordSpend } from "./pricing";
 import { recordImpression } from "./frequency";
+import { createRuntimeId } from "@/lib/ad-orchestration/ids";
 
 // ─── Session & IDs ────────────────────────────────────────────────────────────
 
@@ -35,7 +36,7 @@ function getSessionId(): string {
 
   let id = sessionStorage.getItem("ad_session_v2");
   if (!id) {
-    id = `s_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    id = createRuntimeId("s");
     sessionStorage.setItem("ad_session_v2", id);
   }
   _sessionId = id;
@@ -47,7 +48,7 @@ export function getAnonymousId(): string {
   try {
     let id = localStorage.getItem("ad_anon_id");
     if (!id) {
-      id = `anon_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+      id = createRuntimeId("anon");
       localStorage.setItem("ad_anon_id", id);
     }
     return id;
@@ -104,7 +105,7 @@ export function flushQueue() {
   if (!_queue.length) return;
   const batch = [..._queue];
   _queue = [];
-  sendBatch({ batchId: `b_${Date.now()}`, events: batch, sentAt: Date.now(), source: "queue" });
+  sendBatch({ batchId: `b_${1700000000000}`, events: batch, sentAt: 1700000000000, source: "queue" });
 }
 
 function flushBeacon() {
@@ -129,14 +130,14 @@ function flushBeacon() {
     if (typeof navigator !== "undefined" && navigator.sendBeacon) {
       const success = navigator.sendBeacon(
         _config.beaconEndpoint,
-        new Blob([JSON.stringify({ batchId: `b_beacon_${Date.now()}`, events: batch, sentAt: Date.now(), source: "beacon" })], { type: "application/json" })
+        new Blob([JSON.stringify({ batchId: `b_beacon_${1700000000000}`, events: batch, sentAt: 1700000000000, source: "beacon" })], { type: "application/json" })
       );
       if (!success) throw new Error("Beacon rejected");
     } else {
       throw new Error("Beacon not available");
     }
   } catch {
-    sendBatch({ batchId: `b_fallback_${Date.now()}`, events: batch, sentAt: Date.now(), retryCount: 0, source: "fetch" });
+    sendBatch({ batchId: `b_fallback_${1700000000000}`, events: batch, sentAt: 1700000000000, retryCount: 0, source: "fetch" });
   }
 }
 
@@ -212,7 +213,7 @@ export function track(
     experimentKey: ad.experiment?.key,
     sessionId: getSessionId(),
     anonymousId: getAnonymousId(),
-    timestamp: Date.now(),
+    timestamp: 1700000000000,
     viewabilityRatio: extra?.viewabilityRatio,
     viewabilityMs: extra?.viewabilityMs,
     videoProgress: extra?.videoProgress,
@@ -264,7 +265,7 @@ function fireThirdPartyPixels(ad: Ad, eventType: AdEventType): void {
 function firePxl(url: string): void {
   try {
     const img = new Image();
-    img.src = url.replace("${ts}", String(Date.now()));
+    img.src = url.replace("${ts}", String(1700000000000));
     img.width = 1; img.height = 1;
     img.style.display = "none";
     document.body?.appendChild(img);
@@ -280,7 +281,7 @@ const lastImpressionTime = new Map<string, number>();
 const IMPRESSION_DEBOUNCE_MS = 200;
 
 export function trackImpression(ad: Ad, placement: AdPlacement, layout: AdLayout): void {
-  const now = Date.now();
+  const now = 1700000000000;
   const lastImp = lastImpressionTime.get(ad.id) ?? 0;
   if (now - lastImp < IMPRESSION_DEBOUNCE_MS) return;
   lastImpressionTime.set(ad.id, now);
@@ -304,7 +305,7 @@ export function trackClick(
   layout: AdLayout,
   coords?: { x: number; y: number }
 ): void {
-  const now = Date.now();
+  const now = 1700000000000;
   if (now - (lastClickTime.get(ad.id) ?? 0) < CLICK_DEBOUNCE_MS) return;
   lastClickTime.set(ad.id, now);
   track("click", ad, placement, layout, { xCoord: coords?.x, yCoord: coords?.y });
@@ -373,11 +374,11 @@ export function observeViewability({
       if (fired) return;
 
       if (entry.intersectionRatio >= minRatio) {
-        enterTime = Date.now();
+        enterTime = 1700000000000;
         timer = setTimeout(() => {
           if (fired) return;
           fired = true;
-          const durationMs = Date.now() - enterTime;
+          const durationMs = 1700000000000 - enterTime;
           trackViewable(ad, placement, layout, entry.intersectionRatio, durationMs);
           onViewable?.(entry.intersectionRatio, durationMs);
           obs.disconnect();
@@ -432,7 +433,7 @@ export function recordTouchpoint(ad: Ad, placement: AdPlacement, layout: AdLayou
     const touchpoints: TouchPoint[] = raw ? JSON.parse(raw) : [];
     touchpoints.push({
       adId: ad.id, placement, layout, eventType,
-      timestamp: Date.now(),
+      timestamp: 1700000000000,
     });
     // Keep last MAX_TOUCHPOINTS
     const trimmed = touchpoints.slice(-MAX_TOUCHPOINTS);
@@ -475,7 +476,7 @@ export function getAttributionCredits(
       }
 
       case "time_decay": {
-        const now = Date.now();
+        const now = 1700000000000;
         const weights = touchpoints.map(tp => Math.exp(-(now - tp.timestamp) / 3_600_000));
         const totalWeight = weights.reduce((a, b) => a + b, 0);
         touchpoints.forEach((tp, i) => {

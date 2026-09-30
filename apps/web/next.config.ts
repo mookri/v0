@@ -23,7 +23,14 @@ const contentSecurityPolicy = [
 
 const nextConfig: NextConfig = {
   // ── Architecture ──────────────────────────────────────────────────────────
-  cacheComponents: false, // Enables Next.js 16+ use cache primitives
+  // Next.js 16: Cache Components is a top-level option.
+  cacheComponents: true,
+
+  // Explicit monorepo root so Turbopack does not mis-detect
+  // C:\Users\Victo\package-lock.json as the workspace root.
+  turbopack: {
+    root: join(process.cwd(), "../.."),
+  },
 
   // ── Build ──────────────────────────────────────────────────────────────────
   typescript: {

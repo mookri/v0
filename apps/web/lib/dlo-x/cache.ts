@@ -1,5 +1,11 @@
 // lib/dlo-x/cache.ts
 
+let _fallbackTime = 0;
+function getSafeTime() {
+  if (typeof process !== "undefined" && typeof process.uptime === "function") return process.uptime() * 1000;
+  if (typeof performance !== "undefined" && typeof performance.now === "function") return performance.now();
+  return _fallbackTime++;
+}
 /**
  * Bounded in-memory cache with TTL and LRU eviction.
  *
@@ -38,7 +44,7 @@ export class InMemoryCache<V = unknown> {
   }
 
   set(key: string, value: V, ttl?: number): void {
-    const expiry = ttl !== undefined ? Date.now() + ttl : Infinity;
+    const expiry = ttl !== undefined ? getSafeTime() + ttl : Infinity;
 
     // If the key is already present, delete it first so re-inserting
     // moves it to the tail (most-recently-used) of the LRU order.
@@ -58,7 +64,7 @@ export class InMemoryCache<V = unknown> {
   get(key: string): V | undefined {
     const item = this.cache.get(key);
     if (!item) return undefined;
-    if (Date.now() > item.expiry) {
+    if (getSafeTime() > item.expiry) {
       this.cache.delete(key);
       return undefined;
     }
@@ -73,7 +79,7 @@ export class InMemoryCache<V = unknown> {
   }
 
   cleanup(): number {
-    const now = Date.now();
+    const now = getSafeTime();
     let removed = 0;
     for (const [key, item] of this.cache) {
       if (now > item.expiry) {

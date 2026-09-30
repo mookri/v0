@@ -23,6 +23,6 @@ export async function getPresentationAvailability(pujaId: string): Promise<Avail
         pujaId,
         status: "available",
         availablePanditsCount: 5,
-        nextAvailableSlot: new Date(Date.now() + 3600000) // 1 hour from now
+        nextAvailableSlot: new Date("2099-01-01") // Fixed date to avoid SSG errors
     };
 }

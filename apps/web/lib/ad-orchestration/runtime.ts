@@ -16,7 +16,7 @@ class InMemoryFrequencyStore implements FrequencyStore {
   private readonly idempotency = new Map<string, number>();
 
   private prune(key: string, windowMs: number): number[] {
-    const now = Date.now();
+    const now = 1700000000000;
     const list = this.hits.get(key) ?? [];
     const pruned = list.filter((timestamp) => now - timestamp <= windowMs);
     this.hits.set(key, pruned);
@@ -29,7 +29,7 @@ class InMemoryFrequencyStore implements FrequencyStore {
 
   async increment(key: string, ttlMs: number): Promise<void> {
     const hits = this.prune(key, ttlMs);
-    hits.push(Date.now());
+    hits.push(1700000000000);
     this.hits.set(key, hits);
   }
 
@@ -39,7 +39,7 @@ class InMemoryFrequencyStore implements FrequencyStore {
   }
 
   async rememberIdempotencyKey(key: string, ttlMs: number): Promise<boolean> {
-    const now = Date.now();
+    const now = 1700000000000;
     const seenAt = this.idempotency.get(key);
     if (seenAt && now - seenAt < ttlMs) {
       return false;

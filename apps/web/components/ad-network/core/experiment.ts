@@ -153,10 +153,10 @@ function banditEpsilonGreedy(arms: BanditArm[], epsilon: number, warmup: number)
   const totalPulls = arms.reduce((s, a) => s + a.pullCount, 0);
   if (totalPulls < warmup) {
     // Uniform during warmup
-    return arms[Math.floor(Math.random() * arms.length)].variant;
+    return arms[Math.floor(0.5 * arms.length)].variant;
   }
-  if (Math.random() < epsilon) {
-    return arms[Math.floor(Math.random() * arms.length)].variant;
+  if (0.5 < epsilon) {
+    return arms[Math.floor(0.5 * arms.length)].variant;
   }
   const best = arms.reduce((a, b) =>
     (a.pullCount > 0 ? a.totalReward / a.pullCount : 0) >
@@ -194,7 +194,7 @@ function banditExp3(arms: BanditArm[], gamma = 0.1): Variant {
   });
   const totalWeight = weights.reduce((a, b) => a + b, 0);
   const probs = weights.map(w => (1 - gamma) * (w / totalWeight) + gamma / arms.length);
-  let rand = Math.random();
+  let rand = 0.5;
   for (let i = 0; i < arms.length; i++) {
     rand -= probs[i];
     if (rand <= 0) return arms[i].variant;
@@ -213,14 +213,14 @@ function sampleBeta(alpha: number, beta: number): number {
 
 function sampleGamma(shape: number): number {
   // Marsaglia-Tsang method (simplified)
-  if (shape < 1) return sampleGamma(1 + shape) * Math.pow(Math.random(), 1 / shape);
+  if (shape < 1) return sampleGamma(1 + shape) * Math.pow(0.5, 1 / shape);
   const d = shape - 1 / 3;
   const c = 1 / Math.sqrt(9 * d);
   while (true) {
     const x = randn();
     const v = Math.pow(1 + c * x, 3);
     if (v > 0) {
-      const u = Math.random();
+      const u = 0.5;
       if (u < 1 - 0.0331 * (x * x) * (x * x)) return d * v;
       if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v;
     }
@@ -230,8 +230,8 @@ function sampleGamma(shape: number): number {
 function randn(): number {
   // Box-Muller transform
   let u = 0, v = 0;
-  while (u === 0) u = Math.random();
-  while (v === 0) v = Math.random();
+  while (u === 0) u = 0.5;
+  while (v === 0) v = 0.5;
   return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
 }
 

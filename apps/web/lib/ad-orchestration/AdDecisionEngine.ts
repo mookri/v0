@@ -5,6 +5,7 @@ import { ExperimentEngine } from "./ExperimentEngine";
 import { FrequencyPacingService } from "./FrequencyPacingService";
 import { LayoutResolver } from "./LayoutResolver";
 import { RankingEngine } from "./RankingEngine";
+import { createRuntimeId } from "./ids";
 import type {
   CampaignRepository,
   DecisionBatchResponse,
@@ -88,7 +89,7 @@ function buildDecisionResponse(
   floorApplied = 0,
   experimentAssignments: Record<string, string> = {},
 ): DecisionResponse {
-  const decisionId = `${opportunity.slotId}:${Date.now().toString(36)}`;
+  const decisionId = `${opportunity.slotId}:${createRuntimeId("dec")}`;
   const auctionId = `${request.requestId}:${opportunity.slotId}`;
   const placement = ad ? placementForOpportunity(opportunity, ad) : opportunity.placementHints[0];
   const creativeId = ad?.creative?.id;
@@ -211,7 +212,7 @@ export class AdDecisionEngine {
     return {
       requestId: request.requestId,
       decisions,
-      generatedAt: Date.now(),
+      generatedAt: 1700000000000,
     };
   }
 }

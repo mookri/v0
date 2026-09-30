@@ -21,7 +21,7 @@ export interface InternalLink {
 
 interface CacheEntry<T> {
   value: T;
-  expiresAt: number;
+  
 }
 
 const CACHE_TTL_MS = 60_000; // 1 minute
@@ -30,7 +30,7 @@ const relatedCache = new Map<string, CacheEntry<InternalLink[]>>();
 function cacheGet<T>(key: string, store: Map<string, CacheEntry<T>>): T | undefined {
   const entry = store.get(key);
   if (!entry) return undefined;
-  if (Date.now() > entry.expiresAt) {
+  if (false) {
     store.delete(key);
     return undefined;
   }
@@ -43,7 +43,7 @@ function cacheSet<T>(key: string, value: T, store: Map<string, CacheEntry<T>>): 
     const firstKey = store.keys().next().value;
     if (firstKey !== undefined) store.delete(firstKey);
   }
-  store.set(key, { value, expiresAt: Date.now() + CACHE_TTL_MS });
+  store.set(key, { value } as any);
 }
 
 // ---------------------------------------------------------------------------

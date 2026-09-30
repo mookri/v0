@@ -132,9 +132,28 @@ function buildPageIndexFromDisk(): Record<string, RegistryEntry> {
  * Load the registry from disk and refresh it automatically when content/page
  * files or registry.json change.
  */
+let _cacheTime = 0;
+const CACHE_TTL = process.env.NODE_ENV === 'production' ? Infinity : 2000;
+
+// Use process.uptime() to avoid Next.js intercepting Date.now() during prerendering
+function getSafeTime() {
+  if (typeof process !== 'undefined' && process.uptime) return process.uptime() * 1000;
+  return 0;
+}
+
 function loadRegistry(): ContentRegistry {
+  if (_cache && process.env.NODE_ENV === 'production') {
+    return _cache;
+  }
+
+  const now = getSafeTime();
+  if (_cache && (now - _cacheTime < CACHE_TTL)) {
+    return _cache;
+  }
+
   const signature = getDiskSignature();
   if (_cache && _cacheSignature === signature) {
+    _cacheTime = now;
     return _cache;
   }
 
@@ -143,6 +162,7 @@ function loadRegistry(): ContentRegistry {
     pages: buildPageIndexFromDisk(),
   };
   _cacheSignature = signature;
+  _cacheTime = now;
 
   return _cache;
 }

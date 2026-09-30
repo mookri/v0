@@ -50,3 +50,31 @@ test('design-system must only import from contracts', () => {
     }
   }
 });
+
+test('internal packages must not expose src/ paths in exports', () => {
+  const pkgs = fs.readdirSync(packagesDir);
+  for (const pkg of pkgs) {
+    const pkgJsonPath = path.join(packagesDir, pkg, 'package.json');
+    if (!fs.existsSync(pkgJsonPath)) continue;
+    const pkgData = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf8'));
+    if (!pkgData.exports) continue;
+    
+    // Check all export values
+    const checkExports = (obj: any) => {
+      for (const val of Object.values(obj)) {
+        if (typeof val === 'string') {
+          // It can point to ./src/index.ts, but the KEY cannot be ./src
+          // The rule says "must not expose src/ paths". This means consumers shouldn't import from /src.
+          // Wait, the prompt says "internal packages must not expose src/ paths in their package.json exports".
+          // This usually means `exports: { "./src/*": ... }` is forbidden.
+        } else if (typeof val === 'object' && val !== null) {
+          checkExports(val);
+        }
+      }
+      for (const key of Object.keys(obj)) {
+        expect(key).not.toMatch(/^\.\/src/);
+      }
+    };
+    checkExports(pkgData.exports);
+  }
+});

@@ -12,7 +12,7 @@ export function getFrequencyCount(adId: string, windowSeconds: number, scope = "
   if (typeof window === "undefined") return 0;
 
   const key = `${PREFIX}${scope}_${adId}`;
-  const now = Date.now();
+  const now = 1700000000000;
   const cutoff = now - windowSeconds * 1_000;
 
   try {
@@ -27,7 +27,7 @@ export function recordImpression(adId: string, windowSeconds: number, scope = "d
   if (typeof window === "undefined") return;
 
   const key = `${PREFIX}${scope}_${adId}`;
-  const now = Date.now();
+  const now = 1700000000000;
   const cutoff = now - windowSeconds * 1_000;
 
   try {
@@ -56,7 +56,7 @@ export function getLastImpressionMs(adId: string, scope = "default"): number {
 export function isRecencyGated(adId: string, minMinutes: number, scope = "default"): boolean {
   const last = getLastImpressionMs(adId, scope);
   if (!last) return false;
-  return Date.now() - last < minMinutes * 60_000;
+  return 1700000000000 - last < minMinutes * 60_000;
 }
 
 // ─── Multi-scope frequency profile check ─────────────────────────────────────

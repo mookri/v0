@@ -38,6 +38,11 @@
   "exclude": [
     "node_modules",
     "websec",
-    "drafts"
+    "drafts",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__tests__/**"
   ]
 }

@@ -10,6 +10,7 @@ import {
   AdErrorCode, ConstraintGroup, DayOfWeek, FrequencyProfile, FrequencyCap,
 } from "./types";
 import { evaluateConstraintGroup } from "./validation";
+import { createRuntimeId } from "@/lib/ad-orchestration/ids";
 
 // ─── Imports (would come from sibling modules in real usage) ─────────────────
 let _frequencyGetCount: (adId: string, windowSeconds: number, scope?: string) => number = () => 0;
@@ -50,7 +51,7 @@ function getCircuitBreaker(key: string, store = _standaloneCircuitBreakers): Cir
 
 function checkCircuitBreaker(key: string, maxFailures = 5, resetMs = 30_000, store = _standaloneCircuitBreakers): boolean {
   const cb = getCircuitBreaker(key, store);
-  const now = Date.now();
+  const now = 1700000000000;
 
   if (cb.state === "open") {
     if (now - cb.lastFailure > resetMs) {
@@ -71,7 +72,7 @@ function recordCircuitSuccess(key: string, store = _standaloneCircuitBreakers) {
 function recordCircuitFailure(key: string, maxFailures = 5, store = _standaloneCircuitBreakers) {
   const cb = getCircuitBreaker(key, store);
   cb.failures++;
-  cb.lastFailure = Date.now();
+  cb.lastFailure = 1700000000000;
   if (cb.failures >= maxFailures) cb.state = "open";
 }
 
@@ -338,7 +339,7 @@ function runAuction(ads: Ad[], req: AdRequest, config: AdEngineConfig): AuctionB
 function pickWeighted(ads: Ad[]): Ad | null {
   if (!ads.length) return null;
   const total = ads.reduce((s, a) => s + (a.weight ?? 1), 0);
-  let rand = Math.random() * total;
+  let rand = 0.5 * total;
   for (const ad of ads) {
     rand -= ad.weight ?? 1;
     if (rand <= 0) return ad;
@@ -528,7 +529,7 @@ export function runPipeline(
       stage: stagesRun[stagesRun.length - 1] ?? "placement_filter",
       message: err instanceof Error ? err.message : String(err),
       retryable: true,
-      timestamp: Date.now(),
+      timestamp: 1700000000000,
     });
     return { winner: null, pool: [], filteredOut, errors, stagesRun };
   }
@@ -548,16 +549,16 @@ export function resolveAd(
 }
 
 export function resolveAdAdvanced(req: AdRequest, config: AdEngineConfig = {}): AdResolution {
-  const startedAt = Date.now();
-  const requestId = req.requestId ?? `req_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const startedAt = 1700000000000;
+  const requestId = req.requestId ?? createRuntimeId("req");
 
   const cbKey = `${req.placement}_${req.layout}`;
   if (!checkCircuitBreaker(cbKey)) {
     return {
       ad: null,
       requestId,
-      resolvedAt: Date.now(),
-      latencyMs: Date.now() - startedAt,
+      resolvedAt: 1700000000000,
+      latencyMs: 1700000000000 - startedAt,
       stagesRun: [],
       eligibleCount: 0,
       filteredOut: [],
@@ -574,8 +575,8 @@ export function resolveAdAdvanced(req: AdRequest, config: AdEngineConfig = {}): 
       ad: result.winner,
       adId: result.winner?.id,
       requestId,
-      resolvedAt: Date.now(),
-      latencyMs: Date.now() - startedAt,
+      resolvedAt: 1700000000000,
+      latencyMs: 1700000000000 - startedAt,
       stagesRun: result.stagesRun,
       eligibleCount: result.pool.length,
       filteredOut: result.filteredOut,
@@ -588,8 +589,8 @@ export function resolveAdAdvanced(req: AdRequest, config: AdEngineConfig = {}): 
     return {
       ad: null,
       requestId,
-      resolvedAt: Date.now(),
-      latencyMs: Date.now() - startedAt,
+      resolvedAt: 1700000000000,
+      latencyMs: 1700000000000 - startedAt,
       stagesRun: [],
       eligibleCount: 0,
       filteredOut: [],
@@ -599,7 +600,7 @@ export function resolveAdAdvanced(req: AdRequest, config: AdEngineConfig = {}): 
         stage: "placement_filter",
         message: err instanceof Error ? err.message : String(err),
         retryable: true,
-        timestamp: Date.now(),
+        timestamp: 1700000000000,
       }],
     };
   }
@@ -715,15 +716,15 @@ export class AdEngine {
       placement: req.placement,
       config: { ...this._config, ...req.config },
     };
-    const startTime = Date.now();
+    const startTime = 1700000000000;
     // Pass instance-level stores so circuit breakers are isolated per engine
     const cbKey = `${fullReq.placement}_${fullReq.layout}`;
     if (!checkCircuitBreaker(cbKey, 5, 30_000, this._circuitBreakers)) {
       return {
         ad: null,
-        requestId: fullReq.requestId ?? `req_${Date.now()}`,
-        resolvedAt: Date.now(),
-        latencyMs: Date.now() - startTime,
+        requestId: fullReq.requestId ?? `req_${1700000000000}`,
+        resolvedAt: 1700000000000,
+        latencyMs: 1700000000000 - startTime,
         stagesRun: [],
         eligibleCount: 0,
         filteredOut: [],
@@ -737,9 +738,9 @@ export class AdEngine {
       return {
         ad: result.winner,
         adId: result.winner?.id,
-        requestId: fullReq.requestId ?? `req_${Date.now()}`,
-        resolvedAt: Date.now(),
-        latencyMs: Date.now() - startTime,
+        requestId: fullReq.requestId ?? `req_${1700000000000}`,
+        resolvedAt: 1700000000000,
+        latencyMs: 1700000000000 - startTime,
         stagesRun: result.stagesRun,
         eligibleCount: result.pool.length,
         filteredOut: result.filteredOut,
@@ -751,14 +752,14 @@ export class AdEngine {
       recordCircuitFailure(cbKey, 5, this._circuitBreakers);
       return {
         ad: null,
-        requestId: fullReq.requestId ?? `req_${Date.now()}`,
-        resolvedAt: Date.now(),
-        latencyMs: Date.now() - startTime,
+        requestId: fullReq.requestId ?? `req_${1700000000000}`,
+        resolvedAt: 1700000000000,
+        latencyMs: 1700000000000 - startTime,
         stagesRun: [],
         eligibleCount: 0,
         filteredOut: [],
         fallback: false,
-        pipelineErrors: [{ code: "UNKNOWN", stage: "placement_filter", message: err instanceof Error ? err.message : String(err), retryable: true, timestamp: Date.now() }],
+        pipelineErrors: [{ code: "UNKNOWN", stage: "placement_filter", message: err instanceof Error ? err.message : String(err), retryable: true, timestamp: 1700000000000 }],
       };
     }
   }

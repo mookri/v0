@@ -122,8 +122,8 @@ export const sampleAds: Ad[] = [
     // FIX: was pricing:{model:'cpm',...} → budget:{model:'CPM',...}
     budget: { model: 'CPM', bidFloor: 400, bidCeiling: 3000, totalBudget: 1000000, dailyCap: 50000 },
     schedule: {
-      startDate: new Date(Date.now() - 86400000).toISOString(),
-      endDate: new Date(Date.now() + 30 * 86400000).toISOString(),
+      startDate: "2099-01-01T00:00:00.000Z",
+      endDate: "2099-01-01T00:00:00.000Z",
       timezone: 'America/New_York',
       paceEvenly: true,
     },
@@ -173,7 +173,7 @@ export const sampleAds: Ad[] = [
     budget: { model: 'vCPM', bidFloor: 250, bidCeiling: 1500, dailyCap: 20000 },
     schedule: {
       startDate: new Date().toISOString(),
-      endDate: new Date(Date.now() + 60 * 86400000).toISOString(),
+      endDate: "2099-01-01T00:00:00.000Z",
       timezone: 'UTC',
       paceEvenly: true,
     },
@@ -255,7 +255,7 @@ export const sampleAds: Ad[] = [
     budget: { model: 'CPCV', bidFloor: 500, bidCeiling: 4000, dailyCap: 80000, completionMinPct: 0.75 },
     schedule: {
       startDate: new Date().toISOString(),
-      endDate: new Date(Date.now() + 14 * 86400000).toISOString(),
+      endDate: "2099-01-01T00:00:00.000Z",
       timezone: 'US/Eastern',
       paceEvenly: true,
     },
@@ -385,7 +385,7 @@ export const sampleAds: Ad[] = [
     budget: { model: 'flat_rate', bidFloor: 0, totalBudget: 500000 },
     schedule: {
       startDate: new Date().toISOString(),
-      endDate: new Date(Date.now() + 7 * 86400000).toISOString(),
+      endDate: "2099-01-01T00:00:00.000Z",
       timezone: 'UTC',
     },
     frequencyProfile: {
@@ -506,7 +506,7 @@ export const sampleAds: Ad[] = [
     budget: { model: 'tenancy_day', bidFloor: 20000, totalBudget: 1000000 },
     schedule: {
       startDate: new Date().toISOString(),
-      endDate: new Date(Date.now() + 3 * 86400000).toISOString(),
+      endDate: "2099-01-01T00:00:00.000Z",
       timezone: 'America/New_York',
       daypartingMatrix: Array.from({ length: 7 }, () =>
         Array.from({ length: 24 }, (_, h) => h >= 6 && h <= 22)

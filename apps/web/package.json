@@ -48,7 +48,10 @@
     "@navdhya/security": "workspace:*",
     "@navdhya/contracts": "workspace:*",
     "@navdhya/design-system": "workspace:*",
-    "@navdhya/observability": "workspace:*"
+    "@navdhya/observability": "workspace:*",
+    "@navdhya/i18n": "workspace:*",
+    "@navdhya/config": "workspace:*",
+    "@navdhya/routing": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.9",

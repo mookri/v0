@@ -5,6 +5,8 @@ import { headers } from 'next/headers';
 import { Role, Tenant, DeviceType, RequestContext } from '@/lib/dlo-x/types';
 import { getMockSession } from '@/lib/auth/mock-session';
 
+let reqCounter = 0;
+
 /**
  * Resolves the request context from headers or uses defaults
  * @param path - The current path
@@ -20,12 +22,13 @@ export async function resolveContext(path: string): Promise<RequestContext> {
       ? 'tablet'
       : 'desktop';
 
+  reqCounter++;
   return {
-    requestId: `req-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    requestId: `req-${reqCounter}`,
     tenantId: 'default',
     userRole: session.role,
     device,
-    seed: Math.random().toString(36).substring(2),
+    seed: 'dynamic-seed',
     path
   };
 }
@@ -36,12 +39,13 @@ export async function resolveContext(path: string): Promise<RequestContext> {
  * @returns RequestContext object with default values
  */
 export function getDefaultContext(path: string): RequestContext {
+  reqCounter++;
   return {
-    requestId: `default-req-${Date.now()}`,
+    requestId: `default-req-${reqCounter}`,
     tenantId: 'default',
     userRole: 'User',
     device: 'desktop',
-    seed: Math.random().toString(36).substring(2),
+    seed: 'default-seed',
     path
   };
 }

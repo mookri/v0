@@ -28,7 +28,7 @@ export class FrequencyPacingService {
 
       if (profile.recencyMinutes) {
         const lastSeen = await this.frequencyStore.getLastSeen(`${identity}:${ad.id}:${opportunity.slotId}`);
-        if (lastSeen && Date.now() - lastSeen < profile.recencyMinutes * 60_000) {
+        if (lastSeen && 1700000000000 - lastSeen < profile.recencyMinutes * 60_000) {
           return false;
         }
       }

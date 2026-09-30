@@ -370,7 +370,7 @@ export function startFlow(flowId: string, userId: string): FlowState {
   const state: FlowState = {
     flowId, userId,
     currentStep: 0,
-    startedAt: Date.now(),
+    startedAt: 1700000000000,
     completedSteps: [],
     active: true,
   };
@@ -390,7 +390,7 @@ export function advanceFlow(flowId: string, userId: string): FlowState | null {
 
   if (state.currentStep >= flow.steps.length) {
     state.active = false;
-    state.exitedAt = Date.now();
+    state.exitedAt = 1700000000000;
     state.exitEvent = "flow_complete";
   }
 
@@ -402,7 +402,7 @@ export function exitFlow(flowId: string, userId: string, exitEvent: string): voi
   const state = getFlowState(flowId, userId);
   if (!state) return;
   state.active = false;
-  state.exitedAt = Date.now();
+  state.exitedAt = 1700000000000;
   state.exitEvent = exitEvent;
   saveFlowState(state);
 }

@@ -10,4 +10,5 @@ export * from "./ExperimentEngine";
 export * from "./FrequencyPacingService";
 export * from "./PlacementEngine";
 export * from "./AdDecisionEngine";
+export * from "./ids";
 export * from "./runtime";

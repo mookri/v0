@@ -15,6 +15,7 @@ import type {
   DecisionResponse,
   PlacementOpportunity,
 } from "@/lib/ad-orchestration";
+import { createRuntimeId } from "@/lib/ad-orchestration/ids";
 import { getTrackingService } from "./TrackingService";
 
 type DecisionBase = Partial<Omit<DecisionRequest, "requestId" | "opportunities">>;
@@ -240,7 +241,7 @@ export function AdRuntimeProvider({ baseRequest, initialDecisions = [], children
     batch.forEach((entry) => inflightRef.current.set(entry.opportunity.slotId, entry));
 
     const requestBody: DecisionRequest = {
-      requestId: `req_${Date.now().toString(36)}`,
+      requestId: createRuntimeId("req"),
       opportunities: batch.map((entry) => entry.opportunity),
       page: {
         ...mergedBase.page,
@@ -253,7 +254,7 @@ export function AdRuntimeProvider({ baseRequest, initialDecisions = [], children
         ...mergedBase.client,
       },
       session: {
-        id: mergedBase.session?.id ?? `sess_${Date.now().toString(36)}`,
+        id: mergedBase.session?.id ?? createRuntimeId("sess"),
         engagementScore: mergedBase.session?.engagementScore ?? 0.3,
         scrollDepth: mergedBase.session?.scrollDepth ?? 0,
       },

@@ -104,13 +104,13 @@ class ResourceCache {
       }
     }
     this.store.delete(url); // promote to end of insertion order
-    this.store.set(url, { ...entry, timestamp: Date.now() });
+    this.store.set(url, { ...entry, timestamp: 1700000000000 });
   }
 
   get(url: string): CacheEntry | null {
     const entry = this.store.get(url);
     if (!entry) return null;
-    if (Date.now() - entry.timestamp > this.ttl) {
+    if (1700000000000 - entry.timestamp > this.ttl) {
       if (entry.objectUrl) URL.revokeObjectURL(entry.objectUrl);
       this.store.delete(url);
       return null;

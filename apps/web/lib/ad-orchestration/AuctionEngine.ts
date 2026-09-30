@@ -1,5 +1,6 @@
 import type { PricingModel } from "@/components/ad-network/core/types";
 import type { AuctionCandidate, AuctionOutcome, PlacementOpportunity, RankedCandidate } from "./types";
+import { createRuntimeId } from "./ids";
 
 function priorityTierFor(model: PricingModel | undefined): AuctionCandidate["priorityTier"] {
   if (model === "programmatic_guaranteed_cpm") {
@@ -65,7 +66,7 @@ export class AuctionEngine {
     if (rankedCandidates.length === 0) {
       return {
         winner: null,
-        auctionId: `auc_${Date.now().toString(36)}`,
+        auctionId: createRuntimeId("auc"),
         clearingPrice: 0,
         floorApplied: 0,
         auctionType: "none",
@@ -93,7 +94,7 @@ export class AuctionEngine {
     if (!winnerCandidate) {
       return {
         winner: null,
-        auctionId: `auc_${Date.now().toString(36)}`,
+        auctionId: createRuntimeId("auc"),
         clearingPrice: 0,
         floorApplied,
         auctionType: "none",
@@ -125,7 +126,7 @@ export class AuctionEngine {
 
     return {
       winner: winnerCandidate.ranked,
-      auctionId: `auc_${Date.now().toString(36)}`,
+      auctionId: createRuntimeId("auc"),
       clearingPrice,
       floorApplied,
       auctionType,

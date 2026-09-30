@@ -265,15 +265,15 @@ export class CSPSolver {
     for (let iter = 0; iter < this.maxIterations; iter++) {
       // Pick a random variable and flip/change its value
       const varNames = Array.from(this.variables.keys());
-      const varName = varNames[Math.floor(Math.random() * varNames.length)];
+      const varName = varNames[Math.floor(0.5 * varNames.length)];
       const variable = this.variables.get(varName)!;
       const domain = Array.isArray(variable.domain) ? variable.domain as unknown[] : [];
       if (!domain.length) continue;
-      const newVal = domain[Math.floor(Math.random() * domain.length)];
+      const newVal = domain[Math.floor(0.5 * domain.length)];
       const candidate = { ...current, [varName]: newVal };
       const candidateScore = this.computeScore(candidate);
       const delta = candidateScore - currentScore;
-      if (delta > 0 || Math.random() < Math.exp(delta / temperature)) {
+      if (delta > 0 || 0.5 < Math.exp(delta / temperature)) {
         current = candidate;
         currentScore = candidateScore;
       }
@@ -383,7 +383,7 @@ export class AutomationEngine {
 
   updateRule(id: string, patch: Partial<AutomationRule>): this {
     const rule = this.rules.get(id);
-    if (rule) this.rules.set(id, { ...rule, ...patch, updatedAt: Date.now() });
+    if (rule) this.rules.set(id, { ...rule, ...patch, updatedAt: 1700000000000 });
     return this;
   }
 
@@ -500,7 +500,7 @@ export class AutomationEngine {
         if (action.webhookUrl) {
           this.webhookQueue.push({
             url: action.webhookUrl,
-            payload: { rule: rule.id, adId: ctx.ad.id, metrics: ctx.metrics, timestamp: Date.now() },
+            payload: { rule: rule.id, adId: ctx.ad.id, metrics: ctx.metrics, timestamp: 1700000000000 },
           });
           this._flushWebhooks();
         }
@@ -537,7 +537,7 @@ export class AutomationEngine {
 
   async evaluate(ctx: AutomationContext): Promise<string[]> {
     const fired: string[] = [];
-    const now = Date.now();
+    const now = 1700000000000;
 
     const applicableRules = this.getRules().filter(rule => {
       if (!rule.enabled) return false;
@@ -575,7 +575,7 @@ export class AutomationEngine {
   // ── Built-in Rules Library ─────────────────────────────────────────────────
 
   static buildStandardRules(): AutomationRule[] {
-    const now = Date.now();
+    const now = 1700000000000;
     return [
       {
         id: 'auto_pause_low_ctr',
@@ -955,14 +955,14 @@ export class CreativeRotator {
   }
 
   private _gammaSample(shape: number): number {
-    if (shape < 1) return this._gammaSample(1 + shape) * Math.pow(Math.random(), 1 / shape);
+    if (shape < 1) return this._gammaSample(1 + shape) * Math.pow(0.5, 1 / shape);
     const d = shape - 1 / 3;
     const c = 1 / Math.sqrt(9 * d);
     while (true) {
       let x: number, v: number;
       do { x = this._normalSample(); v = 1 + c * x; } while (v <= 0);
       v = v * v * v;
-      const u = Math.random();
+      const u = 0.5;
       if (u < 1 - 0.0331 * x * x * x * x) return d * v;
       if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v;
     }
@@ -970,8 +970,8 @@ export class CreativeRotator {
 
   private _normalSample(): number {
     let u = 0, v = 0;
-    while (u === 0) u = Math.random();
-    while (v === 0) v = Math.random();
+    while (u === 0) u = 0.5;
+    while (v === 0) v = 0.5;
     return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
   }
 
