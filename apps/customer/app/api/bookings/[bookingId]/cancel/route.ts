@@ -3,15 +3,16 @@ import { anonymousContext } from '@/application/request-context';
 import { cancelCustomerBooking } from '@/application/bookings/cancel-customer-booking';
 import { scopedIdempotencyKey } from '@/application/idempotency';
 
-export async function POST(req: Request, { params }: { params: { bookingId: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ bookingId: string }> }) {
   const requestId = newRequestId();
+  const { bookingId } = await params;
   const ctx = anonymousContext('customer.booking.detail', requestId);
   if (!ctx.actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
   const rawKey = req.headers.get('Idempotency-Key') ?? `ik_${requestId}`;
   const idempotencyKey = scopedIdempotencyKey({
     actorId: ctx.actor.userId,
     operation: 'cancel-booking',
-    resourceId: params.bookingId,
+    resourceId: bookingId,
     key: rawKey,
   });
   const result = cancelCustomerBooking(null, ctx.actor.userId, idempotencyKey);

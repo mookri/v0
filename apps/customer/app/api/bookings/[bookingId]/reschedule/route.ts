@@ -2,8 +2,9 @@ import { newRequestId, err } from '@/application/api-envelope';
 import { anonymousContext } from '@/application/request-context';
 import { rescheduleCustomerBooking } from '@/application/bookings/reschedule-customer-booking';
 
-export async function POST(req: Request, { params }: { params: { bookingId: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ bookingId: string }> }) {
   const requestId = newRequestId();
+  await params;
   const ctx = anonymousContext('customer.booking.detail', requestId);
   if (!ctx.actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
   let body: { newStartTime?: string } = {};

@@ -28,3 +28,20 @@ before any production cutover (phase 25).
 
 Status: matrix documented; deploy run pending (see `migration-status.yaml`
 `19-staging-deploy`).
+
+## Local staging run (2026-10-01, Windows dev box, node v24 vs wanted 20.x)
+
+- customer: `NEXT_STANDALONE=0 pnpm build` ✓ (18 static pages), booted on
+  :3001 — `/api/health` → ok envelope; `/api/bookings` → 401
+  `UNAUTHENTICATED` envelope, no leaks; `/` → 200.
+- partner: build ✓, booted on :3002 — `/api/health` → ok; accept without
+  actor → 401; with actor → stable `ASSIGNMENT_NOT_FOUND` envelope.
+- web: build ✓ (1363 static pages), booted on :3000 — `/` → 200,
+  `/book` → 200, `/user/bookings` → 200 with NO redirect (strangler flag
+  off, as designed). Fallback intact.
+- Fixes the run forced: Next 16 dynamic route/page `params` are now
+  `Promise` (4 routes + 1 page updated); `NEXT_STANDALONE=0` escape for
+  local runs (Windows lacks symlink privilege for standalone trace-copy);
+  `outputFileTracingRoot` pinned (stray lockfile above repo).
+- Environment notes for real staging: pin node 20.x (`.nvmrc`); deploy
+  pipelines keep default `standalone` output.

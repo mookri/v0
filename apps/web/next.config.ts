@@ -38,7 +38,10 @@ const nextConfig: NextConfig = {
   },
 
   // ── Output ────────────────────────────────────────────────────────────────
-  output: 'standalone',
+  // Windows dev box lacks symlink privileges for standalone trace-copy;
+  // NEXT_STANDALONE=0 for local runs (see apps/customer/next.config.ts).
+  output: process.env['NEXT_STANDALONE'] === '0' ? undefined : 'standalone',
+  outputFileTracingRoot: join(process.cwd(), '../..'),
 
   // ── Compression ───────────────────────────────────────────────────────────
   compress: true,

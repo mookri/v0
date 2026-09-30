@@ -2,7 +2,7 @@ import { newRequestId, ok, err } from '@/application/api-envelope';
 import { resolvePartnerActor } from '@/application/actor';
 import { acceptOffer } from '@/application/assignments';
 
-export async function POST(req: Request, { params }: { params: { assignmentId: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ assignmentId: string }> }) {
   const requestId = newRequestId();
   const actor = resolvePartnerActor(req.headers);
   if (!actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
@@ -21,6 +21,6 @@ export async function POST(req: Request, { params }: { params: { assignmentId: s
   if (!result.ok) {
     return Response.json(err('ASSIGNMENT_CONFLICT', 'Offer cannot be accepted.', requestId), { status: 409 });
   }
-  void params;
-  return Response.json(ok({ assignmentId: params.assignmentId, status: result.offer.status }, requestId));
+  const { assignmentId } = await params;
+  return Response.json(ok({ assignmentId, status: result.offer.status }, requestId));
 }

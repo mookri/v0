@@ -1,7 +1,15 @@
 import type { NextConfig } from 'next';
 
+import * as path from 'path';
+
 const nextConfig: NextConfig = {
-  output: 'standalone',
+  // Standalone packaging requires symlink privileges the Windows dev box
+  // lacks (EPERM in trace-copy). Local staging runs use NEXT_STANDALONE=0;
+  // deploy pipelines keep the default standalone output.
+  output: process.env['NEXT_STANDALONE'] === '0' ? undefined : 'standalone',
+  // Pin tracing root: a stray lockfile above the repo confuses Next's
+  // workspace-root inference otherwise.
+  outputFileTracingRoot: path.join(__dirname, '..', '..'),
   compress: true,
   env: {
     NEXT_PUBLIC_SITE_URL: 'https://app.navdhya.com',

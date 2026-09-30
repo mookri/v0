@@ -3,11 +3,12 @@ import { anonymousContext } from '@/application/request-context';
 import { authorizeBooking } from '@/application/bookings/get-customer-booking-details';
 import { toCustomerBookingDetails } from '@/application/bookings/get-customer-booking-details';
 
-export async function GET(_req: Request, { params }: { params: { bookingId: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ bookingId: string }> }) {
   const requestId = newRequestId();
+  const { bookingId } = await params;
   const ctx = anonymousContext('customer.booking.detail', requestId);
   if (!ctx.actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-  if (!params.bookingId || params.bookingId.length > 200) {
+  if (!bookingId || bookingId.length > 200) {
     return Response.json(err('VALIDATION_ERROR', 'Invalid booking id.', requestId), { status: 400 });
   }
   const access = authorizeBooking(null, ctx.actor.userId);

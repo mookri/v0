@@ -1,7 +1,11 @@
 import type { NextConfig } from 'next';
+import * as path from 'path';
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
+  // Windows dev box lacks symlink privileges for standalone trace-copy;
+  // NEXT_STANDALONE=0 for local runs (same escape as the customer app).
+  output: process.env['NEXT_STANDALONE'] === '0' ? undefined : 'standalone',
+  outputFileTracingRoot: path.join(__dirname, '..', '..'),
   compress: true,
   env: {
     NEXT_PUBLIC_SITE_URL: 'https://partner.navdhya.com',
