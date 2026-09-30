@@ -18,8 +18,8 @@ completed:
   - 12-customer-routes
   - 13-bff
   - 14-api-platform
-partial:
   - 17-edge-session-decision
+partial:
   - 19-staging-deploy
   - 20-perf-baseline
   - 21-book-split
