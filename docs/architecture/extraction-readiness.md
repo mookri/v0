@@ -38,7 +38,7 @@ Notes:
 | recommendations | L5 | full layers + adapters, clean |
 | search | L5 | port bound in `infrastructure/search`, clean |
 | user | L5 | full layers + adapters, clean |
-| identity | L4 | ports+adapters, no `contracts/` dir — blocker: publish session/handoff contracts |
+| identity | L4 | ports+adapters incl. ActorResolver port, no `contracts/` dir — blocker: publish session/handoff contracts |
 | content | L3 | contracts published, no adapter — blocker: content source adapter |
 | payment | L5 | HMAC webhook auth + verified-gate, Razorpay adapter bound, clean |
 | ads | L4 | domain/application/contracts/ports, pure `ui/`; adapter externalized — confirm before L5 |
@@ -49,7 +49,7 @@ Notes:
 | geography | L2 | domain/ports, no application/contracts split — blocker |
 | feedback | L2 | domain/application, no ports — blocker: review/moderation ports |
 | incident | L2 | domain/application, no ports — blocker |
-| notifications | L2 | domain/application, no ports — blocker |
+| notifications | L4 | live events + bus port + memory adapter, clean |
 | partner | L2 | domain/application, no ports — blocker: lifecycle ports (see 27-partner-migration) |
 | resource-management | L2 | domain/application, no ports — blocker |
 | support | L2 | domain/application, no ports — blocker |
