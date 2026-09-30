@@ -1,5 +1,6 @@
 export * from './domain/Payment';
 export * from './domain/payment-rules';
+export * from './domain/webhook-auth';
 export * from './contracts/PaymentContracts';
 export * from './ports/PaymentPorts';
 export * from './events/PaymentEvents';

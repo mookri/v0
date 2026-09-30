@@ -100,7 +100,7 @@ test('refund: partial then full; overrun and non-captured blocked', async () => 
 test('webhook: capture applies once; replay returns current summary', async () => {
   const repo = memoryRepo();
   await initiatePayment(repo, fakeProvider(), req());
-  const evt = { providerEventId: 'evt_1', type: 'payment.captured' as const, providerPaymentId: 'pp_1', paymentId: 'pay_1', nowIso: NOW };
+  const evt = { providerEventId: 'evt_1', type: 'payment.captured' as const, providerPaymentId: 'pp_1', paymentId: 'pay_1', verified: true, nowIso: NOW };
   const first = await handleWebhook(repo, evt);
   expect(first.status).toBe('CAPTURED');
   const replay = await handleWebhook(repo, evt);

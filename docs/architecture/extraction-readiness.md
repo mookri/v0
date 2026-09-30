@@ -40,7 +40,7 @@ Notes:
 | user | L5 | full layers + adapters, clean |
 | identity | L4 | ports+adapters, no `contracts/` dir — blocker: publish session/handoff contracts |
 | content | L3 | contracts published, no adapter — blocker: content source adapter |
-| payment | L4 | port bound in `infrastructure/payments` (Noop), clean; needs provider adapter for L5-use (Razorpay) — tracked in 22-payment-hardening |
+| payment | L5 | HMAC webhook auth + verified-gate, Razorpay adapter bound, clean |
 | ads | L4 | domain/application/contracts/ports, pure `ui/`; adapter externalized — confirm before L5 |
 | communication | L4 | domain/ports + adapters, clean |
 | customer-profile | L3 | domain/application/ports, no contracts — blocker: publish 360 contracts |

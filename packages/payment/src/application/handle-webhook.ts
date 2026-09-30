@@ -8,6 +8,9 @@ export interface ProviderWebhookEvent {
   type: 'payment.captured' | 'payment.failed';
   providerPaymentId: string;
   paymentId: string;
+  // Must be true: signature verified by the caller (see webhook-auth) before
+  // invoking. Never set from client input.
+  verified: boolean;
   nowIso: string;
 }
 
@@ -16,6 +19,7 @@ export async function handleWebhook(
   repo: PaymentRepository,
   event: ProviderWebhookEvent,
 ): Promise<PaymentSummary> {
+  if (!event.verified) throw new Error('WEBHOOK_UNVERIFIED');
   const seen = await repo.findByProviderEventId(event.providerEventId);
   if (seen) return toPaymentSummary(seen);
   const payment = await repo.findById(event.paymentId);

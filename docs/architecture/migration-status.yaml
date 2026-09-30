@@ -22,16 +22,16 @@ completed:
   - 19-staging-deploy
   - 20-perf-baseline
   - 21-book-split
+  - 22-payment-hardening
   - 26-strangler
   - 27-partner-migration
   - 29-readiness-scoring
 partial: []
 not-started:
-  - 22-payment-hardening
   - 24-realtime
   - 25-production-cutover
   - 28-admin-operations
 baselines:
   architecture-tests: 30 files / 84 passing
-  unit-suites: 60 files / 234 passing
+  unit-suites: 61 files / 239 passing
   branch: architecture/phase-3-web-extraction
