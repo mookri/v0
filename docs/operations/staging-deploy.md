@@ -9,7 +9,7 @@ before any production cutover (phase 25).
 |-----|----------|------------|----------------|--------|
 | web (`apps/web`) | 3000 | `output: standalone` (check app config) | `https://www.navdhya.com` | TBD |
 | customer (`apps/customer`) | 3001 | `output: standalone` | `https://app.navdhya.com` | `/api/health` → `{status:'ok',product:'customer'}` |
-| partner (`apps/partner`) | 3002 | `output: standalone` (check app config) | `https://partner.navdhya.com` | TBD |
+| partner (`apps/partner`) | 3002 | `output: standalone` (check app config) | `https://partner.navdhya.com` | `/api/health` → `{status:'ok',product:'partner'}` |
 
 ## Env contract
 

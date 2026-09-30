@@ -20,20 +20,18 @@ completed:
   - 14-api-platform
   - 17-edge-session-decision
   - 26-strangler
+  - 27-partner-migration
   - 29-readiness-scoring
 partial:
   - 19-staging-deploy
   - 20-perf-baseline
   - 21-book-split
-  - 26-strangler
-  - 27-partner-migration
 not-started:
   - 22-payment-hardening
   - 24-realtime
   - 25-production-cutover
   - 28-admin-operations
-  - 29-readiness-scoring
 baselines:
   architecture-tests: 30 files / 84 passing
-  unit-suites: 53 files / 220 passing
+  unit-suites: 58 files / 231 passing
   branch: architecture/phase-3-web-extraction
