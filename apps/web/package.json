@@ -47,7 +47,8 @@
     "zod": "3.25.76",
     "@navdhya/security": "workspace:*",
     "@navdhya/contracts": "workspace:*",
-    "@navdhya/design-system": "workspace:*"
+    "@navdhya/design-system": "workspace:*",
+    "@navdhya/observability": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.9",

@@ -9,5 +9,7 @@
       "default": "./src/index.ts"
     }
   },
-  "dependencies": {}
+  "dependencies": {
+    "@navdhya/contracts": "workspace:*"
+  }
 }
