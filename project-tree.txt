@@ -1,0 +1,2091 @@
+﻿v0-navdhya-ritual-services
+├── .githooks
+│   └── pre-commit
+├── .github
+│   ├── workflows
+│   │   └── ci.yml
+│   └── CODEOWNERS
+├── .playwright-mcp
+│   ├── console-2026-05-31T16-48-45-937Z.log
+│   ├── page-2026-05-31T16-35-07-224Z.yml
+│   └── page-2026-05-31T16-48-56-281Z.yml
+├── .swc
+│   └── plugins
+│       └── windows_x86_64_20.0.0
+├── app
+│   ├── (auth)
+│   │   ├── account-deactivated
+│   │   │   └── page.tsx
+│   │   ├── apply
+│   │   │   ├── pandit
+│   │   │   │   └── page.tsx
+│   │   │   └── vendor
+│   │   │       └── page.tsx
+│   │   ├── complete-profile
+│   │   │   └── page.tsx
+│   │   ├── email-verified
+│   │   │   └── page.tsx
+│   │   ├── forgot-password
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── invite
+│   │   │   └── page.tsx
+│   │   ├── lock
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── login
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── new-password
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── pin-login
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── reset-password
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── select-role
+│   │   │   └── page.tsx
+│   │   ├── signup
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── two-factor
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── verify
+│   │   │   └── page.tsx
+│   │   └── layout.tsx
+│   ├── (legal)
+│   │   ├── accessibility
+│   │   │   └── page.tsx
+│   │   ├── affiliate-disclosure
+│   │   │   └── page.tsx
+│   │   ├── ai-disclosure
+│   │   │   └── page.tsx
+│   │   ├── cancellation-policy
+│   │   │   └── page.tsx
+│   │   ├── child-protection
+│   │   │   └── page.tsx
+│   │   ├── cookie-policy
+│   │   │   └── page.tsx
+│   │   ├── data-processing
+│   │   │   └── page.tsx
+│   │   ├── grievance-officer
+│   │   │   └── page.tsx
+│   │   ├── ip-policy
+│   │   │   └── page.tsx
+│   │   ├── pandit-agreement
+│   │   │   └── page.tsx
+│   │   ├── pandit-verification
+│   │   │   └── page.tsx
+│   │   ├── privacy-policy
+│   │   │   └── page.tsx
+│   │   ├── refund-policy
+│   │   │   └── page.tsx
+│   │   ├── service-guarantee
+│   │   │   └── page.tsx
+│   │   ├── terms-of-service
+│   │   │   └── page.tsx
+│   │   ├── vendor-terms
+│   │   │   └── page.tsx
+│   │   └── layout.tsx
+│   ├── (seo)
+│   │   ├── [...slug]
+│   │   │   └── page.tsx
+│   │   └── layout.tsx
+│   ├── about
+│   │   └── page.tsx
+│   ├── admin
+│   │   ├── [[...section]]
+│   │   │   └── page.tsx
+│   │   └── layout.tsx
+│   ├── api
+│   │   ├── ads
+│   │   │   ├── __tests__
+│   │   │   │   ├── csrf.test.ts
+│   │   │   │   └── routes.test.ts
+│   │   │   ├── decision
+│   │   │   │   └── route.ts
+│   │   │   ├── track
+│   │   │   │   └── route.ts
+│   │   │   └── track-beacon
+│   │   │       └── route.ts
+│   │   └── revalidate
+│   │       └── route.ts
+│   ├── astrology
+│   │   ├── gemstone
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── horoscope
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── kundli
+│   │   │   └── page.tsx
+│   │   ├── matchmaking
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   └── remedies
+│   │       ├── client.tsx
+│   │       └── page.tsx
+│   ├── book
+│   │   ├── client.tsx
+│   │   └── page.tsx
+│   ├── community
+│   │   ├── events
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── forums
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── join
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── stories
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── volunteer
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── client.tsx
+│   │   └── page.tsx
+│   ├── consultation
+│   │   └── page.tsx
+│   ├── contact
+│   │   └── page.tsx
+│   ├── find-pandit
+│   │   ├── client.tsx
+│   │   └── page.tsx
+│   ├── gallery
+│   │   ├── client.tsx
+│   │   └── page.tsx
+│   ├── help
+│   │   ├── client.tsx
+│   │   └── page.tsx
+│   ├── learn
+│   │   ├── certified
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── courses
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── kids
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── library
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── workshops
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── client.tsx
+│   │   └── page.tsx
+│   ├── llms.txt
+│   │   └── route.ts
+│   ├── llms-full.txt
+│   │   └── route.ts
+│   ├── manager
+│   │   └── [[...section]]
+│   │       └── page.tsx
+│   ├── pandit
+│   │   └── [[...section]]
+│   │       └── page.tsx
+│   ├── pandits
+│   │   ├── book
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── certified
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── insights
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── join
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── client.tsx
+│   │   └── page.tsx
+│   ├── platform
+│   │   ├── [[...section]]
+│   │   │   └── page.tsx
+│   │   └── layout.tsx
+│   ├── pujas
+│   │   ├── [slug]
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── custom
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── havan
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── home
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── occasions
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── online
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── personalized
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── regional
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── temple
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── vedic
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── client.tsx
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── resources
+│   │   ├── blog
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── library
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── news
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── scriptures
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── tools
+│   │   │   ├── client.tsx
+│   │   │   └── page.tsx
+│   │   ├── client.tsx
+│   │   └── page.tsx
+│   ├── services
+│   │   ├── client.tsx
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── settings
+│   │   └── page.tsx
+│   ├── sitemap.xml
+│   │   └── route.ts
+│   ├── sitemaps
+│   │   └── [...slug]
+│   │       └── route.ts
+│   ├── user
+│   │   └── [[...section]]
+│   │       └── page.tsx
+│   ├── vastu
+│   │   └── page.tsx
+│   ├── vendor
+│   │   └── [[...section]]
+│   │       └── page.tsx
+│   ├── globals.css
+│   ├── layout.tsx
+│   ├── not-found.tsx
+│   ├── page.tsx
+│   ├── providers.tsx
+│   └── robots.ts
+├── application
+│   ├── booking
+│   ├── recommendation
+│   └── search
+├── bin
+│   └── dlo.ts
+├── cache
+├── components
+│   ├── __tests__
+│   │   ├── preloader
+│   │   │   ├── test-colors
+│   │   │   │   └── page.tsx
+│   │   │   ├── test-loading
+│   │   │   │   └── page.tsx
+│   │   │   ├── test-preloader
+│   │   │   │   └── page.tsx
+│   │   │   └── test-suspense
+│   │   │       └── page.tsx
+│   │   ├── fixed-header.test.tsx
+│   │   ├── mobile-menu-check.tsx
+│   │   ├── new-header.test.tsx
+│   │   └── site-header.test.tsx
+│   ├── ad-network
+│   │   ├── __tests__
+│   │   │   ├── AdRuntimeLoading.test.tsx
+│   │   │   ├── AdSlot.test.tsx
+│   │   │   └── AutoAdRenderer.test.tsx
+│   │   ├── adapters
+│   │   │   ├── adapters.ts
+│   │   │   ├── global-ads.d.ts
+│   │   │   └── gpt.d.ts
+│   │   ├── automation
+│   │   │   └── automation.ts
+│   │   ├── core
+│   │   │   ├── engine.ts
+│   │   │   ├── experiment.ts
+│   │   │   ├── frequency.ts
+│   │   │   ├── loader.ts
+│   │   │   ├── pricing.ts
+│   │   │   ├── registry.ts
+│   │   │   ├── tracking.ts
+│   │   │   ├── types.ts
+│   │   │   └── validation.ts
+│   │   ├── flows
+│   │   │   └── flows.ts
+│   │   ├── runtime
+│   │   │   ├── AdRuntimeProvider.tsx
+│   │   │   ├── observer.ts
+│   │   │   └── TrackingService.ts
+│   │   ├── Adprovider.tsx
+│   │   ├── AdSlot.tsx
+│   │   ├── Adtokens.ts
+│   │   ├── AutoAdRenderer.tsx
+│   │   ├── HeroAd.tsx
+│   │   ├── HOW_TO_USE.md
+│   │   ├── index.ts
+│   │   ├── NativeAds.tsx
+│   │   ├── RectangularAds.tsx
+│   │   ├── SponsoredAds.tsx
+│   │   └── VerticalAds.tsx
+│   ├── analytics
+│   │   └── PostHogProvider.tsx
+│   ├── auth
+│   │   ├── __tests__
+│   │   │   └── OtpInput.test.tsx
+│   │   ├── AuthButtons.tsx
+│   │   ├── AuthDivider.tsx
+│   │   ├── AuthHeader.tsx
+│   │   ├── AuthRoutePanel.tsx
+│   │   ├── AuthSocialButtons.tsx
+│   │   ├── AuthSplitLayout.tsx
+│   │   ├── AuthTabs.tsx
+│   │   ├── FloatingInput.tsx
+│   │   ├── ForgotScreen.tsx
+│   │   ├── LoginScreen.tsx
+│   │   ├── OtpInput.tsx
+│   │   ├── OtpScreen.tsx
+│   │   ├── PhoneInput.tsx
+│   │   ├── SignupScreen.tsx
+│   │   ├── SuccessScreen.tsx
+│   │   └── UnifiedAuthConsole.tsx
+│   ├── dashboard
+│   │   ├── __tests__
+│   │   │   └── StatusBadge.test.tsx
+│   │   ├── ProgressBar.tsx
+│   │   ├── QuickActions.tsx
+│   │   ├── StatCard.tsx
+│   │   ├── StatusBadge.tsx
+│   │   └── TimelineItem.tsx
+│   ├── dev
+│   │   └── DevRoleSwitcher.tsx
+│   ├── dlo-x
+│   │   ├── shells
+│   │   │   ├── AdminShell.tsx
+│   │   │   ├── AuthShell.tsx
+│   │   │   ├── ChromeShell.tsx
+│   │   │   ├── DashboardShell.tsx
+│   │   │   ├── MainShell.tsx
+│   │   │   ├── MinimalShell.tsx
+│   │   │   ├── MobileShell.tsx
+│   │   │   ├── PlatformShell.tsx
+│   │   │   ├── PoojaShell.tsx
+│   │   │   └── VendorShell.tsx
+│   │   ├── ErrorBoundary.tsx
+│   │   └── LayoutOrchestrator.tsx
+│   ├── mobile
+│   │   └── home
+│   │       ├── MobileAnimatedSearchBar.tsx
+│   │       ├── MobileBottomNav.tsx
+│   │       ├── MobileCategories.tsx
+│   │       ├── MobileFeaturedRituals.tsx
+│   │       ├── MobileHero.tsx
+│   │       ├── MobileHome.tsx
+│   │       ├── MobilePujaForYou.tsx
+│   │       ├── MobileSearchBar.tsx
+│   │       └── MobileTopBar.tsx
+│   ├── product
+│   │   ├── NavdhyaMarketplaceHome.tsx
+│   │   ├── ProductPageShell.tsx
+│   │   └── RoleWorkspacePage.tsx
+│   ├── sections
+│   │   ├── contact
+│   │   │   ├── contact-form.tsx
+│   │   │   ├── contact-info.tsx
+│   │   │   ├── contact-map.tsx
+│   │   │   └── index.ts
+│   │   ├── QuickActions
+│   │   │   ├── CarouselControls.tsx
+│   │   │   ├── FestivalCard.tsx
+│   │   │   ├── OfferBanner.tsx
+│   │   │   ├── PanditsNearYou.tsx
+│   │   │   ├── QuickLinks.tsx
+│   │   │   ├── SacredSpaces.tsx
+│   │   │   ├── ServiceCard.tsx
+│   │   │   └── TrustBadges.tsx
+│   │   ├── blog.tsx
+│   │   ├── booking.tsx
+│   │   ├── catalog.tsx
+│   │   ├── CatalogFilterBar.tsx
+│   │   ├── CategoryHeroBanner.tsx
+│   │   ├── faq.tsx
+│   │   ├── featured-pujas.tsx
+│   │   ├── featured-pujas-carousel.tsx
+│   │   ├── FilterPanelModal.tsx
+│   │   ├── hero.tsx
+│   │   ├── info-bar.tsx
+│   │   ├── process-steps.tsx
+│   │   ├── quick.tsx
+│   │   ├── testimonials.tsx
+│   │   ├── trust-stats.tsx
+│   │   └── why-choose.tsx
+│   ├── seo
+│   │   ├── __tests__
+│   │   │   ├── article-ad-experience.test.ts
+│   │   │   └── JsonLd.test.tsx
+│   │   ├── article-ad-experience.ts
+│   │   ├── ArticlePage.tsx
+│   │   ├── ArticlePageClient.tsx
+│   │   ├── BreadcrumbNav.tsx
+│   │   ├── HeroImage.tsx
+│   │   ├── InternalLinks.tsx
+│   │   ├── JsonLd.tsx
+│   │   ├── NativeAds.tsx
+│   │   ├── SchemaMarkup.tsx
+│   │   └── SchemaScript.tsx
+│   ├── ui
+│   │   ├── components
+│   │   │   └── ui
+│   │   │       └── NavLink.tsx
+│   │   ├── accordion.tsx
+│   │   ├── button.tsx
+│   │   ├── dropdown-menu.tsx
+│   │   ├── input.tsx
+│   │   ├── label.tsx
+│   │   ├── mobile-menu.css
+│   │   ├── NavLink.tsx
+│   │   ├── OtpInput.tsx
+│   │   ├── PasswordStrengthBar.tsx
+│   │   ├── preloader.tsx
+│   │   ├── Preloader-temp.tsx
+│   │   ├── ProgressBar.tsx
+│   │   ├── PujaCard.tsx
+│   │   ├── select.tsx
+│   │   ├── separator.tsx
+│   │   ├── sheet.tsx
+│   │   └── textarea.tsx
+│   ├── bottom-menu.tsx
+│   ├── hero.tsx
+│   ├── MenuSheet.tsx
+│   ├── NavigationLoader.tsx
+│   ├── QuickBook.tsx
+│   ├── site-footer.tsx
+│   ├── site-header.tsx
+│   ├── test-loading.tsx
+│   ├── test-suspense.tsx
+│   └── whatsapp-float.tsx
+├── content
+│   ├── images
+│   │   └── imgData.json
+│   ├── pages
+│   │   ├── 16-sanskars.json
+│   │   ├── 99pandit-alternatives-delhi.json
+│   │   ├── abhishek-ritual-home.json
+│   │   ├── agni-sacred-fire-vedic.json
+│   │   ├── ahimsa-daily-life.json
+│   │   ├── ahimsa-vedic-rituals.json
+│   │   ├── ai-vedic-ritual-scheduling.json
+│   │   ├── akshaya-tritiya-ritual.json
+│   │   ├── amavasya-puja-home.json
+│   │   ├── anant-chaturdashi-ritual.json
+│   │   ├── ancestor-rite-timing-before-a-move-or-property-change-consultation.json
+│   │   ├── ancestor-rite-timing-before-booking-a-priest-consultation.json
+│   │   ├── ancestor-rite-timing-for-diaspora-time-zone-coordination-consultation.json
+│   │   ├── ancestor-rite-timing-when-elders-want-scriptural-context-first-consultation.json
+│   │   ├── ancestor-rite-timing-when-the-family-wants-a-second-opinion-consultation.json
+│   │   ├── annaprashan.json
+│   │   ├── annaprashan-apartment-format-guide.json
+│   │   ├── annaprashan-briefing-the-family.json
+│   │   ├── annaprashan-ceremony-guide.json
+│   │   ├── annaprashan-combined-ritual-day-guide.json
+│   │   ├── annaprashan-combined-rituals.json
+│   │   ├── annaprashan-delhi.json
+│   │   ├── annaprashan-dwarka.json
+│   │   ├── annaprashan-east-delhi.json
+│   │   ├── annaprashan-elder-led-family-guide.json
+│   │   ├── annaprashan-family-consensus-guide.json
+│   │   ├── annaprashan-first-time-bookers-guide.json
+│   │   ├── annaprashan-ghaziabad.json
+│   │   ├── annaprashan-gurgaon.json
+│   │   ├── annaprashan-home-vs-venue.json
+│   │   ├── annaprashan-language-fit-guide.json
+│   │   ├── annaprashan-language-preference.json
+│   │   ├── annaprashan-last-minute-clarity-guide.json
+│   │   ├── annaprashan-noida.json
+│   │   ├── annaprashan-north-delhi.json
+│   │   ├── annaprashan-pandit-fit.json
+│   │   ├── annaprashan-price-delhi-ncr.json
+│   │   ├── annaprashan-rohini.json
+│   │   ├── annaprashan-samagri-responsibility.json
+│   │   ├── annaprashan-same-day-risk.json
+│   │   ├── annaprashan-small-home-setup-guide.json
+│   │   ├── annaprashan-south-delhi.json
+│   │   ├── annaprashan-travel-sensitive-guide.json
+│   │   ├── annaprashan-weekend-booking-guide.json
+│   │   ├── annaprashan-west-delhi.json
+│   │   ├── annaprashan-when-to-book.json
+│   │   ├── annual-ritual-calendar.json
+│   │   ├── anusthan-at-home.json
+│   │   ├── apartment-annaprashan-delhi-ncr.json
+│   │   ├── apartment-bhoomi-pujan-delhi-ncr.json
+│   │   ├── apartment-griha-pravesh-delhi-ncr.json
+│   │   ├── apartment-havan-delhi-ncr.json
+│   │   ├── apartment-hindu-wedding-delhi-ncr.json
+│   │   ├── apartment-lakshmi-ganesh-puja-delhi-ncr.json
+│   │   ├── apartment-mundan-delhi-ncr.json
+│   │   ├── apartment-namkaran-delhi-ncr.json
+│   │   ├── apartment-navagraha-puja-delhi-ncr.json
+│   │   ├── apartment-office-opening-delhi-ncr.json
+│   │   ├── apartment-satyanarayan-katha-delhi-ncr.json
+│   │   ├── apartment-vastu-shanti-delhi-ncr.json
+│   │   ├── assamese-bihu-rituals.json
+│   │   ├── asthi-visarjan-ritual.json
+│   │   ├── astrology-career-guidance.json
+│   │   ├── astrology-health-predictions.json
+│   │   ├── astrology-hindu-marriage.json
+│   │   ├── astrology-naming-ceremony.json
+│   │   ├── astrology-remedies-mantras.json
+│   │   ├── astrology-ritual-relationship.json
+│   │   ├── at-home-annaprashan-delhi-ncr.json
+│   │   ├── at-home-bhoomi-pujan-delhi-ncr.json
+│   │   ├── at-home-griha-pravesh-delhi-ncr.json
+│   │   ├── at-home-havan-delhi-ncr.json
+│   │   ├── at-home-hindu-wedding-delhi-ncr.json
+│   │   ├── at-home-lakshmi-ganesh-puja-delhi-ncr.json
+│   │   ├── at-home-mundan-delhi-ncr.json
+│   │   ├── at-home-namkaran-delhi-ncr.json
+│   │   ├── at-home-navagraha-puja-delhi-ncr.json
+│   │   ├── at-home-office-opening-delhi-ncr.json
+│   │   ├── at-home-satyanarayan-katha-delhi-ncr.json
+│   │   ├── at-home-vastu-shanti-delhi-ncr.json
+│   │   ├── australia-brisbane.json
+│   │   ├── australia-brisbane-india-family-pandit-coordination.json
+│   │   ├── australia-brisbane-nri-griha-pravesh-planning.json
+│   │   ├── australia-brisbane-online-astrology-consultation.json
+│   │   ├── australia-brisbane-online-puja.json
+│   │   ├── australia-brisbane-online-satyanarayan-katha.json
+│   │   ├── australia-melbourne.json
+│   │   ├── australia-melbourne-india-family-pandit-coordination.json
+│   │   ├── australia-melbourne-nri-griha-pravesh-planning.json
+│   │   ├── australia-melbourne-online-astrology-consultation.json
+│   │   ├── australia-melbourne-online-puja.json
+│   │   ├── australia-melbourne-online-satyanarayan-katha.json
+│   │   ├── australia-perth.json
+│   │   ├── australia-perth-india-family-pandit-coordination.json
+│   │   ├── australia-perth-nri-griha-pravesh-planning.json
+│   │   ├── australia-perth-online-astrology-consultation.json
+│   │   ├── australia-perth-online-puja.json
+│   │   ├── australia-perth-online-satyanarayan-katha.json
+│   │   ├── australia-sydney.json
+│   │   ├── australia-sydney-india-family-pandit-coordination.json
+│   │   ├── australia-sydney-nri-griha-pravesh-planning.json
+│   │   ├── australia-sydney-online-astrology-consultation.json
+│   │   ├── australia-sydney-online-puja.json
+│   │   ├── australia-sydney-online-satyanarayan-katha.json
+│   │   ├── ayodhya-ritual-traditions.json
+│   │   ├── baby-naming.json
+│   │   ├── baisakhi-ritual-guide.json
+│   │   ├── banana-leaf-ritual.json
+│   │   ├── barsi-ritual-guide.json
+│   │   ├── bell-conch-puja.json
+│   │   ├── benefits-chanting-om.json
+│   │   ├── benefits-fasting-hindu.json
+│   │   ├── benefits-regular-astrology.json
+│   │   ├── benefits-regular-puja.json
+│   │   ├── benefits-temple-visits.json
+│   │   ├── benefits-vedic-chants.json
+│   │   ├── bengali-hindu-ritual-traditions.json
+│   │   ├── best-pandit-booking-delhi.json
+│   │   ├── bhai-dooj-ritual.json
+│   │   ├── bhajans-kirtans-spiritual.json
+│   │   ├── bhoomi-pujan.json
+│   │   ├── bhoomi-pujan-apartment-format-guide.json
+│   │   ├── bhoomi-pujan-briefing-the-family.json
+│   │   ├── bhoomi-pujan-ceremony.json
+│   │   ├── bhoomi-pujan-combined-ritual-day-guide.json
+│   │   ├── bhoomi-pujan-combined-rituals.json
+│   │   ├── bhoomi-pujan-delhi.json
+│   │   ├── bhoomi-pujan-dwarka.json
+│   │   ├── bhoomi-pujan-east-delhi.json
+│   │   ├── bhoomi-pujan-elder-led-family-guide.json
+│   │   ├── bhoomi-pujan-family-consensus-guide.json
+│   │   ├── bhoomi-pujan-first-time-bookers-guide.json
+│   │   ├── bhoomi-pujan-ghaziabad.json
+│   │   ├── bhoomi-pujan-gurgaon.json
+│   │   ├── bhoomi-pujan-home-vs-venue.json
+│   │   ├── bhoomi-pujan-language-fit-guide.json
+│   │   ├── bhoomi-pujan-language-preference.json
+│   │   ├── bhoomi-pujan-last-minute-clarity-guide.json
+│   │   ├── bhoomi-pujan-noida.json
+│   │   ├── bhoomi-pujan-north-delhi.json
+│   │   ├── bhoomi-pujan-pandit-fit.json
+│   │   ├── bhoomi-pujan-price-delhi-ncr.json
+│   │   ├── bhoomi-pujan-rohini.json
+│   │   ├── bhoomi-pujan-samagri-responsibility.json
+│   │   ├── bhoomi-pujan-same-day-risk.json
+│   │   ├── bhoomi-pujan-small-home-setup-guide.json
+│   │   ├── bhoomi-pujan-south-delhi.json
+│   │   ├── bhoomi-pujan-travel-sensitive-guide.json
+│   │   ├── bhoomi-pujan-weekend-booking-guide.json
+│   │   ├── bhoomi-pujan-west-delhi.json
+│   │   ├── bhoomi-pujan-when-to-book.json
+│   │   ├── bhumi-puja-renovation.json
+│   │   ├── bihari-hindu-ritual-customs.json
+│   │   ├── bindi-spiritual-significance.json
+│   │   ├── birth-time-kundali.json
+│   │   ├── book-astrology-consultation-online.json
+│   │   ├── book-pandit-home-puja.json
+│   │   ├── brahmin-feast-vidhi.json
+│   │   ├── braj-mathura-rituals.json
+│   │   ├── broomstick-hindu-ritual.json
+│   │   ├── camphor-hindu-worship.json
+│   │   ├── camphor-home-rituals.json
+│   │   ├── career-reading-before-a-move-or-property-change-consultation.json
+│   │   ├── career-reading-before-booking-a-priest-consultation.json
+│   │   ├── career-reading-for-diaspora-time-zone-coordination-consultation.json
+│   │   ├── career-reading-when-elders-want-scriptural-context-first-consultation.json
+│   │   ├── career-reading-when-the-family-wants-a-second-opinion-consultation.json
+│   │   ├── ceremony-readiness-before-first-booking.json
+│   │   ├── ceremony-readiness-for-repeat-households.json
+│   │   ├── ceremony-readiness-vs-generic-listings.json
+│   │   ├── ceremony-readiness-vs-phone-only-booking.json
+│   │   ├── ceremony-readiness-vs-unmanaged-referrals.json
+│   │   ├── chakra-system-hindu.json
+│   │   ├── chandan-paste-puja.json
+│   │   ├── char-dham-yatra.json
+│   │   ├── chhath-puja-ritual-guide.json
+│   │   ├── chhat-puja-ceremony.json
+│   │   ├── choose-incense-puja.json
+│   │   ├── choose-personal-deity.json
+│   │   ├── clean-puja-idols.json
+│   │   ├── clear-booking-briefs-before-first-booking.json
+│   │   ├── clear-booking-briefs-for-repeat-households.json
+│   │   ├── clear-booking-briefs-vs-generic-listings.json
+│   │   ├── clear-booking-briefs-vs-phone-only-booking.json
+│   │   ├── clear-booking-briefs-vs-unmanaged-referrals.json
+│   │   ├── coconut-hindu-rituals.json
+│   │   ├── communicate-ritual-requirements.json
+│   │   ├── complete-diwali-puja-guide.json
+│   │   ├── coorg-kodava-rituals.json
+│   │   ├── cow-hindu-ritual-significance.json
+│   │   ├── cow-worship-home.json
+│   │   ├── daily-lamp-lighting.json
+│   │   ├── daily-puja-routine.json
+│   │   ├── dasha-mahadasha-vedic.json
+│   │   ├── deepawali-traditions-india.json
+│   │   ├── delhi.json
+│   │   ├── delhi-hindu-temple-rituals.json
+│   │   ├── devi-puja-guide.json
+│   │   ├── dhanteras-ritual-lakshmi.json
+│   │   ├── dharma-hindu-rituals.json
+│   │   ├── dhoop-agarbatti-puja.json
+│   │   ├── diaspora-regional-traditions.json
+│   │   ├── draw-swastika-puja.json
+│   │   ├── dream-symbolism-hindu.json
+│   │   ├── durga-puja-ceremony-guide.json
+│   │   ├── durga-puja-vidhi-mantras.json
+│   │   ├── dussehra-vijayadashami-guide.json
+│   │   ├── dwarka-ritual-traditions.json
+│   │   ├── eclipse-ritual-significance.json
+│   │   ├── elder-women-family-rituals.json
+│   │   ├── evaluate-pandit-ceremony.json
+│   │   ├── explain-puja-children.json
+│   │   ├── family-ceremony-annaprashan-delhi-ncr.json
+│   │   ├── family-ceremony-bhoomi-pujan-delhi-ncr.json
+│   │   ├── family-ceremony-griha-pravesh-delhi-ncr.json
+│   │   ├── family-ceremony-havan-delhi-ncr.json
+│   │   ├── family-ceremony-hindu-wedding-delhi-ncr.json
+│   │   ├── family-ceremony-lakshmi-ganesh-puja-delhi-ncr.json
+│   │   ├── family-ceremony-mundan-delhi-ncr.json
+│   │   ├── family-ceremony-namkaran-delhi-ncr.json
+│   │   ├── family-ceremony-navagraha-puja-delhi-ncr.json
+│   │   ├── family-ceremony-office-opening-delhi-ncr.json
+│   │   ├── family-ceremony-satyanarayan-katha-delhi-ncr.json
+│   │   ├── family-ceremony-vastu-shanti-delhi-ncr.json
+│   │   ├── family-havan-preparation.json
+│   │   ├── fasting-rules-hindu-families.json
+│   │   ├── feng-shui-vs-vastu.json
+│   │   ├── festival-decoration-rituals.json
+│   │   ├── festival-observance-planning-before-a-move-or-property-change-consultation.json
+│   │   ├── festival-observance-planning-before-booking-a-priest-consultation.json
+│   │   ├── festival-observance-planning-for-diaspora-time-zone-coordination-consultation.json
+│   │   ├── festival-observance-planning-when-elders-want-scriptural-context-first-consultation.json
+│   │   ├── festival-observance-planning-when-the-family-wants-a-second-opinion-consultation.json
+│   │   ├── flowers-hindu-worship.json
+│   │   ├── fold-offer-vastra.json
+│   │   ├── follow-up-quality-before-first-booking.json
+│   │   ├── follow-up-quality-for-repeat-households.json
+│   │   ├── follow-up-quality-vs-generic-listings.json
+│   │   ├── follow-up-quality-vs-phone-only-booking.json
+│   │   ├── follow-up-quality-vs-unmanaged-referrals.json
+│   │   ├── food-rules-puja-days.json
+│   │   ├── four-vedas-ritual-significance.json
+│   │   ├── friday-lakshmi-puja.json
+│   │   ├── ganesh-chaturthi-festival-guide.json
+│   │   ├── ganesh-puja-ceremony.json
+│   │   ├── ganesh-puja-vidhi.json
+│   │   ├── garbhadhan-pumsavana.json
+│   │   ├── gauna-ceremony-hindu-marriage.json
+│   │   ├── gayatri-mantra-explained.json
+│   │   ├── gemstone-therapy-astrology.json
+│   │   ├── germany-berlin.json
+│   │   ├── germany-berlin-india-family-pandit-coordination.json
+│   │   ├── germany-berlin-nri-griha-pravesh-planning.json
+│   │   ├── germany-berlin-online-astrology-consultation.json
+│   │   ├── germany-berlin-online-puja.json
+│   │   ├── germany-berlin-online-satyanarayan-katha.json
+│   │   ├── germany-frankfurt.json
+│   │   ├── germany-frankfurt-india-family-pandit-coordination.json
+│   │   ├── germany-frankfurt-nri-griha-pravesh-planning.json
+│   │   ├── germany-frankfurt-online-astrology-consultation.json
+│   │   ├── germany-frankfurt-online-puja.json
+│   │   ├── germany-frankfurt-online-satyanarayan-katha.json
+│   │   ├── germany-hamburg.json
+│   │   ├── germany-hamburg-india-family-pandit-coordination.json
+│   │   ├── germany-hamburg-nri-griha-pravesh-planning.json
+│   │   ├── germany-hamburg-online-astrology-consultation.json
+│   │   ├── germany-hamburg-online-puja.json
+│   │   ├── germany-hamburg-online-satyanarayan-katha.json
+│   │   ├── germany-munich.json
+│   │   ├── germany-munich-india-family-pandit-coordination.json
+│   │   ├── germany-munich-nri-griha-pravesh-planning.json
+│   │   ├── germany-munich-online-astrology-consultation.json
+│   │   ├── germany-munich-online-puja.json
+│   │   ├── germany-munich-online-satyanarayan-katha.json
+│   │   ├── ghaziabad.json
+│   │   ├── gochara-vedic-astrology.json
+│   │   ├── gotra-hindu-ceremonies.json
+│   │   ├── govardhan-puja-guide.json
+│   │   ├── gratitude-vedic-practice.json
+│   │   ├── griha-pravesh.json
+│   │   ├── griha-pravesh-apartment-format-guide.json
+│   │   ├── griha-pravesh-briefing-the-family.json
+│   │   ├── griha-pravesh-ceremony-explained.json
+│   │   ├── griha-pravesh-combined-ritual-day-guide.json
+│   │   ├── griha-pravesh-combined-rituals.json
+│   │   ├── griha-pravesh-delhi.json
+│   │   ├── griha-pravesh-dwarka.json
+│   │   ├── griha-pravesh-east-delhi.json
+│   │   ├── griha-pravesh-elder-led-family-guide.json
+│   │   ├── griha-pravesh-family-consensus-guide.json
+│   │   ├── griha-pravesh-first-time-bookers-guide.json
+│   │   ├── griha-pravesh-ghaziabad.json
+│   │   ├── griha-pravesh-gurgaon.json
+│   │   ├── griha-pravesh-home-vs-venue.json
+│   │   ├── griha-pravesh-language-fit-guide.json
+│   │   ├── griha-pravesh-language-preference.json
+│   │   ├── griha-pravesh-last-minute-clarity-guide.json
+│   │   ├── griha-pravesh-noida.json
+│   │   ├── griha-pravesh-north-delhi.json
+│   │   ├── griha-pravesh-pandit-fit.json
+│   │   ├── griha-pravesh-price-delhi.json
+│   │   ├── griha-pravesh-price-delhi-ncr.json
+│   │   ├── griha-pravesh-puja-vidhi.json
+│   │   ├── griha-pravesh-rohini.json
+│   │   ├── griha-pravesh-samagri-responsibility.json
+│   │   ├── griha-pravesh-same-day-risk.json
+│   │   ├── griha-pravesh-small-home-setup-guide.json
+│   │   ├── griha-pravesh-south-delhi.json
+│   │   ├── griha-pravesh-travel-sensitive-guide.json
+│   │   ├── griha-pravesh-weekend-booking-guide.json
+│   │   ├── griha-pravesh-west-delhi.json
+│   │   ├── griha-pravesh-when-to-book.json
+│   │   ├── grihastha-dharma-rituals.json
+│   │   ├── guide-puja-at-home.json
+│   │   ├── gujarati-ritual-traditions.json
+│   │   ├── gurgaon.json
+│   │   ├── guru-purnima-guide.json
+│   │   ├── hanuman-jayanti-festival.json
+│   │   ├── hanuman-puja-guide.json
+│   │   ├── havan.json
+│   │   ├── havan-apartment-format-guide.json
+│   │   ├── havan-briefing-the-family.json
+│   │   ├── havan-combined-ritual-day-guide.json
+│   │   ├── havan-combined-rituals.json
+│   │   ├── havan-delhi.json
+│   │   ├── havan-dwarka.json
+│   │   ├── havan-east-delhi.json
+│   │   ├── havan-elder-led-family-guide.json
+│   │   ├── havan-family-consensus-guide.json
+│   │   ├── havan-first-time-bookers-guide.json
+│   │   ├── havan-ghaziabad.json
+│   │   ├── havan-gurgaon.json
+│   │   ├── havan-home-vs-venue.json
+│   │   ├── havan-language-fit-guide.json
+│   │   ├── havan-language-preference.json
+│   │   ├── havan-last-minute-clarity-guide.json
+│   │   ├── havan-noida.json
+│   │   ├── havan-north-delhi.json
+│   │   ├── havan-pandit-fit.json
+│   │   ├── havan-price-delhi.json
+│   │   ├── havan-price-delhi-ncr.json
+│   │   ├── havan-rohini.json
+│   │   ├── havan-samagri-responsibility.json
+│   │   ├── havan-samagri-types.json
+│   │   ├── havan-same-day-risk.json
+│   │   ├── havan-small-home-setup-guide.json
+│   │   ├── havan-south-delhi.json
+│   │   ├── havan-travel-sensitive-guide.json
+│   │   ├── havan-weekend-booking-guide.json
+│   │   ├── havan-west-delhi.json
+│   │   ├── havan-when-to-book.json
+│   │   ├── health-focused-astrology-before-a-move-or-property-change-consultation.json
+│   │   ├── health-focused-astrology-before-booking-a-priest-consultation.json
+│   │   ├── health-focused-astrology-for-diaspora-time-zone-coordination-consultation.json
+│   │   ├── health-focused-astrology-when-elders-want-scriptural-context-first-consultation.json
+│   │   ├── health-focused-astrology-when-the-family-wants-a-second-opinion-consultation.json
+│   │   ├── hindu-funeral-rites.json
+│   │   ├── hindu-philosophy-modern.json
+│   │   ├── hindu-wedding.json
+│   │   ├── hindu-wedding-apartment-format-guide.json
+│   │   ├── hindu-wedding-ceremony-guide.json
+│   │   ├── hindu-wedding-combined-ritual-day-guide.json
+│   │   ├── hindu-wedding-delhi.json
+│   │   ├── hindu-wedding-dwarka.json
+│   │   ├── hindu-wedding-east-delhi.json
+│   │   ├── hindu-wedding-elder-led-family-guide.json
+│   │   ├── hindu-wedding-family-consensus-guide.json
+│   │   ├── hindu-wedding-first-time-bookers-guide.json
+│   │   ├── hindu-wedding-ghaziabad.json
+│   │   ├── hindu-wedding-gurgaon.json
+│   │   ├── hindu-wedding-language-fit-guide.json
+│   │   ├── hindu-wedding-last-minute-clarity-guide.json
+│   │   ├── hindu-wedding-noida.json
+│   │   ├── hindu-wedding-north-delhi.json
+│   │   ├── hindu-wedding-price-delhi-ncr.json
+│   │   ├── hindu-wedding-rohini.json
+│   │   ├── hindu-wedding-small-home-setup-guide.json
+│   │   ├── hindu-wedding-south-delhi.json
+│   │   ├── hindu-wedding-travel-sensitive-guide.json
+│   │   ├── hindu-wedding-weekend-booking-guide.json
+│   │   ├── hindu-wedding-west-delhi.json
+│   │   ├── history-vedic-ritual-india.json
+│   │   ├── holi-holika-dahan-ritual.json
+│   │   ├── home-guide.json
+│   │   ├── home-mandir-setup.json
+│   │   ├── home-puja-room-setup.json
+│   │   ├── household-rituals-after-marriage.json
+│   │   ├── how-navdhya-works.json
+│   │   ├── how-to-do-aarti.json
+│   │   ├── how-to-verify-pandit.json
+│   │   ├── importance-of-sraddha.json
+│   │   ├── importance-satsang.json
+│   │   ├── incense-holder-types.json
+│   │   ├── introduction-bhakti-yoga.json
+│   │   ├── introduction-vedic-astrology.json
+│   │   ├── introduction-vedic-deities.json
+│   │   ├── ireland-cork.json
+│   │   ├── ireland-cork-india-family-pandit-coordination.json
+│   │   ├── ireland-cork-nri-griha-pravesh-planning.json
+│   │   ├── ireland-cork-online-astrology-consultation.json
+│   │   ├── ireland-cork-online-puja.json
+│   │   ├── ireland-cork-online-satyanarayan-katha.json
+│   │   ├── ireland-dublin.json
+│   │   ├── ireland-dublin-india-family-pandit-coordination.json
+│   │   ├── ireland-dublin-nri-griha-pravesh-planning.json
+│   │   ├── ireland-dublin-online-astrology-consultation.json
+│   │   ├── ireland-dublin-online-puja.json
+│   │   ├── ireland-dublin-online-satyanarayan-katha.json
+│   │   ├── ireland-galway.json
+│   │   ├── ireland-galway-india-family-pandit-coordination.json
+│   │   ├── ireland-galway-nri-griha-pravesh-planning.json
+│   │   ├── ireland-galway-online-astrology-consultation.json
+│   │   ├── ireland-galway-online-puja.json
+│   │   ├── ireland-galway-online-satyanarayan-katha.json
+│   │   ├── journal-spiritual-practice.json
+│   │   ├── jupiter-transit-spiritual.json
+│   │   ├── kaal-sarp-dosh-puja.json
+│   │   ├── kalash-setup-puja.json
+│   │   ├── kalash-sthapana-guide.json
+│   │   ├── kali-puja-vidhi.json
+│   │   ├── kanya-puja-ceremony.json
+│   │   ├── karma-kanda-vedic.json
+│   │   ├── karma-ritual-practice.json
+│   │   ├── kartik-purnima-puja.json
+│   │   ├── karva-chauth-puja.json
+│   │   ├── karvachauth-puja-guide.json
+│   │   ├── kashmiri-pandit-rituals.json
+│   │   ├── kerala-hindu-ritual-traditions.json
+│   │   ├── kitchen-puja-hearth.json
+│   │   ├── krishna-janmashtami-guide.json
+│   │   ├── kundali-matching-marriage.json
+│   │   ├── kundli-reading-before-a-move-or-property-change-consultation.json
+│   │   ├── kundli-reading-before-booking-a-priest-consultation.json
+│   │   ├── kundli-reading-for-diaspora-time-zone-coordination-consultation.json
+│   │   ├── kundli-reading-when-elders-want-scriptural-context-first-consultation.json
+│   │   ├── kundli-reading-when-the-family-wants-a-second-opinion-consultation.json
+│   │   ├── lakshmi-ganesh-puja.json
+│   │   ├── lakshmi-ganesh-puja-apartment-format-guide.json
+│   │   ├── lakshmi-ganesh-puja-combined-ritual-day-guide.json
+│   │   ├── lakshmi-ganesh-puja-delhi.json
+│   │   ├── lakshmi-ganesh-puja-dwarka.json
+│   │   ├── lakshmi-ganesh-puja-east-delhi.json
+│   │   ├── lakshmi-ganesh-puja-elder-led-family-guide.json
+│   │   ├── lakshmi-ganesh-puja-family-consensus-guide.json
+│   │   ├── lakshmi-ganesh-puja-first-time-bookers-guide.json
+│   │   ├── lakshmi-ganesh-puja-ghaziabad.json
+│   │   ├── lakshmi-ganesh-puja-gurgaon.json
+│   │   ├── lakshmi-ganesh-puja-language-fit-guide.json
+│   │   ├── lakshmi-ganesh-puja-last-minute-clarity-guide.json
+│   │   ├── lakshmi-ganesh-puja-noida.json
+│   │   ├── lakshmi-ganesh-puja-north-delhi.json
+│   │   ├── lakshmi-ganesh-puja-price-delhi-ncr.json
+│   │   ├── lakshmi-ganesh-puja-rohini.json
+│   │   ├── lakshmi-ganesh-puja-small-home-setup-guide.json
+│   │   ├── lakshmi-ganesh-puja-south-delhi.json
+│   │   ├── lakshmi-ganesh-puja-travel-sensitive-guide.json
+│   │   ├── lakshmi-ganesh-puja-weekend-booking-guide.json
+│   │   ├── lakshmi-ganesh-puja-west-delhi.json
+│   │   ├── lakshmi-puja-ceremony-guide.json
+│   │   ├── lakshmi-puja-vidhi-diwali.json
+│   │   ├── lingayat-ritual-traditions.json
+│   │   ├── lohri-celebration-ritual.json
+│   │   ├── mahalaya-pitru-paksha.json
+│   │   ├── maharashtrian-ritual-traditions.json
+│   │   ├── mahashivratri-ritual-guide.json
+│   │   ├── makar-sankranti-ritual-guide.json
+│   │   ├── make-kumkum-puja.json
+│   │   ├── make-rangoli-puja.json
+│   │   ├── mala-beads-hindu.json
+│   │   ├── mangala-gauri-puja.json
+│   │   ├── mangal-dosh-remedies.json
+│   │   ├── mangalsutra-ceremony.json
+│   │   ├── mantras-vedic-rituals.json
+│   │   ├── marriage-matching-before-a-move-or-property-change-consultation.json
+│   │   ├── marriage-matching-before-booking-a-priest-consultation.json
+│   │   ├── marriage-matching-for-diaspora-time-zone-coordination-consultation.json
+│   │   ├── marriage-matching-when-elders-want-scriptural-context-first-consultation.json
+│   │   ├── marriage-matching-when-the-family-wants-a-second-opinion-consultation.json
+│   │   ├── mauna-spiritual-significance.json
+│   │   ├── meditation-hindu-spiritual.json
+│   │   ├── mehendi-ceremony-ritual.json
+│   │   ├── monthly-planetary-transits-puja.json
+│   │   ├── monthly-ritual-obligations.json
+│   │   ├── morning-sandhyavandanam.json
+│   │   ├── muhurat-2026.json
+│   │   ├── muhurat-selection-before-a-move-or-property-change-consultation.json
+│   │   ├── muhurat-selection-before-booking-a-priest-consultation.json
+│   │   ├── muhurat-selection-for-diaspora-time-zone-coordination-consultation.json
+│   │   ├── muhurat-selection-when-elders-want-scriptural-context-first-consultation.json
+│   │   ├── muhurat-selection-when-the-family-wants-a-second-opinion-consultation.json
+│   │   ├── muhurta-selection-events.json
+│   │   ├── multilingual-guidance-before-first-booking.json
+│   │   ├── multilingual-guidance-for-repeat-households.json
+│   │   ├── multilingual-guidance-vs-generic-listings.json
+│   │   ├── multilingual-guidance-vs-phone-only-booking.json
+│   │   ├── multilingual-guidance-vs-unmanaged-referrals.json
+│   │   ├── mundan.json
+│   │   ├── mundan-apartment-format-guide.json
+│   │   ├── mundan-briefing-the-family.json
+│   │   ├── mundan-ceremony-guide.json
+│   │   ├── mundan-combined-ritual-day-guide.json
+│   │   ├── mundan-combined-rituals.json
+│   │   ├── mundan-delhi.json
+│   │   ├── mundan-dwarka.json
+│   │   ├── mundan-east-delhi.json
+│   │   ├── mundan-elder-led-family-guide.json
+│   │   ├── mundan-family-consensus-guide.json
+│   │   ├── mundan-first-time-bookers-guide.json
+│   │   ├── mundan-ghaziabad.json
+│   │   ├── mundan-gurgaon.json
+│   │   ├── mundan-home-vs-venue.json
+│   │   ├── mundan-language-fit-guide.json
+│   │   ├── mundan-language-preference.json
+│   │   ├── mundan-last-minute-clarity-guide.json
+│   │   ├── mundan-noida.json
+│   │   ├── mundan-north-delhi.json
+│   │   ├── mundan-pandit-fit.json
+│   │   ├── mundan-price-delhi-ncr.json
+│   │   ├── mundan-rohini.json
+│   │   ├── mundan-samagri-responsibility.json
+│   │   ├── mundan-same-day-risk.json
+│   │   ├── mundan-small-home-setup-guide.json
+│   │   ├── mundan-south-delhi.json
+│   │   ├── mundan-tirupati.json
+│   │   ├── mundan-travel-sensitive-guide.json
+│   │   ├── mundan-weekend-booking-guide.json
+│   │   ├── mundan-west-delhi.json
+│   │   ├── mundan-when-to-book.json
+│   │   ├── music-hindu-ritual.json
+│   │   ├── naamkaran-jaatakarm.json
+│   │   ├── naga-tribal-hindu-rituals.json
+│   │   ├── nag-panchami-ritual.json
+│   │   ├── nakshatra-vedic-life.json
+│   │   ├── namaskar-pranayam-puja.json
+│   │   ├── naming-guidance-before-a-move-or-property-change-consultation.json
+│   │   ├── naming-guidance-before-booking-a-priest-consultation.json
+│   │   ├── naming-guidance-for-diaspora-time-zone-coordination-consultation.json
+│   │   ├── naming-guidance-when-elders-want-scriptural-context-first-consultation.json
+│   │   ├── naming-guidance-when-the-family-wants-a-second-opinion-consultation.json
+│   │   ├── namkaran.json
+│   │   ├── namkaran-apartment-format-guide.json
+│   │   ├── namkaran-briefing-the-family.json
+│   │   ├── namkaran-ceremony-guide.json
+│   │   ├── namkaran-combined-ritual-day-guide.json
+│   │   ├── namkaran-combined-rituals.json
+│   │   ├── namkaran-delhi.json
+│   │   ├── namkaran-dwarka.json
+│   │   ├── namkaran-east-delhi.json
+│   │   ├── namkaran-elder-led-family-guide.json
+│   │   ├── namkaran-family-consensus-guide.json
+│   │   ├── namkaran-first-time-bookers-guide.json
+│   │   ├── namkaran-ghaziabad.json
+│   │   ├── namkaran-gurgaon.json
+│   │   ├── namkaran-home-vs-venue.json
+│   │   ├── namkaran-language-fit-guide.json
+│   │   ├── namkaran-language-preference.json
+│   │   ├── namkaran-last-minute-clarity-guide.json
+│   │   ├── namkaran-noida.json
+│   │   ├── namkaran-north-delhi.json
+│   │   ├── namkaran-pandit-fit.json
+│   │   ├── namkaran-price-delhi-ncr.json
+│   │   ├── namkaran-rohini.json
+│   │   ├── namkaran-samagri-responsibility.json
+│   │   ├── namkaran-same-day-risk.json
+│   │   ├── namkaran-small-home-setup-guide.json
+│   │   ├── namkaran-south-delhi.json
+│   │   ├── namkaran-travel-sensitive-guide.json
+│   │   ├── namkaran-weekend-booking-guide.json
+│   │   ├── namkaran-west-delhi.json
+│   │   ├── namkaran-when-to-book.json
+│   │   ├── nashik-kumbh-mela-ritual.json
+│   │   ├── navagraha-puja.json
+│   │   ├── navagraha-puja-apartment-format-guide.json
+│   │   ├── navagraha-puja-briefing-the-family.json
+│   │   ├── navagraha-puja-combined-ritual-day-guide.json
+│   │   ├── navagraha-puja-combined-rituals.json
+│   │   ├── navagraha-puja-delhi.json
+│   │   ├── navagraha-puja-dwarka.json
+│   │   ├── navagraha-puja-east-delhi.json
+│   │   ├── navagraha-puja-elder-led-family-guide.json
+│   │   ├── navagraha-puja-family-consensus-guide.json
+│   │   ├── navagraha-puja-first-time-bookers-guide.json
+│   │   ├── navagraha-puja-ghaziabad.json
+│   │   ├── navagraha-puja-gurgaon.json
+│   │   ├── navagraha-puja-home-vs-venue.json
+│   │   ├── navagraha-puja-language-fit-guide.json
+│   │   ├── navagraha-puja-language-preference.json
+│   │   ├── navagraha-puja-last-minute-clarity-guide.json
+│   │   ├── navagraha-puja-noida.json
+│   │   ├── navagraha-puja-north-delhi.json
+│   │   ├── navagraha-puja-pandit-fit.json
+│   │   ├── navagraha-puja-price-delhi-ncr.json
+│   │   ├── navagraha-puja-rohini.json
+│   │   ├── navagraha-puja-samagri-responsibility.json
+│   │   ├── navagraha-puja-same-day-risk.json
+│   │   ├── navagraha-puja-small-home-setup-guide.json
+│   │   ├── navagraha-puja-south-delhi.json
+│   │   ├── navagraha-puja-travel-sensitive-guide.json
+│   │   ├── navagraha-puja-weekend-booking-guide.json
+│   │   ├── navagraha-puja-west-delhi.json
+│   │   ├── navagraha-puja-when-to-book.json
+│   │   ├── navagraha-ritual-worship.json
+│   │   ├── nav-brand-001.json
+│   │   ├── nav-brand-002.json
+│   │   ├── nav-brand-003.json
+│   │   ├── nav-brand-004.json
+│   │   ├── nav-brand-005.json
+│   │   ├── navdhya-2023-launch.json
+│   │   ├── navdhya-api-integration.json
+│   │   ├── navdhya-app-booking.json
+│   │   ├── navdhya-app-pandit-booking.json
+│   │   ├── navdhya-astrology-consultation.json
+│   │   ├── navdhya-astrology-report.json
+│   │   ├── navdhya-astrology-service.json
+│   │   ├── navdhya-australia.json
+│   │   ├── navdhya-b2b-partnerships.json
+│   │   ├── navdhya-brand-identity.json
+│   │   ├── navdhya-ceremony-booking.json
+│   │   ├── navdhya-chatbot-support.json
+│   │   ├── navdhya-core-offerings.json
+│   │   ├── navdhya-corporate-puja.json
+│   │   ├── navdhya-customer-communication.json
+│   │   ├── navdhya-customer-dashboard.json
+│   │   ├── navdhya-customer-success.json
+│   │   ├── navdhya-customer-support.json
+│   │   ├── navdhya-data-privacy.json
+│   │   ├── navdhya-delhi-spiritual-services.json
+│   │   ├── navdhya-digital-booking.json
+│   │   ├── navdhya-emergency-pandit.json
+│   │   ├── navdhya-entity-knowledge-graph.json
+│   │   ├── navdhya-expansion-roadmap.json
+│   │   ├── navdhya-faq.json
+│   │   ├── navdhya-feedback-improvement.json
+│   │   ├── navdhya-for-modern-families.json
+│   │   ├── navdhya-future-spiritual-services.json
+│   │   ├── navdhya-germany.json
+│   │   ├── navdhya-griha-pravesh.json
+│   │   ├── navdhya-growth-plans.json
+│   │   ├── navdhya-hindu-diaspora.json
+│   │   ├── navdhya-hindu-religious-ceremonies.json
+│   │   ├── navdhya-hyperlocal-delhi.json
+│   │   ├── navdhya-ireland.json
+│   │   ├── navdhya-language-support.json
+│   │   ├── navdhya-last-minute-bookings.json
+│   │   ├── navdhya-live-streaming-puja.json
+│   │   ├── navdhya-loyalty-programme.json
+│   │   ├── navdhya-mobile-ux.json
+│   │   ├── navdhya-modern-spiritual-seekers.json
+│   │   ├── navdhya-navratri.json
+│   │   ├── navdhya-nri-global.json
+│   │   ├── navdhya-panchang-integration.json
+│   │   ├── navdhya-pandit-booking-guide.json
+│   │   ├── navdhya-pandit-languages.json
+│   │   ├── navdhya-pandit-livelihood.json
+│   │   ├── navdhya-pandit-matching.json
+│   │   ├── navdhya-pandit-onboarding.json
+│   │   ├── navdhya-pandit-training.json
+│   │   ├── navdhya-pandit-verification-process.json
+│   │   ├── navdhya-partner-priest.json
+│   │   ├── navdhya-payment-security.json
+│   │   ├── navdhya-platform-architecture.json
+│   │   ├── navdhya-pricing-packages.json
+│   │   ├── navdhya-priest-app.json
+│   │   ├── navdhya-priest-supply-scaling.json
+│   │   ├── navdhya-puja-material-delivery.json
+│   │   ├── navdhya-quality-assurance.json
+│   │   ├── navdhya-quality-control-tech.json
+│   │   ├── navdhya-ratings-reviews.json
+│   │   ├── navdhya-regional-customisation.json
+│   │   ├── navdhya-ritual-data.json
+│   │   ├── navdhya-ritual-materials.json
+│   │   ├── navdhya-ritual-outcome-verification.json
+│   │   ├── navdhya-samagri-logistics.json
+│   │   ├── navdhya-satyanarayan-puja.json
+│   │   ├── navdhya-schema-structured-data.json
+│   │   ├── navdhya-senior-citizens.json
+│   │   ├── navdhya-service-area.json
+│   │   ├── navdhya-social-impact.json
+│   │   ├── navdhya-social-media-ritual.json
+│   │   ├── navdhya-spiritual-communities.json
+│   │   ├── navdhya-spiritual-guidance.json
+│   │   ├── navdhya-spiritual-technology.json
+│   │   ├── navdhya-subscription-puja.json
+│   │   ├── navdhya-sustainability.json
+│   │   ├── navdhya-technology-ritual.json
+│   │   ├── navdhya-trust-safety.json
+│   │   ├── navdhya-uk.json
+│   │   ├── navdhya-upflame-llp.json
+│   │   ├── navdhya-us.json
+│   │   ├── navdhya-vedic-authenticity.json
+│   │   ├── navdhya-vedic-tradition.json
+│   │   ├── navdhya-verified-pandits.json
+│   │   ├── navdhya-voice-search.json
+│   │   ├── navdhya-vs-99pandit.json
+│   │   ├── navdhya-vs-bookmypooja.json
+│   │   ├── navdhya-vs-harivara.json
+│   │   ├── navdhya-vs-smartpuja.json
+│   │   ├── navdhya-vs-traditional-pandit-booking.json
+│   │   ├── navdhya-vs-vidhipujan.json
+│   │   ├── navgrah-puja-guide.json
+│   │   ├── navratri-fasting-guide.json
+│   │   ├── navratri-festival-ritual-guide.json
+│   │   ├── navratri-garba-dandiya.json
+│   │   ├── navratri-ghatasthapana.json
+│   │   ├── navratri-nine-day-puja-plan.json
+│   │   ├── neem-hindu-ritual.json
+│   │   ├── noida.json
+│   │   ├── north-vs-south-indian-puja.json
+│   │   ├── numerology-hindu-tradition.json
+│   │   ├── odia-ritual-traditions.json
+│   │   ├── office-opening.json
+│   │   ├── office-opening-apartment-format-guide.json
+│   │   ├── office-opening-briefing-the-family.json
+│   │   ├── office-opening-combined-ritual-day-guide.json
+│   │   ├── office-opening-combined-rituals.json
+│   │   ├── office-opening-delhi.json
+│   │   ├── office-opening-dwarka.json
+│   │   ├── office-opening-east-delhi.json
+│   │   ├── office-opening-elder-led-family-guide.json
+│   │   ├── office-opening-family-consensus-guide.json
+│   │   ├── office-opening-first-time-bookers-guide.json
+│   │   ├── office-opening-ghaziabad.json
+│   │   ├── office-opening-gurgaon.json
+│   │   ├── office-opening-home-vs-venue.json
+│   │   ├── office-opening-language-fit-guide.json
+│   │   ├── office-opening-language-preference.json
+│   │   ├── office-opening-last-minute-clarity-guide.json
+│   │   ├── office-opening-noida.json
+│   │   ├── office-opening-north-delhi.json
+│   │   ├── office-opening-pandit-fit.json
+│   │   ├── office-opening-price-delhi.json
+│   │   ├── office-opening-price-delhi-ncr.json
+│   │   ├── office-opening-rohini.json
+│   │   ├── office-opening-samagri-responsibility.json
+│   │   ├── office-opening-same-day-risk.json
+│   │   ├── office-opening-small-home-setup-guide.json
+│   │   ├── office-opening-south-delhi.json
+│   │   ├── office-opening-travel-sensitive-guide.json
+│   │   ├── office-opening-weekend-booking-guide.json
+│   │   ├── office-opening-west-delhi.json
+│   │   ├── office-opening-when-to-book.json
+│   │   ├── office-puja-guide.json
+│   │   ├── oil-types-diyas.json
+│   │   ├── onam-festival-ritual.json
+│   │   ├── online-kundali-analysis-navdhya.json
+│   │   ├── online-participation-clarity-before-first-booking.json
+│   │   ├── online-participation-clarity-for-repeat-households.json
+│   │   ├── online-participation-clarity-vs-generic-listings.json
+│   │   ├── online-participation-clarity-vs-phone-only-booking.json
+│   │   ├── online-participation-clarity-vs-unmanaged-referrals.json
+│   │   ├── online-puja-technology.json
+│   │   ├── online-puja-vs-home-puja.json
+│   │   ├── overseas-family-coordination-before-a-move-or-property-change-consultation.json
+│   │   ├── overseas-family-coordination-before-booking-a-priest-consultation.json
+│   │   ├── overseas-family-coordination-for-diaspora-time-zone-coordination-consultation.json
+│   │   ├── overseas-family-coordination-when-elders-want-scriptural-context-first-consultation.json
+│   │   ├── overseas-family-coordination-when-the-family-wants-a-second-opinion-consultation.json
+│   │   ├── pandit-amavasya.json
+│   │   ├── pandit-availability-booking.json
+│   │   ├── pandit-availability-ceremony-day.json
+│   │   ├── pandit-availability-confirm.json
+│   │   ├── pandit-availability-discover.json
+│   │   ├── pandit-availability-evaluate.json
+│   │   ├── pandit-availability-follow-up.json
+│   │   ├── pandit-availability-prepare.json
+│   │   ├── pandit-availability-shortlist.json
+│   │   ├── pandit-bhoomi-pujan.json
+│   │   ├── pandit-booking-pricing-delhi.json
+│   │   ├── pandit-booking-pricing-delhi-ncr.json
+│   │   ├── pandit-ceremony-brief-ceremony-day.json
+│   │   ├── pandit-ceremony-brief-confirm.json
+│   │   ├── pandit-ceremony-brief-discover.json
+│   │   ├── pandit-ceremony-brief-evaluate.json
+│   │   ├── pandit-ceremony-brief-follow-up.json
+│   │   ├── pandit-ceremony-brief-prepare.json
+│   │   ├── pandit-ceremony-brief-shortlist.json
+│   │   ├── pandit-corporate-events.json
+│   │   ├── pandit-diwali-delhi.json
+│   │   ├── pandit-funeral-last-rites.json
+│   │   ├── pandit-ganesh-chaturthi.json
+│   │   ├── pandit-griha-pravesh-delhi.json
+│   │   ├── pandit-havan-ceremony.json
+│   │   ├── pandit-household-conduct-ceremony-day.json
+│   │   ├── pandit-household-conduct-confirm.json
+│   │   ├── pandit-household-conduct-discover.json
+│   │   ├── pandit-household-conduct-evaluate.json
+│   │   ├── pandit-household-conduct-follow-up.json
+│   │   ├── pandit-household-conduct-prepare.json
+│   │   ├── pandit-household-conduct-shortlist.json
+│   │   ├── pandit-kali-puja.json
+│   │   ├── pandit-language-comfort-ceremony-day.json
+│   │   ├── pandit-language-comfort-confirm.json
+│   │   ├── pandit-language-comfort-discover.json
+│   │   ├── pandit-language-comfort-evaluate.json
+│   │   ├── pandit-language-comfort-follow-up.json
+│   │   ├── pandit-language-comfort-prepare.json
+│   │   ├── pandit-language-comfort-shortlist.json
+│   │   ├── pandit-mundan-ceremony.json
+│   │   ├── pandit-namkaran.json
+│   │   ├── pandit-navratri-puja.json
+│   │   ├── pandit-online-guidance-ceremony-day.json
+│   │   ├── pandit-online-guidance-confirm.json
+│   │   ├── pandit-online-guidance-discover.json
+│   │   ├── pandit-online-guidance-evaluate.json
+│   │   ├── pandit-online-guidance-follow-up.json
+│   │   ├── pandit-online-guidance-prepare.json
+│   │   ├── pandit-online-guidance-shortlist.json
+│   │   ├── pandit-online-puja.json
+│   │   ├── pandit-pitru-paksha.json
+│   │   ├── pandit-pricing-clarity-ceremony-day.json
+│   │   ├── pandit-pricing-clarity-confirm.json
+│   │   ├── pandit-pricing-clarity-discover.json
+│   │   ├── pandit-pricing-clarity-evaluate.json
+│   │   ├── pandit-pricing-clarity-follow-up.json
+│   │   ├── pandit-pricing-clarity-prepare.json
+│   │   ├── pandit-pricing-clarity-shortlist.json
+│   │   ├── pandit-puja-delhi.json
+│   │   ├── pandit-qualifications.json
+│   │   ├── pandit-regional-fit-ceremony-day.json
+│   │   ├── pandit-regional-fit-confirm.json
+│   │   ├── pandit-regional-fit-discover.json
+│   │   ├── pandit-regional-fit-evaluate.json
+│   │   ├── pandit-regional-fit-follow-up.json
+│   │   ├── pandit-regional-fit-prepare.json
+│   │   ├── pandit-regional-fit-shortlist.json
+│   │   ├── pandit-review-followup-ceremony-day.json
+│   │   ├── pandit-review-followup-confirm.json
+│   │   ├── pandit-review-followup-discover.json
+│   │   ├── pandit-review-followup-evaluate.json
+│   │   ├── pandit-review-followup-follow-up.json
+│   │   ├── pandit-review-followup-prepare.json
+│   │   ├── pandit-review-followup-shortlist.json
+│   │   ├── pandit-rudrabhishek.json
+│   │   ├── pandit-satyanarayan-katha.json
+│   │   ├── pandit-seemantonnayana.json
+│   │   ├── pandit-shravan-month.json
+│   │   ├── pandit-upanayana.json
+│   │   ├── pandit-urgent-support-ceremony-day.json
+│   │   ├── pandit-urgent-support-confirm.json
+│   │   ├── pandit-urgent-support-discover.json
+│   │   ├── pandit-urgent-support-evaluate.json
+│   │   ├── pandit-urgent-support-follow-up.json
+│   │   ├── pandit-urgent-support-prepare.json
+│   │   ├── pandit-urgent-support-shortlist.json
+│   │   ├── pandit-verification-ceremony-day.json
+│   │   ├── pandit-verification-confirm.json
+│   │   ├── pandit-verification-discover.json
+│   │   ├── pandit-verification-evaluate.json
+│   │   ├── pandit-verification-follow-up.json
+│   │   ├── pandit-verification-prepare.json
+│   │   ├── pandit-verification-shortlist.json
+│   │   ├── pandit-vivah-sanskar.json
+│   │   ├── pandit-wedding-delhi.json
+│   │   ├── panigrahana-ritual.json
+│   │   ├── partner-accountability-before-first-booking.json
+│   │   ├── partner-accountability-for-repeat-households.json
+│   │   ├── partner-accountability-vs-generic-listings.json
+│   │   ├── partner-accountability-vs-phone-only-booking.json
+│   │   ├── partner-accountability-vs-unmanaged-referrals.json
+│   │   ├── perform-havan-at-home.json
+│   │   ├── pilgrimage-yatra-guide.json
+│   │   ├── pithi-ceremony-wedding.json
+│   │   ├── pitra-dosh-remedies.json
+│   │   ├── pitru-paksha-ancestor-rites.json
+│   │   ├── pitru-tarpan-guide.json
+│   │   ├── pitru-visarjan-mahalaya.json
+│   │   ├── planetary-offerings-days.json
+│   │   ├── pongal-festival-ritual.json
+│   │   ├── post-illness-purification.json
+│   │   ├── post-puja-clean-up-after-home-puja.json
+│   │   ├── pranayam-before-puja.json
+│   │   ├── pran-pratishtha-home.json
+│   │   ├── prayagraj-kumbh-mela-ritual.json
+│   │   ├── pregnancy-ritual-planning-before-a-move-or-property-change-consultation.json
+│   │   ├── pregnancy-ritual-planning-before-booking-a-priest-consultation.json
+│   │   ├── pregnancy-ritual-planning-for-diaspora-time-zone-coordination-consultation.json
+│   │   ├── pregnancy-ritual-planning-when-elders-want-scriptural-context-first-consultation.json
+│   │   ├── pregnancy-ritual-planning-when-the-family-wants-a-second-opinion-consultation.json
+│   │   ├── prepare-gangajal-rituals.json
+│   │   ├── prepare-kund-havan.json
+│   │   ├── prepare-multi-day-ceremony.json
+│   │   ├── prepare-panchamrit-puja.json
+│   │   ├── prepare-prasad-deities.json
+│   │   ├── prepare-wedding-ceremony.json
+│   │   ├── priests-regional-traditions.json
+│   │   ├── property-timing-before-a-move-or-property-change-consultation.json
+│   │   ├── property-timing-before-booking-a-priest-consultation.json
+│   │   ├── property-timing-for-diaspora-time-zone-coordination-consultation.json
+│   │   ├── property-timing-when-elders-want-scriptural-context-first-consultation.json
+│   │   ├── property-timing-when-the-family-wants-a-second-opinion-consultation.json
+│   │   ├── puja-after-birth.json
+│   │   ├── puja-before-buying-property.json
+│   │   ├── puja-child-health.json
+│   │   ├── puja-cost-guide-delhi.json
+│   │   ├── puja-ekadashi.json
+│   │   ├── puja-exam-success.json
+│   │   ├── puja-home-protection.json
+│   │   ├── puja-maha-shivratri.json
+│   │   ├── puja-marriage-blessings.json
+│   │   ├── puja-menstruation-rules.json
+│   │   ├── puja-new-business.json
+│   │   ├── puja-new-rented-home.json
+│   │   ├── puja-new-vehicle.json
+│   │   ├── puja-prosperity-wealth.json
+│   │   ├── puja-reduces-stress.json
+│   │   ├── puja-remove-negative-energy.json
+│   │   ├── puja-safe-travel.json
+│   │   ├── puja-samagri-checklist.json
+│   │   ├── puja-samagri-shopping-list.json
+│   │   ├── puja-surya-grahan.json
+│   │   ├── puja-thali-preparation.json
+│   │   ├── puja-timing-panchang.json
+│   │   ├── puja-vidhi-guide.json
+│   │   ├── puja-vs-prayer.json
+│   │   ├── puja-without-pandit.json
+│   │   ├── punjabi-hindu-ritual-traditions.json
+│   │   ├── punyaha-vachanam-baby-shower.json
+│   │   ├── purify-puja-space.json
+│   │   ├── puri-jagannath-rituals.json
+│   │   ├── purnima-fasting-puja.json
+│   │   ├── purohit-vs-jyotishi.json
+│   │   ├── questions-ask-pandit.json
+│   │   ├── rahu-ketu-shanti-puja.json
+│   │   ├── rahu-ketu-vedic-astrology.json
+│   │   ├── rajasthani-ritual-customs.json
+│   │   ├── raksha-bandhan-ritual.json
+│   │   ├── ram-navami-ritual-guide.json
+│   │   ├── rath-yatra-festival-guide.json
+│   │   ├── read-vedic-birth-chart.json
+│   │   ├── red-cloth-ritual.json
+│   │   ├── regional-pandit-traditions.json
+│   │   ├── regional-traditions-ceremony-choice.json
+│   │   ├── ritual-bathing-snan.json
+│   │   ├── ritual-data-privacy-before-first-booking.json
+│   │   ├── ritual-data-privacy-for-repeat-households.json
+│   │   ├── ritual-data-privacy-vs-generic-listings.json
+│   │   ├── ritual-data-privacy-vs-phone-only-booking.json
+│   │   ├── ritual-data-privacy-vs-unmanaged-referrals.json
+│   │   ├── ritual-first-entry-home.json
+│   │   ├── rituals-create-community.json
+│   │   ├── rituals-ganga-river.json
+│   │   ├── rituals-new-school-year.json
+│   │   ├── rituals-pregnancy-hindu.json
+│   │   ├── role-of-flowers-hindu-puja.json
+│   │   ├── role-of-pandit-vedic-ceremonies.json
+│   │   ├── rudrabhishek-at-home.json
+│   │   ├── rudraksha-spiritual-significance.json
+│   │   ├── sacred-colours-hindu-ritual.json
+│   │   ├── sacred-geometry-hindu-rituals.json
+│   │   ├── sacred-grains-ritual.json
+│   │   ├── sacred-metals-ritual.json
+│   │   ├── sacred-plants-hindu.json
+│   │   ├── sacred-thread-janeu.json
+│   │   ├── sagai-engagement-ceremony.json
+│   │   ├── same-day-annaprashan-delhi-ncr.json
+│   │   ├── same-day-bhoomi-pujan-delhi-ncr.json
+│   │   ├── same-day-griha-pravesh-delhi-ncr.json
+│   │   ├── same-day-havan-delhi-ncr.json
+│   │   ├── same-day-hindu-wedding-delhi-ncr.json
+│   │   ├── same-day-lakshmi-ganesh-puja-delhi-ncr.json
+│   │   ├── same-day-mundan-delhi-ncr.json
+│   │   ├── same-day-namkaran-delhi-ncr.json
+│   │   ├── same-day-navagraha-puja-delhi-ncr.json
+│   │   ├── same-day-office-opening-delhi-ncr.json
+│   │   ├── same-day-pandit-booking-delhi.json
+│   │   ├── same-day-satyanarayan-katha-delhi-ncr.json
+│   │   ├── same-day-vastu-shanti-delhi-ncr.json
+│   │   ├── sanskrit-pandit-requirements.json
+│   │   ├── saptapadi-seven-steps.json
+│   │   ├── saraswati-puja-ceremony.json
+│   │   ├── saraswati-puja-vidhi.json
+│   │   ├── sattvic-diet-spiritual.json
+│   │   ├── saturn-shani-sade-sati.json
+│   │   ├── satyanarayan-katha.json
+│   │   ├── satyanarayan-katha-apartment-format-guide.json
+│   │   ├── satyanarayan-katha-briefing-the-family.json
+│   │   ├── satyanarayan-katha-combined-ritual-day-guide.json
+│   │   ├── satyanarayan-katha-combined-rituals.json
+│   │   ├── satyanarayan-katha-delhi.json
+│   │   ├── satyanarayan-katha-dwarka.json
+│   │   ├── satyanarayan-katha-east-delhi.json
+│   │   ├── satyanarayan-katha-elder-led-family-guide.json
+│   │   ├── satyanarayan-katha-family-consensus-guide.json
+│   │   ├── satyanarayan-katha-first-time-bookers-guide.json
+│   │   ├── satyanarayan-katha-ghaziabad.json
+│   │   ├── satyanarayan-katha-gurgaon.json
+│   │   ├── satyanarayan-katha-home-vs-venue.json
+│   │   ├── satyanarayan-katha-language-fit-guide.json
+│   │   ├── satyanarayan-katha-language-preference.json
+│   │   ├── satyanarayan-katha-last-minute-clarity-guide.json
+│   │   ├── satyanarayan-katha-noida.json
+│   │   ├── satyanarayan-katha-north-delhi.json
+│   │   ├── satyanarayan-katha-pandit-fit.json
+│   │   ├── satyanarayan-katha-price-delhi-ncr.json
+│   │   ├── satyanarayan-katha-rohini.json
+│   │   ├── satyanarayan-katha-samagri-responsibility.json
+│   │   ├── satyanarayan-katha-same-day-risk.json
+│   │   ├── satyanarayan-katha-small-home-setup-guide.json
+│   │   ├── satyanarayan-katha-south-delhi.json
+│   │   ├── satyanarayan-katha-travel-sensitive-guide.json
+│   │   ├── satyanarayan-katha-weekend-booking-guide.json
+│   │   ├── satyanarayan-katha-west-delhi.json
+│   │   ├── satyanarayan-katha-when-to-book.json
+│   │   ├── satyanarayan-puja-at-home.json
+│   │   ├── satyanarayan-puja-complete-guide.json
+│   │   ├── science-vedic-ritual-timing.json
+│   │   ├── seemantonnayana-pregnancy-ritual.json
+│   │   ├── shaiva-vaishnava-ritual-differences.json
+│   │   ├── shakta-ritual-traditions.json
+│   │   ├── shani-graha-shanti-puja.json
+│   │   ├── sharad-purnima-ritual.json
+│   │   ├── shirdi-sai-baba-rituals.json
+│   │   ├── shiva-puja-monday.json
+│   │   ├── shivling-abhishek-ritual.json
+│   │   ├── shodashopachara-puja-method.json
+│   │   ├── shradh-ceremony-guide.json
+│   │   ├── significance-108.json
+│   │   ├── sindhi-hindu-ritual-traditions.json
+│   │   ├── sindoor-ceremony.json
+│   │   ├── sindoor-preparation-rituals.json
+│   │   ├── skanda-sashti-ritual.json
+│   │   ├── smarta-tradition-hindu.json
+│   │   ├── sohagini-puja.json
+│   │   ├── solah-somvar-vrat-puja.json
+│   │   ├── somvar-fast-at-home.json
+│   │   ├── source-authentic-puja-materials.json
+│   │   ├── south-indian-brahmin-rituals.json
+│   │   ├── spiritual-consultation-vs-therapy.json
+│   │   ├── spirituality-financial-wellbeing.json
+│   │   ├── spiritual-morning-routine.json
+│   │   ├── spiritual-practices-modern-life.json
+│   │   ├── spiritual-remedies-career-finance.json
+│   │   ├── spiritual-retreat-meditation.json
+│   │   ├── start-japa-practice.json
+│   │   ├── store-organize-puja-items.json
+│   │   ├── sudarshana-puja-guide.json
+│   │   ├── sunsign-moonsign-vedic.json
+│   │   ├── support-responsiveness-before-first-booking.json
+│   │   ├── support-responsiveness-for-repeat-households.json
+│   │   ├── support-responsiveness-vs-generic-listings.json
+│   │   ├── support-responsiveness-vs-phone-only-booking.json
+│   │   ├── support-responsiveness-vs-unmanaged-referrals.json
+│   │   ├── surya-namaskar-puja.json
+│   │   ├── sutak-after-death.json
+│   │   ├── sutak-post-birth-rituals.json
+│   │   ├── symbolism-diyas-hindu.json
+│   │   ├── tamil-hindu-ritual-traditions.json
+│   │   ├── teej-festival-ritual.json
+│   │   ├── temple-vs-home-puja.json
+│   │   ├── threshold-rituals-home.json
+│   │   ├── thursday-vishnu-puja.json
+│   │   ├── tilak-ceremony-marriage.json
+│   │   ├── tirthas-sacred-water.json
+│   │   ├── tirupati-balaji-rituals.json
+│   │   ├── tribal-folk-deity-worship.json
+│   │   ├── tulsi-hindu-worship.json
+│   │   ├── tulsi-puja-daily.json
+│   │   ├── tulsi-vivah-puja.json
+│   │   ├── types-of-diyas.json
+│   │   ├── types-of-pandits.json
+│   │   ├── ugadi-new-year-ritual.json
+│   │   ├── uk-birmingham.json
+│   │   ├── uk-birmingham-india-family-pandit-coordination.json
+│   │   ├── uk-birmingham-nri-griha-pravesh-planning.json
+│   │   ├── uk-birmingham-online-astrology-consultation.json
+│   │   ├── uk-birmingham-online-puja.json
+│   │   ├── uk-birmingham-online-satyanarayan-katha.json
+│   │   ├── uk-leicester.json
+│   │   ├── uk-leicester-india-family-pandit-coordination.json
+│   │   ├── uk-leicester-nri-griha-pravesh-planning.json
+│   │   ├── uk-leicester-online-astrology-consultation.json
+│   │   ├── uk-leicester-online-puja.json
+│   │   ├── uk-leicester-online-satyanarayan-katha.json
+│   │   ├── uk-london.json
+│   │   ├── uk-london-india-family-pandit-coordination.json
+│   │   ├── uk-london-nri-griha-pravesh-planning.json
+│   │   ├── uk-london-online-astrology-consultation.json
+│   │   ├── uk-london-online-puja.json
+│   │   ├── uk-london-online-satyanarayan-katha.json
+│   │   ├── uk-manchester.json
+│   │   ├── uk-manchester-india-family-pandit-coordination.json
+│   │   ├── uk-manchester-nri-griha-pravesh-planning.json
+│   │   ├── uk-manchester-online-astrology-consultation.json
+│   │   ├── uk-manchester-online-puja.json
+│   │   ├── uk-manchester-online-satyanarayan-katha.json
+│   │   ├── understanding-puja-hindu-tradition.json
+│   │   ├── upanayana-thread-ceremony.json
+│   │   ├── urgent-annaprashan-delhi-ncr.json
+│   │   ├── urgent-bhoomi-pujan-delhi-ncr.json
+│   │   ├── urgent-griha-pravesh-delhi-ncr.json
+│   │   ├── urgent-havan-delhi-ncr.json
+│   │   ├── urgent-hindu-wedding-delhi-ncr.json
+│   │   ├── urgent-lakshmi-ganesh-puja-delhi-ncr.json
+│   │   ├── urgent-mundan-delhi-ncr.json
+│   │   ├── urgent-namkaran-delhi-ncr.json
+│   │   ├── urgent-navagraha-puja-delhi-ncr.json
+│   │   ├── urgent-office-opening-delhi-ncr.json
+│   │   ├── urgent-satyanarayan-katha-delhi-ncr.json
+│   │   ├── urgent-vastu-shanti-delhi-ncr.json
+│   │   ├── us-chicago.json
+│   │   ├── us-chicago-india-family-pandit-coordination.json
+│   │   ├── us-chicago-nri-griha-pravesh-planning.json
+│   │   ├── us-chicago-online-astrology-consultation.json
+│   │   ├── us-chicago-online-puja.json
+│   │   ├── us-chicago-online-satyanarayan-katha.json
+│   │   ├── us-dallas.json
+│   │   ├── us-dallas-india-family-pandit-coordination.json
+│   │   ├── us-dallas-nri-griha-pravesh-planning.json
+│   │   ├── us-dallas-online-astrology-consultation.json
+│   │   ├── us-dallas-online-puja.json
+│   │   ├── us-dallas-online-satyanarayan-katha.json
+│   │   ├── us-new-york.json
+│   │   ├── us-new-york-india-family-pandit-coordination.json
+│   │   ├── us-new-york-nri-griha-pravesh-planning.json
+│   │   ├── us-new-york-online-astrology-consultation.json
+│   │   ├── us-new-york-online-puja.json
+│   │   ├── us-new-york-online-satyanarayan-katha.json
+│   │   ├── us-san-jose.json
+│   │   ├── us-san-jose-india-family-pandit-coordination.json
+│   │   ├── us-san-jose-nri-griha-pravesh-planning.json
+│   │   ├── us-san-jose-online-astrology-consultation.json
+│   │   ├── us-san-jose-online-puja.json
+│   │   ├── us-san-jose-online-satyanarayan-katha.json
+│   │   ├── us-seattle.json
+│   │   ├── us-seattle-india-family-pandit-coordination.json
+│   │   ├── us-seattle-nri-griha-pravesh-planning.json
+│   │   ├── us-seattle-online-astrology-consultation.json
+│   │   ├── us-seattle-online-puja.json
+│   │   ├── us-seattle-online-satyanarayan-katha.json
+│   │   ├── uttarakhandi-devbhoomi-rituals.json
+│   │   ├── varanasi-kashi-rituals.json
+│   │   ├── vasant-panchami-ritual.json
+│   │   ├── vastu-astrology-connection.json
+│   │   ├── vastu-consultation-before-a-move-or-property-change-consultation.json
+│   │   ├── vastu-consultation-before-booking-a-priest-consultation.json
+│   │   ├── vastu-consultation-for-diaspora-time-zone-coordination-consultation.json
+│   │   ├── vastu-consultation-when-elders-want-scriptural-context-first-consultation.json
+│   │   ├── vastu-consultation-when-the-family-wants-a-second-opinion-consultation.json
+│   │   ├── vastu-dosh-nivaran-puja.json
+│   │   ├── vastu-puja-room-placement.json
+│   │   ├── vastu-shanti.json
+│   │   ├── vastu-shanti-apartment-format-guide.json
+│   │   ├── vastu-shanti-briefing-the-family.json
+│   │   ├── vastu-shanti-combined-ritual-day-guide.json
+│   │   ├── vastu-shanti-combined-rituals.json
+│   │   ├── vastu-shanti-delhi.json
+│   │   ├── vastu-shanti-dwarka.json
+│   │   ├── vastu-shanti-east-delhi.json
+│   │   ├── vastu-shanti-elder-led-family-guide.json
+│   │   ├── vastu-shanti-family-consensus-guide.json
+│   │   ├── vastu-shanti-first-time-bookers-guide.json
+│   │   ├── vastu-shanti-ghaziabad.json
+│   │   ├── vastu-shanti-gurgaon.json
+│   │   ├── vastu-shanti-home-vs-venue.json
+│   │   ├── vastu-shanti-language-fit-guide.json
+│   │   ├── vastu-shanti-language-preference.json
+│   │   ├── vastu-shanti-last-minute-clarity-guide.json
+│   │   ├── vastu-shanti-noida.json
+│   │   ├── vastu-shanti-north-delhi.json
+│   │   ├── vastu-shanti-pandit-fit.json
+│   │   ├── vastu-shanti-price-delhi-ncr.json
+│   │   ├── vastu-shanti-puja-guide.json
+│   │   ├── vastu-shanti-rohini.json
+│   │   ├── vastu-shanti-samagri-responsibility.json
+│   │   ├── vastu-shanti-same-day-risk.json
+│   │   ├── vastu-shanti-small-home-setup-guide.json
+│   │   ├── vastu-shanti-south-delhi.json
+│   │   ├── vastu-shanti-travel-sensitive-guide.json
+│   │   ├── vastu-shanti-weekend-booking-guide.json
+│   │   ├── vastu-shanti-west-delhi.json
+│   │   ├── vastu-shanti-when-to-book.json
+│   │   ├── vedic-calendar-auspicious-timing.json
+│   │   ├── vedic-ritual-faq-beginners.json
+│   │   ├── vedic-ritual-mental-wellbeing.json
+│   │   ├── vedic-rituals-north-india.json
+│   │   ├── verified-pandit-network-before-first-booking.json
+│   │   ├── verified-pandit-network-for-repeat-households.json
+│   │   ├── verified-pandit-network-vs-generic-listings.json
+│   │   ├── verified-pandit-network-vs-phone-only-booking.json
+│   │   ├── verified-pandit-network-vs-unmanaged-referrals.json
+│   │   ├── vijaya-dashami-shastra-puja.json
+│   │   ├── vishnu-puja-home.json
+│   │   ├── vivah-panchami-celebration.json
+│   │   ├── vivah-puja-ritual.json
+│   │   ├── voice-faq-book-online-puja-for-parents-before-you-book.json
+│   │   ├── voice-faq-book-online-puja-for-parents-quick-answer.json
+│   │   ├── voice-faq-book-online-puja-for-parents-what-you-need-to-know.json
+│   │   ├── voice-faq-can-astrology-help-with-muhurta-before-you-book.json
+│   │   ├── voice-faq-can-astrology-help-with-muhurta-quick-answer.json
+│   │   ├── voice-faq-can-astrology-help-with-muhurta-what-you-need-to-know.json
+│   │   ├── voice-faq-can-family-join-remotely-before-you-book.json
+│   │   ├── voice-faq-can-family-join-remotely-quick-answer.json
+│   │   ├── voice-faq-can-family-join-remotely-what-you-need-to-know.json
+│   │   ├── voice-faq-choose-pandit-for-housewarming-before-you-book.json
+│   │   ├── voice-faq-choose-pandit-for-housewarming-quick-answer.json
+│   │   ├── voice-faq-choose-pandit-for-housewarming-what-you-need-to-know.json
+│   │   ├── voice-faq-explain-namkaran-to-relatives-before-you-book.json
+│   │   ├── voice-faq-explain-namkaran-to-relatives-quick-answer.json
+│   │   ├── voice-faq-explain-namkaran-to-relatives-what-you-need-to-know.json
+│   │   ├── voice-faq-how-to-compare-pandit-options-before-you-book.json
+│   │   ├── voice-faq-how-to-compare-pandit-options-quick-answer.json
+│   │   ├── voice-faq-how-to-compare-pandit-options-what-you-need-to-know.json
+│   │   ├── voice-faq-how-to-coordinate-with-elders-abroad-before-you-book.json
+│   │   ├── voice-faq-how-to-coordinate-with-elders-abroad-quick-answer.json
+│   │   ├── voice-faq-how-to-coordinate-with-elders-abroad-what-you-need-to-know.json
+│   │   ├── voice-faq-is-vastu-shanti-needed-before-moving-before-you-book.json
+│   │   ├── voice-faq-is-vastu-shanti-needed-before-moving-quick-answer.json
+│   │   ├── voice-faq-is-vastu-shanti-needed-before-moving-what-you-need-to-know.json
+│   │   ├── voice-faq-prepare-havan-space-before-you-book.json
+│   │   ├── voice-faq-prepare-havan-space-quick-answer.json
+│   │   ├── voice-faq-prepare-havan-space-what-you-need-to-know.json
+│   │   ├── voice-faq-what-comes-after-submitting-a-brief-before-you-book.json
+│   │   ├── voice-faq-what-comes-after-submitting-a-brief-quick-answer.json
+│   │   ├── voice-faq-what-comes-after-submitting-a-brief-what-you-need-to-know.json
+│   │   ├── voice-faq-what-happens-in-satyanarayan-katha-before-you-book.json
+│   │   ├── voice-faq-what-happens-in-satyanarayan-katha-quick-answer.json
+│   │   ├── voice-faq-what-happens-in-satyanarayan-katha-what-you-need-to-know.json
+│   │   ├── voice-faq-what-makes-a-booking-trustworthy-before-you-book.json
+│   │   ├── voice-faq-what-makes-a-booking-trustworthy-quick-answer.json
+│   │   ├── voice-faq-what-makes-a-booking-trustworthy-what-you-need-to-know.json
+│   │   ├── voice-faq-what-materials-are-usually-needed-before-you-book.json
+│   │   ├── voice-faq-what-materials-are-usually-needed-quick-answer.json
+│   │   ├── voice-faq-what-materials-are-usually-needed-what-you-need-to-know.json
+│   │   ├── voice-faq-what-to-ask-before-griha-pravesh-before-you-book.json
+│   │   ├── voice-faq-what-to-ask-before-griha-pravesh-quick-answer.json
+│   │   ├── voice-faq-what-to-ask-before-griha-pravesh-what-you-need-to-know.json
+│   │   ├── voice-faq-when-to-plan-mundan-before-you-book.json
+│   │   ├── voice-faq-when-to-plan-mundan-quick-answer.json
+│   │   ├── voice-faq-when-to-plan-mundan-what-you-need-to-know.json
+│   │   ├── water-rituals-home.json
+│   │   ├── wear-tilak-properly.json
+│   │   ├── wedding-rituals-indian-regions.json
+│   │   ├── weekend-annaprashan-delhi-ncr.json
+│   │   ├── weekend-bhoomi-pujan-delhi-ncr.json
+│   │   ├── weekend-griha-pravesh-delhi-ncr.json
+│   │   ├── weekend-havan-delhi-ncr.json
+│   │   ├── weekend-hindu-wedding-delhi-ncr.json
+│   │   ├── weekend-lakshmi-ganesh-puja-delhi-ncr.json
+│   │   ├── weekend-mundan-delhi-ncr.json
+│   │   ├── weekend-namkaran-delhi-ncr.json
+│   │   ├── weekend-navagraha-puja-delhi-ncr.json
+│   │   ├── weekend-office-opening-delhi-ncr.json
+│   │   ├── weekend-satyanarayan-katha-delhi-ncr.json
+│   │   ├── weekend-vastu-shanti-delhi-ncr.json
+│   │   ├── weekly-ritual-calendar.json
+│   │   ├── what-are-doshas-astrology.json
+│   │   ├── what-are-samskaras.json
+│   │   ├── what-are-upacharas.json
+│   │   ├── what-are-vedic-rituals.json
+│   │   ├── what-is-a-havan.json
+│   │   ├── what-is-a-yajna.json
+│   │   ├── what-is-diksha.json
+│   │   ├── what-is-jyotishi.json
+│   │   ├── what-is-kundali.json
+│   │   ├── what-is-panchang.json
+│   │   ├── what-is-prasad.json
+│   │   ├── what-is-rudrabhishek.json
+│   │   ├── what-is-sankalpa.json
+│   │   ├── what-is-vedic-astrology-jyotish.json
+│   │   ├── what-is-vedic-purohit.json
+│   │   ├── what-to-wear-puja.json
+│   │   ├── wooden-items-puja.json
+│   │   ├── write-ritual-brief-navdhya.json
+│   │   ├── yearly-horoscope-hindu-new-year.json
+│   │   └── yoga-vedic-ritual.json
+│   ├── sources
+│   │   ├── v2
+│   │   │   ├── ceremony-decision-pages.json
+│   │   │   ├── consultation-intent-pages.json
+│   │   │   ├── international-city-hubs.json
+│   │   │   ├── international-country-hubs.json
+│   │   │   ├── international-service-pages.json
+│   │   │   ├── pandit-journey-pages.json
+│   │   │   ├── refresh-core-services.json
+│   │   │   ├── refresh-global-brand.json
+│   │   │   ├── service-intent-pages.json
+│   │   │   ├── trust-comparison-pages.json
+│   │   │   └── voice-faq-pages.json
+│   │   ├── astrology-consultation-pages.tsv
+│   │   ├── booking-modifier-pages.tsv
+│   │   ├── comparison-pages.tsv
+│   │   ├── faq-commercial-pages.tsv
+│   │   ├── festival-ritual-pages.tsv
+│   │   ├── geo-service-pages.tsv
+│   │   ├── hindu-ceremony-pages.json
+│   │   ├── hindu-ceremony-pages-batch-2.tsv
+│   │   ├── household-ritual-pages.tsv
+│   │   ├── pandit-service-pages.tsv
+│   │   ├── platform-technology-pages.tsv
+│   │   ├── pricing-pages.tsv
+│   │   ├── puja-guide-pages.tsv
+│   │   ├── regional-tradition-pages.tsv
+│   │   ├── ritual-prep-pages.tsv
+│   │   ├── seasonal-pages.tsv
+│   │   ├── spiritual-lifestyle-pages.tsv
+│   │   ├── trust-pages.tsv
+│   │   └── vedic-education-pages.tsv
+│   └── registry.json
+├── context
+│   └── LoadingContext.tsx
+├── dal
+│   ├── availability.ts
+│   └── catalog.ts
+├── docs
+│   ├── opt
+│   │   └── Readme.mdx
+│   ├── ads-setup.md
+│   ├── dlo-x-file-templates.md
+│   ├── dlo-x-folder-structure.md
+│   ├── dlo-x-naming-conventions.md
+│   ├── dlo-x-predicate-registry.md
+│   ├── dlo-x-README.md
+│   ├── dlo-x-testing-structure.md
+│   ├── dlo-x-types.md
+│   ├── i18n.md
+│   ├── navdhya-core-entity-definition.md
+│   └── seo-strategy.md
+├── domain
+│   ├── availability
+│   ├── booking
+│   ├── pandit
+│   ├── pricing
+│   ├── puja
+│   └── user
+├── drafts
+│   ├── dashboard
+│   │   └── page.tsx
+│   ├── debug-loading
+│   │   └── page.tsx
+│   ├── seo-demo
+│   │   └── page.tsx
+│   ├── test-loading
+│   │   └── page.tsx
+│   ├── test-navigation
+│   │   └── page.tsx
+│   └── DLO-X-IMPLEMENTATION-SUMMARY.md
+├── events
+├── hooks
+│   ├── useNavigationLoader.tsx
+│   └── use-seo.ts
+├── infrastructure
+│   ├── db
+│   ├── payments
+│   └── redis
+├── lib
+│   ├── ad-orchestration
+│   │   ├── __tests__
+│   │   │   ├── AuctionEngine.test.ts
+│   │   │   ├── LayoutSystem.test.ts
+│   │   │   ├── PlacementEngine.test.ts
+│   │   │   └── RankingEngine.test.ts
+│   │   ├── AdDecisionEngine.ts
+│   │   ├── AuctionEngine.ts
+│   │   ├── CampaignRepository.ts
+│   │   ├── campaign-seed.ts
+│   │   ├── ExperimentEngine.ts
+│   │   ├── FrequencyPacingService.ts
+│   │   ├── index.ts
+│   │   ├── layout-catalog.ts
+│   │   ├── LayoutRegistry.ts
+│   │   ├── LayoutResolver.ts
+│   │   ├── PlacementEngine.ts
+│   │   ├── RankingEngine.ts
+│   │   ├── runtime.ts
+│   │   └── types.ts
+│   ├── ads
+│   │   ├── engine.ts
+│   │   ├── experiment.ts
+│   │   ├── registry.ts
+│   │   ├── tracking.ts
+│   │   └── types.ts
+│   ├── auth
+│   │   ├── contracts.ts
+│   │   ├── cookie-names.ts
+│   │   ├── countries.ts
+│   │   ├── mock-session.ts
+│   │   └── mock-session-client.ts
+│   ├── config
+│   │   └── ads.json
+│   ├── content
+│   │   ├── __tests__
+│   │   │   ├── encoding.test.ts
+│   │   │   ├── puja-pages.test.ts
+│   │   │   ├── registry-sync.test.ts
+│   │   │   └── seo-catalog.test.ts
+│   │   ├── json.ts
+│   │   ├── loader.ts
+│   │   ├── puja.ts
+│   │   ├── registry.ts
+│   │   └── types.ts
+│   ├── data
+│   │   ├── QuickAction
+│   │   │   └── data.ts
+│   │   └── pujas.ts
+│   ├── dlo-x
+│   │   ├── __tests__
+│   │   │   ├── cache.test.ts
+│   │   │   ├── layout-policies.test.ts
+│   │   │   └── stable-seed.test.ts
+│   │   ├── ab-testing.ts
+│   │   ├── backend-client.ts
+│   │   ├── cache.ts
+│   │   ├── layout-policies.ts
+│   │   ├── layout-registry.ts
+│   │   ├── layout-resolver.ts
+│   │   ├── policy-builder.ts
+│   │   ├── security.ts
+│   │   ├── stable-seed.ts
+│   │   ├── telemetry.ts
+│   │   └── types.ts
+│   ├── i18n
+│   │   ├── __tests__
+│   │   │   ├── formatters.test.ts
+│   │   │   └── locale.test.ts
+│   │   ├── formatters.ts
+│   │   ├── locale.ts
+│   │   ├── messages.ts
+│   │   └── translate.ts
+│   ├── infra
+│   │   └── dns.ts
+│   ├── linking
+│   │   └── graph.ts
+│   ├── pandits
+│   │   ├── __tests__
+│   │   │   └── data.test.ts
+│   │   ├── data.ts
+│   │   ├── index.ts
+│   │   └── types.ts
+│   ├── product
+│   │   └── role-config.ts
+│   ├── routes
+│   │   ├── __tests__
+│   │   │   └── metadata.test.ts
+│   │   └── metadata.ts
+│   ├── schema
+│   │   ├── __tests__
+│   │   │   └── generator.test.ts
+│   │   └── generator.ts
+│   ├── security
+│   │   ├── __tests__
+│   │   │   └── security.test.ts
+│   │   ├── csrf.ts
+│   │   ├── index.ts
+│   │   ├── rate-limit.ts
+│   │   ├── sanitize.ts
+│   │   └── scroll-lock.ts
+│   ├── seo
+│   │   ├── __tests__
+│   │   │   ├── aeo.test.ts
+│   │   │   ├── discovery.test.ts
+│   │   │   ├── metadata.test.ts
+│   │   │   └── sitemap.test.ts
+│   │   ├── aeo.ts
+│   │   ├── competitors.ts
+│   │   ├── entity.ts
+│   │   ├── metadata.ts
+│   │   ├── robots.ts
+│   │   ├── routes.ts
+│   │   ├── site.ts
+│   │   ├── sitemap.constants.ts
+│   │   ├── sitemap.ts
+│   │   ├── sitemap-cache.server.ts
+│   │   ├── sitemap-etag.ts
+│   │   └── sitemap-response.ts
+│   ├── config.ts
+│   ├── content-loader.ts
+│   ├── context-resolver.ts
+│   ├── footerData.ts
+│   ├── Heroimagepool.ts
+│   ├── menuData.ts
+│   ├── metadata-config.ts
+│   ├── schema-utils.ts
+│   ├── seo-config.ts
+│   ├── seo-manager.ts
+│   ├── services-metadata.ts
+│   ├── theme-config.json
+│   └── utils.ts
+├── messages
+│   ├── en.json
+│   └── hi.json
+├── public
+│   ├── favicon
+│   │   ├── android-chrome-192x192.png
+│   │   ├── android-chrome-512x512.png
+│   │   ├── apple-touch-icon.png
+│   │   ├── favicon.ico
+│   │   ├── favicon-16x16.png
+│   │   ├── favicon-32x32.png
+│   │   └── site.webmanifest
+│   ├── fonts
+│   │   ├── Moon2.0-Bold.otf
+│   │   ├── Moon2.0-Light.otf
+│   │   └── Moon2.0-Regular.otf
+│   ├── images
+│   │   ├── festivals
+│   │   │   └── ganesh-chaturthi.jpg
+│   │   ├── pandits
+│   │   │   ├── pandit-1.jpg
+│   │   │   └── pandit-2.jpg
+│   │   └── pujas
+│   │       ├── ganesh.jpg
+│   │       ├── griha-shanti.jpg
+│   │       ├── lakshmi.jpg
+│   │       └── satyanarayan.jpg
+│   ├── navdhya-home
+│   │   ├── temple-directory-1.jpg
+│   │   ├── temple-directory-2.jpg
+│   │   ├── temple-ritual-1.jpg
+│   │   └── temple-ritual-2.jpg
+│   ├── og
+│   │   └── navdhya-default-og.png
+│   ├── payments
+│   │   ├── apple-white.png
+│   │   ├── google-white.png
+│   │   ├── klarna-white.webp
+│   │   ├── payment.svg
+│   │   ├── payment2.svg
+│   │   ├── payment3.svg
+│   │   └── payment4.svg
+│   ├── cost.png
+│   ├── hindu-puja-ceremony-peaceful-home-setting.jpg
+│   ├── hindu-rituals-knowledge-blog.jpg
+│   ├── india-service-coverage-map.jpg
+│   ├── map-embed.jpg
+│   ├── navdhya-logo.png
+│   ├── office-location-map-new-delhi.jpg
+│   ├── offline.html
+│   ├── placeholder.jpg
+│   ├── placeholder.svg
+│   ├── placeholder-logo.png
+│   ├── placeholder-logo.svg
+│   ├── placeholder-user.jpg
+│   ├── puja-ceremony-mandap.jpg
+│   ├── puja-ritual-thumbnail.jpg
+│   ├── ritual-knowledge-blog.jpg
+│   ├── s7bpr.jpg
+│   ├── service-coverage-map.jpg
+│   ├── sw.js
+│   ├── traditional-hindu-puja-mandap.jpg
+│   ├── traditional-puja-ceremony-mandap.jpg
+│   └── traditional-puja-ceremony-setup.jpg
+├── repositories
+├── script
+│   ├── generate-full-sitemap.ts
+│   ├── sitemap.ts
+│   └── sync-registry.ts
+├── scripts
+│   ├── audit-seo.ts
+│   ├── backfill-speakable-faqs.ts
+│   ├── check-bundle-parity.ts
+│   ├── check-seo-routes.ps1
+│   ├── generate-continuous-coverage.ts
+│   ├── generate-delhi-expansion-pages.ts
+│   ├── generate-expanded-seo-batches.ps1
+│   ├── generate-hindu-ceremony-pages.ps1
+│   ├── generate-seo-v2.ts
+│   ├── generate-vedic-education-pages.ps1
+│   ├── implement-seo-completion.ts
+│   ├── normalize-seo-catalog.ts
+│   ├── postbuild.mjs
+│   ├── qa-seo-v2.ts
+│   ├── rebuild-content-registry.ps1
+│   ├── rebuild-content-registry.ts
+│   ├── refresh-hero-pool.mjs
+│   └── translate.ts
+├── styles
+│   └── globals.css
+├── telemetry
+├── tmp
+│   └── tsc_output.txt
+├── types
+│   └── quickActions
+│       └── index.ts
+├── validation
+├── .gitignore
+├── .gitleaks.toml
+├── 500.xlsx
+├── audit-04june.md
+├── CHANGELOG.md
+├── components.json
+├── context-resolve.json
+├── i18n.ts
+├── jest.config.ts
+├── jest.setup.ts
+├── navdhya-home.png
+├── navdhya-home-4105-deep.md
+├── navdhya-home-4105-snapshot.md
+├── next.config.ts
+├── next-env.d.ts
+├── package.json
+├── package-lock.json
+├── planning-04june.md
+├── postcss.config.mjs
+├── project.bat
+├── proxy.ts
+├── README.md
+├── routes-redirects.json
+├── server.js
+├── temp.yml
+├── tsc_output.txt
+├── tsconfig.json
+├── tsconfig.node.json
+└── tsconfig.tsbuildinfo

@@ -4,7 +4,7 @@ import { getAdOrchestrationRuntime } from "@/lib/ad-orchestration";
 import type { DecisionRequest } from "@/lib/ad-orchestration";
 import { validateCsrfToken } from "@/lib/security/csrf";
 
-export const runtime = "nodejs";
+
 
 /** Cap on the number of opportunities in a single decision request.
  *  Anything beyond this is almost certainly a DoS attempt — a single

@@ -1,0 +1,40 @@
+routes:
+  - path: "/"
+    owner: web
+    class: public
+
+  - path: "/pujas/**"
+    owner: web
+    class: public
+
+  - path: "/astrology/**"
+    owner: web
+    class: public
+
+  - path: "/resources/**"
+    owner: web
+    class: public
+
+  - path: "/book/**"
+    owner: customer
+    class: transactional
+
+  - path: "/user/**"
+    owner: customer
+    class: account
+
+  - path: "/settings/**"
+    owner: customer
+    class: account
+
+  - path: "/admin/**"
+    owner: admin
+    class: administrative
+
+  - path: "/pandit/**"
+    owner: partner
+    class: partner
+
+  - path: "/vendor/**"
+    owner: partner
+    class: partner

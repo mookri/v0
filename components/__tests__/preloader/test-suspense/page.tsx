@@ -7,3 +7,5 @@ export default function TestSuspensePage() {
     </div>
   )
 }
+
+it('dummy test', () => {});

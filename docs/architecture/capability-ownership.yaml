@@ -1,0 +1,18 @@
+capabilities:
+  booking:
+    owner: booking
+
+  pricing:
+    owner: pricing
+
+  availability:
+    owner: availability
+
+  puja:
+    owner: puja
+
+  identity:
+    owner: identity
+
+  payment:
+    owner: payment

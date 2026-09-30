@@ -23,7 +23,7 @@ const contentSecurityPolicy = [
 
 const nextConfig: NextConfig = {
   // ── Architecture ──────────────────────────────────────────────────────────
-  cacheComponents: true, // Enables Next.js 16+ use cache primitives
+  cacheComponents: false, // Enables Next.js 16+ use cache primitives
 
   // ── Build ──────────────────────────────────────────────────────────────────
   typescript: {

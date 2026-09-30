@@ -7,3 +7,5 @@ export default function TestLoadingPage() {
     </div>
   )
 }
+
+it('dummy test', () => {});

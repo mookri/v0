@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getAdOrchestrationRuntime } from "@/lib/ad-orchestration";
 import type { TrackingBatchPayload } from "@/lib/ad-orchestration";
 
-export const runtime = "nodejs";
+
 
 async function handleTrackingBatch(payload: TrackingBatchPayload) {
   const runtime = getAdOrchestrationRuntime();
