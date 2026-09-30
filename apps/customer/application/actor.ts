@@ -1,15 +1,13 @@
-import type { ActorResolver, RequestActor } from '@navdhya/identity/src/ports/actor-resolver';
+import { SignedTokenActorResolver, INSECURE_DEV_SECRET } from '@navdhya/identity/src/application/token-actor';
 
-// STAGING ONLY: resolves the actor from the x-user-id header so authed
-// flows are testable end-to-end behind mocks. Implements the identity
-// ActorResolver port so the session-backed replacement is a swap, not a
-// rewrite. Client-supplied actor ids must never be trusted in production.
-export class StagingHeaderActorResolver implements ActorResolver {
-  async resolve(headers: Record<string, string | undefined>): Promise<RequestActor | null> {
-    const userId = headers['x-user-id'];
-    if (!userId) return null;
-    return { userId, sessionId: `staging_${userId}`, roles: ['customer'] };
-  }
+// Actor resolution for customer BFF routes via signed bearer tokens.
+// Secret comes from server env; the insecure fallback is dev-only
+// (production must set SESSION_SIGNING_KEY — see packages/config).
+export function customerActorResolver(now?: () => string): SignedTokenActorResolver {
+  return new SignedTokenActorResolver({
+    secret: process.env['SESSION_SIGNING_KEY'] ?? INSECURE_DEV_SECRET,
+    now,
+  });
 }
 
 export function headersToRecord(headers: Headers): Record<string, string | undefined> {

@@ -1,6 +1,10 @@
 import { test, expect } from 'vitest';
 import { POST } from '@apps/partner/app/api/assignments/[assignmentId]/accept/route';
 import { GET as health } from '@apps/partner/app/api/health/route';
+import { mintActorToken, INSECURE_DEV_SECRET } from '@navdhya/identity/src/application/token-actor';
+
+const bearer = (userId: string) =>
+  `Bearer ${mintActorToken(INSECURE_DEV_SECRET, { userId, sessionId: `staging_${userId}`, roles: ['partner'] }, new Date().toISOString(), 3600)}`;
 
 const post = (headers: Record<string, string> = {}) =>
   POST(new Request('https://partner.navdhya.com/api/assignments/a1/accept', { method: 'POST', headers }), {
@@ -15,7 +19,7 @@ test('accept without actor is unauthenticated', async () => {
 });
 
 test('accept maps stub store miss to stable not-found envelope', async () => {
-  const res = await post({ 'x-partner-id': 'p1', 'Idempotency-Key': 'ik-1' });
+  const res = await post({ authorization: bearer('p1'), 'Idempotency-Key': 'ik-1' });
   expect(res.status).toBe(404);
   const body = (await res.json()) as { error: { code: string; message: string; requestId: string } };
   expect(body.error.code).toBe('ASSIGNMENT_NOT_FOUND');

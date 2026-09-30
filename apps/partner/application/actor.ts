@@ -1,14 +1,20 @@
-// Actor resolution seam for partner BFF routes.
-// STAGING ONLY: resolves the actor from the x-partner-id header so the
-// assignment flow is testable end-to-end behind mocks.
-// TODO(session-adapter): replace with the session adapter (same as customer);
-// client-supplied actor ids must never be trusted in production.
-export interface PartnerActor {
-  partnerId: string;
+import { SignedTokenActorResolver, INSECURE_DEV_SECRET } from '@navdhya/identity/src/application/token-actor';
+
+// Actor resolution for partner BFF routes via signed bearer tokens.
+// Secret comes from server env; the insecure fallback is dev-only
+// (production must set SESSION_SIGNING_KEY — see packages/config).
+// Replaces the former staging header seam; no client ids are trusted.
+export function partnerActorResolver(now?: () => string): SignedTokenActorResolver {
+  return new SignedTokenActorResolver({
+    secret: process.env['SESSION_SIGNING_KEY'] ?? INSECURE_DEV_SECRET,
+    now,
+  });
 }
 
-export function resolvePartnerActor(headers: Headers): PartnerActor | null {
-  const partnerId = headers.get('x-partner-id');
-  if (!partnerId) return null;
-  return { partnerId };
+export function headersToRecord(headers: Headers): Record<string, string | undefined> {
+  const out: Record<string, string | undefined> = {};
+  headers.forEach((value, key) => {
+    out[key.toLowerCase()] = value;
+  });
+  return out;
 }

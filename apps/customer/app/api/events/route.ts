@@ -1,5 +1,5 @@
 import { newRequestId, err } from '@/application/api-envelope';
-import { StagingHeaderActorResolver, headersToRecord } from '@/application/actor';
+import { customerActorResolver, headersToRecord } from '@/application/actor';
 import { createEventStream, sseHeaders } from '@/application/events-stream';
 import { userChannel } from '@navdhya/notifications/src/events/live';
 import { MemoryEventBus } from '@navdhya/notifications/src/adapters/memory-bus';
@@ -7,7 +7,7 @@ import { MemoryEventBus } from '@navdhya/notifications/src/adapters/memory-bus';
 // Single-instance bus (dev/staging). Multi-instance deployments need a
 // shared broker; the EventBus port makes that a swap (see phase 25 notes).
 const bus = new MemoryEventBus();
-const actors = new StagingHeaderActorResolver();
+const actors = customerActorResolver();
 
 export function __eventsBusForTests() {
   return bus;

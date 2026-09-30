@@ -1,14 +1,16 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
-import { resolvePartnerActor } from '@/application/actor';
+import { partnerActorResolver, headersToRecord } from '@/application/actor';
 import { acceptOffer } from '@/application/assignments';
+
+const actors = partnerActorResolver();
 
 export async function POST(req: Request, { params }: { params: Promise<{ assignmentId: string }> }) {
   const requestId = newRequestId();
-  const actor = resolvePartnerActor(req.headers);
+  const actor = await actors.resolve(headersToRecord(req.headers));
   if (!actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
   const idempotencyKey = req.headers.get('Idempotency-Key') ?? `ik_${requestId}`;
   // TODO(fulfillment-repo): load the offer from fulfillment via repository, persist on accept.
-  const result = acceptOffer(null, actor.partnerId, new Date().toISOString(), idempotencyKey);
+  const result = acceptOffer(null, actor.userId, new Date().toISOString(), idempotencyKey);
   if (!result.ok && result.reason === 'NOT_FOUND') {
     return Response.json(err('ASSIGNMENT_NOT_FOUND', 'Assignment not found.', requestId), { status: 404 });
   }
