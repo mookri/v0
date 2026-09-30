@@ -14,9 +14,9 @@ import type {
   ServiceDetails,
   ServiceProcessStep,
   SpeakableFAQEntry,
-} from "../lib/content/types";
+} from "../apps/web/lib/content/types";
 
-const ROOT = process.cwd();
+const ROOT = path.join(process.cwd(), 'apps/web');
 const CONTENT_DIR = path.join(ROOT, "content");
 const PAGES_DIR = path.join(CONTENT_DIR, "pages");
 const V2_SOURCES_DIR = path.join(CONTENT_DIR, "sources", "v2");

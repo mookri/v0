@@ -14,11 +14,11 @@
 
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { parseJsonString } from "../lib/content/json";
-import { deriveSpeakableFaqs } from "../lib/seo/aeo";
-import type { SEOPage, SpeakableFAQEntry } from "../lib/content/types";
+import { parseJsonString } from "../apps/web/lib/content/json";
+import { deriveSpeakableFaqs } from "../apps/web/lib/seo/aeo";
+import type { SEOPage, SpeakableFAQEntry } from "../apps/web/lib/content/types";
 
-const PAGES_DIR = join(process.cwd(), "content", "pages");
+const PAGES_DIR = join(process.cwd(), "apps/web", "content", "pages");
 const DRY_RUN = process.argv.includes("--dry-run");
 
 interface BackfillStats {

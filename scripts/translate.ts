@@ -59,7 +59,7 @@ function parseArgs(argv: string[]): Args {
   return args;
 }
 
-const MESSAGES_DIR = join(process.cwd(), "messages");
+const MESSAGES_DIR = join(process.cwd(), "apps/web", "messages");
 
 async function loadBundle(locale: Locale): Promise<MessageBundle> {
   const file = join(MESSAGES_DIR, `${locale}.json`);

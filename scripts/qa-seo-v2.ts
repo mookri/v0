@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
-import type { SEOPage } from "../lib/content/types";
+import type { SEOPage } from "../apps/web/lib/content/types";
 
-const ROOT = process.cwd();
+const ROOT = path.join(process.cwd(), 'apps/web');
 const PAGES_DIR = path.join(ROOT, "content", "pages");
 const BANNED_PHRASES = [
   "families searching",
