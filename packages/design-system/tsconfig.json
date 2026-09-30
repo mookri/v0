@@ -1,10 +1,17 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@navdhya/design-system/*": ["./src/*"]
-    }
-  },
-  "include": ["src"]
+    "extends":  "../../tsconfig.json",
+    "compilerOptions":  {
+                            "baseUrl":  ".",
+                            "paths":  {
+                                          "@navdhya/design-system/*":  [
+                                                                           "./src/*"
+                                                                       ],
+                                          "@/*":  [
+                                                      "./src/*"
+                                                  ]
+                                      }
+                        },
+    "include":  [
+                    "src"
+                ]
 }

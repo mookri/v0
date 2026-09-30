@@ -7,6 +7,11 @@
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@navdhya/*": ["./packages/*"],
+      "@infra/*": ["./infrastructure/*"]
+    }
   }
 }

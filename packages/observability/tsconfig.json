@@ -1,10 +1,17 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@navdhya/observability/*": ["./src/*"]
-    }
-  },
-  "include": ["src"]
+    "extends":  "../../tsconfig.json",
+    "compilerOptions":  {
+                            "baseUrl":  ".",
+                            "paths":  {
+                                          "@navdhya/observability/*":  [
+                                                                           "./src/*"
+                                                                       ],
+                                          "@/*":  [
+                                                      "./src/*"
+                                                  ]
+                                      }
+                        },
+    "include":  [
+                    "src"
+                ]
 }
