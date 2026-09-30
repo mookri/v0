@@ -45,7 +45,7 @@ Notes:
 | communication | L4 | domain/ports + adapters, clean |
 | customer-profile | L3 | domain/application/ports, no contracts — blocker: publish 360 contracts |
 | finance | L2 | domain/application/ports, no contracts — blocker: invoice/ledger contracts |
-| fulfillment | L2 | domain/ports, no application/contracts split — blocker |
+| fulfillment | L3 | assignment port + memory adapter live in partner flow; blocker: publish contracts |
 | geography | L2 | domain/ports, no application/contracts split — blocker |
 | feedback | L2 | domain/application, no ports — blocker: review/moderation ports |
 | incident | L2 | domain/application, no ports — blocker |

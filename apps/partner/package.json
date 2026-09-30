@@ -13,7 +13,9 @@
   "dependencies": {
     "next": "16.0.10",
     "react": "^19",
-    "react-dom": "^19"
+    "react-dom": "^19",
+    "@navdhya/fulfillment": "workspace:*",
+    "@navdhya/identity": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22",

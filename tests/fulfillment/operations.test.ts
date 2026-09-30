@@ -5,6 +5,7 @@ import { isOfferAcceptable, rankCandidates } from '@navdhya/fulfillment/src/assi
 import { stableExceptionKey } from '@navdhya/fulfillment/src/exceptions/exception';
 import { overlaps, withBuffer, hasConflict } from '@navdhya/scheduling/src/schedule';
 import { commitSchedule } from '@navdhya/scheduling/src/application';
+import { MemoryAssignmentGateway } from '@navdhya/fulfillment/src/adapters/memory-assignment';
 
 const order = (status: 'READY' | 'ASSIGNMENT_PENDING' | 'COMPLETED' = 'READY') => ({
   id: 'f1', bookingId: 'b1', status, serviceDate: '2026-10-05', timezone: 'Asia/Kolkata', recipeVersion: 3, version: 2,
@@ -49,3 +50,15 @@ test('commit is transactional on conflicts', async () => {
   const bad = await commitSchedule(store, { id: 's4', resourceId: 'p1', workOrderId: 'w1', window: { startsAt: '2026-10-05T13:00:00.000Z', endsAt: '2026-10-05T12:00:00.000Z' }, timezone: 'Asia/Kolkata' });
   expect(bad).toEqual({ ok: false, reason: 'TIME_WINDOW_INVALID' });
 });
+
+test('memory assignment gateway enforces offer lifecycle', async () => {
+  const gw = new MemoryAssignmentGateway(() => '2026-10-01T00:00:00.000Z');
+  const { offerId } = await gw.offer({ fulfillmentId: 'f1', partnerId: 'p1', expiresAt: '2026-10-01T01:00:00.000Z' });
+  expect((await gw.get(offerId))?.status).toBe('PENDING');
+  expect(await gw.accept(offerId)).toBe(true);
+  expect(await gw.accept(offerId)).toBe(false);
+  const { offerId: stale } = await gw.offer({ fulfillmentId: 'f2', partnerId: 'p2', expiresAt: '2026-09-30T00:00:00.000Z' });
+  expect(await gw.accept(stale)).toBe(false);
+  expect(await gw.get('nope')).toBeNull();
+});
+

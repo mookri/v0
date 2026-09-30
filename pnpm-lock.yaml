@@ -229,6 +229,12 @@ importers:
 
   apps/partner:
     dependencies:
+      '@navdhya/fulfillment':
+        specifier: workspace:*
+        version: link:../../packages/fulfillment
+      '@navdhya/identity':
+        specifier: workspace:*
+        version: link:../../packages/identity
       next:
         specifier: 16.0.10
         version: 16.0.10(@babel/core@7.29.7)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)

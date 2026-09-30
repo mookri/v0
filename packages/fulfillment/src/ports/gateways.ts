@@ -1,4 +1,5 @@
 import { FulfillmentOrder, canTransitionFulfillment } from '@navdhya/fulfillment/src/domain/fulfillment-order';
+import { AssignmentOffer } from '@navdhya/fulfillment/src/assignment/assignment';
 
 export interface FulfillmentRepository {
   getById(id: string): Promise<FulfillmentOrder | null>;
@@ -13,6 +14,7 @@ export interface SchedulingGateway {
 
 export interface AssignmentGateway {
   offer(input: { fulfillmentId: string; partnerId: string; expiresAt: string }): Promise<{ offerId: string }>;
+  get(offerId: string): Promise<AssignmentOffer | null>;
   accept(offerId: string): Promise<boolean>;
 }
 

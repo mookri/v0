@@ -1,16 +1,25 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
 import { partnerActorResolver, headersToRecord } from '@/application/actor';
 import { acceptOffer } from '@/application/assignments';
+import { MemoryAssignmentGateway } from '@navdhya/fulfillment/src/adapters/memory-assignment';
 
 const actors = partnerActorResolver();
+// Single-instance staging source (same limitation as the events memory
+// bus); a shared fulfillment store replaces this behind the port.
+const assignments = new MemoryAssignmentGateway();
+
+export function __assignmentGatewayForTests() {
+  return assignments;
+}
 
 export async function POST(req: Request, { params }: { params: Promise<{ assignmentId: string }> }) {
   const requestId = newRequestId();
   const actor = await actors.resolve(headersToRecord(req.headers));
   if (!actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
+  const { assignmentId } = await params;
   const idempotencyKey = req.headers.get('Idempotency-Key') ?? `ik_${requestId}`;
-  // TODO(fulfillment-repo): load the offer from fulfillment via repository, persist on accept.
-  const result = acceptOffer(null, actor.userId, new Date().toISOString(), idempotencyKey);
+  const offer = await assignments.get(assignmentId);
+  const result = acceptOffer(offer, actor.userId, new Date().toISOString(), idempotencyKey);
   if (!result.ok && result.reason === 'NOT_FOUND') {
     return Response.json(err('ASSIGNMENT_NOT_FOUND', 'Assignment not found.', requestId), { status: 404 });
   }
@@ -23,6 +32,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ assignm
   if (!result.ok) {
     return Response.json(err('ASSIGNMENT_CONFLICT', 'Offer cannot be accepted.', requestId), { status: 409 });
   }
-  const { assignmentId } = await params;
-  return Response.json(ok({ assignmentId, status: result.offer.status }, requestId));
+  const accepted = await assignments.accept(assignmentId);
+  if (!accepted) {
+    return Response.json(err('ASSIGNMENT_CONFLICT', 'Offer was taken or expired.', requestId), { status: 409 });
+  }
+  return Response.json(ok({ assignmentId, status: 'ACCEPTED' }, requestId));
 }
