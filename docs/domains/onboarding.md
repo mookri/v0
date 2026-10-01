@@ -70,7 +70,15 @@ vs `OnboardingDocumentStatus`) — unify when the verification worker binds
 a queue (stage 6); the onboarding model carries reason codes the old one
 lacks.
 
-## Stage 5+ (not started)
+## Stage 5 (done)
+
+API v1 on the partner app (BFF standard): start / get / step-PUT /
+submit+confirm (two-phase OTP) / documents / status, with ownership
+checks, stable codes (`ONBOARDING_*`), rate limits. Contract tests drive
+the full HTTP flow per track. Docs: `docs/api/pandit-onboarding.md` +
+`docs/api/partner-onboarding.md`.
+
+## Stage 6+ (not started)
 
 OTP port + two-phase submit · `OnboardingRepository` port + memory
 adapter · document pipeline + verification worker · API v1 + `docs/api`

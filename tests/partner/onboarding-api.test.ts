@@ -1,0 +1,125 @@
+import { test, expect, beforeEach } from 'vitest';
+import { POST as start } from '@apps/partner/app/api/onboarding/start/route';
+import { GET as getApp } from '@apps/partner/app/api/onboarding/[id]/route';
+import { PUT as putStep } from '@apps/partner/app/api/onboarding/[id]/step/[step]/route';
+import { POST as submit } from '@apps/partner/app/api/onboarding/[id]/submit/route';
+import { POST as confirm } from '@apps/partner/app/api/onboarding/[id]/submit/confirm/route';
+import { POST as documents } from '@apps/partner/app/api/onboarding/[id]/documents/route';
+import { GET as status } from '@apps/partner/app/api/onboarding/[id]/status/route';
+import { __useOtpForTests, __resetEvidenceForTests } from '@apps/partner/server/onboarding';
+import { SeededOtpProvider } from '@navdhya/identity/src/adapters/memory-otp';
+import { mintActorToken, INSECURE_DEV_SECRET } from '@navdhya/identity/src/application/token-actor';
+
+const otp = new SeededOtpProvider();
+beforeEach(() => {
+  __useOtpForTests(otp);
+  __resetEvidenceForTests();
+});
+
+const bearer = (userId: string) =>
+  `Bearer ${mintActorToken(INSECURE_DEV_SECRET, { userId, sessionId: `s_${userId}`, roles: ['partner'] }, new Date().toISOString(), 3600)}`;
+const auth = (userId: string) => ({ authorization: bearer(userId) });
+const json = (method: string, url: string, userId: string | null, body?: unknown) =>
+  new Request(url, {
+    method,
+    headers: { ...(userId ? auth(userId) : {}), 'Content-Type': 'application/json' },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+const BASE = 'https://partner.navdhya.com';
+
+const EVIDENCE: Record<string, unknown> = {
+  identity: { name: 'Ravi', phone: '+91' },
+  credentials: { certifications: ['vedic'] },
+  services: ['lakshmi-puja'],
+  areas: ['delhi'],
+  availability: { set: true },
+  documents: ['doc_1'],
+  agreement: { accepted: true },
+};
+
+async function startApp(userId = 'p1', track = 'pandit'): Promise<string> {
+  const res = await start(json('POST', `${BASE}/api/onboarding/start`, userId, { track }));
+  expect(res.status).toBe(201);
+  const body = (await res.json()) as { data: { applicationId: string; trackVersion: string } };
+  expect(body.data.trackVersion).toBe('pandit-v1');
+  return body.data.applicationId;
+}
+
+async function fillSteps(id: string, userId: string, evidence: Record<string, unknown> = EVIDENCE) {
+  for (const [step, value] of Object.entries(evidence)) {
+    const res = await putStep(json('PUT', `${BASE}/api/onboarding/${id}/step/${step}`, userId, { value }), {
+      params: Promise.resolve({ id, step }),
+    });
+    expect(res.status).toBe(200);
+  }
+}
+
+test('start validates track; draft reports needs; unknown step rejected', async () => {
+  const bad = await start(json('POST', `${BASE}/api/onboarding/start`, 'p1', { track: 'nope' }));
+  expect(bad.status).toBe(400);
+  const anon = await start(json('POST', `${BASE}/api/onboarding/start`, null, { track: 'pandit' }));
+  expect(anon.status).toBe(401);
+  const id = await startApp();
+  const res = await getApp(json('GET', `${BASE}/api/onboarding/${id}`, 'p1'), { params: Promise.resolve({ id }) });
+  const body = (await res.json()) as { data: { needs: string[]; steps: { id: string }[] } };
+  expect(body.data.needs).toContain('identity');
+  expect(body.data.steps.length).toBe(8);
+  const unknown = await putStep(json('PUT', `${BASE}/api/onboarding/${id}/step/nope`, 'p1', { value: 1 }), {
+    params: Promise.resolve({ id, step: 'nope' }),
+  });
+  expect(unknown.status).toBe(400);
+  const foreign = await getApp(json('GET', `${BASE}/api/onboarding/${id}`, 'p2'), { params: Promise.resolve({ id }) });
+  expect(foreign.status).toBe(403);
+});
+
+test('two-phase submit over HTTP: incomplete blocks, OTP confirms, replay dies', async () => {
+  const id = await startApp();
+  const early = await submit(json('POST', `${BASE}/api/onboarding/${id}/submit`, 'p1', {}), {
+    params: Promise.resolve({ id }),
+  });
+  expect(early.status).toBe(422);
+  await fillSteps(id, 'p1');
+  const begun = await submit(json('POST', `${BASE}/api/onboarding/${id}/submit`, 'p1', {}), {
+    params: Promise.resolve({ id }),
+  });
+  expect(begun.status).toBe(200);
+  const { data: { challengeId } } = (await begun.json()) as { data: { challengeId: string } };
+  const wrong = await confirm(json('POST', `${BASE}/api/onboarding/${id}/submit/confirm`, 'p1', { challengeId, code: '000000' }), {
+    params: Promise.resolve({ id }),
+  });
+  expect(wrong.status).toBe(401);
+  const done = await confirm(
+    json('POST', `${BASE}/api/onboarding/${id}/submit/confirm`, 'p1', { challengeId, code: otp.codeFor(challengeId) }),
+    { params: Promise.resolve({ id }) },
+  );
+  expect(done.status).toBe(200);
+  const st = (await (
+    await status(json('GET', `${BASE}/api/onboarding/${id}/status`, 'p1'), { params: Promise.resolve({ id }) })
+  ).json()) as { data: { status: string; needs: string[] } };
+  expect(st.data.status).toBe('SUBMITTED');
+  expect(st.data.needs).toEqual([]);
+  const replay = await confirm(
+    json('POST', `${BASE}/api/onboarding/${id}/submit/confirm`, 'p1', { challengeId, code: otp.codeFor(challengeId) }),
+    { params: Promise.resolve({ id }) },
+  );
+  expect(replay.status).toBe(409);
+});
+
+test('documents issuance scopes keys and validates input', async () => {
+  const id = await startApp();
+  const res = await documents(
+    json('POST', `${BASE}/api/onboarding/${id}/documents`, 'p1', { kind: 'id-proof', contentLength: 100, sha256: 'abc' }),
+    { params: Promise.resolve({ id }) },
+  );
+  expect(res.status).toBe(201);
+  const body = (await res.json()) as { data: { documentId: string; url: string } };
+  expect(body.data.url).toContain('onboarding/');
+  const bad = await documents(json('POST', `${BASE}/api/onboarding/${id}/documents`, 'p1', { kind: 'video' }), {
+    params: Promise.resolve({ id }),
+  });
+  expect(bad.status).toBe(400);
+  const st = (await (
+    await status(json('GET', `${BASE}/api/onboarding/${id}/status`, 'p1'), { params: Promise.resolve({ id }) })
+  ).json()) as { data: { documents: { kind: string; status: string }[] } };
+  expect(st.data.documents).toEqual([{ id: body.data.documentId, kind: 'id-proof', status: 'PENDING', reasonCode: null }]);
+});

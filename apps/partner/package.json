@@ -15,7 +15,8 @@
     "react": "^19",
     "react-dom": "^19",
     "@navdhya/fulfillment": "workspace:*",
-    "@navdhya/identity": "workspace:*"
+    "@navdhya/identity": "workspace:*",
+    "@navdhya/partner": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22",
