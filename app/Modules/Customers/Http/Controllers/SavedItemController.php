@@ -3,6 +3,7 @@
 namespace App\Modules\Customers\Http\Controllers;
 
 use App\Modules\Customers\Models\SavedItem;
+use App\Modules\Customers\CustomerActivityRecorder;
 use App\Platform\Api\CursorPagination;
 use App\Platform\Audit\AuditWriter;
 use Illuminate\Http\JsonResponse;
@@ -16,7 +17,7 @@ use Illuminate\Http\Request;
  */
 final class SavedItemController extends CustomerSelfServiceController
 {
-    public function __construct(private readonly AuditWriter $audit)
+    public function __construct(private readonly AuditWriter $audit, private readonly CustomerActivityRecorder $activity)
     {
     }
 
@@ -95,6 +96,7 @@ final class SavedItemController extends CustomerSelfServiceController
             null,
             ['user_id' => $userId, 'ref_type' => $item->ref_type, 'ref_id' => $item->ref_id]
         );
+        $this->activity->record($userId, 'saved_added', "Saved {$item->ref_type}");
 
         return new JsonResponse([
             'data' => self::serialize($item),
@@ -128,6 +130,7 @@ final class SavedItemController extends CustomerSelfServiceController
             null,
             ['user_id' => (string) $user->getAuthIdentifier()]
         );
+        $this->activity->record((string) $user->getAuthIdentifier(), 'saved_removed', 'Removed a saved item');
 
         return new JsonResponse([
             'data' => ['object' => 'saved_item_deletion', 'deleted' => true],

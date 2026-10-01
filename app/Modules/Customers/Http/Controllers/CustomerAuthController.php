@@ -7,6 +7,7 @@ use App\Modules\Customers\Auth\CustomerOtpService;
 use App\Modules\Customers\Auth\OtpRateLimitedException;
 use App\Modules\Customers\Models\BuyerProfile;
 use App\Modules\Customers\Models\CustomerOtpChallenge;
+use App\Modules\Customers\CustomerActivityRecorder;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Identity\ActorTokenIssuer;
 use App\Platform\Tenancy\ConnectionResolver;
@@ -39,6 +40,7 @@ final class CustomerAuthController
     public function __construct(
         private readonly CustomerOtpService $otp,
         private readonly AuditWriter $audit,
+        private readonly CustomerActivityRecorder $activity,
     ) {
     }
 
@@ -291,6 +293,7 @@ final class CustomerAuthController
                 null,
                 ['tenant_id' => $tenantId, 'user_id' => (string) $user->getAuthIdentifier()]
             );
+            $this->activity->record((string) $user->getAuthIdentifier(), 'signup', 'Account created');
         } finally {
             if ($scoped['ownsContext']) {
                 $scoped['context']->clear();
@@ -377,6 +380,7 @@ final class CustomerAuthController
                 null,
                 ['tenant_id' => $tenantId, 'user_id' => (string) $user->getAuthIdentifier()]
             );
+            $this->activity->record((string) $user->getAuthIdentifier(), 'login', 'Signed in');
         } finally {
             if ($scoped['ownsContext']) {
                 $scoped['context']->clear();
@@ -411,6 +415,7 @@ final class CustomerAuthController
             null,
             ['user_id' => (string) $request->user()->getAuthIdentifier()]
         );
+        $this->activity->record((string) $request->user()->getAuthIdentifier(), 'logout', 'Signed out');
 
         return new JsonResponse([
             'data' => ['object' => 'customer_session', 'signed_out' => true],

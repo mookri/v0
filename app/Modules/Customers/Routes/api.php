@@ -1,7 +1,9 @@
 <?php
 
+use App\Modules\Customers\Http\Controllers\CustomerActivityController;
 use App\Modules\Customers\Http\Controllers\CustomerAddressController;
 use App\Modules\Customers\Http\Controllers\CustomerAuthController;
+use App\Modules\Customers\Http\Controllers\CustomerDiscoverController;
 use App\Modules\Customers\Http\Controllers\CustomerNotificationController;
 use App\Modules\Customers\Http\Controllers\CustomerProfileController;
 use App\Modules\Customers\Http\Controllers\CustomerSettingController;
@@ -96,3 +98,11 @@ Route::get('settings', [CustomerSettingController::class, 'index'])
     ->name('settings.index');
 Route::patch('settings', [CustomerSettingController::class, 'update'])
     ->name('settings.update');
+
+// Discover feed (B6): deterministic composition via Contracts ports.
+Route::get('discover', [CustomerDiscoverController::class, 'feed'])
+    ->name('discover.feed');
+
+// Activity feed (B6): customer-safe read model, never audit rows.
+Route::get('activity', [CustomerActivityController::class, 'index'])
+    ->name('activity.index');

@@ -26,6 +26,8 @@ updates this doc and both test suites in the same change.
 | reschedule | `POST …/reschedule {newStartTime}` → 409 | `POST …/{id}:reschedule {new_start_time, version}` → 200; stale → 409 `version_conflict`, overlap → 409 `conflict`, off-state → 409 `state_forbidden` | version + overlap are new (BFF sends `version` from detail read in F2) |
 | history | — | `GET …/{id}/history` (append-only transitions) | backend only until F2 |
 | reviews | web `/user/*` mock | `POST …/{id}/reviews` (COMPLETED only, one per booking), `GET /api/v1/booking/reviews`, `DELETE …/{id}` | backend only until F2 |
+| discover | `GET /api/discover` → always-empty feed | `GET /api/v1/customers/discover` → `{recommended, popular, recent}` (SQL-only: recency + 30d booking rank + novelty exclusion; no ML) | backend real; kernel envelope wraps the feed object (BFF unwraps in F2) |
+| activity | `/` recentActivity mock strings | `GET /api/v1/customers/activity` (cursor + `?kind=`, caller-scoped, dedicated read model — never audit rows) | backend only until F2 |
 
 Profile/saved/notifications/settings/bookings rows land with B3–B5.
 

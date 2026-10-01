@@ -598,6 +598,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/customers/activity:
+    get:
+      operationId: listCustomerActivity
+      summary: 'Cursor-paginated account history (optional kind filter).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          $ref: '#/components/parameters/Limit'
+        -
+          $ref: '#/components/parameters/Cursor'
+        -
+          name: kind
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'Activity items.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
   /api/v1/customers/addresses:
     get:
       operationId: listCustomerAddresses
@@ -884,6 +915,27 @@ paths:
                   meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
         401:
           $ref: '#/components/responses/Unauthenticated'
+  /api/v1/customers/discover:
+    get:
+      operationId: getDiscoverFeed
+      summary: 'Deterministic recommended/popular/recent feed.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      responses:
+        200:
+          description: Feed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [recommended, popular, recent] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
   /api/v1/customers/notifications:
     get:
       operationId: listCustomerNotifications

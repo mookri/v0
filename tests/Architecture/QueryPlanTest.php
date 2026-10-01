@@ -93,5 +93,9 @@ final class QueryPlanTest extends TenantIntegrationTestCase
             $this->plan($conn, 'select * from booking_reviews where tenant_id = ? and user_id = ?', [$tenant, '1']),
             'reviews by customer scan'
         );
+        $this->assertIndexed(
+            $this->plan($conn, 'select * from customer_activities where tenant_id = ? and user_id = ?', [$tenant, '1']),
+            'activities by customer scan'
+        );
     }
 }

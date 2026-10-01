@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Modules\Customers\Auth\CustomerOtpService;
 use App\Modules\Customers\Models\BuyerProfile;
 use App\Modules\Customers\Models\CustomerOtpChallenge;
+use App\Modules\Customers\CustomerActivityRecorder;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Tenancy\ConnectionResolver;
 use App\Platform\Tenancy\Models\Tenant;
@@ -24,7 +25,7 @@ use Illuminate\Http\Request;
  */
 final class CustomerProfileController extends CustomerSelfServiceController
 {
-    public function __construct(private readonly AuditWriter $audit)
+    public function __construct(private readonly AuditWriter $audit, private readonly CustomerActivityRecorder $activity)
     {
     }
 
@@ -86,6 +87,7 @@ final class CustomerProfileController extends CustomerSelfServiceController
             null,
             ['user_id' => (string) $user->getAuthIdentifier(), 'fields' => array_keys($validated)]
         );
+        $this->activity->record((string) $user->getAuthIdentifier(), 'profile_updated', 'Profile updated');
 
         return new JsonResponse([
             'data' => self::serialize($user->fresh(), $profile->fresh()),
@@ -178,6 +180,7 @@ final class CustomerProfileController extends CustomerSelfServiceController
                 null,
                 ['user_id' => (string) $user->getAuthIdentifier(), 'membership_id' => (string) $membership->getKey()]
             );
+            $this->activity->record((string) $user->getAuthIdentifier(), 'reactivated', 'Account reactivated');
         } finally {
             if ($scoped['ownsContext']) {
                 $scoped['context']->clear();
@@ -250,6 +253,7 @@ final class CustomerProfileController extends CustomerSelfServiceController
             null,
             ['user_id' => (string) $user->getAuthIdentifier(), 'membership_id' => (string) $membership->getKey()]
         );
+        $this->activity->record((string) $user->getAuthIdentifier(), 'deactivated', 'Account deactivated');
 
         return new JsonResponse([
             'data' => [

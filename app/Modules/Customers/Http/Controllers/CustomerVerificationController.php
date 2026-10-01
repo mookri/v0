@@ -5,6 +5,7 @@ namespace App\Modules\Customers\Http\Controllers;
 use App\Modules\Customers\Auth\CustomerOtpService;
 use App\Modules\Customers\Auth\OtpRateLimitedException;
 use App\Modules\Customers\Models\CustomerOtpChallenge;
+use App\Modules\Customers\CustomerActivityRecorder;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
@@ -31,6 +32,7 @@ final class CustomerVerificationController extends CustomerSelfServiceController
     public function __construct(
         private readonly CustomerOtpService $otp,
         private readonly AuditWriter $audit,
+        private readonly CustomerActivityRecorder $activity,
     ) {
     }
 
@@ -191,6 +193,11 @@ final class CustomerVerificationController extends CustomerSelfServiceController
             ['module' => 'customers', 'resource_type' => 'buyer_profile', 'resource_id' => (string) $found['profile']->getKey()],
             null,
             ['user_id' => (string) $user->getAuthIdentifier(), 'channel' => $channel]
+        );
+        $this->activity->record(
+            (string) $user->getAuthIdentifier(),
+            'verification',
+            $channel === 'phone' ? 'Phone number verified' : 'Email address verified'
         );
 
         return new JsonResponse([

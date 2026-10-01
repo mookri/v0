@@ -3,6 +3,7 @@
 namespace App\Modules\Customers\Http\Controllers;
 
 use App\Modules\Customers\Models\CustomerAddress;
+use App\Modules\Customers\CustomerActivityRecorder;
 use App\Platform\Api\CursorPagination;
 use App\Platform\Audit\AuditWriter;
 use Illuminate\Http\JsonResponse;
@@ -15,7 +16,7 @@ use Illuminate\Http\Request;
  */
 final class CustomerAddressController extends CustomerSelfServiceController
 {
-    public function __construct(private readonly AuditWriter $audit)
+    public function __construct(private readonly AuditWriter $audit, private readonly CustomerActivityRecorder $activity)
     {
     }
 
@@ -90,6 +91,7 @@ final class CustomerAddressController extends CustomerSelfServiceController
             null,
             ['user_id' => $userId]
         );
+        $this->activity->record($userId, 'address_added', "Address '{$validated['label']}' added");
 
         return new JsonResponse([
             'data' => self::serialize($address),
@@ -128,6 +130,7 @@ final class CustomerAddressController extends CustomerSelfServiceController
             null,
             ['user_id' => $userId, 'fields' => array_keys($validated)]
         );
+        $this->activity->record($userId, 'address_updated', "Address '{$address->label}' updated");
 
         return new JsonResponse([
             'data' => self::serialize($address->fresh()),
@@ -166,6 +169,7 @@ final class CustomerAddressController extends CustomerSelfServiceController
             null,
             ['user_id' => $userId]
         );
+        $this->activity->record($userId, 'address_removed', 'Address removed');
 
         return new JsonResponse([
             'data' => ['object' => 'customer_address_deletion', 'deleted' => true],

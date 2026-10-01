@@ -8,6 +8,7 @@ use App\Modules\Booking\Models\Booking;
 use App\Modules\Booking\Models\BookingReview;
 use App\Modules\Booking\Models\BookingTransition;
 use App\Modules\Customers\Models\BuyerProfile;
+use App\Modules\Customers\Models\CustomerActivity;
 use App\Modules\Customers\Models\CustomerAddress;
 use App\Modules\Customers\Models\CustomerNotification;
 use App\Modules\Customers\Models\CustomerSetting;
@@ -232,6 +233,19 @@ final class Phase0kIsolationMatrixTest extends TenantIntegrationTestCase
                 'value' => 'hi',
             ],
             ['value' => 'en'],
+        );
+    }
+
+    public function test_customer_activities_are_isolated(): void
+    {
+        $this->assertTenantIsolationMatrix(
+            CustomerActivity::class,
+            fn (): array => [
+                'user_id' => User::factory()->create()->id,
+                'kind' => 'login',
+                'label' => 'Signed in',
+            ],
+            ['label' => 'isolation probe'],
         );
     }
 
