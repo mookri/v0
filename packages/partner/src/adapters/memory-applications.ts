@@ -1,4 +1,4 @@
-import { PartnerApplication } from '@navdhya/partner/src/domain/partner-application';
+import { PartnerApplication, ApplicationStatus } from '@navdhya/partner/src/domain/partner-application';
 import { OnboardingRepository } from '@navdhya/partner/src/ports/applications';
 
 // Single-instance staging adapter (same limitation as the other memory
@@ -18,6 +18,10 @@ export class MemoryOnboardingRepository implements OnboardingRepository {
 
   async findByIdentity(identityId: string): Promise<PartnerApplication[]> {
     return [...this.byId.values()].filter((a) => a.identityId === identityId).map((a) => ({ ...a }));
+  }
+
+  async listByStates(states: ApplicationStatus[]): Promise<PartnerApplication[]> {
+    return [...this.byId.values()].filter((a) => states.includes(a.status)).map((a) => ({ ...a }));
   }
 
   async update(app: PartnerApplication): Promise<void> {

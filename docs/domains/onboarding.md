@@ -91,7 +91,16 @@ Gap note: field layouts are UI-owned data (stage 8 track-studio moves
 them into versioned track data); documents step collects identifiers —
 byte upload binds when storage does.
 
-## Stage 7+ (not started)
+## Stage 7 (done)
+
+Reviewer backend: `reviewApplication` (approve/reject w/ mandatory
+reason/request-info w/ appeal guardrails) + append-only audit store +
+per-track SLA evaluation. Routes: role-gated queue (states + SLA breach
+flags) and decisions with four-eyes countersign on rejections (recorded
+in the audit note). Appeal admission stays applicant-side; direct
+approve-from-appeal is illegal (re-enter review).
+
+## Stage 8+ (not started)
 
 OTP port + two-phase submit · `OnboardingRepository` port + memory
 adapter · document pipeline + verification worker · API v1 + `docs/api`

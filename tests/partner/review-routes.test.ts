@@ -1,0 +1,74 @@
+import { test, expect } from 'vitest';
+import { GET as queue } from '@apps/partner/app/api/review/queue/route';
+import { POST as decide } from '@apps/partner/app/api/review/[id]/decision/route';
+import { onboardingApps } from '@apps/partner/server/onboarding';
+import { reviewAudit } from '@apps/partner/server/review';
+import { mintActorToken, INSECURE_DEV_SECRET } from '@navdhya/identity/src/application/token-actor';
+
+const BASE = 'https://partner.navdhya.com';
+const bearer = (userId: string, roles: string[]) =>
+  `Bearer ${mintActorToken(INSECURE_DEV_SECRET, { userId, sessionId: `s_${userId}`, roles }, new Date().toISOString(), 3600)}`;
+const req = (method: string, url: string, userId: string | null, roles: string[] = ['partner'], body?: unknown) =>
+  new Request(url, {
+    method,
+    headers: { ...(userId ? { authorization: bearer(userId, roles) } : {}), 'Content-Type': 'application/json' },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+
+async function seed(status: 'SUBMITTED' | 'UNDER_REVIEW' = 'UNDER_REVIEW', id = 'ra_1') {
+  await onboardingApps.save({
+    id,
+    identityId: 'p1',
+    type: 'PANDIT',
+    track: 'pandit',
+    trackVersion: 'pandit-v1',
+    status,
+    submittedAt: new Date(Date.now() - 3600_000).toISOString(),
+  });
+  return id;
+}
+
+test('review routes gate roles; queue carries SLA state', async () => {
+  const anon = await queue(req('GET', `${BASE}/api/review/queue`, null));
+  expect(anon.status).toBe(401);
+  const applicant = await queue(req('GET', `${BASE}/api/review/queue`, 'p1'));
+  expect(applicant.status).toBe(403);
+  await seed();
+  const res = await queue(req('GET', `${BASE}/api/review/queue`, 'r1', ['reviewer']));
+  expect(res.status).toBe(200);
+  const body = (await res.json()) as { data: { items: { id: string; slaBreached: boolean }[] } };
+  const item = body.data.items.find((i) => i.id === 'ra_1');
+  expect(item?.slaBreached).toBe(false);
+});
+
+test('approve flows; rejections need countersign + reason; audit appended', async () => {
+  const id = await seed('UNDER_REVIEW', 'ra_2');
+  const approve = await decide(req('POST', `${BASE}/api/review/${id}/decision`, 'r1', ['reviewer'], { decision: 'APPROVED' }), {
+    params: Promise.resolve({ id }),
+  });
+  expect(approve.status).toBe(200);
+  expect((await reviewAudit.listByApplication(id)).map((r) => r.decision)).toEqual(['APPROVED']);
+
+  const id2 = await seed('UNDER_REVIEW', 'ra_3');
+  const naked = await decide(req('POST', `${BASE}/api/review/${id2}/decision`, 'r1', ['reviewer'], { decision: 'REJECTED' }), {
+    params: Promise.resolve({ id: id2 }),
+  });
+  expect(naked.status).toBe(400);
+  const selfSigned = await decide(
+    req('POST', `${BASE}/api/review/${id2}/decision`, 'r1', ['reviewer'], { decision: 'REJECTED', secondReviewer: 'r1' }),
+    { params: Promise.resolve({ id: id2 }) },
+  );
+  expect(selfSigned.status).toBe(400);
+  const rejected = await decide(
+    req('POST', `${BASE}/api/review/${id2}/decision`, 'r1', ['reviewer'], {
+      decision: 'REJECTED',
+      reasonCode: 'OTHER',
+      secondReviewer: 'r2',
+    }),
+    { params: Promise.resolve({ id: id2 }) },
+  );
+  expect(rejected.status).toBe(200);
+  const records = await reviewAudit.listByApplication(id2);
+  expect(records[0]?.reviewerId).toBe('r1');
+  expect(records[0]?.note).toContain('countersigned:r2');
+});

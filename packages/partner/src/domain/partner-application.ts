@@ -33,7 +33,7 @@ export function canSubmitApplication(status: ApplicationStatus): boolean {
 const APPLICATION_TRANSITIONS: Record<ApplicationStatus, ApplicationStatus[]> = {
   DRAFT: ['SUBMITTED', 'WITHDRAWN'],
   SUBMITTED: ['UNDER_REVIEW', 'WITHDRAWN'],
-  UNDER_REVIEW: ['APPROVED', 'REJECTED', 'WITHDRAWN'],
+  UNDER_REVIEW: ['APPROVED', 'REJECTED', 'DRAFT', 'WITHDRAWN'],
   APPROVED: [],
   REJECTED: ['APPEALED', 'WITHDRAWN'],
   APPEALED: ['UNDER_REVIEW', 'WITHDRAWN'],
