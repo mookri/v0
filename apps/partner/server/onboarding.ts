@@ -1,9 +1,10 @@
 import { MemoryOnboardingRepository } from '@navdhya/partner/src/adapters/memory-applications';
 import { MemoryDocumentStore, MemoryUploadUrls } from '@navdhya/partner/src/adapters/memory-documents';
 import { MemoryOtpProvider } from '@navdhya/identity/src/adapters/memory-otp';
-import { partnerActorResolver } from '@/application/actor';
+import { partnerActorResolver, headersToRecord, readSessionCookie } from '@/application/actor';
+import { partnerSessions, partnerTokenSecret } from '@/server/auth';
+import { resolveSessionToken } from '@navdhya/identity/src/application/token-session';
 import { err } from '@/application/api-envelope';
-import { headersToRecord } from '@/application/actor';
 import { assertSameTenant } from '@navdhya/identity/src/ports/actor-resolver';
 import { PartnerApplication } from '@navdhya/partner/src/domain/partner-application';
 import { DraftEvidence } from '@navdhya/partner/src/onboarding/steps';
@@ -45,9 +46,25 @@ export async function loadOwnApplication(
   requestId: string,
   applicationId: string,
 ): Promise<{ application: PartnerApplication } | { response: Response }> {
-  const actor = await partnerActorResolver().resolve(headersToRecord(req.headers));
-  if (!actor) {
+  const headers = headersToRecord(req.headers);
+  if (!headers['authorization']) {
+    const cookieToken = readSessionCookie(req.headers.get('cookie'));
+    if (cookieToken) headers['authorization'] = `Bearer ${cookieToken}`;
+  }
+  const bearer = headers['authorization'];
+  if (!bearer?.startsWith('Bearer ')) {
     return { response: Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 }) };
+  }
+  // Session-bound: revoked/expired sessions reject even with valid signatures.
+  let actor;
+  try {
+    actor = await resolveSessionToken(
+      { sessions: partnerSessions, tokenSecret: partnerTokenSecret() },
+      bearer.slice('Bearer '.length).trim(),
+      new Date().toISOString(),
+    );
+  } catch {
+    return { response: Response.json(err('UNAUTHENTICATED', 'Invalid session.', requestId), { status: 401 }) };
   }
   const application = await onboardingApps.findById(applicationId);
   if (!application) {

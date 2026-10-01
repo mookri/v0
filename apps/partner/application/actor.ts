@@ -1,4 +1,5 @@
 import { SignedTokenActorResolver, INSECURE_DEV_SECRET } from '@navdhya/identity/src/application/token-actor';
+import { SESSION_COOKIE } from '@/server/auth';
 
 // Actor resolution for partner BFF routes via signed bearer tokens.
 // Secret comes from server env; the insecure fallback is dev-only
@@ -9,6 +10,25 @@ export function partnerActorResolver(now?: () => string): SignedTokenActorResolv
     secret: process.env['SESSION_SIGNING_KEY'] ?? INSECURE_DEV_SECRET,
     now,
   });
+}
+
+// Browser sessions: the login route issues SESSION_COOKIE (httpOnly);
+// routes accept it as a fallback when no Authorization header is present.
+// Cookie theft mitigations (rotation, binding) land with the session
+// hardening pass — the token inside carries its own expiry meanwhile.
+export function readSessionCookie(cookieHeader: string | null): string | null {
+  if (!cookieHeader) return null;
+  for (const part of cookieHeader.split(';')) {
+    const [name, ...rest] = part.trim().split('=');
+    if (name === SESSION_COOKIE && rest.length > 0) return rest.join('=');
+  }
+  return null;
+}
+
+export function bearerOrSessionCookie(headers: Headers): string | null {
+  const header = headers.get('authorization');
+  if (header?.startsWith('Bearer ')) return header.slice('Bearer '.length).trim();
+  return readSessionCookie(headers.get('cookie'));
 }
 
 export function headersToRecord(headers: Headers): Record<string, string | undefined> {

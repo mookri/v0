@@ -8,7 +8,7 @@ import { POST as documents } from '@apps/partner/app/api/onboarding/[id]/documen
 import { GET as status } from '@apps/partner/app/api/onboarding/[id]/status/route';
 import { __useOtpForTests, __resetEvidenceForTests } from '@apps/partner/server/onboarding';
 import { SeededOtpProvider } from '@navdhya/identity/src/adapters/memory-otp';
-import { mintActorToken, INSECURE_DEV_SECRET } from '@navdhya/identity/src/application/token-actor';
+import { __issuePartnerTestToken } from '@apps/partner/server/auth';
 
 const otp = new SeededOtpProvider();
 beforeEach(() => {
@@ -16,13 +16,12 @@ beforeEach(() => {
   __resetEvidenceForTests();
 });
 
-const bearer = (userId: string) =>
-  `Bearer ${mintActorToken(INSECURE_DEV_SECRET, { userId, sessionId: `s_${userId}`, roles: ['partner'] }, new Date().toISOString(), 3600)}`;
-const auth = (userId: string) => ({ authorization: bearer(userId) });
-const json = (method: string, url: string, userId: string | null, body?: unknown) =>
+const bearer = async (userId: string) => `Bearer ${await __issuePartnerTestToken(userId)}`;
+const auth = async (userId: string) => ({ authorization: await bearer(userId) });
+const json = async (method: string, url: string, userId: string | null, body?: unknown) =>
   new Request(url, {
     method,
-    headers: { ...(userId ? auth(userId) : {}), 'Content-Type': 'application/json' },
+    headers: { ...(userId ? await auth(userId) : {}), 'Content-Type': 'application/json' },
     body: body ? JSON.stringify(body) : undefined,
   });
 const BASE = 'https://partner.navdhya.com';
@@ -38,7 +37,7 @@ const EVIDENCE: Record<string, unknown> = {
 };
 
 async function startApp(userId = 'p1', track = 'pandit'): Promise<string> {
-  const res = await start(json('POST', `${BASE}/api/onboarding/start`, userId, { track }));
+  const res = await start(await json('POST', `${BASE}/api/onboarding/start`, userId, { track }));
   expect(res.status).toBe(201);
   const body = (await res.json()) as { data: { applicationId: string; trackVersion: string } };
   expect(body.data.trackVersion).toBe('pandit-v1');
@@ -47,7 +46,7 @@ async function startApp(userId = 'p1', track = 'pandit'): Promise<string> {
 
 async function fillSteps(id: string, userId: string, evidence: Record<string, unknown> = EVIDENCE) {
   for (const [step, value] of Object.entries(evidence)) {
-    const res = await putStep(json('PUT', `${BASE}/api/onboarding/${id}/step/${step}`, userId, { value }), {
+    const res = await putStep(await json('PUT', `${BASE}/api/onboarding/${id}/step/${step}`, userId, { value }), {
       params: Promise.resolve({ id, step }),
     });
     expect(res.status).toBe(200);
@@ -55,51 +54,51 @@ async function fillSteps(id: string, userId: string, evidence: Record<string, un
 }
 
 test('start validates track; draft reports needs; unknown step rejected', async () => {
-  const bad = await start(json('POST', `${BASE}/api/onboarding/start`, 'p1', { track: 'nope' }));
+  const bad = await start(await json('POST', `${BASE}/api/onboarding/start`, 'p1', { track: 'nope' }));
   expect(bad.status).toBe(400);
-  const anon = await start(json('POST', `${BASE}/api/onboarding/start`, null, { track: 'pandit' }));
+  const anon = await start(await json('POST', `${BASE}/api/onboarding/start`, null, { track: 'pandit' }));
   expect(anon.status).toBe(401);
   const id = await startApp();
-  const res = await getApp(json('GET', `${BASE}/api/onboarding/${id}`, 'p1'), { params: Promise.resolve({ id }) });
+  const res = await getApp(await json('GET', `${BASE}/api/onboarding/${id}`, 'p1'), { params: Promise.resolve({ id }) });
   const body = (await res.json()) as { data: { needs: string[]; steps: { id: string }[] } };
   expect(body.data.needs).toContain('identity');
   expect(body.data.steps.length).toBe(8);
-  const unknown = await putStep(json('PUT', `${BASE}/api/onboarding/${id}/step/nope`, 'p1', { value: 1 }), {
+  const unknown = await putStep(await json('PUT', `${BASE}/api/onboarding/${id}/step/nope`, 'p1', { value: 1 }), {
     params: Promise.resolve({ id, step: 'nope' }),
   });
   expect(unknown.status).toBe(400);
-  const foreign = await getApp(json('GET', `${BASE}/api/onboarding/${id}`, 'p2'), { params: Promise.resolve({ id }) });
+  const foreign = await getApp(await json('GET', `${BASE}/api/onboarding/${id}`, 'p2'), { params: Promise.resolve({ id }) });
   expect(foreign.status).toBe(403);
 });
 
 test('two-phase submit over HTTP: incomplete blocks, OTP confirms, replay dies', async () => {
   const id = await startApp();
-  const early = await submit(json('POST', `${BASE}/api/onboarding/${id}/submit`, 'p1', {}), {
+  const early = await submit(await json('POST', `${BASE}/api/onboarding/${id}/submit`, 'p1', {}), {
     params: Promise.resolve({ id }),
   });
   expect(early.status).toBe(422);
   await fillSteps(id, 'p1');
-  const begun = await submit(json('POST', `${BASE}/api/onboarding/${id}/submit`, 'p1', {}), {
+  const begun = await submit(await json('POST', `${BASE}/api/onboarding/${id}/submit`, 'p1', {}), {
     params: Promise.resolve({ id }),
   });
   expect(begun.status).toBe(200);
   const { data: { challengeId } } = (await begun.json()) as { data: { challengeId: string } };
-  const wrong = await confirm(json('POST', `${BASE}/api/onboarding/${id}/submit/confirm`, 'p1', { challengeId, code: '000000' }), {
+  const wrong = await confirm(await json('POST', `${BASE}/api/onboarding/${id}/submit/confirm`, 'p1', { challengeId, code: '000000' }), {
     params: Promise.resolve({ id }),
   });
   expect(wrong.status).toBe(401);
   const done = await confirm(
-    json('POST', `${BASE}/api/onboarding/${id}/submit/confirm`, 'p1', { challengeId, code: otp.codeFor(challengeId) }),
+    await json('POST', `${BASE}/api/onboarding/${id}/submit/confirm`, 'p1', { challengeId, code: otp.codeFor(challengeId) }),
     { params: Promise.resolve({ id }) },
   );
   expect(done.status).toBe(200);
   const st = (await (
-    await status(json('GET', `${BASE}/api/onboarding/${id}/status`, 'p1'), { params: Promise.resolve({ id }) })
+    await status(await json('GET', `${BASE}/api/onboarding/${id}/status`, 'p1'), { params: Promise.resolve({ id }) })
   ).json()) as { data: { status: string; needs: string[] } };
   expect(st.data.status).toBe('SUBMITTED');
   expect(st.data.needs).toEqual([]);
   const replay = await confirm(
-    json('POST', `${BASE}/api/onboarding/${id}/submit/confirm`, 'p1', { challengeId, code: otp.codeFor(challengeId) }),
+    await json('POST', `${BASE}/api/onboarding/${id}/submit/confirm`, 'p1', { challengeId, code: otp.codeFor(challengeId) }),
     { params: Promise.resolve({ id }) },
   );
   expect(replay.status).toBe(409);
@@ -107,31 +106,31 @@ test('two-phase submit over HTTP: incomplete blocks, OTP confirms, replay dies',
 
 test('applicant routes enforce market scope', async () => {
   const id = await startApp('p1');
-  const aeBearer = `Bearer ${mintActorToken(INSECURE_DEV_SECRET, { userId: 'p1', sessionId: 's_p1', roles: ['partner'], market: 'ae' }, new Date().toISOString(), 3600)}`;
+  const aeBearer = `Bearer ${await __issuePartnerTestToken('p1', ['partner'], 'ae')}`;
   const res = await getApp(
     new Request(`${BASE}/api/onboarding/${id}`, { headers: { authorization: aeBearer } }),
     { params: Promise.resolve({ id }) },
   );
   expect(res.status).toBe(403);
-  const home = await getApp(json('GET', `${BASE}/api/onboarding/${id}`, 'p1'), { params: Promise.resolve({ id }) });
+  const home = await getApp(await json('GET', `${BASE}/api/onboarding/${id}`, 'p1'), { params: Promise.resolve({ id }) });
   expect(home.status).toBe(200);
 });
 
 test('documents issuance scopes keys and validates input', async () => {
   const id = await startApp();
   const res = await documents(
-    json('POST', `${BASE}/api/onboarding/${id}/documents`, 'p1', { kind: 'id-proof', contentLength: 100, sha256: 'abc' }),
+    await json('POST', `${BASE}/api/onboarding/${id}/documents`, 'p1', { kind: 'id-proof', contentLength: 100, sha256: 'abc' }),
     { params: Promise.resolve({ id }) },
   );
   expect(res.status).toBe(201);
   const body = (await res.json()) as { data: { documentId: string; url: string } };
   expect(body.data.url).toContain('onboarding/');
-  const bad = await documents(json('POST', `${BASE}/api/onboarding/${id}/documents`, 'p1', { kind: 'video' }), {
+  const bad = await documents(await json('POST', `${BASE}/api/onboarding/${id}/documents`, 'p1', { kind: 'video' }), {
     params: Promise.resolve({ id }),
   });
   expect(bad.status).toBe(400);
   const st = (await (
-    await status(json('GET', `${BASE}/api/onboarding/${id}/status`, 'p1'), { params: Promise.resolve({ id }) })
+    await status(await json('GET', `${BASE}/api/onboarding/${id}/status`, 'p1'), { params: Promise.resolve({ id }) })
   ).json()) as { data: { documents: { kind: string; status: string }[] } };
   expect(st.data.documents).toEqual([{ id: body.data.documentId, kind: 'id-proof', status: 'PENDING', reasonCode: null }]);
 });

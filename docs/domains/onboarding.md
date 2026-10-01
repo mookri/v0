@@ -135,9 +135,9 @@ fixed via auto-triage on first reviewer touch, covered by test.
 
 ## Known limitations
 
-- Reviewer console decision form posts without a bearer token (browsers
-  hold no token today) — reviewer UI works with cookie-issued sessions
-  (login flow upgrade); the API is fully proven with tokens.
+- Applicant routes are session-bound (logout revokes); reviewer UI pages
+  still need cookie-issued sessions for browser use — DecisionForm posts
+  bearer-less until the cookie login lands there too.
 - `MemoryCredentialVerifier` is staging-only; `Pbkdf2CredentialVerifier`
   (stdlib, per-identity salt, server pepper, 210k iterations) is the
   production path behind the same port.
