@@ -34,6 +34,6 @@ ready. Admin role changes go through the admin-ops runbook.
 
 ## Status
 
-Claims + helper + login passthrough done; first surface enforced:
-review queue filters by actor market and review decisions assert tenant
-(next surfaces: applicant ownership checks, one per commit with tests).
+Claims + helper + login passthrough done; enforced on review queue,
+review decisions, and all six applicant routes (shared `loadOwnApplication`
+guard: auth + ownership + tenant). Next surfaces: customer BFF routes.

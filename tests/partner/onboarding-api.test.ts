@@ -105,6 +105,18 @@ test('two-phase submit over HTTP: incomplete blocks, OTP confirms, replay dies',
   expect(replay.status).toBe(409);
 });
 
+test('applicant routes enforce market scope', async () => {
+  const id = await startApp('p1');
+  const aeBearer = `Bearer ${mintActorToken(INSECURE_DEV_SECRET, { userId: 'p1', sessionId: 's_p1', roles: ['partner'], market: 'ae' }, new Date().toISOString(), 3600)}`;
+  const res = await getApp(
+    new Request(`${BASE}/api/onboarding/${id}`, { headers: { authorization: aeBearer } }),
+    { params: Promise.resolve({ id }) },
+  );
+  expect(res.status).toBe(403);
+  const home = await getApp(json('GET', `${BASE}/api/onboarding/${id}`, 'p1'), { params: Promise.resolve({ id }) });
+  expect(home.status).toBe(200);
+});
+
 test('documents issuance scopes keys and validates input', async () => {
   const id = await startApp();
   const res = await documents(

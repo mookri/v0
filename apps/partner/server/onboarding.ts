@@ -2,6 +2,10 @@ import { MemoryOnboardingRepository } from '@navdhya/partner/src/adapters/memory
 import { MemoryDocumentStore, MemoryUploadUrls } from '@navdhya/partner/src/adapters/memory-documents';
 import { MemoryOtpProvider } from '@navdhya/identity/src/adapters/memory-otp';
 import { partnerActorResolver } from '@/application/actor';
+import { err } from '@/application/api-envelope';
+import { headersToRecord } from '@/application/actor';
+import { assertSameTenant } from '@navdhya/identity/src/ports/actor-resolver';
+import { PartnerApplication } from '@navdhya/partner/src/domain/partner-application';
 import { DraftEvidence } from '@navdhya/partner/src/onboarding/steps';
 
 // Onboarding composition (single-instance staging stores; shared backends
@@ -32,4 +36,30 @@ export function __useOtpForTests(provider: MemoryOtpProvider): void {
 }
 export function __resetEvidenceForTests(): void {
   evidence.clear();
+}
+
+// Shared applicant guard: auth + existence + ownership + tenant scope.
+// All applicant routes use this — never inline compares.
+export async function loadOwnApplication(
+  req: Request,
+  requestId: string,
+  applicationId: string,
+): Promise<{ application: PartnerApplication } | { response: Response }> {
+  const actor = await partnerActorResolver().resolve(headersToRecord(req.headers));
+  if (!actor) {
+    return { response: Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 }) };
+  }
+  const application = await onboardingApps.findById(applicationId);
+  if (!application) {
+    return { response: Response.json(err('ONBOARDING_NOT_FOUND', 'Application not found.', requestId), { status: 404 }) };
+  }
+  if (application.identityId !== actor.userId) {
+    return { response: Response.json(err('ASSIGNMENT_FORBIDDEN', 'Not allowed.', requestId), { status: 403 }) };
+  }
+  try {
+    assertSameTenant(actor, { market: application.market });
+  } catch {
+    return { response: Response.json(err('ASSIGNMENT_FORBIDDEN', 'Not allowed.', requestId), { status: 403 }) };
+  }
+  return { application };
 }

@@ -3,6 +3,7 @@ import { onboardingActors, onboardingApps } from '@/server/onboarding';
 import { headersToRecord } from '@/application/actor';
 import { getTrackDefinition } from '@navdhya/partner/src/onboarding/tracks';
 import { ApplicationTrack } from '@navdhya/partner/src/domain/partner-application';
+import { DEFAULT_MARKET } from '@navdhya/identity/src/ports/actor-resolver';
 
 export async function POST(req: Request) {
   const requestId = newRequestId();
@@ -24,6 +25,7 @@ export async function POST(req: Request) {
       type: track === 'pandit' ? 'PANDIT' : 'VENDOR',
       track,
       trackVersion: def.version,
+      market: actor.market ?? DEFAULT_MARKET,
       status: 'DRAFT',
     });
     return Response.json(ok({ applicationId, track, trackVersion: def.version }, requestId), { status: 201 });
