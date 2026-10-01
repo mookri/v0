@@ -63,6 +63,16 @@ final class CustomerOtpService
         $challenge->save();
         $this->codes->record((string) $challenge->getKey(), $code);
 
+        // Drill-only code log (config/customers.php): no delivery channel
+        // exists outside tests yet, so local/staging drills read the code
+        // from the log. Off by default; never enable in production.
+        if (config('customers.log_otp_codes') === true) {
+            \Illuminate\Support\Facades\Log::info('OTP challenge issued (drill-only code log)', [
+                'challenge_id' => (string) $challenge->getKey(),
+                'code' => $code,
+            ]);
+        }
+
         return $challenge;
     }
 

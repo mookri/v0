@@ -289,4 +289,34 @@ final class CustomersAuthTest extends TenantIntegrationTestCase
             'tenant_id' => '01J0000000000000000000000', 'purpose' => 'login', 'identity' => '+911234567890',
         ])->assertNotFound()->assertJsonPath('error.code', 'not_found');
     }
+
+    public function test_drill_code_log_is_opt_in(): void
+    {
+        $this->otp();
+        $tenant = $this->makeTenant();
+        $tid = (string) $tenant->getKey();
+        User::factory()->create(['phone' => '+911234567890']);
+
+        $handler = new \Monolog\Handler\TestHandler();
+        app('log')->channel()->getLogger()->pushHandler($handler);
+
+        config()->set('customers.log_otp_codes', false);
+        $this->postJson('/api/v1/customers/auth/otp', [
+            'tenant_id' => $tid, 'purpose' => 'login', 'identity' => '+911234567890',
+        ])->assertStatus(202);
+        $this->assertFalse($handler->hasInfoRecords());
+
+        config()->set('customers.log_otp_codes', true);
+        $challengeId = $this->postJson('/api/v1/customers/auth/otp', [
+            'tenant_id' => $tid, 'purpose' => 'login', 'identity' => '+911234567890',
+        ])->assertStatus(202)->json('data.challenge_id');
+
+        $logged = array_values(array_filter(
+            $handler->getRecords(),
+            static fn ($record): bool => ($record['message'] ?? null) === 'OTP challenge issued (drill-only code log)'
+        ));
+        $this->assertCount(1, $logged);
+        $this->assertSame($challengeId, $logged[0]['context']['challenge_id']);
+        $this->assertNotEmpty($logged[0]['context']['code']);
+    }
 }
