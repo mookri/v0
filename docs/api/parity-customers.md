@@ -28,7 +28,7 @@ subset of the contract union with identical statuses. New codes:
 | `GET /api/notifications` | `GET /api/v1/customers/notifications` |
 | `GET /api/discover` | `GET /api/v1/customers/discover` (`{recommended, popular, recent}` unwrapped from the kernel envelope) |
 | `GET /api/settings` | `GET /api/v1/customers/settings` (key-values mapped to sections here) |
-| `POST /api/auth/login` | `POST /api/v1/customers/auth/otp` then `POST …/auth/login`; shapes `{token, sessionId, expiresAt}` from `{token, actor.session_id, expires_at}` |
+| `POST /api/auth/login` | `POST /api/v1/customers/auth/otp` then `POST …/auth/login`; shapes `{sessionId, expiresAt}` from `{actor.session_id, expires_at}` — the bearer goes to an HttpOnly cookie, never to the client, so wired login omits `token` by design |
 | `POST /api/auth/logout` | `POST /api/v1/customers/auth/logout` |
 
 ## Code correspondence (BFF codes)
