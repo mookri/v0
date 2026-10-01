@@ -37,6 +37,24 @@ abstract class CustomerSelfServiceController
      */
     protected function ownProfile(Request $request): array|JsonResponse
     {
+        $user = $this->ownUser($request);
+        if ($user instanceof JsonResponse) {
+            return $user;
+        }
+
+        $profile = BuyerProfile::query()->where('user_id', $user->getAuthIdentifier())->first();
+
+        if ($profile === null) {
+            return new JsonResponse([
+                'error' => ['code' => 'not_found', 'message' => 'Profile not found.', 'request_id' => $this->requestId($request)],
+            ], 404);
+        }
+
+        return ['user' => $user, 'profile' => $profile];
+    }
+
+    protected function ownUser(Request $request): User|JsonResponse
+    {
         if ($denied = $this->machineDenial($request)) {
             return $denied;
         }
@@ -49,15 +67,7 @@ abstract class CustomerSelfServiceController
             ], 401);
         }
 
-        $profile = BuyerProfile::query()->where('user_id', $user->getAuthIdentifier())->first();
-
-        if ($profile === null) {
-            return new JsonResponse([
-                'error' => ['code' => 'not_found', 'message' => 'Profile not found.', 'request_id' => $this->requestId($request)],
-            ], 404);
-        }
-
-        return ['user' => $user, 'profile' => $profile];
+        return $user;
     }
 
     protected function membershipId(): ?string

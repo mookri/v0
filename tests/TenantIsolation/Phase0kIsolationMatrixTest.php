@@ -4,6 +4,10 @@ namespace Tests\TenantIsolation;
 
 use App\Models\User;
 use App\Modules\Customers\Models\BuyerProfile;
+use App\Modules\Customers\Models\CustomerAddress;
+use App\Modules\Customers\Models\CustomerNotification;
+use App\Modules\Customers\Models\CustomerSetting;
+use App\Modules\Customers\Models\SavedItem;
 use App\Platform\Audit\AuditLog;
 use App\Platform\Authz\Models\CapabilityMetadata;
 use App\Platform\Authz\Models\MembershipRoleAssignment;
@@ -126,6 +130,61 @@ final class Phase0kIsolationMatrixTest extends TenantIntegrationTestCase
                 'display_name' => 'Isolation buyer',
             ],
             ['display_name' => 'isolation probe'],
+        );
+    }
+
+    public function test_customer_addresses_are_isolated(): void
+    {
+        $this->assertTenantIsolationMatrix(
+            CustomerAddress::class,
+            fn (): array => [
+                'user_id' => User::factory()->create()->id,
+                'label' => 'home',
+                'line1' => '1 Isolation Road',
+                'city' => 'Mumbai',
+                'state' => 'Maharashtra',
+                'postal_code' => '400001',
+            ],
+            ['city' => 'isolation probe'],
+        );
+    }
+
+    public function test_saved_items_are_isolated(): void
+    {
+        $this->assertTenantIsolationMatrix(
+            SavedItem::class,
+            fn (): array => [
+                'user_id' => User::factory()->create()->id,
+                'ref_type' => 'puja',
+                'ref_id' => (string) Str::ulid(),
+            ],
+            ['ref_type' => 'content'],
+        );
+    }
+
+    public function test_customer_notifications_are_isolated(): void
+    {
+        $this->assertTenantIsolationMatrix(
+            CustomerNotification::class,
+            fn (): array => [
+                'user_id' => User::factory()->create()->id,
+                'kind' => 'booking',
+                'title' => 'Isolation notice',
+            ],
+            ['title' => 'isolation probe'],
+        );
+    }
+
+    public function test_customer_settings_are_isolated(): void
+    {
+        $this->assertTenantIsolationMatrix(
+            CustomerSetting::class,
+            fn (): array => [
+                'user_id' => User::factory()->create()->id,
+                'key' => 'locale',
+                'value' => 'hi',
+            ],
+            ['value' => 'en'],
         );
     }
 

@@ -65,5 +65,21 @@ final class QueryPlanTest extends TenantIntegrationTestCase
             $this->plan('central', 'select * from membership_role_assignments where membership_id = ?', ['m1']),
             'assignment lookup scan'
         );
+        $this->assertIndexed(
+            $this->plan($conn, 'select * from customer_addresses where tenant_id = ? and user_id = ?', [$tenant, '1']),
+            'address book scan'
+        );
+        $this->assertIndexed(
+            $this->plan($conn, 'select * from saved_items where tenant_id = ? and user_id = ?', [$tenant, '1']),
+            'saved items scan'
+        );
+        $this->assertIndexed(
+            $this->plan($conn, 'select * from customer_notifications where tenant_id = ? and user_id = ?', [$tenant, '1']),
+            'notifications scan'
+        );
+        $this->assertIndexed(
+            $this->plan($conn, 'select * from customer_settings where tenant_id = ? and user_id = ?', [$tenant, '1']),
+            'settings scan'
+        );
     }
 }

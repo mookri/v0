@@ -346,6 +346,155 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/customers/addresses:
+    get:
+      operationId: listCustomerAddresses
+      summary: 'Cursor-paginated caller address book.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          $ref: '#/components/parameters/Limit'
+        -
+          $ref: '#/components/parameters/Cursor'
+      responses:
+        200:
+          description: Addresses.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+    post:
+      operationId: createCustomerAddress
+      summary: 'Add an address (cap 20 per customer).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - label
+                - line1
+                - city
+                - state
+                - postal_code
+      responses:
+        201:
+          description: 'Created address.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  '/api/v1/customers/addresses/{id}':
+    patch:
+      operationId: updateCustomerAddress
+      summary: 'Update own address.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          description: 'Updated address.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: deleteCustomerAddress
+      summary: 'Delete own address (default promotes a successor).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, deleted] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  '/api/v1/customers/addresses/{id}:default':
+    post:
+      operationId: defaultCustomerAddress
+      summary: 'Swap the default address.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: 'New default.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
   /api/v1/customers/auth/login:
     post:
       operationId: loginCustomer
@@ -483,6 +632,81 @@ paths:
                   meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
         401:
           $ref: '#/components/responses/Unauthenticated'
+  /api/v1/customers/notifications:
+    get:
+      operationId: listCustomerNotifications
+      summary: 'Cursor-paginated notifications, newest first.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          $ref: '#/components/parameters/Limit'
+        -
+          $ref: '#/components/parameters/Cursor'
+      responses:
+        200:
+          description: Notifications.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+  '/api/v1/customers/notifications/{id}:read':
+    post:
+      operationId: readCustomerNotification
+      summary: 'Mark one notification read.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: 'Marked read.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  '/api/v1/customers/notifications:read-all':
+    post:
+      operationId: readAllCustomerNotifications
+      summary: 'Mark all notifications read (reports count flipped).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      responses:
+        200:
+          description: 'Marked read.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, read] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
   /api/v1/customers/profile:
     get:
       operationId: getCustomerProfile
@@ -597,6 +821,136 @@ paths:
                   - meta
                 properties:
                   data: { type: object, required: [object, id, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/saved:
+    get:
+      operationId: listSavedItems
+      summary: 'Cursor-paginated saved bookmarks.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          $ref: '#/components/parameters/Limit'
+        -
+          $ref: '#/components/parameters/Cursor'
+      responses:
+        200:
+          description: 'Saved items.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+    post:
+      operationId: saveItem
+      summary: 'Bookmark a reference (opaque ref, enriched by readers).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ref_type
+                - ref_id
+      responses:
+        201:
+          description: Saved.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, ref_type, ref_id] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  '/api/v1/customers/saved/{id}':
+    delete:
+      operationId: unsaveItem
+      summary: 'Remove a bookmark.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: Removed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, deleted] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  /api/v1/customers/settings:
+    get:
+      operationId: getCustomerSettings
+      summary: 'Settings merged over v1 defaults.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      responses:
+        200:
+          description: Settings.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, settings] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+    patch:
+      operationId: updateCustomerSettings
+      summary: 'Update known keys (unknown keys and mistyped values are 422).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          description: 'Updated settings.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, settings] }
                   meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
   /api/v1/customers/verifications:
     get:

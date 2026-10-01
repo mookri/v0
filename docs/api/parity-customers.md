@@ -17,6 +17,10 @@ updates this doc and both test suites in the same change.
 | profile update | — | `PATCH /api/v1/customers/profile` → 200 (strict fields) | backend only until F2 |
 | deactivate/reactivate | — | `POST /api/v1/customers/profile:deactivate` (authed + fresh OTP) / `:reactivate` (**public** OTP — suspended members cannot pass the tenant gate) → 200; double-deactivate meets the 403 gate by design | backend only until F2 |
 | verifications | — | `GET /api/v1/customers/verifications`, `POST …` → 202, `POST …/{id}:confirm` → 200 | backend only until F2 |
+| addresses | web `/user/*` mock | `GET/POST /api/v1/customers/addresses`, `PATCH/DELETE …/{id}`, `POST …/{id}:default` (cap 20, default promotion) | backend only until F2 |
+| saved | `GET /api/saved` → mock cards | `GET/POST /api/v1/customers/saved` (opaque ULID refs, enriched by readers — deliberate: bookmarks, not FKs), `DELETE …/{id}` | shape differs by design (backend stores refs; BFF enriches) |
+| notifications | `GET /api/notifications` → `items:[]` | `GET /api/v1/customers/notifications` (cursor), `POST …/{id}:read`, `POST …:read-all` (reports flip count) | backend real; producers land B5+ |
+| settings | `GET /api/settings` → static sections | `GET/PATCH /api/v1/customers/settings` (closed key set over defaults; BFF maps key-values → sections in F2) | shape differs by design |
 
 Profile/saved/notifications/settings/bookings rows land with B3–B5.
 
@@ -36,6 +40,10 @@ Profile/saved/notifications/settings/bookings rows land with B3–B5.
 | deactivate without fresh OTP | — | `unauthenticated` (401) |
 | machine caller on self-serve | — | `membership_inactive` (403) |
 | missing profile (staff-actor edge) | — | `not_found` (404) |
+| address book full (20) | — | `conflict` (409) |
+| duplicate saved ref | — | `conflict` (409) |
+| malformed saved ref | — | `validation_failed` (422, `details.fields.ref_id`) |
+| unknown setting key / mistyped value | — | `validation_failed` (422) |
 
 Codes differ by registry (BFF domain codes vs kernel snake codes) — clients
 MUST branch on documented per-surface codes, never assume string equality

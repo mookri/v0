@@ -1,8 +1,12 @@
 <?php
 
+use App\Modules\Customers\Http\Controllers\CustomerAddressController;
 use App\Modules\Customers\Http\Controllers\CustomerAuthController;
+use App\Modules\Customers\Http\Controllers\CustomerNotificationController;
 use App\Modules\Customers\Http\Controllers\CustomerProfileController;
+use App\Modules\Customers\Http\Controllers\CustomerSettingController;
 use App\Modules\Customers\Http\Controllers\CustomerVerificationController;
+use App\Modules\Customers\Http\Controllers\SavedItemController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -58,3 +62,37 @@ Route::post('verifications', [CustomerVerificationController::class, 'request'])
     ->name('verifications.request');
 Route::post('verifications/{challengeId}:confirm', [CustomerVerificationController::class, 'confirm'])
     ->name('verifications.confirm');
+
+// Address book (B4): caller-scoped CRUD with default promotion.
+Route::get('addresses', [CustomerAddressController::class, 'index'])
+    ->name('addresses.index');
+Route::post('addresses', [CustomerAddressController::class, 'store'])
+    ->name('addresses.store');
+Route::patch('addresses/{id}', [CustomerAddressController::class, 'update'])
+    ->name('addresses.update');
+Route::delete('addresses/{id}', [CustomerAddressController::class, 'destroy'])
+    ->name('addresses.destroy');
+Route::post('addresses/{id}:default', [CustomerAddressController::class, 'makeDefault'])
+    ->name('addresses.default');
+
+// Saved bookmarks (B4): opaque refs, enriched by readers.
+Route::get('saved', [SavedItemController::class, 'index'])
+    ->name('saved.index');
+Route::post('saved', [SavedItemController::class, 'store'])
+    ->name('saved.store');
+Route::delete('saved/{id}', [SavedItemController::class, 'destroy'])
+    ->name('saved.destroy');
+
+// Notifications (B4): producer-written, customer read + mark-read.
+Route::get('notifications', [CustomerNotificationController::class, 'index'])
+    ->name('notifications.index');
+Route::post('notifications/{id}:read', [CustomerNotificationController::class, 'read'])
+    ->name('notifications.read');
+Route::post('notifications:read-all', [CustomerNotificationController::class, 'readAll'])
+    ->name('notifications.read-all');
+
+// Settings (B4): closed key set over defaults.
+Route::get('settings', [CustomerSettingController::class, 'index'])
+    ->name('settings.index');
+Route::patch('settings', [CustomerSettingController::class, 'update'])
+    ->name('settings.update');
