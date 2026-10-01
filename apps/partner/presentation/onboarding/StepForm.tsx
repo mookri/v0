@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { STEP_FIELDS, assembleStepValue } from '@/presentation/onboarding/step-fields';
+import { STEP_FIELDS, assembleStepValue, labelKey } from '@/presentation/onboarding/step-fields';
 import { onboardingString, OnboardingLocale, OnboardingStringKey } from '@/presentation/onboarding/strings';
 
 export function StepForm({
@@ -19,6 +19,7 @@ export function StepForm({
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const t = (key: OnboardingStringKey) => onboardingString(locale, key);
+  const lt = (key: string) => t(labelKey(key));
   if (!layout) return <p>{t('common.unknownStep')}</p>;
 
   async function onSubmit(formData: FormData) {
@@ -55,17 +56,17 @@ export function StepForm({
       }}
     >
       {layout.fields.map((field) => {
-        if (field.type === 'info') return <p key={field.name}>{t(field.labelKey)}</p>;
+        if (field.type === 'info') return <p key={field.name}>{lt(field.labelKey)}</p>;
         if (field.type === 'checkbox') {
           return (
             <label key={field.name}>
-              <input name={field.name} type="checkbox" defaultChecked={current[field.name] === true} /> {t(field.labelKey)}
+              <input name={field.name} type="checkbox" defaultChecked={current[field.name] === true} /> {lt(field.labelKey)}
             </label>
           );
         }
         return (
           <label key={field.name}>
-            {t(field.labelKey)}
+            {lt(field.labelKey)}
             <input
               name={field.name}
               type={field.type === 'number' ? 'number' : field.type === 'tel' ? 'tel' : 'text'}

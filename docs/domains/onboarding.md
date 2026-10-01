@@ -109,6 +109,14 @@ proof test runs draft → submit → approve → eligible through the real
 functions. Activation is not yet called from the decision route (wiring
 it in is the staging-proof step with a live reviewer).
 
+## Track-studio foundation (done)
+
+Field layouts moved into versioned track data (`onboarding/fields.ts` +
+`TrackStep.layout`): UI renders `STEP_FIELDS` derived from track
+definitions (untranslated keys throw at startup), assembly/parsing lives
+in the package, and the round-trip test still proves form values pass
+the domain gates. Track-studio UI (stage 8) now edits data, not code.
+
 ## Remaining
 
 OTP port + two-phase submit · `OnboardingRepository` port + memory
