@@ -7,5 +7,7 @@ export * from './application/readiness';
 export * from './application/lifecycle';
 export * from './application/onboarding-submit';
 export * from './ports/challenges';
+export * from './ports/applications';
+export * from './adapters/memory-applications';
 export * from './onboarding/tracks';
 export * from './onboarding/steps';

@@ -51,7 +51,13 @@ identity's adapters satisfy it structurally — packages stay
 self-contained per dependency rule 13 (this was enforced, not chosen:
 the first draft imported identity source and failed `rootDir`).
 
-## Stage 3+ (not started)
+## Stage 3 (done)
+
+`OnboardingRepository` port + `MemoryOnboardingRepository` (save/findById/
+findByIdentity/update; defensive copies; duplicate + missing guards;
+supersedes linkage preserved). Shared store swaps behind the port later.
+
+## Stage 4+ (not started)
 
 OTP port + two-phase submit · `OnboardingRepository` port + memory
 adapter · document pipeline + verification worker · API v1 + `docs/api`
