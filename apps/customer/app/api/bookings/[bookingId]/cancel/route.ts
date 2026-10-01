@@ -2,10 +2,28 @@ import { newRequestId, err, ok } from '@/application/api-envelope';
 import { anonymousContext } from '@/application/request-context';
 import { cancelCustomerBooking } from '@/application/bookings/cancel-customer-booking';
 import { scopedIdempotencyKey } from '@/application/idempotency';
+import { laravelEnabled, laravelPost, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { wiredActor } from '@/server/wired-actor';
+import { toBookingDetails, type LaravelReservation } from '@/application/bookings/laravel-booking-mappers';
 
 export async function POST(req: Request, { params }: { params: Promise<{ bookingId: string }> }) {
   const requestId = newRequestId();
   const { bookingId } = await params;
+  if (laravelEnabled()) {
+    const actor = wiredActor(req, requestId);
+    if (actor instanceof Response) return actor;
+    try {
+      const { data: reservation } = await laravelPost<LaravelReservation>(
+        actor.token,
+        `/booking/reservations/${encodeURIComponent(bookingId)}:cancel`,
+        {},
+        { not_found: 'BOOKING_NOT_FOUND', state_forbidden: 'BOOKING_CANNOT_CANCEL' },
+      );
+      return Response.json(ok(toBookingDetails(reservation), requestId));
+    } catch (e) {
+      return laravelErrorResponse(e, 'Booking cannot be cancelled.', requestId);
+    }
+  }
   const ctx = anonymousContext('customer.booking.detail', requestId);
   if (!ctx.actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
   const rawKey = req.headers.get('Idempotency-Key') ?? `ik_${requestId}`;

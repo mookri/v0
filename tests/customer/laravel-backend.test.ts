@@ -16,6 +16,13 @@ import {
 import { GET as listBookings } from '@apps/customer/app/api/bookings/route';
 import { GET as bookingDetail } from '@apps/customer/app/api/bookings/[bookingId]/route';
 import { POST as login } from '@apps/customer/app/api/auth/login/route';
+import { GET as getProfile } from '@apps/customer/app/api/profile/route';
+import { GET as listSaved } from '@apps/customer/app/api/saved/route';
+import { GET as listNotifications } from '@apps/customer/app/api/notifications/route';
+import { GET as getDiscover } from '@apps/customer/app/api/discover/route';
+import { GET as getSettings } from '@apps/customer/app/api/settings/route';
+import { POST as cancelBooking } from '@apps/customer/app/api/bookings/[bookingId]/cancel/route';
+import { POST as rescheduleBooking } from '@apps/customer/app/api/bookings/[bookingId]/reschedule/route';
 
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -52,6 +59,20 @@ function stubLaravel(handler: (url: string, init?: RequestInit) => unknown) {
       return new Response(JSON.stringify(body), { status: 200 });
     }),
   );
+}
+
+function stubLaravelStatuses(handler: (url: string, init?: RequestInit) => { status: number; body: unknown }) {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (url: string, init?: RequestInit) => {
+      const { status, body } = handler(url, init);
+      return new Response(JSON.stringify(body), { status });
+    }),
+  );
+}
+
+function authed(url: string, init?: RequestInit) {
+  return new Request(url, { headers: { cookie: cookieHeader(backendToken()) }, ...init });
 }
 
 test('wiring is off by default', () => {
@@ -165,4 +186,102 @@ test('wired login fans out to otp+redeem and sets the cookie', async () => {
   const body = (await res.json()) as { data: { sessionId: string; expiresAt: string } };
   expect(body.data.sessionId).toBe('sess_9');
   expect(res.headers.get('Set-Cookie')).toContain(CUSTOMER_TOKEN_COOKIE);
+});
+
+test('wired reads pass backend data through with BFF shapes', async () => {
+  wiredEnv();
+  stubLaravel((url) => {
+    if (url.includes('/customers/profile')) {
+      return { data: { id: 'p1', object: 'buyer_profile', status: 'active' }, meta: { request_id: 'r' } };
+    }
+    if (url.includes('/customers/saved')) {
+      return {
+        data: [{ id: 's1', ref_type: 'puja', ref_id: 'ABCDEF1234567890ABCDEF12', saved_at: null }],
+        meta: { request_id: 'r', page: { limit: 25, has_more: false, next_cursor: null } },
+      };
+    }
+    if (url.includes('/customers/notifications')) {
+      return {
+        data: [{ id: 'n1', kind: 'booking', title: 'T', read_at: null }],
+        meta: { request_id: 'r', page: { limit: 25, has_more: false, next_cursor: null } },
+      };
+    }
+    if (url.includes('/customers/discover')) {
+      return {
+        data: { recommended: [], popular: [{ id: 'c1', title: 'Puja', kind: 'puja' }], recent: [] },
+        meta: { request_id: 'r' },
+      };
+    }
+    return {
+      data: { object: 'customer_settings', settings: { locale: 'hi' } },
+      meta: { request_id: 'r' },
+    };
+  });
+
+  const profile = await getProfile(authed('https://app.navdhya.com/api/profile'));
+  expect(profile.status).toBe(200);
+  expect(((await profile.json()) as { data: { profile: { status: string } } }).data.profile.status).toBe('active');
+
+  const saved = await listSaved(authed('https://app.navdhya.com/api/saved'));
+  const savedBody = (await saved.json()) as { data: { items: { id: string; type: string; title: string }[] } };
+  expect(savedBody.data.items).toEqual([
+    { id: 's1', type: 'puja', title: 'ABCDEF1234567890ABCDEF12', href: '/pujas/ABCDEF1234567890ABCDEF12' },
+  ]);
+
+  const notifications = await listNotifications(authed('https://app.navdhya.com/api/notifications'));
+  expect(notifications.status).toBe(200);
+
+  const discover = await getDiscover(authed('https://app.navdhya.com/api/discover'));
+  const discoverBody = (await discover.json()) as { data: { popular: { id: string }[] } };
+  expect(discoverBody.data.popular).toEqual([{ id: 'c1', title: 'Puja', kind: 'puja' }]);
+
+  const settings = await getSettings(authed('https://app.navdhya.com/api/settings'));
+  const settingsBody = (await settings.json()) as { data: { values: { locale: string } } };
+  expect(settingsBody.data.values.locale).toBe('hi');
+});
+
+test('wired cancel maps not_found to BOOKING_NOT_FOUND', async () => {
+  wiredEnv();
+  stubLaravelStatuses(() => ({
+    status: 404,
+    body: { error: { code: 'not_found', message: 'Missing.', requestId: 'r' } },
+  }));
+  const res = await cancelBooking(authed('https://app.navdhya.com/api/bookings/nope/cancel', { method: 'POST' }), {
+    params: Promise.resolve({ bookingId: 'nope' }),
+  });
+  expect(res.status).toBe(404);
+  expect(((await res.json()) as { error: { code: string } }).error.code).toBe('BOOKING_NOT_FOUND');
+});
+
+test('wired reschedule reads version then moves', async () => {
+  wiredEnv();
+  const calls: { url: string; body: unknown }[] = [];
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (url: string, init?: RequestInit) => {
+      const body = init?.body !== undefined ? JSON.parse(init.body as string) : undefined;
+      calls.push({ url, body });
+      const payload = url.endsWith(':reschedule')
+        ? { data: { id: 'b1', status: 'CONFIRMED', service_sku: null, scheduled_at: '2030-06-01T10:00:00', version: 2, actions: [] }, meta: { request_id: 'r' } }
+        : { data: { id: 'b1', status: 'CONFIRMED', service_sku: null, scheduled_at: '2030-05-01T10:00:00', version: 1, actions: ['reschedule'] }, meta: { request_id: 'r' } };
+      return new Response(JSON.stringify(payload), { status: 200 });
+    }),
+  );
+  const res = await rescheduleBooking(
+    authed('https://app.navdhya.com/api/bookings/b1/reschedule', {
+      method: 'POST',
+      body: JSON.stringify({ newStartTime: '2030-06-01T10:00:00.000Z' }),
+    }),
+    { params: Promise.resolve({ bookingId: 'b1' }) },
+  );
+  expect(res.status).toBe(200);
+  expect(calls).toEqual([
+    { url: 'https://api.example.test/api/v1/booking/reservations/b1', body: undefined },
+    {
+      url: 'https://api.example.test/api/v1/booking/reservations/b1:reschedule',
+      body: { new_start_time: '2030-06-01T10:00:00.000Z', version: 1 },
+    },
+  ]);
+  const moved = (await res.json()) as { data: { schedule: { date: string }; actions: string[] } };
+  expect(moved.data.schedule.date).toBe('2030-06-01');
 });

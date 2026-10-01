@@ -19,17 +19,17 @@ subset of the contract union with identical statuses. New codes:
 | BFF endpoint | Backend source |
 |---|---|
 | `GET /api/home` | composes `GET /api/v1/booking/reservations` + `GET /api/v1/customers/profile` |
-| `GET /api/bookings` | `GET /api/v1/booking/reservations` (`?section=`) |
-| `GET /api/bookings/:bookingId` | `GET /api/v1/booking/reservations/{id}` (+ live `actions`) |
-| `POST /api/bookings/:bookingId/cancel` | `POST /api/v1/booking/reservations/{id}:cancel` (idempotent; 409 → `BOOKING_CANNOT_CANCEL`) |
-| `POST /api/bookings/:bookingId/reschedule` | `POST …/{id}:reschedule {new_start_time, version}` (stale → 409 `STALE_RESOURCE`, overlap → 409 `BOOKING_SLOT_CONFLICT`) |
-| `GET /api/profile` | `GET /api/v1/customers/profile` (masked contacts) |
-| `GET /api/saved` | `GET /api/v1/customers/saved` (opaque refs, enriched here) |
-| `GET /api/notifications` | `GET /api/v1/customers/notifications` |
-| `GET /api/discover` | `GET /api/v1/customers/discover` (`{recommended, popular, recent}` unwrapped from the kernel envelope) |
-| `GET /api/settings` | `GET /api/v1/customers/settings` (key-values mapped to sections here) |
-| `POST /api/auth/login` | `POST /api/v1/customers/auth/otp` then `POST …/auth/login`; shapes `{sessionId, expiresAt}` from `{actor.session_id, expires_at}` — the bearer goes to an HttpOnly cookie, never to the client, so wired login omits `token` by design |
-| `POST /api/auth/logout` | `POST /api/v1/customers/auth/logout` |
+| `GET /api/bookings` | `GET /api/v1/booking/reservations` � **wired behind flag, drilled live** |
+| `GET /api/bookings/:bookingId` | `GET /api/v1/booking/reservations/{id}` � **wired behind flag, drilled live** |
+| `POST /api/bookings/:bookingId/cancel` | `POST /api/v1/booking/reservations/{id}:cancel` — **wired behind flag** (idempotent; 409 → `BOOKING_CANNOT_CANCEL`) |
+| `POST /api/bookings/:bookingId/reschedule` | `POST …/{id}:reschedule` — **wired behind flag** (reads live version first; stale → `STALE_RESOURCE`, overlap → `BOOKING_SLOT_CONFLICT`) |
+| `GET /api/profile` | `GET /api/v1/customers/profile` (masked contacts) � **wired behind flag** |
+| `GET /api/saved` | `GET /api/v1/customers/saved` � **wired behind flag** (interim title=ref mapping; catalog enrichment later) |
+| `GET /api/notifications` | `GET /api/v1/customers/notifications` � **wired behind flag** |
+| `GET /api/discover` | `GET /api/v1/customers/discover` � **wired behind flag** (envelope unwrapped here) |
+| `GET /api/settings` | `GET /api/v1/customers/settings` � **wired behind flag** (values merged into sections response) |
+| `POST /api/auth/login` | `POST /api/v1/customers/auth/otp` then `POST …/auth/login` — **wired behind flag, drilled (401 path live)**; `{sessionId, expiresAt}`, bearer in HttpOnly cookie, `token` omitted by design |
+| `POST /api/auth/logout` | `POST /api/v1/customers/auth/logout` � **wired behind flag, drilled live** |
 
 ## Code correspondence (BFF codes)
 
