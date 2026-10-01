@@ -57,7 +57,20 @@ the first draft imported identity source and failed `rootDir`).
 findByIdentity/update; defensive copies; duplicate + missing guards;
 supersedes linkage preserved). Shared store swaps behind the port later.
 
-## Stage 4+ (not started)
+## Stage 4 (done)
+
+Document metadata (`onboarding/documents.ts`) + `DocumentStore` /
+`UploadUrlPort` (partner-owned) + memory adapters + pure worker logic
+(`verify-document.ts`: MIME allowlist per kind, 10MB cap, hash equality,
+expiry; every rejection reason-coded). Uploads addressed
+`onboarding/<app>/<kind>/<sha>` (content-addressed); scoped 15-min URLs.
+
+Known debt: two document models coexist (`verification.DocumentStatus`
+vs `OnboardingDocumentStatus`) — unify when the verification worker binds
+a queue (stage 6); the onboarding model carries reason codes the old one
+lacks.
+
+## Stage 5+ (not started)
 
 OTP port + two-phase submit · `OnboardingRepository` port + memory
 adapter · document pipeline + verification worker · API v1 + `docs/api`
