@@ -1,12 +1,10 @@
 import { headers } from 'next/headers';
-import { onboardingActors } from '@/server/onboarding';
-import { isReviewer, getReviewQueue } from '@/server/review';
+import { getReviewQueue, resolveReviewer } from '@/server/review';
 import { DEFAULT_MARKET } from '@navdhya/identity/src/ports/actor-resolver';
 
 export default async function ReviewQueuePage() {
-  const auth = (await headers()).get('authorization') ?? '';
-  const actor = await onboardingActors.resolve({ authorization: auth || undefined });
-  if (!actor || !isReviewer(actor.roles)) {
+  const actor = await resolveReviewer({ headers: await headers() });
+  if (!actor) {
     return (
       <main>
         <h1>Review queue</h1>

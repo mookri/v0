@@ -1,15 +1,19 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
-import { onboardingActors, onboardingApps } from '@/server/onboarding';
-import { reviewAudit, reviewPartners, isReviewer } from '@/server/review';
-import { headersToRecord } from '@/application/actor';
+import { onboardingApps } from '@/server/onboarding';
+import { reviewAudit, reviewPartners, isReviewer, resolveReviewerActor } from '@/server/review';
+import { withCookieFallback } from '@/application/actor';
 import { assertSameTenant } from '@navdhya/identity/src/ports/actor-resolver';
 import { reviewApplication, ReviewDecision } from '@navdhya/partner/src/application/review';
 import { activateOnApproval } from '@navdhya/partner/src/application/activation';
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const requestId = newRequestId();
-  const actor = await onboardingActors.resolve(headersToRecord(req.headers));
+  // Session-bound (logout revokes reviewer powers, not just pages).
+  const actor = await resolveReviewerActor(withCookieFallback(req));
   if (!actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
+  if (!isReviewer(actor.roles)) {
+    return Response.json(err('ASSIGNMENT_FORBIDDEN', 'Not allowed.', requestId), { status: 403 });
+  }
   if (!isReviewer(actor.roles)) {
     return Response.json(err('ASSIGNMENT_FORBIDDEN', 'Not allowed.', requestId), { status: 403 });
   }

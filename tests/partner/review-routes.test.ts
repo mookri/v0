@@ -119,3 +119,18 @@ test('approve flows; rejections need countersign + reason; audit appended', asyn
   expect(records[0]?.reviewerId).toBe('r1');
   expect(records[0]?.note).toContain('countersigned:r2');
 });
+
+test('decision route accepts the session cookie fallback (browser forms)', async () => {
+  const id = await seed('UNDER_REVIEW', 'ra_cookie');
+  const { __issuePartnerTestToken } = await import('@apps/partner/server/auth');
+  const raw = await __issuePartnerTestToken('r9', ['reviewer']);
+  const res = await decide(
+    new Request(`${BASE}/api/review/${id}/decision`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', cookie: `__session=${raw}` },
+      body: JSON.stringify({ decision: 'APPROVED' }),
+    }),
+    { params: Promise.resolve({ id }) },
+  );
+  expect(res.status).toBe(200);
+});

@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
-import { onboardingActors, onboardingApps, getEvidence } from '@/server/onboarding';
-import { isReviewer, reviewAudit } from '@/server/review';
+import { onboardingApps, getEvidence } from '@/server/onboarding';
+import { reviewAudit, resolveReviewer } from '@/server/review';
 import { getTrackDefinition } from '@navdhya/partner/src/onboarding/tracks';
 import { missingSteps } from '@navdhya/partner/src/onboarding/steps';
 import { DecisionForm } from '@/presentation/review/DecisionForm';
@@ -9,9 +9,8 @@ import { assertSameTenant } from '@navdhya/identity/src/ports/actor-resolver';
 
 export default async function ReviewDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const auth = (await headers()).get('authorization') ?? '';
-  const actor = await onboardingActors.resolve({ authorization: auth || undefined });
-  if (!actor || !isReviewer(actor.roles)) {
+  const actor = await resolveReviewer({ headers: await headers() });
+  if (!actor) {
     return (
       <main>
         <h1>Review</h1>

@@ -135,9 +135,10 @@ fixed via auto-triage on first reviewer touch, covered by test.
 
 ## Known limitations
 
-- Applicant routes are session-bound (logout revokes); reviewer UI pages
-  still need cookie-issued sessions for browser use — DecisionForm posts
-  bearer-less until the cookie login lands there too.
+- Applicant routes are session-bound (logout revokes); reviewer pages and
+  the decision/queue APIs are session-bound too, with cookie fallback
+  (`withCookieFallback`) so browser reviewers work end to end; 401 vs 403
+  preserved. Logout revokes reviewer powers everywhere.
 - `MemoryCredentialVerifier` is staging-only; `Pbkdf2CredentialVerifier`
   (stdlib, per-identity salt, server pepper, 210k iterations) is the
   production path behind the same port.

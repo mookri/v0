@@ -38,3 +38,15 @@ export function headersToRecord(headers: Headers): Record<string, string | undef
   });
   return out;
 }
+
+// Browser fallback: inject Authorization from the session cookie when the
+// header is absent, so cookie-authed pages and forms reach the same
+// bearer-only resolvers as API clients.
+export function withCookieFallback(req: Request): Record<string, string | undefined> {
+  const record = headersToRecord(req.headers);
+  if (!record['authorization']) {
+    const token = readSessionCookie(req.headers.get('cookie'));
+    if (token) record['authorization'] = `Bearer ${token}`;
+  }
+  return record;
+}
