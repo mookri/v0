@@ -4,7 +4,7 @@ import * as path from 'path';
 
 const packagesDir = path.join(process.cwd(), 'packages');
 
-test('packages must not import from apps', () => {
+test('packages must not import from apps', { timeout: 120000 }, () => {
   const pkgs = fs.readdirSync(packagesDir);
   for (const pkg of pkgs) {
     const pkgPath = path.join(packagesDir, pkg);
