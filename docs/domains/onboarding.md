@@ -78,7 +78,20 @@ checks, stable codes (`ONBOARDING_*`), rate limits. Contract tests drive
 the full HTTP flow per track. Docs: `docs/api/pandit-onboarding.md` +
 `docs/api/partner-onboarding.md`.
 
-## Stage 6+ (not started)
+## Stage 6 (done)
+
+Dynamic step UI on the partner app: `/onboarding/[id]` overview +
+`/onboarding/[id]/[step]` renderer (one `StepForm` from `STEP_FIELDS`
+layouts; per-step PUT with idempotency keys; `needs[]` checklist).
+en+hi strings with parity test; locale via `?hl=hi` (same route, never a
+separate deployment). Round-trip test proves assembled form values pass
+the domain submit gate for all three tracks.
+
+Gap note: field layouts are UI-owned data (stage 8 track-studio moves
+them into versioned track data); documents step collects identifiers —
+byte upload binds when storage does.
+
+## Stage 7+ (not started)
 
 OTP port + two-phase submit · `OnboardingRepository` port + memory
 adapter · document pipeline + verification worker · API v1 + `docs/api`
