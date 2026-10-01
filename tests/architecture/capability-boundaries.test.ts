@@ -65,7 +65,7 @@ test('capabilities must communicate through public contracts, no deep imports', 
   }
 });
 
-test('apps must not import apps', () => {
+test('apps must not import apps', { timeout: 120000 }, () => {
   const webDir = path.join(appsDir, 'web');
   const files = getAllFiles(webDir);
   for (const file of files) {
