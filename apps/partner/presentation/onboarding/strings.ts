@@ -29,6 +29,9 @@ const en = {
   'common.continue': 'Continue',
   'common.needs': 'Still needed',
   'common.back': 'Back to overview',
+  'common.unknownStep': 'Unknown step.',
+  'common.invalidStep': 'Invalid step.',
+  'common.saveFailed': 'Save failed.',
 };
 
 export type OnboardingStringKey = keyof typeof en;
@@ -60,6 +63,9 @@ const hi: Record<OnboardingStringKey, string> = {
   'common.continue': 'आगे बढ़ें',
   'common.needs': 'अभी चाहिए',
   'common.back': 'अवलोकन पर वापस जाएँ',
+  'common.unknownStep': 'अज्ञात चरण।',
+  'common.invalidStep': 'अमान्य चरण।',
+  'common.saveFailed': 'सहेजना विफल रहा।',
 };
 
 export const onboardingStrings: Record<OnboardingLocale, Record<OnboardingStringKey, string>> = { en, hi };

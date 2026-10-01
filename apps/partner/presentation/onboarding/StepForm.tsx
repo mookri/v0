@@ -18,8 +18,8 @@ export function StepForm({
   const layout = STEP_FIELDS[step];
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  if (!layout) return <p>Unknown step.</p>;
   const t = (key: OnboardingStringKey) => onboardingString(locale, key);
+  if (!layout) return <p>{t('common.unknownStep')}</p>;
 
   async function onSubmit(formData: FormData) {
     setError(null);
@@ -33,7 +33,7 @@ export function StepForm({
     try {
       value = assembleStepValue(step, inputs);
     } catch {
-      setError('Invalid step.');
+      setError(t('common.invalidStep'));
       return;
     }
     const res = await fetch(`/api/onboarding/${applicationId}/step/${step}`, {
@@ -41,7 +41,7 @@ export function StepForm({
       headers: { 'Content-Type': 'application/json', 'Idempotency-Key': `ik_${applicationId}_${step}` },
       body: JSON.stringify({ value }),
     });
-    if (!res.ok) setError('Save failed.');
+    if (!res.ok) setError(t('common.saveFailed'));
     else setSaved(true);
   }
 
