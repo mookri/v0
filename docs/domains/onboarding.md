@@ -38,7 +38,20 @@ renders from `missingSteps()` (the applicant checklist + submit gate);
 empty = submittable. Unknown step ids throw (fail-closed on definition
 drift).
 
-## Stage 2+ (not started)
+## Stage 2 (done)
+
+OTP port (`identity/ports/otp.ts`) + memory/fake adapters; two-phase
+submit in `partner/application/onboarding-submit.ts` (validate → challenge
+→ re-validate → verify → transition). Wrong/expired/exhausted/replayed
+codes collapse to `OTP_INVALID` (no oracle); rate limits enforced;
+submit policy versioned (`SUBMIT_OTP_POLICY`).
+
+Boundary note: the capability owns its port (`partner/ports/challenges.ts`);
+identity's adapters satisfy it structurally — packages stay
+self-contained per dependency rule 13 (this was enforced, not chosen:
+the first draft imported identity source and failed `rootDir`).
+
+## Stage 3+ (not started)
 
 OTP port + two-phase submit · `OnboardingRepository` port + memory
 adapter · document pipeline + verification worker · API v1 + `docs/api`
