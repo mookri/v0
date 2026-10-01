@@ -2,6 +2,7 @@ import { newRequestId, ok, err } from '@/application/api-envelope';
 import { onboardingActors, onboardingApps } from '@/server/onboarding';
 import { reviewAudit, isReviewer } from '@/server/review';
 import { headersToRecord } from '@/application/actor';
+import { assertSameTenant } from '@navdhya/identity/src/ports/actor-resolver';
 import { reviewApplication, ReviewDecision } from '@navdhya/partner/src/application/review';
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -14,6 +15,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const { id } = await params;
   const app = await onboardingApps.findById(id);
   if (!app) return Response.json(err('ONBOARDING_NOT_FOUND', 'Application not found.', requestId), { status: 404 });
+  try {
+    assertSameTenant(actor, { market: app.market });
+  } catch {
+    return Response.json(err('ASSIGNMENT_FORBIDDEN', 'Not allowed.', requestId), { status: 403 });
+  }
   let body: { decision?: ReviewDecision; reasonCode?: 'OTHER'; note?: string; secondReviewer?: string } = {};
   try {
     body = (await req.json()) as typeof body;

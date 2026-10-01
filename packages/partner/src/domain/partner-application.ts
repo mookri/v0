@@ -17,6 +17,8 @@ export interface PartnerApplication {
   // Pinned at creation: rule changes ship as new versions, never mutate
   // in-flight applications.
   trackVersion: string;
+  // Tenant scope; absent = default market (legacy/dev records).
+  market?: string;
   status: ApplicationStatus;
   // Set when a resubmission supersedes a rejected/withdrawn application.
   supersedes?: string;

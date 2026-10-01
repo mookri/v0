@@ -8,20 +8,29 @@ import { mintActorToken, INSECURE_DEV_SECRET } from '@navdhya/identity/src/appli
 const BASE = 'https://partner.navdhya.com';
 const bearer = (userId: string, roles: string[]) =>
   `Bearer ${mintActorToken(INSECURE_DEV_SECRET, { userId, sessionId: `s_${userId}`, roles }, new Date().toISOString(), 3600)}`;
+const bearerScoped = (userId: string, roles: string[], market: string) =>
+  `Bearer ${mintActorToken(INSECURE_DEV_SECRET, { userId, sessionId: `s_${userId}`, roles, market }, new Date().toISOString(), 3600)}`;
 const req = (method: string, url: string, userId: string | null, roles: string[] = ['partner'], body?: unknown) =>
   new Request(url, {
     method,
     headers: { ...(userId ? { authorization: bearer(userId, roles) } : {}), 'Content-Type': 'application/json' },
     body: body ? JSON.stringify(body) : undefined,
   });
+const reqScoped = (method: string, url: string, userId: string, roles: string[], market: string, body?: unknown) =>
+  new Request(url, {
+    method,
+    headers: { authorization: bearerScoped(userId, roles, market), 'Content-Type': 'application/json' },
+    body: body ? JSON.stringify(body) : undefined,
+  });
 
-async function seed(status: 'SUBMITTED' | 'UNDER_REVIEW' = 'UNDER_REVIEW', id = 'ra_1') {
+async function seed(status: 'SUBMITTED' | 'UNDER_REVIEW' = 'UNDER_REVIEW', id = 'ra_1', market?: string) {
   await onboardingApps.save({
     id,
     identityId: 'p1',
     type: 'PANDIT',
     track: 'pandit',
     trackVersion: 'pandit-v1',
+    ...(market ? { market } : {}),
     status,
     submittedAt: new Date(Date.now() - 3600_000).toISOString(),
   });
@@ -39,6 +48,25 @@ test('review routes gate roles; queue carries SLA state', async () => {
   const body = (await res.json()) as { data: { items: { id: string; slaBreached: boolean }[] } };
   const item = body.data.items.find((i) => i.id === 'ra_1');
   expect(item?.slaBreached).toBe(false);
+});
+
+test('review queue and decisions enforce market scope', async () => {
+  await seed('UNDER_REVIEW', 'ra_in');
+  await seed('UNDER_REVIEW', 'ra_ae', 'ae');
+  const res = await queue(reqScoped('GET', `${BASE}/api/review/queue`, 'r1', ['reviewer'], 'in'));
+  const body = (await res.json()) as { data: { items: { id: string }[] } };
+  expect(body.data.items.map((i) => i.id)).toContain('ra_in');
+  expect(body.data.items.map((i) => i.id)).not.toContain('ra_ae');
+  const foreign = await decide(
+    reqScoped('POST', `${BASE}/api/review/ra_ae/decision`, 'r1', ['reviewer'], 'in', { decision: 'APPROVED' }),
+    { params: Promise.resolve({ id: 'ra_ae' }) },
+  );
+  expect(foreign.status).toBe(403);
+  const home = await decide(
+    reqScoped('POST', `${BASE}/api/review/ra_in/decision`, 'r1', ['reviewer'], 'in', { decision: 'APPROVED' }),
+    { params: Promise.resolve({ id: 'ra_in' }) },
+  );
+  expect(home.status).toBe(200);
 });
 
 test('approve flows; rejections need countersign + reason; audit appended', async () => {

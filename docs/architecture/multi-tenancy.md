@@ -34,6 +34,6 @@ ready. Admin role changes go through the admin-ops runbook.
 
 ## Status
 
-Claims + helper + login passthrough done; per-surface enforcement
-(onboarding ownership, review queue scoping) is the follow-up, one
-surface per commit with tests.
+Claims + helper + login passthrough done; first surface enforced:
+review queue filters by actor market and review decisions assert tenant
+(next surfaces: applicant ownership checks, one per commit with tests).

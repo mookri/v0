@@ -4,6 +4,7 @@ import { isReviewer } from '@/server/review';
 import { headersToRecord } from '@/application/actor';
 import { getTrackDefinition } from '@navdhya/partner/src/onboarding/tracks';
 import { reviewSlaStatus } from '@navdhya/partner/src/application/review-sla';
+import { DEFAULT_MARKET } from '@navdhya/identity/src/ports/actor-resolver';
 import { ApplicationStatus } from '@navdhya/partner/src/domain/partner-application';
 
 const REVIEW_STATES: ApplicationStatus[] = ['SUBMITTED', 'UNDER_REVIEW', 'APPEALED'];
@@ -16,7 +17,8 @@ export async function GET(req: Request) {
     return Response.json(err('ASSIGNMENT_FORBIDDEN', 'Not allowed.', requestId), { status: 403 });
   }
   const nowIso = new Date().toISOString();
-  const apps = await onboardingApps.listByStates(REVIEW_STATES);
+  const market = actor.market ?? DEFAULT_MARKET;
+  const apps = (await onboardingApps.listByStates(REVIEW_STATES)).filter((app) => (app.market ?? DEFAULT_MARKET) === market);
   const items = apps.map((app) => {
     const def = getTrackDefinition(app.track, app.trackVersion);
     const sla = app.submittedAt ? reviewSlaStatus(app.submittedAt, def.slaHours, nowIso) : null;
@@ -24,6 +26,7 @@ export async function GET(req: Request) {
       id: app.id,
       track: app.track,
       status: app.status,
+      market: app.market ?? DEFAULT_MARKET,
       submittedAt: app.submittedAt ?? null,
       slaBreached: sla?.breached ?? null,
       slaRemainingMs: sla?.remainingMs ?? null,
