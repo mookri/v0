@@ -437,6 +437,41 @@ additional external identity to an existing user requires ACR 2 and the
 
 Service identity covers non-human principals: `service`, `agent`, and `partner` principals authenticate with machine tokens (client-credentials) and are modeled by the Principal contract (K-001). Machine tokens MUST NOT carry `sensitive`-flagged scopes; agent authorization is governed by the AI-agent safety rules (SEC-024). Service principals are tenant-scoped unless they are platform-level kernel services.
 
+### Amendment A-SEC-014-1 — machine API keys (interim, pre-Passport)
+
+**Status:** ACTIVE · **Date:** 2026-10-01 · **Supersedes:** nothing (additive)
+
+Until TOKEN-001 (Passport JWT) lands, server-to-server authentication uses
+tenant-bound machine API keys (`api_keys`, central connection) alongside
+the frontend HMAC dual-accept bridge:
+
+- **Issuance:** `POST /api/v1/platform/api-keys` (human session + active
+  membership required — machine principals get explicit 403). The
+  plaintext secret (`sk_live_…`) is returned **once**; only its SHA-256
+  persists (`secret_hash`). Listing (`GET …/api-keys`) returns metadata
+  only — never secrets or hashes.
+- **Authentication:** `auth.any` middleware (single entry point: session →
+  HMAC bearer → API key; never stacked `auth` aliases). The key's 15-char
+  prefix locates the row; `hash_equals(secret_hash, sha256(presented))`
+  verifies. Success installs a `MachinePrincipal` (key tenant + scopes,
+  never a `User` impersonation) and stamps `last_used_at` best-effort.
+- **Tenant binding:** `ResolveTenantContext` accepts a machine principal
+  only when the key's tenant equals the `X-Tenant-Id` header tenant —
+  cross-tenant keys fail closed (401). Key principals carry no membership,
+  so the policy engine's allow-grant stage (membership-gated) default-denies
+  them: capability-gated writes return 403.
+- **Lifecycle:** revoke is immediate (`revoked_at`); rotation mints a
+  replacement row and caps the old key with a 24 h overlap expiry (existing
+  expiry always wins) — never secret edits. Unknown prefixes,
+  revoked/expired keys, and garbage bearers all deny with identical 401s.
+- **Deferred to Passport/Redis:** `scopes` are recorded but not yet
+  scope-enforced per route (default-deny on writes covers v1); `rate_tier`
+  is stored (`standard|professional|enterprise|partner`) and enforced only
+  by the DB-backed ceilings until REDIS-001 unblocks tiered throttling.
+
+OpenAPI: `app/Platform/Identity/Http/openapi-keys.yaml` (composed into
+`docs/api/openapi.v1.yaml`); tests: `tests/Platform/Identity/ApiKeyTest.php`.
+
 ## SEC-015 Revocation, introspection & abuse controls
 
 - id: SEC-015

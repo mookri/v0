@@ -54,6 +54,24 @@ final class ResolveTenantContext
 
         $user = $request->user();
 
+        if ($user instanceof \App\Platform\Identity\MachinePrincipal) {
+            // Machine credentials carry their own tenant binding: the key's
+            // tenant must equal the header tenant (no cross-tenant keys),
+            // and no membership is required — the key IS the grant.
+            if ($user->tenantId() !== (string) $tenant->getKey()) {
+                throw new TenantNotInTokenException();
+            }
+            $this->context->set(
+                (string) $tenant->getKey(),
+                null,
+                null,
+                $this->connections->cachedFor($tenant),
+                ['key_id' => $user->getAuthIdentifier(), 'scopes' => $user->scopes()]
+            );
+
+            return $next($request);
+        }
+
         if (! $user instanceof Authenticatable) {
             // The auth middleware should have denied already; fail closed.
             throw new TenantNotInTokenException();

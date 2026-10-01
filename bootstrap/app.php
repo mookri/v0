@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant' => ResolveTenantContext::class,
             'capability' => CheckCapability::class,
             'auth.hmac' => \App\Platform\Identity\Http\Middleware\AuthenticateHmacToken::class,
+            'auth.any' => \App\Platform\Identity\Http\Middleware\AuthenticateAny::class,
             'limit.body' => \App\Platform\Http\Middleware\LimitJsonBody::class,
             // 'scope'/'stepup' land with the token platform (docs 03-04).
         ]);

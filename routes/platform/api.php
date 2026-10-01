@@ -65,7 +65,7 @@ Route::prefix(config('platform.api_version', 'v1'))
 // bearer verification); StartSession runs group-wide so cookie sessions
 // resolve on every surface here, not just identity.
 Route::prefix(config('platform.api_version', 'v1'))
-    ->middleware(['auth.hmac', \Illuminate\Session\Middleware\StartSession::class])
+    ->middleware(['auth.any', \Illuminate\Session\Middleware\StartSession::class])
     ->name('platform.')
     ->group(function (): void {
         Route::get('platform/tenants', [\App\Platform\Tenancy\Http\Controllers\TenantSelfServiceController::class, 'index'])
@@ -94,6 +94,14 @@ Route::prefix(config('platform.api_version', 'v1'))
             ->name('identity.invites.issue');
         Route::post('identity/invites/{id}:revoke', [\App\Platform\Identity\Http\Controllers\InviteController::class, 'revoke'])
             ->name('identity.invites.revoke');
+        Route::get('platform/api-keys', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'index'])
+            ->name('api-keys.index');
+        Route::post('platform/api-keys', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'issue'])
+            ->name('api-keys.issue');
+        Route::post('platform/api-keys/{id}:revoke', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'revoke'])
+            ->name('api-keys.revoke');
+        Route::post('platform/api-keys/{id}:rotate', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'rotate'])
+            ->name('api-keys.rotate');
         Route::get('platform/users', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'index'])
             ->middleware(['tenant', 'capability:platform:user:view'])
             ->name('users.index');

@@ -897,6 +897,114 @@ paths:
                 properties:
                   data: { type: object, required: [id, status, review_id] }
                   meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/platform/api-keys:
+    get:
+      operationId: listApiKeys
+      summary: 'List key metadata (never secrets).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      responses:
+        200:
+          description: 'Key metadata list.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+    post:
+      operationId: issueApiKey
+      summary: 'Issue a key (plaintext returned once).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tenant_id
+                - name
+      responses:
+        201:
+          description: 'Issued key with one-time secret.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, prefix, secret] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  '/api/v1/platform/api-keys/{id}:revoke':
+    post:
+      operationId: revokeApiKey
+      summary: 'Revoke a key immediately.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: 'Revoked key.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  '/api/v1/platform/api-keys/{id}:rotate':
+    post:
+      operationId: rotateApiKey
+      summary: 'Rotate a key (24h dual-active overlap).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        201:
+          description: 'Replacement key with one-time secret.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, prefix, secret, supersedes] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
   '/api/v1/platform/memberships/{membershipId}/roles':
     post:
       operationId: grantMembershipRole

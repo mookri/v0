@@ -27,7 +27,7 @@ foreach (ModuleRegistry::modules() as $module) {
         // resolution. Public surfaces opt out explicitly per route with
         // ->withoutMiddleware(['auth', 'tenant']) and a comment citing why.
         Route::prefix($version.'/'.$module->code)
-            ->middleware(['auth', 'tenant'])
+            ->middleware(['auth.any', 'tenant'])
             ->name($module->code.'.')
             ->group($routes);
     }
