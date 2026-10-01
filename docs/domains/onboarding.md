@@ -100,7 +100,16 @@ flags) and decisions with four-eyes countersign on rejections (recorded
 in the audit note). Appeal admission stays applicant-side; direct
 approve-from-appeal is illegal (re-enter review).
 
-## Stage 8+ (not started)
+## Stage 8 (done)
+
+Activation wiring: `activateOnApproval` (create-ACTIVE when missing,
+persist VERIFIED→ACTIVE, never force-transition suspensions/exits) +
+`MemoryPartnerRepository` (port gained additive `update`). End-to-end
+proof test runs draft → submit → approve → eligible through the real
+functions. Activation is not yet called from the decision route (wiring
+it in is the staging-proof step with a live reviewer).
+
+## Remaining
 
 OTP port + two-phase submit · `OnboardingRepository` port + memory
 adapter · document pipeline + verification worker · API v1 + `docs/api`

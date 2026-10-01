@@ -4,6 +4,7 @@ export interface PartnerRepository {
   findById(id: string): Promise<Partner | null>;
   findByIdentity(identityId: string): Promise<Partner[]>;
   save(partner: Partner): Promise<void>;
+  update(partner: Partner): Promise<void>;
 }
 
 const LIFECYCLE: Record<PartnerStatus, PartnerStatus[]> = {
