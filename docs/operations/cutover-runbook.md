@@ -18,6 +18,15 @@ Web routes stay deployed throughout — rollback is flag-off, instant.
 6. Secrets present, server-only: session signing keys, Razorpay `keyId` /
    `keySecret` (never `NEXT_PUBLIC_*`).
 
+## Known non-blocking warnings (drill-observed, 2026-10-01)
+
+- Web logs `unstable_cacheLife/cacheTag should be imported as cacheLife/
+  cacheTag` at boot (Next 16 stabilized the names; the `unstable_` prefix
+  will be removed in a future Next). Non-fatal today; migrate imports
+  before the next Next upgrade or the web build breaks.
+- `next start` warns when `output: standalone` is set but unused locally
+  (expected: local runs use `NEXT_STANDALONE=0`; deploy uses standalone).
+
 ## Order of cutover (one class at a time)
 
 | Step | Flag | Traffic | Verify |
