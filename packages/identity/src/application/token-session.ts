@@ -16,6 +16,8 @@ export interface LoginInput {
   proof: unknown;
   audience: SessionAudience;
   roles: string[];
+  market?: string;
+  orgId?: string;
   sessionId: string;
   tokenTtlSeconds: number;
   sessionTtlSeconds: number;
@@ -40,7 +42,13 @@ export async function login(deps: LoginDeps, input: LoginInput): Promise<{ sessi
   await deps.sessions.create(session);
   const token = mintActorToken(
     deps.tokenSecret,
-    { userId: input.identityId, sessionId: session.id, roles: input.roles },
+    {
+      userId: input.identityId,
+      sessionId: session.id,
+      roles: input.roles,
+      ...(input.market ? { market: input.market } : {}),
+      ...(input.orgId ? { orgId: input.orgId } : {}),
+    },
     input.nowIso,
     input.tokenTtlSeconds,
   );

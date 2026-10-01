@@ -9,6 +9,8 @@ export interface ActorTokenClaims {
   userId: string;
   sessionId: string;
   roles: string[];
+  market?: string;
+  orgId?: string;
   expiresAtIso: string;
 }
 
@@ -28,12 +30,20 @@ export function mintActorToken(
   nowIso: string,
   ttlSeconds: number,
 ): string {
-  for (const field of [actor.userId, actor.sessionId, ...actor.roles]) {
+  for (const field of [actor.userId, actor.sessionId, ...(actor.market ? [actor.market] : []), ...(actor.orgId ? [actor.orgId] : []), ...actor.roles]) {
     if (!field || field.includes('.') || field.includes(',')) throw new Error('ACTOR_FIELD_INVALID');
   }
   const expiresAtIso = new Date(Date.parse(nowIso) + ttlSeconds * 1000).toISOString();
   const payload = b64urlEncode(
-    JSON.stringify({ v: 1, u: actor.userId, s: actor.sessionId, r: actor.roles.join(','), e: expiresAtIso }),
+    JSON.stringify({
+      v: 1,
+      u: actor.userId,
+      s: actor.sessionId,
+      r: actor.roles.join(','),
+      m: actor.market ?? null,
+      o: actor.orgId ?? null,
+      e: expiresAtIso,
+    }),
   );
   return `${payload}.${sign(secret, payload)}`;
 }
@@ -45,7 +55,7 @@ export function verifyActorToken(secret: string, token: string, nowIso: string):
   const a = Buffer.from(expected, 'utf8');
   const b = Buffer.from(signature, 'utf8');
   if (a.length !== b.length || !timingSafeEqual(a, b)) throw new Error('ACTOR_TOKEN_INVALID');
-  let claims: { v: number; u: string; s: string; r: string; e: string };
+  let claims: { v: number; u: string; s: string; r: string; m: string | null; o: string | null; e: string };
   try {
     claims = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as typeof claims;
   } catch {
@@ -53,7 +63,13 @@ export function verifyActorToken(secret: string, token: string, nowIso: string):
   }
   if (claims.v !== 1 || !claims.u || !claims.s || !claims.e) throw new Error('ACTOR_TOKEN_MALFORMED');
   if (claims.e <= nowIso) throw new Error('ACTOR_TOKEN_EXPIRED');
-  return { userId: claims.u, sessionId: claims.s, roles: claims.r ? claims.r.split(',') : [] };
+  return {
+    userId: claims.u,
+    sessionId: claims.s,
+    roles: claims.r ? claims.r.split(',') : [],
+    ...(claims.m ? { market: claims.m } : {}),
+    ...(claims.o ? { orgId: claims.o } : {}),
+  };
 }
 
 export interface TokenResolverConfig {
