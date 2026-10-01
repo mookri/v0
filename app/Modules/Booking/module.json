@@ -8,7 +8,13 @@
   "actions": ["cancel", "reschedule"],
   "permissions": [],
   "scopes": ["booking:self"],
-  "events": [],
+  "events": [
+    { "name": "booking.reservation.cancelled", "schema": "v1" },
+    { "name": "booking.reservation.rescheduled", "schema": "v1" },
+    { "name": "booking.reservation.transitioned", "schema": "v1" },
+    { "name": "booking.review.created", "schema": "v1" },
+    { "name": "booking.review.removed", "schema": "v1" }
+  ],
   "navigation": [],
   "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/booking" }
 }

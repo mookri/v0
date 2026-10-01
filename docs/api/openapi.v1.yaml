@@ -69,6 +69,258 @@ paths:
           $ref: '#/components/responses/AuthorizationDenied'
         422:
           $ref: '#/components/responses/ValidationFailed'
+  /api/v1/booking/reservations:
+    get:
+      operationId: listReservations
+      summary: 'Cursor-paginated caller reservations (optional section filter).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          $ref: '#/components/parameters/Limit'
+        -
+          $ref: '#/components/parameters/Cursor'
+        -
+          name: section
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - upcoming
+              - active
+              - completed
+              - cancelled
+      responses:
+        200:
+          description: Reservations.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+  '/api/v1/booking/reservations/{id}':
+    get:
+      operationId: getReservation
+      summary: 'Read one reservation with live actions (404 across owners).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: Reservation.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, status, version, actions] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  '/api/v1/booking/reservations/{id}/history':
+    get:
+      operationId: getReservationHistory
+      summary: 'Append-only transition timeline.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: Timeline.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  '/api/v1/booking/reservations/{id}/reviews':
+    post:
+      operationId: reviewReservation
+      summary: 'Review a COMPLETED booking (one per booking).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - rating
+      responses:
+        201:
+          description: 'Created review.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, booking_id, rating] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  '/api/v1/booking/reservations/{id}:cancel':
+    post:
+      operationId: cancelReservation
+      summary: 'Cancel (idempotent on CANCELLED, 409 off-lifecycle).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: 'Cancelled reservation.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, status, version, actions] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  '/api/v1/booking/reservations/{id}:reschedule':
+    post:
+      operationId: rescheduleReservation
+      summary: 'Reschedule with optimistic version + overlap check.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - new_start_time
+                - version
+      responses:
+        200:
+          description: 'Rescheduled reservation.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, status, version, actions] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  /api/v1/booking/reviews:
+    get:
+      operationId: listBookingReviews
+      summary: 'Cursor-paginated caller reviews.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          $ref: '#/components/parameters/Limit'
+        -
+          $ref: '#/components/parameters/Cursor'
+      responses:
+        200:
+          description: Reviews.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+  '/api/v1/booking/reviews/{id}':
+    delete:
+      operationId: deleteBookingReview
+      summary: 'Remove own review.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: Removed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, deleted] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
   /api/v1/catalog/items:
     get:
       operationId: listCatalogItems

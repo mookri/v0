@@ -4,6 +4,7 @@ namespace App\Modules\Customers;
 
 use App\Modules\Customers\Auth\CustomerOtpService;
 use App\Modules\Customers\Auth\RandomOtpCodes;
+use App\Modules\Customers\Contracts\NotifiesCustomers;
 use App\Platform\Identity\Contracts\TrackSeeder;
 use App\Platform\Modules\ModuleServiceProvider as BaseModuleServiceProvider;
 
@@ -18,6 +19,7 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
     public function registerModule(): void
     {
         $this->app->bind(TrackSeeder::class, CustomersTrackSeeder::class);
+        $this->app->bind(NotifiesCustomers::class, CustomerNotifier::class);
         $this->app->singleton(
             CustomerOtpService::class,
             static fn (): CustomerOtpService => new CustomerOtpService(new RandomOtpCodes())

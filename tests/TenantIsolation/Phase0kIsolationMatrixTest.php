@@ -3,6 +3,10 @@
 namespace Tests\TenantIsolation;
 
 use App\Models\User;
+use App\Modules\Booking\Domain\BookingLifecycle;
+use App\Modules\Booking\Models\Booking;
+use App\Modules\Booking\Models\BookingReview;
+use App\Modules\Booking\Models\BookingTransition;
 use App\Modules\Customers\Models\BuyerProfile;
 use App\Modules\Customers\Models\CustomerAddress;
 use App\Modules\Customers\Models\CustomerNotification;
@@ -130,6 +134,49 @@ final class Phase0kIsolationMatrixTest extends TenantIntegrationTestCase
                 'display_name' => 'Isolation buyer',
             ],
             ['display_name' => 'isolation probe'],
+        );
+    }
+
+    public function test_bookings_are_isolated(): void
+    {
+        $this->assertTenantIsolationMatrix(
+            Booking::class,
+            fn (): array => [
+                'user_id' => User::factory()->create()->id,
+                'status' => BookingLifecycle::STATUS_CONFIRMED,
+            ],
+            ['status' => BookingLifecycle::STATUS_ASSIGNED],
+        );
+    }
+
+    public function test_booking_transitions_are_isolated(): void
+    {
+        $this->assertTenantIsolationMatrix(
+            BookingTransition::class,
+            fn (): array => [
+                'booking_id' => (string) Str::ulid(),
+                'from_status' => BookingLifecycle::STATUS_CONFIRMED,
+                'to_status' => BookingLifecycle::STATUS_ASSIGNED,
+                'actor_id' => 'iso-probe',
+            ],
+            ['reason' => 'isolation probe'],
+        );
+    }
+
+    public function test_booking_reviews_are_isolated(): void
+    {
+        $this->assertTenantIsolationMatrix(
+            BookingReview::class,
+            function (): array {
+                $bookingId = (string) Str::ulid();
+
+                return [
+                    'booking_id' => $bookingId,
+                    'user_id' => User::factory()->create()->id,
+                    'rating' => 5,
+                ];
+            },
+            ['rating' => 4],
         );
     }
 

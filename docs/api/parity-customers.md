@@ -21,6 +21,11 @@ updates this doc and both test suites in the same change.
 | saved | `GET /api/saved` → mock cards | `GET/POST /api/v1/customers/saved` (opaque ULID refs, enriched by readers — deliberate: bookmarks, not FKs), `DELETE …/{id}` | shape differs by design (backend stores refs; BFF enriches) |
 | notifications | `GET /api/notifications` → `items:[]` | `GET /api/v1/customers/notifications` (cursor), `POST …/{id}:read`, `POST …:read-all` (reports flip count) | backend real; producers land B5+ |
 | settings | `GET /api/settings` → static sections | `GET/PATCH /api/v1/customers/settings` (closed key set over defaults; BFF maps key-values → sections in F2) | shape differs by design |
+| bookings list/detail | `GET /api/bookings` → cards, `GET /api/bookings/:id` → details+actions | `GET /api/v1/booking/reservations` (cursor + `?section=` upcoming/active/completed/cancelled), `GET …/{id}` (+ live `actions`) | backend real; section mapping documented here (upcoming = pre-service states, active = ASSIGNED/IN_PROGRESS, completed = COMPLETED, cancelled = terminal rest) |
+| cancel | `POST …/cancel` → 409 `BOOKING_CANNOT_CANCEL` | `POST /api/v1/booking/reservations/{id}:cancel` → 200 (idempotent on CANCELLED), else 409 `state_forbidden` | BFF maps 409 → `BOOKING_CANNOT_CANCEL`; idempotent replay is new (safe retries) |
+| reschedule | `POST …/reschedule {newStartTime}` → 409 | `POST …/{id}:reschedule {new_start_time, version}` → 200; stale → 409 `version_conflict`, overlap → 409 `conflict`, off-state → 409 `state_forbidden` | version + overlap are new (BFF sends `version` from detail read in F2) |
+| history | — | `GET …/{id}/history` (append-only transitions) | backend only until F2 |
+| reviews | web `/user/*` mock | `POST …/{id}/reviews` (COMPLETED only, one per booking), `GET /api/v1/booking/reviews`, `DELETE …/{id}` | backend only until F2 |
 
 Profile/saved/notifications/settings/bookings rows land with B3–B5.
 
@@ -44,6 +49,11 @@ Profile/saved/notifications/settings/bookings rows land with B3–B5.
 | duplicate saved ref | — | `conflict` (409) |
 | malformed saved ref | — | `validation_failed` (422, `details.fields.ref_id`) |
 | unknown setting key / mistyped value | — | `validation_failed` (422) |
+| illegal cancel/reschedule state | `BOOKING_CANNOT_CANCEL` / `BOOKING_RESCHEDULE_UNAVAILABLE` (409) | `state_forbidden` (409) |
+| reschedule slot overlap | `BOOKING_SLOT_CONFLICT` (409) | `conflict` (409) |
+| stale booking version | `STALE_RESOURCE` (409) | `version_conflict` (409) |
+| review on non-completed booking | `REVIEW_NOT_ALLOWED` (409, new additive) | `state_forbidden` (409) |
+| duplicate review | `REVIEW_EXISTS` (409, new additive) | `conflict` (409) |
 
 Codes differ by registry (BFF domain codes vs kernel snake codes) — clients
 MUST branch on documented per-surface codes, never assume string equality
