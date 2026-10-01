@@ -5,3 +5,5 @@ export * from './domain/skills';
 export * from './verification/verification';
 export * from './application/readiness';
 export * from './application/lifecycle';
+export * from './onboarding/tracks';
+export * from './onboarding/steps';
