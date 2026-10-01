@@ -1,0 +1,8 @@
+{
+    "code": "bravo",
+    "name": "Bravo",
+    "version": "1.0.0",
+    "phase": 1,
+    "priority": 100,
+    "dependencies": ["alpha"]
+}

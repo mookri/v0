@@ -1,0 +1,6 @@
+{
+    "code": "cycle_a",
+    "name": "Cycle A",
+    "version": "1.0.0",
+    "dependencies": ["cycle_b"]
+}

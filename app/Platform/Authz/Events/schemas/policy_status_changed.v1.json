@@ -1,0 +1,63 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "navdhya/platform/policy_status_changed.v1.json",
+    "title": "platform.policy.status_changed",
+    "description": "Emitted when a policy transitions draft|active|disabled (SEC-021, AC-T-0K01-01-3). Carries the full policy payload plus the from/to status.",
+    "type": "object",
+    "required": [
+        "policy_id", "name", "effect", "capability_selector",
+        "scope_bindings", "conditions", "priority", "status",
+        "version", "from_status", "to_status", "occurred_at"
+    ],
+    "properties": {
+        "policy_id": { "type": "string" },
+        "tenant_id": { "type": ["string", "null"] },
+        "name": { "type": "string" },
+        "description": { "type": ["string", "null"] },
+        "effect": { "enum": ["allow", "deny"] },
+        "capability_selector": {
+            "type": "object",
+            "required": ["module", "resource", "action"],
+            "properties": {
+                "module": { "type": "string" },
+                "resource": { "type": "string" },
+                "action": { "type": "string" }
+            },
+            "additionalProperties": false
+        },
+        "scope_bindings": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["scope_type", "scope_id"],
+                "properties": {
+                    "scope_type": { "type": "string" },
+                    "scope_id": { "type": "string" },
+                    "scope_mode": { "enum": ["SELF", "NODE", "DIRECT_CHILDREN", "SUBTREE"] }
+                },
+                "additionalProperties": false
+            }
+        },
+        "conditions": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["field", "operator", "value"],
+                "properties": {
+                    "field": { "enum": ["amount", "currency", "org", "time", "status"] },
+                    "operator": { "enum": ["eq", "neq", "gt", "gte", "lt", "lte", "in", "not_in"] },
+                    "value": {}
+                },
+                "additionalProperties": false
+            }
+        },
+        "priority": { "type": "integer", "minimum": -1000, "maximum": 1000 },
+        "status": { "enum": ["draft", "active", "disabled"] },
+        "version": { "type": "integer", "minimum": 1 },
+        "from_status": { "enum": ["draft", "active", "disabled"] },
+        "to_status": { "enum": ["draft", "active", "disabled"] },
+        "actor_id": { "type": ["string", "null"] },
+        "occurred_at": { "type": "string", "format": "date-time" }
+    },
+    "additionalProperties": false
+}

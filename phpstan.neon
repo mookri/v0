@@ -1,0 +1,23 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    # Baseline tracks pre-existing skeleton debt only (doc 14 gate table:
+    # baseline entries forbidden for new module code). The 16 entries are
+    # all app/Http scaffold debt predating Phase 0K. PHPStan 2.x includes
+    # the baseline as a neon file (the 1.x parameters.baselineFiles key
+    # was removed).
+    - phpstan-baseline.neon
+
+parameters:
+    # Doc 01 §7 / doc 14 §10: level 6 baseline at kernel start, ratcheting to 8.
+    level: 6
+    paths:
+        - app/
+        - config/
+        - routes/
+    tmpDir: storage/framework/phpstan
+    # Local PHP CLI ships with a 128M memory_limit; Larastan needs more
+    # (raised per analysis process via the bootstrap file — PHPStan 2.x
+    # removed the memoryLimit config key).
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+    treatPhpDocTypesAsCertain: false

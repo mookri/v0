@@ -1,0 +1,75 @@
+<?php
+
+namespace Tests\Platform\Authz;
+
+use Tests\TenantIntegrationTestCase;
+
+/**
+ * Role + assignment administration: tenant-scoped roles, grant/revoke on
+ * memberships with cross-link protection, issuer membership required.
+ */
+final class RoleAdminTest extends TenantIntegrationTestCase
+{
+    public function test_guests_are_denied(): void
+    {
+        $this->getJson('/api/v1/platform/roles?tenant_id=x')->assertUnauthorized();
+    }
+
+    public function test_roles_crud_and_assignment_lifecycle(): void
+    {
+        $tenant = $this->makeTenant();
+        [$issuer] = $this->actingAsMembership($tenant);
+        $tid = (string) $tenant->getKey();
+        $authed = fn () => $this->actingAs($issuer);
+
+        $authed()->getJson('/api/v1/platform/roles')->assertStatus(422);
+
+        $created = $authed()->postJson('/api/v1/platform/roles', [
+            'tenant_id' => $tid, 'code' => 'reviewer', 'name' => 'Reviewer',
+        ])->assertCreated();
+        $created->assertJsonPath('data.code', 'reviewer');
+
+        $authed()->postJson('/api/v1/platform/roles', [
+            'tenant_id' => $tid, 'code' => 'reviewer', 'name' => 'Dupe',
+        ])->assertStatus(409);
+
+        $listed = $authed()->getJson("/api/v1/platform/roles?tenant_id={$tid}")->assertOk();
+        $this->assertSame(['reviewer'], collect($listed->json('data'))->pluck('code')->all());
+
+        $member = \App\Models\User::factory()->create();
+        $membership = $this->makeMembership($tenant, $member);
+        $granted = $authed()->postJson("/api/v1/platform/memberships/{$membership->getKey()}/roles", [
+            'tenant_id' => $tid, 'role_code' => 'reviewer',
+        ])->assertCreated();
+        $assignmentId = $granted->json('data.id');
+
+        // Idempotent re-grant.
+        $authed()->postJson("/api/v1/platform/memberships/{$membership->getKey()}/roles", [
+            'tenant_id' => $tid, 'role_code' => 'reviewer',
+        ])->assertCreated();
+
+        // Unknown role fails closed.
+        $authed()->postJson("/api/v1/platform/memberships/{$membership->getKey()}/roles", [
+            'tenant_id' => $tid, 'role_code' => 'ghost',
+        ])->assertStatus(422);
+
+        // Cross-membership revoke path leaks nothing.
+        $other = $this->makeMembership($tenant);
+        $authed()->deleteJson(
+            "/api/v1/platform/memberships/{$other->getKey()}/roles/{$assignmentId}?tenant_id={$tid}"
+        )->assertNotFound();
+
+        $authed()->deleteJson("/api/v1/platform/memberships/{$membership->getKey()}/roles/{$assignmentId}?tenant_id={$tid}")
+            ->assertOk();
+    }
+
+    public function test_issuer_without_membership_is_denied(): void
+    {
+        $tenant = $this->makeTenant();
+        $outsider = \App\Models\User::factory()->create();
+
+        $this->actingAs($outsider)->postJson('/api/v1/platform/roles', [
+            'tenant_id' => (string) $tenant->getKey(), 'code' => 'x', 'name' => 'X',
+        ])->assertForbidden()->assertJsonPath('error.code', 'membership_inactive');
+    }
+}

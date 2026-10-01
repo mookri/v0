@@ -1,0 +1,73 @@
+# Navdhya layer enforcement (doc 01 §7).
+#
+# Rules:
+#   - Kernel (App\Platform) may depend on Support only — never on Modules.
+#   - Contracts are the only importable module surface: other modules and
+#     the kernel may use App\Modules\*\Contracts, nothing else.
+#   - ModuleCore/ModuleHttp may depend on Kernel, Support and Contracts.
+#   - Cross-module dependencies on non-Contracts layers (Module A -> Module B
+#     internals) are additionally enforced per-module by architecture tests
+#     (tests/Architecture), because a static config cannot express per-module
+#     layers until modules exist.
+#
+# Run: vendor/bin/deptrac analyse --no-cache
+# (deptrac 2.x: the 1.x `className` collector is now `classLike`)
+
+deptrac:
+    paths:
+        - ./app
+    exclude_files: []
+    layers:
+        - name: Kernel
+          collectors:
+              - type: classLike
+                value: ^App\\Platform\\.*
+        - name: Support
+          collectors:
+              - type: classLike
+                value: ^App\\Support\\.*
+        - name: Contracts
+          collectors:
+              - type: classLike
+                value: ^App\\Modules\\[A-Za-z0-9]+\\Contracts\\.*
+        - name: ModuleCore
+          collectors:
+              - type: classLike
+                value: ^App\\Modules\\[A-Za-z0-9]+\\(Domain|Events|Listeners|Jobs|Policies|Database)\\.*
+        - name: ModuleHttp
+          collectors:
+              - type: classLike
+                value: ^App\\Modules\\[A-Za-z0-9]+\\Http\\.*
+        - name: ModuleRoot
+          collectors:
+              - type: classLike
+                value: ^App\\Modules\\[A-Za-z0-9]+\\ModuleServiceProvider$
+        - name: AppShell
+          collectors:
+              - type: classLike
+                value: ^App\\(Http|Models|Providers)\\.*
+    ruleset:
+        Kernel:
+            - Support
+        Support: []
+        Contracts:
+            - Support
+        ModuleCore:
+            - Kernel
+            - Support
+            - Contracts
+        ModuleHttp:
+            - ModuleCore
+            - Kernel
+            - Support
+            - Contracts
+        ModuleRoot:
+            - Kernel
+            - Support
+            - Contracts
+            - ModuleCore
+            - ModuleHttp
+        AppShell:
+            - Kernel
+            - Support
+            - Contracts

@@ -1,0 +1,142 @@
+<?php
+
+namespace Tests;
+
+use App\Models\User;
+use App\Platform\Audit\AuditLog;
+use App\Platform\Authz\Models\MembershipRoleAssignment;
+use App\Platform\Authz\Models\Role;
+use App\Platform\Authz\Models\RolePermission;
+use App\Platform\Tenancy\Models\Tenant;
+use App\Platform\Tenancy\Models\TenantMembership;
+use App\Platform\Tenancy\TenantContext;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Assert as PHPUnit;
+
+/**
+ * Base class for kernel tests that touch the database (doc 02, doc 14 §3).
+ *
+ * RefreshDatabase runs the migrations on BOTH kernel connections (each
+ * migration declares its connection explicitly) and wraps every test in a
+ * transaction on each, so central + tenant_shared writes roll back
+ * together. Ships the actingAsMembership / grant / audit helpers promised
+ * by KernelTestCase.
+ */
+abstract class TenantIntegrationTestCase extends KernelTestCase
+{
+    use RefreshDatabase;
+
+    /**
+     * @var list<string>
+     */
+    protected $connectionsToTransact = ['central', 'tenant_shared'];
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    protected function makeTenant(array $attributes = []): Tenant
+    {
+        return Tenant::factory()->create($attributes);
+    }
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    protected function makeMembership(Tenant $tenant, ?User $user = null, array $attributes = []): TenantMembership
+    {
+        return TenantMembership::factory()->create([
+            'tenant_id' => $tenant->getKey(),
+            'user_id' => ($user ?? User::factory()->create())->id,
+            ...$attributes,
+        ]);
+    }
+
+    protected function resolveContext(Tenant $tenant, ?TenantMembership $membership = null): void
+    {
+        // Explicit scope transition: clear-then-set. Production code must
+        // never resolve twice without clearing (TenantContext enforces it).
+        app(TenantContext::class)->clear();
+        app(TenantContext::class)->set(
+            (string) $tenant->getKey(),
+            $membership !== null ? (string) $membership->getKey() : null,
+        );
+    }
+
+    protected function clearContext(): void
+    {
+        app(TenantContext::class)->clear();
+    }
+
+    /**
+     * Authenticate a user holding an active membership in the tenant,
+     * granted the given capability codes through a fresh role.
+     *
+     * @param  list<string>  $capabilities
+     * @return array{0: User, 1: TenantMembership}
+     */
+    protected function actingAsMembership(Tenant $tenant, array $capabilities = []): array
+    {
+        $user = User::factory()->create();
+        $membership = $this->makeMembership($tenant, $user);
+
+        if ($capabilities !== []) {
+            $this->grantCapabilities($tenant, $membership, $capabilities);
+        }
+
+        $this->actingAs($user);
+
+        return [$user, $membership];
+    }
+
+    /**
+     * @param  list<string>  $codes
+     */
+    protected function grantCapabilities(Tenant $tenant, TenantMembership $membership, array $codes): Role
+    {
+        $context = app(TenantContext::class);
+        $alreadyResolved = $context->isResolved();
+
+        if (! $alreadyResolved) {
+            $this->resolveContext($tenant, $membership);
+        }
+
+        $role = Role::factory()->create();
+
+        foreach ($codes as $code) {
+            RolePermission::create(['role_id' => $role->getKey(), 'capability_code' => $code]);
+        }
+
+        MembershipRoleAssignment::create([
+            'membership_id' => $membership->getKey(),
+            'role_id' => $role->getKey(),
+        ]);
+
+        if (! $alreadyResolved) {
+            $this->clearContext();
+        }
+
+        return $role;
+    }
+
+    protected function assertAuditRecorded(Tenant $tenant, string $action): void
+    {
+        $count = AuditLog::withoutGlobalScopes()
+            ->where('tenant_id', $tenant->getKey())
+            ->where('action', $action)
+            ->count();
+
+        PHPUnit::assertGreaterThan(
+            0,
+            $count,
+            sprintf("Expected an audit record with action '%s' for tenant %s.", $action, (string) $tenant->getKey()),
+        );
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function tenantHeaders(Tenant $tenant): array
+    {
+        return ['X-Tenant-Id' => (string) $tenant->getKey()];
+    }
+}

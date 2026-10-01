@@ -1,0 +1,270 @@
+# OpenAPI 3.1 fragment — catalog module (items + publish verb).
+openapi: 3.1.0
+info:
+  title: Navdhya Catalog — Items
+  version: 1.0.0
+paths:
+  /api/v1/catalog/items:
+    get:
+      operationId: listCatalogItems
+      summary: Cursor-paginated catalog items (optional status filter).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Item list.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+    post:
+      operationId: createCatalogItem
+      summary: Create a draft catalog item (SKU unique per tenant).
+      x-permission: catalog:item:manage
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sku, name]
+      responses:
+        '201':
+          description: Draft item.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, sku, name, status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '409':
+          description: Duplicate SKU.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/catalog/items/{id}:
+    get:
+      operationId: getCatalogItem
+      summary: Read one item (404 across tenant boundaries).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Item.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, sku, name, status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      operationId: updateCatalogItem
+      summary: Partial update (archived items immutable).
+      x-permission: catalog:item:manage
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                description: { type: string }
+                currency: { type: string }
+                price_minor: { type: integer }
+      responses:
+        '200':
+          description: Updated item.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, sku, name, status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/catalog/items/{id}/prices:
+    post:
+      operationId: setCatalogPrice
+      summary: Set a price (supersedes the open row for sku/market/currency).
+      x-permission: catalog:item:manage
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [currency, price_minor]
+              properties:
+                currency: { type: string }
+                price_minor: { type: integer }
+                market: { type: string }
+      responses:
+        '201':
+          description: Price row.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, sku, currency, price_minor]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/catalog/quote:
+    post:
+      operationId: quoteCatalogPrices
+      summary: Deterministic quote (unknown SKUs fail the whole quote).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [currency, lines]
+              properties:
+                currency: { type: string }
+                lines:
+                  type: array
+                  items:
+                    type: object
+                    required: [sku, quantity]
+      responses:
+        '200':
+          description: Quote totals in minor units.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, lines, total_minor, currency]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+        '409':
+          description: Archived items are immutable.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/catalog/items/{id}:publish:
+    post:
+      operationId: publishCatalogItem
+      summary: Publish a draft (explicit verb, never a flag flip).
+      x-permission: catalog:item:manage
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Active item.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, sku, name, status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+  /api/v1/catalog/items/{id}:archive:
+    post:
+      operationId: archiveCatalogItem
+      summary: Archive an item (terminal state).
+      x-permission: catalog:item:manage
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Archived item.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, sku, name, status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }

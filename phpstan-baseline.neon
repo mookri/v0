@@ -1,0 +1,91 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/ConfirmablePasswordController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/EmailVerificationPromptController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/NewPasswordController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/PasswordResetLinkController.php
+
+		-
+			message: '#^Parameter \#1 \$user of class Illuminate\\Auth\\Events\\Verified constructor expects Illuminate\\Contracts\\Auth\\MustVerifyEmail, App\\Models\\User\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/VerifyEmailController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\RoutingController\:\:index\(\) should return Illuminate\\Http\\Response but returns Illuminate\\Http\\RedirectResponse\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Http/Controllers/RoutingController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\RoutingController\:\:root\(\) has parameter \$first with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Http/Controllers/RoutingController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\RoutingController\:\:root\(\) should return Illuminate\\Http\\Response but returns Illuminate\\Contracts\\View\\Factory\|Illuminate\\View\\View\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Http/Controllers/RoutingController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\RoutingController\:\:secondLevel\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/RoutingController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\RoutingController\:\:secondLevel\(\) has parameter \$first with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Http/Controllers/RoutingController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\RoutingController\:\:secondLevel\(\) has parameter \$second with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Http/Controllers/RoutingController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\RoutingController\:\:thirdLevel\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/RoutingController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\RoutingController\:\:thirdLevel\(\) has parameter \$first with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Http/Controllers/RoutingController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\RoutingController\:\:thirdLevel\(\) has parameter \$second with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Http/Controllers/RoutingController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\RoutingController\:\:thirdLevel\(\) has parameter \$third with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Http/Controllers/RoutingController.php

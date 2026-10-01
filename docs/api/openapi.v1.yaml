@@ -1,0 +1,1412 @@
+openapi: 3.1.0
+info:
+  title: 'Navdhya Platform API'
+  version: 1.0.0
+paths:
+  /api/v1/authz/explain:
+    get:
+      operationId: explainAuthorization
+      summary: 'Restricted SEC-022 precedence-chain trace (requires platform:authz:explain)'
+      x-permission: 'platform:authz:explain'
+      description: "Returns the full chain trace (K-013 AuthorizationDecision) for one membership + capability. Principals are only visible within the caller's own tenant; anything else is 403 authorization_denied (AC-T-0K01-02-4). Evaluation bypasses the decision cache."
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: membership_id
+          in: query
+          required: true
+          schema:
+            type: string
+        -
+          name: capability
+          in: query
+          required: true
+          schema:
+            type: string
+        -
+          name: amount
+          in: query
+          schema:
+            type: number
+        -
+          name: currency
+          in: query
+          schema:
+            type: string
+            pattern: '^[A-Z]{3}$'
+        -
+          name: org
+          in: query
+          schema:
+            type: string
+            maxLength: 64
+        -
+          name: time
+          in: query
+          schema:
+            type: string
+        -
+          name: status
+          in: query
+          schema:
+            type: string
+            maxLength: 64
+      responses:
+        200:
+          description: 'Full precedence-chain trace'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { $ref: '#/components/schemas/AuthorizationDecision' }
+                  meta: { type: object, properties: { request_id: { type: string } } }
+        403:
+          $ref: '#/components/responses/AuthorizationDenied'
+        422:
+          $ref: '#/components/responses/ValidationFailed'
+  /api/v1/catalog/items:
+    get:
+      operationId: listCatalogItems
+      summary: 'Cursor-paginated catalog items (optional status filter).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          $ref: '#/components/parameters/Limit'
+        -
+          $ref: '#/components/parameters/Cursor'
+      responses:
+        200:
+          description: 'Item list.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+    post:
+      operationId: createCatalogItem
+      summary: 'Create a draft catalog item (SKU unique per tenant).'
+      x-permission: 'catalog:item:manage'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - sku
+                - name
+      responses:
+        201:
+          description: 'Draft item.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, sku, name, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        409:
+          description: 'Duplicate SKU.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  '/api/v1/catalog/items/{id}':
+    get:
+      operationId: getCatalogItem
+      summary: 'Read one item (404 across tenant boundaries).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: Item.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, sku, name, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateCatalogItem
+      summary: 'Partial update (archived items immutable).'
+      x-permission: 'catalog:item:manage'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                currency:
+                  type: string
+                price_minor:
+                  type: integer
+      responses:
+        200:
+          description: 'Updated item.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, sku, name, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  '/api/v1/catalog/items/{id}/prices':
+    post:
+      operationId: setCatalogPrice
+      summary: 'Set a price (supersedes the open row for sku/market/currency).'
+      x-permission: 'catalog:item:manage'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - currency
+                - price_minor
+              properties:
+                currency:
+                  type: string
+                price_minor:
+                  type: integer
+                market:
+                  type: string
+      responses:
+        201:
+          description: 'Price row.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, sku, currency, price_minor] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  '/api/v1/catalog/items/{id}:archive':
+    post:
+      operationId: archiveCatalogItem
+      summary: 'Archive an item (terminal state).'
+      x-permission: 'catalog:item:manage'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: 'Archived item.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, sku, name, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  '/api/v1/catalog/items/{id}:publish':
+    post:
+      operationId: publishCatalogItem
+      summary: 'Publish a draft (explicit verb, never a flag flip).'
+      x-permission: 'catalog:item:manage'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: 'Active item.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, sku, name, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/catalog/quote:
+    post:
+      operationId: quoteCatalogPrices
+      summary: 'Deterministic quote (unknown SKUs fail the whole quote).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - currency
+                - lines
+              properties:
+                currency:
+                  type: string
+                lines:
+                  type: array
+                  items: { type: object, required: [sku, quantity] }
+      responses:
+        200:
+          description: 'Quote totals in minor units.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, lines, total_minor, currency] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        422:
+          $ref: '#/components/responses/ValidationFailed'
+        409:
+          description: 'Archived items are immutable.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/identity/invites:
+    post:
+      operationId: issueInvite
+      x-gate: ownership
+      summary: 'Issue a track-scoped invite (token shown once).'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tenant_id
+                - track
+                - identifier
+              properties:
+                tenant_id:
+                  $ref: '#/components/schemas/Ulid'
+                track:
+                  type: string
+                  enum: [pandit, partner-vendor, partner-individual, customer, staff]
+                identifier:
+                  type: string
+                roles:
+                  type: array
+                  items: { type: string }
+                ttl_hours:
+                  type: integer
+                  minimum: 1
+                  maximum: 168
+      responses:
+        201:
+          description: 'Issued invite with one-time token.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, token, expires_at] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        422:
+          $ref: '#/components/responses/ValidationFailed'
+        429:
+          description: 'Too many invites.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  '/api/v1/identity/invites/{id}:revoke':
+    post:
+      operationId: revokeInvite
+      x-gate: ownership
+      summary: 'Revoke an invite before acceptance.'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: Revoked.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, state] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  '/api/v1/identity/invites:accept':
+    post:
+      operationId: acceptInvite
+      x-gate: public
+      summary: 'Accept an invite (public; token is the credential).'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+      responses:
+        200:
+          description: 'Acceptance with user, membership and seed.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, user_id, membership_id] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/identity/profile:
+    get:
+      operationId: getOwnProfile
+      x-gate: ownership
+      summary: "Read the caller's profile."
+      responses:
+        200:
+          description: Profile.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, name, email, email_verified], properties: { id: { type: integer }, object: { type: string, enum: [user_profile] }, name: { type: string }, email: { type: string, format: email }, email_verified: { type: boolean } } }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        401:
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    patch:
+      operationId: updateOwnProfile
+      x-gate: ownership
+      summary: 'Update own display name (unknown fields rejected).'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  maxLength: 255
+      responses:
+        200:
+          description: 'Updated profile.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, name, email, email_verified], properties: { id: { type: integer }, object: { type: string, enum: [user_profile] }, name: { type: string }, email: { type: string, format: email }, email_verified: { type: boolean } } }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        422:
+          $ref: '#/components/responses/ValidationFailed'
+  /api/v1/identity/sessions:
+    get:
+      operationId: listOwnSessions
+      x-gate: ownership
+      summary: 'List own web sessions with current marker.'
+      responses:
+        200:
+          description: 'Session inventory.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array, items: { type: object, required: [id, object, current], properties: { id: { type: string }, object: { type: string, enum: [user_session] }, current: { type: boolean } } } }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  '/api/v1/identity/sessions:revoke-others':
+    post:
+      operationId: revokeOtherSessions
+      x-gate: ownership
+      summary: 'Revoke all sessions except the current one.'
+      responses:
+        200:
+          description: 'Revocation count.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, revoked], properties: { object: { type: string, enum: [session_revocation] }, revoked: { type: integer } } }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/onboarding/applications:
+    post:
+      operationId: startApplication
+      summary: 'Start a partner application on a version-pinned track.'
+      x-permission: 'onboarding:application:create'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - track
+              properties:
+                track:
+                  type: string
+                  enum: [pandit, partner-vendor, partner-individual]
+      responses:
+        201:
+          description: 'Draft application.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, track, track_version, status], properties: { id: { $ref: '#/components/schemas/Ulid' }, object: { type: string, enum: [partner_application] }, track: { type: string }, track_version: { type: string }, status: { type: string } } }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        422:
+          $ref: '#/components/responses/ValidationFailed'
+  '/api/v1/onboarding/applications/{id}':
+    get:
+      operationId: getApplication
+      summary: 'Read own application (ownership enforced).'
+      x-permission: 'onboarding:application:view'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: Application.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, track, track_version, status], properties: { id: { $ref: '#/components/schemas/Ulid' }, object: { type: string, enum: [partner_application] }, track: { type: string }, track_version: { type: string }, status: { type: string } } }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  '/api/v1/onboarding/applications/{id}/documents':
+    post:
+      operationId: uploadApplicationDocument
+      summary: 'Upload a document (multipart, 10MB cap).'
+      x-permission: 'onboarding:application:create'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - kind
+                - file
+      responses:
+        201:
+          description: 'Stored document metadata.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, kind, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  '/api/v1/onboarding/applications/{id}/status':
+    get:
+      operationId: getApplicationStatus
+      summary: 'Application state, needs and documents.'
+      x-permission: 'onboarding:application:view'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: 'Status view.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  '/api/v1/onboarding/applications/{id}/step/{step}':
+    put:
+      operationId: saveApplicationStep
+      summary: 'Save draft evidence for one step (idempotent).'
+      x-permission: 'onboarding:application:create'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+        -
+          name: step
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - value
+      responses:
+        200:
+          description: 'Saved step.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, step, saved] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+        422:
+          $ref: '#/components/responses/ValidationFailed'
+  '/api/v1/onboarding/applications/{id}/submit':
+    post:
+      operationId: beginApplicationSubmit
+      summary: 'Validate draft and issue an OTP challenge.'
+      x-permission: 'onboarding:application:submit'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: 'Challenge issued.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, challenge_id] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        422:
+          $ref: '#/components/responses/ValidationFailed'
+  '/api/v1/onboarding/applications/{id}/submit/confirm':
+    post:
+      operationId: confirmApplicationSubmit
+      summary: 'Verify the OTP challenge and transition to SUBMITTED.'
+      x-permission: 'onboarding:application:submit'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - challenge_id
+                - code
+      responses:
+        200:
+          description: Submitted.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/onboarding/review/queue:
+    get:
+      operationId: listReviewQueue
+      summary: 'SLA-flagged review queue (reviewer capability).'
+      x-permission: 'onboarding:review:view'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      responses:
+        200:
+          description: 'Queue items.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  '/api/v1/onboarding/review/{id}:approve':
+    post:
+      operationId: approveApplication
+      summary: 'Approve an application (audited).'
+      x-permission: 'onboarding:review:approve'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: Approved.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, status, review_id] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  '/api/v1/onboarding/review/{id}:reject':
+    post:
+      operationId: rejectApplication
+      summary: 'Reject with reason + countersignature (audited).'
+      x-permission: 'onboarding:review:reject'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - reason_code
+                - second_reviewer
+      responses:
+        200:
+          description: Rejected.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, status, review_id] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  '/api/v1/onboarding/review/{id}:request-info':
+    post:
+      operationId: requestApplicationInfo
+      summary: 'Return to draft with needs preserved.'
+      x-permission: 'onboarding:review:view'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: 'Returned to draft.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, status, review_id] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  '/api/v1/platform/memberships/{membershipId}/roles':
+    post:
+      operationId: grantMembershipRole
+      x-gate: ownership
+      summary: 'Grant a role to a membership (idempotent).'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: membershipId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tenant_id
+                - role_code
+      responses:
+        201:
+          description: 'Granted assignment.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, membership_id, role_code] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  '/api/v1/platform/memberships/{membershipId}/roles/{assignmentId}':
+    delete:
+      operationId: revokeMembershipRole
+      x-gate: ownership
+      summary: 'Revoke a role assignment (link-checked).'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: membershipId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+        -
+          name: assignmentId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: Revoked.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, revoked] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  /api/v1/platform/roles:
+    get:
+      operationId: listRoles
+      x-gate: ownership
+      summary: 'List tenant roles (tenant_id query required).'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      responses:
+        200:
+          description: Roles.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+    post:
+      operationId: createRole
+      x-gate: ownership
+      summary: 'Create a tenant role.'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tenant_id
+                - code
+                - name
+      responses:
+        201:
+          description: 'Created role.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, code, name, state] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/platform/tenants:
+    get:
+      operationId: listOwnTenantMemberships
+      x-gate: ownership
+      summary: "List the caller's tenant memberships"
+      responses:
+        200:
+          description: 'Memberships with tenant summaries.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array, items: { type: object, required: [id, object, state, tenant], properties: { id: { $ref: '#/components/schemas/Ulid' }, object: { type: string, enum: [tenant_membership] }, state: { type: string, enum: [active, suspended, expired] }, tenant: { type: object, required: [id, slug, name, status], properties: { id: { $ref: '#/components/schemas/Ulid' }, slug: { type: string }, name: { type: string }, status: { type: string } } } } } }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        401:
+          description: Unauthenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/platform/users:
+    get:
+      operationId: listTenantUsers
+      summary: 'List tenant users via memberships (tenant_id query required).'
+      x-permission: 'platform:user:view'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      responses:
+        200:
+          description: 'Users with membership states.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  '/api/v1/platform/users/{id}:activate':
+    post:
+      operationId: activateUser
+      summary: 'Restore a suspended user to active.'
+      x-permission: 'platform:user:manage'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tenant_id
+      responses:
+        200:
+          description: 'Activated user.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  '/api/v1/platform/users/{id}:suspend':
+    post:
+      operationId: suspendUser
+      summary: 'Suspend a user (deactivated is terminal and excluded).'
+      x-permission: 'platform:user:manage'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tenant_id
+      responses:
+        200:
+          description: 'Suspended user.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  /api/v1/policies:
+    get:
+      operationId: listPolicies
+      summary: 'List policies (tenant rows + platform defaults)'
+      x-permission: 'platform:policy:view'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          $ref: '#/components/parameters/Limit'
+        -
+          $ref: '#/components/parameters/Cursor'
+        -
+          name: status
+          in: query
+          schema:
+            enum:
+              - draft
+              - active
+              - disabled
+        -
+          name: effect
+          in: query
+          schema:
+            enum:
+              - allow
+              - deny
+      responses:
+        200:
+          description: 'Cursor-paginated policy list (doc 06 §3.3)'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/Policy' } }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        403:
+          $ref: '#/components/responses/AuthorizationDenied'
+    post:
+      operationId: createPolicy
+      summary: 'Create a tenant policy (requires platform:policy:configure)'
+      x-permission: 'platform:policy:configure'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PolicyInput'
+      responses:
+        201:
+          description: 'Created policy (status=draft, version=1)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyEnvelope'
+        409:
+          $ref: '#/components/responses/Conflict'
+        422:
+          $ref: '#/components/responses/ValidationFailed'
+  '/api/v1/policies/{policy}':
+    parameters:
+      -
+        $ref: '#/components/parameters/TenantId'
+      -
+        name: policy
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+    get:
+      operationId: getPolicy
+      summary: 'Read one policy (404 across tenant boundaries)'
+      x-permission: 'platform:policy:view'
+      responses:
+        200:
+          description: 'The policy'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyEnvelope'
+        404:
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updatePolicy
+      summary: 'Partial update; version bumps; platform defaults are read-only'
+      x-permission: 'platform:policy:configure'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PolicyInput'
+      responses:
+        200:
+          description: 'Updated policy'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyEnvelope'
+        403:
+          $ref: '#/components/responses/AuthorizationDenied'
+        404:
+          $ref: '#/components/responses/NotFound'
+        409:
+          $ref: '#/components/responses/Conflict'
+        422:
+          $ref: '#/components/responses/ValidationFailed'
+  '/api/v1/policies/{policy}:activate':
+    post:
+      operationId: activatePolicy
+      summary: 'Transition draft|disabled -> active'
+      x-permission: 'platform:policy:configure'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: policy
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'Activated policy'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyEnvelope'
+        409:
+          $ref: '#/components/responses/StateForbidden'
+  '/api/v1/policies/{policy}:disable':
+    post:
+      operationId: disablePolicy
+      summary: 'Transition draft|active -> disabled'
+      x-permission: 'platform:policy:configure'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: policy
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'Disabled policy'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyEnvelope'
+        409:
+          $ref: '#/components/responses/StateForbidden'
+components:
+  parameters:
+    TenantId:
+      name: X-Tenant-Id
+      in: header
+      required: true
+      schema:
+        type: string
+        pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+      description: 'Tenant ULID; required on every tenant-scoped call.'
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+    Cursor:
+      name: cursor
+      in: query
+      schema:
+        type: string
+      description: 'Opaque base64 cursor; offset pagination is banned.'
+  schemas:
+    Ulid:
+      type: string
+      pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+    Timestamp:
+      type: string
+      format: date-time
+      example: '2026-08-24T10:15:30.123Z'
+    Money:
+      type: object
+      required:
+        - amount
+        - currency
+      properties:
+        amount:
+          type: string
+          pattern: '^-?[0-9]+\.[0-9]{2}$'
+          example: '15499.00'
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          example: INR
+    ErrorEnvelope:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+            - request_id
+          properties:
+            code:
+              type: string
+              example: permission_missing
+            message:
+              type: string
+            details:
+              type: object
+            request_id:
+              type: string
+    ListMeta:
+      type: object
+      required:
+        - request_id
+        - page
+      properties:
+        request_id:
+          type: string
+        page:
+          type: object
+          required:
+            - limit
+            - has_more
+          properties:
+            limit:
+              type: integer
+            has_more:
+              type: boolean
+            next_cursor:
+              type: string
+              nullable: true
+  responses:
+    AuthorizationDenied:
+      description: 'Missing permission or scope.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    ValidationFailed:
+      description: 'Semantic validation failure.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    Conflict:
+      description: 'State or idempotency conflict.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotFound:
+      description: 'Absent or outside tenant scope (no existence leakage).'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'

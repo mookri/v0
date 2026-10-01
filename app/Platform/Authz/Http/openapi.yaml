@@ -1,0 +1,299 @@
+# OpenAPI 3.1 fragment — platform kernel policy admin surface
+# (SEC-021, T-0K01-01.4) + restricted authorization explain surface
+# (SEC-022, T-0K01-02.3). Merged into docs/api/openapi.v1.yaml by
+# api:compose once that command lands; kept contract-first per doc 06 §8.
+openapi: 3.1.0
+info:
+  title: Navdhya Platform Kernel — Policies
+  version: 1.0.0
+paths:
+  /api/v1/policies:
+    get:
+      operationId: listPolicies
+      summary: List policies (tenant rows + platform defaults)
+      x-permission: platform:policy:view
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          schema: { enum: [draft, active, disabled] }
+        - name: effect
+          in: query
+          schema: { enum: [allow, deny] }
+      responses:
+        '200':
+          description: Cursor-paginated policy list (doc 06 §3.3)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/Policy' } }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+    post:
+      operationId: createPolicy
+      summary: Create a tenant policy (requires platform:policy:configure)
+      x-permission: platform:policy:configure
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PolicyInput' }
+      responses:
+        '201':
+          description: Created policy (status=draft, version=1)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PolicyEnvelope' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/policies/{policy}:
+    parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - name: policy
+        in: path
+        required: true
+        schema: { type: string, pattern: '^[0-9A-HJKMNP-TV-Z]{26}$' }
+    get:
+      operationId: getPolicy
+      summary: Read one policy (404 across tenant boundaries)
+      x-permission: platform:policy:view
+      responses:
+        '200':
+          description: The policy
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PolicyEnvelope' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      operationId: updatePolicy
+      summary: Partial update; version bumps; platform defaults are read-only
+      x-permission: platform:policy:configure
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PolicyInput' }
+      responses:
+        '200':
+          description: Updated policy
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PolicyEnvelope' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/policies/{policy}:activate:
+    post:
+      operationId: activatePolicy
+      summary: Transition draft|disabled -> active
+      x-permission: platform:policy:configure
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: policy
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Activated policy, content: { application/json: { schema: { $ref: '#/components/schemas/PolicyEnvelope' } } } }
+        '409': { $ref: '#/components/responses/StateForbidden' }
+  /api/v1/policies/{policy}:disable:
+    post:
+      operationId: disablePolicy
+      summary: Transition draft|active -> disabled
+      x-permission: platform:policy:configure
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: policy
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Disabled policy, content: { application/json: { schema: { $ref: '#/components/schemas/PolicyEnvelope' } } } }
+        '409': { $ref: '#/components/responses/StateForbidden' }
+  /api/v1/authz/explain:
+    get:
+      operationId: explainAuthorization
+      summary: Restricted SEC-022 precedence-chain trace (requires platform:authz:explain)
+      x-permission: platform:authz:explain
+      description: >-
+        Returns the full chain trace (K-013 AuthorizationDecision) for one
+        membership + capability. Principals are only visible within the
+        caller's own tenant; anything else is 403 authorization_denied
+        (AC-T-0K01-02-4). Evaluation bypasses the decision cache.
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: membership_id
+          in: query
+          required: true
+          schema: { type: string }
+        - name: capability
+          in: query
+          required: true
+          schema: { type: string }
+        - name: amount
+          in: query
+          schema: { type: number }
+        - name: currency
+          in: query
+          schema: { type: string, pattern: '^[A-Z]{3}$' }
+        - name: org
+          in: query
+          schema: { type: string, maxLength: 64 }
+        - name: time
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string, maxLength: 64 }
+      responses:
+        '200':
+          description: Full precedence-chain trace
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { $ref: '#/components/schemas/AuthorizationDecision' }
+                  meta: { type: object, properties: { request_id: { type: string } } }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+components:
+  parameters:
+    TenantId:
+      name: X-Tenant-Id
+      in: header
+      required: true
+      schema: { type: string }
+    Limit:
+      name: limit
+      in: query
+      schema: { type: integer, default: 25, minimum: 1, maximum: 100 }
+    Cursor:
+      name: cursor
+      in: query
+      schema: { type: string }
+  schemas:
+    CapabilitySelector:
+      type: object
+      required: [module, resource, action]
+      properties:
+        module: { type: string, pattern: '^(\*|[a-z][a-z0-9_]*)$' }
+        resource: { type: string, pattern: '^(\*|[a-z][a-z0-9_]*)$' }
+        action: { type: string, pattern: '^(\*|[a-z][a-z0-9_]*)$' }
+      additionalProperties: false
+    ScopeBinding:
+      type: object
+      required: [scope_type, scope_id]
+      properties:
+        scope_type: { type: string, pattern: '^[a-z][a-z0-9_]*$' }
+        scope_id: { type: string, maxLength: 64 }
+        scope_mode: { enum: [SELF, NODE, DIRECT_CHILDREN, SUBTREE] }
+      additionalProperties: false
+    Condition:
+      type: object
+      required: [field, operator, value]
+      properties:
+        field: { enum: [amount, currency, org, time, status] }
+        operator: { enum: [eq, neq, gt, gte, lt, lte, in, not_in] }
+        value: {}
+      additionalProperties: false
+    PolicyInput:
+      type: object
+      required: [name, effect, capability_selector]
+      properties:
+        name: { type: string, maxLength: 120 }
+        description: { type: [string, 'null'], maxLength: 2000 }
+        effect: { enum: [allow, deny] }
+        capability_selector: { $ref: '#/components/schemas/CapabilitySelector' }
+        scope_bindings: { type: array, maxItems: 20, items: { $ref: '#/components/schemas/ScopeBinding' } }
+        conditions: { type: array, maxItems: 20, items: { $ref: '#/components/schemas/Condition' } }
+        priority: { type: integer, minimum: -1000, maximum: 1000 }
+      additionalProperties: false
+    Policy:
+      allOf:
+        - $ref: '#/components/schemas/PolicyInput'
+        - type: object
+          required: [id, object, status, version, created_at, updated_at]
+          properties:
+            id: { type: string }
+            object: { const: policy }
+            tenant_id: { type: [string, 'null'] }
+            status: { enum: [draft, active, disabled] }
+            version: { type: integer, minimum: 1 }
+            created_at: { type: [string, 'null'], format: date-time }
+            updated_at: { type: [string, 'null'], format: date-time }
+    AuthorizationDecision:
+      type: object
+      required: [object, decision, deciding_stage, capability, evaluated_policies, stages, cached, logged]
+      properties:
+        object: { const: authz_decision }
+        decision: { enum: [allow, deny] }
+        deciding_stage: { enum: [explicit_deny, security_constraint, policy_constraint, allow_grant, default_deny, forged_context] }
+        capability: { type: string }
+        principal_id: { type: [string, 'null'] }
+        evaluated_policies: { type: array, items: { type: string } }
+        stages:
+          type: array
+          items:
+            type: object
+            required: [stage, outcome]
+            properties:
+              stage: { type: string }
+              outcome: { type: string }
+              reason: { type: [string, 'null'] }
+              details: { type: object }
+        cached: { type: boolean }
+        logged: { type: boolean }
+    PolicyEnvelope:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { $ref: '#/components/schemas/Policy' }
+        meta: { type: object, properties: { request_id: { type: string } } }
+    ListMeta:
+      type: object
+      properties:
+        request_id: { type: string }
+        page:
+          type: object
+          properties:
+            limit: { type: integer }
+            has_more: { type: boolean }
+            next_cursor: { type: [string, 'null'] }
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, details, request_id]
+          properties:
+            code: { type: string }
+            message: { type: string }
+            details: { type: object }
+            request_id: { type: string }
+  responses:
+    AuthorizationDenied:
+      description: Capability not granted (SEC-022 floor)
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    Conflict:
+      description: Name conflict (409 conflict)
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    StateForbidden:
+      description: Illegal status transition (409 state_forbidden)
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    NotFound:
+      description: Absent or outside tenant scope
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    ValidationFailed:
+      description: Grammar violation (422 validation_failed)
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
