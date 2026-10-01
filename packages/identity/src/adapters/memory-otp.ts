@@ -22,6 +22,10 @@ export class MemoryOtpProvider implements OtpProvider {
   private seq = 0;
 
   protected generateCode(length: number, challengeId: string): string {
+    // Staging drill backdoor: fixed code when explicitly enabled. Never set
+    // in production (no default, env-only, documented in staging-deploy).
+    const drill = process.env['DRILL_OTP_CODE'];
+    if (drill) return drill.slice(0, length).padStart(length, '0');
     void challengeId;
     return randomCode(length);
   }

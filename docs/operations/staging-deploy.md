@@ -45,3 +45,6 @@ Status: matrix documented; deploy run pending (see `migration-status.yaml`
   `outputFileTracingRoot` pinned (stray lockfile above repo).
 - Environment notes for real staging: pin node 20.x (`.nvmrc`); deploy
   pipelines keep default `standalone` output.
+- Drill backdoors (staging only, never production): `SEED_DEV_IDENTITY=1`
+  (+ `SEED_DEV_PROOF`) seeds a customer dev login; `DRILL_OTP_CODE=123456`
+  makes OTP challenges issue that code for the partner submit drill.

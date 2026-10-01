@@ -79,6 +79,14 @@ test('shared queue helper scopes and flags consistently with the route', async (
   expect(items.find((i) => i.id === 'rq_1')?.slaBreached).toBe(false);
 });
 
+test('first reviewer touch auto-triages SUBMITTED into review', async () => {
+  const id = await seed('SUBMITTED', 'ra_triage');
+  const res = await decide(reqScoped('POST', `${BASE}/api/review/${id}/decision`, 'r1', ['reviewer'], 'in', { decision: 'APPROVED' }), {
+    params: Promise.resolve({ id }),
+  });
+  expect(res.status).toBe(200);
+});
+
 test('approve flows; rejections need countersign + reason; audit appended', async () => {
   const id = await seed('UNDER_REVIEW', 'ra_2');
   const approve = await decide(req('POST', `${BASE}/api/review/${id}/decision`, 'r1', ['reviewer'], { decision: 'APPROVED' }), {
@@ -86,6 +94,8 @@ test('approve flows; rejections need countersign + reason; audit appended', asyn
   });
   expect(approve.status).toBe(200);
   expect((await reviewAudit.listByApplication(id)).map((r) => r.decision)).toEqual(['APPROVED']);
+  const approvedBody = (await approve.json()) as { data: { activated: { partnerId: string; eligible: boolean } } };
+  expect(approvedBody.data.activated).toEqual({ partnerId: 'p_p1', eligible: true });
 
   const id2 = await seed('UNDER_REVIEW', 'ra_3');
   const naked = await decide(req('POST', `${BASE}/api/review/${id2}/decision`, 'r1', ['reviewer'], { decision: 'REJECTED' }), {

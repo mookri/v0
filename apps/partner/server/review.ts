@@ -1,4 +1,5 @@
 import { MemoryReviewAuditStore } from '@navdhya/partner/src/adapters/memory-review-audit';
+import { MemoryPartnerRepository } from '@navdhya/partner/src/adapters/memory-partners';
 import { onboardingApps } from '@/server/onboarding';
 import { getTrackDefinition } from '@navdhya/partner/src/onboarding/tracks';
 import { reviewSlaStatus } from '@navdhya/partner/src/application/review-sla';
@@ -6,6 +7,7 @@ import { ApplicationStatus } from '@navdhya/partner/src/domain/partner-applicati
 
 // Review audit composition (single-instance staging; shared store later).
 export const reviewAudit = new MemoryReviewAuditStore();
+export const reviewPartners = new MemoryPartnerRepository();
 
 export function isReviewer(roles: string[]): boolean {
   return roles.includes('reviewer') || roles.includes('admin');

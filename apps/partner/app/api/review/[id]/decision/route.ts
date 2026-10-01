@@ -1,9 +1,10 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
 import { onboardingActors, onboardingApps } from '@/server/onboarding';
-import { reviewAudit, isReviewer } from '@/server/review';
+import { reviewAudit, reviewPartners, isReviewer } from '@/server/review';
 import { headersToRecord } from '@/application/actor';
 import { assertSameTenant } from '@navdhya/identity/src/ports/actor-resolver';
 import { reviewApplication, ReviewDecision } from '@navdhya/partner/src/application/review';
+import { activateOnApproval } from '@navdhya/partner/src/application/activation';
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const requestId = newRequestId();
@@ -35,7 +36,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   }
   const nowIso = new Date().toISOString();
   try {
-    const { application, record } = reviewApplication(app, {
+    // Auto-triage: first reviewer touch claims the application into review.
+    const reviewable =
+      app.status === 'SUBMITTED' ? { ...app, status: 'UNDER_REVIEW' as const } : app;
+    if (reviewable !== app) await onboardingApps.update(reviewable);
+    const { application, record } = reviewApplication(reviewable, {
       decision: body.decision,
       reviewerId: actor.userId,
       reasonCode: body.reasonCode,
@@ -44,7 +49,20 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     });
     await onboardingApps.update(application);
     await reviewAudit.append(record);
-    return Response.json(ok({ applicationId: id, status: application.status, reviewId: record.id }, requestId));
+    let activated: { partnerId: string; eligible: boolean } | null = null;
+    if (application.status === 'APPROVED') {
+      const result = await activateOnApproval(
+        { partners: reviewPartners },
+        {
+          identityId: application.identityId,
+          type: application.type,
+          partnerId: `p_${application.identityId}`,
+          nowIso,
+        },
+      );
+      activated = { partnerId: result.partner.id, eligible: result.eligible };
+    }
+    return Response.json(ok({ applicationId: id, status: application.status, reviewId: record.id, activated }, requestId));
   } catch (e) {
     const code = e instanceof Error ? e.message : '';
     if (code.startsWith('REVIEW_INVALID_STATE')) {

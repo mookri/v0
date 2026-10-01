@@ -125,6 +125,14 @@ Queue logic shared between route and pages via `getReviewQueue`
 (no loopback HTTP). English-only v1 (internal tool, documented);
 decision form posts reason codes + countersign to the decision API.
 
+## Staging proof (done 2026-10-01, logged in `cutover-log.md`)
+
+Live drill against the production build (`DRILL_OTP_CODE` backdoor):
+start → 7 step PUTs → submit → wrong-code 401 → confirm SUBMITTED →
+queue (SLA live) → approve → `activated: {eligible: true}` → status
+APPROVED. The drill caught a real gap first (no SUBMITTED→review path);
+fixed via auto-triage on first reviewer touch, covered by test.
+
 ## Remaining
 
 OTP port + two-phase submit · `OnboardingRepository` port + memory
