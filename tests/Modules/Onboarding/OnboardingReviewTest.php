@@ -42,16 +42,10 @@ final class FakeReviewOtpCodes implements OtpCodeGenerator
 final class OnboardingReviewTest extends TenantIntegrationTestCase
 {
     /**
-     * @param list<string> $reviewerCaps
-     * @return array{0: Tenant, 1: User, 2: string}
+     * Submit one fully-evidenced application for the given applicant.
      */
-    private function submittedApp(array $reviewerCaps): array
+    private function submitOne(Tenant $tenant, User $applicant, FakeReviewOtpCodes $codes): string
     {
-        $codes = new FakeReviewOtpCodes();
-        $this->app->singleton(OtpService::class, static fn (): OtpService => new OtpService($codes));
-
-        $tenant = $this->makeTenant();
-        [$applicant] = $this->actingAsMembership($tenant);
         $started = $this->actingAs($applicant)->postJson(
             '/api/v1/onboarding/applications',
             ['track' => 'pandit'],
@@ -85,6 +79,22 @@ final class OnboardingReviewTest extends TenantIntegrationTestCase
             ['challenge_id' => $challengeId, 'code' => $codes->lastFor($challengeId)],
             $this->tenantHeaders($tenant)
         )->assertOk();
+
+        return $id;
+    }
+
+    /**
+     * @param list<string> $reviewerCaps
+     * @return array{0: Tenant, 1: User, 2: string}
+     */
+    private function submittedApp(array $reviewerCaps): array
+    {
+        $codes = new FakeReviewOtpCodes();
+        $this->app->singleton(OtpService::class, static fn (): OtpService => new OtpService($codes));
+
+        $tenant = $this->makeTenant();
+        [$applicant] = $this->actingAsMembership($tenant);
+        $id = $this->submitOne($tenant, $applicant, $codes);
 
         $reviewer = User::factory()->create();
         $membership = $this->makeMembership($tenant, $reviewer);
@@ -156,5 +166,77 @@ final class OnboardingReviewTest extends TenantIntegrationTestCase
         $this->actingAs($reviewer)->postJson("/api/v1/onboarding/review/{$id}:request-info", [], $this->tenantHeaders($tenant))
             ->assertOk()
             ->assertJsonPath('data.status', 'DRAFT');
+    }
+
+    public function test_queue_paginates_with_cursor(): void
+    {
+        $codes = new FakeReviewOtpCodes();
+        $this->app->singleton(OtpService::class, static fn (): OtpService => new OtpService($codes));
+
+        $tenant = $this->makeTenant();
+        [$applicant] = $this->actingAsMembership($tenant);
+        $ids = [
+            $this->submitOne($tenant, $applicant, $codes),
+            $this->submitOne($tenant, $applicant, $codes),
+            $this->submitOne($tenant, $applicant, $codes),
+        ];
+
+        $reviewer = User::factory()->create();
+        $membership = $this->makeMembership($tenant, $reviewer);
+        $this->grantCapabilities($tenant, $membership, ['onboarding:review:view']);
+        $headers = $this->tenantHeaders($tenant);
+        $actor = fn () => $this->actingAs($reviewer);
+
+        $first = $actor()->getJson('/api/v1/onboarding/review/queue?limit=2', $headers)->assertOk();
+        $this->assertCount(2, $first->json('data'));
+        $this->assertTrue($first->json('meta.page.has_more'));
+        $cursor = $first->json('meta.page.next_cursor');
+        $this->assertIsString($cursor);
+        // SLA urgency flags ride every item (ordering is newest-first).
+        $this->assertArrayHasKey('sla_breached', $first->json('data.0'));
+        $this->assertArrayHasKey('sla_remaining_ms', $first->json('data.0'));
+
+        $second = $actor()->getJson('/api/v1/onboarding/review/queue?limit=2&cursor='.urlencode($cursor), $headers)->assertOk();
+        $this->assertCount(1, $second->json('data'));
+        $this->assertFalse($second->json('meta.page.has_more'));
+
+        $seen = array_merge(
+            collect($first->json('data'))->pluck('id')->all(),
+            collect($second->json('data'))->pluck('id')->all()
+        );
+        sort($seen);
+        $expected = $ids;
+        sort($expected);
+        $this->assertSame($expected, $seen);
+    }
+
+    public function test_queue_status_filter(): void
+    {
+        $codes = new FakeReviewOtpCodes();
+        $this->app->singleton(OtpService::class, static fn (): OtpService => new OtpService($codes));
+
+        $tenant = $this->makeTenant();
+        [$applicant] = $this->actingAsMembership($tenant);
+        $staying = $this->submitOne($tenant, $applicant, $codes);
+        $leaving = $this->submitOne($tenant, $applicant, $codes);
+
+        $reviewer = User::factory()->create();
+        $membership = $this->makeMembership($tenant, $reviewer);
+        $this->grantCapabilities($tenant, $membership, ['onboarding:review:view']);
+        $headers = $this->tenantHeaders($tenant);
+        $actor = fn () => $this->actingAs($reviewer);
+
+        $actor()->postJson("/api/v1/onboarding/review/{$leaving}:request-info", [], $headers)->assertOk();
+
+        // Unfiltered queue holds only review states (DRAFT excluded).
+        $all = $actor()->getJson('/api/v1/onboarding/review/queue', $headers)->assertOk();
+        $this->assertSame([$staying], collect($all->json('data'))->pluck('id')->all());
+
+        // Unknown status values are ignored, not errors.
+        $ignored = $actor()->getJson('/api/v1/onboarding/review/queue?status=APPROVED', $headers)->assertOk();
+        $this->assertSame([$staying], collect($ignored->json('data'))->pluck('id')->all());
+
+        $filtered = $actor()->getJson('/api/v1/onboarding/review/queue?status=SUBMITTED', $headers)->assertOk();
+        $this->assertSame([$staying], collect($filtered->json('data'))->pluck('id')->all());
     }
 }

@@ -5,6 +5,7 @@ namespace App\Modules\Onboarding\Http\Controllers;
 use App\Modules\Onboarding\Models\PartnerApplication;
 use App\Modules\Onboarding\Models\ReviewRecord;
 use App\Modules\Onboarding\TrackCatalog;
+use App\Platform\Api\CursorPagination;
 use App\Platform\Audit\AuditWriter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -34,32 +35,50 @@ final class ReviewController
 
     public function queue(Request $request): JsonResponse
     {
-        $items = PartnerApplication::query()
-            ->whereIn('status', self::REVIEW_STATES)
-            ->orderBy('submitted_at')
-            ->get()
-            ->map(function (PartnerApplication $application): array {
-                $track = TrackCatalog::find($application->track, $application->track_version);
-                $slaHours = $track['sla_hours'] ?? 72;
-                $remaining = $application->submitted_at !== null
-                    ? (strtotime($application->submitted_at) + $slaHours * 3600) * 1000 - (int) (microtime(true) * 1000)
-                    : null;
+        // Cursor-only pagination (doc 06 §3.3): offset is banned on kernel
+        // surfaces, so the queue walks newest-first like every other list.
+        // SLA urgency rides per-item flags, not row order; `?status=`
+        // narrows within the review states.
+        $query = PartnerApplication::query()->whereIn('status', self::REVIEW_STATES);
 
-                return [
-                    'id' => (string) $application->getKey(),
-                    'object' => 'partner_application',
-                    'track' => $application->track,
-                    'status' => $application->status,
-                    'submitted_at' => $application->submitted_at,
-                    'sla_breached' => $remaining === null ? null : $remaining < 0,
-                    'sla_remaining_ms' => $remaining,
-                ];
-            })->values()->all();
+        $status = $request->query('status');
+        if (is_string($status) && in_array($status, self::REVIEW_STATES, true)) {
+            $query->where('status', $status);
+        }
+
+        [$applications, $page] = CursorPagination::paginate($query, $request);
+
+        $items = array_map(
+            fn (PartnerApplication $application): array => self::serializeQueueItem($application),
+            $applications
+        );
 
         return new JsonResponse([
             'data' => $items,
-            'meta' => ['request_id' => $this->requestId($request)],
+            'meta' => ['request_id' => $this->requestId($request), 'page' => $page],
         ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function serializeQueueItem(PartnerApplication $application): array
+    {
+        $track = TrackCatalog::find($application->track, $application->track_version);
+        $slaHours = $track['sla_hours'] ?? 72;
+        $remaining = $application->submitted_at !== null
+            ? (strtotime($application->submitted_at) + $slaHours * 3600) * 1000 - (int) (microtime(true) * 1000)
+            : null;
+
+        return [
+            'id' => (string) $application->getKey(),
+            'object' => 'partner_application',
+            'track' => $application->track,
+            'status' => $application->status,
+            'submitted_at' => $application->submitted_at,
+            'sla_breached' => $remaining === null ? null : $remaining < 0,
+            'sla_remaining_ms' => $remaining,
+        ];
     }
 
     public function approve(Request $request, string $id): JsonResponse
@@ -103,10 +122,6 @@ final class ReviewController
             return new JsonResponse([
                 'error' => ['code' => 'not_found', 'message' => 'Application not found.', 'request_id' => $this->requestId($request)],
             ], 404);
-        }
-
-        if ($application->status === PartnerApplication::STATUS_SUBMITTED) {
-            $application->forceFill(['status' => PartnerApplication::STATUS_UNDER_REVIEW])->save();
         }
 
         if ($application->status === PartnerApplication::STATUS_SUBMITTED) {

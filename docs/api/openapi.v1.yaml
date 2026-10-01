@@ -789,11 +789,25 @@ paths:
   /api/v1/onboarding/review/queue:
     get:
       operationId: listReviewQueue
-      summary: 'SLA-flagged review queue (reviewer capability).'
+      summary: 'Cursor-paginated SLA-flagged review queue (optional status filter).'
       x-permission: 'onboarding:review:view'
       parameters:
         -
           $ref: '#/components/parameters/TenantId'
+        -
+          $ref: '#/components/parameters/Limit'
+        -
+          $ref: '#/components/parameters/Cursor'
+        -
+          name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - SUBMITTED
+              - UNDER_REVIEW
+              - APPEALED
       responses:
         200:
           description: 'Queue items.'
@@ -806,7 +820,7 @@ paths:
                   - meta
                 properties:
                   data: { type: array }
-                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
   '/api/v1/onboarding/review/{id}:approve':
     post:
       operationId: approveApplication

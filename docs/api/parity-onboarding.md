@@ -14,7 +14,7 @@ updates this doc and both test suites in the same change.
 | submit | `POST /:id/submit` → `{challengeId}` | same | equal |
 | confirm | `POST /:id/submit/confirm` → SUBMITTED | same | equal |
 | documents | `POST /:id/documents` → `{documentId, url}` | `POST /:id/documents` → `{id}` (bytes inline; URL flow lands with object storage) | **diverged by design** — converge on signed-URL flow later |
-| review queue | partner BFF | `GET review/queue` + SLA flags | Laravel superset (SLA flags) |
+| review queue | partner BFF | `GET review/queue` + SLA flags, cursor pages (`limit`/`cursor`, `meta.page`), `?status=` within review states | Laravel superset (SLA flags + pagination) |
 | decision | partner BFF accept/approve | `:approve`/`:reject`/`:request-info` verbs | equal semantics, finer routes |
 
 ## Code correspondence (stable)
