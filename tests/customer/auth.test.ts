@@ -8,9 +8,9 @@ const loginAs = (body: unknown) =>
 
 test('login validates input and rejects bad credentials', async () => {
   const badBody = await login(new Request('https://app.navdhya.com/api/auth/login', { method: 'POST', body: '!!' }));
-  expect(badBody.status).toBe(400);
+  expect(badBody.status).toBe(422);
   const missing = await loginAs({});
-  expect(missing.status).toBe(400);
+  expect(missing.status).toBe(422);
   const unknown = await loginAs({ identityId: 'ghost', proof: 'x' });
   expect(unknown.status).toBe(401);
 });

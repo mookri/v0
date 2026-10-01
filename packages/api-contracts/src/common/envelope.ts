@@ -21,7 +21,9 @@ export type ApiErrorCode =
   | 'BOOKING_CANNOT_CANCEL'
   | 'BOOKING_SLOT_CONFLICT'
   | 'BOOKING_RESCHEDULE_UNAVAILABLE'
-  | 'STALE_RESOURCE';
+  | 'STALE_RESOURCE'
+  | 'REVIEW_NOT_ALLOWED'
+  | 'REVIEW_EXISTS';
 
 export interface ApiErrorEnvelope {
   error: { code: ApiErrorCode; message: string; requestId: string; fieldErrors?: Record<string, string>; retryAfter?: number };
@@ -32,12 +34,16 @@ export const HTTP_STATUS: Record<string, number> = {
   FORBIDDEN: 403,
   NOT_FOUND: 404,
   BOOKING_NOT_FOUND: 404,
-  VALIDATION_ERROR: 400,
+  // 422 (not 400): aligned with the backend kernel registry
+  // (validation_failed) per the customer parity contract.
+  VALIDATION_ERROR: 422,
   CONFLICT: 409,
   BOOKING_CANNOT_CANCEL: 409,
   BOOKING_SLOT_CONFLICT: 409,
   STALE_RESOURCE: 409,
   BOOKING_RESCHEDULE_UNAVAILABLE: 409,
+  REVIEW_NOT_ALLOWED: 409,
+  REVIEW_EXISTS: 409,
   RATE_LIMITED: 429,
   DEPENDENCY_UNAVAILABLE: 503,
   INTERNAL_ERROR: 500,

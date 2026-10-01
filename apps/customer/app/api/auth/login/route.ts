@@ -9,10 +9,10 @@ export async function POST(req: Request) {
   try {
     body = (await req.json()) as typeof body;
   } catch {
-    return Response.json(err('VALIDATION_ERROR', 'Invalid request body.', requestId), { status: 400 });
+    return Response.json(err('VALIDATION_ERROR', 'Invalid request body.', requestId), { status: 422 });
   }
   if (!body.identityId || typeof body.proof !== 'string') {
-    return Response.json(err('VALIDATION_ERROR', 'identityId and proof are required.', requestId), { status: 400 });
+    return Response.json(err('VALIDATION_ERROR', 'identityId and proof are required.', requestId), { status: 422 });
   }
   const nowIso = new Date().toISOString();
   try {

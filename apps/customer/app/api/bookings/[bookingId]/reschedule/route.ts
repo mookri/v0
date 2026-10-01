@@ -11,11 +11,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ booking
   try {
     body = await req.json();
   } catch {
-    return Response.json(err('VALIDATION_ERROR', 'Invalid request body.', requestId), { status: 400 });
+    return Response.json(err('VALIDATION_ERROR', 'Invalid request body.', requestId), { status: 422 });
   }
   const start = body.newStartTime ? new Date(body.newStartTime) : null;
   if (!start || Number.isNaN(start.getTime())) {
-    return Response.json(err('VALIDATION_ERROR', 'newStartTime must be an ISO timestamp.', requestId), { status: 400 });
+    return Response.json(err('VALIDATION_ERROR', 'newStartTime must be an ISO timestamp.', requestId), { status: 422 });
   }
   const idempotencyKey = req.headers.get('Idempotency-Key') ?? `ik_${requestId}`;
   const result = rescheduleCustomerBooking(null, ctx.actor.userId, start, true, idempotencyKey);

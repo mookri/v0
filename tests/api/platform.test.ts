@@ -6,6 +6,13 @@ import { isRetryableStatus } from '@apps/customer/application/api-policy';
 test('status map is consistent', () => {
   expect(statusFor('BOOKING_NOT_FOUND')).toBe(404);
   expect(statusFor('BOOKING_CANNOT_CANCEL')).toBe(409);
+  expect(statusFor('BOOKING_SLOT_CONFLICT')).toBe(409);
+  expect(statusFor('BOOKING_RESCHEDULE_UNAVAILABLE')).toBe(409);
+  expect(statusFor('STALE_RESOURCE')).toBe(409);
+  expect(statusFor('REVIEW_NOT_ALLOWED')).toBe(409);
+  expect(statusFor('REVIEW_EXISTS')).toBe(409);
+  // Parity: validation is 422 on both surfaces (backend kernel registry).
+  expect(statusFor('VALIDATION_ERROR')).toBe(422);
   expect(statusFor('RATE_LIMITED')).toBe(429);
   expect(statusFor('INTERNAL_ERROR')).toBe(500);
 });
