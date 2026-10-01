@@ -39,7 +39,9 @@ move to the bottom with date + resolution, never deleted.
 ### TOKEN-001 — Passport JWT unbuilt (2026-10-01)
 - **Blocks:** login-response upgrade, SSO, scoped partner tokens.
 - **Interim posture:** HMAC dual-accept bridge (verifier + middleware,
-  cross-implementation tested).
+  cross-implementation tested). Customer self-service auth (B2) mints
+  backend HMAC actor tokens (`ActorTokenIssuer`, 24 h absolute, no
+  server-side revocation until the jti store lands) — same interim.
 - **Tracks:** Passport second half + HMAC sunset with date.
 
 ## Resolved

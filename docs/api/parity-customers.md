@@ -1,5 +1,7 @@
 # Customer Contract Parity — Next.js BFF ↔ Laravel modules
 
+**Backend status:** COMPLETE (B1–B8, suite 400 passed) · Frontend wiring (F1–F2) pending.
+
 Both surfaces implement the same flow with their platform's envelope and
 code registry. This table is the contract: either side changing a row
 updates this doc and both test suites in the same change.
@@ -30,7 +32,7 @@ updates this doc and both test suites in the same change.
 | activity | `/` recentActivity mock strings | `GET /api/v1/customers/activity` (cursor + `?kind=`, caller-scoped, dedicated read model — never audit rows) | backend only until F2 |
 | support | `/support`, `/help` (validation only) | `POST /api/v1/customers/support/tickets` (cap 10 open), `GET …` (cursor), `GET …/{id}` (thread), `POST …/{id}/messages` (re-opens CLOSED), `POST …/{id}:close` | backend real; staff console is a separate surface |
 
-Profile/saved/notifications/settings/bookings rows land with B3–B5.
+Profile/saved/notifications/settings/bookings/discover/activity/support rows below are implemented (B3–B7).
 
 ## Code correspondence (stable)
 

@@ -278,3 +278,37 @@ Capability syntax is `<module>:<resource>:<action>` (colon form retained per the
     and emits the event.
 5. **Tenant isolation**: every table in this domain is covered by the `AssertTenantIsolation` matrix — see the tenancy register ([tenancy & data](../../06-tenancy/tenancy-and-data.md)).
 6. **Contract tests**: every permission in the summary above appears on its routes and OpenAPI fragments validate — see the [testing strategy](../../19-testing/testing-strategy.md).
+
+---
+
+## Implementation record — customer self-service backend (B1–B8, 2026-10-02)
+
+**Status:** BUILT · Supersedes nothing (additive record; the vision above
+stands for store credit / merge / B2B, all deferred).
+
+What shipped (backend `main`, suite 400 passed — Pint/PHPStan/compose/doctor
+green; OpenAPI 71 paths; parity contract `docs/api/parity-customers.md`):
+
+| Slice | Content |
+|---|---|
+| B1 | `customers` + `booking` module skeletons; `users.phone/phone_verified_at`; `buyer_profiles` (1-per-tenant-user); `CustomersTrackSeeder` (customer track seeds profile, delegates supply tracks) |
+| B2 | OTP auth: public `auth/otp\|signup\|verify\|login` (throttled, no-oracle decoys) + `auth/logout`; backend-minted HMAC actor tokens (`ActorTokenIssuer`, 24 h) resolving through the untouched `auth.any` chain |
+| B3 | Profile read/strict-update, contact verifications bound to the requester, OTP-stepped deactivate (live membership denial) + public-OTP reactivate |
+| B4 | Address book (cap 20, default promotion), opaque saved bookmarks, producer-written notifications with read/read-all, closed-key settings over defaults |
+| B5 | `BookingLifecycle` (11 states, guards, sections), reservations (sectioned lists, idempotent cancel, versioned + overlap-checked reschedule, transition history), author-only reviews |
+| B6 | Deterministic discover feed (recency + 30 d booking rank + novelty exclusion) via `ListsCatalogItems` / `RanksServices` Contracts ports; `customer_activities` read model + recorder (never audit rows) |
+| B7 | Customer-side support tickets (cap 10 open, reply re-opens, explicit close) |
+
+Deliberate deltas vs the vision above (all recorded in the parity doc):
+ownership gates (`x-gate: ownership`, foreign rows → 404) instead of buyer-scope
+capabilities — no `buyer_scope_violation` code exists; HMAC bearer tokens
+instead of authorization-server sessions (TOKEN-001 interim, now also covering
+customer login); saved items are opaque bookmarks enriched by readers (no
+wishlist FKs); settings are key-values the BFF maps to sections; down-scoped
+`/me/*` routes were not built — the surfaces live at `/api/v1/customers/*`
+and `/api/v1/booking/*` per the module URL rule.
+
+Deferred (unchanged): booking creation (`/book` handoff slice), payment
+states + gateway (VAULT), store credit, customer merge, B2B, account
+deletion (retention decision), staff support console, SSE event bus
+(REDIS-001), Passport JWT + jti revocation (TOKEN-001).
