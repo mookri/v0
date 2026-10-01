@@ -10,6 +10,7 @@ use App\Platform\Authz\Contracts\PolicyStatus;
 use App\Platform\Authz\Exceptions\AuthorizationDeniedException;
 use App\Platform\Authz\Exceptions\CapabilityParseException;
 use App\Platform\Authz\Exceptions\InvalidPolicyPayloadException;
+use App\Platform\Authz\Exceptions\SodConflictException;
 use App\Platform\Authz\Models\CapabilityMetadata;
 use App\Platform\Authz\Models\Policy;
 use App\Platform\Authz\Models\Role;
@@ -37,6 +38,10 @@ use Illuminate\Database\Eloquent\Builder;
  *                            (policies narrow grants).
  *   4. allow_grant         - an active-role grant carries the capability
  *                            for the membership.
+ *   4.5 sod_conflict        - runtime SoD re-check (SEC-011 §7.3): a
+ *                            blocking conflict rule involving the
+ *                            exercised permission denies despite the
+ *                            grant (rules added after assignment).
  *   5. default_deny        - no explicit allow reached (CON-003).
  *
  * Every decision carries its deciding stage, the evaluated policy ids and
@@ -57,6 +62,7 @@ final class PolicyEvaluationEngine
         private readonly ConditionEvaluator $conditions,
         private readonly DecisionCache $cache,
         private readonly ModuleRegistry $registry,
+        private readonly SodEvaluator $sod,
     ) {
     }
 
@@ -111,6 +117,8 @@ final class PolicyEvaluationEngine
     /**
      * Evaluate and deny with an AuthorizationDeniedException carrying the
      * deciding stage as the stable reason (middleware + contract calls).
+     * SoD runtime denials throw SodConflictException so the envelope
+     * renders the stable `sod_conflict` code with the blocking rules.
      *
      * @throws AuthorizationDeniedException
      */
@@ -118,14 +126,33 @@ final class PolicyEvaluationEngine
     {
         $decision = $this->evaluate($request);
 
-        if (! $decision->allowed()) {
-            throw new AuthorizationDeniedException(
-                capability: $request->capability,
-                reason: $decision->decidingStage->value,
-            );
+        if ($decision->allowed()) {
+            return $decision;
         }
 
-        return $decision;
+        if ($decision->decidingStage === DecidingStage::SodConflict) {
+            throw new SodConflictException($request->capability, $this->sodRulesFrom($decision));
+        }
+
+        throw new AuthorizationDeniedException(
+            capability: $request->capability,
+            reason: $decision->decidingStage->value,
+        );
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function sodRulesFrom(AuthorizationDecision $decision): array
+    {
+        foreach ($decision->stages as $stage) {
+            if (($stage['stage'] ?? null) === DecidingStage::SodConflict->value
+                && isset($stage['details']['rules']) && is_array($stage['details']['rules'])) {
+                return array_values(array_filter($stage['details']['rules'], 'is_string'));
+            }
+        }
+
+        return [];
     }
 
     private function runChain(AuthorizationRequest $request, ?string $membershipId): AuthorizationDecision
@@ -181,6 +208,22 @@ final class PolicyEvaluationEngine
 
         // Stage 4: explicit allow grant (scopes ∩ grants ∩ membership).
         if ($membershipId !== null && $this->grantExists($membershipId, $capability->code)) {
+            // Stage 4.5 (SEC-011 §7.3): SoD runtime re-check. Grants alone
+            // are insufficient — a conflict rule added after assignment (or
+            // a cross-assignment combination) denies here even though the
+            // grant exists. Warn-severity trips stay allowed (assignment
+            // time owned the warning).
+            $sodTenant = $this->context->tenantId();
+            $blocks = $sodTenant !== null
+                ? $this->sod->blockingForCapability($sodTenant, $membershipId, $capability->code)
+                : [];
+
+            if ($blocks !== []) {
+                $stages[] = $this->stage(DecidingStage::SodConflict, 'deny', 'sod_conflict', ['rules' => $blocks]);
+
+                return $this->decision(AuthorizationDecision::DECISION_DENY, DecidingStage::SodConflict, $request->capability, $principalId, $evaluated, $stages);
+            }
+
             $stages[] = $this->stage(DecidingStage::AllowGrant, 'allow', 'capability_granted');
 
             return $this->decision(AuthorizationDecision::DECISION_ALLOW, DecidingStage::AllowGrant, $request->capability, $principalId, $evaluated, $stages);

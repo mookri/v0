@@ -3,6 +3,7 @@
 namespace App\Platform\Api;
 
 use App\Platform\Authz\Exceptions\AuthorizationDeniedException;
+use App\Platform\Authz\Exceptions\SodConflictException;
 use App\Platform\Authz\Exceptions\InvalidPolicyPayloadException;
 use App\Platform\Tenancy\Exceptions\MembershipInactiveException;
 use App\Platform\Tenancy\Exceptions\TenantHeaderMissingException;
@@ -79,6 +80,15 @@ final class ErrorEnvelope
         // envelope code (doc 06 §4.2).
         if ($e instanceof AccessDeniedHttpException && $e->getPrevious() instanceof Throwable) {
             return self::classify($request, $e->getPrevious());
+        }
+
+        if ($e instanceof SodConflictException) {
+            return [
+                403,
+                'sod_conflict',
+                $e->getMessage() ?: 'This action violates separation of duties.',
+                ['capability' => $e->capability, 'rules' => $e->rules],
+            ];
         }
 
         if ($e instanceof AuthorizationDeniedException) {

@@ -16,6 +16,7 @@ enum DecidingStage: string
     case SecurityConstraint = 'security_constraint';
     case PolicyConstraint = 'policy_constraint';
     case AllowGrant = 'allow_grant';
+    case SodConflict = 'sod_conflict';
     case DefaultDeny = 'default_deny';
     case ForgedContext = 'forged_context';
 }

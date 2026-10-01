@@ -12,8 +12,10 @@ use Illuminate\Auth\Access\AuthorizationException;
  * `authorization_denied`; clients branch on the code, never the message.
  * Carries the denied capability + deciding reason so the denial audit
  * record and (from T-0K01-03) the decision log can be written.
+ * Subclassable: SodConflictException refines the denial with blocking
+ * rule codes (the envelope renders it as `sod_conflict`).
  */
-final class AuthorizationDeniedException extends AuthorizationException
+class AuthorizationDeniedException extends AuthorizationException
 {
     public function __construct(
         public readonly string $capability,

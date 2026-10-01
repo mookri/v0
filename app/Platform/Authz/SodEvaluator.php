@@ -3,13 +3,17 @@
 namespace App\Platform\Authz;
 
 use App\Platform\Authz\Models\SodRule;
+use App\Platform\Authz\Models\MembershipRoleAssignment;
+use App\Platform\Authz\Models\Role;
+use App\Platform\Authz\Models\RolePermission;
 
 /**
- * Segregation-of-duties conflict evaluator (SEC-011 §7.1–7.2).
+ * Segregation-of-duties conflict evaluator (SEC-011 §7.1–7.3).
  *
- * Pure evaluation — no writes, no HTTP. The caller (role grant today, the
- * policy engine's runtime stage later) supplies the *resulting* role and
- * capability sets; this returns the blocking and warning rule codes.
+ * Pure evaluation — no writes, no HTTP. Assignment-time callers supply
+ * the *resulting* role and capability sets; the policy engine's runtime
+ * stage (§7.3) asks for blocking rules involving one exercised
+ * capability against live grants.
  *
  * Rule resolution: platform defaults (tenant_id NULL) plus tenant rows;
  * a tenant row with the same code replaces the platform row wholesale
@@ -60,6 +64,51 @@ final class SodEvaluator
         $rule = $this->activeConflictRules($tenantId)['sod.role_grant_self'] ?? null;
 
         return $rule?->severity;
+    }
+
+    /**
+     * Blocking conflict rules involving one exercised capability, given
+     * the membership's live grants (SEC-011 §7.3 runtime check). Only
+     * rules whose permission set names the capability are considered —
+     * role-only conflicts are assignment-time business. Warn-severity
+     * trips are ignored here (assignment-time owned the warning).
+     *
+     * @return list<string> blocking rule codes
+     */
+    public function blockingForCapability(string $tenantId, string $membershipId, string $capability): array
+    {
+        $roleIds = MembershipRoleAssignment::query()
+            ->where('membership_id', $membershipId)
+            ->pluck('role_id')
+            ->all();
+
+        if ($roleIds === []) {
+            return [];
+        }
+
+        $roles = Role::query()->whereIn('id', $roleIds)->where('state', Role::STATE_ACTIVE)->get();
+        $roleCodes = $roles->map(static fn (Role $role): string => $role->code)->all();
+        $capabilities = RolePermission::query()
+            ->whereIn('role_id', $roles->map(static fn (Role $role): string => (string) $role->getKey())->all())
+            ->distinct()->pluck('capability_code')->all();
+
+        $blocks = [];
+        foreach ($this->activeConflictRules($tenantId) as $rule) {
+            if ($rule->code === 'sod.role_grant_self') {
+                continue;
+            }
+            if ($rule->severity !== SodRule::SEVERITY_BLOCK) {
+                continue;
+            }
+            if (! in_array($capability, $rule->permission_set ?? [], true)) {
+                continue;
+            }
+            if ($this->triggered($rule, $roleCodes, $capabilities)) {
+                $blocks[] = $rule->code;
+            }
+        }
+
+        return $blocks;
     }
 
     /**

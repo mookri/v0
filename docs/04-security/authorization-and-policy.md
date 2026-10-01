@@ -408,6 +408,26 @@ and satisfy the predicate; self-approval returns `sod_conflict`.
   `approval_chain` enforcement in the workflow engine, `rule_created` /
   `rule_updated` events (emitted once rule-admin CRUD exists).
 
+### Implementation note A-SEC-011-2 — runtime enforcement live (2026-10-02)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive; A-SEC-011-1 still
+describes assignment-time)
+
+- New `DecidingStage::sod_conflict` sits between allow-grant and the
+  allow: a granted capability is re-checked against blocking conflict
+  rules involving the exercised permission (role-only rules stay
+  assignment-time business; warn trips stay allowed — assignment time
+  owned the warning).
+- Denials throw `SodConflictException` (extends the now-subclassable
+  `AuthorizationDeniedException`) and render 403 `sod_conflict` with
+  `details.capability` + `details.rules`; the explain surface shows the
+  stage (fragment enum extended).
+- `SodRule` writes bump the decision-cache generation (platform rows
+  bump global), so rules added after assignment bite within the same
+  request cycle — proven by test, not by TTL hope.
+- Still pending: rule-admin CRUD with operator consent, `rule_created` /
+  `rule_updated` events, `approval_chain` in the workflow engine.
+
 ---
 
 ## SEC-012 Route authorization requirements

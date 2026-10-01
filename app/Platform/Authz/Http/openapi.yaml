@@ -237,7 +237,7 @@ components:
       properties:
         object: { const: authz_decision }
         decision: { enum: [allow, deny] }
-        deciding_stage: { enum: [explicit_deny, security_constraint, policy_constraint, allow_grant, default_deny, forged_context] }
+        deciding_stage: { enum: [explicit_deny, agent_safety, security_constraint, policy_constraint, allow_grant, sod_conflict, default_deny, forged_context] }
         capability: { type: string }
         principal_id: { type: [string, 'null'] }
         evaluated_policies: { type: array, items: { type: string } }

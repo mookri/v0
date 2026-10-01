@@ -15,6 +15,7 @@ use App\Platform\Authz\Models\MembershipRoleAssignment;
 use App\Platform\Authz\Models\Policy;
 use App\Platform\Authz\Models\Role;
 use App\Platform\Authz\Models\RolePermission;
+use App\Platform\Authz\Models\SodRule;
 use App\Platform\Authz\PolicyEvaluationEngine;
 use App\Platform\Authz\PolicyValidator;
 use App\Platform\Authz\PrincipalResolver;
@@ -95,12 +96,13 @@ final class PlatformServiceProvider extends ServiceProvider
     /**
      * Decision-cache invalidation hooks (AC-T-0K01-02-3): any mutation of
      * authorization state — a policy row, a grant row (role, permission,
-     * membership assignment) or a capability registry row — bumps the
-     * owning tenant's decision generation, so cached decisions become
-     * unreachable within the same request cycle in which the state
-     * changed. Platform-default policy rows (tenant_id NULL) bump the
-     * global generation. Bulk query-builder mutations that bypass model
-     * events stay bounded by the cache TTL (belt-and-braces).
+     * membership assignment), a capability registry row, or an SoD rule
+     * row — bumps the owning tenant's decision generation, so cached
+     * decisions become unreachable within the same request cycle in
+     * which the state changed. Platform-default rows (tenant_id NULL,
+     * policies and SoD rules alike) bump the global generation. Bulk
+     * query-builder mutations that bypass model events stay bounded by
+     * the cache TTL (belt-and-braces).
      */
     private function registerAuthzCacheInvalidation(AuthzCacheInvalidator $invalidator): void
     {
@@ -116,6 +118,7 @@ final class PlatformServiceProvider extends ServiceProvider
             RolePermission::class,
             MembershipRoleAssignment::class,
             CapabilityMetadata::class,
+            SodRule::class,
         ];
 
         foreach ($models as $modelClass) {
