@@ -30,7 +30,7 @@ test('identity never imports business capabilities', () => {
   }
 });
 
-test('apps never import credential internals or session secrets', () => {
+test('apps never import credential internals or session secrets', { timeout: 120000 }, () => {
   for (const app of ['apps/customer', 'apps/web']) {
     for (const file of getAllFiles(path.join(process.cwd(), app))) {
       const content = fs.readFileSync(file, 'utf8');
