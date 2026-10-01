@@ -2,6 +2,7 @@ import { test, expect } from 'vitest';
 import { GET as queue } from '@apps/partner/app/api/review/queue/route';
 import { POST as decide } from '@apps/partner/app/api/review/[id]/decision/route';
 import { onboardingApps } from '@apps/partner/server/onboarding';
+import { getReviewQueue } from '@apps/partner/server/review';
 import { reviewAudit } from '@apps/partner/server/review';
 import { mintActorToken, INSECURE_DEV_SECRET } from '@navdhya/identity/src/application/token-actor';
 
@@ -67,6 +68,15 @@ test('review queue and decisions enforce market scope', async () => {
     { params: Promise.resolve({ id: 'ra_in' }) },
   );
   expect(home.status).toBe(200);
+});
+
+test('shared queue helper scopes and flags consistently with the route', async () => {
+  await seed('SUBMITTED', 'rq_1');
+  await seed('UNDER_REVIEW', 'rq_2', 'ae');
+  const items = await getReviewQueue('in', new Date().toISOString());
+  expect(items.map((i) => i.id)).toContain('rq_1');
+  expect(items.map((i) => i.id)).not.toContain('rq_2');
+  expect(items.find((i) => i.id === 'rq_1')?.slaBreached).toBe(false);
 });
 
 test('approve flows; rejections need countersign + reason; audit appended', async () => {

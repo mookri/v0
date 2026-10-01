@@ -117,6 +117,14 @@ definitions (untranslated keys throw at startup), assembly/parsing lives
 in the package, and the round-trip test still proves form values pass
 the domain gates. Track-studio UI (stage 8) now edits data, not code.
 
+## Reviewer console UI (done)
+
+`/review` queue + `/review/[id]` detail (evidence, checklist, audit
+trail, decision form) on the partner app, role-gated, tenant-scoped.
+Queue logic shared between route and pages via `getReviewQueue`
+(no loopback HTTP). English-only v1 (internal tool, documented);
+decision form posts reason codes + countersign to the decision API.
+
 ## Remaining
 
 OTP port + two-phase submit · `OnboardingRepository` port + memory
