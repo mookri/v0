@@ -1,0 +1,14 @@
+{
+  "code": "customers",
+  "name": "Customer Self-Service",
+  "version": "0.1.0",
+  "phase": 2,
+  "priority": 150,
+  "dependencies": [],
+  "actions": ["deactivate", "verify"],
+  "permissions": [],
+  "scopes": ["customers:self"],
+  "events": [],
+  "navigation": [],
+  "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/customers" }
+}

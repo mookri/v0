@@ -1,0 +1,6 @@
+# OpenAPI 3.1 fragment — booking module (B1 skeleton; reservations land B5).
+openapi: 3.1.0
+info:
+  title: Navdhya Booking — Lifecycle
+  version: 0.1.0
+paths: {}

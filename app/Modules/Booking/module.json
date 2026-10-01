@@ -1,0 +1,14 @@
+{
+  "code": "booking",
+  "name": "Booking Lifecycle",
+  "version": "0.1.0",
+  "phase": 3,
+  "priority": 250,
+  "dependencies": [],
+  "actions": ["cancel", "reschedule"],
+  "permissions": [],
+  "scopes": ["booking:self"],
+  "events": [],
+  "navigation": [],
+  "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/booking" }
+}

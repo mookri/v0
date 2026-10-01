@@ -3,6 +3,7 @@
 namespace Tests\TenantIsolation;
 
 use App\Models\User;
+use App\Modules\Customers\Models\BuyerProfile;
 use App\Platform\Audit\AuditLog;
 use App\Platform\Authz\Models\CapabilityMetadata;
 use App\Platform\Authz\Models\MembershipRoleAssignment;
@@ -113,6 +114,18 @@ final class Phase0kIsolationMatrixTest extends TenantIntegrationTestCase
                 ];
             },
             ['role_id' => (string) Str::ulid()],
+        );
+    }
+
+    public function test_buyer_profiles_are_isolated(): void
+    {
+        $this->assertTenantIsolationMatrix(
+            BuyerProfile::class,
+            fn (): array => [
+                'user_id' => User::factory()->create()->id,
+                'display_name' => 'Isolation buyer',
+            ],
+            ['display_name' => 'isolation probe'],
         );
     }
 
