@@ -11,4 +11,5 @@ export * from './application/token-session';
 export * from './adapters/memory';
 export * from './adapters/memory-credentials';
 export * from './adapters/memory-otp';
+export * from './adapters/pbkdf2-credentials';
 export * from './adapters/local-gateway';

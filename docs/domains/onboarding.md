@@ -133,6 +133,15 @@ queue (SLA live) → approve → `activated: {eligible: true}` → status
 APPROVED. The drill caught a real gap first (no SUBMITTED→review path);
 fixed via auto-triage on first reviewer touch, covered by test.
 
+## Known limitations
+
+- Reviewer console decision form posts without a bearer token (browsers
+  hold no token today) — reviewer UI works with cookie-issued sessions
+  (login flow upgrade); the API is fully proven with tokens.
+- `MemoryCredentialVerifier` is staging-only; `Pbkdf2CredentialVerifier`
+  (stdlib, per-identity salt, server pepper, 210k iterations) is the
+  production path behind the same port.
+
 ## Remaining
 
 OTP port + two-phase submit · `OnboardingRepository` port + memory
