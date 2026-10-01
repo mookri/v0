@@ -17,10 +17,16 @@ function getAllFiles(dir: string, ext: string[] = ['.ts', '.tsx']): string[] {
 
 test('identity never imports business capabilities', () => {
   const dir = path.join(process.cwd(), 'packages', 'identity', 'src');
-  const banned = ['@navdhya/booking', '@navdhya/payment', 'booking/', 'payment', 'pricing', 'puja', 'pandit', 'ads', 'content'];
+  // Word-boundary + path forms (plain substring matching false-positives
+  // on identifiers like padStart containing 'ads').
+  const banned: RegExp[] = [
+    /@navdhya\/(booking|payment|pricing|puja|pandit|ads|content)\b/,
+    /\b(booking|payment|pricing|puja|pandit|ads|content)\//,
+    /\b(pricing|puja|pandit|content)\b/,
+  ];
   for (const file of getAllFiles(dir)) {
     const content = fs.readFileSync(file, 'utf8');
-    for (const b of banned) expect(content, `no ${b} in ${file}`).not.toContain(b);
+    for (const b of banned) expect(content, `no ${b} in ${file}`).not.toMatch(b);
   }
 });
 
