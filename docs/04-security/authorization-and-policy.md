@@ -428,6 +428,23 @@ describes assignment-time)
 - Still pending: rule-admin CRUD with operator consent, `rule_created` /
   `rule_updated` events, `approval_chain` in the workflow engine.
 
+### Implementation note A-SEC-011-3 — rule-admin CRUD live (2026-10-02)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive)
+
+- `SodRuleController` (`/api/v1/platform/sod-rules`, issuer-membership
+  gated like role admin, machines denied): tenant custom rules,
+  overrides by code (downgrade block→warn), cursor-paginated effective
+  list with `source`/`overrides_platform`, `rule_created`/`rule_updated`
+  events + `sod.rule.*` audit rows.
+- Platform rows are immutable (409 with override guidance); disabling a
+  code with an active platform block fails closed (422
+  `operator_consent_required`) — consent has no issuer yet, so removal
+  is impossible, exactly as §7.1 requires. Override deletion resurfaces
+  the platform default (evaluator merges by code; nothing to rebuild).
+- `approval_chain` enforcement in the workflow engine is now the only
+  remaining SoD item.
+
 ---
 
 ## SEC-012 Route authorization requirements

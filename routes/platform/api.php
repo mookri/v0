@@ -119,6 +119,14 @@ Route::prefix(config('platform.api_version', 'v1'))
             ->name('memberships.roles.grant');
         Route::delete('platform/memberships/{membershipId}/roles/{assignmentId}', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'revoke'])
             ->name('memberships.roles.revoke');
+        Route::get('platform/sod-rules', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'index'])
+            ->name('sod-rules.index');
+        Route::post('platform/sod-rules', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'store'])
+            ->name('sod-rules.store');
+        Route::patch('platform/sod-rules/{id}', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'update'])
+            ->name('sod-rules.update');
+        Route::delete('platform/sod-rules/{id}', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'destroy'])
+            ->name('sod-rules.destroy');
     });
 
 // Invite acceptance carries its own credential (the token) — public route
