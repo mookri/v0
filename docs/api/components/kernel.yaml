@@ -57,6 +57,11 @@ components:
             has_more: { type: boolean }
             next_cursor: { type: string, nullable: true }
   responses:
+    Unauthenticated:
+      description: Missing, invalid, or expired credential (no oracle — identical for all OTP failures).
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorEnvelope' }
     AuthorizationDenied:
       description: Missing permission or scope.
       content:

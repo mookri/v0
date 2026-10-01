@@ -346,6 +346,143 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/customers/auth/login:
+    post:
+      operationId: loginCustomer
+      summary: 'Verify login code (200 + token; deactivated is 403).'
+      x-gate: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tenant_id
+                - challenge_id
+                - code
+      responses:
+        200:
+          description: 'Authenticated; HMAC actor token issued.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, token, expires_at, tenant_id, actor] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        401:
+          $ref: '#/components/responses/Unauthenticated'
+  /api/v1/customers/auth/logout:
+    post:
+      operationId: logoutCustomer
+      summary: 'Best-effort logout (client discards the bearer).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      responses:
+        200:
+          description: 'Signed out.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, signed_out] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/auth/otp:
+    post:
+      operationId: requestCustomerOtp
+      summary: 'Issue an OTP challenge (public, throttled, no oracle).'
+      x-gate: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tenant_id
+                - purpose
+                - identity
+      responses:
+        202:
+          description: 'Challenge issued (identical for unknown identities).'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, challenge_id, expires_in] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/auth/signup:
+    post:
+      operationId: signupCustomer
+      summary: 'Start signup (account is created at verify, not here).'
+      x-gate: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tenant_id
+                - phone
+                - name
+      responses:
+        202:
+          description: 'Signup challenge issued.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, challenge_id, expires_in] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/auth/verify:
+    post:
+      operationId: verifyCustomerSignup
+      summary: 'Verify signup code (creates user, membership, profile; 201 + token).'
+      x-gate: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tenant_id
+                - challenge_id
+                - code
+      responses:
+        201:
+          description: 'Account created; HMAC actor token issued.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, token, expires_at, tenant_id, actor] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        401:
+          $ref: '#/components/responses/Unauthenticated'
   /api/v1/identity/invites:
     post:
       operationId: issueInvite
@@ -1510,6 +1647,12 @@ components:
               type: string
               nullable: true
   responses:
+    Unauthenticated:
+      description: 'Missing, invalid, or expired credential (no oracle — identical for all OTP failures).'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     AuthorizationDenied:
       description: 'Missing permission or scope.'
       content:

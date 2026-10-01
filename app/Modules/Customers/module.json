@@ -8,7 +8,11 @@
   "actions": ["deactivate", "verify"],
   "permissions": [],
   "scopes": ["customers:self"],
-  "events": [],
+  "events": [
+    { "name": "customers.account.signed_up", "schema": "v1" },
+    { "name": "customers.auth.logged_in", "schema": "v1" },
+    { "name": "customers.auth.logged_out", "schema": "v1" }
+  ],
   "navigation": [],
   "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/customers" }
 }
