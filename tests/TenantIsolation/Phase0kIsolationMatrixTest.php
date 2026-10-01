@@ -10,6 +10,8 @@ use App\Modules\Booking\Models\BookingTransition;
 use App\Modules\Customers\Models\BuyerProfile;
 use App\Modules\Customers\Models\CustomerActivity;
 use App\Modules\Customers\Models\CustomerAddress;
+use App\Modules\Customers\Models\SupportMessage;
+use App\Modules\Customers\Models\SupportTicket;
 use App\Modules\Customers\Models\CustomerNotification;
 use App\Modules\Customers\Models\CustomerSetting;
 use App\Modules\Customers\Models\SavedItem;
@@ -246,6 +248,32 @@ final class Phase0kIsolationMatrixTest extends TenantIntegrationTestCase
                 'label' => 'Signed in',
             ],
             ['label' => 'isolation probe'],
+        );
+    }
+
+    public function test_support_tickets_are_isolated(): void
+    {
+        $this->assertTenantIsolationMatrix(
+            SupportTicket::class,
+            fn (): array => [
+                'user_id' => User::factory()->create()->id,
+                'subject' => 'Isolation ticket',
+                'category' => 'other',
+            ],
+            ['subject' => 'isolation probe'],
+        );
+    }
+
+    public function test_support_messages_are_isolated(): void
+    {
+        $this->assertTenantIsolationMatrix(
+            SupportMessage::class,
+            fn (): array => [
+                'ticket_id' => (string) Str::ulid(),
+                'user_id' => User::factory()->create()->id,
+                'body' => 'Isolation message',
+            ],
+            ['body' => 'isolation probe'],
         );
     }
 

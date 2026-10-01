@@ -33,6 +33,7 @@ final class CustomerActivity extends Model
         'address_added', 'address_updated', 'address_removed',
         'saved_added', 'saved_removed', 'settings_updated',
         'deactivated', 'reactivated',
+        'support_opened', 'support_replied', 'support_closed',
     ];
 
     protected $connection = 'tenant_shared';

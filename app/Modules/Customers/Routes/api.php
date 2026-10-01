@@ -4,6 +4,7 @@ use App\Modules\Customers\Http\Controllers\CustomerActivityController;
 use App\Modules\Customers\Http\Controllers\CustomerAddressController;
 use App\Modules\Customers\Http\Controllers\CustomerAuthController;
 use App\Modules\Customers\Http\Controllers\CustomerDiscoverController;
+use App\Modules\Customers\Http\Controllers\CustomerSupportController;
 use App\Modules\Customers\Http\Controllers\CustomerNotificationController;
 use App\Modules\Customers\Http\Controllers\CustomerProfileController;
 use App\Modules\Customers\Http\Controllers\CustomerSettingController;
@@ -106,3 +107,15 @@ Route::get('discover', [CustomerDiscoverController::class, 'feed'])
 // Activity feed (B6): customer-safe read model, never audit rows.
 Route::get('activity', [CustomerActivityController::class, 'index'])
     ->name('activity.index');
+
+// Support tickets, customer side (B7): staff console is separate.
+Route::post('support/tickets', [CustomerSupportController::class, 'store'])
+    ->name('support.store');
+Route::get('support/tickets', [CustomerSupportController::class, 'index'])
+    ->name('support.index');
+Route::get('support/tickets/{id}', [CustomerSupportController::class, 'show'])
+    ->name('support.show');
+Route::post('support/tickets/{id}/messages', [CustomerSupportController::class, 'reply'])
+    ->name('support.reply');
+Route::post('support/tickets/{id}:close', [CustomerSupportController::class, 'close'])
+    ->name('support.close');

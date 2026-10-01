@@ -97,5 +97,13 @@ final class QueryPlanTest extends TenantIntegrationTestCase
             $this->plan($conn, 'select * from customer_activities where tenant_id = ? and user_id = ?', [$tenant, '1']),
             'activities by customer scan'
         );
+        $this->assertIndexed(
+            $this->plan($conn, 'select * from support_tickets where tenant_id = ? and user_id = ?', [$tenant, '1']),
+            'tickets by customer scan'
+        );
+        $this->assertIndexed(
+            $this->plan($conn, 'select * from support_messages where tenant_id = ? and ticket_id = ?', [$tenant, 't1']),
+            'messages by ticket scan'
+        );
     }
 }

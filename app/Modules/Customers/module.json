@@ -21,7 +21,10 @@
     { "name": "customers.address.removed", "schema": "v1" },
     { "name": "customers.saved.added", "schema": "v1" },
     { "name": "customers.saved.removed", "schema": "v1" },
-    { "name": "customers.settings.updated", "schema": "v1" }
+    { "name": "customers.settings.updated", "schema": "v1" },
+    { "name": "customers.ticket.created", "schema": "v1" },
+    { "name": "customers.ticket.replied", "schema": "v1" },
+    { "name": "customers.ticket.closed", "schema": "v1" }
   ],
   "navigation": [],
   "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/customers" }

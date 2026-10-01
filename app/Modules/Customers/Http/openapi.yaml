@@ -677,3 +677,131 @@ paths:
                 properties:
                   data: { type: array }
                   meta: { $ref: '#/components/schemas/ListMeta' }
+  /api/v1/customers/support/tickets:
+    get:
+      operationId: listSupportTickets
+      summary: Cursor-paginated caller tickets (list excludes threads).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Tickets.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+    post:
+      operationId: openSupportTicket
+      summary: Open a ticket with an initial message (cap 10 open).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [subject, body, category]
+      responses:
+        '201':
+          description: Opened ticket with thread.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, status]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/support/tickets/{id}:
+    get:
+      operationId: getSupportTicket
+      summary: Ticket detail with thread.
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Ticket.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, status]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/customers/support/tickets/{id}/messages:
+    post:
+      operationId: replySupportTicket
+      summary: Reply (re-opens CLOSED tickets).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+      responses:
+        '201':
+          description: Reply recorded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, status]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/customers/support/tickets/{id}:close:
+    post:
+      operationId: closeSupportTicket
+      summary: Close a ticket (already-closed is 409).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Closed ticket.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, status]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '404': { $ref: '#/components/responses/NotFound' }
