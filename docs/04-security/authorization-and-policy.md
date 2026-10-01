@@ -389,6 +389,25 @@ and satisfy the predicate; self-approval returns `sod_conflict`.
 `platform.sod.rule_created`, `platform.sod.rule_updated`,
 `platform.sod.conflict_blocked`, `platform.sod.warning`.
 
+### Implementation note A-SEC-011-1 — assignment-time live (2026-10-01)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive)
+
+- `sod_rules` (central, NULL tenant = platform default) + `SodEvaluator`
+  (conflict kind only) + grant-time hook in `RoleController::grant`:
+  blocking rules → 403 `sod_conflict` with `details.rules`; warn rules →
+  grant proceeds + `platform.sod.warning`; `sod.role_grant_self` enforced
+  by issuer/target identity comparison at the same effective severity;
+  idempotent re-grants skip evaluation (no state change); every outcome
+  audit-logged as `sod.evaluated`. Platform defaults seedable via
+  `SodRuleSeeder` (`db:seed --class=SodRuleSeeder`).
+- Tenant rows override platform rows by code (downgrade block→warn works
+  today); tenant rule-admin CRUD with operator-consent checks is NOT built
+  yet, so seeds + factories are the only writers.
+- Explicitly pending: runtime re-evaluation in the policy engine (§7.3),
+  `approval_chain` enforcement in the workflow engine, `rule_created` /
+  `rule_updated` events (emitted once rule-admin CRUD exists).
+
 ---
 
 ## SEC-012 Route authorization requirements

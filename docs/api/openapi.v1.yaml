@@ -1023,7 +1023,7 @@ paths:
     post:
       operationId: grantMembershipRole
       x-gate: ownership
-      summary: 'Grant a role to a membership (idempotent).'
+      summary: 'Grant a role to a membership (idempotent, SoD-checked).'
       parameters:
         -
           $ref: '#/components/parameters/TenantId'
@@ -1055,6 +1055,8 @@ paths:
                 properties:
                   data: { type: object, required: [id, membership_id, role_code] }
                   meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        403:
+          $ref: '#/components/responses/AuthorizationDenied'
   '/api/v1/platform/memberships/{membershipId}/roles/{assignmentId}':
     delete:
       operationId: revokeMembershipRole

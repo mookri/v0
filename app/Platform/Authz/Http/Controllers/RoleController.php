@@ -4,6 +4,12 @@ namespace App\Platform\Authz\Http\Controllers;
 
 use App\Platform\Authz\Models\MembershipRoleAssignment;
 use App\Platform\Authz\Models\Role;
+use App\Platform\Authz\Models\RolePermission;
+use App\Platform\Authz\Models\SodRule;
+use App\Platform\Authz\Events\SodConflictBlocked;
+use App\Platform\Authz\Events\SodWarning;
+use App\Platform\Authz\SodEvaluator;
+use App\Platform\Audit\AuditWriter;
 use App\Platform\Tenancy\ConnectionResolver;
 use App\Platform\Tenancy\Models\Tenant;
 use App\Platform\Tenancy\Models\TenantMembership;
@@ -16,11 +22,18 @@ use Illuminate\Http\Request;
  * data underneath): roles are tenant-scoped rows, so every mutation
  * resolves the target tenant's context explicitly (body tenant_id +
  * issuer membership check) instead of relying on ambient resolution.
- * SoD rules land with the sod_rules table (spec'd, unbuilt) — grants
- * are direct until then, fully audited via the decision trail.
+ * Grants pass assignment-time SoD conflict evaluation (SEC-011 §7.2):
+ * blocking rules reject with `sod_conflict`, warn rules proceed with a
+ * `platform.sod.warning` event; every evaluation is audit-logged.
  */
 final class RoleController
 {
+    public function __construct(
+        private readonly AuditWriter $audit,
+        private readonly SodEvaluator $sod,
+    ) {
+    }
+
     private function requestId(Request $request): string
     {
         return (string) $request->attributes->get('request_id', '');
@@ -170,10 +183,28 @@ final class RoleController
                 ], 422);
             }
 
-            $assignment = MembershipRoleAssignment::query()->firstOrCreate([
-                'membership_id' => (string) $membership->getKey(),
-                'role_id' => (string) $role->getKey(),
-            ]);
+            $membershipKey = (string) $membership->getKey();
+            $existing = MembershipRoleAssignment::query()
+                ->where('membership_id', $membershipKey)
+                ->where('role_id', (string) $role->getKey())
+                ->first();
+
+            // Idempotent re-grant changes nothing, so it skips SoD
+            // evaluation (rules added after assignment are the runtime
+            // stage's job, SEC-011 §7.3).
+            if ($existing === null) {
+                $denied = $this->checkSoD($request, (string) $scoped['tenant']->getKey(), $membership, $role);
+                if ($denied instanceof JsonResponse) {
+                    return $denied;
+                }
+
+                $existing = MembershipRoleAssignment::query()->create([
+                    'membership_id' => $membershipKey,
+                    'role_id' => (string) $role->getKey(),
+                ]);
+            }
+
+            $assignment = $existing;
         } finally {
             if ($scoped['ownsContext']) {
                 $scoped['context']->clear();
@@ -189,6 +220,73 @@ final class RoleController
             ],
             'meta' => ['request_id' => $this->requestId($request)],
         ], 201);
+    }
+
+    /**
+     * Assignment-time SoD evaluation (SEC-011 §7.2): computes the
+     * membership's resulting active role + capability sets with the
+     * candidate grant applied, evaluates conflict rules, audit-logs every
+     * outcome, emits warn/block events, and returns a 403 `sod_conflict`
+     * envelope when a blocking rule trips (null = grant may proceed).
+     */
+    private function checkSoD(Request $request, string $tenantId, TenantMembership $membership, Role $role): ?JsonResponse
+    {
+        $membershipKey = (string) $membership->getKey();
+        $actorId = (string) $request->user()->getAuthIdentifier();
+
+        $roleIds = MembershipRoleAssignment::query()
+            ->where('membership_id', $membershipKey)
+            ->pluck('role_id')->all();
+        $roleIds[] = (string) $role->getKey();
+        $roleIds = array_values(array_unique($roleIds));
+
+        $roles = Role::query()->whereIn('id', $roleIds)->where('state', Role::STATE_ACTIVE)->get();
+        $roleCodes = $roles->map(static fn (Role $assigned): string => $assigned->code)->all();
+        $capabilities = RolePermission::query()
+            ->whereIn('role_id', $roles->map(static fn (Role $assigned): string => (string) $assigned->getKey())->all())
+            ->distinct()->pluck('capability_code')->all();
+
+        $verdict = $this->sod->evaluate($tenantId, $roleCodes, $capabilities);
+        $blocks = $verdict['blocks'];
+        $warnings = $verdict['warnings'];
+
+        // Self-grant (sod.role_grant_self): the issuer IS the target member.
+        // Needs identity comparison, not permission sets, so it is checked
+        // here against the rule's effective severity.
+        $selfSeverity = ((string) $membership->user_id === $actorId)
+            ? $this->sod->selfGrantSeverity($tenantId)
+            : null;
+        if ($selfSeverity === SodRule::SEVERITY_WARN) {
+            $warnings[] = 'sod.role_grant_self';
+        } elseif ($selfSeverity !== null) {
+            $blocks[] = 'sod.role_grant_self';
+        }
+
+        $this->audit->record(
+            'sod.evaluated',
+            ['module' => 'platform', 'resource_type' => 'role_assignment', 'resource_id' => $membershipKey],
+            null,
+            ['membership_id' => $membershipKey, 'role_code' => $role->code, 'blocks' => $blocks, 'warnings' => $warnings]
+        );
+
+        if ($warnings !== []) {
+            event(new SodWarning($tenantId, $membershipKey, $role->code, $warnings, $actorId));
+        }
+
+        if ($blocks !== []) {
+            event(new SodConflictBlocked($tenantId, $membershipKey, $role->code, $blocks, $actorId));
+
+            return new JsonResponse([
+                'error' => [
+                    'code' => 'sod_conflict',
+                    'message' => 'Role grant violates separation-of-duties rules.',
+                    'details' => ['rules' => $blocks],
+                    'request_id' => $this->requestId($request),
+                ],
+            ], 403);
+        }
+
+        return null;
     }
 
     public function revoke(Request $request, string $membershipId, string $assignmentId): JsonResponse
