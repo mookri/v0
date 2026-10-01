@@ -483,6 +483,206 @@ paths:
                   meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
         401:
           $ref: '#/components/responses/Unauthenticated'
+  /api/v1/customers/profile:
+    get:
+      operationId: getCustomerProfile
+      summary: "Read the caller's profile (masked contacts)."
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      responses:
+        200:
+          description: Profile.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateCustomerProfile
+      summary: 'Strict profile update (unknown fields are 422).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                display_name:
+                  type: string
+                  nullable: true
+                locale:
+                  type: string
+      responses:
+        200:
+          description: 'Updated profile.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  '/api/v1/customers/profile:deactivate':
+    post:
+      operationId: deactivateCustomer
+      summary: 'Deactivate own account (fresh OTP proof required).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - challenge_id
+                - code
+      responses:
+        200:
+          description: Deactivated.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, id, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  '/api/v1/customers/profile:reactivate':
+    post:
+      operationId: reactivateCustomer
+      summary: 'Reactivate own account (public, fresh OTP proof required).'
+      x-gate: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tenant_id
+                - challenge_id
+                - code
+      responses:
+        200:
+          description: Reactivated.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, id, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/verifications:
+    get:
+      operationId: getVerificationStatus
+      summary: 'Masked contact verification status.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      responses:
+        200:
+          description: Status.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+    post:
+      operationId: requestVerification
+      summary: 'Issue a verification challenge for a new contact value.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - channel
+                - value
+      responses:
+        202:
+          description: 'Challenge issued.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, challenge_id, expires_in] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  '/api/v1/customers/verifications/{challengeId}:confirm':
+    post:
+      operationId: confirmVerification
+      summary: 'Confirm a verification code (applies the contact change).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: challengeId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+      responses:
+        200:
+          description: Verified.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, channel] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
   /api/v1/identity/invites:
     post:
       operationId: issueInvite

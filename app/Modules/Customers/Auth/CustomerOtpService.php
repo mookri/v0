@@ -84,10 +84,23 @@ final class CustomerOtpService
         string $code,
         CarbonImmutable $now,
     ): ?CustomerOtpChallenge {
+        return $this->verifyForPurposes($tenantId, [$purpose], $challengeId, $code, $now);
+    }
+
+    /**
+     * @param list<string> $purposes
+     */
+    public function verifyForPurposes(
+        string $tenantId,
+        array $purposes,
+        string $challengeId,
+        string $code,
+        CarbonImmutable $now,
+    ): ?CustomerOtpChallenge {
         $challenge = CustomerOtpChallenge::query()
             ->where('id', $challengeId)
             ->where('tenant_id', $tenantId)
-            ->where('purpose', $purpose)
+            ->whereIn('purpose', $purposes)
             ->first();
 
         if ($challenge === null) {

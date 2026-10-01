@@ -1,0 +1,154 @@
+<?php
+
+namespace Tests\Modules\Customers;
+
+use App\Models\User;
+use App\Modules\Customers\Auth\CustomerOtpService;
+use App\Modules\Customers\Auth\SeededOtpCodes;
+use App\Modules\Customers\Models\BuyerProfile;
+use App\Platform\Tenancy\Models\Tenant;
+use Tests\TenantIntegrationTestCase;
+
+/**
+ * Contact verification (B3, docs/api/parity-customers.md): masked status
+ * reads, OTP-proven phone/email changes bound to the requester, 409 on
+ * already-verified values, and collapse of bad codes to one 401.
+ */
+final class CustomerVerificationTest extends TenantIntegrationTestCase
+{
+    /**
+     * @return array{0: Tenant, 1: User}
+     */
+    private function customer(): array
+    {
+        $tenant = $this->makeTenant();
+        $user = User::factory()->create(['phone' => '+911234567890']);
+        $user->forceFill([
+            'email' => '911234567890@phone.local',
+            'phone_verified_at' => now()->toDateTimeString(),
+            'external_id' => 'cust_'.strtolower((string) \Illuminate\Support\Str::ulid()),
+        ])->save();
+        $this->makeMembership($tenant, $user);
+
+        $this->resolveContext($tenant);
+        try {
+            BuyerProfile::factory()->create(['user_id' => $user->id]);
+        } finally {
+            $this->clearContext();
+        }
+
+        $this->actingAs($user);
+
+        return [$tenant, $user];
+    }
+
+    private function freshOtp(): SeededOtpCodes
+    {
+        $codes = new SeededOtpCodes();
+        $this->app->singleton(CustomerOtpService::class, static fn (): CustomerOtpService => new CustomerOtpService($codes));
+        config()->set('identity.hmac_secret', 'verification-test-secret');
+
+        return $codes;
+    }
+
+    public function test_status_masks_and_hides_synthetic_email(): void
+    {
+        [$tenant] = $this->customer();
+
+        $status = $this->getJson('/api/v1/customers/verifications', $this->tenantHeaders($tenant))->assertOk();
+        $this->assertSame('+91******90', $status->json('data.phone.value_masked'));
+        $this->assertNotNull($status->json('data.phone.verified_at'));
+        $this->assertNull($status->json('data.email.value_masked'));
+        $this->assertNull($status->json('data.email.verified_at'));
+    }
+
+    public function test_change_phone_end_to_end(): void
+    {
+        $codes = $this->freshOtp();
+        [$tenant, $user] = $this->customer();
+        $headers = $this->tenantHeaders($tenant);
+        $actor = fn () => $this->actingAs($user);
+
+        $challengeId = $actor()->postJson('/api/v1/customers/verifications', [
+            'channel' => 'phone', 'value' => '+919876543210',
+        ], $headers)->assertStatus(202)->json('data.challenge_id');
+
+        // Wrong code collapses to the single 401.
+        $actor()->postJson("/api/v1/customers/verifications/{$challengeId}:confirm", [
+            'code' => '000000',
+        ], $headers)->assertUnauthorized()->assertJsonPath('error.code', 'unauthenticated');
+
+        $confirmed = $actor()->postJson("/api/v1/customers/verifications/{$challengeId}:confirm", [
+            'code' => $codes->lastFor($challengeId),
+        ], $headers)->assertOk();
+        $this->assertSame('phone', $confirmed->json('data.channel'));
+        $this->assertSame('+91******10', $confirmed->json('data.value_masked'));
+
+        $this->assertDatabaseHas('users', ['id' => $user->id, 'phone' => '+919876543210'], 'central');
+        $this->assertNotNull(User::query()->find($user->id)->phone_verified_at);
+        $this->assertAuditRecorded($tenant, 'customers.verification.completed');
+
+        // The new phone is now the login identity.
+        $loginId = $this->postJson('/api/v1/customers/auth/otp', [
+            'tenant_id' => (string) $tenant->getKey(), 'purpose' => 'login', 'identity' => '+919876543210',
+        ])->assertStatus(202)->json('data.challenge_id');
+        $this->postJson('/api/v1/customers/auth/login', [
+            'tenant_id' => (string) $tenant->getKey(), 'challenge_id' => $loginId, 'code' => $codes->lastFor($loginId),
+        ])->assertOk();
+    }
+
+    public function test_already_verified_value_conflicts(): void
+    {
+        [$tenant, $user] = $this->customer();
+        $headers = $this->tenantHeaders($tenant);
+
+        // Current phone is verified (factory verified_at) → 409.
+        $this->actingAs($user)->postJson('/api/v1/customers/verifications', [
+            'channel' => 'phone', 'value' => '+911234567890',
+        ], $headers)->assertStatus(409)->assertJsonPath('error.code', 'conflict');
+    }
+
+    public function test_bad_shapes_are_422(): void
+    {
+        [$tenant, $user] = $this->customer();
+        $headers = $this->tenantHeaders($tenant);
+        $actor = fn () => $this->actingAs($user);
+
+        $actor()->postJson('/api/v1/customers/verifications', [
+            'channel' => 'phone', 'value' => 'not-a-phone',
+        ], $headers)->assertStatus(422)->assertJsonPath('error.code', 'validation_failed');
+
+        $actor()->postJson('/api/v1/customers/verifications', [
+            'channel' => 'email', 'value' => 'not-an-email',
+        ], $headers)->assertStatus(422)->assertJsonPath('error.details.fields.value', ['invalid_email']);
+    }
+
+    public function test_challenge_bound_to_requester(): void
+    {
+        $codes = $this->freshOtp();
+        [$tenant, $user] = $this->customer();
+        $headers = $this->tenantHeaders($tenant);
+
+        // Attacker (second customer) tries to confirm the victim's challenge
+        // with the correct code: structurally valid, applies to nothing.
+        $victimId = $this->actingAs($user)->postJson('/api/v1/customers/verifications', [
+            'channel' => 'phone', 'value' => '+919876543210',
+        ], $headers)->assertStatus(202)->json('data.challenge_id');
+
+        $attacker = User::factory()->create(['phone' => '+911111111111']);
+        $attacker->forceFill(['external_id' => 'cust_'.strtolower((string) \Illuminate\Support\Str::ulid())])->save();
+        $this->makeMembership($tenant, $attacker);
+        $this->resolveContext($tenant);
+        try {
+            BuyerProfile::factory()->create(['user_id' => $attacker->id]);
+        } finally {
+            $this->clearContext();
+        }
+
+        $this->actingAs($attacker)->postJson("/api/v1/customers/verifications/{$victimId}:confirm", [
+            'code' => $codes->lastFor($victimId),
+        ], $headers)->assertUnauthorized();
+
+        $this->assertDatabaseHas('users', ['id' => $attacker->id, 'phone' => '+911111111111'], 'central');
+    }
+}
