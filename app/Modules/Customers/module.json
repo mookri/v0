@@ -24,7 +24,8 @@
     { "name": "customers.settings.updated", "schema": "v1" },
     { "name": "customers.ticket.created", "schema": "v1" },
     { "name": "customers.ticket.replied", "schema": "v1" },
-    { "name": "customers.ticket.closed", "schema": "v1" }
+    { "name": "customers.ticket.closed", "schema": "v1" },
+    { "name": "customers.referral.attributed", "schema": "v1" }
   ],
   "navigation": [],
   "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/customers" }

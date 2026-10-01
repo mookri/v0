@@ -105,5 +105,9 @@ final class QueryPlanTest extends TenantIntegrationTestCase
             $this->plan($conn, 'select * from support_messages where tenant_id = ? and ticket_id = ?', [$tenant, 't1']),
             'messages by ticket scan'
         );
+        $this->assertIndexed(
+            $this->plan($conn, 'select * from referral_attributions where tenant_id = ? and referrer_user_id = ?', [$tenant, '1']),
+            'referrals by referrer scan'
+        );
     }
 }

@@ -1126,6 +1126,31 @@ paths:
                 properties:
                   data: { type: object, required: [object, id, status] }
                   meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/referrals:
+    get:
+      operationId: getReferralSummary
+      summary: 'Caller referral code, count, and masked referred list.'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          $ref: '#/components/parameters/Limit'
+        -
+          $ref: '#/components/parameters/Cursor'
+      responses:
+        200:
+          description: 'Referral summary.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, code, referred_count, referrals] }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
   /api/v1/customers/saved:
     get:
       operationId: listSavedItems

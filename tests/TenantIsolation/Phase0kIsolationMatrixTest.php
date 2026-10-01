@@ -10,6 +10,8 @@ use App\Modules\Booking\Models\BookingTransition;
 use App\Modules\Customers\Models\BuyerProfile;
 use App\Modules\Customers\Models\CustomerActivity;
 use App\Modules\Customers\Models\CustomerAddress;
+use App\Modules\Customers\Models\ReferralAttribution;
+use App\Modules\Customers\Models\ReferralCode;
 use App\Modules\Customers\Models\SupportMessage;
 use App\Modules\Customers\Models\SupportTicket;
 use App\Modules\Customers\Models\CustomerNotification;
@@ -274,6 +276,31 @@ final class Phase0kIsolationMatrixTest extends TenantIntegrationTestCase
                 'body' => 'Isolation message',
             ],
             ['body' => 'isolation probe'],
+        );
+    }
+
+    public function test_referral_codes_are_isolated(): void
+    {
+        $this->assertTenantIsolationMatrix(
+            ReferralCode::class,
+            fn (): array => [
+                'user_id' => User::factory()->create()->id,
+                'code' => ReferralCode::generate(),
+            ],
+            ['code' => ReferralCode::generate()],
+        );
+    }
+
+    public function test_referral_attributions_are_isolated(): void
+    {
+        $this->assertTenantIsolationMatrix(
+            ReferralAttribution::class,
+            fn (): array => [
+                'referrer_user_id' => User::factory()->create()->id,
+                'referred_user_id' => User::factory()->create()->id,
+                'code' => 'REF-ISOLATION',
+            ],
+            ['code' => 'REF-PROBE'],
         );
     }
 

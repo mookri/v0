@@ -7,6 +7,8 @@ use App\Modules\Customers\Auth\CustomerOtpService;
 use App\Modules\Customers\Auth\OtpRateLimitedException;
 use App\Modules\Customers\Models\BuyerProfile;
 use App\Modules\Customers\Models\CustomerOtpChallenge;
+use App\Modules\Customers\Models\ReferralAttribution;
+use App\Modules\Customers\Models\ReferralCode;
 use App\Modules\Customers\CustomerActivityRecorder;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Identity\ActorTokenIssuer;
@@ -294,6 +296,9 @@ final class CustomerAuthController
                 ['tenant_id' => $tenantId, 'user_id' => (string) $user->getAuthIdentifier()]
             );
             $this->activity->record((string) $user->getAuthIdentifier(), 'signup', 'Account created');
+
+            $this->issueReferralCode($tenantId, (string) $user->getAuthIdentifier());
+            $this->attributeReferral($request, $tenantId, (string) $user->getAuthIdentifier(), (string) ($payload['referral_code'] ?? ''));
         } finally {
             if ($scoped['ownsContext']) {
                 $scoped['context']->clear();
@@ -315,6 +320,68 @@ final class CustomerAuthController
             ],
             'meta' => ['request_id' => $this->requestId($request)],
         ], 201);
+    }
+
+    /**
+     * Referral code issuance (idempotent) + attribution. Invalid and
+     * self codes are ignored, never errors — a typo must not fail
+     * signup. Reward rules are out of scope (attribution only).
+     */
+    private function issueReferralCode(string $tenantId, string $userId): void
+    {
+        if (ReferralCode::query()->where('user_id', $userId)->exists()) {
+            return;
+        }
+
+        for ($attempts = 0; $attempts < 5; $attempts++) {
+            try {
+                $code = new ReferralCode();
+                $code->forceFill([
+                    'tenant_id' => $tenantId,
+                    'user_id' => $userId,
+                    'code' => ReferralCode::generate(),
+                ]);
+                $code->save();
+
+                return;
+            } catch (\Illuminate\Database\QueryException) {
+                // Globally-unique code collision (astronomically rare):
+                // regenerate instead of failing signup.
+            }
+        }
+    }
+
+    private function attributeReferral(Request $request, string $tenantId, string $userId, string $code): void
+    {
+        if ($code === '') {
+            return;
+        }
+
+        $referral = ReferralCode::query()->where('code', $code)->first();
+
+        // Unknown codes, foreign-tenant codes, and self codes are
+        // ignored — a typo must not fail signup.
+        if ($referral === null
+            || (string) $referral->tenant_id !== $tenantId
+            || (string) $referral->user_id === $userId) {
+            return;
+        }
+
+        $attribution = new ReferralAttribution();
+        $attribution->forceFill([
+            'tenant_id' => $tenantId,
+            'referrer_user_id' => (string) $referral->user_id,
+            'referred_user_id' => $userId,
+            'code' => $code,
+        ]);
+        $attribution->save();
+
+        $this->audit->record(
+            'customers.referral.attributed',
+            ['module' => 'customers', 'resource_type' => 'referral_attribution', 'resource_id' => (string) $attribution->getKey()],
+            null,
+            ['tenant_id' => $tenantId, 'referrer_user_id' => (string) $referral->user_id, 'referred_user_id' => $userId]
+        );
     }
 
     public function login(Request $request): JsonResponse
