@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $refresh_ttl_seconds
  * @property bool $require_pkce
  * @property string $rate_tier
+ * @property string $status
  */
 final class OAuthClientProfile extends Model
 {
@@ -53,7 +54,7 @@ final class OAuthClientProfile extends Model
     protected $fillable = [
         'client_id', 'client_type', 'tenant_id', 'allowed_grants',
         'allowed_scopes', 'audience', 'access_ttl_seconds',
-        'refresh_ttl_seconds', 'require_pkce', 'rate_tier',
+        'refresh_ttl_seconds', 'require_pkce', 'rate_tier', 'status',
     ];
 
     protected function casts(): array
