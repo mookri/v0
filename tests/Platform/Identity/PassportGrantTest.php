@@ -27,6 +27,13 @@ final class PassportGrantTest extends TenantIntegrationTestCase
         ]);
         $client->save();
 
+        \App\Platform\Identity\OAuth\OAuthClientProfile::factory()->create([
+            'client_id' => (string) $client->getKey(),
+            'client_type' => \App\Platform\Identity\OAuth\OAuthClientProfile::TYPE_FIRST_PARTY_WEB,
+            'tenant_id' => null,
+            'allowed_grants' => ['authorization_code', 'refresh_token'],
+        ]);
+
         return $client;
     }
 
@@ -160,13 +167,19 @@ final class PassportGrantTest extends TenantIntegrationTestCase
 
     public function test_password_grant_stays_banned(): void
     {
+        $tenant = $this->makeTenant();
+        [$user] = $this->actingAsMembership($tenant);
+        $client = $this->webClient();
+
+        // Even a fully-profiled client cannot use the password grant:
+        // it is in no profile's allowed set (server-wide ban).
         $this->postJson('/oauth/token', [
             'grant_type' => 'password',
-            'client_id' => 'whatever',
-            'client_secret' => 'whatever',
+            'client_id' => (string) $client->getKey(),
+            'client_secret' => 'test-secret-12345',
             'username' => 'a@example.test',
             'password' => 'secret',
             'scope' => '',
-        ])->assertStatus(400)->assertJsonPath('error', 'unsupported_grant_type');
+        ])->assertStatus(400)->assertJsonPath('error', 'unsupported_grant');
     }
 }

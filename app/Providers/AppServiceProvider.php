@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Platform\Identity\OAuth\CheckOAuthGrant;
+use App\Platform\Identity\OAuth\Console\CreateClientCommand;
 use App\Platform\Identity\OAuth\RotatingRefreshTokenRepository;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Laravel\Passport\Passport;
@@ -18,6 +21,12 @@ class AppServiceProvider extends ServiceProvider
         // league rotates by default; our subclass adds lineage kill +
         // security event on revoked-token reuse.
         $this->app->bind(RefreshTokenRepository::class, RotatingRefreshTokenRepository::class);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                CreateClientCommand::class,
+            ]);
+        }
     }
 
     /**
@@ -33,5 +42,14 @@ class AppServiceProvider extends ServiceProvider
         Passport::authorizationView(
             static fn (array $parameters): \Symfony\Component\HttpFoundation\Response => response()->view('oauth.authorize', $parameters)
         );
+
+        // P3a: per-client grant enforcement on the token route. Wired
+        // here (not in routes files) because the route is registered by
+        // Passport's own provider; the named-route lookup keeps this
+        // working across Passport upgrades that preserve route names.
+        $tokenRoute = Route::getRoutes()->getByName('passport.token');
+        if ($tokenRoute !== null) {
+            $tokenRoute->middleware(CheckOAuthGrant::class);
+        }
     }
 }

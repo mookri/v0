@@ -48,9 +48,14 @@ move to the bottom with date + resolution, never deleted.
 - **P2 done (2026-10-02):** routes on with consent screen; code + PKCE
   happy path, PKCE mismatch denial, refresh rotation with reuse
   detection (lineage kill + `platform.token.reuse_detected`), password
-  grant provably banned, 15 min access TTL enforced. Client profiles
-  (tenant binding, partner/POS) land P3.
-- **Tracks:** P3 dual-accept window + client profiles, P4 HMAC sunset with date.
+  grant provably banned, 15 min access TTL enforced.
+- **P3a done (2026-10-02):** `oauth_client_profiles` (type, tenant
+  binding, allowed grants/scopes, audience, TTL overrides, PKCE flag,
+  tier); `platform:client:create` (secret shown once, hashed at rest;
+  partner requires active tenant; pos_device refused — device grant
+  stays off); per-client grant enforcement on the token route
+  (league-shaped errors; profile-less clients rejected).
+- **Tracks:** P3b dual-accept window (Passport JWT in `auth.any`), P4 HMAC sunset with date.
 
 ## Resolved
 
