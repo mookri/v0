@@ -130,6 +130,24 @@ Password hashing: Argon2id (Laravel default).
 All token endpoint traffic MUST be TLS-only; CORS is configured per
 registered client origin only.
 
+### Implementation note A-SEC-002-1 — discovery + userinfo live (2026-10-02)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive)
+
+- `/.well-known/oauth-authorization-server` (RFC 8414, throttled,
+  cacheable) instead of `openid-configuration`: OIDC discovery implies
+  `id_token` issuance, which is not built — the RFC 8414 document
+  carries everything an OAuth client needs today. OIDC discovery lands
+  with `id_token`s.
+- `/.well-known/jwks.json` publishes the active RSA key (`kty/use/alg/
+  n/e`, cacheable). No `kid` correlation: league mints kid-less
+  tokens; rotation dual-publishes when the time comes.
+- `GET /oauth/userinfo` (any accepted credential, no tenant scope —
+  identity-level): `{sub, name, email(+verified), phone(+verified)}`
+  with `sub` = external_id, falling back to the user id.
+- Still pending: `id_token` issuance, OIDC discovery, introspection
+  (§8.2), device flow, step-up, MFA endpoints.
+
 ### 2.3 Client registry
 
 Passport `oauth_clients` is extended by kernel table `oauth_client_profiles`:

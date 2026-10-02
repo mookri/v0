@@ -62,6 +62,8 @@ move to the bottom with date + resolution, never deleted.
 - **P4a done (2026-10-02):** RFC 7009 revocation endpoint
   (`POST /api/oauth/revoke`, symmetric kill both directions, no-oracle
   200s, league error shape).
+- **P4a-ii done (2026-10-02):** RFC 8414 discovery, JWKS, userinfo
+  (A-SEC-002-1; OIDC discovery + `id_token`s pending).
 - **Tracks:** P4b HMAC sunset with date (+ custom JWT claims: tenant, acr/sid).
 ## Resolved
 
