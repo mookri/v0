@@ -121,6 +121,46 @@ final class CustomersAuthTest extends TenantIntegrationTestCase
         $this->assertAuditRecorded($tenant, 'customers.auth.logged_in');
     }
 
+    public function test_login_demands_totp_when_mfa_enrolled(): void
+    {
+        $codes = $this->otp();
+        $tenant = $this->makeTenant();
+        $tid = (string) $tenant->getKey();
+
+        $user = User::factory()->create(['phone' => '+911234567890']);
+        $user->forceFill(['external_id' => 'cust_mfalogin'])->save();
+        $this->makeMembership($tenant, $user);
+
+        $service = new \App\Platform\Identity\MfaService();
+        $service->enroll($user);
+        $secret = \Illuminate\Support\Facades\Crypt::decryptString($user->fresh()->mfa_secret);
+        $totp = \OTPHP\TOTP::createFromSecret($secret);
+        $service->confirm($user->fresh(), $totp->now(), time());
+
+        $loginWith = function (?string $totpCode) use ($codes, $tid) {
+            $challengeId = $this->postJson('/api/v1/customers/auth/otp', [
+                'tenant_id' => $tid, 'purpose' => 'login', 'identity' => '+911234567890',
+            ])->assertStatus(202)->json('data.challenge_id');
+
+            $payload = [
+                'tenant_id' => $tid, 'challenge_id' => $challengeId,
+                'code' => $codes->lastFor($challengeId),
+            ];
+            if ($totpCode !== null) {
+                $payload['totp_code'] = $totpCode;
+            }
+
+            return $this->postJson('/api/v1/customers/auth/login', $payload);
+        };
+
+        // No TOTP, wrong TOTP: same single 401 (no oracle on MFA state).
+        $loginWith(null)->assertUnauthorized()->assertJsonPath('error.code', 'unauthenticated');
+        $loginWith('000000')->assertUnauthorized()->assertJsonPath('error.code', 'unauthenticated');
+
+        // Correct TOTP: full two-factor login.
+        $loginWith($totp->now())->assertOk()->assertJsonPath('data.actor.user_id', 'cust_mfalogin');
+    }
+
     public function test_bad_codes_collapse_to_one_401(): void
     {
         $codes = $this->otp();

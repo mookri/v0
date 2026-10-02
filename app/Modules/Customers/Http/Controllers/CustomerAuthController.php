@@ -390,6 +390,7 @@ final class CustomerAuthController
             'tenant_id' => ['required', 'string'],
             'challenge_id' => ['required', 'string'],
             'code' => ['required', 'string'],
+            'totp_code' => ['sometimes', 'nullable', 'string'],
         ]);
 
         $tenant = $this->activeTenant($request, $validated['tenant_id']);
@@ -430,6 +431,19 @@ final class CustomerAuthController
             return new JsonResponse([
                 'error' => ['code' => 'membership_inactive', 'message' => 'This account is deactivated.', 'request_id' => $this->requestId($request)],
             ], 403);
+        }
+
+        // Enrolled MFA upgrades login to two factors: possession (OTP)
+        // plus the TOTP code. Absent or wrong codes collapse to the
+        // single 401 (no oracle on MFA state).
+        if ((bool) $user->mfa_enabled) {
+            $totp = (string) ($validated['totp_code'] ?? '');
+
+            if ($totp === '' || ! app(\App\Platform\Identity\MfaService::class)->verify($user, $totp, time())) {
+                return new JsonResponse([
+                    'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
+                ], 401);
+            }
         }
 
         $scoped = $this->resolveTenantScope($tenant);

@@ -13,7 +13,7 @@ updates this doc and both test suites in the same change.
 | OTP request | `POST /api/auth/login {identityId, proof}` → `{token, sessionId, expiresAt}` (single call, memory identity) | `POST /api/v1/customers/auth/otp {tenant_id, purpose, identity}` → 202 `{challenge_id, expires_in}` | **diverged by design** — BFF keeps its shape; backend splits challenge + redeem (rate control). BFF maps: otp call, then redeem, then shapes `{token, sessionId, expiresAt}` from `{token, actor.session_id, expires_at}` |
 | signup | (no BFF endpoint yet) | `POST /api/v1/customers/auth/signup` → 202 `{challenge_id}` | backend only until F2 |
 | signup verify | (no BFF endpoint yet) | `POST /api/v1/customers/auth/verify` → 201 `{token, expires_at, tenant_id, actor}` | backend only until F2 |
-| login redeem | (folded into BFF login) | `POST /api/v1/customers/auth/login` → 200 `{token, expires_at, tenant_id, actor}` | backend only until F2 |
+| login redeem | (folded into BFF login, optional `totpCode` passthrough) | `POST /api/v1/customers/auth/login` → 200 `{token, expires_at, tenant_id, actor}` (+ optional `totp_code` when the account has MFA enrolled — absent/wrong collapses to 401) | backend only until F2 |
 | logout | `POST /api/auth/logout` → `{signedOut:true}` | `POST /api/v1/customers/auth/logout` → 200 `{signed_out:true}` | equal semantics (both best-effort until jti store) |
 | profile read | `GET /api/profile` → `{profile:null}` (stub) | `GET /api/v1/customers/profile` → 200 masked profile | backend real; BFF adopts shape in F2 |
 | profile update | — | `PATCH /api/v1/customers/profile` → 200 (strict fields) | backend only until F2 |
