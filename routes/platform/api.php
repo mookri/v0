@@ -125,10 +125,10 @@ Route::prefix(config('platform.api_version', 'v1'))
             ->middleware(['tenant', 'capability:platform:user:view'])
             ->name('users.index');
         Route::post('platform/users/{id}:suspend', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'suspend'])
-            ->middleware(['tenant', 'capability:platform:user:manage'])
+            ->middleware(['tenant', 'capability:platform:user:manage', 'stepup:2'])
             ->name('users.suspend');
         Route::post('platform/users/{id}:activate', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'activate'])
-            ->middleware(['tenant', 'capability:platform:user:manage'])
+            ->middleware(['tenant', 'capability:platform:user:manage', 'stepup:2'])
             ->name('users.activate');
         Route::get('platform/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'index'])
             ->name('roles.index');

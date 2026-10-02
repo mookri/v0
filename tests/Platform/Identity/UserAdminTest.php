@@ -35,6 +35,12 @@ final class UserAdminTest extends TenantIntegrationTestCase
         $target = \App\Models\User::factory()->create();
         $this->makeMembership($tenant, $target);
 
+        // Lifecycle writes are step-up gated: capability alone is not
+        // enough to kill (or restore) credentials.
+        $authed()->postJson("/api/v1/platform/users/{$target->id}:suspend", ['tenant_id' => $tid], $headers)
+            ->assertForbidden()->assertJsonPath('error.code', 'step_up_required');
+
+        $this->stepUp($admin);
         $suspended = $authed()->postJson("/api/v1/platform/users/{$target->id}:suspend", ['tenant_id' => $tid], $headers)
             ->assertOk();
         $suspended->assertJsonPath('data.status', 'suspended');

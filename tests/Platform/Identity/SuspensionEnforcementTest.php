@@ -83,11 +83,17 @@ final class SuspensionEnforcementTest extends TenantIntegrationTestCase
             'last_activity' => time(),
         ]);
 
-        $this->actingAs($issuer)->postJson(
+        $suspend = fn () => $this->actingAs($issuer)->postJson(
             "/api/v1/platform/users/{$user->getAuthIdentifier()}:suspend",
             ['tenant_id' => $tid],
             $this->tenantHeaders($tenant)
-        )->assertOk()->assertJsonPath('data.status', 'suspended');
+        );
+
+        // Step-up gated: no fresh proof, no credential kill.
+        $suspend()->assertForbidden()->assertJsonPath('error.code', 'step_up_required');
+
+        $this->stepUp($issuer);
+        $suspend()->assertOk()->assertJsonPath('data.status', 'suspended');
 
         // Tokens dead (no live rows left for the user)...
         $this->assertSame(0, \Laravel\Passport\Token::query()
