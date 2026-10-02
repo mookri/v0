@@ -386,3 +386,48 @@ test('new wired surfaces pass through with BFF shapes', async () => {
   const cold = await listAddresses(new Request('https://app.navdhya.com/api/addresses'));
   expect(cold.status).toBe(401);
 });
+
+test('wired signup intent and verify set the session cookie', async () => {
+  wiredEnv();
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (url: string) => {
+      const body = url.endsWith('/customers/auth/signup')
+        ? { data: { challenge_id: 'ch_9', expires_in: 600 }, meta: { request_id: 'r1' } }
+        : { data: { token: 'tok', expires_at: '2030-01-01T00:00:00.000Z', tenant_id: 'tenant_1', actor: { user_id: 'cust_9', session_id: 'sess_9' } }, meta: { request_id: 'r2' } };
+      return new Response(JSON.stringify(body), { status: 200 });
+    }),
+  );
+  const { POST: signup } = await import('@apps/customer/app/api/auth/signup/route');
+  const { POST: verify } = await import('@apps/customer/app/api/auth/verify/route');
+
+  const intent = await signup(
+    new Request('https://app.navdhya.com/api/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify({ phone: '+911234567890', name: 'Ravi' }),
+    }),
+  );
+  expect(intent.status).toBe(202);
+  expect(((await intent.json()) as { data: { challengeId: string } }).data.challengeId).toBe('ch_9');
+
+  const done = await verify(
+    new Request('https://app.navdhya.com/api/auth/verify', {
+      method: 'POST',
+      body: JSON.stringify({ challengeId: 'ch_9', code: '123456' }),
+    }),
+  );
+  expect(done.status).toBe(201);
+  const doneBody = (await done.json()) as { data: { sessionId: string } };
+  expect(doneBody.data.sessionId).toBe('sess_9');
+  expect(done.headers.get('Set-Cookie')).toContain(CUSTOMER_TOKEN_COOKIE);
+
+  // Flag off: unauthenticated-only.
+  vi.stubEnv('CUSTOMER_BACKEND', '');
+  const cold = await signup(
+    new Request('https://app.navdhya.com/api/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify({ phone: '+911234567890', name: 'Ravi' }),
+    }),
+  );
+  expect(cold.status).toBe(401);
+});
