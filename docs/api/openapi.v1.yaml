@@ -3,6 +3,32 @@ info:
   title: 'Navdhya Platform API'
   version: 1.0.0
 paths:
+  /api/oauth/introspect:
+    post:
+      operationId: introspectOAuthToken
+      summary: 'RFC 7662 introspection (first-party service clients only).'
+      x-gate: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+                - client_id
+                - client_secret
+      responses:
+        200:
+          description: 'Active flag with claims, or inactive.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - active
+                properties:
+                  active: { type: boolean }
   /api/oauth/revoke:
     post:
       operationId: revokeOAuthToken

@@ -569,6 +569,20 @@ clients** — this is the mechanism future extracted services use to validate
 tokens without shared key access patterns changing (carve-out rule C4,
 [domain framework §6](../02-architecture/architecture-master.md)). Rate-limited per client; every introspection call is logged.
 
+### Implementation note A-SEC-015-2 — introspection live (2026-10-02)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive)
+
+- `POST /api/oauth/introspect` (client-authenticated, throttled):
+  first-party service clients only (partners get 403); access tokens
+  resolve claims from the row + JWT scopes, refresh tokens resolve
+  client/exp; unknown/expired/revoked answer `{active: false}` without
+  distinguishing. Every call is operationally logged (no tenant
+  context exists at this layer, so kernel audit rows don't apply).
+- No `tenant_id(s)`/`acr` claims yet (tokens don't carry them — custom
+  claims land with P4b); no Redis cache (REDIS-001) — lookups are
+  indexed DB reads.
+
 ---
 
 ### Brute-Force & Abuse Controls

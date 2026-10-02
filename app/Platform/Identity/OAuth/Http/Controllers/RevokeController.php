@@ -2,6 +2,7 @@
 
 namespace App\Platform\Identity\OAuth\Http\Controllers;
 
+use App\Platform\Identity\OAuth\ResolvesOAuthTokens;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -19,6 +20,8 @@ use Laravel\Passport\Passport;
  */
 final class RevokeController
 {
+    use ResolvesOAuthTokens;
+
     public function __invoke(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -49,66 +52,26 @@ final class RevokeController
     private function revoke(string $token, ?string $hint): void
     {
         if ($hint === null || $hint === 'access_token') {
-            $jti = $this->jtiOf($token);
-            $accessIds = Passport::token()->newQuery()
-                ->whereKey($jti)
-                ->pluck('id');
+            $access = $this->findAccessToken($token);
 
-            if ($accessIds->isNotEmpty()) {
-                Passport::token()->newQuery()->whereIn('id', $accessIds)->update(['revoked' => true]);
-                Passport::refreshToken()->newQuery()->whereIn('access_token_id', $accessIds)->update(['revoked' => true]);
+            if ($access !== null) {
+                Passport::token()->newQuery()->whereKey($access->getKey())->update(['revoked' => true]);
+                Passport::refreshToken()->newQuery()->where('access_token_id', $access->getKey())->update(['revoked' => true]);
 
                 return;
             }
         }
 
         if ($hint === null || $hint === 'refresh_token') {
-            // Refresh tokens travel encrypted (league defuse payload keyed
-            // by the app key): decrypt to the stored id first. Undecryptable
-            // input is an unknown token — silent 200, no oracle.
-            $id = $this->refreshTokenId($token);
-
-            if ($id === null) {
-                return;
-            }
-
-            $refresh = Passport::refreshToken()->newQuery()->whereKey($id)->first();
+            // Refresh tokens travel encrypted: the trait decrypts to the
+            // stored id first; undecryptable input is an unknown token
+            // (silent 200, no oracle).
+            $refresh = $this->findRefreshToken($token);
 
             if ($refresh !== null) {
-                Passport::refreshToken()->newQuery()->whereKey($id)->update(['revoked' => true]);
+                Passport::refreshToken()->newQuery()->whereKey($refresh->getKey())->update(['revoked' => true]);
                 Passport::token()->newQuery()->whereKey($refresh->getAttribute('access_token_id'))->update(['revoked' => true]);
             }
         }
-    }
-
-    /**
-     * Access tokens travel as JWTs (revoke by jti); anything else passes
-     * through for the refresh path to attempt.
-     */
-    private function jtiOf(string $token): string
-    {
-        if (substr_count($token, '.') !== 2) {
-            return $token;
-        }
-
-        $claims = json_decode(base64_decode(strtr(explode('.', $token)[1], '-_', '+/'), true) ?: '[]', true);
-
-        return is_array($claims) && isset($claims['jti']) && is_string($claims['jti']) ? $claims['jti'] : $token;
-    }
-
-    private function refreshTokenId(string $token): ?string
-    {
-        try {
-            $payload = json_decode(
-                \Defuse\Crypto\Crypto::decryptWithPassword($token, app('encrypter')->getKey()),
-                true
-            );
-        } catch (\Throwable) {
-            return null;
-        }
-
-        return is_array($payload) && isset($payload['refresh_token_id']) && is_string($payload['refresh_token_id'])
-            ? $payload['refresh_token_id']
-            : null;
     }
 }

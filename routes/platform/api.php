@@ -138,6 +138,9 @@ Route::name('oauth.')
         Route::post('oauth/revoke', [\App\Platform\Identity\OAuth\Http\Controllers\RevokeController::class, '__invoke'])
             ->middleware('throttle:10,1')
             ->name('revoke');
+        Route::post('oauth/introspect', [\App\Platform\Identity\OAuth\Http\Controllers\IntrospectController::class, '__invoke'])
+            ->middleware('throttle:10,1')
+            ->name('introspect');
     });
 
 // Invite acceptance carries its own credential (the token) — public route
