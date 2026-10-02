@@ -19,7 +19,7 @@ interface LaravelSession {
 export async function POST(req: Request) {
   const requestId = newRequestId();
   seedDevIdentity();
-  let body: { identityId?: string; proof?: string } = {};
+  let body: { identityId?: string; proof?: string; totpCode?: string } = {};
   try {
     body = (await req.json()) as typeof body;
   } catch {
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     return Response.json(err('VALIDATION_ERROR', 'identityId and proof are required.', requestId), { status: 422 });
   }
   if (laravelEnabled()) {
-    return laravelLogin(body.identityId, body.proof, requestId);
+    return laravelLogin(body.identityId, body.proof, body.totpCode, requestId);
   }
   const nowIso = new Date().toISOString();
   try {
@@ -64,7 +64,7 @@ export async function POST(req: Request) {
 // client — so the wired response omits `token` by design (parity mirror
 // records the delta); deactivated accounts collapse to 401 like the mock
 // path's IDENTITY_INACTIVE.
-async function laravelLogin(identityId: string, proof: string, requestId: string) {
+async function laravelLogin(identityId: string, proof: string, totpCode: string | undefined, requestId: string) {
   const tenant = laravelTenant();
   try {
     const { data: challenge } = await laravelPost<LaravelChallenge>(null, '/customers/auth/otp', {
@@ -72,11 +72,15 @@ async function laravelLogin(identityId: string, proof: string, requestId: string
       purpose: 'login',
       identity: identityId,
     });
-    const { data: session } = await laravelPost<LaravelSession>(null, '/customers/auth/login', {
+    const redeem: Record<string, string> = {
       tenant_id: tenant,
       challenge_id: challenge.challenge_id,
       code: proof,
-    });
+    };
+    if (totpCode !== undefined) {
+      redeem['totp_code'] = totpCode;
+    }
+    const { data: session } = await laravelPost<LaravelSession>(null, '/customers/auth/login', redeem);
     const maxAge = Math.max(60, Math.floor((Date.parse(session.expires_at) - Date.now()) / 1000));
     return Response.json(ok({ sessionId: session.actor.session_id, expiresAt: session.expires_at }, requestId), {
       headers: { 'Set-Cookie': buildSessionCookie(session.token, maxAge) },
