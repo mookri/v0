@@ -107,4 +107,35 @@ final class RevokeTokenTest extends TenantIntegrationTestCase
             'client_secret' => 'wrong',
         ])->assertStatus(401)->assertJsonPath('error', 'invalid_client');
     }
+
+    public function test_malformed_requests_answer_league_invalid_request(): void
+    {
+        $tenant = $this->makeTenant();
+        [$user] = $this->actingAsMembership($tenant);
+        [$client] = $this->tokensFor($user);
+        [$id, $secret] = $this->clientCredentials($client);
+        auth()->logout();
+
+        // Missing token: protocol surface answers invalid_request 400,
+        // never the kernel 422 envelope.
+        $this->postJson('/api/oauth/revoke', [
+            'client_id' => $id,
+            'client_secret' => $secret,
+        ])->assertStatus(400)->assertJsonPath('error', 'invalid_request');
+
+        // Bad hint value: same shape.
+        $this->postJson('/api/oauth/revoke', [
+            'token' => 'no-such-token',
+            'token_type_hint' => 'bogus',
+            'client_id' => $id,
+            'client_secret' => $secret,
+        ])->assertStatus(400)->assertJsonPath('error', 'invalid_request');
+
+        // Missing client_secret: same shape (not 401 — the request never
+        // reached client authentication).
+        $this->postJson('/api/oauth/revoke', [
+            'token' => 'no-such-token',
+            'client_id' => $id,
+        ])->assertStatus(400)->assertJsonPath('error', 'invalid_request');
+    }
 }

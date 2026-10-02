@@ -24,12 +24,16 @@ final class RevokeController
 
     public function __invoke(Request $request): JsonResponse
     {
-        $validated = $request->validate([
+        [$validated, $denial] = $this->validateProtocol($request, [
             'token' => ['required', 'string'],
             'token_type_hint' => ['sometimes', 'string', 'in:access_token,refresh_token'],
             'client_id' => ['required', 'string'],
             'client_secret' => ['required', 'string'],
         ]);
+
+        if ($denial !== null) {
+            return $denial;
+        }
 
         $client = Client::query()->whereKey($validated['client_id'])->first();
 

@@ -13,6 +13,34 @@ use Laravel\Passport\Passport;
  */
 trait ResolvesOAuthTokens
 {
+    /**
+     * Protocol-surface validation: failures answer league-shaped
+     * `invalid_request` 400, never the kernel 422 envelope (this is
+     * protocol surface — clients speak RFC 6749 here, not our API).
+     *
+     * @param  array<string, mixed> $rules
+     * @return array{array<string, mixed>|null, \Illuminate\Http\JsonResponse|null}
+     */
+    private function validateProtocol(\Illuminate\Http\Request $request, array $rules): array
+    {
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            $description = 'The request is missing a required parameter: '.implode(', ', $validator->errors()->keys()).'.';
+
+            return [null, new \Illuminate\Http\JsonResponse([
+                'error' => 'invalid_request',
+                'error_description' => $description,
+                'message' => $description,
+            ], 400)];
+        }
+
+        /** @var array<string, mixed> $validated */
+        $validated = $validator->validated();
+
+        return [$validated, null];
+    }
+
     private function findAccessToken(string $token): mixed
     {
         return Passport::token()->newQuery()->whereKey($this->jtiOf($token))->first();

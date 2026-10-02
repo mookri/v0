@@ -24,11 +24,15 @@ final class IntrospectController
 
     public function __invoke(Request $request): JsonResponse
     {
-        $validated = $request->validate([
+        [$validated, $denial] = $this->validateProtocol($request, [
             'token' => ['required', 'string'],
             'client_id' => ['required', 'string'],
             'client_secret' => ['required', 'string'],
         ]);
+
+        if ($denial !== null) {
+            return $denial;
+        }
 
         $client = Client::query()->whereKey($validated['client_id'])->first();
 

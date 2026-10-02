@@ -150,4 +150,23 @@ final class IntrospectTokenTest extends TenantIntegrationTestCase
             'client_secret' => 'partner-secret-1',
         ])->assertForbidden()->assertJsonPath('error', 'insufficient_scope');
     }
+
+    public function test_malformed_requests_answer_league_invalid_request(): void
+    {
+        $tenant = $this->makeTenant();
+        [$user] = $this->actingAsMembership($tenant);
+        [$service, $secret] = $this->serviceClient();
+        $auth = ['client_id' => (string) $service->getKey(), 'client_secret' => $secret];
+        auth()->logout();
+
+        // Missing token: invalid_request 400, never the kernel 422.
+        $this->postJson('/api/oauth/introspect', $auth)
+            ->assertStatus(400)->assertJsonPath('error', 'invalid_request');
+
+        // Missing client_secret: same shape (pre-auth failure).
+        $this->postJson('/api/oauth/introspect', [
+            'token' => 'whatever',
+            'client_id' => (string) $service->getKey(),
+        ])->assertStatus(400)->assertJsonPath('error', 'invalid_request');
+    }
 }
