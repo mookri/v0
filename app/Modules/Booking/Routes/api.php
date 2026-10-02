@@ -13,17 +13,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('reservations', [ReservationController::class, 'index'])
-    ->middleware('scope:booking:read')
+    ->middleware(['scope:booking:read', 'throttle.tier'])
     ->name('reservations.index');
 Route::get('reservations/{id}', [ReservationController::class, 'show'])
-    ->middleware('scope:booking:read')
+    ->middleware(['scope:booking:read', 'throttle.tier'])
     ->name('reservations.show');
 Route::post('reservations/{id}:cancel', [ReservationController::class, 'cancel'])
     ->name('reservations.cancel');
 Route::post('reservations/{id}:reschedule', [ReservationController::class, 'reschedule'])
     ->name('reservations.reschedule');
 Route::get('reservations/{id}/history', [ReservationController::class, 'history'])
-    ->middleware('scope:booking:read')
+    ->middleware(['scope:booking:read', 'throttle.tier'])
     ->name('reservations.history');
 
 Route::get('reviews', [BookingReviewController::class, 'index'])

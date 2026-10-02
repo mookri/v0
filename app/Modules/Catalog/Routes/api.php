@@ -12,10 +12,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('items', [CatalogItemController::class, 'index'])
-    ->middleware('scope:catalog:read')
+    ->middleware(['scope:catalog:read', 'throttle.tier'])
     ->name('items.index');
 Route::get('items/{id}', [CatalogItemController::class, 'show'])
-    ->middleware('scope:catalog:read')
+    ->middleware(['scope:catalog:read', 'throttle.tier'])
     ->name('items.show');
 Route::post('items', [CatalogItemController::class, 'store'])
     ->middleware('capability:catalog:item:manage')

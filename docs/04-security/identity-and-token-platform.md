@@ -482,6 +482,20 @@ the frontend HMAC dual-accept bridge:
 - Key issuance validates scope shape (`module:verb`); rollout rule: every
   new ownership-read added for machine consumption declares its scope.
 
+### Amendment A-SEC-014-3 — tiered machine throttling (2026-10-02)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive)
+
+- `throttle.tier` middleware on the machine-read surface (catalog +
+  reservation reads, after `scope` so denials burn no quota): per-key
+  per-minute ceilings from the key tier through the driver-agnostic
+  limiter — standard 60, professional 300, enterprise 1200, partner 600
+  (unknown tiers fall back to standard). Humans pass through; excess
+  throws the framework throttle exception → 429 `rate_limited` with
+  `Retry-After: 60` (already the envelope mapping).
+- Single-instance ceilings by REDIS-001 design (array/database cache);
+  shared/distributed throttling waits on Redis like everything else.
+
 OpenAPI: `app/Platform/Identity/Http/openapi-keys.yaml` (composed into
 `docs/api/openapi.v1.yaml`); tests: `tests/Platform/Identity/ApiKeyTest.php`.
 
