@@ -158,4 +158,27 @@ final class MfaController
             'meta' => ['request_id' => $this->requestId($request)],
         ]);
     }
+
+    public function recoveryCodes(Request $request): JsonResponse
+    {
+        $user = $this->actor($request);
+        if ($user instanceof JsonResponse) {
+            return $user;
+        }
+
+        $validated = $request->validate(['code' => ['required', 'string']]);
+
+        $codes = $this->mfa->regenerateRecoveryCodes($user, $validated['code'], time());
+
+        if ($codes === null) {
+            return new JsonResponse([
+                'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
+            ], 401);
+        }
+
+        return new JsonResponse([
+            'data' => ['object' => 'mfa_recovery_codes', 'recovery_codes' => $codes],
+            'meta' => ['request_id' => $this->requestId($request)],
+        ]);
+    }
 }

@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Platform\Identity\OAuth\CheckOAuthGrant;
 use App\Platform\Identity\OAuth\Console\CreateClientCommand;
+use App\Platform\Identity\OAuth\Console\RevokeClientCommand;
+use App\Platform\Identity\OAuth\Console\RotateClientSecretCommand;
 use App\Platform\Identity\OAuth\RotatingRefreshTokenRepository;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -25,6 +27,8 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CreateClientCommand::class,
+                RevokeClientCommand::class,
+                RotateClientSecretCommand::class,
             ]);
         }
     }

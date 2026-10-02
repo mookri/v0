@@ -1751,6 +1751,34 @@ paths:
                 properties:
                   data: { type: object, required: [object, otpauth_url] }
                   meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/identity/mfa/recovery-codes:
+    post:
+      operationId: regenerateMfaRecoveryCodes
+      summary: 'Issue a fresh recovery sheet (live TOTP code required).'
+      x-gate: ownership
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+      responses:
+        200:
+          description: 'Fresh codes (old sheet void).'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, recovery_codes] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        401:
+          $ref: '#/components/responses/Unauthenticated'
   /api/v1/identity/mfa/revoke:
     post:
       operationId: revokeMfa

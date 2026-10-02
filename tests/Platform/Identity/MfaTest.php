@@ -67,6 +67,33 @@ final class MfaTest extends TenantIntegrationTestCase
             ->assertUnauthorized();
     }
 
+    public function test_recovery_sheet_regeneration_voids_old(): void
+    {
+        [$user] = $this->actingAsMembership($this->makeTenant());
+        $actor = fn () => $this->actingAs($user);
+
+        $enrolled = $actor()->postJson('/api/v1/identity/mfa/enroll')
+            ->assertCreated()->assertJsonPath('data.object', 'mfa_enrollment');
+        $totp = $this->totpFromUrl($enrolled->json('data.otpauth_url'));
+
+        $old = $actor()->postJson('/api/v1/identity/mfa/confirm', ['code' => $totp->now()])
+            ->assertOk()->json('data.recovery_codes');
+
+        // Recovery codes cannot mint a new sheet (TOTP only).
+        $actor()->postJson('/api/v1/identity/mfa/recovery-codes', ['code' => $old[0]])
+            ->assertUnauthorized();
+
+        $fresh = $actor()->postJson('/api/v1/identity/mfa/recovery-codes', ['code' => $totp->now()])
+            ->assertOk()->json('data.recovery_codes');
+        $this->assertCount(10, $fresh);
+        $this->assertNotSame($old[0], $fresh[0]);
+
+        // Old sheet is void; new sheet works once.
+        $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $old[1]])
+            ->assertUnauthorized();
+        $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $fresh[0]])->assertOk();
+    }
+
     public function test_guests_and_machines_denied(): void
     {
         $this->postJson('/api/v1/identity/mfa/enroll')->assertUnauthorized();

@@ -73,6 +73,93 @@ final class OAuthClientTest extends TenantIntegrationTestCase
         $this->assertDatabaseMissing('oauth_clients', ['name' => 'Orphan'], 'central');
     }
 
+    public function test_revoke_kills_client_profile_and_tokens(): void
+    {
+        $tenant = $this->makeTenant();
+        [$user] = $this->actingAsMembership($tenant);
+
+        $client = new Client();
+        $client->forceFill([
+            'name' => 'Doomed', 'secret' => 'doomed-secret-12345', 'redirect_uris' => [],
+            'grant_types' => ['client_credentials'], 'revoked' => false,
+        ]);
+        $client->save();
+
+        OAuthClientProfile::factory()->create([
+            'client_id' => (string) $client->getKey(),
+            'client_type' => OAuthClientProfile::TYPE_PARTNER,
+            'tenant_id' => (string) $tenant->getKey(),
+            'allowed_grants' => ['client_credentials'],
+        ]);
+
+        // A live token first (proves the kill below is real).
+        $live = $this->postJson('/oauth/token', [
+            'grant_type' => 'client_credentials',
+            'client_id' => (string) $client->getKey(),
+            'client_secret' => 'doomed-secret-12345',
+            'scope' => '',
+        ])->assertOk()->json('access_token');
+        $this->assertNotEmpty($live);
+
+        \Artisan::call('platform:client:revoke', ['id' => (string) $client->getKey()]);
+
+        $this->assertDatabaseHas('oauth_clients', [
+            'id' => (string) $client->getKey(), 'revoked' => true,
+        ], 'central');
+        $this->assertDatabaseHas('oauth_client_profiles', [
+            'client_id' => (string) $client->getKey(), 'status' => 'disabled',
+        ], 'central');
+        $this->assertDatabaseMissing('oauth_access_tokens', [
+            'client_id' => (string) $client->getKey(), 'revoked' => false,
+        ], 'central');
+
+        // Dead client, dead tokens.
+        $this->postJson('/oauth/token', [
+            'grant_type' => 'client_credentials',
+            'client_id' => (string) $client->getKey(),
+            'client_secret' => 'doomed-secret-12345',
+            'scope' => '',
+        ])->assertStatus(401);
+    }
+
+    public function test_rotate_secret_breaks_old_and_keeps_new(): void
+    {
+        $tenant = $this->makeTenant();
+        $this->actingAsMembership($tenant);
+
+        $client = new Client();
+        $client->forceFill([
+            'name' => 'Rotator', 'secret' => 'rotator-old-secret-1', 'redirect_uris' => [],
+            'grant_types' => ['client_credentials'], 'revoked' => false,
+        ]);
+        $client->save();
+
+        OAuthClientProfile::factory()->create([
+            'client_id' => (string) $client->getKey(),
+            'allowed_grants' => ['client_credentials'],
+        ]);
+
+        $cid = (string) $client->getKey();
+        $this->postJson('/oauth/token', [
+            'grant_type' => 'client_credentials', 'client_id' => $cid,
+            'client_secret' => 'rotator-old-secret-1', 'scope' => '',
+        ])->assertOk();
+
+        \Artisan::call('platform:client:rotate-secret', ['id' => $cid]);
+        preg_match('/New secret \(shown once\): (\S+)/', \Artisan::output(), $shown);
+        $new = $shown[1];
+
+        // Old secret dead, old tokens dead, new secret works.
+        $this->postJson('/oauth/token', [
+            'grant_type' => 'client_credentials', 'client_id' => $cid,
+            'client_secret' => 'rotator-old-secret-1', 'scope' => '',
+        ])->assertStatus(401);
+        $this->postJson('/oauth/token', [
+            'grant_type' => 'client_credentials', 'client_id' => $cid,
+            'client_secret' => $new, 'scope' => '',
+        ])->assertOk();
+    }
+
     public function test_disallowed_grant_denied_before_league(): void
     {
         $tenant = $this->makeTenant();

@@ -82,6 +82,36 @@ final class MfaService
         return $this->consumeRecoveryCode($user, $code);
     }
 
+    /**
+     * Issue a fresh recovery sheet (lost sheet recovery): requires an
+     * enabled factor plus a live TOTP code, replaces all previous codes.
+     *
+     * @return list<string>|null plaintext codes (once) on success
+     */
+    public function regenerateRecoveryCodes(User $user, string $code, int $now): ?array
+    {
+        if (! (bool) $user->mfa_enabled) {
+            return null;
+        }
+
+        $totp = $this->totpFor($user);
+
+        if ($totp === null || ! $totp->verify($code, $now, self::WINDOW)) {
+            return null;
+        }
+
+        $codes = [];
+        for ($i = 0; $i < self::RECOVERY_CODES; $i++) {
+            $codes[] = strtoupper(Str::random(8));
+        }
+
+        $user->forceFill([
+            'mfa_recovery_hashes' => array_map(static fn (string $c): string => hash('sha256', $c), $codes),
+        ])->save();
+
+        return $codes;
+    }
+
     public function revoke(User $user, string $code, int $now): bool
     {
         // Revocation needs a live TOTP code: recovery codes authenticate
