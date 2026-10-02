@@ -49,6 +49,15 @@ subset of the contract union with identical statuses. New codes:
 | `POST /api/bookings/:bookingId/reviews` | `POST /api/v1/booking/reservations/{id}/reviews` - **wired behind flag** |
 | `DELETE /api/reviews/:id` | `DELETE /api/v1/booking/reviews/{id}` - **wired behind flag** |
 
+| `GET /api/mfa/status` | `GET /api/v1/identity/mfa` - **wired behind flag** |
+| `POST /api/mfa/enroll` | `POST /api/v1/identity/mfa/enroll` - **wired behind flag** |
+| `POST /api/mfa/confirm` | `POST /api/v1/identity/mfa/confirm` - **wired behind flag** |
+| `POST /api/mfa/verify` | `POST /api/v1/identity/mfa/verify` - **wired behind flag** (step-up primitive) |
+| `POST /api/mfa/revoke` | `POST /api/v1/identity/mfa/revoke` - **wired behind flag** (requires live TOTP) |
+| `POST /api/mfa/recovery-codes` | `POST /api/v1/identity/mfa/recovery-codes` - **wired behind flag** (requires live TOTP) |
+| `GET /api/sessions` | `GET /api/v1/identity/sessions` - **wired behind flag** |
+| `POST /api/sessions/revoke-others` | `POST /api/v1/identity/sessions:revoke-others` - **wired behind flag** |
+
 ## Code correspondence (BFF codes)
 
 | Situation | BFF code | Backend code |
