@@ -138,6 +138,7 @@ Route::prefix(config('platform.api_version', 'v1'))
             ->middleware('stepup:2')
             ->name('memberships.roles.grant');
         Route::delete('platform/memberships/{membershipId}/roles/{assignmentId}', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'revoke'])
+            ->middleware('stepup:2')
             ->name('memberships.roles.revoke');
         Route::get('platform/sod-rules', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'index'])
             ->name('sod-rules.index');

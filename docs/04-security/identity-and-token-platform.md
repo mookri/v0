@@ -410,7 +410,8 @@ Normative behavior:
   further sensitive-route rollout.
 - Rollout (2026-10-02): onboarding review approve/reject decisions
   (request-info returns work to draft — not sensitive, ungated);
-  user suspend/activate (credential kill/restore).
+  user suspend/activate (credential kill/restore); role assignment
+  revoke, symmetric with grant.
 - Deliberately ungated: MFA revoke + recovery-code regeneration demand
   a live TOTP code (fresher than any 15-minute proof —
   step-up-equivalent by construction); session revoke-others stays
