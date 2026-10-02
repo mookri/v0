@@ -74,6 +74,7 @@ paths:
       operationId: listReservations
       summary: 'Cursor-paginated caller reservations (optional section filter).'
       x-gate: ownership
+      x-scope: 'booking:read'
       parameters:
         -
           $ref: '#/components/parameters/TenantId'
@@ -110,6 +111,7 @@ paths:
       operationId: getReservation
       summary: 'Read one reservation with live actions (404 across owners).'
       x-gate: ownership
+      x-scope: 'booking:read'
       parameters:
         -
           $ref: '#/components/parameters/TenantId'
@@ -139,6 +141,7 @@ paths:
       operationId: getReservationHistory
       summary: 'Append-only transition timeline.'
       x-gate: ownership
+      x-scope: 'booking:read'
       parameters:
         -
           $ref: '#/components/parameters/TenantId'
@@ -326,6 +329,7 @@ paths:
       operationId: listCatalogItems
       summary: 'Cursor-paginated catalog items (optional status filter).'
       x-gate: ownership
+      x-scope: 'catalog:read'
       parameters:
         -
           $ref: '#/components/parameters/TenantId'
@@ -386,6 +390,7 @@ paths:
       operationId: getCatalogItem
       summary: 'Read one item (404 across tenant boundaries).'
       x-gate: ownership
+      x-scope: 'catalog:read'
       parameters:
         -
           $ref: '#/components/parameters/TenantId'
