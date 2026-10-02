@@ -390,8 +390,10 @@ Normative behavior:
   password re-auth alternative — unenrolled users cannot perform
   sensitive operations, by fail-closed design.
 - Still pending: web redirect flow (`/oauth/stepup`), session ACR
-  tracking, `amr` claims, tenant `require_mfa` enforcement, and the
-  wider sensitive-route rollout (review decisions next).
+  tracking, `amr` claims, tenant `require_mfa` enforcement, and
+  further sensitive-route rollout.
+- Rollout (2026-10-02): onboarding review approve/reject decisions
+  (request-info returns work to draft — not sensitive, ungated).
 6. Every step-up emits `platform.session.stepup_completed` (audit).
 
 ---

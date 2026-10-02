@@ -21,10 +21,10 @@ Route::get('review/queue', [ReviewController::class, 'queue'])
     ->middleware('capability:onboarding:review:view')
     ->name('review.queue');
 Route::post('review/{id}:approve', [ReviewController::class, 'approve'])
-    ->middleware('capability:onboarding:review:approve')
+    ->middleware(['capability:onboarding:review:approve', 'stepup:2'])
     ->name('review.approve');
 Route::post('review/{id}:reject', [ReviewController::class, 'reject'])
-    ->middleware('capability:onboarding:review:reject')
+    ->middleware(['capability:onboarding:review:reject', 'stepup:2'])
     ->name('review.reject');
 Route::post('review/{id}:request-info', [ReviewController::class, 'requestInfo'])
     ->middleware('capability:onboarding:review:view')

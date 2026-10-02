@@ -128,6 +128,11 @@ final class OnboardingReviewTest extends TenantIntegrationTestCase
     {
         [$tenant, $reviewer, $id] = $this->submittedApp(['onboarding:review:view', 'onboarding:review:approve']);
 
+        // Decisions are step-up gated: no fresh proof, no approval.
+        $this->actingAs($reviewer)->postJson("/api/v1/onboarding/review/{$id}:approve", [], $this->tenantHeaders($tenant))
+            ->assertForbidden()->assertJsonPath('error.code', 'step_up_required');
+
+        $this->stepUp($reviewer);
         $this->actingAs($reviewer)->postJson("/api/v1/onboarding/review/{$id}:approve", [], $this->tenantHeaders($tenant))
             ->assertOk()
             ->assertJsonPath('data.status', 'APPROVED');
@@ -148,6 +153,7 @@ final class OnboardingReviewTest extends TenantIntegrationTestCase
         $base = "/api/v1/onboarding/review/{$id}:reject";
         $headers = $this->tenantHeaders($tenant);
         $actor = fn () => $this->actingAs($reviewer);
+        $this->stepUp($reviewer);
 
         $actor()->postJson($base, [], $headers)->assertStatus(422);
         $actor()->postJson($base, ['reason_code' => 'OTHER', 'second_reviewer' => (string) $reviewer->id], $headers)
