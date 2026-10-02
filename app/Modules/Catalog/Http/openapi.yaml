@@ -9,6 +9,7 @@ paths:
       operationId: listCatalogItems
       summary: Cursor-paginated catalog items (optional status filter).
       x-gate: ownership
+      x-scope: catalog:read
       parameters:
         - $ref: '#/components/parameters/TenantId'
         - $ref: '#/components/parameters/Limit'
@@ -64,6 +65,7 @@ paths:
       operationId: getCatalogItem
       summary: Read one item (404 across tenant boundaries).
       x-gate: ownership
+      x-scope: catalog:read
       parameters:
         - $ref: '#/components/parameters/TenantId'
         - name: id

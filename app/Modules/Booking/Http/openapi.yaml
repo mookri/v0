@@ -9,6 +9,7 @@ paths:
       operationId: listReservations
       summary: Cursor-paginated caller reservations (optional section filter).
       x-gate: ownership
+      x-scope: booking:read
       parameters:
         - $ref: '#/components/parameters/TenantId'
         - $ref: '#/components/parameters/Limit'
@@ -35,6 +36,7 @@ paths:
       operationId: getReservation
       summary: Read one reservation with live actions (404 across owners).
       x-gate: ownership
+      x-scope: booking:read
       parameters:
         - $ref: '#/components/parameters/TenantId'
         - name: id
@@ -117,6 +119,7 @@ paths:
       operationId: getReservationHistory
       summary: Append-only transition timeline.
       x-gate: ownership
+      x-scope: booking:read
       parameters:
         - $ref: '#/components/parameters/TenantId'
         - name: id

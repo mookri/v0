@@ -2,6 +2,7 @@
 
 use App\Platform\Api\ErrorEnvelope;
 use App\Platform\Authz\Http\Middleware\CheckCapability;
+use App\Platform\Authz\Http\Middleware\CheckScope;
 use App\Platform\Http\Middleware\AttachRequestId;
 use App\Platform\Tenancy\Http\Middleware\ResolveTenantContext;
 use Illuminate\Foundation\Application;
@@ -24,10 +25,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'tenant' => ResolveTenantContext::class,
             'capability' => CheckCapability::class,
+            'scope' => CheckScope::class,
             'auth.hmac' => \App\Platform\Identity\Http\Middleware\AuthenticateHmacToken::class,
             'auth.any' => \App\Platform\Identity\Http\Middleware\AuthenticateAny::class,
             'limit.body' => \App\Platform\Http\Middleware\LimitJsonBody::class,
-            // 'scope'/'stepup' land with the token platform (docs 03-04).
+            // 'stepup' lands with the token platform (docs 03-04).
         ]);
 
         $middleware->appendToGroup('api', 'limit.body');

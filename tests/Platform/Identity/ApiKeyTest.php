@@ -52,7 +52,7 @@ final class ApiKeyTest extends TenantIntegrationTestCase
         $tid = (string) $tenant->getKey();
 
         $issued = $this->actingAs($issuer)->postJson('/api/v1/platform/api-keys', [
-            'tenant_id' => $tid, 'name' => 'Catalog reader',
+            'tenant_id' => $tid, 'name' => 'Catalog reader', 'scopes' => ['catalog:read'],
         ])->assertCreated();
         $secret = $issued->json('data.secret');
         $keyId = $issued->json('data.id');

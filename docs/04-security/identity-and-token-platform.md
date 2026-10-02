@@ -464,10 +464,23 @@ the frontend HMAC dual-accept bridge:
   replacement row and caps the old key with a 24 h overlap expiry (existing
   expiry always wins) — never secret edits. Unknown prefixes,
   revoked/expired keys, and garbage bearers all deny with identical 401s.
-- **Deferred to Passport/Redis:** `scopes` are recorded but not yet
-  scope-enforced per route (default-deny on writes covers v1); `rate_tier`
+- **Deferred to Passport/Redis:** `rate_tier`
   is stored (`standard|professional|enterprise|partner`) and enforced only
   by the DB-backed ceilings until REDIS-001 unblocks tiered throttling.
+
+### Amendment A-SEC-014-2 — machine scope enforcement (2026-10-02)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive)
+
+- Ownership reads consumable by machines declare `scope:<scope>`
+  middleware (`CheckScope`, alias `scope`): catalog item reads
+  (`catalog:read`), reservation reads + history (`booking:read`).
+- Humans pass through (grants govern); machines need exact scope match
+  (no wildcards, no write-implies-read v1) or 403 `insufficient_scope`
+  (kernel registry code, unaudited like credential errors). Capability
+  routes still default-deny machines — scopes never substitute grants.
+- Key issuance validates scope shape (`module:verb`); rollout rule: every
+  new ownership-read added for machine consumption declares its scope.
 
 OpenAPI: `app/Platform/Identity/Http/openapi-keys.yaml` (composed into
 `docs/api/openapi.v1.yaml`); tests: `tests/Platform/Identity/ApiKeyTest.php`.

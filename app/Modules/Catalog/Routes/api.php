@@ -11,8 +11,12 @@ use Illuminate\Support\Facades\Route;
 | item capabilities.
 */
 
-Route::get('items', [CatalogItemController::class, 'index'])->name('items.index');
-Route::get('items/{id}', [CatalogItemController::class, 'show'])->name('items.show');
+Route::get('items', [CatalogItemController::class, 'index'])
+    ->middleware('scope:catalog:read')
+    ->name('items.index');
+Route::get('items/{id}', [CatalogItemController::class, 'show'])
+    ->middleware('scope:catalog:read')
+    ->name('items.show');
 Route::post('items', [CatalogItemController::class, 'store'])
     ->middleware('capability:catalog:item:manage')
     ->name('items.store');

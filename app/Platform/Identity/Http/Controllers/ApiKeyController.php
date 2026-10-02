@@ -94,7 +94,7 @@ final class ApiKeyController
             'tenant_id' => ['required', 'string'],
             'name' => ['required', 'string', 'max:120'],
             'scopes' => ['nullable', 'array'],
-            'scopes.*' => ['string'],
+            'scopes.*' => ['string', 'regex:/^[a-z][a-z0-9_]*:[a-z][a-z0-9_]+$/'],
             'rate_tier' => ['nullable', 'string', 'in:standard,professional,enterprise,partner'],
             'ttl_hours' => ['nullable', 'integer', 'min:1', 'max:8760'],
         ]);
