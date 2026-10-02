@@ -45,8 +45,12 @@ move to the bottom with date + resolution, never deleted.
 - **P1 done (2026-10-02):** `laravel/passport` installed, keys generated
   (dev-local; prod via VAULT-001), stock `oauth_*` tables on central,
   routes OFF (`ignoreRoutes`) until P2 configures clients/grants.
-- **Tracks:** P2 clients + grants (code+PKCE, refresh rotation), P3
-  dual-accept window, P4 HMAC sunset with date.
+- **P2 done (2026-10-02):** routes on with consent screen; code + PKCE
+  happy path, PKCE mismatch denial, refresh rotation with reuse
+  detection (lineage kill + `platform.token.reuse_detected`), password
+  grant provably banned, 15 min access TTL enforced. Client profiles
+  (tenant binding, partner/POS) land P3.
+- **Tracks:** P3 dual-accept window + client profiles, P4 HMAC sunset with date.
 
 ## Resolved
 

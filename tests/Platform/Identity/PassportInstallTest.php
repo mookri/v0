@@ -28,17 +28,19 @@ final class PassportInstallTest extends TenantIntegrationTestCase
         }
     }
 
-    public function test_oauth_routes_stay_off_until_p2(): void
+    public function test_oauth_routes_on_with_consent(): void
     {
-        // Stock routes unregistered: the token endpoint is not reachable
-        // (no client could complete a flow anyway — fail closed twice).
-        $this->postJson('/oauth/token', [
-            'grant_type' => 'client_credentials',
+        // P2 turned the routes on with the consent screen: guests
+        // redirect to login (never a 500), and the token endpoint
+        // answers protocol errors as JSON.
+        $this->get('/oauth/authorize?'.http_build_query([
+            'response_type' => 'code',
             'client_id' => 'no-such-client',
-            'client_secret' => 'nope',
-        ])->assertNotFound()->assertJsonPath('error.code', 'not_found');
+            'redirect_uri' => 'https://example.test/callback',
+        ]))->assertUnauthorized();
 
-        $this->get('/oauth/authorize')->assertNotFound();
+        $this->postJson('/oauth/token', ['grant_type' => 'password'])
+            ->assertStatus(400)->assertJsonPath('error', 'unsupported_grant_type');
     }
 
     public function test_hmac_bridge_untouched(): void

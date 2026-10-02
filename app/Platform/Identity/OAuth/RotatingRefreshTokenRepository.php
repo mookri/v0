@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Platform\Identity\OAuth;
+
+use Laravel\Passport\Bridge\RefreshTokenRepository as PassportRefreshTokenRepository;
+use Laravel\Passport\Passport;
+
+/**
+ * Refresh rotation with reuse detection (SEC-003 §3.2): league rotates
+ * (revokes the presented refresh token) by default; this subclass adds
+ * the missing half — presenting an already-revoked refresh token kills
+ * the entire lineage (all access + refresh tokens for the token's
+ * user+client pair) and emits the security event. The grant then fails
+ * closed with invalid_grant like any other revoked presentation.
+ */
+final class RotatingRefreshTokenRepository extends PassportRefreshTokenRepository
+{
+    public function isRefreshTokenRevoked(string $tokenId): bool
+    {
+        $token = Passport::refreshToken()->newQuery()->whereKey($tokenId)->first();
+
+        if ($token === null) {
+            return true;
+        }
+
+        if ((bool) $token->revoked) {
+            $this->revokeLineage($token);
+        }
+
+        return (bool) $token->revoked;
+    }
+
+    private function revokeLineage(mixed $token): void
+    {
+        $accessToken = Passport::token()->newQuery()->whereKey($token->access_token_id)->first();
+
+        if ($accessToken === null) {
+            return;
+        }
+
+        $userId = $accessToken->getAttribute('user_id');
+        $clientId = $accessToken->getAttribute('client_id');
+
+        $accessIds = Passport::token()->newQuery()
+            ->where('user_id', $userId)
+            ->where('client_id', $clientId)
+            ->pluck('id');
+
+        Passport::token()->newQuery()->whereIn('id', $accessIds)->update(['revoked' => true]);
+        Passport::refreshToken()->newQuery()->whereIn('access_token_id', $accessIds)->update(['revoked' => true]);
+
+        event(new TokenReuseDetected((string) $userId, (string) $clientId));
+    }
+}

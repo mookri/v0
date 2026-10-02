@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Platform\Identity\OAuth\RotatingRefreshTokenRepository;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
@@ -12,11 +14,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // P1 (TOKEN-001): dependency + tables + keys only. Passport's
-        // stock routes stay OFF until P2 configures clients and grants —
-        // no half-wired /oauth/* surface (the default authorize view
-        // binding is a 500 without P2's consent screens).
-        Passport::ignoreRoutes();
+        // Refresh rotation with reuse detection (SEC-003 §3.2): the
+        // league rotates by default; our subclass adds lineage kill +
+        // security event on revoked-token reuse.
+        $this->app->bind(RefreshTokenRepository::class, RotatingRefreshTokenRepository::class);
     }
 
     /**
@@ -24,6 +25,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // P2 (TOKEN-001): Passport routes on with the consent screen;
+        // token lifetimes per SEC-003 (15 min access max, 30 d refresh
+        // lineage). Password + implicit grants stay disabled (banned).
+        Passport::tokensExpireIn(now()->addMinutes(15));
+        Passport::refreshTokensExpireIn(now()->addDays(30));
+        Passport::authorizationView(
+            static fn (array $parameters): \Symfony\Component\HttpFoundation\Response => response()->view('oauth.authorize', $parameters)
+        );
     }
 }
