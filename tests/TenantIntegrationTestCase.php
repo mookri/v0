@@ -7,6 +7,7 @@ use App\Platform\Audit\AuditLog;
 use App\Platform\Authz\Models\MembershipRoleAssignment;
 use App\Platform\Authz\Models\Role;
 use App\Platform\Authz\Models\RolePermission;
+use App\Platform\Identity\Models\MfaStepUp;
 use App\Platform\Tenancy\Models\Tenant;
 use App\Platform\Tenancy\Models\TenantMembership;
 use App\Platform\Tenancy\TenantContext;
@@ -130,6 +131,21 @@ abstract class TenantIntegrationTestCase extends KernelTestCase
             $count,
             sprintf("Expected an audit record with action '%s' for tenant %s.", $action, (string) $tenant->getKey()),
         );
+    }
+
+    /**
+     * Satisfy the step-up gate for a user: enable their MFA flag and
+     * record a fresh proof (bypasses TOTP crypto — the crypto path is
+     * covered by MfaTest; this helper tests gate behavior).
+     */
+    protected function stepUp(User $user, int $minutesAgo = 0): void
+    {
+        $user->forceFill(['mfa_enabled' => true])->save();
+
+        MfaStepUp::query()->create([
+            'user_id' => $user->getAuthIdentifier(),
+            'verified_at' => now()->subMinutes($minutesAgo)->toDateTimeString(),
+        ]);
     }
 
     /**

@@ -171,6 +171,7 @@ final class CustomerProfileTest extends TenantIntegrationTestCase
         [$tenant] = $this->customer();
         $tid = (string) $tenant->getKey();
         [$issuer] = $this->actingAsMembership($tenant);
+        $this->stepUp($issuer);
 
         $secret = $this->actingAs($issuer)->postJson('/api/v1/platform/api-keys', [
             'tenant_id' => $tid, 'name' => 'probe',

@@ -3,6 +3,7 @@
 use App\Platform\Api\ErrorEnvelope;
 use App\Platform\Authz\Http\Middleware\CheckCapability;
 use App\Platform\Authz\Http\Middleware\CheckScope;
+use App\Platform\Authz\Http\Middleware\RequiresAcr;
 use App\Platform\Authz\Http\Middleware\ThrottleTier;
 use App\Platform\Http\Middleware\AttachRequestId;
 use App\Platform\Tenancy\Http\Middleware\ResolveTenantContext;
@@ -28,6 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'capability' => CheckCapability::class,
             'scope' => CheckScope::class,
             'throttle.tier' => ThrottleTier::class,
+            'stepup' => RequiresAcr::class,
             'auth.hmac' => \App\Platform\Identity\Http\Middleware\AuthenticateHmacToken::class,
             'auth.any' => \App\Platform\Identity\Http\Middleware\AuthenticateAny::class,
             'limit.body' => \App\Platform\Http\Middleware\LimitJsonBody::class,

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
  * - OTP challenges past expiry → delete (single-use secrets, no history value).
  * - Invites past expiry → mark EXPIRED (rows retained as audit history).
  * - Web sessions past expiry → delete.
+ * - Step-up proofs past 24 h → delete (authority is the first 15 min).
  *
  * Kernel-maintenance bypass (TEN-009): global scopes are lifted explicitly
  * here and only here for sweep purposes; every swept row is tenant-scoped
@@ -87,6 +88,16 @@ final class CleanupExpiredCommand extends Command
         $report['sessions'] = (clone $sessionQuery)->count();
         if (! $dryRun) {
             $sessionQuery->delete();
+        }
+
+        // Step-up proofs: older than the 24 h forensics window → delete
+        // (authority lives only in the first 15 minutes; rows past a day
+        // are dead weight, never evidence).
+        $stepUpQuery = DB::connection('central')->table('mfa_step_ups')
+            ->where('verified_at', '<', gmdate('Y-m-d H:i:s', time() - 86400));
+        $report['mfa_step_ups'] = (clone $stepUpQuery)->count();
+        if (! $dryRun) {
+            $stepUpQuery->delete();
         }
 
         foreach ($report as $class => $count) {

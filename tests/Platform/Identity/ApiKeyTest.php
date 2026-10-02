@@ -21,6 +21,7 @@ final class ApiKeyTest extends TenantIntegrationTestCase
             ->assertUnauthorized();
 
         [$issuer] = $this->actingAsMembership($tenant);
+        $this->stepUp($issuer);
         $authed = fn () => $this->actingAs($issuer);
 
         $issued = $authed()->postJson('/api/v1/platform/api-keys', [
@@ -50,6 +51,7 @@ final class ApiKeyTest extends TenantIntegrationTestCase
         $tenant = $this->makeTenant();
         [$issuer] = $this->actingAsMembership($tenant);
         $tid = (string) $tenant->getKey();
+        $this->stepUp($issuer);
 
         $issued = $this->actingAs($issuer)->postJson('/api/v1/platform/api-keys', [
             'tenant_id' => $tid, 'name' => 'Catalog reader', 'scopes' => ['catalog:read'],

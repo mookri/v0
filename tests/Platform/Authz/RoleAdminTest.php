@@ -20,6 +20,7 @@ final class RoleAdminTest extends TenantIntegrationTestCase
         $tenant = $this->makeTenant();
         [$issuer] = $this->actingAsMembership($tenant);
         $tid = (string) $tenant->getKey();
+        $this->stepUp($issuer);
         $authed = fn () => $this->actingAs($issuer);
 
         $authed()->getJson('/api/v1/platform/roles')->assertStatus(422);

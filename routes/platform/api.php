@@ -110,10 +110,13 @@ Route::prefix(config('platform.api_version', 'v1'))
         Route::get('platform/api-keys', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'index'])
             ->name('api-keys.index');
         Route::post('platform/api-keys', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'issue'])
+            ->middleware('stepup:2')
             ->name('api-keys.issue');
         Route::post('platform/api-keys/{id}:revoke', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'revoke'])
+            ->middleware('stepup:2')
             ->name('api-keys.revoke');
         Route::post('platform/api-keys/{id}:rotate', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'rotate'])
+            ->middleware('stepup:2')
             ->name('api-keys.rotate');
         Route::get('platform/users', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'index'])
             ->middleware(['tenant', 'capability:platform:user:view'])
@@ -129,6 +132,7 @@ Route::prefix(config('platform.api_version', 'v1'))
         Route::post('platform/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'store'])
             ->name('roles.store');
         Route::post('platform/memberships/{membershipId}/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'grant'])
+            ->middleware('stepup:2')
             ->name('memberships.roles.grant');
         Route::delete('platform/memberships/{membershipId}/roles/{assignmentId}', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'revoke'])
             ->name('memberships.roles.revoke');

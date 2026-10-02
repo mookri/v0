@@ -58,6 +58,7 @@ final class SodEnforcementTest extends TenantIntegrationTestCase
     {
         $tenant = $this->makeTenant();
         [$issuer, $issuerMembership] = $this->actingAsMembership($tenant);
+        $this->stepUp($issuer);
 
         return [$tenant, $issuer, $issuerMembership];
     }

@@ -375,6 +375,23 @@ Normative behavior:
    `acr_values=2&prompt=login`; interactive clients re-authorize and retry.
 5. Client-credentials tokens can never satisfy ACR 2; sensitive scopes are
    simply unavailable to them (§5.2).
+
+### Implementation note A-SEC-004-2 — step-up gate live (2026-10-02)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive)
+
+- `stepup:2` middleware on API key issue/rotate/revoke + role grants:
+  fresh MFA proof (step-up row < 15 min) or 403 `step_up_required`
+  (unenrolled vs stale distinguished by message; machines always
+  denied). Every MFA verify writes a proof row; rows sweep after 24 h.
+- Deltas vs the normative text above: the middleware alias is `stepup`
+  (not `requires_acr`); denials carry actionable messages instead of
+  `details.stepup_url` (no step-up UI flow exists yet); v1 has no
+  password re-auth alternative — unenrolled users cannot perform
+  sensitive operations, by fail-closed design.
+- Still pending: web redirect flow (`/oauth/stepup`), session ACR
+  tracking, `amr` claims, tenant `require_mfa` enforcement, and the
+  wider sensitive-route rollout (review decisions next).
 6. Every step-up emits `platform.session.stepup_completed` (audit).
 
 ---

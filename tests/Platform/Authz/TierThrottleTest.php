@@ -18,6 +18,7 @@ final class TierThrottleTest extends TenantIntegrationTestCase
     private function keyWithTier(string $tenantId, string $issuerId, string $tier): array
     {
         $issuer = \App\Models\User::find($issuerId);
+        $this->stepUp($issuer);
 
         $secret = $this->actingAs($issuer)->postJson('/api/v1/platform/api-keys', [
             'tenant_id' => $tenantId, 'name' => 'tier-probe', 'scopes' => ['catalog:read'], 'rate_tier' => $tier,

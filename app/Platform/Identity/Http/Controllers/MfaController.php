@@ -120,6 +120,16 @@ final class MfaController
             ], 401);
         }
 
+        // Every successful verification is a fresh-possession proof for
+        // step-up (SEC-004): the requires_acr gate reads these rows.
+        $stepUp = new \App\Platform\Identity\Models\MfaStepUp();
+        $stepUp->forceFill([
+            'user_id' => $user->getAuthIdentifier(),
+            'verified_at' => gmdate('Y-m-d H:i:s'),
+            'ip' => $request->ip(),
+        ]);
+        $stepUp->save();
+
         return new JsonResponse([
             'data' => ['object' => 'mfa_verification', 'verified' => true],
             'meta' => ['request_id' => $this->requestId($request)],

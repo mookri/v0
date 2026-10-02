@@ -73,6 +73,7 @@ final class MfaTest extends TenantIntegrationTestCase
 
         $tenant = $this->makeTenant();
         [$issuer] = $this->actingAsMembership($tenant);
+        $this->stepUp($issuer);
         $secret = $this->actingAs($issuer)->postJson('/api/v1/platform/api-keys', [
             'tenant_id' => (string) $tenant->getKey(), 'name' => 'mfa-probe',
         ])->assertCreated()->json('data.secret');

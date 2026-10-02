@@ -18,6 +18,7 @@ final class ScopeEnforcementTest extends TenantIntegrationTestCase
     private function keyWithScopes(string $tenantId, string $issuerId, ?array $scopes): array
     {
         $issuer = \App\Models\User::find($issuerId);
+        $this->stepUp($issuer);
         $payload = ['tenant_id' => $tenantId, 'name' => 'scoped-probe'];
         if ($scopes !== null) {
             $payload['scopes'] = $scopes;
@@ -89,6 +90,7 @@ final class ScopeEnforcementTest extends TenantIntegrationTestCase
     {
         $tenant = $this->makeTenant();
         [$issuer] = $this->actingAsMembership($tenant);
+        $this->stepUp($issuer);
 
         $this->actingAs($issuer)->postJson('/api/v1/platform/api-keys', [
             'tenant_id' => (string) $tenant->getKey(), 'name' => 'bad', 'scopes' => ['not a scope'],
