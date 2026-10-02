@@ -262,6 +262,22 @@ Device clients are per-tenant, per-terminal records
 (`client_type=pos_device`) so a compromised terminal can be revoked
 individually without affecting the store.
 
+### Implementation note A-SEC-002-1 — device flow live (2026-10-02)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive)
+
+- Stock league device grant (already enabled server-wide) + two
+  standalone verification views (`oauth.device.user-code` entry,
+  `oauth.device.authorize` approve/deny with `auth_token` binding) +
+  `pos_device` client type in `platform:client:create` (tenant
+  REQUIRED, one row per terminal; grants device-code + refresh).
+- Verified paths: pending → slow_down on fast poll → web approval →
+  tokens on poll; denial → `access_denied` on poll. Device-code
+  redemption passes the same per-client grant middleware as all token
+  grants.
+- Still pending: device-client revocation console (per-terminal kill
+  is a client row revocation today), `expired_token` path coverage.
+
 ---
 
 ## SEC-003 Token schemas & scopes

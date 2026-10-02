@@ -42,6 +42,8 @@ class AppServiceProvider extends ServiceProvider
         Passport::authorizationView(
             static fn (array $parameters): \Symfony\Component\HttpFoundation\Response => response()->view('oauth.authorize', $parameters)
         );
+        Passport::deviceUserCodeView('oauth.device.user-code');
+        Passport::deviceAuthorizationView('oauth.device.authorize');
 
         // P3a: per-client grant enforcement on the token route. Wired
         // here (not in routes files) because the route is registered by

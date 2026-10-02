@@ -15,8 +15,9 @@ use Laravel\Passport\Client;
  * recreate until the rotation command lands.
  *
  * Types: first_party_web (code + refresh, PKCE), first_party_service
- * (client credentials), partner (client credentials + tenant REQUIRED).
- * pos_device is rejected: the device grant stays disabled (SEC-002).
+ * (client credentials), partner (client credentials + tenant REQUIRED),
+ * pos_device (device-code + refresh + tenant REQUIRED, one row per
+ * terminal — a compromised terminal revokes individually).
  */
 final class CreateClientCommand extends Command
 {
@@ -36,6 +37,7 @@ final class CreateClientCommand extends Command
         OAuthClientProfile::TYPE_FIRST_PARTY_WEB => ['authorization_code', 'refresh_token'],
         OAuthClientProfile::TYPE_FIRST_PARTY_SERVICE => ['client_credentials'],
         OAuthClientProfile::TYPE_PARTNER => ['client_credentials'],
+        OAuthClientProfile::TYPE_POS_DEVICE => ['urn:ietf:params:oauth:grant-type:device_code', 'refresh_token'],
     ];
 
     public function handle(): int
@@ -49,19 +51,15 @@ final class CreateClientCommand extends Command
             return self::FAILURE;
         }
 
-        if ($type === OAuthClientProfile::TYPE_POS_DEVICE) {
-            $this->error('pos_device clients need the device grant, which stays disabled (SEC-002).');
-
-            return self::FAILURE;
-        }
-
         $name = (string) ($this->option('name') ?: $type.' client');
         $tenantId = $this->option('tenant') !== null ? (string) $this->option('tenant') : null;
 
-        if ($type === OAuthClientProfile::TYPE_PARTNER) {
+        if (in_array($type, [OAuthClientProfile::TYPE_PARTNER, OAuthClientProfile::TYPE_POS_DEVICE], true)) {
             $tenant = $tenantId !== null ? Tenant::query()->find($tenantId) : null;
             if ($tenant === null || $tenant->state !== Tenant::STATE_ACTIVE) {
-                $this->error('Partner clients require an active --tenant.');
+                $label = $type === OAuthClientProfile::TYPE_PARTNER ? 'Partner' : 'POS device';
+
+                $this->error($label.' clients require an active --tenant.'.($type === OAuthClientProfile::TYPE_POS_DEVICE ? ' (one record per terminal)' : ''));
 
                 return self::FAILURE;
             }
