@@ -103,6 +103,27 @@ final class InviteTest extends TenantIntegrationTestCase
             ->assertJsonPath('error.code', 'unauthenticated');
     }
 
+    public function test_accept_on_customer_track_seeds_buyer_profile(): void
+    {
+        $tenant = $this->makeTenant();
+        [$issuer] = $this->actingAsMembership($tenant);
+        $issued = $this->actingAs($issuer)->postJson('/api/v1/identity/invites', [
+            'tenant_id' => (string) $tenant->getKey(),
+            'track' => 'customer',
+            'identifier' => 'buyer1@example.com',
+        ], $this->tenantHeaders($tenant))->assertCreated();
+        $token = $issued->json('data.token');
+
+        $accepted = $this->postJson('/api/v1/identity/invites:accept', ['token' => $token])->assertOk();
+        $userId = $accepted->json('data.user_id');
+
+        $this->assertDatabaseHas('buyer_profiles', [
+            'tenant_id' => (string) $tenant->getKey(),
+            'user_id' => $userId,
+            'status' => 'active',
+        ], 'tenant_shared');
+    }
+
     public function test_revoke_kills_invite_before_accept(): void
     {
         $tenant = $this->makeTenant();
