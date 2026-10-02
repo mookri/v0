@@ -8,8 +8,9 @@ use Tests\TenantIntegrationTestCase;
 
 /**
  * Device flow (SEC-002 §3.4, RFC 8628): code issuance, pending polls,
- * slow-down on fast polling, web approval, token issuance on poll, and
- * denial. POS clients are per-tenant, per-terminal records.
+ * slow-down on fast polling, web approval, token issuance on poll,
+ * denial, and expiry (expired_token). POS clients are per-tenant,
+ * per-terminal records.
  */
 final class DeviceFlowTest extends TenantIntegrationTestCase
 {
@@ -117,5 +118,24 @@ final class DeviceFlowTest extends TenantIntegrationTestCase
         $denied = $this->poll($client, $secret, $code['device_code']);
         $this->assertSame(401, $denied['status']);
         $this->assertSame('access_denied', $denied['body']['error']);
+    }
+
+    public function test_expired_device_code_fails_poll(): void
+    {
+        $tenant = $this->makeTenant();
+        [$client, $secret] = $this->posClient((string) $tenant->getKey());
+
+        $code = $this->requestCode($client, $secret);
+
+        // Age the code past its lifetime (RFC 8628 §3.5).
+        $model = \Laravel\Passport\Passport::deviceCodeModel();
+        $model::query()->where('user_code', $code['user_code'])
+            ->update(['expires_at' => gmdate('Y-m-d H:i:s', time() - 60)]);
+
+        sleep(6);
+
+        $expired = $this->poll($client, $secret, $code['device_code']);
+        $this->assertSame(400, $expired['status']);
+        $this->assertSame('expired_token', $expired['body']['error']);
     }
 }
