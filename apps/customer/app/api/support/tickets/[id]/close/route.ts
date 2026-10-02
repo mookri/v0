@@ -1,0 +1,22 @@
+import { newRequestId, ok, err } from '@/application/api-envelope';
+import { laravelEnabled, laravelPost, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { wiredActor } from '@/server/wired-actor';
+
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const requestId = newRequestId();
+  if (!laravelEnabled()) {
+    return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
+  }
+  const actor = wiredActor(req, requestId);
+  if (actor instanceof Response) return actor;
+  try {
+    const { data: ticket } = await laravelPost<unknown>(
+      actor.token,
+      `/customers/support/tickets/${encodeURIComponent((await params).id)}:close`,
+      {},
+    );
+    return Response.json(ok(ticket as Record<string, unknown>, requestId));
+  } catch (e) {
+    return laravelErrorResponse(e, 'Ticket is unavailable.', requestId);
+  }
+}

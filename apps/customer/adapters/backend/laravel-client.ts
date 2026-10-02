@@ -64,7 +64,7 @@ export interface LaravelResponse<T> {
 
 async function callLaravel<T>(
   token: string | null,
-  method: 'GET' | 'POST',
+  method: 'GET' | 'POST' | 'DELETE',
   path: string,
   query: Record<string, string> = {},
   body: unknown = undefined,
@@ -109,6 +109,14 @@ export function laravelPost<T>(
   codeMap: BackendCodeMap = {},
 ): Promise<LaravelResponse<T>> {
   return callLaravel<T>(token, 'POST', path, {}, body, codeMap);
+}
+
+export function laravelDelete<T>(
+  token: string | null,
+  path: string,
+  codeMap: BackendCodeMap = {},
+): Promise<LaravelResponse<T>> {
+  return callLaravel<T>(token, 'DELETE', path, {}, undefined, codeMap);
 }
 
 // Shared failure mapping for branched handlers: backend-mapped BFF codes

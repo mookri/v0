@@ -285,3 +285,104 @@ test('wired reschedule reads version then moves', async () => {
   const moved = (await res.json()) as { data: { schedule: { date: string }; actions: string[] } };
   expect(moved.data.schedule.date).toBe('2030-06-01');
 });
+
+test('wired home composes four backend reads', async () => {
+  wiredEnv();
+  stubLaravel((url) => {
+    if (url.includes('/customers/profile')) {
+      return { data: { display_name: 'Ravi', name: 'Ravi' }, meta: { request_id: 'r' } };
+    }
+    if (url.includes('/booking/reservations')) {
+      return {
+        data: [{ id: 'b1', status: 'CONFIRMED', service_sku: null, scheduled_at: '2030-05-01T10:00:00', version: 1, actions: [] }],
+        meta: { request_id: 'r', page: { limit: 1, has_more: false, next_cursor: null } },
+      };
+    }
+    if (url.includes('/customers/discover')) {
+      return {
+        data: { recommended: [{ id: 'c1', title: 'Puja', kind: 'puja' }], popular: [], recent: [] },
+        meta: { request_id: 'r' },
+      };
+    }
+    return {
+      data: {
+        items: [{ id: 'a1', kind: 'login', label: 'Signed in', at: null }],
+        pagination: { hasMore: false, nextCursor: null },
+      },
+      meta: { request_id: 'r', page: { limit: 5, has_more: false, next_cursor: null } },
+    };
+  });
+  const { GET: getHome } = await import('@apps/customer/app/api/home/route');
+  const res = await getHome(authed('https://app.navdhya.com/api/home'));
+  expect(res.status).toBe(200);
+  const body = (await res.json()) as {
+    data: {
+      greeting: { displayName: string };
+      upcomingBooking?: { id: string };
+      recommendations: { id: string }[];
+      recentActivity: { id: string; text: string }[];
+    };
+  };
+  expect(body.data.greeting.displayName).toBe('Ravi');
+  expect(body.data.upcomingBooking?.id).toBe('b1');
+  expect(body.data.recommendations).toEqual([{ id: 'c1', title: 'Puja' }]);
+  expect(body.data.recentActivity).toEqual([{ id: 'a1', text: 'Signed in' }]);
+});
+
+test('new wired surfaces pass through with BFF shapes', async () => {
+  wiredEnv();
+  stubLaravel((url, init) => {
+    if (url.includes('/customers/addresses') && init?.method !== 'POST') {
+      return {
+        data: [{ id: 'a1', label: 'home' }],
+        meta: { request_id: 'r', page: { limit: 25, has_more: false, next_cursor: null } },
+      };
+    }
+    if (url.includes('/customers/activity')) {
+      return {
+        data: [{ id: 'a1', kind: 'login', label: 'Signed in' }],
+        meta: { request_id: 'r', page: { limit: 25, has_more: false, next_cursor: null } },
+      };
+    }
+    if (url.includes('/customers/support/tickets') && !url.includes('/messages') && !url.includes(':close')) {
+      return { data: { id: 't1', status: 'OPEN' }, meta: { request_id: 'r' } };
+    }
+    if (url.includes('/customers/referrals')) {
+      return { data: { code: 'REF-ABC', referred_count: 0, referrals: [] }, meta: { request_id: 'r' } };
+    }
+    if (url.includes('/booking/reviews')) {
+      return {
+        data: [{ id: 'r1', rating: 5 }],
+        meta: { request_id: 'r', page: { limit: 25, has_more: false, next_cursor: null } },
+      };
+    }
+    return { data: { id: 'x1', status: 'OPEN' }, meta: { request_id: 'r' } };
+  });
+  const { GET: listAddresses } = await import('@apps/customer/app/api/addresses/route');
+  const { GET: listActivity } = await import('@apps/customer/app/api/activity/route');
+  const { GET: listTickets } = await import('@apps/customer/app/api/support/tickets/route');
+  const { GET: getReferrals } = await import('@apps/customer/app/api/referrals/route');
+  const { GET: listReviews } = await import('@apps/customer/app/api/reviews/route');
+
+  const addresses = await listAddresses(authed('https://app.navdhya.com/api/addresses'));
+  expect(addresses.status).toBe(200);
+  expect(((await addresses.json()) as { data: { items: unknown[] } }).data.items).toHaveLength(1);
+
+  const activity = await listActivity(authed('https://app.navdhya.com/api/activity'));
+  expect(activity.status).toBe(200);
+
+  const tickets = await listTickets(authed('https://app.navdhya.com/api/support/tickets'));
+  expect(tickets.status).toBe(200);
+
+  const referrals = await getReferrals(authed('https://app.navdhya.com/api/referrals'));
+  const referralsBody = (await referrals.json()) as { data: { code: string } };
+  expect(referralsBody.data.code).toBe('REF-ABC');
+
+  const reviews = await listReviews(authed('https://app.navdhya.com/api/reviews'));
+  expect(reviews.status).toBe(200);
+
+  // Flag off: new surfaces are unauthenticated-only (no mock data).
+  vi.stubEnv('CUSTOMER_BACKEND', '');
+  const cold = await listAddresses(new Request('https://app.navdhya.com/api/addresses'));
+  expect(cold.status).toBe(401);
+});

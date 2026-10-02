@@ -77,6 +77,21 @@ const MAPPINGS: BackendMapping[] = [
   { bff: 'GET /api/settings', backend: ['GET /api/v1/customers/settings'], inRegistry: true },
   { bff: 'POST /api/auth/login', backend: ['POST /api/v1/customers/auth/otp', 'POST /api/v1/customers/auth/login'], inRegistry: false },
   { bff: 'POST /api/auth/logout', backend: ['POST /api/v1/customers/auth/logout'], inRegistry: false },
+  { bff: 'GET /api/addresses', backend: ['GET /api/v1/customers/addresses'], inRegistry: true },
+  { bff: 'POST /api/addresses', backend: ['POST /api/v1/customers/addresses'], inRegistry: true },
+  { bff: 'PATCH /api/addresses/:id', backend: ['PATCH /api/v1/customers/addresses/{id}'], inRegistry: true },
+  { bff: 'DELETE /api/addresses/:id', backend: ['DELETE /api/v1/customers/addresses/{id}'], inRegistry: true },
+  { bff: 'POST /api/addresses/:id/default', backend: ['POST /api/v1/customers/addresses/{id}:default'], inRegistry: true },
+  { bff: 'GET /api/activity', backend: ['GET /api/v1/customers/activity'], inRegistry: true },
+  { bff: 'GET /api/support/tickets', backend: ['GET /api/v1/customers/support/tickets'], inRegistry: true },
+  { bff: 'POST /api/support/tickets', backend: ['POST /api/v1/customers/support/tickets'], inRegistry: true },
+  { bff: 'GET /api/support/tickets/:id', backend: ['GET /api/v1/customers/support/tickets/{id}'], inRegistry: true },
+  { bff: 'POST /api/support/tickets/:id/messages', backend: ['POST /api/v1/customers/support/tickets/{id}/messages'], inRegistry: true },
+  { bff: 'POST /api/support/tickets/:id/close', backend: ['POST /api/v1/customers/support/tickets/{id}:close'], inRegistry: true },
+  { bff: 'GET /api/referrals', backend: ['GET /api/v1/customers/referrals'], inRegistry: true },
+  { bff: 'GET /api/reviews', backend: ['GET /api/v1/booking/reviews'], inRegistry: true },
+  { bff: 'POST /api/bookings/:bookingId/reviews', backend: ['POST /api/v1/booking/reservations/{id}/reviews'], inRegistry: true },
+  { bff: 'DELETE /api/reviews/:id', backend: ['DELETE /api/v1/booking/reviews/{id}'], inRegistry: true },
 ];
 
 test('backend mappings use module prefixes and registries agree', () => {

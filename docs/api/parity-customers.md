@@ -18,7 +18,7 @@ subset of the contract union with identical statuses. New codes:
 
 | BFF endpoint | Backend source |
 |---|---|
-| `GET /api/home` | composes `GET /api/v1/booking/reservations` + `GET /api/v1/customers/profile` |
+| `GET /api/home` | composes `GET /api/v1/booking/reservations` + `GET /api/v1/customers/profile` — **wired behind flag** (profile + upcoming + discover + activity, fail-closed) |
 | `GET /api/bookings` | `GET /api/v1/booking/reservations` � **wired behind flag, drilled live** |
 | `GET /api/bookings/:bookingId` | `GET /api/v1/booking/reservations/{id}` � **wired behind flag, drilled live** |
 | `POST /api/bookings/:bookingId/cancel` | `POST /api/v1/booking/reservations/{id}:cancel` — **wired behind flag** (idempotent; 409 → `BOOKING_CANNOT_CANCEL`) |
@@ -30,6 +30,22 @@ subset of the contract union with identical statuses. New codes:
 | `GET /api/settings` | `GET /api/v1/customers/settings` � **wired behind flag** (values merged into sections response) |
 | `POST /api/auth/login` | `POST /api/v1/customers/auth/otp` then `POST …/auth/login` — **wired behind flag, drilled (401 path live)**; `{sessionId, expiresAt}`, bearer in HttpOnly cookie, `token` omitted by design |
 | `POST /api/auth/logout` | `POST /api/v1/customers/auth/logout` � **wired behind flag, drilled live** |
+
+| `GET /api/addresses` | `GET /api/v1/customers/addresses` - **wired behind flag** |
+| `POST /api/addresses` | `POST /api/v1/customers/addresses` - **wired behind flag** |
+| `PATCH /api/addresses/:id` | `PATCH /api/v1/customers/addresses/{id}` - **wired behind flag** |
+| `DELETE /api/addresses/:id` | `DELETE /api/v1/customers/addresses/{id}` - **wired behind flag** |
+| `POST /api/addresses/:id/default` | `POST /api/v1/customers/addresses/{id}:default` - **wired behind flag** |
+| `GET /api/activity` | `GET /api/v1/customers/activity` (`?kind=`) - **wired behind flag** |
+| `GET /api/support/tickets` | `GET /api/v1/customers/support/tickets` - **wired behind flag** |
+| `POST /api/support/tickets` | `POST /api/v1/customers/support/tickets` - **wired behind flag** |
+| `GET /api/support/tickets/:id` | `GET /api/v1/customers/support/tickets/{id}` - **wired behind flag** |
+| `POST /api/support/tickets/:id/messages` | reply (re-opens) - **wired behind flag** |
+| `POST /api/support/tickets/:id/close` | close - **wired behind flag** |
+| `GET /api/referrals` | `GET /api/v1/customers/referrals` - **wired behind flag** |
+| `GET /api/reviews` | `GET /api/v1/booking/reviews` - **wired behind flag** |
+| `POST /api/bookings/:bookingId/reviews` | `POST /api/v1/booking/reservations/{id}/reviews` - **wired behind flag** |
+| `DELETE /api/reviews/:id` | `DELETE /api/v1/booking/reviews/{id}` - **wired behind flag** |
 
 ## Code correspondence (BFF codes)
 
