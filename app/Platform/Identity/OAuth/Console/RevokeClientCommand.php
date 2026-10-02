@@ -9,9 +9,10 @@ use Laravel\Passport\Passport;
 
 /**
  * Revoke an OAuth client: `platform:client:revoke {id}`. Revocation
- * kills the client row, disables its profile, and revokes every live
- * token for the client (bulk trigger, SEC-015 §8.1) — a compromised
- * terminal dies completely, not just at issuance.
+ * kills the client row, disables its profile, revokes every live
+ * token for the client, and kills its outstanding device pairings
+ * (bulk trigger, SEC-015 §8.1) — a compromised terminal dies
+ * completely, not just at issuance.
  */
 final class RevokeClientCommand extends Command
 {
@@ -44,11 +45,19 @@ final class RevokeClientCommand extends Command
         Passport::token()->newQuery()->whereIn('id', $accessIds)->update(['revoked' => true]);
         Passport::refreshToken()->newQuery()->whereIn('access_token_id', $accessIds)->update(['revoked' => true]);
 
+        // Outstanding terminal pairings die too (pending codes can
+        // otherwise still be approved and polled into fresh tokens).
+        $deviceModel = Passport::deviceCodeModel();
+        $devicesKilled = $deviceModel::query()
+            ->where('client_id', (string) $client->getKey())
+            ->where('revoked', false)
+            ->update(['revoked' => true]);
+
         // Passport memoizes client rows per process (once): flush so
         // in-process readers (Octane, queue workers) see the revocation.
         \Illuminate\Support\Once::flush();
 
-        $this->info('Client revoked: '.(string) $client->getKey().' ('.$accessIds->count().' live tokens killed).');
+        $this->info('Client revoked: '.(string) $client->getKey().' ('.$accessIds->count().' live tokens, '.$devicesKilled.' device codes killed).');
 
         return self::SUCCESS;
     }

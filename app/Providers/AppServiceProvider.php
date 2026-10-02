@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use App\Platform\Identity\OAuth\CheckOAuthGrant;
 use App\Platform\Identity\OAuth\Console\CreateClientCommand;
+use App\Platform\Identity\OAuth\Console\ListDeviceCodesCommand;
 use App\Platform\Identity\OAuth\Console\RevokeClientCommand;
+use App\Platform\Identity\OAuth\Console\RevokeDeviceCodeCommand;
 use App\Platform\Identity\OAuth\Console\RotateClientSecretCommand;
 use App\Platform\Identity\OAuth\RotatingRefreshTokenRepository;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
                 CreateClientCommand::class,
                 RevokeClientCommand::class,
                 RotateClientSecretCommand::class,
+                ListDeviceCodesCommand::class,
+                RevokeDeviceCodeCommand::class,
             ]);
         }
     }
