@@ -46,6 +46,9 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'phone_verified_at' => 'datetime',
+            'mfa_enrolled_at' => 'datetime',
+            'mfa_enabled' => 'boolean',
+            'mfa_recovery_hashes' => 'array',
             'password' => 'hashed',
         ];
     }

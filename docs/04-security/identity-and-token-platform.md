@@ -83,6 +83,22 @@ Password hashing: Argon2id (Laravel default).
   enforced users without MFA are pushed to enrollment at next login and
   receive ACR 1 until enrolled.
 
+### Implementation note A-SEC-004-1 — TOTP live (2026-10-02)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive)
+
+- `POST /api/v1/identity/mfa/enroll|confirm|verify|revoke` +
+  `GET /api/v1/identity/mfa` (user-level, no tenant scope; machines
+  denied): secrets application-encrypted, enabled only after a
+  confirming code, recovery codes single-use hashed (shown once),
+  revocation needs a live TOTP code (recovery codes authenticate but
+  never revoke), code failures collapse to one 401, code endpoints
+  throttled. Lifecycle emits `platform.mfa.enrolled/revoked` (no
+  audit rows — identity self-service precedent, no tenant context).
+- Session/token `amr` claims, tenant `require_mfa` enforcement, and
+  `/oauth/stepup` still pending (step-up consumes the verify
+  primitive).
+
 ---
 
 ## SEC-002 Authorization server & grant matrix

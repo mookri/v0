@@ -90,6 +90,19 @@ Route::prefix(config('platform.api_version', 'v1'))
             ->name('identity.sessions');
         Route::post('identity/sessions:revoke-others', [\App\Platform\Identity\Http\Controllers\IdentitySelfServiceController::class, 'revokeOtherSessions'])
             ->name('identity.sessions.revoke-others');
+        Route::get('identity/mfa', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'status'])
+            ->name('identity.mfa.status');
+        Route::post('identity/mfa/enroll', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'enroll'])
+            ->name('identity.mfa.enroll');
+        Route::post('identity/mfa/confirm', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'confirm'])
+            ->middleware('throttle:10,1')
+            ->name('identity.mfa.confirm');
+        Route::post('identity/mfa/verify', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'verify'])
+            ->middleware('throttle:10,1')
+            ->name('identity.mfa.verify');
+        Route::post('identity/mfa/revoke', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'revoke'])
+            ->middleware('throttle:10,1')
+            ->name('identity.mfa.revoke');
         Route::post('identity/invites', [\App\Platform\Identity\Http\Controllers\InviteController::class, 'issue'])
             ->name('identity.invites.issue');
         Route::post('identity/invites/{id}:revoke', [\App\Platform\Identity\Http\Controllers\InviteController::class, 'revoke'])

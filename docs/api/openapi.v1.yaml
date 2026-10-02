@@ -1687,6 +1687,126 @@ paths:
                 properties:
                   data: { type: object, required: [object, user_id, membership_id] }
                   meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/identity/mfa:
+    get:
+      operationId: getMfaStatus
+      summary: 'TOTP enrollment status.'
+      x-gate: ownership
+      responses:
+        200:
+          description: Status.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, enabled] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/identity/mfa/confirm:
+    post:
+      operationId: confirmMfa
+      summary: 'Confirm enrollment (recovery codes out once).'
+      x-gate: ownership
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+      responses:
+        200:
+          description: Confirmed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, recovery_codes] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        401:
+          $ref: '#/components/responses/Unauthenticated'
+  /api/v1/identity/mfa/enroll:
+    post:
+      operationId: enrollMfa
+      summary: 'Start enrollment (otpauth URL out, secret stored disabled).'
+      x-gate: ownership
+      responses:
+        201:
+          description: Enrollment.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, otpauth_url] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/identity/mfa/revoke:
+    post:
+      operationId: revokeMfa
+      summary: 'Revoke the factor (live TOTP code required).'
+      x-gate: ownership
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+      responses:
+        200:
+          description: Revoked.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, revoked] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        401:
+          $ref: '#/components/responses/Unauthenticated'
+  /api/v1/identity/mfa/verify:
+    post:
+      operationId: verifyMfa
+      summary: 'Verify a code (step-up primitive).'
+      x-gate: ownership
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+      responses:
+        200:
+          description: Verified.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, verified] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        401:
+          $ref: '#/components/responses/Unauthenticated'
   /api/v1/identity/profile:
     get:
       operationId: getOwnProfile
