@@ -4,6 +4,7 @@ namespace Tests\Platform\Identity;
 
 use App\Models\User;
 use Laravel\Passport\Client;
+use Tests\Platform\Identity\Concerns\IssuesUserTokens;
 use Tests\TenantIntegrationTestCase;
 
 /**
@@ -14,62 +15,22 @@ use Tests\TenantIntegrationTestCase;
  */
 final class RevokeTokenTest extends TenantIntegrationTestCase
 {
+    use IssuesUserTokens;
+
     /**
      * @return array{0: Client, 1: array{access_token: string, refresh_token: string}}
      */
     private function tokensFor(User $user): array
     {
-        $client = new Client();
-        $client->forceFill([
-            'name' => 'Revoke web client',
-            'secret' => 'revoke-secret-12345',
-            'redirect_uris' => ['https://example.test/callback'],
-            'grant_types' => ['authorization_code', 'refresh_token'],
-            'revoked' => false,
-        ]);
-        $client->save();
-
-        \App\Platform\Identity\OAuth\OAuthClientProfile::factory()->create([
-            'client_id' => (string) $client->getKey(),
-            'client_type' => \App\Platform\Identity\OAuth\OAuthClientProfile::TYPE_FIRST_PARTY_WEB,
-            'allowed_grants' => ['authorization_code', 'refresh_token'],
-        ]);
-
-        $verifier = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk';
-        $this->actingAs($user)->get('/oauth/authorize?'.http_build_query([
-            'client_id' => (string) $client->getKey(),
-            'redirect_uri' => 'https://example.test/callback',
-            'response_type' => 'code', 'scope' => '', 'state' => 'xyz',
-            'code_challenge' => 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM',
-            'code_challenge_method' => 'S256',
-        ]))->assertOk();
-
-        $approve = $this->post('/oauth/authorize', [
-            '_token' => csrf_token(),
-            'state' => 'xyz',
-            'client_id' => (string) $client->getKey(),
-            'auth_token' => session('authToken'),
-        ])->assertStatus(302);
-        parse_str((string) parse_url((string) $approve->headers->get('Location'), PHP_URL_QUERY), $query);
-
-        $tokens = $this->postJson('/oauth/token', [
-            'grant_type' => 'authorization_code',
-            'client_id' => (string) $client->getKey(),
-            'client_secret' => 'revoke-secret-12345',
-            'redirect_uri' => 'https://example.test/callback',
-            'code' => $query['code'],
-            'code_verifier' => $verifier,
-        ])->assertOk()->json();
-
-        return [$client, $tokens];
+        return $this->userTokensFor($user);
     }
 
     /**
      * @return array{0: string, 1: string} client id + secret
      */
-    private function clientCredentials(Client $client, string $secret): array
+    private function clientCredentials(Client $client): array
     {
-        return [(string) $client->getKey(), $secret];
+        return [(string) $client->getKey(), self::CLIENT_SECRET];
     }
 
     public function test_revoke_access_cascades_and_bites_dual_accept(): void
@@ -77,7 +38,7 @@ final class RevokeTokenTest extends TenantIntegrationTestCase
         $tenant = $this->makeTenant();
         [$user] = $this->actingAsMembership($tenant);
         [$client, $tokens] = $this->tokensFor($user);
-        [$id, $secret] = $this->clientCredentials($client, 'revoke-secret-12345');
+        [$id, $secret] = $this->clientCredentials($client);
         $tid = (string) $tenant->getKey();
         auth()->logout();
 
@@ -108,7 +69,7 @@ final class RevokeTokenTest extends TenantIntegrationTestCase
         $tenant = $this->makeTenant();
         [$user] = $this->actingAsMembership($tenant);
         [$client, $tokens] = $this->tokensFor($user);
-        [$id, $secret] = $this->clientCredentials($client, 'revoke-secret-12345');
+        [$id, $secret] = $this->clientCredentials($client);
         auth()->logout();
 
         $this->postJson('/api/oauth/revoke', [
@@ -130,7 +91,7 @@ final class RevokeTokenTest extends TenantIntegrationTestCase
         $tenant = $this->makeTenant();
         [$user] = $this->actingAsMembership($tenant);
         [$client] = $this->tokensFor($user);
-        [$id, $secret] = $this->clientCredentials($client, 'revoke-secret-12345');
+        [$id, $secret] = $this->clientCredentials($client);
 
         // No oracle: unknown tokens succeed silently.
         $this->postJson('/api/oauth/revoke', [

@@ -52,4 +52,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Lifecycle gate (user_lifecycle_status migration): only `active`
+     * users authenticate. Absence historically meant active, so null
+     * reads as active — the migration default covers new rows.
+     */
+    public function isActive(): bool
+    {
+        return ($this->status ?? 'active') === 'active';
+    }
 }

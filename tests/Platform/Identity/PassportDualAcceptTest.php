@@ -3,9 +3,9 @@
 namespace Tests\Platform\Identity;
 
 use App\Models\User;
-use App\Platform\Identity\OAuth\OAuthClientProfile;
 use App\Platform\Tenancy\Models\Tenant;
 use Laravel\Passport\Client;
+use Tests\Platform\Identity\Concerns\IssuesUserTokens;
 use Tests\TenantIntegrationTestCase;
 
 /**
@@ -16,56 +16,14 @@ use Tests\TenantIntegrationTestCase;
  */
 final class PassportDualAcceptTest extends TenantIntegrationTestCase
 {
+    use IssuesUserTokens;
+
     /**
      * @return array{0: Client, 1: string} client + access token
      */
     private function mintFor(User $user): array
     {
-        $client = new Client();
-        $client->forceFill([
-            'name' => 'Dual-accept web client',
-            'secret' => 'dual-accept-secret-1',
-            'redirect_uris' => ['https://example.test/callback'],
-            'grant_types' => ['authorization_code', 'refresh_token'],
-            'revoked' => false,
-        ]);
-        $client->save();
-
-        OAuthClientProfile::factory()->create([
-            'client_id' => (string) $client->getKey(),
-            'client_type' => OAuthClientProfile::TYPE_FIRST_PARTY_WEB,
-            'allowed_grants' => ['authorization_code', 'refresh_token'],
-        ]);
-
-        $verifier = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk';
-
-        $this->actingAs($user)->get('/oauth/authorize?'.http_build_query([
-            'client_id' => (string) $client->getKey(),
-            'redirect_uri' => 'https://example.test/callback',
-            'response_type' => 'code',
-            'scope' => '',
-            'state' => 'xyz',
-            'code_challenge' => 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM',
-            'code_challenge_method' => 'S256',
-        ]))->assertOk();
-
-        $approve = $this->post('/oauth/authorize', [
-            '_token' => csrf_token(),
-            'state' => 'xyz',
-            'client_id' => (string) $client->getKey(),
-            'auth_token' => session('authToken'),
-        ])->assertStatus(302);
-
-        parse_str((string) parse_url((string) $approve->headers->get('Location'), PHP_URL_QUERY), $query);
-
-        $tokens = $this->postJson('/oauth/token', [
-            'grant_type' => 'authorization_code',
-            'client_id' => (string) $client->getKey(),
-            'client_secret' => 'dual-accept-secret-1',
-            'redirect_uri' => 'https://example.test/callback',
-            'code' => $query['code'],
-            'code_verifier' => $verifier,
-        ])->assertOk()->json();
+        [$client, $tokens] = $this->userTokensFor($user);
 
         return [$client, $tokens['access_token']];
     }

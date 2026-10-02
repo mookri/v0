@@ -86,7 +86,7 @@ final class AuthenticateAny
 
         $user = User::query()->find($claims['sub']);
 
-        if ($user === null) {
+        if ($user === null || ! $user->isActive()) {
             return false;
         }
 
@@ -112,7 +112,7 @@ final class AuthenticateAny
         }
 
         $user = User::query()->where('external_id', $actor['user_id'])->first();
-        if ($user === null) {
+        if ($user === null || ! $user->isActive()) {
             return false;
         }
 

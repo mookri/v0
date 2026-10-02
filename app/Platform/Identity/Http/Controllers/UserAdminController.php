@@ -11,9 +11,11 @@ use Illuminate\Http\Request;
 /**
  * User lifecycle administration (platform-global surfaces, central data):
  * tenant-scoped user listing (via memberships), suspend/activate with
- * reason. Suspended users fail authentication everywhere once the guard
- * check lands with the token program; until then suspension is enforced
- * at membership resolution (suspended state denies entry).
+ * reason. Suspension is enforced at every API credential check (HMAC +
+ * dual-accept status gates, refresh treated as revoked) and cascades
+ * here: suspending kills the user's OAuth tokens and web sessions, so
+ * no suspended credential survives past the 15-minute access TTL.
+ * Activation does not resurrect anything — fresh login required.
  */
 final class UserAdminController
 {
@@ -110,6 +112,10 @@ final class UserAdminController
 
         $user->forceFill(['status' => $status])->save();
 
+        if ($status === self::STATUS_SUSPENDED) {
+            $this->revokeCredentials((string) $user->getAuthIdentifier());
+        }
+
         return new JsonResponse([
             'data' => [
                 'id' => $user->getAuthIdentifier(),
@@ -118,5 +124,24 @@ final class UserAdminController
             ],
             'meta' => ['request_id' => $this->requestId($request)],
         ]);
+    }
+
+    /**
+     * Bulk revocation trigger (SEC-015 §8.1): all OAuth tokens for the
+     * user die, and every web session row goes with them.
+     */
+    private function revokeCredentials(string $userId): void
+    {
+        $accessIds = \Laravel\Passport\Passport::token()->newQuery()
+            ->where('user_id', $userId)
+            ->pluck('id');
+
+        \Laravel\Passport\Passport::token()->newQuery()->whereIn('id', $accessIds)->update(['revoked' => true]);
+        \Laravel\Passport\Passport::refreshToken()->newQuery()->whereIn('access_token_id', $accessIds)->update(['revoked' => true]);
+
+        \Illuminate\Support\Facades\DB::connection(config('database.default'))
+            ->table('sessions')
+            ->where('user_id', $userId)
+            ->delete();
     }
 }

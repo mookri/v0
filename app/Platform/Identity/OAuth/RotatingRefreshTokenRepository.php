@@ -25,9 +25,14 @@ final class RotatingRefreshTokenRepository extends PassportRefreshTokenRepositor
 
         if ((bool) $token->revoked) {
             $this->revokeLineage($token);
+
+            return true;
         }
 
-        return (bool) $token->revoked;
+        // Suspended/deactivated owners fail closed at refresh time (the
+        // access-token half is covered by the dual-accept status gate;
+        // together no suspended credential survives past 15 minutes).
+        return ! $this->ownerIsActive($token);
     }
 
     private function revokeLineage(mixed $token): void
@@ -50,5 +55,24 @@ final class RotatingRefreshTokenRepository extends PassportRefreshTokenRepositor
         Passport::refreshToken()->newQuery()->whereIn('access_token_id', $accessIds)->update(['revoked' => true]);
 
         event(new TokenReuseDetected((string) $userId, (string) $clientId));
+    }
+
+    /**
+     * Owner lifecycle gate: refresh tokens of suspended/deactivated
+     * users read as revoked (fail closed without touching rows — the
+     * rows die on their own expiry/rotation; suspension cascade wipes
+     * them eagerly via the admin endpoint).
+     */
+    private function ownerIsActive(mixed $token): bool
+    {
+        $accessToken = Passport::token()->newQuery()->whereKey($token->access_token_id)->first();
+
+        if ($accessToken === null) {
+            return false;
+        }
+
+        $user = \App\Models\User::query()->find($accessToken->getAttribute('user_id'));
+
+        return $user !== null && $user->isActive();
     }
 }
