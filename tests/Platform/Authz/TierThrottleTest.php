@@ -41,7 +41,10 @@ final class TierThrottleTest extends TenantIntegrationTestCase
         }
 
         $this->getJson('/api/v1/catalog/items', $headers)
-            ->assertStatus(429)->assertJsonPath('error.code', 'rate_limited');
+            ->assertStatus(429)->assertJsonPath('error.code', 'rate_limited')
+            ->assertHeader('Retry-After', '60')
+            ->assertHeader('X-RateLimit-Limit', '60')
+            ->assertHeader('X-RateLimit-Remaining', '0');
     }
 
     public function test_enterprise_key_survives_sixty_one_requests(): void

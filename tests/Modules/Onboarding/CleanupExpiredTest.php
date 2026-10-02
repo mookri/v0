@@ -2,6 +2,7 @@
 
 namespace Tests\Modules\Onboarding;
 
+use App\Models\User;
 use App\Modules\Onboarding\Models\OtpChallenge;
 use App\Modules\Onboarding\Models\PartnerApplication;
 use App\Platform\Identity\Models\Invite;
@@ -101,6 +102,30 @@ final class CleanupExpiredTest extends TenantIntegrationTestCase
     public function test_refuses_without_explicit_mode(): void
     {
         $this->assertSame(1, Artisan::call('cleanup:expired'));
+    }
+
+    public function test_step_up_proofs_sweep_after_24h(): void
+    {
+        $user = User::factory()->create();
+
+        \App\Platform\Identity\Models\MfaStepUp::query()->create([
+            'user_id' => $user->id,
+            'verified_at' => now()->subHours(25)->toDateTimeString(),
+        ]);
+        \App\Platform\Identity\Models\MfaStepUp::query()->create([
+            'user_id' => $user->id,
+            'verified_at' => now()->toDateTimeString(),
+        ]);
+
+        $this->assertSame(0, Artisan::call('cleanup:expired', ['--force' => true]));
+
+        $this->assertSame(1, \App\Platform\Identity\Models\MfaStepUp::query()->count());
+        $this->assertSame(
+            0,
+            \App\Platform\Identity\Models\MfaStepUp::query()
+                ->where('verified_at', '<', now()->subHours(24)->toDateTimeString())
+                ->count()
+        );
     }
 
     public function test_evidence_cap_rejects_without_partial_write(): void

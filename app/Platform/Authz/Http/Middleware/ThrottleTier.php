@@ -44,7 +44,11 @@ final class ThrottleTier
             throw new ThrottleRequestsException(
                 'Too many requests.',
                 null,
-                ['Retry-After' => (string) self::WINDOW_SECONDS]
+                [
+                    'Retry-After' => (string) self::WINDOW_SECONDS,
+                    'X-RateLimit-Limit' => (string) $max,
+                    'X-RateLimit-Remaining' => '0',
+                ]
             );
         }
 
