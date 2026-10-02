@@ -526,6 +526,22 @@ OpenAPI: `app/Platform/Identity/Http/openapi-keys.yaml` (composed into
   `jti` revocation → live membership/scope resolution. Revocation lookup is
   Redis-cached (TTL 30 s) with write-through on revoke.
 
+### Implementation note A-SEC-015-1 — revocation endpoint live (2026-10-02)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive)
+
+- `POST /api/oauth/revoke` (client-authenticated, throttled, public):
+  access-token revocation cascades to its refresh tokens (else refresh
+  resurrects the session); refresh revocation symmetrically kills its
+  access token. Refresh tokens travel league-encrypted — the endpoint
+  decrypts to the stored id first; undecryptable input is an unknown
+  token (silent 200, no oracle). Errors use league's shape, not the
+  kernel envelope (protocol surface). Dual-accept honors revocation
+  immediately (proven end to end).
+- `jti_revocations` table, Redis revocation cache, and back-channel SLO
+  remain future work; revocation state today is the `revoked` flags on
+  the Passport tables.
+
 ### 8.2 Introspection (RFC 7662)
 
 `/oauth/introspect` accepts a client-authenticated request and returns the

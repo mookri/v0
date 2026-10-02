@@ -3,6 +3,34 @@ info:
   title: 'Navdhya Platform API'
   version: 1.0.0
 paths:
+  /api/oauth/revoke:
+    post:
+      operationId: revokeOAuthToken
+      summary: 'Revoke an access or refresh token (unknown tokens 200).'
+      x-gate: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+                - client_id
+                - client_secret
+      responses:
+        200:
+          description: 'Revoked (or unknown — no oracle).'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
   /api/v1/authz/explain:
     get:
       operationId: explainAuthorization

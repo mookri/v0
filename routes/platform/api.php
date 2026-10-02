@@ -129,6 +129,17 @@ Route::prefix(config('platform.api_version', 'v1'))
             ->name('sod-rules.destroy');
     });
 
+// RFC 7009 revocation carries the client credential in the body (like
+// invite acceptance): public route by design, throttled, never session
+// authenticated. Lives under /api next to Passport's own /oauth/*
+// vendor surface (this file is api-prefixed by the route provider).
+Route::name('oauth.')
+    ->group(function (): void {
+        Route::post('oauth/revoke', [\App\Platform\Identity\OAuth\Http\Controllers\RevokeController::class, '__invoke'])
+            ->middleware('throttle:10,1')
+            ->name('revoke');
+    });
+
 // Invite acceptance carries its own credential (the token) — public route
 // by design, rate-limited at the edge/product tier, never authenticated.
 Route::prefix(config('platform.api_version', 'v1'))

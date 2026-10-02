@@ -59,7 +59,10 @@ move to the bottom with date + resolution, never deleted.
   bearers verify RS256 + expiry + live revocation + audience-client
   checks (`PassportJwtVerifier`, house-style hand-rolled); tenant
   authority stays on live membership (no tenant claim yet — P4).
-- **Tracks:** P4 HMAC sunset with date (+ custom JWT claims: tenant, acr/sid).
+- **P4a done (2026-10-02):** RFC 7009 revocation endpoint
+  (`POST /api/oauth/revoke`, symmetric kill both directions, no-oracle
+  200s, league error shape).
+- **Tracks:** P4b HMAC sunset with date (+ custom JWT claims: tenant, acr/sid).
 ## Resolved
 
 (none yet)
