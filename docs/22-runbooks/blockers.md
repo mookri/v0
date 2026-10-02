@@ -55,8 +55,11 @@ move to the bottom with date + resolution, never deleted.
   partner requires active tenant; pos_device refused — device grant
   stays off); per-client grant enforcement on the token route
   (league-shaped errors; profile-less clients rejected).
-- **Tracks:** P3b dual-accept window (Passport JWT in `auth.any`), P4 HMAC sunset with date.
-
+- **P3b done (2026-10-02):** dual-accept in `auth.any` — JWT-shaped
+  bearers verify RS256 + expiry + live revocation + audience-client
+  checks (`PassportJwtVerifier`, house-style hand-rolled); tenant
+  authority stays on live membership (no tenant claim yet — P4).
+- **Tracks:** P4 HMAC sunset with date (+ custom JWT claims: tenant, acr/sid).
 ## Resolved
 
 (none yet)
