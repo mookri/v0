@@ -42,7 +42,11 @@ move to the bottom with date + resolution, never deleted.
   cross-implementation tested). Customer self-service auth (B2) mints
   backend HMAC actor tokens (`ActorTokenIssuer`, 24 h absolute, no
   server-side revocation until the jti store lands) — same interim.
-- **Tracks:** Passport second half + HMAC sunset with date.
+- **P1 done (2026-10-02):** `laravel/passport` installed, keys generated
+  (dev-local; prod via VAULT-001), stock `oauth_*` tables on central,
+  routes OFF (`ignoreRoutes`) until P2 configures clients/grants.
+- **Tracks:** P2 clients + grants (code+PKCE, refresh rotation), P3
+  dual-accept window, P4 HMAC sunset with date.
 
 ## Resolved
 
