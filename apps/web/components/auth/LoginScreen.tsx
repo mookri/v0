@@ -54,7 +54,27 @@ export function LoginScreen({
     setIsLoading(true)
 
     try {
-      await new Promise(r => setTimeout(r, 900))
+      const res = await fetch('/api/auth/otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identity: phone, purpose: 'login' }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        setErrors({ phone: data.error?.message || 'Failed to send code' })
+        return
+      }
+
+      const data = await res.json()
+      const challengeId = data.data?.challengeId
+      if (!challengeId) {
+        setErrors({ phone: 'Failed to get challenge ID' })
+        return
+      }
+
+      // Store challengeId for OTP screen (could use context or pass via transition)
+      sessionStorage.setItem('auth_challenge_id', challengeId)
       setOtpSentReason('LOGIN')
       transitionTo('OTP')
     } finally {

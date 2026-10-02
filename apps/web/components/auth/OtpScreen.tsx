@@ -31,10 +31,10 @@ export function OtpScreen({
     useState(false)
   const [resendTimer, setResendTimer] =
     useState(60)
-
   const [errors, setErrors] = useState<
     Record<string, string>
   >({})
+  const [generalError, setGeneralError] = useState('')
 
   const dialCode =
     getCountryByCode(countryCode).dialCode
@@ -70,15 +70,64 @@ export function OtpScreen({
     }
 
     setIsLoading(true)
+    setGeneralError('')
 
     try {
-      await new Promise(r =>
-        setTimeout(r, 1000)
-      )
+      const challengeId = sessionStorage.getItem('auth_challenge_id')
+      if (!challengeId) {
+        setGeneralError('Session expired. Please request a new code.')
+        setIsLoading(false)
+        return
+      }
 
+      const endpoint = otpSentReason === 'LOGIN' ? '/api/auth/login' : '/api/auth/verify'
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ challengeId, code: otp }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        setGeneralError(data.error?.message || 'Invalid code')
+        return
+      }
+
+      sessionStorage.removeItem('auth_challenge_id')
       transitionTo('SUCCESS')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleResend = async () => {
+    setResendTimer(60)
+    setGeneralError('')
+
+    try {
+      const purpose = otpSentReason === 'LOGIN' ? 'login' : 'signup'
+      const endpoint = purpose === 'login' ? '/api/auth/otp' : '/api/auth/signup'
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: purpose === 'login'
+          ? JSON.stringify({ identity: phone, purpose: 'login' })
+          : JSON.stringify({ phone, name: phone }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        setGeneralError(data.error?.message || 'Failed to resend code')
+        return
+      }
+
+      const data = await res.json()
+      const challengeId = data.data?.challengeId
+      if (challengeId) {
+        sessionStorage.setItem('auth_challenge_id', challengeId)
+      }
+    } catch {
+      setGeneralError('Failed to resend code')
     }
   }
 
@@ -146,11 +195,17 @@ export function OtpScreen({
           onSubmit={handleVerifyOtp}
           className="space-y-3"
         >
+          {generalError && (
+            <div className="mb-2 p-3 rounded-xl bg-red-500/5 border border-red-500/20">
+              <p className="text-xs text-red-400 font-medium text-center">{generalError}</p>
+            </div>
+          )}
           <OtpInput
             value={otp}
             onChange={(value) => {
               setOtp(value)
               clearError('otp')
+              setGeneralError('')
             }}
             error={errors.otp}
           />
@@ -174,14 +229,9 @@ export function OtpScreen({
             ) : (
               <button
                 type="button"
-                onClick={async () => {
-                  setResendTimer(60)
-
-                  await new Promise(r =>
-                    setTimeout(r, 500)
-                  )
-                }}
-                className="hover:text-[#111] transition-colors"
+                onClick={handleResend}
+                disabled={isLoading}
+                className="hover:text-[#111] transition-colors disabled:opacity-50"
               >
                 Resend code
               </button>

@@ -73,10 +73,26 @@ export function SignupScreen({
     setIsLoading(true)
 
     try {
-      await new Promise(r =>
-        setTimeout(r, 1000)
-      )
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, name: phone }), // Using phone as name for now
+      })
 
+      if (!res.ok) {
+        const data = await res.json()
+        setErrors({ general: data.error?.message || 'Signup failed' })
+        return
+      }
+
+      const data = await res.json()
+      const challengeId = data.data?.challengeId
+      if (!challengeId) {
+        setErrors({ general: 'Failed to get challenge ID' })
+        return
+      }
+
+      sessionStorage.setItem('auth_challenge_id', challengeId)
       setOtpSentReason('SIGNUP')
       transitionTo('OTP')
     } finally {
