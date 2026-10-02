@@ -36,12 +36,14 @@ move to the bottom with date + resolution, never deleted.
 - **Unblock condition:** vault path per security baseline §3 + rotation runbook.
 - **Tracks:** payment production creds, dedicated tenant configs.
 
-### TOKEN-001 — Passport JWT unbuilt (2026-10-01)
+### TOKEN-001 — Passport JWT unbuilt (2026-10-01) — **RESOLVED 2026-10-03**
 - **Blocks:** login-response upgrade, SSO, scoped partner tokens.
-- **Interim posture:** HMAC dual-accept bridge (verifier + middleware,
-  cross-implementation tested). Customer self-service auth (B2) mints
-  backend HMAC actor tokens (`ActorTokenIssuer`, 24 h absolute, no
-  server-side revocation until the jti store lands) — same interim.
+- **Resolution:** **Hybrid forever** (P4b decision). HMAC actor tokens
+  **permanent** for machine/BFF surfaces; Passport JWT **only** for
+  interactive user tokens. Dual-accept stays by design — no sunset,
+  no flag-day migration. Custom JWT claims (`tenant`, `acr/sid`) are
+  optimization, not authority (P3b deliberately kept live-membership
+  authority, fail-closed); tracked as optional S6b.
 - **P1 done (2026-10-02):** `laravel/passport` installed, keys generated
   (dev-local; prod via VAULT-001), stock `oauth_*` tables on central,
   routes OFF (`ignoreRoutes`) until P2 configures clients/grants.
@@ -64,7 +66,6 @@ move to the bottom with date + resolution, never deleted.
   200s, league error shape).
 - **P4a-ii done (2026-10-02):** RFC 8414 discovery, JWKS, userinfo
   (A-SEC-002-1; OIDC discovery + `id_token`s pending).
-- **Tracks:** P4b HMAC sunset with date (+ custom JWT claims: tenant, acr/sid).
 ## Resolved
 
 (none yet)

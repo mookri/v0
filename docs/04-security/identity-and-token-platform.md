@@ -575,6 +575,24 @@ the frontend HMAC dual-accept bridge:
 OpenAPI: `app/Platform/Identity/Http/openapi-keys.yaml` (composed into
 `docs/api/openapi.v1.yaml`); tests: `tests/Platform/Identity/ApiKeyTest.php`.
 
+### Amendment A-SEC-014-4 — hybrid HMAC/JWT forever (TOKEN-001 P4b, 2026-10-03)
+
+**Status:** ACTIVE · **Supersedes:** "P4b HMAC sunset" language in TOKEN-001
+blocker (additive)
+
+- **Decision:** HMAC actor tokens are **permanent** for machine/BFF
+  surfaces (service identity, customer BFF login); Passport JWT
+  **only** for interactive user tokens (OAuth/OIDC flows).
+  Dual-accept in `auth.any` stays by design — no sunset date, no
+  flag-day migration.
+- **Authority:** tenant authority stays on live membership (P3b
+  deliberate fail-closed). Custom JWT claims (`tenant`, `acr/sid`)
+  are optimization, not authority; tracked as optional S6b.
+- **Impact:** blocker TOKEN-001 marked resolved; remaining tracks
+  limited to optional JWT claim enrichment. HMAC `ActorTokenIssuer`
+  and Passport dual-accept both ship; `config/customers.php`
+  `OTP_LOG_CODES` drill flag unchanged.
+
 ## SEC-015 Revocation, introspection & abuse controls
 
 - id: SEC-015

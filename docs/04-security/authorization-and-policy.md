@@ -445,6 +445,17 @@ describes assignment-time)
 - `approval_chain` enforcement in the workflow engine is now the only
   remaining SoD item.
 
+### Amendment A-SEC-011-4 — approval_chain removed from v1 scope (2026-10-03)
+
+**Status:** ACTIVE · **Supersedes:** pending item in A-SEC-011-3
+
+- **Decision:** `approval_chain` requirement dropped from v1. The
+  workflow engine (W1–W3) is out of scope; no multi-step approval
+  flows will be built.
+- **Standing SoD:** rule CRUD (A-SEC-011-3), runtime re-evaluation
+  (A-SEC-011-2), assignment-time (A-SEC-011-1), operator-consent
+  guard — all still active. No workflow engine in v1.
+
 ---
 
 ## SEC-012 Route authorization requirements

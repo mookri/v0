@@ -32,6 +32,14 @@ updates this doc and both test suites in the same change.
 | activity | `/` recentActivity mock strings | `GET /api/v1/customers/activity` (cursor + `?kind=`, caller-scoped, dedicated read model — never audit rows) | backend only until F2 |
 | referrals | — | `GET /api/v1/customers/referrals` (code + count + masked list; attribution only, no rewards) | backend only until F2 |
 | support | `/support`, `/help` (validation only) | `POST /api/v1/customers/support/tickets` (cap 10 open), `GET …` (cursor), `GET …/{id}` (thread), `POST …/{id}/messages` (re-opens CLOSED), `POST …/{id}:close` | backend real; staff console is a separate surface |
+| mfa status | `GET /api/mfa/status` → `{enabled, enrolled_at}` | `GET /api/v1/identity/mfa` → 200 `{object: mfa_status, enabled, enrolled_at}` | **wired behind flag** |
+| mfa enroll | `POST /api/mfa/enroll` → `{otpauth_url, secret}` | `POST /api/v1/identity/mfa/enroll` → 201 `{otpauth_url, secret}` | **wired behind flag** |
+| mfa confirm | `POST /api/mfa/confirm {code}` → `{recovery_codes}` | `POST /api/v1/identity/mfa/confirm` → 200 `{recovery_codes}` | **wired behind flag** |
+| mfa verify (step-up) | `POST /api/mfa/verify {code}` → `{verified: true}` | `POST /api/v1/identity/mfa/verify` → 200 `{verified: true}` (writes step-up proof row) | **wired behind flag** |
+| mfa revoke | `POST /api/mfa/revoke {code}` → `{revoked: true}` | `POST /api/v1/identity/mfa/revoke` → 200 `{revoked: true}` (requires live TOTP) | **wired behind flag** |
+| mfa recovery codes | `POST /api/mfa/recovery-codes {code}` → `{recovery_codes}` | `POST /api/v1/identity/mfa/recovery-codes` → 200 `{recovery_codes}` (requires live TOTP) | **wired behind flag** |
+| sessions list | `GET /api/sessions` → `[{id, ip, ua, last_active}]` | `GET /api/v1/identity/sessions` → 200 `{data: [...], meta}` | **wired behind flag** |
+| revoke other sessions | `POST /api/sessions/revoke-others` → `{revoked_count}` | `POST /api/v1/identity/sessions:revoke-others` → 200 `{revoked_count}` | **wired behind flag** |
 
 Profile/saved/notifications/settings/bookings/discover/activity/support rows below are implemented (B3–B7).
 
