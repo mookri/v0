@@ -31,6 +31,8 @@ subset of the contract union with identical statuses. New codes:
 | `POST /api/verifications` | `POST /api/v1/customers/verifications` — **wired behind flag** |
 | `POST /api/verifications/confirm` | `POST /api/v1/customers/verifications/{id}:confirm` — **wired behind flag** |
 | `GET /api/saved` | `GET /api/v1/customers/saved` � **wired behind flag** (interim title=ref mapping; catalog enrichment later) |
+| `POST /api/saved` | `POST /api/v1/customers/saved` — **wired behind flag** (cap 20) |
+| `DELETE /api/saved/:id` | `DELETE /api/v1/customers/saved/{id}` — **wired behind flag** |
 | `GET /api/notifications` | `GET /api/v1/customers/notifications` � **wired behind flag** |
 | `GET /api/discover` | `GET /api/v1/customers/discover` � **wired behind flag** (envelope unwrapped here) |
 | `GET /api/settings` | `GET /api/v1/customers/settings` � **wired behind flag** (values merged into sections response) |

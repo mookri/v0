@@ -1,57 +1,70 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
-import { anonymousContext } from '@/application/request-context';
-import { listSavedItems } from '@/application/saved/saved-items';
-import { laravelEnabled, laravelGet, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { laravelEnabled, laravelGet, laravelPost, laravelDelete, laravelErrorResponse } from '@/adapters/backend/laravel-client';
 import { wiredActor } from '@/server/wired-actor';
 
-interface LaravelSavedItem {
-  id: string;
-  ref_type: string;
-  ref_id: string;
-  saved_at: string | null;
-}
-
-interface LaravelSavedPage {
-  data: LaravelSavedItem[];
-  meta: { page?: { has_more?: boolean; next_cursor?: string | null } };
-}
-
+// Wired saved list (CUSTOMER_BACKEND=laravel): GET /api/saved
 export async function GET(req: Request) {
   const requestId = newRequestId();
-  if (laravelEnabled()) {
-    const actor = wiredActor(req, requestId);
-    if (actor instanceof Response) return actor;
-    try {
-      const page = await laravelGet<LaravelSavedItem[]>(actor.token, '/customers/saved', { limit: '25' });
-      const items = (page.data ?? []).map((item) => ({
-        // Interim mapping: titles enrich via catalog in a later slice;
-        // the ref id is the stable key until then (parity mirror).
-        id: item.id,
-        type: item.ref_type,
-        title: item.ref_id,
-        href: `/pujas/${item.ref_id}`,
-      }));
-      return Response.json(
-        ok(
-          {
-            items,
-            pagination: {
-              hasMore: page.meta?.page?.has_more ?? false,
-              nextCursor: page.meta?.page?.next_cursor ?? null,
-            },
-          },
-          requestId,
-        ),
-        { headers: { 'Cache-Control': 'private, max-age=30' } },
-      );
-    } catch (e) {
-      return laravelErrorResponse(e, 'Saved items are unavailable.', requestId);
-    }
+  if (!laravelEnabled()) {
+    return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
   }
-  const ctx = anonymousContext('customer.saved', requestId);
-  if (!ctx.actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-  const data = listSavedItems([], () => null);
-  return Response.json(ok({ items: data, pagination: { hasMore: false, nextCursor: null } }, requestId), {
-    headers: { 'Cache-Control': 'private, max-age=30' },
-  });
+
+  const actor = wiredActor(req, requestId);
+  if (actor instanceof Response) return actor;
+
+  try {
+    const { data: backendData } = await laravelGet<{ items?: unknown[] } | unknown[]>(actor.token, '/customers/saved');
+
+    // Handle both array and object-with-items responses
+    const rawItems = Array.isArray(backendData) ? backendData : (backendData?.items ?? []);
+
+    // Enrich saved items for BFF consumption (interim title=ref mapping)
+    const enrichedItems = rawItems.map((item: any) => {
+      const refId = item.ref_id ?? item.refId ?? '';
+      const refType = item.ref_type ?? item.refType ?? 'puja';
+      return {
+        id: item.id,
+        type: refType,
+        title: refId,
+        href: `/${refType}s/${refId}`,
+      };
+    });
+
+    return Response.json(ok({ items: enrichedItems }, requestId));
+  } catch (e) {
+    return laravelErrorResponse(e, 'Saved items unavailable.', requestId);
+  }
+}
+
+// Wired saved add (CUSTOMER_BACKEND=laravel): POST /api/saved
+export async function POST(req: Request) {
+  const requestId = newRequestId();
+  if (!laravelEnabled()) {
+    return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
+  }
+
+  let body: { ref_id?: string; title?: string } = {};
+  try {
+    body = await req.json();
+  } catch {
+    return Response.json(err('VALIDATION_ERROR', 'Invalid request body.', requestId), { status: 422 });
+  }
+
+  if (!body.ref_id) {
+    return Response.json(err('VALIDATION_ERROR', 'ref_id is required.', requestId), { status: 422 });
+  }
+
+  const actor = wiredActor(req, requestId);
+  if (actor instanceof Response) return actor;
+
+  try {
+    const { data } = await laravelPost<unknown>(
+      actor.token,
+      '/customers/saved',
+      { ref_id: body.ref_id, title: body.title }
+    );
+    return Response.json(ok(data, requestId), { status: 201 });
+  } catch (e) {
+    return laravelErrorResponse(e, 'Failed to add saved item.', requestId);
+  }
 }
