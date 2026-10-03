@@ -49,6 +49,8 @@ subset of the contract union with identical statuses. New codes:
 | `GET /api/activity` | `GET /api/v1/customers/activity` (`?kind=`) - **wired behind flag** |
 | `GET /api/support/tickets` | `GET /api/v1/customers/support/tickets` - **wired behind flag** |
 | `POST /api/support/tickets` | `POST /api/v1/customers/support/tickets` - **wired behind flag** |
+| `POST /api/notifications/:id/read` | `POST /api/v1/customers/notifications/{id}:read` — **wired behind flag** |
+| `POST /api/notifications/read-all` | `POST /api/v1/customers/notifications:read-all` — **wired behind flag** |
 | `GET /api/support/tickets/:id` | `GET /api/v1/customers/support/tickets/{id}` - **wired behind flag** |
 | `POST /api/support/tickets/:id/messages` | reply (re-opens) - **wired behind flag** |
 | `POST /api/support/tickets/:id/close` | close - **wired behind flag** |
