@@ -45,4 +45,15 @@ export const customerApi = {
       body: JSON.stringify({}),
     }),
   getProfile: () => request('/api/profile'),
+  getVerifications: () => request('/api/verifications'),
+  addVerification: (type: 'phone' | 'email', contact: string) =>
+    request('/api/verifications', {
+      method: 'POST',
+      body: JSON.stringify({ type, contact }),
+    }),
+  confirmVerification: (id: string, code: string) =>
+    request('/api/verifications/confirm', {
+      method: 'POST',
+      body: JSON.stringify({ id, code }),
+    }),
 };
