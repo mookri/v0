@@ -27,6 +27,9 @@ subset of the contract union with identical statuses. New codes:
 | `PATCH /api/profile` | `PATCH /api/v1/customers/profile` — **wired behind flag** (strict field allowlist) |
 | `POST /api/profile:deactivate` | `POST /api/v1/customers/profile:deactivate` (fresh OTP) — **wired behind flag** |
 | `POST /api/profile:reactivate` | `POST /api/v1/customers/profile:reactivate` (public OTP) — **wired behind flag** |
+| `GET /api/verifications` | `GET /api/v1/customers/verifications` — **wired behind flag** |
+| `POST /api/verifications` | `POST /api/v1/customers/verifications` — **wired behind flag** |
+| `POST /api/verifications/confirm` | `POST /api/v1/customers/verifications/{id}:confirm` — **wired behind flag** |
 | `GET /api/saved` | `GET /api/v1/customers/saved` � **wired behind flag** (interim title=ref mapping; catalog enrichment later) |
 | `GET /api/notifications` | `GET /api/v1/customers/notifications` � **wired behind flag** |
 | `GET /api/discover` | `GET /api/v1/customers/discover` � **wired behind flag** (envelope unwrapped here) |
