@@ -9,7 +9,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    const token = req.headers.get('Authorization')?.replace('Bearer ', '');
+    const token = req.headers.get('Authorization')?.replace('Bearer ', '') ?? null;
     const tenant = laravelTenant();
     const { data } = await laravelGet(token, '/identity/mfa', { tenant_id: tenant });
     return Response.json(ok(data, requestId));

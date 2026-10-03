@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const token = req.headers.get('Authorization')?.replace('Bearer ', '');
+    const token = req.headers.get('Authorization')?.replace('Bearer ', '') ?? null;
     const tenant = laravelTenant();
     const body = await req.json().catch(() => ({}));
     const { data } = await laravelPost(token, '/identity/mfa/enroll', { ...body, tenant_id: tenant });

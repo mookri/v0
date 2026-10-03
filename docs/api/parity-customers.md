@@ -24,6 +24,9 @@ subset of the contract union with identical statuses. New codes:
 | `POST /api/bookings/:bookingId/cancel` | `POST /api/v1/booking/reservations/{id}:cancel` — **wired behind flag** (idempotent; 409 → `BOOKING_CANNOT_CANCEL`) |
 | `POST /api/bookings/:bookingId/reschedule` | `POST …/{id}:reschedule` — **wired behind flag** (reads live version first; stale → `STALE_RESOURCE`, overlap → `BOOKING_SLOT_CONFLICT`) |
 | `GET /api/profile` | `GET /api/v1/customers/profile` (masked contacts) � **wired behind flag** |
+| `PATCH /api/profile` | `PATCH /api/v1/customers/profile` — **wired behind flag** (strict field allowlist) |
+| `POST /api/profile:deactivate` | `POST /api/v1/customers/profile:deactivate` (fresh OTP) — **wired behind flag** |
+| `POST /api/profile:reactivate` | `POST /api/v1/customers/profile:reactivate` (public OTP) — **wired behind flag** |
 | `GET /api/saved` | `GET /api/v1/customers/saved` � **wired behind flag** (interim title=ref mapping; catalog enrichment later) |
 | `GET /api/notifications` | `GET /api/v1/customers/notifications` � **wired behind flag** |
 | `GET /api/discover` | `GET /api/v1/customers/discover` � **wired behind flag** (envelope unwrapped here) |
