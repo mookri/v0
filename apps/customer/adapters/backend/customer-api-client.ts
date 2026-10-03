@@ -56,4 +56,12 @@ export const customerApi = {
       method: 'POST',
       body: JSON.stringify({ id, code }),
     }),
+  getSaved: () => request('/api/saved'),
+  addSaved: (refId: string, title?: string) =>
+    request('/api/saved', {
+      method: 'POST',
+      body: JSON.stringify({ ref_id: refId, title }),
+    }),
+  deleteSaved: (id: string) =>
+    request(`/api/saved/${id}`, { method: 'DELETE' }),
 };
