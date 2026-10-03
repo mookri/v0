@@ -37,6 +37,7 @@ subset of the contract union with identical statuses. New codes:
 | `GET /api/discover` | `GET /api/v1/customers/discover` � **wired behind flag** (envelope unwrapped here) |
 | `GET /api/settings` | `GET /api/v1/customers/settings` � **wired behind flag** (values merged into sections response) |
 | `PATCH /api/settings` | `PATCH /api/v1/customers/settings` — **wired behind flag** (closed key set, validated) |
+| `GET /api/bookings/:bookingId/history` | `GET /api/v1/booking/reservations/{id}/history` — **wired behind flag** |
 | `POST /api/auth/login` | `POST /api/v1/customers/auth/otp` then `POST …/auth/login` (with optional `totpCode` → `totp_code`) - **wired behind flag, drilled (401 path live)**; `{sessionId, expiresAt}`, bearer in HttpOnly cookie, `token` omitted by design |
 | `POST /api/auth/signup` | `POST /api/v1/customers/auth/signup` - **wired behind flag** (intent, 202 challenge) |
 | `POST /api/auth/verify` | `POST /api/v1/customers/auth/verify` - **wired behind flag** (201 + session cookie, no token to client) |
