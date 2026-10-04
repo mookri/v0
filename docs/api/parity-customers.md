@@ -18,6 +18,7 @@ updates this doc and both test suites in the same change.
 | profile read | `GET /api/profile` → `{profile}` | `GET /api/v1/customers/profile` → 200 masked profile | **wired behind flag** |
 | profile update | `PATCH /api/profile` → `{profile}` | `PATCH /api/v1/customers/profile` → 200 (strict fields) | **wired behind flag** |
 | deactivate/reactivate | `POST /api/profile:deactivate` (fresh OTP) / `POST /api/profile:reactivate` (public OTP) | `POST /api/v1/customers/profile:deactivate` (authed + fresh OTP) / `:reactivate` (**public** OTP — suspended members cannot pass the tenant gate) → 200 | **wired behind flag** |
+| account deletion | `POST /api/profile:delete` (fresh OTP) → 200 `{id, status, deleted_at}` | `POST /api/v1/customers/profile:delete` → 200 (soft delete: sets deleted_at, suspends membership, audit `customers.account.deleted`) | **wired behind flag** |
 | verifications | `GET /api/verifications` → `{verifications[]}` / `POST /api/verifications` → 202 `{challenge_id}` / `POST /api/verifications/confirm {id, code}` → 200 | `GET /api/v1/customers/verifications`, `POST …` → 202, `POST …/{id}:confirm` → 200 | **wired behind flag** |
 | addresses | web `/user/*` mock | `GET/POST /api/v1/customers/addresses`, `PATCH/DELETE …/{id}`, `POST …/{id}:default` (cap 20, default promotion) | backend only until F2 |
 | saved | `GET /api/saved` → mock cards | `GET/POST /api/v1/customers/saved` (opaque ULID refs, enriched by readers — deliberate: bookmarks, not FKs), `DELETE …/{id}` | shape differs by design (backend stores refs; BFF enriches) |
@@ -80,6 +81,7 @@ Profile/saved/notifications/settings/bookings/discover/activity/support rows bel
 | support cap / close-when-closed | `CONFLICT` (409) | `conflict` / `state_forbidden` (409) |
 | missing Idempotency-Key on booking create | `VALIDATION_ERROR` (422) | `validation_failed` (422, `details.fields.Idempotency-Key`) |
 | invalid/inactive service SKU on create | `VALIDATION_ERROR` (422) | `validation_failed` (422, `details.fields.service_sku`) |
+| account deletion (soft delete) | `VALIDATION_ERROR` (422, bad OTP) / `FORBIDDEN` (403, no membership) | `validation_failed` (422) / `membership_inactive` (403) |
 
 Codes differ by registry (BFF domain codes vs kernel snake codes) — clients
 MUST branch on documented per-surface codes, never assume string equality
