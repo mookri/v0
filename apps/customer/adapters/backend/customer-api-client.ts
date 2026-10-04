@@ -98,4 +98,11 @@ export const customerApi = {
       headers: { 'Idempotency-Key': idempotencyKey },
       body: JSON.stringify(payload),
     }),
+
+  // Profile
+  deleteProfile: (challengeId: string, code: string) =>
+    request('/api/profile:delete', {
+      method: 'POST',
+      body: JSON.stringify({ challengeId, code }),
+    }),
 };

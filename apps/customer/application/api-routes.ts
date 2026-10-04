@@ -17,6 +17,7 @@ export const apiRoutes: ApiRouteMeta[] = [
   { routeId: 'customer.profile', method: 'GET', path: '/api/profile', access: 'authenticated', capability: 'user', cache: 'private-short' },
   { routeId: 'customer.profile', method: 'PATCH', path: '/api/profile', access: 'authenticated', capability: 'user', cache: 'none' },
   { routeId: 'customer.profile', method: 'POST', path: '/api/profile:deactivate', access: 'authenticated', capability: 'user', cache: 'none' },
+  { routeId: 'customer.profile', method: 'POST', path: '/api/profile:delete', access: 'authenticated', capability: 'user', cache: 'none' },
   { routeId: 'customer.profile', method: 'POST', path: '/api/profile:reactivate', access: 'public', capability: 'user', cache: 'none' },
   { routeId: 'customer.saved', method: 'GET', path: '/api/saved', access: 'authenticated', capability: 'user', cache: 'private-short' },
   { routeId: 'customer.saved', method: 'POST', path: '/api/saved', access: 'authenticated', capability: 'user', cache: 'none' },

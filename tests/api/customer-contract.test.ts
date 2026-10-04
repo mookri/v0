@@ -74,6 +74,7 @@ const MAPPINGS: BackendMapping[] = [
   { bff: 'GET /api/profile', backend: ['GET /api/v1/customers/profile'], inRegistry: true },
   { bff: 'PATCH /api/profile', backend: ['PATCH /api/v1/customers/profile'], inRegistry: true },
   { bff: 'POST /api/profile:deactivate', backend: ['POST /api/v1/customers/profile:deactivate'], inRegistry: true },
+  { bff: 'POST /api/profile:delete', backend: ['POST /api/v1/customers/profile:delete'], inRegistry: true },
   { bff: 'POST /api/profile:reactivate', backend: ['POST /api/v1/customers/profile:reactivate'], inRegistry: false },
   { bff: 'GET /api/saved', backend: ['GET /api/v1/customers/saved'], inRegistry: true },
   { bff: 'POST /api/saved', backend: ['POST /api/v1/customers/saved'], inRegistry: true },
