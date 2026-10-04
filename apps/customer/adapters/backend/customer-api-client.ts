@@ -71,4 +71,27 @@ export const customerApi = {
   markAllNotificationsRead: () =>
     request('/api/notifications/read-all', { method: 'POST' }),
   getSettings: () => request('/api/settings'),
+
+  // Puja / Catalog
+  getPujas: () => request('/api/pujas'),
+  getPuja: (id: string) => request(`/api/pujas/${id}`),
+  quotePuja: (id: string, payload: { currency: string; lines: Array<{ sku: string; quantity: number }> }) =>
+    request(`/api/pujas/${id}/quote`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  // Booking creation
+  createBooking: (payload: {
+    service_sku: string;
+    scheduled_at: string;
+    duration_minutes?: number;
+    address_id?: string;
+    address_snapshot?: Record<string, unknown>;
+  }, idempotencyKey: string) =>
+    request('/api/bookings', {
+      method: 'POST',
+      headers: { 'Idempotency-Key': idempotencyKey },
+      body: JSON.stringify(payload),
+    }),
 };

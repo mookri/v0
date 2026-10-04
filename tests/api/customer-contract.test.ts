@@ -104,6 +104,14 @@ const MAPPINGS: BackendMapping[] = [
   { bff: 'GET /api/verifications', backend: ['GET /api/v1/customers/verifications'], inRegistry: true },
   { bff: 'POST /api/verifications', backend: ['POST /api/v1/customers/verifications'], inRegistry: true },
   { bff: 'POST /api/verifications/confirm', backend: ['POST /api/v1/customers/verifications/{id}:confirm'], inRegistry: true },
+
+  // Puja / Catalog (P7)
+  { bff: 'GET /api/pujas', backend: ['GET /api/v1/catalog/items?status=ACTIVE'], inRegistry: true },
+  { bff: 'GET /api/pujas/:pujaId', backend: ['GET /api/v1/catalog/items/{id}'], inRegistry: true },
+  { bff: 'POST /api/pujas/:pujaId/quote', backend: ['POST /api/v1/catalog/quote'], inRegistry: true },
+
+  // Booking creation (P8)
+  { bff: 'POST /api/bookings', backend: ['POST /api/v1/booking/reservations'], inRegistry: true },
 ];
 
 test('backend mappings use module prefixes and registries agree', () => {
@@ -111,7 +119,7 @@ test('backend mappings use module prefixes and registries agree', () => {
   for (const mapping of MAPPINGS) {
     expect(mapping.backend.length).toBeGreaterThan(0);
     for (const path of mapping.backend) {
-      expect(path).toMatch(/^(GET|POST|PATCH|PUT|DELETE) \/api\/v1\/(customers|booking)\//);
+      expect(path).toMatch(/^(GET|POST|PATCH|PUT|DELETE) \/api\/v1\/(customers|booking|catalog)\//);
     }
     if (mapping.inRegistry) {
       expect(registry.has(mapping.bff)).toBe(true);

@@ -45,4 +45,12 @@ export const apiRoutes: ApiRouteMeta[] = [
   { routeId: 'customer.verifications', method: 'GET', path: '/api/verifications', access: 'authenticated', capability: 'user', cache: 'private-short' },
   { routeId: 'customer.verifications', method: 'POST', path: '/api/verifications', access: 'authenticated', capability: 'user', cache: 'none' },
   { routeId: 'customer.verifications', method: 'POST', path: '/api/verifications/confirm', access: 'authenticated', capability: 'user', cache: 'none' },
+
+  // Puja / Catalog (P7)
+  { routeId: 'customer.pujas', method: 'GET', path: '/api/pujas', access: 'authenticated', capability: 'catalog', cache: 'private-short' },
+  { routeId: 'customer.puja.detail', method: 'GET', path: '/api/pujas/:pujaId', access: 'authenticated', capability: 'catalog', cache: 'private-short' },
+  { routeId: 'customer.puja.quote', method: 'POST', path: '/api/pujas/:pujaId/quote', access: 'authenticated', capability: 'catalog', cache: 'none' },
+
+  // Booking creation (P8 - placeholder for contract test, BFF route added in P8)
+  { routeId: 'customer.bookings.create', method: 'POST', path: '/api/bookings', access: 'authenticated', capability: 'booking', cache: 'none' },
 ];
