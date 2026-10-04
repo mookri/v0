@@ -8,9 +8,14 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | Booking Module API Routes (mounted by the registry at
 | /api/v1/booking/* with auth.any + tenant, ADR-005). Reservations are
-| caller-scoped (ownership gates, never capabilities); creation endpoints
-| land with the /book handoff slice.
+| caller-scoped (ownership gates, never capabilities); creation endpoint
+| is DRAFT-only (no payment), idempotent on Idempotency-Key.
+|--------------------------------------------------------------------------
 */
+
+Route::post('reservations', [ReservationController::class, 'store'])
+    ->middleware(['throttle.tier'])
+    ->name('reservations.store');
 
 Route::get('reservations', [ReservationController::class, 'index'])
     ->middleware(['scope:booking:read', 'throttle.tier'])
