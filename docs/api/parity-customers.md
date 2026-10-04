@@ -87,3 +87,19 @@ Codes differ by registry (BFF domain codes vs kernel snake codes) — clients
 MUST branch on documented per-surface codes, never assume string equality
 across surfaces. HTTP statuses are identical everywhere: that is the
 cross-surface contract (validation: 422 both sides after the F1 alignment).
+
+## Pandit directory (P9)
+
+| Step | Next.js BFF | Laravel module | Match |
+|---|---|---|---|
+| pandit directory | `GET /api/pandits` → `{data: PanditProfile[], meta: {page}}` | `GET /api/v1/pandit/profiles` → 200 kernel envelope with items + cursor page (verified + ACTIVE only) | **wired behind flag** (BFF unwraps kernel envelope, passes query params) |
+| pandit detail | `GET /api/pandits/:panditId` → `{id, name, bio, specializations[], market, languages[], experience_years, rating_avg, review_count, verification_status, status, created_at}` | `GET /api/v1/pandit/profiles/{id}` → 200 kernel envelope with profile (404 `PANDIT_NOT_FOUND` for unknown/unverified/suspended) | **wired behind flag** (404 → NOT_FOUND) |
+| pandit availability | `GET /api/pandits/:panditId/availability?start_date&end_date` → `{data: AvailabilitySlot[], meta}` | `GET /api/v1/pandit/profiles/{id}/availability` → 200 kernel envelope with slots (404 `PANDIT_NOT_FOUND` for unknown/unverified/suspended) | **wired behind flag** (404 → NOT_FOUND) |
+
+### Pandit code correspondence
+
+| Situation | Next.js code | Laravel code |
+|---|---|---|
+| unknown/unverified/suspended pandit | `NOT_FOUND` (404) | `PANDIT_NOT_FOUND` (404) |
+| invalid query params (date format, rating range) | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
+| guest / unauthenticated caller | `UNAUTHENTICATED` (401) | `unauthenticated` / `tenant_not_in_token` (401) — kernel binds tenant only for a principal |
