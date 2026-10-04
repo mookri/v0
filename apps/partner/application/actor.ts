@@ -12,6 +12,9 @@ export function partnerActorResolver(now?: () => string): SignedTokenActorResolv
   });
 }
 
+// Pre-configured instance for onboarding routes
+export const onboardingActors = partnerActorResolver();
+
 // Browser sessions: the login route issues SESSION_COOKIE (httpOnly);
 // routes accept it as a fallback when no Authorization header is present.
 // Cookie theft mitigations (rotation, binding) land with the session

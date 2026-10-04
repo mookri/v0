@@ -26,8 +26,41 @@
       "@/*": [
         "./*"
       ],
-      "@navdhya/*": [
-        "../../packages/*"
+      "@navdhya/partner/*": [
+        "../../packages/partner/src/*"
+      ],
+      "@navdhya/partner/src/*": [
+        "../../packages/partner/src/*"
+      ],
+      "@navdhya/identity/*": [
+        "../../packages/identity/src/*"
+      ],
+      "@navdhya/identity/src/*": [
+        "../../packages/identity/src/*"
+      ],
+      "@navdhya/fulfillment/*": [
+        "../../packages/fulfillment/src/*"
+      ],
+      "@navdhya/fulfillment/src/*": [
+        "../../packages/fulfillment/src/*"
+      ],
+      "@navdhya/booking/*": [
+        "../../packages/booking/src/*"
+      ],
+      "@navdhya/availability/*": [
+        "../../packages/availability/src/*"
+      ],
+      "@navdhya/pandit/*": [
+        "../../packages/pandit/src/*"
+      ],
+      "@navdhya/puja/*": [
+        "../../packages/puja/src/*"
+      ],
+      "@navdhya/booking/*": [
+        "../../packages/booking/src/*"
+      ],
+      "@navdhya/availability/*": [
+        "../../packages/availability/src/*"
       ]
     }
   },
@@ -36,9 +69,49 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    "../../packages/partner/**/*.ts",
+    "../../packages/identity/**/*.ts",
+    "../../packages/fulfillment/**/*.ts",
+    "../../packages/booking/**/*.ts",
+    "../../packages/availability/**/*.ts",
+    "../../packages/pandit/**/*.ts",
+    "../../packages/puja/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "../../packages/ads",
+    "../../packages/analytics",
+    "../../packages/attribution",
+    "../../packages/authorization",
+    "../../packages/aeo",
+    "../../packages/commerce",
+    "../../packages/communication",
+    "../../packages/config",
+    "../../packages/content",
+    "../../packages/contracts",
+    "../../packages/customer-profile",
+    "../../packages/design-system",
+    "../../packages/discovery",
+    "../../packages/events",
+    "../../packages/experimentation",
+    "../../packages/feedback",
+    "../../packages/finance",
+    "../../packages/geography",
+    "../../packages/incident",
+    "../../packages/layout-engine",
+    "../../packages/notifications",
+    "../../packages/payment",
+    "../../packages/personalization",
+    "../../packages/pricing",
+    "../../packages/recommendations",
+    "../../packages/resource-management",
+    "../../packages/routing",
+    "../../packages/scheduling",
+    "../../packages/search",
+    "../../packages/security",
+    "../../packages/seo",
+    "../../packages/support",
+    "../../packages/user"
   ]
 }
