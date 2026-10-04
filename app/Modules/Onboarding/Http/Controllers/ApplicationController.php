@@ -2,6 +2,7 @@
 
 namespace App\Modules\Onboarding\Http\Controllers;
 
+use App\Modules\Onboarding\Contracts\ManagesPartnerApplications;
 use App\Modules\Onboarding\Models\PartnerApplication;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,6 +20,10 @@ final class ApplicationController
         'partner-individual' => 'partner-individual-v1',
     ];
 
+    public function __construct(private readonly ManagesPartnerApplications $applications)
+    {
+    }
+
     public function start(Request $request): JsonResponse
     {
         $validated = $request->validate(['track' => ['required', 'string']]);
@@ -34,23 +39,13 @@ final class ApplicationController
             ], 422);
         }
 
-        $application = new PartnerApplication();
-        $application->forceFill([
-            'identity_id' => (string) $request->user()->getAuthIdentifier(),
-            'track' => $validated['track'],
-            'track_version' => self::TRACK_VERSIONS[$validated['track']],
-            'status' => PartnerApplication::STATUS_DRAFT,
-        ]);
-        $application->save();
+        $data = $this->applications->start(
+            (string) $request->user()->getAuthIdentifier(),
+            $validated['track'],
+        );
 
         return new JsonResponse([
-            'data' => [
-                'id' => (string) $application->getKey(),
-                'object' => 'partner_application',
-                'track' => $application->track,
-                'track_version' => $application->track_version,
-                'status' => $application->status,
-            ],
+            'data' => $data,
             'meta' => ['request_id' => (string) $request->attributes->get('request_id', '')],
         ], 201);
     }

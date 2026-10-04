@@ -18,6 +18,10 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
             \App\Platform\Identity\Contracts\TrackSeeder::class,
             OnboardingTrackSeeder::class
         );
+        $this->app->bind(
+            \App\Modules\Onboarding\Contracts\ManagesPartnerApplications::class,
+            PartnerApplicationService::class
+        );
     }
 
     public function bootModule(): void

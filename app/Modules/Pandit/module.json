@@ -1,0 +1,29 @@
+{
+  "code": "pandit",
+  "name": "Pandit Management",
+  "version": "0.1.0",
+  "phase": 3,
+  "priority": 220,
+  "dependencies": ["onboarding", "catalog", "booking"],
+  "actions": ["apply", "verify", "manage", "assign"],
+  "permissions": [
+    { "code": "pandit:profile:view", "name": "View pandit profiles (admin directory)" },
+    { "code": "pandit:profile:manage", "name": "Verify, suspend and reactivate pandit profiles", "sensitive": true },
+    { "code": "pandit:assignment:manage", "name": "Manage pandit assignments", "sensitive": true }
+  ],
+  "scopes": ["pandit:read", "pandit:self", "pandit:admin"],
+  "events": [
+    { "name": "pandit.application.started", "schema": "v1" },
+    { "name": "pandit.profile.provisioned", "schema": "v1" },
+    { "name": "pandit.profile.updated", "schema": "v1" },
+    { "name": "pandit.profile.verified", "schema": "v1" },
+    { "name": "pandit.profile.suspended", "schema": "v1" },
+    { "name": "pandit.profile.reactivated", "schema": "v1" },
+    { "name": "pandit.availability.updated", "schema": "v1" },
+    { "name": "pandit.assignment.assigned", "schema": "v1" },
+    { "name": "pandit.assignment.confirmed", "schema": "v1" },
+    { "name": "pandit.assignment.declined", "schema": "v1" },
+    { "name": "pandit.assignment.unassigned", "schema": "v1" }
+  ],
+  "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/pandit" }
+}
