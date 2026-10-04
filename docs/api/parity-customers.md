@@ -21,6 +21,7 @@ subset of the contract union with identical statuses. New codes:
 | `GET /api/home` | composes `GET /api/v1/booking/reservations` + `GET /api/v1/customers/profile` — **wired behind flag** (profile + upcoming + discover + activity, fail-closed) |
 | `GET /api/bookings` | `GET /api/v1/booking/reservations` � **wired behind flag, drilled live** |
 | `GET /api/bookings/:bookingId` | `GET /api/v1/booking/reservations/{id}` � **wired behind flag, drilled live** |
+| `POST /api/bookings` | `POST /api/v1/booking/reservations` — **wired behind flag** (DRAFT, idempotent on Idempotency-Key; 409 `conflict` → `BOOKING_SLOT_CONFLICT`, 422 → `VALIDATION_ERROR`) |
 | `POST /api/bookings/:bookingId/cancel` | `POST /api/v1/booking/reservations/{id}:cancel` — **wired behind flag** (idempotent; 409 → `BOOKING_CANNOT_CANCEL`) |
 | `POST /api/bookings/:bookingId/reschedule` | `POST …/{id}:reschedule` — **wired behind flag** (reads live version first; stale → `STALE_RESOURCE`, overlap → `BOOKING_SLOT_CONFLICT`) |
 | `GET /api/profile` | `GET /api/v1/customers/profile` (masked contacts) � **wired behind flag** |
@@ -42,7 +43,6 @@ subset of the contract union with identical statuses. New codes:
 | `POST /api/auth/signup` | `POST /api/v1/customers/auth/signup` - **wired behind flag** (intent, 202 challenge) |
 | `POST /api/auth/verify` | `POST /api/v1/customers/auth/verify` - **wired behind flag** (201 + session cookie, no token to client) |
 | `POST /api/auth/logout` | `POST /api/v1/customers/auth/logout` � **wired behind flag, drilled live** |
-
 | `GET /api/addresses` | `GET /api/v1/customers/addresses` - **wired behind flag** |
 | `POST /api/addresses` | `POST /api/v1/customers/addresses` - **wired behind flag** |
 | `PATCH /api/addresses/:id` | `PATCH /api/v1/customers/addresses/{id}` - **wired behind flag** |
@@ -60,7 +60,6 @@ subset of the contract union with identical statuses. New codes:
 | `GET /api/reviews` | `GET /api/v1/booking/reviews` - **wired behind flag** |
 | `POST /api/bookings/:bookingId/reviews` | `POST /api/v1/booking/reservations/{id}/reviews` - **wired behind flag** |
 | `DELETE /api/reviews/:id` | `DELETE /api/v1/booking/reviews/{id}` - **wired behind flag** |
-
 | `GET /api/mfa/status` | `GET /api/v1/identity/mfa` - **wired behind flag** |
 | `POST /api/mfa/enroll` | `POST /api/v1/identity/mfa/enroll` - **wired behind flag** |
 | `POST /api/mfa/confirm` | `POST /api/v1/identity/mfa/confirm` - **wired behind flag** |
@@ -69,6 +68,14 @@ subset of the contract union with identical statuses. New codes:
 | `POST /api/mfa/recovery-codes` | `POST /api/v1/identity/mfa/recovery-codes` - **wired behind flag** (requires live TOTP) |
 | `GET /api/sessions` | `GET /api/v1/identity/sessions` - **wired behind flag** |
 | `POST /api/sessions/revoke-others` | `POST /api/v1/identity/sessions:revoke-others` - **wired behind flag** |
+
+## Puja / Catalog (P7)
+
+| BFF endpoint | Backend source |
+|---|---|
+| `GET /api/pujas` | `GET /api/v1/catalog/items?status=ACTIVE` — **wired behind flag** (kernel envelope unwrapped, items mapped to `{id, title, kind:'puja', sku, currency, price_minor, description}`) |
+| `GET /api/pujas/:pujaId` | `GET /api/v1/catalog/items/{id}` — **wired behind flag** (404 → `NOT_FOUND`) |
+| `POST /api/pujas/:pujaId/quote` | `POST /api/v1/catalog/quote` — **wired behind flag** (422 `validation_failed` → `VALIDATION_ERROR`) |
 
 ## Code correspondence (BFF codes)
 
@@ -84,5 +91,6 @@ subset of the contract union with identical statuses. New codes:
 | stale version | `STALE_RESOURCE` (409) | `version_conflict` (409) |
 | review on non-completed | `REVIEW_NOT_ALLOWED` (409) | `state_forbidden` (409) |
 | duplicate review | `REVIEW_EXISTS` (409) | `conflict` (409) |
+| missing idempotency key (create) | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
 
 HTTP statuses are identical everywhere: that is the cross-surface contract.
