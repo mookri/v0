@@ -31,7 +31,7 @@ final class QuoteCalculator
         foreach ($lines as $line) {
             $sku = (string) ($line['sku'] ?? '');
             $quantity = (int) ($line['quantity'] ?? 0);
-            $panditId = isset($line['pandit_id']) && $line['pandit_id'] !== null ? (int) $line['pandit_id'] : null;
+            $panditId = isset($line['pandit_id']) ? (int) $line['pandit_id'] : null;
             $market = (string) ($line['market'] ?? $defaultMarket);
 
             if ($sku === '' || $quantity <= 0) {

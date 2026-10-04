@@ -125,7 +125,7 @@ final class ReservationController
 
         // Idempotency-Key required (fail-closed)
         $idempotencyKey = $request->header('Idempotency-Key');
-        if (! $idempotencyKey || ! is_string($idempotencyKey) || $idempotencyKey === '') {
+        if (! $idempotencyKey || ! is_string($idempotencyKey)) {
             return new JsonResponse([
                 'error' => [
                     'code' => 'validation_failed',
@@ -194,7 +194,7 @@ final class ReservationController
             ->whereIn('status', [BookingLifecycle::STATUS_CONFIRMED, BookingLifecycle::STATUS_ASSIGNED])
             ->whereNotNull('scheduled_at')
             ->get()
-            ->filter(function (Booking $other): bool {
+            ->filter(function (Booking $other) use ($newEnd, $newStart): bool {
                 $start = CarbonImmutable::parse($other->scheduled_at);
                 $end = $start->addMinutes($other->duration_minutes);
                 return $start < $newEnd && $newStart < $end;

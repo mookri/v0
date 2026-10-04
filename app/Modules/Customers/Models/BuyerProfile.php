@@ -42,8 +42,6 @@ final class BuyerProfile extends Model
         'tenant_id', 'user_id', 'display_name', 'locale', 'status',
     ];
 
-    protected $dates = ['deleted_at'];
-
     public function getConnectionName(): ?string
     {
         try {
@@ -53,30 +51,6 @@ final class BuyerProfile extends Model
         }
 
         return $context->connectionName() ?? $this->connection;
-    }
-
-    /**
-     * Scope: only non-deleted profiles (default).
-     */
-    public function scopeWithoutTrashed($query)
-    {
-        return $query->whereNull('deleted_at');
-    }
-
-    /**
-     * Scope: only deleted profiles.
-     */
-    public function scopeOnlyTrashed($query)
-    {
-        return $query->whereNotNull('deleted_at');
-    }
-
-    /**
-     * Scope: include deleted profiles.
-     */
-    public function scopeWithTrashed($query)
-    {
-        return $query;
     }
 
     /**
