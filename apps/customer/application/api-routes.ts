@@ -52,6 +52,11 @@ export const apiRoutes: ApiRouteMeta[] = [
   { routeId: 'customer.puja.detail', method: 'GET', path: '/api/pujas/:pujaId', access: 'authenticated', capability: 'catalog', cache: 'private-short' },
   { routeId: 'customer.puja.quote', method: 'POST', path: '/api/pujas/:pujaId/quote', access: 'authenticated', capability: 'catalog', cache: 'none' },
 
-  // Booking creation (P8 - placeholder for contract test, BFF route added in P8)
+  // Booking creation (P8)
   { routeId: 'customer.bookings.create', method: 'POST', path: '/api/bookings', access: 'authenticated', capability: 'booking', cache: 'none' },
+
+  // Pandit directory (P9)
+  { routeId: 'customer.pandits', method: 'GET', path: '/api/pandits', access: 'authenticated', capability: 'pandit:read', cache: 'private-short' },
+  { routeId: 'customer.pandit.detail', method: 'GET', path: '/api/pandits/:panditId', access: 'authenticated', capability: 'pandit:read', cache: 'private-short' },
+  { routeId: 'customer.pandit.availability', method: 'GET', path: '/api/pandits/:panditId/availability', access: 'authenticated', capability: 'pandit:read', cache: 'private-short' },
 ];

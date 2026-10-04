@@ -99,6 +99,25 @@ export const customerApi = {
       body: JSON.stringify(payload),
     }),
 
+  // Pandit directory
+  getPandits: (params?: { specialization?: string; market?: string; min_rating?: number; limit?: number }) => {
+    const qs = new URLSearchParams();
+    if (params?.specialization) qs.set('specialization', params.specialization);
+    if (params?.market) qs.set('market', params.market);
+    if (params?.min_rating !== undefined) qs.set('min_rating', String(params.min_rating));
+    if (params?.limit !== undefined) qs.set('limit', String(params.limit));
+    const suffix = qs.toString() ? `?${qs.toString()}` : '';
+    return request(`/api/pandits${suffix}`);
+  },
+  getPandit: (id: string) => request(`/api/pandits/${id}`),
+  getPanditAvailability: (id: string, params?: { start_date?: string; end_date?: string }) => {
+    const qs = new URLSearchParams();
+    if (params?.start_date) qs.set('start_date', params.start_date);
+    if (params?.end_date) qs.set('end_date', params.end_date);
+    const suffix = qs.toString() ? `?${qs.toString()}` : '';
+    return request(`/api/pandits/${id}/availability${suffix}`);
+  },
+
   // Profile
   deleteProfile: (challengeId: string, code: string) =>
     request('/api/profile:delete', {

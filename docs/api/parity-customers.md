@@ -19,12 +19,12 @@ subset of the contract union with identical statuses. New codes:
 | BFF endpoint | Backend source |
 |---|---|
 | `GET /api/home` | composes `GET /api/v1/booking/reservations` + `GET /api/v1/customers/profile` — **wired behind flag** (profile + upcoming + discover + activity, fail-closed) |
-| `GET /api/bookings` | `GET /api/v1/booking/reservations` � **wired behind flag, drilled live** |
-| `GET /api/bookings/:bookingId` | `GET /api/v1/booking/reservations/{id}` � **wired behind flag, drilled live** |
+| `GET /api/bookings` | `GET /api/v1/booking/reservations` — **wired behind flag, drilled live** |
+| `GET /api/bookings/:bookingId` | `GET /api/v1/booking/reservations/{id}` — **wired behind flag, drilled live** |
 | `POST /api/bookings` | `POST /api/v1/booking/reservations` — **wired behind flag** (DRAFT, idempotent on Idempotency-Key; 409 `conflict` → `BOOKING_SLOT_CONFLICT`, 422 → `VALIDATION_ERROR`) |
 | `POST /api/bookings/:bookingId/cancel` | `POST /api/v1/booking/reservations/{id}:cancel` — **wired behind flag** (idempotent; 409 → `BOOKING_CANNOT_CANCEL`) |
 | `POST /api/bookings/:bookingId/reschedule` | `POST …/{id}:reschedule` — **wired behind flag** (reads live version first; stale → `STALE_RESOURCE`, overlap → `BOOKING_SLOT_CONFLICT`) |
-| `GET /api/profile` | `GET /api/v1/customers/profile` (masked contacts) � **wired behind flag** |
+| `GET /api/profile` | `GET /api/v1/customers/profile` (masked contacts) — **wired behind flag** |
 | `PATCH /api/profile` | `PATCH /api/v1/customers/profile` — **wired behind flag** (strict field allowlist) |
 | `POST /api/profile:deactivate` | `POST /api/v1/customers/profile:deactivate` (fresh OTP) — **wired behind flag** |
 | `POST /api/profile:delete` | `POST /api/v1/customers/profile:delete` (fresh OTP) — **wired behind flag** (soft delete: sets deleted_at, suspends membership, audit) |
@@ -32,18 +32,18 @@ subset of the contract union with identical statuses. New codes:
 | `GET /api/verifications` | `GET /api/v1/customers/verifications` — **wired behind flag** |
 | `POST /api/verifications` | `POST /api/v1/customers/verifications` — **wired behind flag** |
 | `POST /api/verifications/confirm` | `POST /api/v1/customers/verifications/{id}:confirm` — **wired behind flag** |
-| `GET /api/saved` | `GET /api/v1/customers/saved` � **wired behind flag** (interim title=ref mapping; catalog enrichment later) |
+| `GET /api/saved` | `GET /api/v1/customers/saved` — **wired behind flag** (interim title=ref mapping; catalog enrichment later) |
 | `POST /api/saved` | `POST /api/v1/customers/saved` — **wired behind flag** (cap 20) |
 | `DELETE /api/saved/:id` | `DELETE /api/v1/customers/saved/{id}` — **wired behind flag** |
-| `GET /api/notifications` | `GET /api/v1/customers/notifications` � **wired behind flag** |
-| `GET /api/discover` | `GET /api/v1/customers/discover` � **wired behind flag** (envelope unwrapped here) |
-| `GET /api/settings` | `GET /api/v1/customers/settings` � **wired behind flag** (values merged into sections response) |
+| `GET /api/notifications` | `GET /api/v1/customers/notifications` — **wired behind flag** |
+| `GET /api/discover` | `GET /api/v1/customers/discover` — **wired behind flag** (envelope unwrapped here) |
+| `GET /api/settings` | `GET /api/v1/customers/settings` — **wired behind flag** (values merged into sections response) |
 | `PATCH /api/settings` | `PATCH /api/v1/customers/settings` — **wired behind flag** (closed key set, validated) |
 | `GET /api/bookings/:bookingId/history` | `GET /api/v1/booking/reservations/{id}/history` — **wired behind flag** |
 | `POST /api/auth/login` | `POST /api/v1/customers/auth/otp` then `POST …/auth/login` (with optional `totpCode` → `totp_code`) - **wired behind flag, drilled (401 path live)**; `{sessionId, expiresAt}`, bearer in HttpOnly cookie, `token` omitted by design |
 | `POST /api/auth/signup` | `POST /api/v1/customers/auth/signup` - **wired behind flag** (intent, 202 challenge) |
 | `POST /api/auth/verify` | `POST /api/v1/customers/auth/verify` - **wired behind flag** (201 + session cookie, no token to client) |
-| `POST /api/auth/logout` | `POST /api/v1/customers/auth/logout` � **wired behind flag, drilled live** |
+| `POST /api/auth/logout` | `POST /api/v1/customers/auth/logout` — **wired behind flag, drilled live** |
 | `GET /api/addresses` | `GET /api/v1/customers/addresses` - **wired behind flag** |
 | `POST /api/addresses` | `POST /api/v1/customers/addresses` - **wired behind flag** |
 | `PATCH /api/addresses/:id` | `PATCH /api/v1/customers/addresses/{id}` - **wired behind flag** |
@@ -70,6 +70,14 @@ subset of the contract union with identical statuses. New codes:
 | `GET /api/sessions` | `GET /api/v1/identity/sessions` - **wired behind flag** |
 | `POST /api/sessions/revoke-others` | `POST /api/v1/identity/sessions:revoke-others` - **wired behind flag** |
 
+## Pandit directory (P9)
+
+| BFF endpoint | Backend source |
+|---|---|
+| `GET /api/pandits` | `GET /api/v1/pandit/profiles` — **wired behind flag** (kernel envelope unwrapped, items mapped to `{id, name, bio, specializations[], market, languages[], experience_years, rating_avg, review_count}`) |
+| `GET /api/pandits/:panditId` | `GET /api/v1/pandit/profiles/{id}` — **wired behind flag** (404 `PANDIT_NOT_FOUND` → `NOT_FOUND`) |
+| `GET /api/pandits/:panditId/availability` | `GET /api/v1/pandit/profiles/{id}/availability` — **wired behind flag** (404 `PANDIT_NOT_FOUND` → `NOT_FOUND`) |
+
 ## Puja / Catalog (P7)
 
 | BFF endpoint | Backend source |
@@ -94,5 +102,8 @@ subset of the contract union with identical statuses. New codes:
 | duplicate review | `REVIEW_EXISTS` (409) | `conflict` (409) |
 | missing idempotency key (create) | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
 | account deletion (soft delete) | `VALIDATION_ERROR` (422, bad OTP) / `FORBIDDEN` (403, no membership) | `validation_failed` (422) / `membership_inactive` (403) |
+| unknown/unverified/suspended pandit | `NOT_FOUND` (404) | `PANDIT_NOT_FOUND` (404) |
+| invalid query params (date format, rating range) | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
+| guest / unauthenticated caller | `UNAUTHENTICATED` (401) | `unauthenticated` / `tenant_not_in_token` (401) |
 
 HTTP statuses are identical everywhere: that is the cross-surface contract.
