@@ -38,6 +38,7 @@ export const customerApi = {
   getHome: () => request('/api/home'),
   getBookings: () => request('/api/bookings'),
   getBooking: (id: string) => request(`/api/bookings/${id}`),
+  getBookingHistory: (id: string) => request(`/api/bookings/${id}/history`),
   cancelBooking: (id: string, idempotencyKey: string) =>
     request(`/api/bookings/${id}/cancel`, {
       method: 'POST',
