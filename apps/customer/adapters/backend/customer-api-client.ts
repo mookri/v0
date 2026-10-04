@@ -75,7 +75,11 @@ export const customerApi = {
   // Puja / Catalog
   getPujas: () => request('/api/pujas'),
   getPuja: (id: string) => request(`/api/pujas/${id}`),
-  quotePuja: (id: string, payload: { currency: string; lines: Array<{ sku: string; quantity: number }> }) =>
+  quotePuja: (id: string, payload: {
+    currency: string;
+    market?: string;
+    lines: Array<{ sku: string; quantity: number; pandit_id?: number; market?: string }>;
+  }) =>
     request(`/api/pujas/${id}/quote`, {
       method: 'POST',
       body: JSON.stringify(payload),

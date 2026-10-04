@@ -18,12 +18,12 @@ export async function GET(req: Request) {
   if (actor instanceof Response) return actor;
 
   try {
-    const { data: backend } = await laravelGet<{ data: Array<Record<string, unknown>> }>(
+    const response = await laravelGet<Array<Record<string, unknown>>>(
       actor.token,
       '/booking/reservations'
     );
 
-    const items = (backend ?? []).map((b: Record<string, unknown>) => ({
+    const items = (response.data ?? []).map((b) => ({
       id: String(b.id ?? ''),
       status: String(b.status ?? ''),
       date: b.scheduled_at ? new Date(String(b.scheduled_at)).toISOString().split('T')[0] : '',

@@ -7,6 +7,19 @@ interface RouteParams {
   params: Promise<{ pujaId: string }>;
 }
 
+interface QuoteLine {
+  sku: string;
+  quantity: number;
+  pandit_id?: number;
+  market?: string;
+}
+
+interface QuoteRequest {
+  currency: string;
+  market?: string;
+  lines: QuoteLine[];
+}
+
 export async function POST(req: Request, { params }: RouteParams) {
   const requestId = newRequestId();
   const { pujaId } = await params;
@@ -25,7 +38,7 @@ export async function POST(req: Request, { params }: RouteParams) {
   const actor = wiredActor(req, requestId);
   if (actor instanceof Response) return actor;
 
-  let body: { currency: string; lines: Array<{ sku: string; quantity: number }> };
+  let body: QuoteRequest;
   try {
     body = await req.json();
   } catch {
@@ -40,6 +53,16 @@ export async function POST(req: Request, { params }: RouteParams) {
       err('VALIDATION_ERROR', 'currency and lines[] are required.', requestId),
       { status: 422 }
     );
+  }
+
+  // Validate each line has required fields
+  for (const line of body.lines) {
+    if (!line.sku || typeof line.quantity !== 'number' || line.quantity <= 0) {
+      return Response.json(
+        err('VALIDATION_ERROR', 'Each line requires sku (string) and quantity (positive integer).', requestId),
+        { status: 422 }
+      );
+    }
   }
 
   try {
