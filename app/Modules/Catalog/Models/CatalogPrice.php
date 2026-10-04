@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $sku
  * @property string $market
  * @property string $currency
+ * @property int|null $pandit_id
  * @property int $price_minor
  * @property \Illuminate\Support\Carbon $effective_from
  * @property \Illuminate\Support\Carbon|null $effective_to
@@ -26,7 +27,7 @@ final class CatalogPrice extends Model
     protected $connection = 'tenant_shared';
 
     protected $fillable = [
-        'tenant_id', 'sku', 'market', 'currency', 'price_minor',
+        'tenant_id', 'sku', 'market', 'currency', 'pandit_id', 'price_minor',
         'effective_from', 'effective_to',
     ];
 
@@ -34,6 +35,7 @@ final class CatalogPrice extends Model
     {
         return [
             'price_minor' => 'integer',
+            'pandit_id' => 'integer',
             'effective_from' => 'datetime',
             'effective_to' => 'datetime',
         ];
