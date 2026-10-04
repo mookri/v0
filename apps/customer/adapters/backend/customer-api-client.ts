@@ -69,4 +69,5 @@ export const customerApi = {
     request(`/api/notifications/${id}/read`, { method: 'POST' }),
   markAllNotificationsRead: () =>
     request('/api/notifications/read-all', { method: 'POST' }),
+  getSettings: () => request('/api/settings'),
 };
