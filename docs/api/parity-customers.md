@@ -27,6 +27,7 @@ subset of the contract union with identical statuses. New codes:
 | `GET /api/profile` | `GET /api/v1/customers/profile` (masked contacts) � **wired behind flag** |
 | `PATCH /api/profile` | `PATCH /api/v1/customers/profile` — **wired behind flag** (strict field allowlist) |
 | `POST /api/profile:deactivate` | `POST /api/v1/customers/profile:deactivate` (fresh OTP) — **wired behind flag** |
+| `POST /api/profile:delete` | `POST /api/v1/customers/profile:delete` (fresh OTP) — **wired behind flag** (soft delete: sets deleted_at, suspends membership, audit) |
 | `POST /api/profile:reactivate` | `POST /api/v1/customers/profile:reactivate` (public OTP) — **wired behind flag** |
 | `GET /api/verifications` | `GET /api/v1/customers/verifications` — **wired behind flag** |
 | `POST /api/verifications` | `POST /api/v1/customers/verifications` — **wired behind flag** |
@@ -92,5 +93,6 @@ subset of the contract union with identical statuses. New codes:
 | review on non-completed | `REVIEW_NOT_ALLOWED` (409) | `state_forbidden` (409) |
 | duplicate review | `REVIEW_EXISTS` (409) | `conflict` (409) |
 | missing idempotency key (create) | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
+| account deletion (soft delete) | `VALIDATION_ERROR` (422, bad OTP) / `FORBIDDEN` (403, no membership) | `validation_failed` (422) / `membership_inactive` (403) |
 
 HTTP statuses are identical everywhere: that is the cross-surface contract.
