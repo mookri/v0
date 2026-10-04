@@ -16,7 +16,7 @@ export type ApiErrorCode =
   | 'REVIEW_EXISTS';
 
 export interface ApiErrorEnvelope {
-  error: { code: ApiErrorCode; message: string; requestId: string };
+  error: { code: ApiErrorCode; message: string; requestId: string; fields?: Record<string, string> };
 }
 
 export interface ApiOk<T> {
@@ -28,8 +28,8 @@ export function ok<T>(data: T, requestId: string): ApiOk<T> {
   return { data, requestId };
 }
 
-export function err(code: ApiErrorCode, message: string, requestId: string): ApiErrorEnvelope {
-  return { error: { code, message, requestId } };
+export function err(code: ApiErrorCode, message: string, requestId: string, fields?: Record<string, string>): ApiErrorEnvelope {
+  return { error: { code, message, requestId, ...(fields ? { fields } : {}) } };
 }
 
 export function newRequestId(): string {

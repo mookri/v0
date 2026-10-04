@@ -69,10 +69,11 @@ async function callLaravel<T>(
   query: Record<string, string> = {},
   body: unknown = undefined,
   codeMap: BackendCodeMap = {},
+  extraHeaders: Record<string, string> = {},
 ): Promise<LaravelResponse<T>> {
   const params = new URLSearchParams(query);
   const qs = params.size > 0 ? `?${params.toString()}` : '';
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  const headers: Record<string, string> = { 'Content-Type': 'application/json', ...extraHeaders };
   if (token) headers['Authorization'] = `Bearer ${token}`;
   const tenant = laravelTenant();
   if (tenant) headers['X-Tenant-Id'] = tenant;
@@ -107,8 +108,9 @@ export function laravelPost<T>(
   path: string,
   body: unknown,
   codeMap: BackendCodeMap = {},
+  extraHeaders: Record<string, string> = {},
 ): Promise<LaravelResponse<T>> {
-  return callLaravel<T>(token, 'POST', path, {}, body, codeMap);
+  return callLaravel<T>(token, 'POST', path, {}, body, codeMap, extraHeaders);
 }
 
 export function laravelDelete<T>(
