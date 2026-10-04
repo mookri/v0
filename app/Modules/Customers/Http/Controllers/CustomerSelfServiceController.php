@@ -42,7 +42,10 @@ abstract class CustomerSelfServiceController
             return $user;
         }
 
-        $profile = BuyerProfile::query()->where('user_id', $user->getAuthIdentifier())->first();
+        $profile = BuyerProfile::query()
+            ->where('user_id', $user->getAuthIdentifier())
+            ->whereNull('deleted_at')
+            ->first();
 
         if ($profile === null) {
             return new JsonResponse([

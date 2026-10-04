@@ -287,6 +287,77 @@ final class CustomerProfileController extends CustomerSelfServiceController
     }
 
     /**
+     * Account deletion (soft delete + audit).
+     * Requires fresh OTP proof (same as deactivate). Sets deleted_at on profile,
+     * suspends membership, records audit + activity.
+     */
+    public function delete(Request $request): JsonResponse
+    {
+        $found = $this->ownProfile($request);
+        if ($found instanceof JsonResponse) {
+            return $found;
+        }
+
+        $validated = $request->validate([
+            'challenge_id' => ['required', 'string'],
+            'code' => ['required', 'string'],
+        ]);
+
+        // Fresh OTP proof (login-purpose challenge, single-use)
+        $proof = app(CustomerOtpService::class)->verify(
+            (string) app(TenantContext::class)->tenantId(),
+            CustomerOtpChallenge::PURPOSE_LOGIN,
+            $validated['challenge_id'],
+            $validated['code'],
+            CarbonImmutable::parse(gmdate('Y-m-d\TH:i:s.v\Z'))
+        );
+
+        if ($proof === null) {
+            return new JsonResponse([
+                'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
+            ], 401);
+        }
+
+        ['user' => $user, 'profile' => $profile] = $found;
+
+        $membershipId = $this->membershipId();
+        $membership = $membershipId !== null
+            ? TenantMembership::query()->withoutGlobalScopes()->find($membershipId)
+            : null;
+
+        if ($membership === null || (string) $membership->user_id !== (string) $user->getAuthIdentifier()) {
+            return new JsonResponse([
+                'error' => ['code' => 'membership_inactive', 'message' => 'No active membership in this tenant.', 'request_id' => $this->requestId($request)],
+            ], 403);
+        }
+
+        // Soft delete profile
+        $profile->forceFill(['status' => BuyerProfile::STATUS_DEACTIVATED])->save();
+        $profile->delete(); // sets deleted_at
+
+        // Suspend membership
+        $membership->forceFill(['state' => TenantMembership::STATE_SUSPENDED])->save();
+
+        $this->audit->record(
+            'customers.account.deleted',
+            ['module' => 'customers', 'resource_type' => 'buyer_profile', 'resource_id' => (string) $profile->getKey()],
+            null,
+            ['user_id' => (string) $user->getAuthIdentifier(), 'membership_id' => (string) $membership->getKey()]
+        );
+        $this->activity->record((string) $user->getAuthIdentifier(), 'deleted', 'Account deleted');
+
+        return new JsonResponse([
+            'data' => [
+                'object' => 'buyer_profile',
+                'id' => (string) $profile->getKey(),
+                'status' => $profile->status,
+                'deleted_at' => $profile->deleted_at,
+            ],
+            'meta' => ['request_id' => $this->requestId($request)],
+        ]);
+    }
+
+    /**
      * @return array<string, mixed>
      */
     private static function serialize(User $user, BuyerProfile $profile): array

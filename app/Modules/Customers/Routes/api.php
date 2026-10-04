@@ -53,6 +53,8 @@ Route::patch('profile', [CustomerProfileController::class, 'update'])
     ->name('profile.update');
 Route::post('profile:deactivate', [CustomerProfileController::class, 'deactivate'])
     ->name('profile.deactivate');
+Route::post('profile:delete', [CustomerProfileController::class, 'delete'])
+    ->name('profile.delete');
 // Public like login (a suspended membership cannot pass the tenant gate,
 // so reactivation takes a fresh OTP proof instead of a session).
 Route::post('profile:reactivate', [CustomerProfileController::class, 'reactivate'])
