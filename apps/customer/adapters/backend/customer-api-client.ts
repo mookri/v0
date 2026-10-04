@@ -118,6 +118,42 @@ export const customerApi = {
     return request(`/api/pandits/${id}/availability${suffix}`);
   },
 
+  // Onboarding
+  getOnboardingTracks: () => request('/api/onboarding/tracks'),
+  startOnboarding: (track: string) =>
+    request('/api/onboarding/applications', {
+      method: 'POST',
+      body: JSON.stringify({ track }),
+    }),
+  getOnboardingApplication: (id: string) => request(`/api/onboarding/applications/${id}`),
+  putOnboardingStep: (applicationId: string, step: string, value: unknown) =>
+    request(`/api/onboarding/applications/${applicationId}/step/${step}`, {
+      method: 'PUT',
+      body: JSON.stringify({ value }),
+    }),
+  uploadOnboardingDocument: (applicationId: string, kind: string, file: File) => {
+    const formData = new FormData();
+    formData.append('kind', kind);
+    formData.append('file', file);
+    return request(`/api/onboarding/applications/${applicationId}/documents`, {
+      method: 'POST',
+      body: formData,
+      headers: {}, // Let browser set Content-Type with boundary
+    });
+  },
+  beginOnboardingSubmit: (applicationId: string) =>
+    request(`/api/onboarding/applications/${applicationId}/submit`, {
+      method: 'POST',
+      body: JSON.stringify({}),
+    }),
+  confirmOnboardingSubmit: (applicationId: string, challengeId: string, code: string) =>
+    request(`/api/onboarding/applications/${applicationId}/submit/confirm`, {
+      method: 'POST',
+      body: JSON.stringify({ challenge_id: challengeId, code }),
+    }),
+  getOnboardingStatus: (applicationId: string) =>
+    request(`/api/onboarding/applications/${applicationId}/status`),
+
   // Profile
   deleteProfile: (challengeId: string, code: string) =>
     request('/api/profile:delete', {

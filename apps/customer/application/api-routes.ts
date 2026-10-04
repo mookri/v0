@@ -59,4 +59,14 @@ export const apiRoutes: ApiRouteMeta[] = [
   { routeId: 'customer.pandits', method: 'GET', path: '/api/pandits', access: 'authenticated', capability: 'pandit:read', cache: 'private-short' },
   { routeId: 'customer.pandit.detail', method: 'GET', path: '/api/pandits/:panditId', access: 'authenticated', capability: 'pandit:read', cache: 'private-short' },
   { routeId: 'customer.pandit.availability', method: 'GET', path: '/api/pandits/:panditId/availability', access: 'authenticated', capability: 'pandit:read', cache: 'private-short' },
+
+  // Onboarding (P10)
+  { routeId: 'customer.onboarding.tracks', method: 'GET', path: '/api/onboarding/tracks', access: 'authenticated', capability: 'onboarding:applicant', cache: 'private-short' },
+  { routeId: 'customer.onboarding.start', method: 'POST', path: '/api/onboarding/applications', access: 'authenticated', capability: 'onboarding:applicant', cache: 'none' },
+  { routeId: 'customer.onboarding.detail', method: 'GET', path: '/api/onboarding/applications/:applicationId', access: 'authenticated', capability: 'onboarding:applicant', cache: 'private-short' },
+  { routeId: 'customer.onboarding.step', method: 'PUT', path: '/api/onboarding/applications/:applicationId/step/:step', access: 'authenticated', capability: 'onboarding:applicant', cache: 'none' },
+  { routeId: 'customer.onboarding.documents', method: 'POST', path: '/api/onboarding/applications/:applicationId/documents', access: 'authenticated', capability: 'onboarding:applicant', cache: 'none' },
+  { routeId: 'customer.onboarding.submit.begin', method: 'POST', path: '/api/onboarding/applications/:applicationId/submit', access: 'authenticated', capability: 'onboarding:applicant', cache: 'none' },
+  { routeId: 'customer.onboarding.submit.confirm', method: 'POST', path: '/api/onboarding/applications/:applicationId/submit/confirm', access: 'authenticated', capability: 'onboarding:applicant', cache: 'none' },
+  { routeId: 'customer.onboarding.status', method: 'GET', path: '/api/onboarding/applications/:applicationId/status', access: 'authenticated', capability: 'onboarding:applicant', cache: 'private-short' },
 ];

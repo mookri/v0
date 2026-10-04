@@ -64,7 +64,7 @@ export interface LaravelResponse<T> {
 
 async function callLaravel<T>(
   token: string | null,
-  method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
+  method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE',
   path: string,
   query: Record<string, string> = {},
   body: unknown = undefined,
@@ -130,6 +130,15 @@ export function laravelPatch<T>(
   return callLaravel<T>(token, 'PATCH', path, {}, body, codeMap);
 }
 
+export function laravelPut<T>(
+  token: string | null,
+  path: string,
+  body: unknown,
+  codeMap: BackendCodeMap = {},
+): Promise<LaravelResponse<T>> {
+  return callLaravel<T>(token, 'PUT', path, {}, body, codeMap);
+}
+
 // Shared failure mapping for branched handlers: backend-mapped BFF codes
 // render as envelopes; anything else propagates to the framework 500
 // (BFF convention: no explicit 500 envelopes).
@@ -138,4 +147,18 @@ export function laravelErrorResponse(e: unknown, message: string, requestId: str
     return Response.json(err(e.code as ApiErrorCode, message, requestId), { status: e.status });
   }
   throw e;
+}
+
+// Low-level call for multipart/form-data or other custom needs.
+// Prefer laravelGet/Post/Patch/Put/Delete for JSON APIs.
+export async function laravelCall<T>(
+  token: string | null,
+  method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE',
+  path: string,
+  query: Record<string, string> = {},
+  body: unknown = undefined,
+  codeMap: BackendCodeMap = {},
+  extraHeaders: Record<string, string> = {},
+): Promise<LaravelResponse<T>> {
+  return callLaravel<T>(token, method, path, query, body, codeMap, extraHeaders);
 }

@@ -78,6 +78,19 @@ subset of the contract union with identical statuses. New codes:
 | `GET /api/pandits/:panditId` | `GET /api/v1/pandit/profiles/{id}` — **wired behind flag** (404 `PANDIT_NOT_FOUND` → `NOT_FOUND`) |
 | `GET /api/pandits/:panditId/availability` | `GET /api/v1/pandit/profiles/{id}/availability` — **wired behind flag** (404 `PANDIT_NOT_FOUND` → `NOT_FOUND`) |
 
+## Onboarding (P10)
+
+| BFF endpoint | Backend source |
+|---|---|
+| `GET /api/onboarding/tracks` | `GET /api/v1/onboarding/tracks` — **wired behind flag** (kernel envelope unwrapped, tracks object mapped) |
+| `POST /api/onboarding/applications` | `POST /api/v1/onboarding/applications` — **wired behind flag** (201, validates track, pins version) |
+| `GET /api/onboarding/applications/:id` | `GET /api/v1/onboarding/applications/{id}` — **wired behind flag** (404 `not_found` → `NOT_FOUND`, 403 `permission_missing` → `FORBIDDEN`) |
+| `PUT /api/onboarding/applications/:id/step/:step` | `PUT /api/v1/onboarding/applications/{id}/step/{step}` — **wired behind flag** (step validators, 64KB cap → 413) |
+| `POST /api/onboarding/applications/:id/documents` | `POST /api/v1/onboarding/applications/{id}/documents` — **wired behind flag** (multipart, kind + file) |
+| `POST /api/onboarding/applications/:id/submit` | `POST /api/v1/onboarding/applications/{id}/submit` — **wired behind flag** (OTP challenge, 429 rate limit) |
+| `POST /api/onboarding/applications/:id/submit/confirm` | `POST /api/v1/onboarding/applications/{id}/submit/confirm` — **wired behind flag** (OTP verify → SUBMITTED) |
+| `GET /api/onboarding/applications/:id/status` | `GET /api/v1/onboarding/applications/{id}/status` — **wired behind flag** (status + rejection_code + documents[]) |
+
 ## Puja / Catalog (P7)
 
 | BFF endpoint | Backend source |
@@ -105,5 +118,14 @@ subset of the contract union with identical statuses. New codes:
 | unknown/unverified/suspended pandit | `NOT_FOUND` (404) | `PANDIT_NOT_FOUND` (404) |
 | invalid query params (date format, rating range) | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
 | guest / unauthenticated caller | `UNAUTHENTICATED` (401) | `unauthenticated` / `tenant_not_in_token` (401) |
+| unknown track | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields.track`) |
+| missing required steps | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields.steps`) |
+| invalid step value | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields[step]`) |
+| step payload too large (>64KB) | `VALIDATION_ERROR` (413) | `payload_too_large` (413) |
+| invalid/expired OTP | `UNAUTHENTICATED` (401) | `unauthenticated` (401, all collapse) |
+| OTP rate limited | `RATE_LIMITED` (429) | `rate_limited` (429) |
+| wrong state for submit/confirm | `CONFLICT` (409) | `state_forbidden` (409) |
+| foreign/unknown application | `NOT_FOUND` (404) / `FORBIDDEN` (403) | `not_found` (404) / `permission_missing` (403) |
+| document kind invalid / file too large / bad mime | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
 
 HTTP statuses are identical everywhere: that is the cross-surface contract.

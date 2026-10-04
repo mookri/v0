@@ -118,6 +118,16 @@ const MAPPINGS: BackendMapping[] = [
   { bff: 'GET /api/pandits', backend: ['GET /api/v1/pandit/profiles'], inRegistry: true },
   { bff: 'GET /api/pandits/:panditId', backend: ['GET /api/v1/pandit/profiles/{id}'], inRegistry: true },
   { bff: 'GET /api/pandits/:panditId/availability', backend: ['GET /api/v1/pandit/profiles/{id}/availability'], inRegistry: true },
+
+  // Onboarding (P10)
+  { bff: 'GET /api/onboarding/tracks', backend: ['GET /api/v1/onboarding/tracks'], inRegistry: true },
+  { bff: 'POST /api/onboarding/applications', backend: ['POST /api/v1/onboarding/applications'], inRegistry: true },
+  { bff: 'GET /api/onboarding/applications/:applicationId', backend: ['GET /api/v1/onboarding/applications/{id}'], inRegistry: true },
+  { bff: 'PUT /api/onboarding/applications/:applicationId/step/:step', backend: ['PUT /api/v1/onboarding/applications/{id}/step/{step}'], inRegistry: true },
+  { bff: 'POST /api/onboarding/applications/:applicationId/documents', backend: ['POST /api/v1/onboarding/applications/{id}/documents'], inRegistry: true },
+  { bff: 'POST /api/onboarding/applications/:applicationId/submit', backend: ['POST /api/v1/onboarding/applications/{id}/submit'], inRegistry: true },
+  { bff: 'POST /api/onboarding/applications/:applicationId/submit/confirm', backend: ['POST /api/v1/onboarding/applications/{id}/submit/confirm'], inRegistry: true },
+  { bff: 'GET /api/onboarding/applications/:applicationId/status', backend: ['GET /api/v1/onboarding/applications/{id}/status'], inRegistry: true },
 ];
 
 test('backend mappings use module prefixes and registries agree', () => {
@@ -125,7 +135,7 @@ test('backend mappings use module prefixes and registries agree', () => {
   for (const mapping of MAPPINGS) {
     expect(mapping.backend.length).toBeGreaterThan(0);
     for (const path of mapping.backend) {
-      expect(path).toMatch(/^(GET|POST|PATCH|PUT|DELETE) \/api\/v1\/(customers|booking|catalog|pandit)\//);
+      expect(path).toMatch(/^(GET|POST|PATCH|PUT|DELETE) \/api\/v1\/(customers|booking|catalog|pandit|onboarding)\//);
     }
     if (mapping.inRegistry) {
       expect(registry.has(mapping.bff)).toBe(true);
