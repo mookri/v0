@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::connection('tenant_shared')->create('vendor_inventory', function (Blueprint $table): void {
+        Schema::connection('tenant_shared')->create('vendor_inventories', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->string('tenant_id', 26);
             $table->ulid('vendor_id');
@@ -27,6 +27,6 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::connection('tenant_shared')->drop('vendor_inventory');
+        Schema::connection('tenant_shared')->drop('vendor_inventories');
     }
 };
