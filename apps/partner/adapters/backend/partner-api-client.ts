@@ -3,6 +3,18 @@
 // Backend translation happens inside the BFF route handlers — pages never
 // talk to api.navdhya.com directly.
 
+import type {
+  VendorCreateInput,
+  VendorInventoryRow,
+  VendorListPayload,
+  VendorOrder,
+  VendorOrderInput,
+  VendorPayout,
+  VendorProduct,
+  VendorProductsPayload,
+  VendorProfile,
+} from '@/application/vendor';
+
 export interface PartnerApiErrorShape {
   code: string;
   status: number;
@@ -99,4 +111,98 @@ export const partnerApi = {
   },
   getTempleDashboardSettings: (templeId: string) =>
     request(`/api/temples/${encodeURIComponent(templeId)}/dashboard/settings`),
+
+  // Vendor surface (P12)
+  getVendors: (params?: { limit?: number; cursor?: string }) => {
+    const qs = new URLSearchParams();
+    if (params?.limit !== undefined) qs.set('limit', String(params.limit));
+    if (params?.cursor) qs.set('cursor', params.cursor);
+    const suffix = qs.toString() ? `?${qs.toString()}` : '';
+    return request<VendorListPayload<VendorProfile>>(`/api/vendors${suffix}`);
+  },
+  createVendor: (body: VendorCreateInput) =>
+    request<VendorProfile>('/api/vendors', { method: 'POST', body: JSON.stringify(body) }),
+  getVendor: (vendorId: string) => request<VendorProfile>(`/api/vendors/${encodeURIComponent(vendorId)}`),
+  updateVendor: (
+    vendorId: string,
+    body: { name?: string; description?: string | null; city?: string | null; state?: string | null },
+  ) => request<VendorProfile>(`/api/vendors/${encodeURIComponent(vendorId)}`, { method: 'PATCH', body: JSON.stringify(body) }),
+
+  getVendorProducts: (vendorId: string, params?: { limit?: number }) => {
+    const qs = new URLSearchParams();
+    if (params?.limit !== undefined) qs.set('limit', String(params.limit));
+    const suffix = qs.toString() ? `?${qs.toString()}` : '';
+    return request<VendorProductsPayload>(`/api/vendors/${encodeURIComponent(vendorId)}/products${suffix}`);
+  },
+  createVendorProduct: (
+    vendorId: string,
+    body: {
+      sku: string;
+      name: string;
+      description?: string | null;
+      currency?: string;
+      price_minor?: number;
+      attributes?: Record<string, unknown> | null;
+    },
+  ) => request<VendorProduct>(`/api/vendors/${encodeURIComponent(vendorId)}/products`, { method: 'POST', body: JSON.stringify(body) }),
+  updateVendorProduct: (
+    vendorId: string,
+    itemId: string,
+    body: {
+      name?: string;
+      description?: string | null;
+      currency?: string;
+      price_minor?: number;
+      attributes?: Record<string, unknown> | null;
+    },
+  ) =>
+    request<VendorProduct>(`/api/vendors/${encodeURIComponent(vendorId)}/products/${encodeURIComponent(itemId)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    }),
+
+  getVendorInventory: (vendorId: string, params?: { limit?: number; cursor?: string }) => {
+    const qs = new URLSearchParams();
+    if (params?.limit !== undefined) qs.set('limit', String(params.limit));
+    if (params?.cursor) qs.set('cursor', params.cursor);
+    const suffix = qs.toString() ? `?${qs.toString()}` : '';
+    return request<VendorListPayload<VendorInventoryRow>>(`/api/vendors/${encodeURIComponent(vendorId)}/inventory${suffix}`);
+  },
+  adjustVendorInventory: (vendorId: string, body: { sku: string; delta: number }) =>
+    request<VendorInventoryRow>(`/api/vendors/${encodeURIComponent(vendorId)}/inventory/adjust`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+
+  getVendorOrders: (vendorId: string, params?: { status?: string; limit?: number; cursor?: string }) => {
+    const qs = new URLSearchParams();
+    if (params?.status) qs.set('status', params.status);
+    if (params?.limit !== undefined) qs.set('limit', String(params.limit));
+    if (params?.cursor) qs.set('cursor', params.cursor);
+    const suffix = qs.toString() ? `?${qs.toString()}` : '';
+    return request<VendorListPayload<Omit<VendorOrder, 'items'>>>(`/api/vendors/${encodeURIComponent(vendorId)}/orders${suffix}`);
+  },
+  placeVendorOrder: (vendorId: string, body: VendorOrderInput) =>
+    request<VendorOrder>(`/api/vendors/${encodeURIComponent(vendorId)}/orders`, { method: 'POST', body: JSON.stringify(body) }),
+  getVendorOrder: (vendorId: string, orderId: string) =>
+    request<VendorOrder>(`/api/vendors/${encodeURIComponent(vendorId)}/orders/${encodeURIComponent(orderId)}`),
+  advanceVendorOrder: (vendorId: string, orderId: string) =>
+    request<VendorOrder>(`/api/vendors/${encodeURIComponent(vendorId)}/orders/${encodeURIComponent(orderId)}/advance`, {
+      method: 'POST',
+      body: '{}',
+    }),
+  cancelVendorOrder: (vendorId: string, orderId: string) =>
+    request<VendorOrder>(`/api/vendors/${encodeURIComponent(vendorId)}/orders/${encodeURIComponent(orderId)}/cancel`, {
+      method: 'POST',
+      body: '{}',
+    }),
+
+  getVendorPayouts: (vendorId: string, params?: { status?: string; limit?: number; cursor?: string }) => {
+    const qs = new URLSearchParams();
+    if (params?.status) qs.set('status', params.status);
+    if (params?.limit !== undefined) qs.set('limit', String(params.limit));
+    if (params?.cursor) qs.set('cursor', params.cursor);
+    const suffix = qs.toString() ? `?${qs.toString()}` : '';
+    return request<VendorListPayload<VendorPayout>>(`/api/vendors/${encodeURIComponent(vendorId)}/payouts${suffix}`);
+  },
 };
