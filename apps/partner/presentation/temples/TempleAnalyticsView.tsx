@@ -1,8 +1,8 @@
 interface TempleAnalyticsViewProps {
   analytics: {
-    revenue_by_month: Array<{ month: string; revenue_minor: int; bookings: int }>;
-    occupancy_by_puja: Array<{ puja_name: string; occupancy: float; bookings: int }>;
-    peak_hours: Array<{ hour: int; bookings: int }>;
+    revenue_by_month: Array<{ month: string; revenue_minor: number; bookings: number }>;
+    occupancy_by_puja: Array<{ puja_name: string; occupancy: number; bookings: number }>;
+    peak_hours: Array<{ hour: number; bookings: number }>;
   };
 }
 

@@ -5,8 +5,8 @@ interface TempleCalendarDay {
     puja_name: string;
     start: string;
     end: string;
-    capacity: int;
-    booked: int;
+    capacity: number;
+    booked: number;
   }>;
 }
 

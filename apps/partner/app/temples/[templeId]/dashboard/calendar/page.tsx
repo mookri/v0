@@ -12,7 +12,7 @@ export default async function TempleDashboardCalendarPage({ params }: { params: 
     const data = await partnerApi.getTempleDashboardCalendar(templeId);
     const calendar = data as { items: Array<{
       date: string;
-      slots: Array<{ id: string; puja_name: string; start: string; end: string; capacity: int; booked: int }>;
+      slots: Array<{ id: string; puja_name: string; start: string; end: string; capacity: number; booked: number }>;
     }> };
     return <TempleDashboardCalendarView calendar={calendar.items} />;
   } catch {

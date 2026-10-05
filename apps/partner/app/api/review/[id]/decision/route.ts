@@ -4,8 +4,6 @@ import { withCookieFallback, readSessionCookie } from '@/application/actor';
 import { isReviewer } from '@/server/review';
 import { assertSameTenant } from '@navdhya/identity/src/ports/actor-resolver';
 import { laravelEnabled, laravelPost, laravelErrorResponse } from '@/adapters/backend/laravel-client';
-import { reviewApplication } from '@navdhya/partner/application/review';
-import { activateOnApproval } from '@navdhya/partner/application/activation';
 import type { PartnerApiErrorCode } from '@/application/api-envelope';
 
 type ReviewDecision = 'APPROVED' | 'REJECTED' | 'REQUEST_INFO';
@@ -65,9 +63,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const { reviewAudit, reviewPartners, isReviewer: checkReviewer, resolveReviewerActor: resolveActor } = await import('@/server/review');
     const { withCookieFallback: withFallback } = await import('@/application/actor');
     const { assertSameTenant: assertTenant } = await import('@navdhya/identity/src/ports/actor-resolver');
-    const { reviewApplication: revApp } = await import('@navdhya/partner/application/review');
+    const { reviewApplication: revApp } = await import('@navdhya/partner/src/application/review');
     type DecisionType = ReviewDecision;
-    const { activateOnApproval: activate } = await import('@navdhya/partner/application/activation');
+    const { activateOnApproval: activate } = await import('@navdhya/partner/src/application/activation');
 
     const actor = await resolveActor(withFallback(req));
     if (!actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
