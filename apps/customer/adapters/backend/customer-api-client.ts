@@ -118,6 +118,23 @@ export const customerApi = {
     return request(`/api/pandits/${id}/availability${suffix}`);
   },
 
+  // Temple directory
+  getTemples: (params?: { city?: string; state?: string; amenities?: string[]; lat?: number; lng?: number; radius?: number; q?: string; sort?: string; limit?: number }) => {
+    const qs = new URLSearchParams();
+    if (params?.city) qs.set('city', params.city);
+    if (params?.state) qs.set('state', params.state);
+    if (params?.amenities) qs.set('amenities', params.amenities.join(','));
+    if (params?.lat !== undefined) qs.set('lat', String(params.lat));
+    if (params?.lng !== undefined) qs.set('lng', String(params.lng));
+    if (params?.radius !== undefined) qs.set('radius', String(params.radius));
+    if (params?.q) qs.set('q', params.q);
+    if (params?.sort) qs.set('sort', params.sort);
+    if (params?.limit !== undefined) qs.set('limit', String(params.limit));
+    const suffix = qs.toString() ? `?${qs.toString()}` : '';
+    return request(`/api/temples${suffix}`);
+  },
+  getTemple: (id: string) => request(`/api/temples/${id}`),
+
   // Profile
   deleteProfile: (challengeId: string, code: string) =>
     request('/api/profile:delete', {

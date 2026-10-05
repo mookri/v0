@@ -118,6 +118,10 @@ const MAPPINGS: BackendMapping[] = [
   { bff: 'GET /api/pandits', backend: ['GET /api/v1/pandit/profiles'], inRegistry: true },
   { bff: 'GET /api/pandits/:panditId', backend: ['GET /api/v1/pandit/profiles/{id}'], inRegistry: true },
   { bff: 'GET /api/pandits/:panditId/availability', backend: ['GET /api/v1/pandit/profiles/{id}/availability'], inRegistry: true },
+
+  // Temple directory (P11)
+  { bff: 'GET /api/temples', backend: ['GET /api/v1/temple/profiles'], inRegistry: true },
+  { bff: 'GET /api/temples/:templeId', backend: ['GET /api/v1/temple/profiles/{id}'], inRegistry: true },
 ];
 
 test('backend mappings use module prefixes and registries agree', () => {
@@ -125,7 +129,7 @@ test('backend mappings use module prefixes and registries agree', () => {
   for (const mapping of MAPPINGS) {
     expect(mapping.backend.length).toBeGreaterThan(0);
     for (const path of mapping.backend) {
-      expect(path).toMatch(/^(GET|POST|PATCH|PUT|DELETE) \/api\/v1\/(customers|booking|catalog|pandit)\//);
+      expect(path).toMatch(/^(GET|POST|PATCH|PUT|DELETE) \/api\/v1\/(customers|booking|catalog|pandit|temple)\//);
     }
     if (mapping.inRegistry) {
       expect(registry.has(mapping.bff)).toBe(true);

@@ -59,4 +59,8 @@ export const apiRoutes: ApiRouteMeta[] = [
   { routeId: 'customer.pandits', method: 'GET', path: '/api/pandits', access: 'authenticated', capability: 'pandit:read', cache: 'private-short' },
   { routeId: 'customer.pandit.detail', method: 'GET', path: '/api/pandits/:panditId', access: 'authenticated', capability: 'pandit:read', cache: 'private-short' },
   { routeId: 'customer.pandit.availability', method: 'GET', path: '/api/pandits/:panditId/availability', access: 'authenticated', capability: 'pandit:read', cache: 'private-short' },
+
+  // Temple directory (P11)
+  { routeId: 'customer.temples', method: 'GET', path: '/api/temples', access: 'authenticated', capability: 'temple:read', cache: 'private-short' },
+  { routeId: 'customer.temple.detail', method: 'GET', path: '/api/temples/:templeId', access: 'authenticated', capability: 'temple:read', cache: 'private-short' },
 ];
