@@ -72,11 +72,18 @@ final class TemplePujaController
     // PARTNER: Show puja assignment
     public function show(Request $request, string $templeId, string $pujaId): JsonResponse
     {
-        // Could add a show method to the contract if needed
-        // For now returning not implemented
+        try {
+            $puja = $this->pujas->showPuja($templeId, $pujaId);
+        } catch (TemplePujaNotFoundException) {
+            return new JsonResponse([
+                'error' => ['code' => 'TEMPLE_PUJA_NOT_FOUND', 'message' => 'Puja assignment not found.', 'request_id' => $this->requestId($request)],
+            ], 404);
+        }
+
         return new JsonResponse([
-            'error' => ['code' => 'not_implemented', 'message' => 'Single puja fetch not implemented.', 'request_id' => $this->requestId($request)],
-        ], 501);
+            'data' => $puja,
+            'meta' => ['request_id' => $this->requestId($request)],
+        ]);
     }
 
     // PARTNER: Update puja assignment

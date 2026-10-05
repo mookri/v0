@@ -3,6 +3,7 @@
 namespace App\Modules\Temple\Http\Controllers;
 
 use App\Modules\Temple\Contracts\ListsTemples;
+use App\Modules\Temple\Contracts\ManagesTemplePujas;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -11,8 +12,10 @@ use Illuminate\Http\Request;
  */
 final class TemplePublicController
 {
-    public function __construct(private readonly ListsTemples $profiles)
-    {
+    public function __construct(
+        private readonly ListsTemples $profiles,
+        private readonly ManagesTemplePujas $pujas,
+    ) {
     }
 
     private function requestId(Request $request): string
@@ -64,21 +67,57 @@ final class TemplePublicController
         ]);
     }
 
-    // PUBLIC: Temple pujas
+    // PUBLIC: Temple pujas (active assignments of a publicly visible temple)
     public function pujas(Request $request, string $templeId): JsonResponse
     {
-        // This would need a contract method - for now returning not implemented
+        $request->validate([
+            'limit' => ['sometimes', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        $limit = min((int) $request->query('limit', 20), 100);
+
+        $result = $this->pujas->publicPujas($templeId, $limit);
+
+        if ($result === null) {
+            // Absent, unverified and non-active temples collapse into the
+            // same 404 (P11g) — no existence oracle before vetting.
+            return new JsonResponse([
+                'error' => ['code' => 'TEMPLE_NOT_FOUND', 'message' => 'Temple not found.', 'request_id' => $this->requestId($request)],
+            ], 404);
+        }
+
         return new JsonResponse([
-            'error' => ['code' => 'not_implemented', 'message' => 'Temple pujas endpoint not yet implemented.', 'request_id' => $this->requestId($request)],
-        ], 501);
+            'data' => $result['items'],
+            'meta' => ['request_id' => $this->requestId($request), 'page' => $result['page']],
+        ]);
     }
 
-    // PUBLIC: Temple availability
+    // PUBLIC: Temple availability (weekly windows from active puja schedules)
     public function availability(Request $request, string $templeId): JsonResponse
     {
-        // This would need a contract method
+        $request->validate([
+            'start_date' => ['sometimes', 'date'],
+            'end_date' => ['sometimes', 'date', 'after_or_equal:start_date'],
+        ]);
+
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+
+        $result = $this->pujas->publicAvailability(
+            $templeId,
+            is_string($startDate) ? $startDate : null,
+            is_string($endDate) ? $endDate : null,
+        );
+
+        if ($result === null) {
+            return new JsonResponse([
+                'error' => ['code' => 'TEMPLE_NOT_FOUND', 'message' => 'Temple not found.', 'request_id' => $this->requestId($request)],
+            ], 404);
+        }
+
         return new JsonResponse([
-            'error' => ['code' => 'not_implemented', 'message' => 'Temple availability endpoint not yet implemented.', 'request_id' => $this->requestId($request)],
-        ], 501);
+            'data' => $result['items'],
+            'meta' => ['request_id' => $this->requestId($request)],
+        ]);
     }
 }
