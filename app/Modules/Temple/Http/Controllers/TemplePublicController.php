@@ -4,6 +4,7 @@ namespace App\Modules\Temple\Http\Controllers;
 
 use App\Modules\Temple\Contracts\ListsTemples;
 use App\Modules\Temple\Contracts\ManagesTemplePujas;
+use App\Modules\Temple\Models\Temple;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -50,12 +51,16 @@ final class TemplePublicController
         ]);
     }
 
-    // PUBLIC: Show temple by slug or ID
+    // PUBLIC: Show temple by slug or ID (fail-closed: VERIFIED + ACTIVE only)
     public function show(Request $request, string $identifier): JsonResponse
     {
         $profile = $this->profiles->profileById($identifier);
 
-        if ($profile === null) {
+        // Absent, unverified and non-active temples collapse into the
+        // same 404 (P11i) — no existence oracle before vetting.
+        if ($profile === null
+            || $profile['verification_status'] !== Temple::VERIFICATION_VERIFIED
+            || $profile['status'] !== Temple::STATUS_ACTIVE) {
             return new JsonResponse([
                 'error' => ['code' => 'TEMPLE_NOT_FOUND', 'message' => 'Temple not found.', 'request_id' => $this->requestId($request)],
             ], 404);

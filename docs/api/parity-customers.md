@@ -109,7 +109,7 @@ cross-surface contract (validation: 422 both sides after the F1 alignment).
 | Step | Next.js BFF | Laravel module | Match |
 |---|---|---|---|
 | temple directory (customer) | `GET /api/temples` → `{data: TempleProfile[], meta: {page}}` | `GET /api/v1/temple/profiles` → 200 kernel envelope with items + cursor page (VERIFIED + ACTIVE only) | **wired behind flag** (BFF unwraps kernel envelope, passes query params) |
-| temple detail (customer) | `GET /api/temples/:templeId` → profile | `GET /api/v1/temple/profiles/{id}` → 200 kernel envelope with profile (404 `TEMPLE_NOT_FOUND` for unknown id) | **wired behind flag** (404 `TEMPLE_NOT_FOUND` → `NOT_FOUND`) |
+| temple detail (customer) | `GET /api/temples/:templeId` → profile | `GET /api/v1/temple/profiles/{id}` → 200 kernel envelope with profile (404 `TEMPLE_NOT_FOUND` for unknown/unverified/suspended id) | **wired behind flag** (404 `TEMPLE_NOT_FOUND` → `NOT_FOUND`) |
 | temple directory (partner) | `GET /api/temples` → `{data: TempleProfile[], meta: {page}}` | `GET /api/v1/temple/profiles` → same backend as the customer directory | **wired behind flag** (`PARTNER_BACKEND=laravel`) |
 | temple detail (partner) | `GET /api/temples/:templeId` → profile | `GET /api/v1/temple/profiles/{id}` → same backend as the customer detail | **wired behind flag** (404 `TEMPLE_NOT_FOUND` → `NOT_FOUND`) |
 | temple dashboard (partner) | `GET /api/temples/:templeId/dashboard/:section` → section payload | `GET /api/v1/temple/partner/temples/{id}/dashboard/{section}` — overview, pujas, bookings, calendar, analytics, settings (overview + settings resolve the temple row: unknown → 404 `not_found`; the other sections scope-query and answer 200 with empty data) | **wired behind flag** (`not_found` → `NOT_FOUND`, `permission_missing` → `FORBIDDEN`, `validation_failed` → `VALIDATION_ERROR`) |
@@ -117,18 +117,18 @@ cross-surface contract (validation: 422 both sides after the F1 alignment).
 | temple availability (public) | (no BFF endpoint yet) | `GET /api/v1/temple/profiles/{templeId}/availability?start_date&end_date` → 200 `{data: slots, meta: {request_id}}`; 404 `TEMPLE_NOT_FOUND`, 422 `validation_failed` | backend only (P11g) |
 | temple puja show (partner) | (no BFF endpoint yet) | `GET /api/v1/temple/partner/temples/{templeId}/pujas/{pujaId}` → 200 assignment; 404 `TEMPLE_PUJA_NOT_FOUND` | backend only (P11g) |
 
-Public visibility is fail-closed: the directory, pujas and availability expose
-only VERIFIED + ACTIVE temples — unverified, suspended and unknown ids collapse
-into the same 404 (no vetting oracle). Only ACTIVE assignments surface
-publicly, and malformed schedule entries are skipped, never fatal. Profile
-detail currently resolves any known id regardless of verification (P11a
-posture — tightening it is a deliberate future slice).
+Public visibility is fail-closed: the directory, detail, pujas and availability
+expose only VERIFIED + ACTIVE temples — unverified, suspended and unknown ids
+collapse into the same 404 (no vetting oracle). Only ACTIVE assignments surface
+publicly, and malformed schedule entries are skipped, never fatal. (P11i closed
+the P11a detail gap: the profile detail no longer resolves known-but-unvetted
+ids.)
 
 ### Temple code correspondence
 
 | Situation | Next.js code | Laravel code |
 |---|---|---|
-| unknown temple (public detail, pujas, availability) | `NOT_FOUND` (404) | `TEMPLE_NOT_FOUND` (404) |
+| unknown/unverified/suspended temple (public detail, pujas, availability) | `NOT_FOUND` (404) | `TEMPLE_NOT_FOUND` (404) |
 | unknown/foreign puja assignment (partner show) | — (no BFF surface yet) | `TEMPLE_PUJA_NOT_FOUND` (404) |
 | unknown temple on dashboard (overview, settings) | `NOT_FOUND` (404) | `not_found` (404 — kernel rendering of the scoped lookup) |
 | invalid query params (limit, start_date/end_date) | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
