@@ -83,7 +83,7 @@ subset of the contract union with identical statuses. New codes:
 | BFF endpoint | Backend source |
 |---|---|
 | `GET /api/temples` (customer + partner) | `GET /api/v1/temple/profiles` — **wired behind flag** (kernel envelope unwrapped; VERIFIED + ACTIVE only) |
-| `GET /api/temples/:templeId` (customer + partner) | `GET /api/v1/temple/profiles/{id}` — **wired behind flag** (404 `TEMPLE_NOT_FOUND` → `NOT_FOUND`) |
+| `GET /api/temples/:templeId` (customer + partner) | `GET /api/v1/temple/profiles/{id}` — **wired behind flag** (VERIFIED + ACTIVE only; 404 `TEMPLE_NOT_FOUND` → `NOT_FOUND`) |
 | `GET /api/temples/:templeId/dashboard/:section` (partner) | `GET /api/v1/temple/partner/temples/{id}/dashboard/{section}` — **wired behind flag** (`not_found` → `NOT_FOUND`, `permission_missing` → `FORBIDDEN`, `validation_failed` → `VALIDATION_ERROR`) |
 
 P11g backend endpoints without a BFF surface yet: `GET /api/v1/temple/profiles/{id}/pujas`,
@@ -118,7 +118,7 @@ backend-authoritative mirror).
 | unknown/unverified/suspended pandit | `NOT_FOUND` (404) | `PANDIT_NOT_FOUND` (404) |
 | invalid query params (date format, rating range) | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
 | guest / unauthenticated caller | `UNAUTHENTICATED` (401) | `unauthenticated` / `tenant_not_in_token` (401) |
-| unknown temple (detail, pujas, availability) | `NOT_FOUND` (404) | `TEMPLE_NOT_FOUND` (404) |
+| unknown/unverified/suspended temple (detail, pujas, availability) | `NOT_FOUND` (404) | `TEMPLE_NOT_FOUND` (404) |
 | unknown/foreign puja assignment (partner show, P11g) | — (no BFF surface yet) | `TEMPLE_PUJA_NOT_FOUND` (404) |
 | unknown temple on dashboard (overview, settings) | `NOT_FOUND` (404) | `not_found` (404) |
 | invalid query params (limit, start_date/end_date) | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
