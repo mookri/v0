@@ -15,6 +15,7 @@ import {
 } from '@apps/customer/server/backend-session';
 import { GET as listBookings } from '@apps/customer/app/api/bookings/route';
 import { GET as bookingDetail } from '@apps/customer/app/api/bookings/[bookingId]/route';
+import { GET as templeDetail } from '@apps/customer/app/api/temples/[templeId]/route';
 import { POST as login } from '@apps/customer/app/api/auth/login/route';
 import { GET as getProfile } from '@apps/customer/app/api/profile/route';
 import { GET as listSaved } from '@apps/customer/app/api/saved/route';
@@ -251,6 +252,19 @@ test('wired cancel maps not_found to BOOKING_NOT_FOUND', async () => {
   });
   expect(res.status).toBe(404);
   expect(((await res.json()) as { error: { code: string } }).error.code).toBe('BOOKING_NOT_FOUND');
+});
+
+test('wired temple detail maps TEMPLE_NOT_FOUND to NOT_FOUND', async () => {
+  wiredEnv();
+  stubLaravelStatuses(() => ({
+    status: 404,
+    body: { error: { code: 'TEMPLE_NOT_FOUND', message: 'Temple not found.', requestId: 'r' } },
+  }));
+  const res = await templeDetail(authed('https://app.navdhya.com/api/temples/t1'), {
+    params: Promise.resolve({ templeId: 't1' }),
+  });
+  expect(res.status).toBe(404);
+  expect(((await res.json()) as { error: { code: string } }).error.code).toBe('NOT_FOUND');
 });
 
 test('wired reschedule reads version then moves', async () => {

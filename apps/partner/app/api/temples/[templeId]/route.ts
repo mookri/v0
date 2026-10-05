@@ -43,6 +43,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ templeId
       {},
       {
         not_found: 'NOT_FOUND',
+        TEMPLE_NOT_FOUND: 'NOT_FOUND',
         validation_failed: 'VALIDATION_ERROR',
       },
     );
