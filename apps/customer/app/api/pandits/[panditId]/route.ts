@@ -39,6 +39,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ panditId
       {},
       {
         not_found: 'NOT_FOUND',
+        PANDIT_NOT_FOUND: 'NOT_FOUND',
         validation_failed: 'VALIDATION_ERROR',
       },
     );
