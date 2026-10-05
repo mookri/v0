@@ -55,4 +55,28 @@ final class CatalogItemQueries implements ListsCatalogItems
 
         return $ordered;
     }
+
+    /**
+     * @return list<array{id: string, sku: string, name: string, description: string|null, status: string, currency: string, price_minor: int, attributes: array<string, mixed>|null, vendor_id: string|null}>
+     */
+    public function listForVendor(string $vendorId, int $limit): array
+    {
+        return CatalogItem::query()
+            ->where('vendor_id', $vendorId)
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->take(max(1, min(100, $limit)))
+            ->get()
+            ->map(static fn (CatalogItem $item): array => [
+                'id' => (string) $item->getKey(),
+                'sku' => $item->sku,
+                'name' => $item->name,
+                'description' => $item->description,
+                'status' => $item->status,
+                'currency' => $item->currency,
+                'price_minor' => $item->price_minor,
+                'attributes' => $item->attributes,
+                'vendor_id' => $item->vendor_id,
+            ])->all();
+    }
 }

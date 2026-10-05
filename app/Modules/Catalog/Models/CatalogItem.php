@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property string $id
  * @property string $tenant_id
+ * @property string|null $vendor_id
  * @property string $sku
  * @property string $name
  * @property string|null $description
@@ -36,7 +37,7 @@ final class CatalogItem extends Model
     protected $connection = 'tenant_shared';
 
     protected $fillable = [
-        'tenant_id', 'sku', 'name', 'description', 'status',
+        'tenant_id', 'vendor_id', 'sku', 'name', 'description', 'status',
         'currency', 'price_minor', 'attributes',
     ];
 

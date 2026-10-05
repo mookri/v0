@@ -181,6 +181,7 @@ final class CatalogItemController
             'currency' => $item->currency,
             'price_minor' => $item->price_minor,
             'attributes' => $item->attributes,
+            'vendor_id' => $item->vendor_id,
         ];
     }
 }
