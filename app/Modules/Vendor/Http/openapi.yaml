@@ -1,0 +1,718 @@
+# OpenAPI 3.1 fragment — vendor module (partner self-serve + admin ops).
+# Partner routes are ownership-gated (scope:vendor:partner + VendorOwnership:
+# 403 foreign same-tenant, 404 cross-tenant); creation additionally requires
+# an APPROVED partner-vendor application. Admin routes are capability-gated,
+# verify/suspend also step-up (level 2).
+openapi: 3.1.0
+info:
+  title: Navdhya Vendor — Profiles, Products, Inventory, Orders, Payouts
+  version: 1.0.0
+paths:
+  /api/v1/vendor/partner/vendors:
+    get:
+      operationId: listVendors
+      summary: Cursor-paginated vendors owned by the caller.
+      x-gate: ownership
+      x-scope: vendor:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Owned vendors.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+    post:
+      operationId: createVendor
+      summary: Create the caller's vendor (APPROVED partner-vendor application required).
+      x-gate: ownership
+      x-scope: vendor:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string, minLength: 2, maxLength: 255 }
+                description: { type: string, maxLength: 2000 }
+                city: { type: string, maxLength: 100 }
+                state: { type: string, maxLength: 100 }
+      responses:
+        '201':
+          description: New vendor (status ACTIVE, verification_status PENDING).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, application_id, owner_user_id, name, status, verification_status]
+                    properties:
+                      object: { type: string, enum: [vendor] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '409':
+          description: >-
+            state_forbidden — no partner-vendor application, application not
+            approved; conflict — application already linked to a vendor.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/vendor/partner/vendors/{id}:
+    get:
+      operationId: getVendor
+      summary: Read one owned vendor (403 foreign same-tenant, 404 cross-tenant).
+      x-gate: ownership
+      x-scope: vendor:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Vendor profile.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, application_id, owner_user_id, name, status, verification_status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      operationId: updateVendor
+      summary: Partial profile update (name, description, city, state).
+      x-gate: ownership
+      x-scope: vendor:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string, minLength: 2, maxLength: 255 }
+                description: { type: string, maxLength: 2000 }
+                city: { type: string, maxLength: 100 }
+                state: { type: string, maxLength: 100 }
+      responses:
+        '200':
+          description: Updated vendor.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, name, status, verification_status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/vendor/partner/vendors/{id}/products:
+    get:
+      operationId: listVendorProducts
+      summary: Limit list of the vendor's catalog items (meta carries request_id only — not cursor-paged).
+      x-gate: ownership
+      x-scope: vendor:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Product rows (Catalog items with vendor_id set).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      operationId: createVendorProduct
+      summary: Add a product (DRAFT start; SKU unique per tenant).
+      x-gate: ownership
+      x-scope: vendor:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sku, name]
+              properties:
+                sku: { type: string, maxLength: 64 }
+                name: { type: string, minLength: 2, maxLength: 255 }
+                description: { type: string, maxLength: 2000 }
+                currency: { type: string, maxLength: 3 }
+                price_minor: { type: integer, minimum: 0 }
+      responses:
+        '201':
+          description: Draft product (status DRAFT).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, vendor_id, sku, name, status]
+                    properties:
+                      status: { type: string, enum: [DRAFT, ACTIVE, ARCHIVED] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: conflict — SKU already exists in this tenant.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/vendor/partner/vendors/{id}/products/{itemId}:
+    patch:
+      operationId: updateVendorProduct
+      summary: Partial product update (archived items immutable).
+      x-gate: ownership
+      x-scope: vendor:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: itemId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string, minLength: 2, maxLength: 255 }
+                description: { type: string, maxLength: 2000 }
+                currency: { type: string, maxLength: 3 }
+                price_minor: { type: integer, minimum: 0 }
+      responses:
+        '200':
+          description: Updated product.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, vendor_id, sku, name, status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: state_forbidden — archived items are immutable.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/vendor/partner/vendors/{id}/inventory:
+    get:
+      operationId: listVendorInventory
+      summary: Cursor-paginated stock rows (created lazily on first adjustment).
+      x-gate: ownership
+      x-scope: vendor:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Stock rows.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/vendor/partner/vendors/{id}/inventory:adjust:
+    post:
+      operationId: adjustVendorInventory
+      summary: Signed stock delta (row created on first adjustment; stock never negative).
+      x-gate: ownership
+      x-scope: vendor:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sku, delta]
+              properties:
+                sku: { type: string, maxLength: 64 }
+                delta: { type: integer }
+      responses:
+        '200':
+          description: Stock row after the adjustment.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, vendor_id, sku, on_hand]
+                    properties:
+                      object: { type: string, enum: [vendor_inventory] }
+                      on_hand: { type: integer, minimum: 0 }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: conflict — stock cannot go negative.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/vendor/partner/vendors/{id}/orders:
+    get:
+      operationId: listVendorOrders
+      summary: Cursor-paginated orders (optional status filter; rows omit line items).
+      x-gate: ownership
+      x-scope: vendor:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          schema: { type: string, maxLength: 24 }
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Order rows.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      operationId: placeVendorOrder
+      summary: Place an order (lines snapshotted; reference unique per vendor).
+      x-gate: ownership
+      x-scope: vendor:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reference, items]
+              properties:
+                reference: { type: string, maxLength: 64 }
+                customer_name: { type: string, maxLength: 255 }
+                currency: { type: string, maxLength: 3 }
+                items:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required: [sku, name, quantity, unit_minor]
+                    properties:
+                      sku: { type: string, maxLength: 64 }
+                      name: { type: string, maxLength: 255 }
+                      quantity: { type: integer, minimum: 1 }
+                      unit_minor: { type: integer, minimum: 0 }
+      responses:
+        '201':
+          description: New order (status NEW, lines inlined, total_minor computed).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, reference, currency, total_minor, status, items]
+                    properties:
+                      object: { type: string, enum: [vendor_order] }
+                      status: { type: string, enum: [NEW, PROCESSING, DISPATCHED, DELIVERED, CANCELLED] }
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          required: [id, sku, name, quantity, unit_minor, line_minor]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: conflict — order reference already exists for this vendor.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/vendor/partner/vendors/{id}/orders/{orderId}:
+    get:
+      operationId: getVendorOrder
+      summary: Read one order (detail inlines the line snapshots; resolved inside the vendor — foreign order is 404).
+      x-gate: ownership
+      x-scope: vendor:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: orderId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Order with inlined items.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, reference, total_minor, status, items]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/vendor/partner/vendors/{id}/orders/{orderId}:advance:
+    post:
+      operationId: advanceVendorOrder
+      summary: Advance the lifecycle NEW → PROCESSING → DISPATCHED → DELIVERED (append-only transition row).
+      x-gate: ownership
+      x-scope: vendor:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: orderId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Order in its next state.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status, updated_at]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: >-
+            state_forbidden — order already delivered; conflict — cancelled
+            orders cannot advance.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/vendor/partner/vendors/{id}/orders/{orderId}:cancel:
+    post:
+      operationId: cancelVendorOrder
+      summary: Cancel a NEW or PROCESSING order (terminal state).
+      x-gate: ownership
+      x-scope: vendor:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: orderId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Cancelled order.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status]
+                    properties:
+                      status: { type: string, enum: [CANCELLED] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: >-
+            conflict — cancelled orders cannot advance; state_forbidden —
+            only new or processing orders can be cancelled.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/vendor/partner/vendors/{id}/payouts:
+    get:
+      operationId: listVendorPayouts
+      summary: Cursor-paginated payout stub (rows seeded after settlement; optional status filter).
+      x-gate: ownership
+      x-scope: vendor:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          schema: { type: string, maxLength: 24 }
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Payout rows.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/vendor/admin/vendors:
+    get:
+      operationId: adminListVendors
+      summary: Admin directory (status / verification_status / search filters).
+      x-permission: vendor:profile:view
+      x-scope: vendor:admin
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          schema: { type: string, maxLength: 24 }
+        - name: verification_status
+          in: query
+          schema: { type: string, maxLength: 24 }
+        - name: search
+          in: query
+          schema: { type: string, maxLength: 190 }
+      responses:
+        '200':
+          description: All vendors in the tenant.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+  /api/v1/vendor/admin/vendors/{id}:verify:
+    post:
+      operationId: verifyVendor
+      summary: Mark a vendor VERIFIED (capability vendor:profile:manage + step-up level 2).
+      x-permission: vendor:profile:manage
+      x-scope: vendor:admin
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Verified vendor.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, verification_status]
+                    properties:
+                      verification_status: { type: string, enum: [VERIFIED] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: state_forbidden — vendor already verified.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/vendor/admin/vendors/{id}:suspend:
+    post:
+      operationId: suspendVendor
+      summary: Suspend a vendor (capability vendor:profile:manage + step-up level 2).
+      x-permission: vendor:profile:manage
+      x-scope: vendor:admin
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Suspended vendor.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status]
+                    properties:
+                      status: { type: string, enum: [SUSPENDED] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: state_forbidden — vendor already suspended.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
