@@ -1,0 +1,1133 @@
+# OpenAPI 3.1 fragment — temple module (public directory + partner
+# self-serve + dashboard + admin ops).
+# Public reads are fail-closed: only VERIFIED + ACTIVE temples surface, and
+# absent, unverified, non-active and foreign ids collapse to the same
+# 404 TEMPLE_NOT_FOUND (no vetting oracle). Partner temple CRUD and manager
+# routes resolve owner/manager membership in code; puja assignment and
+# dashboard routes are tenant + temple scoped (scope-only — no per-caller
+# ownership gate, documented per operation). Admin routes are
+# capability-gated; verify/suspend/reactivate additionally step-up (level 2).
+openapi: 3.1.0
+info:
+  title: Navdhya Temple — Directory, Pujas, Managers, Dashboard, Admin
+  version: 1.0.0
+paths:
+  /api/v1/temple/profiles:
+    get:
+      operationId: listTempleProfiles
+      summary: Cursor-paginated public directory (VERIFIED + ACTIVE only).
+      x-gate: ownership
+      x-scope: temple:read
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: city
+          in: query
+          schema: { type: string, maxLength: 100 }
+        - name: state
+          in: query
+          schema: { type: string, maxLength: 100 }
+        - name: amenities
+          in: query
+          schema: { type: array, items: { type: string } }
+        - name: lat
+          in: query
+          schema: { type: number, minimum: -90, maximum: 90 }
+        - name: lng
+          in: query
+          schema: { type: number, minimum: -180, maximum: 180 }
+        - name: radius
+          in: query
+          schema: { type: number, minimum: 1, maximum: 500 }
+        - name: q
+          in: query
+          schema: { type: string, maxLength: 100 }
+        - name: sort
+          in: query
+          schema: { type: string, enum: [relevance, distance, rating, price] }
+      responses:
+        '200':
+          description: Verified + active temples in the tenant.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: array
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+  /api/v1/temple/profiles/{id}:
+    get:
+      operationId: getTempleProfile
+      summary: Public temple profile — fail-closed (VERIFIED + ACTIVE only).
+      x-gate: ownership
+      x-scope: temple:read
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Temple profile.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, slug, name, trust_name, type, city, state, images, amenities, rating_avg, review_count, verification_status, status]
+                    properties:
+                      id: { $ref: '#/components/schemas/Ulid' }
+                      slug: { type: string }
+                      name: { type: string }
+                      trust_name: { type: string }
+                      type: { type: string, enum: [individual, trust] }
+                      address: { type: string }
+                      city: { type: string }
+                      state: { type: string }
+                      lat: { type: number, nullable: true }
+                      lng: { type: number, nullable: true }
+                      images: { type: array, items: { type: string } }
+                      amenities: { type: array, items: { type: string } }
+                      description: { type: string, nullable: true }
+                      rating_avg: { type: number }
+                      review_count: { type: integer }
+                      verification_status: { type: string, enum: [PENDING, VERIFIED, REJECTED] }
+                      status: { type: string, enum: [DRAFT, ACTIVE, INACTIVE] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: >-
+            TEMPLE_NOT_FOUND — absent, unverified, non-active or foreign
+            temple (identical 404 — no existence oracle before vetting).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/temple/profiles/{templeId}/pujas:
+    get:
+      operationId: listPublicTemplePujas
+      summary: Active puja assignments of a publicly visible temple.
+      x-gate: ownership
+      x-scope: temple:read
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Active assignments (publicly visible temples only).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: TEMPLE_NOT_FOUND — absent, unverified or non-active temple.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/temple/profiles/{templeId}/availability:
+    get:
+      operationId: getPublicTempleAvailability
+      summary: Weekly availability windows derived from active puja schedules.
+      x-gate: ownership
+      x-scope: temple:read
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: start_date
+          in: query
+          schema: { type: string, format: date }
+        - name: end_date
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Flat slot rows (malformed schedules skipped, never fatal).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: TEMPLE_NOT_FOUND — absent, unverified or non-active temple.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/temple/partner/temples:
+    get:
+      operationId: listPartnerTemples
+      summary: Temples owned or managed by the caller (owner/manager membership resolved in code).
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          schema: { type: string, maxLength: 24 }
+      responses:
+        '200':
+          description: Owned/managed temples.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+    post:
+      operationId: createPartnerTemple
+      summary: Create a temple (caller becomes owner and first manager).
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [slug, name, trust_name, type, address, city, state]
+              properties:
+                slug: { type: string, maxLength: 100 }
+                name: { type: string, maxLength: 255 }
+                trust_name: { type: string, maxLength: 255 }
+                type: { type: string, enum: [individual, trust] }
+                address: { type: string, maxLength: 500 }
+                city: { type: string, maxLength: 100 }
+                state: { type: string, maxLength: 100 }
+                lat: { type: number, minimum: -90, maximum: 90 }
+                lng: { type: number, minimum: -180, maximum: 180 }
+                images: { type: array, items: { type: string, format: uri } }
+                amenities: { type: array, items: { type: string } }
+                description: { type: string, maxLength: 2000 }
+      responses:
+        '201':
+          description: New temple (status DRAFT, verification_status PENDING).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, slug, name, status, verification_status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/temple/partner/temples/{id}:
+    get:
+      operationId: getPartnerTemple
+      summary: Own/managed temple detail (owner/manager membership resolved in code).
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Temple profile (with manager roles).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, slug, name, status, verification_status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: TEMPLE_NOT_FOUND — unknown, foreign or unmanaged temple.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+    patch:
+      operationId: updatePartnerTemple
+      summary: Partial profile update of an owned/managed temple.
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string, maxLength: 255 }
+                trust_name: { type: string, maxLength: 255 }
+                address: { type: string, maxLength: 500 }
+                city: { type: string, maxLength: 100 }
+                state: { type: string, maxLength: 100 }
+                lat: { type: number, minimum: -90, maximum: 90 }
+                lng: { type: number, minimum: -180, maximum: 180 }
+                images: { type: array, items: { type: string, format: uri } }
+                amenities: { type: array, items: { type: string } }
+                description: { type: string, maxLength: 2000 }
+      responses:
+        '200':
+          description: Updated temple.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, name, status, verification_status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: TEMPLE_NOT_FOUND — unknown or foreign temple.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/temple/partner/temples/{templeId}/pujas:
+    get:
+      operationId: listPartnerTemplePujas
+      summary: Puja assignments for a temple (tenant + temple scope; no per-caller ownership gate).
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: status
+          in: query
+          schema: { type: string, maxLength: 24 }
+      responses:
+        '200':
+          description: Assignment rows.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: TEMPLE_NOT_FOUND — unknown temple.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+    post:
+      operationId: assignPartnerTemplePuja
+      summary: Assign a puja to a temple (tenant + temple scope; no per-caller ownership gate).
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [puja_id]
+              properties:
+                puja_id: { type: string, maxLength: 40 }
+                price_override_minor: { type: integer, minimum: 0 }
+                capacity: { type: integer, minimum: 1 }
+                schedule_json: { type: string, nullable: true }
+      responses:
+        '201':
+          description: New assignment (status ACTIVE).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, temple_id, puja_id, status]
+                    properties:
+                      status: { type: string, enum: [ACTIVE, INACTIVE] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: TEMPLE_NOT_FOUND — unknown temple.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/temple/partner/temples/{templeId}/pujas/{pujaId}:
+    get:
+      operationId: getPartnerTemplePuja
+      summary: Single assignment (tenant + temple scope; foreign assignment is 404).
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: pujaId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Assignment row.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, temple_id, puja_id, status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: TEMPLE_PUJA_NOT_FOUND — unknown or foreign assignment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+    put:
+      operationId: updatePartnerTemplePuja
+      summary: Update price/capacity/schedule/status of an assignment.
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: pujaId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                price_override_minor: { type: integer, minimum: 0 }
+                capacity: { type: integer, minimum: 1 }
+                schedule_json: { type: string, nullable: true }
+                status: { type: string, enum: [ACTIVE, INACTIVE] }
+      responses:
+        '200':
+          description: Updated assignment.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, temple_id, puja_id, status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: TEMPLE_PUJA_NOT_FOUND — unknown or foreign assignment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+    delete:
+      operationId: removePartnerTemplePuja
+      summary: Remove an assignment from a temple.
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: pujaId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Assignment removed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [deleted]
+                    properties:
+                      deleted: { type: boolean }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: TEMPLE_PUJA_NOT_FOUND — unknown or foreign assignment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/temple/partner/temples/{templeId}/managers:
+    get:
+      operationId: listPartnerTempleManagers
+      summary: Manager roster for a temple (tenant + temple scope).
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Manager rows (flat list — meta carries request_id only).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+    post:
+      operationId: addPartnerTempleManager
+      summary: Invite a manager (owner only — enforced in code, rendered 422).
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id, role]
+              properties:
+                user_id: { type: string, maxLength: 40 }
+                role: { type: string, enum: [admin, manager, viewer] }
+      responses:
+        '201':
+          description: New manager row.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, user_id, role, invited_at]
+                    properties:
+                      role: { type: string, enum: [admin, manager, viewer] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: not_found — unknown temple (kernel rendering of the scoped lookup).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422':
+          description: >-
+            validation_failed — owner-only invite, duplicate manager, or bad
+            fields (business-rule denials render 422 on this surface).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/temple/partner/temples/{templeId}/managers/{managerId}:
+    put:
+      operationId: updatePartnerTempleManager
+      summary: Change a manager's role (owner only — enforced in code, rendered 422).
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: managerId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [role]
+              properties:
+                role: { type: string, enum: [admin, manager, viewer] }
+      responses:
+        '200':
+          description: Updated manager row.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, user_id, role]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: TEMPLE_NOT_FOUND — unknown temple or manager row.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422':
+          description: validation_failed — owner-only mutation or bad role.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+    delete:
+      operationId: removePartnerTempleManager
+      summary: Remove a manager (owner only; the owner row itself is immutable).
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: managerId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Manager removed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [deleted]
+                    properties:
+                      deleted: { type: boolean }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: TEMPLE_NOT_FOUND — unknown temple or manager row.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/temple/partner/temples/{templeId}/dashboard/overview:
+    get:
+      operationId: getTempleDashboardOverview
+      summary: Dashboard KPIs and recent activity (temple row resolved; unknown → 404).
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: KPI counters and recent bookings.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [total_pujas, active_pujas, total_bookings, upcoming_bookings, revenue_minor, avg_occupancy, recent_bookings]
+                    properties:
+                      recent_bookings: { type: array }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: not_found — unknown temple (kernel rendering of the scoped lookup).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/temple/partner/temples/{templeId}/dashboard/pujas:
+    get:
+      operationId: getTempleDashboardPujas
+      summary: Dashboard puja rows with booking counts (unknown temple answers 200 empty).
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: status
+          in: query
+          schema: { type: string, maxLength: 24 }
+        - name: puja_id
+          in: query
+          schema: { type: string, maxLength: 40 }
+      responses:
+        '200':
+          description: Dashboard puja rows (empty for unknown temple).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+  /api/v1/temple/partner/temples/{templeId}/dashboard/bookings:
+    get:
+      operationId: getTempleDashboardBookings
+      summary: Dashboard booking rows (unknown temple answers 200 empty).
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: status
+          in: query
+          schema: { type: string, maxLength: 24 }
+        - name: date_from
+          in: query
+          schema: { type: string, format: date }
+        - name: date_to
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Booking rows (empty for unknown temple).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+  /api/v1/temple/partner/temples/{templeId}/dashboard/calendar:
+    get:
+      operationId: getTempleDashboardCalendar
+      summary: Calendar slots for a month (year and month are required).
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: year
+          in: query
+          required: true
+          schema: { type: integer, minimum: 2020, maximum: 2030 }
+        - name: month
+          in: query
+          required: true
+          schema: { type: integer, minimum: 1, maximum: 12 }
+      responses:
+        '200':
+          description: Day rows with slots (empty for unknown temple).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/temple/partner/temples/{templeId}/dashboard/analytics:
+    get:
+      operationId: getTempleDashboardAnalytics
+      summary: Revenue, occupancy and peak-hour analytics.
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: months
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 24, default: 12 }
+      responses:
+        '200':
+          description: Analytics buckets (empty for unknown temple).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [revenue_by_month, occupancy_by_puja, peak_hours]
+                    properties:
+                      revenue_by_month: { type: array }
+                      occupancy_by_puja: { type: array }
+                      peak_hours: { type: array }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/temple/partner/temples/{templeId}/dashboard/settings:
+    get:
+      operationId: getTempleDashboardSettings
+      summary: Temple details, managers and amenities (temple row resolved; unknown → 404).
+      x-gate: ownership
+      x-scope: temple:partner
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: templeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Settings payload.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [temple, managers, amenities]
+                    properties:
+                      temple: { type: object }
+                      managers: { type: array }
+                      amenities: { type: array }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: not_found — unknown temple (kernel rendering of the scoped lookup).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/temple/admin/profiles:
+    get:
+      operationId: adminListTemples
+      summary: Admin directory (status / verification_status / search filters; lists rows the public directory hides).
+      x-permission: temple:profile:view
+      x-scope: temple:admin
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          schema: { type: string, maxLength: 24 }
+        - name: verification_status
+          in: query
+          schema: { type: string, maxLength: 24 }
+        - name: search
+          in: query
+          schema: { type: string, maxLength: 190 }
+      responses:
+        '200':
+          description: All temples in the tenant (any verification status).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+  /api/v1/temple/admin/profiles/{id}:verify:
+    post:
+      operationId: verifyTemple
+      summary: Mark a temple VERIFIED (capability temple:profile:manage + step-up level 2).
+      x-permission: temple:profile:manage
+      x-scope: temple:admin
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Verified temple.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, verification_status]
+                    properties:
+                      verification_status: { type: string, enum: [VERIFIED] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: TEMPLE_NOT_FOUND — unknown temple.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '409':
+          description: state_forbidden — illegal verification transition.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/temple/admin/profiles/{id}:suspend:
+    post:
+      operationId: suspendTemple
+      summary: Suspend a temple (status INACTIVE; capability temple:profile:manage + step-up level 2).
+      x-permission: temple:profile:manage
+      x-scope: temple:admin
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Suspended temple.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status]
+                    properties:
+                      status: { type: string, enum: [INACTIVE] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: TEMPLE_NOT_FOUND — unknown temple.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '409':
+          description: state_forbidden — illegal status transition.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/temple/admin/profiles/{id}:reactivate:
+    post:
+      operationId: reactivateTemple
+      summary: Reactivate a suspended temple (capability temple:profile:manage + step-up level 2).
+      x-permission: temple:profile:manage
+      x-scope: temple:admin
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Reactivated temple.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status]
+                    properties:
+                      status: { type: string, enum: [ACTIVE] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: TEMPLE_NOT_FOUND — unknown temple.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '409':
+          description: state_forbidden — only suspended temples can reactivate.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
