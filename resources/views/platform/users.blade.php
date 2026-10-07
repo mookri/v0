@@ -10,6 +10,8 @@
                 <span class="badge bg-primary-subtle text-primary" id="user-workspace">&mdash;</span>
             </div>
             <div class="card-body">
+                {{-- Coded flash for the shared suspend/activate actions (doc 06 §7.2). --}}
+                <x-flash-alerts />
                 <div class="alert alert-danger d-none" id="user-alert" role="alert"></div>
 
                 <div class="table-responsive">
@@ -20,6 +22,7 @@
                             <th>Name</th>
                             <th>User status</th>
                             <th>Membership</th>
+                            <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody id="user-rows"></tbody>

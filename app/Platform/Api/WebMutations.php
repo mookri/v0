@@ -23,10 +23,18 @@ final class WebMutations
      * Run the action (or take its already-built envelope) and negotiate
      * the response: JSON for /api/v1, redirect + flash for web form posts.
      * The closure form lets multi-return actions negotiate once at the
-     * seam instead of at every return.
+     * seam instead of at every return. Success redirects go back to the
+     * referring page unless the caller passes an explicit same-site
+     * target — the step-up form returns the user to where they started
+     * ($redirectTo). Failures always go back so the form can retry in
+     * place with the coded flash_error.
      */
-    public static function negotiate(Request $request, JsonResponse|Closure $json, string $webFlash): JsonResponse|RedirectResponse
-    {
+    public static function negotiate(
+        Request $request,
+        JsonResponse|Closure $json,
+        string $webFlash,
+        ?string $redirectTo = null,
+    ): JsonResponse|RedirectResponse {
         $result = $json instanceof Closure ? $json() : $json;
 
         if ($request->is('api/*')) {
@@ -44,6 +52,8 @@ final class WebMutations
             return redirect()->back()->with('flash_error', $code.': '.$message);
         }
 
-        return redirect()->back()->with('flash', $webFlash);
+        $redirect = $redirectTo !== null ? redirect()->to($redirectTo) : redirect()->back();
+
+        return $redirect->with('flash', $webFlash);
     }
 }

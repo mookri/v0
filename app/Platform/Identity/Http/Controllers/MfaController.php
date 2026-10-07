@@ -3,17 +3,20 @@
 namespace App\Platform\Identity\Http\Controllers;
 
 use App\Models\User;
+use App\Platform\Api\WebMutations;
 use App\Platform\Identity\Events\MfaEnrolled;
 use App\Platform\Identity\Events\MfaRevoked;
 use App\Platform\Identity\MfaService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 /**
  * TOTP second factor (SEC-004 §1.4): enroll (otpauth URL out, secret
  * stored disabled) → confirm (code in, recovery codes out once) →
- * verify (step-up primitive for /oauth/stepup later) → revoke (live
- * code required). Machines denied; code failures collapse to one 401.
+ * verify (the step-up primitive shared by /api/v1/identity/mfa/verify
+ * and the web /oauth/stepup form) → revoke (live code required).
+ * Machines denied; code failures collapse to one 401.
  * User-level surface: no tenant scope, no audit rows (identity
  * self-service precedent) — lifecycle emits platform events.
  */
@@ -105,19 +108,24 @@ final class MfaController
         ]);
     }
 
-    public function verify(Request $request): JsonResponse
+    // Shared action (doc 06 §7.1-7.2): /api/v1/identity/mfa/verify and
+    // the web /oauth/stepup form both land here — one verification, one
+    // proof row, negotiation only at the seam (web returns to the
+    // sanitized return_to carrying a coded flash; API keeps its envelope
+    // untouched, byte-identical to before).
+    public function verify(Request $request): JsonResponse|RedirectResponse
     {
         $user = $this->actor($request);
         if ($user instanceof JsonResponse) {
-            return $user;
+            return WebMutations::negotiate($request, $user, '');
         }
 
         $validated = $request->validate(['code' => ['required', 'string']]);
 
         if (! $this->mfa->verify($user, $validated['code'], time())) {
-            return new JsonResponse([
+            return WebMutations::negotiate($request, new JsonResponse([
                 'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
-            ], 401);
+            ], 401), '');
         }
 
         // Every successful verification is a fresh-possession proof for
@@ -130,10 +138,15 @@ final class MfaController
         ]);
         $stepUp->save();
 
-        return new JsonResponse([
-            'data' => ['object' => 'mfa_verification', 'verified' => true],
-            'meta' => ['request_id' => $this->requestId($request)],
-        ]);
+        return WebMutations::negotiate(
+            $request,
+            new JsonResponse([
+                'data' => ['object' => 'mfa_verification', 'verified' => true],
+                'meta' => ['request_id' => $this->requestId($request)],
+            ]),
+            'Identity verified — sensitive actions are unlocked for 15 minutes.',
+            StepUpController::safeReturnTo($request->input('return_to')),
+        );
     }
 
     public function revoke(Request $request): JsonResponse

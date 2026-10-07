@@ -113,7 +113,8 @@ export function appendHiddenInput(form, name, value) {
  * the page meta, _method spoofing for PATCH/DELETE, extra hidden fields
  * (workspace id), and an optional submit confirmation. These forms post
  * to the SHARED web actions, never to /api/v1 (cookie sessions never
- * authenticate API writes).
+ * authenticate API writes). Returns the form so callers can attach the
+ * step-up gate (`stepUp: true` via appendRow).
  */
 export function appendPostForm(parent, { action, label, cls = 'btn-outline-primary', method = 'POST', fields = {}, confirmMessage = '' }) {
   const form = document.createElement('form');
@@ -142,6 +143,8 @@ export function appendPostForm(parent, { action, label, cls = 'btn-outline-prima
   }
 
   parent.appendChild(form);
+
+  return form;
 }
 
 /** Replace the table body with a single centered state row. */
@@ -172,7 +175,11 @@ export function appendRow(rowsEl, cells) {
       td.appendChild(span);
     } else if (spec && Array.isArray(spec.forms)) {
       for (const options of spec.forms) {
-        appendPostForm(td, options);
+        const form = appendPostForm(td, options);
+        // Sensitive forms (stepup:2 server gate) pass `stepUp: true`:
+        // the gate sits AFTER the optional confirm listener so a
+        // cancelled confirm never opens the verify modal.
+        if (options.stepUp) attachStepUpGate(form);
       }
     } else {
       td.textContent = spec && spec.text !== undefined ? String(spec.text) : '';
@@ -191,4 +198,185 @@ export function showError(alertEl, error) {
   if (error.requestId) parts.push(`request ${error.requestId}`);
   alertEl.textContent = parts.join(' — ');
   alertEl.classList.remove('d-none');
+}
+
+// ---- Step-up gate (doc 06 §7.5) -------------------------------------------
+// Sensitive forms confirm first (appendPostForm's own listener), then this
+// gate: probe /oauth/stepup; while the proof is fresh the form posts right
+// away, otherwise a modal collects the TOTP/recovery code, posts the
+// step-up endpoint, and a re-probe decides the outcome — a followed
+// redirect can never masquerade as success. Fail-closed by construction:
+// without MFA or a verified code the form never posts, and the server's
+// `stepup:2` middleware answers 403 step_up_required regardless.
+
+let stepUpUi = null;
+
+function ensureStepUpModal() {
+  if (stepUpUi) return stepUpUi;
+
+  const el = document.createElement('div');
+  el.className = 'modal fade';
+  el.id = 'admin-stepup-modal';
+  el.tabIndex = -1;
+  el.innerHTML = [
+    '<div class="modal-dialog modal-dialog-centered">',
+    '  <div class="modal-content">',
+    '    <div class="modal-header"><h5 class="modal-title">Verify your identity</h5></div>',
+    '    <div class="modal-body">',
+    '      <p class="text-muted mb-2" id="admin-stepup-hint">Enter the code from your authenticator app (or a recovery code).</p>',
+    '      <div class="alert alert-danger d-none" id="admin-stepup-error" role="alert"></div>',
+    '      <input class="form-control font-monospace" id="admin-stepup-code" inputmode="numeric" autocomplete="one-time-code" maxlength="12" placeholder="123456">',
+    '    </div>',
+    '    <div class="modal-footer">',
+    '      <button type="button" class="btn btn-outline-secondary" id="admin-stepup-cancel">Cancel</button>',
+    '      <button type="button" class="btn btn-primary" id="admin-stepup-submit">Verify</button>',
+    '    </div>',
+    '  </div>',
+    '</div>',
+  ].join('');
+  document.body.appendChild(el);
+
+  const hint = el.querySelector('#admin-stepup-hint');
+  const error = el.querySelector('#admin-stepup-error');
+  const code = el.querySelector('#admin-stepup-code');
+  const submit = el.querySelector('#admin-stepup-submit');
+  const cancel = el.querySelector('#admin-stepup-cancel');
+  const modal = window.bootstrap ? new window.bootstrap.Modal(el) : null;
+
+  stepUpUi = {
+    hint,
+    error,
+    code,
+    submit,
+    show() {
+      error.classList.add('d-none');
+      if (modal) {
+        modal.show();
+      } else {
+        el.classList.add('show', 'd-block');
+      }
+      code.focus();
+    },
+    hide() {
+      if (modal) {
+        modal.hide();
+      } else {
+        el.classList.remove('show', 'd-block');
+      }
+    },
+  };
+
+  code.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (submit.onclick) submit.onclick();
+    }
+  });
+  cancel.addEventListener('click', () => stepUpUi.hide());
+
+  return stepUpUi;
+}
+
+async function stepUpStatus() {
+  const res = await fetch('/oauth/stepup', {
+    headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+    credentials: 'same-origin',
+  });
+  if (!res.ok) throw new Error(`step-up probe ${res.status}`);
+  const body = await res.json();
+  return body && body.data ? body.data : {};
+}
+
+async function stepUpVerify(code) {
+  const data = new FormData();
+  data.append('_token', apiMeta('csrf-token') || '');
+  data.append('code', code);
+  data.append('return_to', window.location.pathname + window.location.search);
+  // redirect: manual stops the browser from following the POST's 302
+  // inside the fetch — the outcome is decided by the follow-up probe, so
+  // success and failure cannot be confused by a followed redirect.
+  await fetch('/oauth/stepup', {
+    method: 'POST',
+    body: data,
+    headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+    credentials: 'same-origin',
+    redirect: 'manual',
+  });
+}
+
+function openStepUpGate(form) {
+  const ui = ensureStepUpModal();
+  ui.error.classList.add('d-none');
+  ui.error.textContent = '';
+  ui.code.value = '';
+
+  const holdForInput = (message) => {
+    ui.hint.textContent = message;
+    ui.code.classList.add('d-none');
+    ui.submit.classList.add('d-none');
+    ui.show();
+  };
+
+  stepUpStatus().then((status) => {
+    if (status.fresh) {
+      form.submit();
+      return;
+    }
+    if (!status.mfa_enabled) {
+      holdForInput(
+        'Multi-factor authentication is required for this action. Enroll an authenticator app in your security settings first.',
+      );
+      return;
+    }
+    ui.hint.textContent = 'Enter the code from your authenticator app (or a recovery code).';
+    ui.code.classList.remove('d-none');
+    ui.submit.classList.remove('d-none');
+    ui.show();
+  }).catch(() => {
+    // Probe failed (offline, 5xx): hold the post — fail-closed.
+    ui.error.textContent = 'Cannot verify your session right now — check your connection and try again.';
+    ui.error.classList.remove('d-none');
+    holdForInput('Cannot verify your session right now.');
+  });
+
+  ui.submit.onclick = async () => {
+    const code = ui.code.value.trim();
+    if (!code) {
+      ui.error.textContent = 'Enter your code.';
+      ui.error.classList.remove('d-none');
+      return;
+    }
+    ui.submit.disabled = true;
+    try {
+      await stepUpVerify(code);
+      const after = await stepUpStatus();
+      if (after.fresh) {
+        ui.hide();
+        form.submit();
+        return;
+      }
+      ui.error.textContent = 'Invalid or expired code.';
+      ui.error.classList.remove('d-none');
+    } catch {
+      ui.error.textContent = 'Verification failed — try again.';
+      ui.error.classList.remove('d-none');
+    } finally {
+      ui.submit.disabled = false;
+    }
+  };
+}
+
+/**
+ * Hold a sensitive form's post until a fresh MFA proof exists (doc 06
+ * §7.5). Registered AFTER any confirm listener so a cancelled confirm
+ * leaves defaultPrevented set and the gate stays quiet; after verification
+ * form.submit() bypasses listeners entirely (no confirm re-prompt, no gate
+ * loop).
+ */
+export function attachStepUpGate(form) {
+  form.addEventListener('submit', (event) => {
+    if (event.defaultPrevented) return;
+    event.preventDefault();
+    openStepUpGate(form);
+  });
 }

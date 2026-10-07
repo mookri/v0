@@ -2,6 +2,9 @@
 // (session cookie + X-Tenant-Id; capability-gated platform:user:view, so a
 // denial surfaces as authorization_denied in the alert). Rows are the
 // workspace's memberships; the embedded user may be null for orphans.
+// Lifecycle forms post the SHARED suspend/activate actions (tenant +
+// platform:user:manage + stepup:2) — the shared step-up gate in
+// admin-api.js holds each post until a fresh MFA proof exists (doc 06 §7.5).
 
 import {
   apiGet,
@@ -16,7 +19,7 @@ import {
 const rowsEl = document.getElementById('user-rows');
 const alertEl = document.getElementById('user-alert');
 
-const COLS = 4;
+const COLS = 5;
 let loaded = false;
 
 function statusBadge(status) {
@@ -33,6 +36,37 @@ function membershipBadge(state) {
   return badge(state || '—', 'bg-secondary-subtle text-secondary');
 }
 
+// Lifecycle forms post the shared web actions (mirroring the API guards
+// exactly); `stepUp: true` attaches the freshness gate so a stale proof
+// opens the verify modal before the post goes out.
+function rowForms(item) {
+  const user = item.user || null;
+  const tenant = apiMeta('api-tenant');
+
+  // Orphans have no user to suspend; deactivated users are frozen
+  // server-side (409 state_forbidden) — no form, no dead button.
+  if (!user || user.status === 'deactivated') return [];
+
+  if (user.status === 'suspended') {
+    return [{
+      action: `/platform/users/${user.id}:activate`,
+      label: 'Activate',
+      cls: 'btn-outline-success btn-sm',
+      fields: { tenant_id: tenant },
+      stepUp: true,
+    }];
+  }
+
+  return [{
+    action: `/platform/users/${user.id}:suspend`,
+    label: 'Suspend',
+    cls: 'btn-outline-danger btn-sm',
+    fields: { tenant_id: tenant },
+    confirmMessage: `Suspend ${user.name || user.email}? Their sessions and tokens die immediately.`,
+    stepUp: true,
+  }];
+}
+
 function appendItems(items) {
   for (const item of items) {
     const user = item.user || null;
@@ -42,6 +76,7 @@ function appendItems(items) {
       (user && user.name) || '—',
       user ? statusBadge(user.status) : badge('orphaned', 'bg-warning-subtle text-warning'),
       membershipBadge(item.state),
+      { forms: rowForms(item) },
     ]);
   }
 }

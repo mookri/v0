@@ -3,9 +3,11 @@
 namespace App\Platform\Identity\Http\Controllers;
 
 use App\Models\User;
+use App\Platform\Api\WebMutations;
 use App\Platform\Tenancy\Models\Tenant;
 use App\Platform\Tenancy\Models\TenantMembership;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 /**
@@ -64,17 +66,30 @@ final class UserAdminController
         ]);
     }
 
-    public function suspend(Request $request, string $id): JsonResponse
+    // Shared actions (doc 06 §7.1-7.2): the console's row forms and
+    // /api/v1 point here — one tenant/issuuer/credential-revocation path,
+    // negotiation only (web redirects back with a coded flash, API keeps
+    // its envelope untouched). The web route mirrors the API guards
+    // exactly: tenant + platform:user:manage + a fresh MFA proof.
+    public function suspend(Request $request, string $id): JsonResponse|RedirectResponse
     {
-        return $this->setStatus($request, $id, self::STATUS_SUSPENDED);
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->setStatusJson($request, $id, self::STATUS_SUSPENDED),
+            'User suspended.',
+        );
     }
 
-    public function activate(Request $request, string $id): JsonResponse
+    public function activate(Request $request, string $id): JsonResponse|RedirectResponse
     {
-        return $this->setStatus($request, $id, self::STATUS_ACTIVE);
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->setStatusJson($request, $id, self::STATUS_ACTIVE),
+            'User activated.',
+        );
     }
 
-    private function setStatus(Request $request, string $id, string $status): JsonResponse
+    private function setStatusJson(Request $request, string $id, string $status): JsonResponse
     {
         $validated = $request->validate(['tenant_id' => ['required', 'string']]);
 

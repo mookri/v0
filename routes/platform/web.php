@@ -33,6 +33,17 @@ Route::get('/oauth/userinfo', [\App\Platform\Identity\OAuth\Http\Controllers\Dis
     ->middleware(['auth.any', 'throttle:60,1'])
     ->name('platform.userinfo');
 
+// Step-up form (SEC-004 §6, doc 06 §7.5): GET renders the TOTP/recovery
+// form — or, fail-closed, the enrollment-required notice — and answers
+// the console's freshness probe as JSON. POST shares the API's MFA verify
+// action, so the proof row it writes is exactly what `stepup:2` reads;
+// return_to is clamped to same-site paths on both sides.
+Route::get('/oauth/stepup', [\App\Platform\Identity\Http\Controllers\StepUpController::class, 'show'])
+    ->middleware('auth')
+    ->name('oauth.stepup');
+Route::post('/oauth/stepup', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'verify'])
+    ->middleware('auth');
+
 // Shared admin write actions (doc 06 §7.1-7.2): the console's forms and
 // the /api/v1 endpoints point at the SAME controller actions — session +
 // CSRF here (web group), bearer over there, one service and validation
@@ -41,8 +52,10 @@ Route::get('/oauth/userinfo', [\App\Platform\Identity\OAuth\Http\Controllers\Dis
 // untouched. The workspace travels as a hidden `tenant_id` form field
 // (forms cannot set headers); ResolveTenantContext reads it only for
 // non-api paths, so API header posture does not move. Step-up-gated
-// mutations (role grants, user suspend/activate) stay API-only until the
-// /oauth/stepup form flow lands (doc 06 §7.5).
+// mutations: user suspend/activate share their API actions behind the
+// same tenant + capability + `stepup:2` guards, satisfied by the
+// /oauth/stepup form below (doc 06 §7.5). Role grants/revokes and
+// api-keys stay API-only until their console surfaces land.
 Route::group(['prefix' => '/platform', 'middleware' => 'auth'], function (): void {
     Route::post('/policies', [\App\Platform\Authz\Http\Controllers\PolicyController::class, 'store'])
         ->middleware(['tenant', 'capability:platform:policy:configure']);
@@ -53,6 +66,10 @@ Route::group(['prefix' => '/platform', 'middleware' => 'auth'], function (): voi
     Route::patch('/policies/{policy}', [\App\Platform\Authz\Http\Controllers\PolicyController::class, 'update'])
         ->middleware(['tenant', 'capability:platform:policy:configure']);
     Route::post('/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'store']);
+    Route::post('/users/{id}:suspend', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'suspend'])
+        ->middleware(['tenant', 'capability:platform:user:manage', 'stepup:2']);
+    Route::post('/users/{id}:activate', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'activate'])
+        ->middleware(['tenant', 'capability:platform:user:manage', 'stepup:2']);
     Route::post('/sod-rules', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'store']);
     Route::patch('/sod-rules/{id}', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'update']);
     Route::delete('/sod-rules/{id}', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'destroy']);

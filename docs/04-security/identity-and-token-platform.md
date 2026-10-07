@@ -95,9 +95,8 @@ Password hashing: Argon2id (Laravel default).
   never revoke), code failures collapse to one 401, code endpoints
   throttled. Lifecycle emits `platform.mfa.enrolled/revoked` (no
   audit rows — identity self-service precedent, no tenant context).
-- Session/token `amr` claims, tenant `require_mfa` enforcement, and
-  `/oauth/stepup` still pending (step-up consumes the verify
-  primitive).
+- Session/token `amr` claims and tenant `require_mfa` enforcement
+  still pending. `/oauth/stepup` landed — see A-SEC-004-3.
 
 ---
 
@@ -418,6 +417,34 @@ Normative behavior:
   available to unenrolled users (self-defense against stolen sessions
   must not require enrollment).
 6. Every step-up emits `platform.session.stepup_completed` (audit).
+
+### Implementation note A-SEC-004-3 — web step-up flow live (2026-10-08)
+
+**Status:** ACTIVE · **Supersedes:** A-SEC-004-2's "web redirect flow
+pending" delta (additive)
+
+- `/oauth/stepup` (web, session-auth): GET renders the TOTP/recovery
+  form — or, fail-closed, the enrollment-required notice — and answers
+  the console's freshness probe as JSON (`Accept: application/json` →
+  `{mfa_enabled, fresh}`). POST shares `MfaController::verify` (doc 06
+  §7 one-action rule): the proof row it writes is exactly what
+  `stepup:2` reads, so form and API verify through one code path.
+  Success redirects to `return_to`, clamped to same-site paths
+  (off-site, protocol-relative or backslash targets collapse to `/`).
+- Console flow (doc 06 §7.5): sensitive forms confirm, then a shared
+  gate in `admin-api.js` probes freshness — a fresh proof posts
+  straight away; otherwise a modal collects the code, posts
+  `/oauth/stepup`, and re-probes before the action goes out (a
+  followed redirect can never masquerade as success). Without MFA or a
+  verified code the form never posts; the server gate answers 403
+  `step_up_required` regardless.
+- First consumer: user suspend/activate — web routes mirror the API
+  guards exactly (`tenant` + `platform:user:manage` + `stepup:2`) and
+  negotiate through `WebMutations` (web → redirect + coded flash, API
+  → byte-identical envelope).
+- Still pending from A-SEC-004-2: session ACR tracking, `amr` claims,
+  tenant `require_mfa` enforcement, and the role-grant / api-key web
+  flows (they share this gate when their console surfaces land).
 
 ---
 
