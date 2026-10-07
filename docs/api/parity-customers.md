@@ -124,3 +124,19 @@ backend-authoritative mirror).
 | invalid query params (limit, start_date/end_date) | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
 
 HTTP statuses are identical everywhere: that is the cross-surface contract.
+
+## Support staff console (S4)
+
+Backend-authoritative staff surface — no BFF endpoint exists for it (the
+Blade console consumes the API directly, doc 06 §7). Codes/statuses below
+are the backend's; the customer-side support flows above are unchanged.
+
+| Backend endpoint | Behavior |
+|---|---|
+| `GET /api/v1/customers/support/staff/tickets?status=OPEN/CLOSED` | 200 cursor queue with masked customer identity; 403 `authorization_denied` without `customers:support:view`; 422 `validation_failed` on a bad filter |
+| `GET /api/v1/customers/support/staff/tickets/{id}` | 200 thread with `by: customer/staff` authorship + author names; foreign id → 404 `not_found` |
+| `POST /api/v1/customers/support/staff/tickets/{id}/messages` | 201 (re-opens CLOSED, audited `via: staff`); 403 without `customers:support:manage` |
+| `POST /api/v1/customers/support/staff/tickets/{id}:close` | 200; repeat 409 `state_forbidden` (same code as the customer side); 404 `not_found` when foreign |
+
+The console's web forms post to `/customers/support/tickets/…` (session +
+CSRF → redirect back with a coded flash) over the same shared actions.
