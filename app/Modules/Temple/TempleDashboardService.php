@@ -69,7 +69,7 @@ final class TempleDashboardService implements ProvidesTempleDashboard
         ];
     }
 
-    public function pujas(string $templeId, array $filters = [], int $limit = 20): array
+    public function pujas(string $templeId, array $filters = [], int $limit = 20, ?string $cursor = null): array
     {
         $tenantId = (string) app(TenantContext::class)->tenantId();
 
@@ -85,7 +85,7 @@ final class TempleDashboardService implements ProvidesTempleDashboard
             $query->where('puja_id', $filters['puja_id']);
         }
 
-        $request = new Request(['limit' => $limit]);
+        $request = new Request(['limit' => $limit, 'cursor' => $cursor]);
         [$items, $page] = CursorPagination::paginate($query, $request, $limit);
 
         return [
@@ -94,19 +94,19 @@ final class TempleDashboardService implements ProvidesTempleDashboard
         ];
     }
 
-    public function bookings(string $templeId, array $filters = [], int $limit = 20): array
+    public function bookings(string $templeId, array $filters = [], int $limit = 20, ?string $cursor = null): array
     {
         $tenantId = (string) app(TenantContext::class)->tenantId();
 
         // TODO: Integrate with Booking module
         // For now returning empty results
-        $request = new Request(['limit' => $limit]);
+        $request = new Request(['limit' => $limit, 'cursor' => $cursor]);
         $query = \App\Modules\Temple\Models\TemplePuja::query()
             ->where('tenant_id', (string) app(TenantContext::class)->tenantId())
             ->where('temple_id', $templeId)
             ->whereRaw('1=0'); // Empty query
 
-        [$items, $page] = CursorPagination::paginate($query, new \Illuminate\Http\Request(['limit' => $limit]), $limit);
+        [$items, $page] = CursorPagination::paginate($query, $request, $limit);
 
         return [
             'items' => [],

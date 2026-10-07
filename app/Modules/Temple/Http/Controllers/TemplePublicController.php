@@ -42,8 +42,9 @@ final class TemplePublicController
 
         $filters = $request->only(['city', 'state', 'amenities', 'lat', 'lng', 'radius', 'q']);
         $limit = min((int) $request->query('limit', 20), 100);
+        $cursor = is_string($request->query('cursor')) ? $request->query('cursor') : null;
 
-        $result = $this->profiles->publicProfiles($filters, $limit);
+        $result = $this->profiles->publicProfiles($filters, $limit, $cursor);
 
         return new JsonResponse([
             'data' => $result['items'],
@@ -80,8 +81,9 @@ final class TemplePublicController
         ]);
 
         $limit = min((int) $request->query('limit', 20), 100);
+        $cursor = is_string($request->query('cursor')) ? $request->query('cursor') : null;
 
-        $result = $this->pujas->publicPujas($templeId, $limit);
+        $result = $this->pujas->publicPujas($templeId, $limit, $cursor);
 
         if ($result === null) {
             // Absent, unverified and non-active temples collapse into the

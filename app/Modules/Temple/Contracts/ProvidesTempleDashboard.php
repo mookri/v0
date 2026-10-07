@@ -27,17 +27,19 @@ interface ProvidesTempleDashboard
      * Pujas for dashboard with inline edit capability.
      *
      * @param  array<string, mixed>  $filters
+     * @param  string|null  $cursor  opaque cursor from a previous page (null = first page)
      * @return array{items: list<array{id: string, puja_id: string, puja_name: string, price_override_minor: int|null, capacity: int|null, schedule_json: string|null, status: string, bookings_count: int}>, page: array{limit: int, has_more: bool, next_cursor: string|null}}
      */
-    public function pujas(string $templeId, array $filters = [], int $limit = 20): array;
+    public function pujas(string $templeId, array $filters = [], int $limit = 20, ?string $cursor = null): array;
 
     /**
      * Bookings for dashboard.
      *
      * @param  array<string, mixed>  $filters
+     * @param  string|null  $cursor  opaque cursor from a previous page (null = first page)
      * @return array{items: list<array{id: string, puja_name: string, user_name: string, user_email: string, start_at: string, end_at: string, status: string, amount_minor: int}>, page: array{limit: int, has_more: bool, next_cursor: string|null}}
      */
-    public function bookings(string $templeId, array $filters = [], int $limit = 20): array;
+    public function bookings(string $templeId, array $filters = [], int $limit = 20, ?string $cursor = null): array;
 
     /**
      * Calendar view: slots for a given month.

@@ -84,7 +84,7 @@ final class TemplePujaManagementService implements ManagesTemplePujas
         // Audit would go here
     }
 
-    public function listPujas(string $templeId, array $filters = [], int $limit = 20): array
+    public function listPujas(string $templeId, array $filters = [], int $limit = 20, ?string $cursor = null): array
     {
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
 
@@ -96,7 +96,7 @@ final class TemplePujaManagementService implements ManagesTemplePujas
             $query->where('status', $filters['status']);
         }
 
-        $request = new \Illuminate\Http\Request(['limit' => $limit]);
+        $request = new \Illuminate\Http\Request(['limit' => $limit, 'cursor' => $cursor]);
         $paginator = \App\Platform\Api\CursorPagination::paginate($query, $request, $limit);
 
         return [
@@ -122,7 +122,7 @@ final class TemplePujaManagementService implements ManagesTemplePujas
         return $this->toAssignment($puja);
     }
 
-    public function publicPujas(string $templeId, int $limit = 20): ?array
+    public function publicPujas(string $templeId, int $limit = 20, ?string $cursor = null): ?array
     {
         if (! $this->publiclyVisible($templeId)) {
             return null;
@@ -135,7 +135,7 @@ final class TemplePujaManagementService implements ManagesTemplePujas
             ->where('temple_id', $templeId)
             ->where('status', TemplePuja::STATUS_ACTIVE);
 
-        $request = new \Illuminate\Http\Request(['limit' => $limit]);
+        $request = new \Illuminate\Http\Request(['limit' => $limit, 'cursor' => $cursor]);
         [$items, $page] = \App\Platform\Api\CursorPagination::paginate($query, $request, $limit);
 
         return [

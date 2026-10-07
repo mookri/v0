@@ -32,8 +32,9 @@ final class TemplePujaController
 
         $filters = $request->only(['status']);
         $limit = min((int) $request->query('limit', 20), 100);
+        $cursor = is_string($request->query('cursor')) ? $request->query('cursor') : null;
 
-        $result = $this->pujas->listPujas($templeId, $filters, $limit);
+        $result = $this->pujas->listPujas($templeId, $filters, $limit, $cursor);
 
         return new JsonResponse([
             'data' => $result['items'],

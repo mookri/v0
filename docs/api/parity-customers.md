@@ -112,7 +112,7 @@ cross-surface contract (validation: 422 both sides after the F1 alignment).
 
 | Step | Next.js BFF | Laravel module | Match |
 |---|---|---|---|
-| temple directory (customer) | `GET /api/temples` → `{data: TempleProfile[], meta: {page}}` | `GET /api/v1/temple/profiles` → 200 kernel envelope with items + cursor page (VERIFIED + ACTIVE only) | **wired behind flag** (BFF unwraps kernel envelope, passes query params) |
+| temple directory (customer) | `GET /api/temples` → `{data: TempleProfile[], meta: {page}}` | `GET /api/v1/temple/profiles` → 200 kernel envelope with items + cursor page (VERIFIED + ACTIVE only) | **wired behind flag** (BFF unwraps kernel envelope, passes query params — `?cursor=` honored end-to-end since S12; the API previously dropped it and replayed page 1) |
 | temple detail (customer) | `GET /api/temples/:templeId` → profile | `GET /api/v1/temple/profiles/{id}` → 200 kernel envelope with profile (404 `TEMPLE_NOT_FOUND` for unknown/unverified/suspended id) | **wired behind flag** (404 `TEMPLE_NOT_FOUND` → `NOT_FOUND`) |
 | temple directory (partner) | `GET /api/temples` → `{data: TempleProfile[], meta: {page}}` | `GET /api/v1/temple/profiles` → same backend as the customer directory | **wired behind flag** (`PARTNER_BACKEND=laravel`) |
 | temple detail (partner) | `GET /api/temples/:templeId` → profile | `GET /api/v1/temple/profiles/{id}` → same backend as the customer detail | **wired behind flag** (404 `TEMPLE_NOT_FOUND` → `NOT_FOUND`) |

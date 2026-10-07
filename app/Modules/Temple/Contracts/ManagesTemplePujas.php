@@ -50,9 +50,10 @@ interface ManagesTemplePujas
      * List pujas for a temple (partner self-serve).
      *
      * @param  array<string, mixed>  $filters
+     * @param  string|null  $cursor  opaque cursor from a previous page (null = first page)
      * @return array{items: list<array{id: string, temple_id: string, puja_id: string, price_override_minor: int|null, capacity: int|null, schedule_json: string|null, status: string}>, page: array{limit: int, has_more: bool, next_cursor: string|null}}
      */
-    public function listPujas(string $templeId, array $filters = [], int $limit = 20): array;
+    public function listPujas(string $templeId, array $filters = [], int $limit = 20, ?string $cursor = null): array;
 
     /**
      * Fetch one puja assignment (partner self-serve), scoped to the
@@ -70,9 +71,10 @@ interface ManagesTemplePujas
      * visible so the caller can collapse both into one 404 — no
      * existence oracle for temples awaiting vetting (P11g).
      *
+     * @param  string|null  $cursor  opaque cursor from a previous page (null = first page)
      * @return array{items: list<array{id: string, temple_id: string, puja_id: string, price_override_minor: int|null, capacity: int|null, schedule_json: string|null, status: string, created_at: string}>, page: array{limit: int, has_more: bool, next_cursor: string|null}}|null
      */
-    public function publicPujas(string $templeId, int $limit = 20): ?array;
+    public function publicPujas(string $templeId, int $limit = 20, ?string $cursor = null): ?array;
 
     /**
      * Public weekly availability of a VERIFIED + ACTIVE temple, expanded

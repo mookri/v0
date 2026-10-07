@@ -8,7 +8,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * Temple profile controller (public + partner self-serve + admin).
+ * Temple profile controller (partner self-serve + admin). The public
+ * browse/search twin lives in TemplePublicController — this class never
+ * had routes for a public index/show (removed as dead code, S12).
  */
 final class TempleProfileController
 {
@@ -23,45 +25,6 @@ final class TempleProfileController
         return (string) $request->attributes->get('request_id', '');
     }
 
-    // PUBLIC: List verified/active temples
-    public function index(Request $request): JsonResponse
-    {
-        $request->validate([
-            'limit' => ['sometimes', 'integer', 'min:1', 'max:100'],
-            'city' => ['sometimes', 'string', 'max:100'],
-            'state' => ['sometimes', 'string', 'max:100'],
-            'amenities' => ['sometimes', 'array'],
-            'amenities.*' => ['string'],
-        ]);
-
-        $filters = $request->only(['city', 'state', 'amenities']);
-        $limit = min((int) $request->query('limit', 20), 100);
-
-        $result = $this->profiles->publicProfiles($filters, $limit);
-
-        return new JsonResponse([
-            'data' => $result['items'],
-            'meta' => ['request_id' => $this->requestId($request), 'page' => $result['page']],
-        ]);
-    }
-
-    // PUBLIC: Show verified/active temple
-    public function show(Request $request, string $id): JsonResponse
-    {
-        $profile = $this->profiles->profileById($id);
-
-        if ($profile === null) {
-            return new JsonResponse([
-                'error' => ['code' => 'TEMPLE_NOT_FOUND', 'message' => 'Temple not found.', 'request_id' => $this->requestId($request)],
-            ], 404);
-        }
-
-        return new JsonResponse([
-            'data' => $profile,
-            'meta' => ['request_id' => $this->requestId($request)],
-        ]);
-    }
-
     // PARTNER: List owned/managed temples
     public function partnerIndex(Request $request): JsonResponse
     {
@@ -73,8 +36,9 @@ final class TempleProfileController
         $identityId = (string) $request->user()?->getAuthIdentifier();
         $filters = $request->only(['status']);
         $limit = min((int) $request->query('limit', 20), 100);
+        $cursor = is_string($request->query('cursor')) ? $request->query('cursor') : null;
 
-        $result = $this->profiles->partnerProfiles($identityId, $filters, $limit);
+        $result = $this->profiles->partnerProfiles($identityId, $filters, $limit, $cursor);
 
         return new JsonResponse([
             'data' => $result['items'],
@@ -175,8 +139,9 @@ final class TempleProfileController
 
         $filters = $request->only(['status', 'verification_status', 'search']);
         $limit = min((int) $request->query('limit', 20), 100);
+        $cursor = is_string($request->query('cursor')) ? $request->query('cursor') : null;
 
-        $result = $this->profiles->adminProfiles($filters, $limit);
+        $result = $this->profiles->adminProfiles($filters, $limit, $cursor);
 
         return new JsonResponse([
             'data' => $result['items'],

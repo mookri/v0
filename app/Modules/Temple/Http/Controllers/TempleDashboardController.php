@@ -42,8 +42,9 @@ final class TempleDashboardController
 
         $filters = $request->only(['status', 'puja_id']);
         $limit = min((int) $request->query('limit', 20), 100);
+        $cursor = is_string($request->query('cursor')) ? $request->query('cursor') : null;
 
-        $result = $this->dashboard->pujas($templeId, $filters, $limit);
+        $result = $this->dashboard->pujas($templeId, $filters, $limit, $cursor);
 
         return new JsonResponse([
             'data' => $result['items'],
@@ -63,8 +64,9 @@ final class TempleDashboardController
 
         $filters = $request->only(['status', 'date_from', 'date_to']);
         $limit = min((int) $request->query('limit', 20), 100);
+        $cursor = is_string($request->query('cursor')) ? $request->query('cursor') : null;
 
-        $result = $this->dashboard->bookings($templeId, $filters, $limit);
+        $result = $this->dashboard->bookings($templeId, $filters, $limit, $cursor);
 
         return new JsonResponse([
             'data' => $result['items'],
