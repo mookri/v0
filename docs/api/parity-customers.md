@@ -92,7 +92,7 @@ cross-surface contract (validation: 422 both sides after the F1 alignment).
 
 | Step | Next.js BFF | Laravel module | Match |
 |---|---|---|---|
-| pandit directory | `GET /api/pandits` → `{data: PanditProfile[], meta: {page}}` | `GET /api/v1/pandit/profiles` → 200 kernel envelope with items + cursor page (verified + ACTIVE only) | **wired behind flag** (BFF unwraps kernel envelope, passes query params) |
+| pandit directory | `GET /api/pandits` → `{data: {items: PanditProfile[], pagination: {hasMore, nextCursor}}, requestId}` | `GET /api/v1/pandit/profiles` → 200 kernel envelope with items + cursor page (verified + ACTIVE only) | **wired behind flag** (BFF unwraps kernel envelope; `?cursor=`/`?limit=` forwarded untouched, `meta.page` mapped to `pagination`) |
 | pandit detail | `GET /api/pandits/:panditId` → `{id, name, bio, specializations[], market, languages[], experience_years, rating_avg, review_count, verification_status, status, created_at}` | `GET /api/v1/pandit/profiles/{id}` → 200 kernel envelope with profile (404 `PANDIT_NOT_FOUND` for unknown/unverified/suspended) | **wired behind flag** (404 → NOT_FOUND) |
 | pandit availability | `GET /api/pandits/:panditId/availability?start_date&end_date` → `{data: AvailabilitySlot[], meta}` | `GET /api/v1/pandit/profiles/{id}/availability` → 200 kernel envelope with slots (404 `PANDIT_NOT_FOUND` for unknown/unverified/suspended) | **wired behind flag** (404 → NOT_FOUND) |
 
