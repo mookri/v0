@@ -29,8 +29,8 @@ Order matters — keys before traffic, migrations before seed:
 4. **Scheduler cron** — install the single entry point (see §2).
    Without it, retention hygiene never fires and tables grow
    unbounded.
-5. **Smoke** — `php artisan api:compose --check` (15 fragments /
-   116 paths), `GET /up` → 200, `GET /ready` → 200,
+5. **Smoke** — `php artisan api:compose --check` (16 fragments /
+   134 paths), `GET /up` → 200, `GET /ready` → 200,
    `GET /.well-known/oauth-authorization-server` → 200.
 
 ## 2. Scheduler (required)
