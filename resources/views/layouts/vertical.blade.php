@@ -3,6 +3,7 @@
 
 <head>
     @include('layouts.partials/title-meta', ['title' => $title])
+    <x-api-context />
     @include('layouts.partials/head-css')
 </head>
 

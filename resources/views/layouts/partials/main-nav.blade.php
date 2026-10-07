@@ -121,6 +121,22 @@
                </li> <!-- end Pages Menu -->
 
                <li class="nav-item">
+                    <a class="nav-link menu-arrow" href="#sidebarPandits" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarPandits">
+                         <span class="nav-icon">
+                              <i class="ri-user-star-line"></i>
+                         </span>
+                         <span class="nav-text"> Pandits </span>
+                    </a>
+                    <div class="collapse" id="sidebarPandits">
+                         <ul class="nav sub-navbar-nav">
+                              <li class="sub-nav-item">
+                                   <a class="sub-nav-link" href="{{ route('second', ['pandits', 'directory'])}}">Directory</a>
+                              </li>
+                         </ul>
+                    </div>
+               </li> <!-- end Pandits Menu -->
+
+               <li class="nav-item">
                     <a class="nav-link" href="{{ route('any', 'orders')}}">
                          <span class="nav-icon">
                               <i class="ri-home-office-line"></i>

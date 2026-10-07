@@ -31,6 +31,7 @@ export default defineConfig({
                 'resources/js/pages/agent-grid.js',
                 'resources/js/pages/agent-detail.js',
                 'resources/js/pages/customer-detail.js',
+                'resources/js/pages/pandit-directory.js',
                 'resources/js/pages/app-chat.js',
                 'resources/js/pages/app-blog-create.js',
                 'resources/js/pages/app-blog-create.js',
