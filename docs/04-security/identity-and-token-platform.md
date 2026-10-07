@@ -450,6 +450,36 @@ pending" delta (additive)
 - Still pending from A-SEC-004-2: session ACR tracking, `amr` claims,
   and tenant `require_mfa` enforcement.
 
+### Implementation note A-SEC-004-4 — security settings console page (2026-10-08)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive; completes
+A-SEC-004-3's fail-closed notice destination)
+
+- `/account/security` (web, session-auth): the console's security page —
+  profile name edit, TOTP enrollment/confirmation/management, and the
+  web session inventory with revoke-others. Served by the admin shell
+  catch-all, reachable from the topbar dropdown; the step-up form and
+  modal notices now link here, so the enrollment nudge is no longer a
+  dead end.
+- One-action rule holds throughout (doc 06 §7): reads travel as
+  session-cookie GETs (`/api/v1/identity/mfa`, `/identity/sessions`;
+  the profile form is prefilled server-side), writes are CSRF forms
+  posting the SHARED actions — `/account/security/...` mirrors the
+  API's `auth.any` + session guards with the web `auth` group,
+  negotiated by `WebMutations`. No step-up gate anywhere in the group:
+  enrolling MFA must work before MFA exists, and revoke-others stays
+  available to unenrolled users (A-SEC-004-2 self-defense precedent).
+  The API stays bearer/CSRF-exempt — cookie-authenticated writes never
+  post to `/api/v1`.
+- One-time values ride the coded flash, consumed by that single render:
+  the enrollment setup key (extracted from the `otpauth` URL), the
+  recovery codes on confirm/regenerate, and the revocation count.
+  `updateProfile`'s strict unknown-field check ignores `_token` only —
+  web CSRF bookkeeping, never a client field.
+- Verified by `SecurityConsoleTest`; `MfaTest` and the identity
+  self-service tests remain the API parity pin (envelopes stay
+  byte-identical through the widening).
+
 ---
 
 ### Sessions & SSO Semantics

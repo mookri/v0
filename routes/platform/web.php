@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 |
 | Kernel-owned web endpoints. Public discovery & health surfaces first,
-| then the admin console's shared write actions (doc 06 §7). This file is
+| then the admin console's shared write actions (doc 06 §7), then the
+| security page's identity self-service forms. This file is
 | required from routes/web.php BEFORE the Velzon admin shell catch-all,
 | inside the `web` middleware group (CSRF + session cookie included).
 | `/up` is registered by the framework via the `health` key in
@@ -89,4 +90,20 @@ Route::group(['prefix' => '/platform', 'middleware' => 'auth'], function (): voi
     Route::post('/sod-rules', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'store']);
     Route::patch('/sod-rules/{id}', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'update']);
     Route::delete('/sod-rules/{id}', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'destroy']);
+});
+
+// Identity self-service write actions (security page /account/security,
+// doc 06 §7): the page's profile/MFA/session forms post here behind
+// session + CSRF — the API mirrors stay auth.any + session with
+// bearer/CSRF-exempt posture, one action underneath. No step-up gate
+// anywhere in this group: enrolling MFA must work before MFA exists,
+// and revoke-others is self-defense against a stolen session (A-SEC-
+// 004-2 precedent — proof must never be required to escape a session).
+Route::group(['prefix' => '/account/security', 'middleware' => 'auth'], function (): void {
+    Route::post('/profile', [\App\Platform\Identity\Http\Controllers\IdentitySelfServiceController::class, 'updateProfile']);
+    Route::post('/mfa/enroll', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'enroll']);
+    Route::post('/mfa/confirm', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'confirm']);
+    Route::post('/mfa/revoke', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'revoke']);
+    Route::post('/mfa/recovery-codes', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'recoveryCodes']);
+    Route::post('/sessions/revoke-others', [\App\Platform\Identity\Http\Controllers\IdentitySelfServiceController::class, 'revokeOtherSessions']);
 });

@@ -2,7 +2,9 @@
 
 namespace App\Platform\Identity\Http\Controllers;
 
+use App\Platform\Api\WebMutations;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -32,10 +34,25 @@ final class IdentitySelfServiceController
         ]);
     }
 
-    public function updateProfile(Request $request): JsonResponse
+    // Shared actions (doc 06 §7.1-7.2): the security page's forms and
+    // /api/v1/identity point here — web posts redirect back with a coded
+    // flash, API envelopes stay byte-identical.
+    public function updateProfile(Request $request): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->updateProfileJson($request),
+            'Profile updated.',
+        );
+    }
+
+    private function updateProfileJson(Request $request): JsonResponse
     {
         $allowed = ['name'];
-        $unknown = array_diff(array_keys($request->all()), $allowed);
+        // `_token` is web CSRF bookkeeping, not a client field: it never
+        // travels on /api/v1 (bearer posture) and must not read as an
+        // unknown field when the security page posts its form.
+        $unknown = array_diff(array_keys($request->except(['_token'])), $allowed);
         if ($unknown !== []) {
             return new JsonResponse([
                 'error' => [
@@ -86,7 +103,20 @@ final class IdentitySelfServiceController
         ]);
     }
 
-    public function revokeOtherSessions(Request $request): JsonResponse
+    public function revokeOtherSessions(Request $request): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->revokeOtherSessionsJson($request),
+            static function (JsonResponse $result): string {
+                $revoked = WebMutations::data($result)['revoked'] ?? 0;
+
+                return 'Other sessions revoked: '.(is_int($revoked) ? $revoked : 0);
+            },
+        );
+    }
+
+    private function revokeOtherSessionsJson(Request $request): JsonResponse
     {
         $user = $request->user();
         if (! $request->hasSession()) {

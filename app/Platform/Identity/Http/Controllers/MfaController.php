@@ -67,7 +67,34 @@ final class MfaController
         ]);
     }
 
-    public function enroll(Request $request): JsonResponse
+    // Shared actions (doc 06 §7.1-7.2): the security page's forms and
+    // /api/v1/identity/mfa point here — one enrollment/confirmation path,
+    // negotiation only. One-time values (setup key, recovery codes) exist
+    // only inside the envelope, so the web flash derives from the success
+    // response and dies with that single render; API envelopes stay
+    // byte-identical (MfaTest + the full suite are the parity pin).
+    public function enroll(Request $request): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->enrollJson($request),
+            static function (JsonResponse $result): string {
+                $url = WebMutations::stringData($result, 'otpauth_url');
+                $secret = '';
+                $query = parse_url($url, PHP_URL_QUERY);
+                if (is_string($query)) {
+                    parse_str($query, $params);
+                    if (isset($params['secret']) && is_string($params['secret'])) {
+                        $secret = $params['secret'];
+                    }
+                }
+
+                return 'Authenticator setup key — enter this key in your app, then confirm below: '.$secret;
+            },
+        );
+    }
+
+    private function enrollJson(Request $request): JsonResponse
     {
         $user = $this->actor($request);
         if ($user instanceof JsonResponse) {
@@ -83,7 +110,17 @@ final class MfaController
         ], 201);
     }
 
-    public function confirm(Request $request): JsonResponse
+    public function confirm(Request $request): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->confirmJson($request),
+            static fn (JsonResponse $result): string => 'Authenticator app enabled. Recovery codes (shown once — store them safely): '
+                .implode(', ', WebMutations::listData($result, 'recovery_codes')),
+        );
+    }
+
+    private function confirmJson(Request $request): JsonResponse
     {
         $user = $this->actor($request);
         if ($user instanceof JsonResponse) {
@@ -149,7 +186,16 @@ final class MfaController
         );
     }
 
-    public function revoke(Request $request): JsonResponse
+    public function revoke(Request $request): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->revokeJson($request),
+            'Authenticator app revoked.',
+        );
+    }
+
+    private function revokeJson(Request $request): JsonResponse
     {
         $user = $this->actor($request);
         if ($user instanceof JsonResponse) {
@@ -172,7 +218,17 @@ final class MfaController
         ]);
     }
 
-    public function recoveryCodes(Request $request): JsonResponse
+    public function recoveryCodes(Request $request): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->recoveryCodesJson($request),
+            static fn (JsonResponse $result): string => 'New recovery codes (shown once — store them safely): '
+                .implode(', ', WebMutations::listData($result, 'recovery_codes')),
+        );
+    }
+
+    private function recoveryCodesJson(Request $request): JsonResponse
     {
         $user = $this->actor($request);
         if ($user instanceof JsonResponse) {

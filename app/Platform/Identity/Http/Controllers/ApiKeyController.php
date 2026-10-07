@@ -96,15 +96,8 @@ final class ApiKeyController
         return WebMutations::negotiate(
             $request,
             fn (): JsonResponse => $this->issueJson($request),
-            static function (JsonResponse $result): string {
-                $payload = $result->getData(true);
-                $data = is_array($payload) && isset($payload['data']) && is_array($payload['data'])
-                    ? $payload['data']
-                    : [];
-                $secret = isset($data['secret']) && is_string($data['secret']) ? $data['secret'] : '';
-
-                return 'API key issued — copy it now, it is shown only once: '.$secret;
-            },
+            static fn (JsonResponse $result): string
+                => 'API key issued — copy it now, it is shown only once: '.WebMutations::stringData($result, 'secret'),
         );
     }
 
@@ -216,15 +209,8 @@ final class ApiKeyController
         return WebMutations::negotiate(
             $request,
             fn (): JsonResponse => $this->rotateJson($request, $id),
-            static function (JsonResponse $result): string {
-                $payload = $result->getData(true);
-                $data = is_array($payload) && isset($payload['data']) && is_array($payload['data'])
-                    ? $payload['data']
-                    : [];
-                $secret = isset($data['secret']) && is_string($data['secret']) ? $data['secret'] : '';
-
-                return 'API key rotated — copy the new secret now, it is shown only once: '.$secret;
-            },
+            static fn (JsonResponse $result): string
+                => 'API key rotated — copy the new secret now, it is shown only once: '.WebMutations::stringData($result, 'secret'),
         );
     }
 

@@ -314,7 +314,9 @@ function openStepUpGate(form) {
   ui.code.value = '';
 
   const holdForInput = (message) => {
-    ui.hint.textContent = message;
+    // Fixed constants only (never user input) — the enrollment nudge
+    // carries a link to the security page the notice now promises.
+    ui.hint.innerHTML = message;
     ui.code.classList.add('d-none');
     ui.submit.classList.add('d-none');
     ui.show();
@@ -327,7 +329,7 @@ function openStepUpGate(form) {
     }
     if (!status.mfa_enabled) {
       holdForInput(
-        'Multi-factor authentication is required for this action. Enroll an authenticator app in your security settings first.',
+        'Multi-factor authentication is required for this action. Enroll an authenticator app in your <a href="/account/security">security settings</a> first.',
       );
       return;
     }

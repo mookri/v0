@@ -33,7 +33,7 @@
     @if (! $mfaEnabled)
         {{-- Fail-closed (SEC-004): v1 has no password re-auth — sensitive
              actions stay locked until MFA is enrolled. --}}
-        <p>Multi-factor authentication is required for this action. Enroll an authenticator app in your security settings first, then come back.</p>
+        <p>Multi-factor authentication is required for this action. Enroll an authenticator app in your <a href="{{ url('/account/security') }}">security settings</a> first, then come back.</p>
         <div class="row">
             <a class="link" href="{{ $returnTo }}">Back</a>
         </div>

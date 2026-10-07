@@ -59,4 +59,44 @@ final class WebMutations
 
         return $redirect->with('flash', $flash);
     }
+
+    /**
+     * The `data` object of a successful envelope ([] when absent) — for
+     * closure flashes that must derive their text from the response
+     * (one-time secrets, recovery codes, revocation counts).
+     *
+     * @return array<string, mixed>
+     */
+    public static function data(JsonResponse $result): array
+    {
+        $payload = $result->getData(true);
+
+        return is_array($payload) && isset($payload['data']) && is_array($payload['data'])
+            ? $payload['data']
+            : [];
+    }
+
+    /**
+     * A string member of `data` ('' when absent or not a string) — the
+     * usual ingredient of a secret-bearing success flash.
+     */
+    public static function stringData(JsonResponse $result, string $key): string
+    {
+        $value = self::data($result)[$key] ?? null;
+
+        return is_string($value) ? $value : '';
+    }
+
+    /**
+     * A list-of-strings member of `data` ([] when absent or not an
+     * array) — recovery codes, scope lists, and friends.
+     *
+     * @return list<string>
+     */
+    public static function listData(JsonResponse $result, string $key): array
+    {
+        $value = self::data($result)[$key] ?? null;
+
+        return is_array($value) ? array_values(array_filter($value, 'is_string')) : [];
+    }
 }

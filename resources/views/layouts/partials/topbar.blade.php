@@ -164,6 +164,10 @@
                               <a class="dropdown-item" href="{{ route('second', ['pages', 'faqs'])}}">
                                    <iconify-icon icon="solar:help-broken" class="align-middle me-2 fs-18"></iconify-icon><span class="align-middle">Help</span>
                               </a>
+                              <a class="dropdown-item" href="{{ route('second', ['account', 'security'])}}">
+                                   <iconify-icon icon="solar:shield-user-broken" class="align-middle me-2 fs-18"></iconify-icon><span class="align-middle">Security</span>
+                              </a>
+
                               <a class="dropdown-item" href="{{ route('second', ['pages', 'lock-screen'])}}">
                                    <iconify-icon icon="solar:lock-keyhole-broken" class="align-middle me-2 fs-18"></iconify-icon><span class="align-middle">Lock screen</span>
                               </a>
