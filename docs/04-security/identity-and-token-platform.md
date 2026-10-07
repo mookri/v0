@@ -438,15 +438,17 @@ pending" delta (additive)
   followed redirect can never masquerade as success). Without MFA or a
   verified code the form never posts; the server gate answers 403
   `step_up_required` regardless.
-- First consumers: user suspend/activate (credential kill/restore) and
-  the users console's role grant/revoke panel — web routes mirror the
-  API guards exactly (`tenant` + `platform:user:manage` + `stepup:2`
-  for lifecycle; `stepup:2` alone for grants, which carry their own
-  scope/SoD checks) and negotiate through `WebMutations` (web →
-  redirect + coded flash, API → byte-identical envelope).
+- First consumers: user suspend/activate (credential kill/restore),
+  the users console's role grant/revoke panel, and the API keys page
+  (issue/rotate flashes carry the one-time secret, escaped by the
+  view) — web routes mirror the API guards exactly (`tenant` +
+  `platform:user:manage` + `stepup:2` for lifecycle; `stepup:2` alone
+  for grants and key administration, which carry their own
+  membership/SoD checks) and negotiate through `WebMutations` (web →
+  redirect + coded flash, API → byte-identical envelope). Every
+  step-up write now has a console surface.
 - Still pending from A-SEC-004-2: session ACR tracking, `amr` claims,
-  tenant `require_mfa` enforcement, and the api-key web flow (it
-  shares this gate when its console surface lands).
+  and tenant `require_mfa` enforcement.
 
 ---
 

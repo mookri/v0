@@ -27,12 +27,14 @@ final class WebMutations
      * referring page unless the caller passes an explicit same-site
      * target — the step-up form returns the user to where they started
      * ($redirectTo). Failures always go back so the form can retry in
-     * place with the coded flash_error.
+     * place with the coded flash_error. $webFlash may be a closure of the
+     * successful envelope for flashes that only exist inside it (the
+     * one-time API key secret on issue/rotate); it never runs on errors.
      */
     public static function negotiate(
         Request $request,
         JsonResponse|Closure $json,
-        string $webFlash,
+        string|Closure $webFlash,
         ?string $redirectTo = null,
     ): JsonResponse|RedirectResponse {
         $result = $json instanceof Closure ? $json() : $json;
@@ -52,8 +54,9 @@ final class WebMutations
             return redirect()->back()->with('flash_error', $code.': '.$message);
         }
 
+        $flash = $webFlash instanceof Closure ? $webFlash($result) : $webFlash;
         $redirect = $redirectTo !== null ? redirect()->to($redirectTo) : redirect()->back();
 
-        return $redirect->with('flash', $webFlash);
+        return $redirect->with('flash', $flash);
     }
 }

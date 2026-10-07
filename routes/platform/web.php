@@ -52,10 +52,10 @@ Route::post('/oauth/stepup', [\App\Platform\Identity\Http\Controllers\MfaControl
 // untouched. The workspace travels as a hidden `tenant_id` form field
 // (forms cannot set headers); ResolveTenantContext reads it only for
 // non-api paths, so API header posture does not move. Step-up-gated
-// mutations: user suspend/activate and role grant/revoke share their
-// API actions behind the same guards the API uses (stepup:2 satisfied
-// by the /oauth/stepup form below — doc 06 §7.5); api-keys stay
-// API-only until their console surface lands.
+// mutations: user suspend/activate, role grant/revoke, and api-key
+// issue/revoke/rotate all share their API actions behind the same
+// guards the API uses (stepup:2 satisfied by the /oauth/stepup form
+// below — doc 06 §7.5); every step-up write now has a console surface.
 Route::group(['prefix' => '/platform', 'middleware' => 'auth'], function (): void {
     Route::post('/policies', [\App\Platform\Authz\Http\Controllers\PolicyController::class, 'store'])
         ->middleware(['tenant', 'capability:platform:policy:configure']);
@@ -76,6 +76,15 @@ Route::group(['prefix' => '/platform', 'middleware' => 'auth'], function (): voi
     Route::post('/memberships/{membershipId}/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'grant'])
         ->middleware('stepup:2');
     Route::delete('/memberships/{membershipId}/roles/{assignmentId}', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'revoke'])
+        ->middleware('stepup:2');
+    // Machine key administration mirrors the API exactly (route: stepup:2
+    // only; the actions do their own membership checks). The one-time
+    // secret rides the success flash on web — nothing else can carry it.
+    Route::post('/api-keys', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'issue'])
+        ->middleware('stepup:2');
+    Route::post('/api-keys/{id}:revoke', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'revoke'])
+        ->middleware('stepup:2');
+    Route::post('/api-keys/{id}:rotate', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'rotate'])
         ->middleware('stepup:2');
     Route::post('/sod-rules', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'store']);
     Route::patch('/sod-rules/{id}', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'update']);

@@ -2,11 +2,13 @@
 
 namespace App\Platform\Identity\Http\Controllers;
 
+use App\Platform\Api\WebMutations;
 use App\Platform\Identity\Models\ApiKey;
 use App\Platform\Identity\MachinePrincipal;
 use App\Platform\Tenancy\Models\Tenant;
 use App\Platform\Tenancy\Models\TenantMembership;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -84,7 +86,29 @@ final class ApiKeyController
         ]);
     }
 
-    public function issue(Request $request): JsonResponse
+    // Shared actions (doc 06 §7.1-7.2): the console's forms and /api/v1
+    // point here — one membership-checked path, negotiation only. The
+    // secret exists only inside the envelope, so the web flash derives
+    // from the successful response (shown once, escaped by the view);
+    // API envelopes stay byte-identical.
+    public function issue(Request $request): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->issueJson($request),
+            static function (JsonResponse $result): string {
+                $payload = $result->getData(true);
+                $data = is_array($payload) && isset($payload['data']) && is_array($payload['data'])
+                    ? $payload['data']
+                    : [];
+                $secret = isset($data['secret']) && is_string($data['secret']) ? $data['secret'] : '';
+
+                return 'API key issued — copy it now, it is shown only once: '.$secret;
+            },
+        );
+    }
+
+    private function issueJson(Request $request): JsonResponse
     {
         if ($denied = $this->machineDenial($request)) {
             return $denied;
@@ -145,7 +169,16 @@ final class ApiKeyController
         ], 201);
     }
 
-    public function revoke(Request $request, string $id): JsonResponse
+    public function revoke(Request $request, string $id): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->revokeJson($request, $id),
+            'API key revoked.',
+        );
+    }
+
+    private function revokeJson(Request $request, string $id): JsonResponse
     {
         if ($denied = $this->machineDenial($request)) {
             return $denied;
@@ -178,7 +211,24 @@ final class ApiKeyController
         ]);
     }
 
-    public function rotate(Request $request, string $id): JsonResponse
+    public function rotate(Request $request, string $id): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->rotateJson($request, $id),
+            static function (JsonResponse $result): string {
+                $payload = $result->getData(true);
+                $data = is_array($payload) && isset($payload['data']) && is_array($payload['data'])
+                    ? $payload['data']
+                    : [];
+                $secret = isset($data['secret']) && is_string($data['secret']) ? $data['secret'] : '';
+
+                return 'API key rotated — copy the new secret now, it is shown only once: '.$secret;
+            },
+        );
+    }
+
+    private function rotateJson(Request $request, string $id): JsonResponse
     {
         if ($denied = $this->machineDenial($request)) {
             return $denied;
