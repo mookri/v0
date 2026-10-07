@@ -12,6 +12,7 @@ use App\Platform\Tenancy\Models\Tenant;
 use App\Platform\Tenancy\Models\TenantMembership;
 use App\Platform\Tenancy\TenantContext;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Session\Middleware\StartSession;
 use PHPUnit\Framework\Assert as PHPUnit;
 
 /**
@@ -117,6 +118,62 @@ abstract class TenantIntegrationTestCase extends KernelTestCase
         }
 
         return $role;
+    }
+
+    /**
+     * Log in over the web surface and return [cookie name, wire value],
+     * then drop the resolved guard/session singletons (fresh-process
+     * simulation) and switch JSON requests to credentialed mode, so
+     * later API requests prove the cookie instead of in-memory state.
+     *
+     * @return array{string, string}
+     */
+    protected function loginSessionFor(User $user): array
+    {
+        // Persistent driver: the array driver is not session-persistent
+        // and never issues a cookie to replay.
+        config(['session.driver' => 'database']);
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $response->assertStatus(302);
+        $this->assertAuthenticated();
+
+        $name = (string) config('session.cookie');
+        foreach ($response->headers->getCookies() as $cookie) {
+            if ($cookie->getName() === $name) {
+                // Web-group cookie: encrypted on the wire, replayed verbatim.
+                $value = $cookie->getValue();
+
+                $this->resetSessionState();
+
+                // JSON requests only carry cookies for credentialed (fetch
+                // same-origin) calls, like the admin shell's.
+                $this->withCredentials();
+
+                return [$name, $value];
+            }
+        }
+
+        $this->fail('login did not issue a session cookie');
+    }
+
+    /**
+     * Drop the guard's in-memory user and the resolved session singletons so
+     * the next request starts from clean process state and proves its cookie,
+     * not this test's login call. StartSession is pinned to the manager it
+     * was first resolved with, so it must be forgotten too or it would keep
+     * driving a stale store.
+     */
+    protected function resetSessionState(): void
+    {
+        $this->app['auth']->forgetGuards();
+        $this->app->forgetInstance('session');
+        $this->app->forgetInstance('session.store');
+        $this->app->forgetInstance(StartSession::class);
     }
 
     protected function assertAuditRecorded(Tenant $tenant, string $action): void

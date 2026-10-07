@@ -18,64 +18,13 @@ use Tests\TenantIntegrationTestCase;
  */
 final class SessionContextForReadsTest extends TenantIntegrationTestCase
 {
-    /**
-     * @return array{string, string} cookie name and wire value
-     */
-    private function loginFor(User $user): array
-    {
-        // Persistent driver: the array driver is not session-persistent
-        // and never issues a cookie to replay.
-        config(['session.driver' => 'database']);
-
-        $response = $this->post('/login', [
-            'email' => $user->email,
-            'password' => 'password',
-        ]);
-
-        $response->assertStatus(302);
-        $this->assertAuthenticated();
-
-        $name = (string) config('session.cookie');
-        foreach ($response->headers->getCookies() as $cookie) {
-            if ($cookie->getName() === $name) {
-                // Web-group cookie: encrypted on the wire, replayed verbatim.
-                $value = $cookie->getValue();
-
-                $this->resetAuthState();
-
-                // JSON requests only carry cookies for credentialed (fetch
-                // same-origin) calls, like the admin shell's.
-                $this->withCredentials();
-
-                return [$name, $value];
-            }
-        }
-
-        $this->fail('login did not issue a session cookie');
-    }
-
-    /**
-     * Drop the guard's in-memory user and the resolved session singletons so
-     * every later request in this test starts from clean process state and
-     * proves the cookie, not the test's login call. StartSession is pinned to
-     * the manager it was first resolved with, so it must be forgotten too or
-     * it would keep driving a stale store.
-     */
-    private function resetAuthState(): void
-    {
-        $this->app['auth']->forgetGuards();
-        $this->app->forgetInstance('session');
-        $this->app->forgetInstance('session.store');
-        $this->app->forgetInstance(\Illuminate\Session\Middleware\StartSession::class);
-    }
-
     public function test_session_cookie_authenticates_module_reads(): void
     {
         $tenant = $this->makeTenant();
         $user = User::factory()->create();
         $this->makeMembership($tenant, $user);
 
-        [$name, $value] = $this->loginFor($user);
+        [$name, $value] = $this->loginSessionFor($user);
 
         $this->withUnencryptedCookie($name, $value)
             ->getJson('/api/v1/pandit/profiles', $this->tenantHeaders($tenant))
@@ -89,7 +38,7 @@ final class SessionContextForReadsTest extends TenantIntegrationTestCase
         $user = User::factory()->create();
         $this->makeMembership($tenant, $user);
 
-        [$name, $value] = $this->loginFor($user);
+        [$name, $value] = $this->loginSessionFor($user);
 
         // Same cookie, unsafe method: no session starts, no CSRF surface.
         $this->withUnencryptedCookie($name, $value)
@@ -103,7 +52,7 @@ final class SessionContextForReadsTest extends TenantIntegrationTestCase
         $tenant = $this->makeTenant();
         $user = User::factory()->create(); // no membership on purpose
 
-        [$name, $value] = $this->loginFor($user);
+        [$name, $value] = $this->loginSessionFor($user);
 
         $this->withUnencryptedCookie($name, $value)
             ->getJson('/api/v1/pandit/profiles', $this->tenantHeaders($tenant))
@@ -117,7 +66,7 @@ final class SessionContextForReadsTest extends TenantIntegrationTestCase
         $user = User::factory()->create();
         $this->makeMembership($tenant, $user);
 
-        [$name, $value] = $this->loginFor($user);
+        [$name, $value] = $this->loginSessionFor($user);
 
         // Hop through the API with the web cookie…
         $api = $this->withUnencryptedCookie($name, $value)
@@ -135,7 +84,7 @@ final class SessionContextForReadsTest extends TenantIntegrationTestCase
         $this->assertIsString($apiValue);
         $this->assertNotSame($value, $apiValue);
 
-        $this->resetAuthState();
+        $this->resetSessionState();
 
         $this->withUnencryptedCookie($name, $apiValue)
             ->get('/')

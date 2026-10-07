@@ -137,6 +137,31 @@
                </li> <!-- end Pandits Menu -->
 
                <li class="nav-item">
+                    <a class="nav-link menu-arrow" href="#sidebarAdministration" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarAdministration">
+                         <span class="nav-icon">
+                              <i class="ri-shield-check-line"></i>
+                         </span>
+                         <span class="nav-text"> Administration </span>
+                    </a>
+                    <div class="collapse" id="sidebarAdministration">
+                         <ul class="nav sub-navbar-nav">
+                              <li class="sub-nav-item">
+                                   <a class="sub-nav-link" href="{{ route('second', ['platform', 'policies'])}}">Policies</a>
+                              </li>
+                              <li class="sub-nav-item">
+                                   <a class="sub-nav-link" href="{{ route('second', ['platform', 'roles'])}}">Roles</a>
+                              </li>
+                              <li class="sub-nav-item">
+                                   <a class="sub-nav-link" href="{{ route('second', ['platform', 'sod-rules'])}}">SoD Rules</a>
+                              </li>
+                              <li class="sub-nav-item">
+                                   <a class="sub-nav-link" href="{{ route('second', ['platform', 'users'])}}">Users</a>
+                              </li>
+                         </ul>
+                    </div>
+               </li> <!-- end Administration Menu -->
+
+               <li class="nav-item">
                     <a class="nav-link" href="{{ route('any', 'orders')}}">
                          <span class="nav-icon">
                               <i class="ri-home-office-line"></i>

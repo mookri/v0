@@ -43,6 +43,15 @@ return Application::configure(basePath: dirname(__DIR__))
         // user. Unsafe methods never start a session, so cookie-authenticated
         // writes stay impossible and the CSRF posture does not move.
         $middleware->appendToGroup('api', \App\Platform\Http\Middleware\SessionContextForReads::class);
+
+        // SortedMiddleware matches Authenticate via the AuthenticatesRequests
+        // interface and would pull `auth` above the unlisted session reader
+        // (session context established too late -> 401 on cookie reads).
+        // Pin the reader directly ahead of authentication instead.
+        $middleware->prependToPriorityList(
+            \Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests::class,
+            \App\Platform\Http\Middleware\SessionContextForReads::class,
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // JSON error envelope for API clients (doc 06 §4). Blade/admin
