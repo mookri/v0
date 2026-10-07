@@ -24,7 +24,7 @@ final class PanditProfileQueries implements ListsPanditProfiles
      * @param  array<string, mixed>  $filters
      * @return array{items: list<PanditPublicProfile>, page: PanditPage}
      */
-    public function publicProfiles(array $filters = [], int $limit = 20): array
+    public function publicProfiles(array $filters = [], int $limit = 20, ?string $cursor = null): array
     {
         $tenantId = (string) app(TenantContext::class)->tenantId();
 
@@ -45,7 +45,7 @@ final class PanditProfileQueries implements ListsPanditProfiles
             $query->where('rating_avg', '>=', $filters['min_rating']);
         }
 
-        $request = new Request(array_merge(['limit' => $limit], $filters));
+        $request = new Request(array_merge(['limit' => $limit, 'cursor' => $cursor], $filters));
         [$items, $page] = CursorPagination::paginate($query, $request);
 
         return [
@@ -99,7 +99,7 @@ final class PanditProfileQueries implements ListsPanditProfiles
      * @param  array<string, mixed>  $filters
      * @return array{items: list<PanditAdminProfile>, page: PanditPage}
      */
-    public function adminProfiles(array $filters = [], int $limit = 20): array
+    public function adminProfiles(array $filters = [], int $limit = 20, ?string $cursor = null): array
     {
         $tenantId = (string) app(TenantContext::class)->tenantId();
 
@@ -120,7 +120,7 @@ final class PanditProfileQueries implements ListsPanditProfiles
             });
         }
 
-        $request = new Request(array_merge(['limit' => $limit], $filters));
+        $request = new Request(array_merge(['limit' => $limit, 'cursor' => $cursor], $filters));
         [$items, $page] = CursorPagination::paginate($query, $request);
 
         return [

@@ -85,6 +85,28 @@ final class PanditAdminTest extends TenantIntegrationTestCase
         $this->assertSame([], $filtered->json('data'));
     }
 
+    public function test_admin_directory_cursor_advances_to_the_next_page(): void
+    {
+        $tenant = $this->makeTenant();
+        $this->actingAsMembership($tenant, ['pandit:profile:view']);
+        $headers = $this->tenantHeaders($tenant);
+
+        $this->seedProfile($tenant);
+        $this->seedProfile($tenant);
+
+        $pageOne = $this->getJson('/api/v1/pandit/admin/profiles?limit=1', $headers)->assertOk();
+        $this->assertCount(1, $pageOne->json('data'));
+        $this->assertTrue($pageOne->json('meta.page.has_more'));
+        $cursor = $pageOne->json('meta.page.next_cursor');
+        $this->assertIsString($cursor);
+
+        $pageTwo = $this->getJson('/api/v1/pandit/admin/profiles?limit=1&cursor='.urlencode($cursor), $headers)
+            ->assertOk();
+        $this->assertCount(1, $pageTwo->json('data'));
+        $this->assertFalse($pageTwo->json('meta.page.has_more'));
+        $this->assertNotSame($pageOne->json('data.0.id'), $pageTwo->json('data.0.id'));
+    }
+
     public function test_verify_suspend_reactivate_are_stepup_gated(): void
     {
         $tenant = $this->makeTenant();

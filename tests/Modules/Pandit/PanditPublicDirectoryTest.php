@@ -98,6 +98,39 @@ final class PanditPublicDirectoryTest extends TenantIntegrationTestCase
             ->assertNotFound()->assertJsonPath('error.code', 'PANDIT_NOT_FOUND');
     }
 
+    public function test_directory_cursor_advances_to_the_next_page(): void
+    {
+        $tenant = $this->makeTenant();
+        $user = User::factory()->create();
+        $this->makeMembership($tenant, $user);
+        $this->actingAs($user);
+        $headers = $this->tenantHeaders($tenant);
+
+        $this->seedProfile($tenant);
+        $this->seedProfile($tenant);
+        $this->seedProfile($tenant);
+
+        $pageOne = $this->getJson('/api/v1/pandit/profiles?limit=2', $headers)->assertOk();
+        $this->assertCount(2, $pageOne->json('data'));
+        $this->assertTrue($pageOne->json('meta.page.has_more'));
+        $cursor = $pageOne->json('meta.page.next_cursor');
+        $this->assertIsString($cursor);
+
+        // The advertised cursor must actually advance the window: page 2
+        // holds the remaining row and never replays page 1.
+        $pageTwo = $this->getJson('/api/v1/pandit/profiles?limit=2&cursor='.urlencode($cursor), $headers)
+            ->assertOk();
+        $this->assertCount(1, $pageTwo->json('data'));
+        $this->assertFalse($pageTwo->json('meta.page.has_more'));
+        $this->assertSame(
+            [],
+            array_values(array_intersect(
+                array_column($pageOne->json('data'), 'id'),
+                array_column($pageTwo->json('data'), 'id'),
+            )),
+        );
+    }
+
     public function test_availability_is_equally_fail_closed(): void
     {
         $tenant = $this->makeTenant();

@@ -16,9 +16,10 @@ interface ListsPanditProfiles
 {
     /**
      * @param  array<string, mixed>  $filters
+     * @param  string|null  $cursor  opaque cursor from a previous page (null = first page)
      * @return array{items: list<PanditPublicProfile>, page: PanditPage}
      */
-    public function publicProfiles(array $filters = [], int $limit = 20): array;
+    public function publicProfiles(array $filters = [], int $limit = 20, ?string $cursor = null): array;
 
     /**
      * @return PanditProfileData|null
@@ -27,7 +28,8 @@ interface ListsPanditProfiles
 
     /**
      * @param  array<string, mixed>  $filters
+     * @param  string|null  $cursor  opaque cursor from a previous page (null = first page)
      * @return array{items: list<PanditAdminProfile>, page: PanditPage}
      */
-    public function adminProfiles(array $filters = [], int $limit = 20): array;
+    public function adminProfiles(array $filters = [], int $limit = 20, ?string $cursor = null): array;
 }

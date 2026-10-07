@@ -299,4 +299,40 @@ final class PanditSelfServiceTest extends TenantIntegrationTestCase
             ->assertJsonPath('data.decline_reason', 'Traveling');
         $this->assertAuditRecorded($tenant, 'pandit.assignment.declined');
     }
+
+    public function test_assignments_cursor_advances_to_the_next_page(): void
+    {
+        [$tenant] = $this->applicant();
+        $headers = $this->tenantHeaders($tenant);
+        $this->postJson('/api/v1/pandit/apply', ['track' => 'pandit'], $headers)->assertCreated();
+
+        $panditId = (string) PanditProfile::query()
+            ->withoutGlobalScopes()
+            ->where('tenant_id', (string) $tenant->getKey())
+            ->firstOrFail()
+            ->getKey();
+
+        foreach ([7, 8, 9] as $offset) {
+            $bookingId = $this->seedBooking($tenant, now()->addDays($offset)->toDateTimeString());
+            $this->seedAssignment($tenant, $panditId, $bookingId);
+        }
+
+        $pageOne = $this->getJson('/api/v1/pandit/assignments?limit=2', $headers)->assertOk();
+        $this->assertCount(2, $pageOne->json('data'));
+        $this->assertTrue($pageOne->json('meta.page.has_more'));
+        $cursor = $pageOne->json('meta.page.next_cursor');
+        $this->assertIsString($cursor);
+
+        $pageTwo = $this->getJson('/api/v1/pandit/assignments?limit=2&cursor='.urlencode($cursor), $headers)
+            ->assertOk();
+        $this->assertCount(1, $pageTwo->json('data'));
+        $this->assertFalse($pageTwo->json('meta.page.has_more'));
+        $this->assertSame(
+            [],
+            array_values(array_intersect(
+                array_column($pageOne->json('data'), 'id'),
+                array_column($pageTwo->json('data'), 'id'),
+            )),
+        );
+    }
 }

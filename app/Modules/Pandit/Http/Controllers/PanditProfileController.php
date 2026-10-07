@@ -37,8 +37,9 @@ final class PanditProfileController
 
         $filters = $request->only(['specialization', 'market', 'min_rating']);
         $limit = min((int) $request->query('limit', 20), 100);
+        $cursor = is_string($request->query('cursor')) ? $request->query('cursor') : null;
 
-        $result = $this->profiles->publicProfiles($filters, $limit);
+        $result = $this->profiles->publicProfiles($filters, $limit, $cursor);
 
         return new JsonResponse([
             'data' => $result['items'],
@@ -203,8 +204,9 @@ final class PanditProfileController
 
         $filters = $request->only(['status', 'verification_status', 'search']);
         $limit = min((int) $request->query('limit', 20), 100);
+        $cursor = is_string($request->query('cursor')) ? $request->query('cursor') : null;
 
-        $result = $this->profiles->adminProfiles($filters, $limit);
+        $result = $this->profiles->adminProfiles($filters, $limit, $cursor);
 
         return new JsonResponse([
             'data' => $result['items'],

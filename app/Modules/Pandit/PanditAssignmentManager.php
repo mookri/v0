@@ -136,7 +136,7 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
      * @param  string|null  $status
      * @return array{items: list<PanditAssignmentData>, page: PanditAssignmentPage}
      */
-    public function getAssignments(string $panditId, ?string $status = null, int $limit = 20): array
+    public function getAssignments(string $panditId, ?string $status = null, int $limit = 20, ?string $cursor = null): array
     {
         $tenantId = (string) app(TenantContext::class)->tenantId();
 
@@ -148,7 +148,7 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
             $query->where('status', $status);
         }
 
-        $request = new Request(['limit' => $limit]);
+        $request = new Request(['limit' => $limit, 'cursor' => $cursor]);
         [$items, $page] = CursorPagination::paginate($query, $request);
 
         $windows = $this->bookings->windowsByIds(

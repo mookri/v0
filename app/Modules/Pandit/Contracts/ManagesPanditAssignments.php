@@ -39,9 +39,10 @@ interface ManagesPanditAssignments
 
     /**
      * @param  string|null  $status
+     * @param  string|null  $cursor  opaque cursor from a previous page (null = first page)
      * @return array{items: list<PanditAssignmentData>, page: PanditAssignmentPage}
      */
-    public function getAssignments(string $panditId, ?string $status = null, int $limit = 20): array;
+    public function getAssignments(string $panditId, ?string $status = null, int $limit = 20, ?string $cursor = null): array;
 
     /**
      * @return PanditAssignmentData

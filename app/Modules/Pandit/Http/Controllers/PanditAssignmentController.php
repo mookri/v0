@@ -89,8 +89,9 @@ final class PanditAssignmentController
 
         $status = is_string($request->query('status')) ? $request->query('status') : null;
         $limit = min((int) $request->query('limit', 20), 100);
+        $cursor = is_string($request->query('cursor')) ? $request->query('cursor') : null;
 
-        $result = $this->assignments->getAssignments((string) $profile->getKey(), $status, $limit);
+        $result = $this->assignments->getAssignments((string) $profile->getKey(), $status, $limit, $cursor);
 
         return new JsonResponse([
             'data' => $result['items'],
