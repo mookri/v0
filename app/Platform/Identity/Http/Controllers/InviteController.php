@@ -3,6 +3,7 @@
 namespace App\Platform\Identity\Http\Controllers;
 
 use App\Models\User;
+use App\Platform\Api\WebMutations;
 use App\Platform\Authz\Models\MembershipRoleAssignment;
 use App\Platform\Authz\Models\Role;
 use App\Platform\Identity\Contracts\TrackSeeder;
@@ -12,6 +13,7 @@ use App\Platform\Tenancy\Models\Tenant;
 use App\Platform\Tenancy\Models\TenantMembership;
 use App\Platform\Tenancy\TenantContext;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -35,7 +37,85 @@ final class InviteController
         return (string) $request->attributes->get('request_id', '');
     }
 
-    public function issue(Request $request): JsonResponse
+    /**
+     * Tenant invite inventory for the console — metadata only: the
+     * one-time token and its hash never leave the server after issue.
+     * Scoped like issue (tenant required, issuer active in it).
+     */
+    public function index(Request $request): JsonResponse
+    {
+        $validated = $request->validate(['tenant_id' => ['required', 'string', 'size:26']]);
+
+        $tenant = Tenant::query()->find($validated['tenant_id']);
+        if ($tenant === null || $tenant->state !== Tenant::STATE_ACTIVE) {
+            return new JsonResponse([
+                'error' => ['code' => 'not_found', 'message' => 'Tenant unavailable.', 'request_id' => $this->requestId($request)],
+            ], 404);
+        }
+
+        $membership = $this->issuerMembership($request, (string) $tenant->getKey());
+        if ($membership instanceof JsonResponse) {
+            return $membership;
+        }
+
+        $invites = Invite::query()
+            ->where('tenant_id', (string) $tenant->getKey())
+            ->orderByDesc('created_at')
+            ->get();
+
+        return new JsonResponse([
+            'data' => $invites->map(static fn (Invite $invite): array => [
+                'id' => (string) $invite->getKey(),
+                'object' => 'invite',
+                'track' => $invite->track,
+                'identifier' => $invite->identifier,
+                'roles' => $invite->roles ?? [],
+                'state' => $invite->state,
+                'expires_at' => $invite->expires_at->toIso8601String(),
+                'created_at' => $invite->created_at?->toIso8601String(),
+                'accepted_by' => $invite->accepted_by,
+            ])->values()->all(),
+            'meta' => ['request_id' => $this->requestId($request)],
+        ]);
+    }
+
+    /**
+     * Issuers need an active membership in the invite's tenant (least
+     * privilege) — the shared gate for list/issue/revoke.
+     */
+    private function issuerMembership(Request $request, string $tenantId): TenantMembership|JsonResponse
+    {
+        $membership = TenantMembership::query()
+            ->where('tenant_id', $tenantId)
+            ->where('user_id', (string) $request->user()->getAuthIdentifier())
+            ->where('state', TenantMembership::STATE_ACTIVE)
+            ->first();
+
+        if ($membership === null) {
+            return new JsonResponse([
+                'error' => ['code' => 'membership_inactive', 'message' => 'No active membership in this tenant.', 'request_id' => $this->requestId($request)],
+            ], 403);
+        }
+
+        return $membership;
+    }
+
+    // Shared actions (doc 06 §7.1-7.2): the invites console forms and
+    // /api/v1/identity/invites point here — one issue/revoke path,
+    // negotiation only. The acceptance token exists only inside the
+    // issue envelope, so the web flash carries it (shown once, escaped
+    // by the view); API envelopes stay byte-identical (InviteTest pins).
+    public function issue(Request $request): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->issueJson($request),
+            static fn (JsonResponse $result): string
+                => 'Invite issued — pass this token to the invitee now, it is shown only once: '.WebMutations::stringData($result, 'token'),
+        );
+    }
+
+    private function issueJson(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'tenant_id' => ['required', 'string', 'size:26'],
@@ -55,15 +135,9 @@ final class InviteController
 
         // Issuers need an active membership here (least privilege); the
         // resolved context below lets tenant-scoped reads (roles) work.
-        $issuerMembership = TenantMembership::query()
-            ->where('tenant_id', (string) $tenant->getKey())
-            ->where('user_id', (string) $request->user()->getAuthIdentifier())
-            ->where('state', TenantMembership::STATE_ACTIVE)
-            ->first();
-        if ($issuerMembership === null) {
-            return new JsonResponse([
-                'error' => ['code' => 'membership_inactive', 'message' => 'No active membership in this tenant.', 'request_id' => $this->requestId($request)],
-            ], 403);
+        $issuerMembership = $this->issuerMembership($request, (string) $tenant->getKey());
+        if ($issuerMembership instanceof JsonResponse) {
+            return $issuerMembership;
         }
 
         $context = app(TenantContext::class);
@@ -231,9 +305,34 @@ final class InviteController
         ]);
     }
 
-    public function revoke(Request $request, string $id): JsonResponse
+    public function revoke(Request $request, string $id): JsonResponse|RedirectResponse
     {
-        $invite = Invite::query()->find($id);
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->revokeJson($request, $id),
+            'Invite revoked.',
+        );
+    }
+
+    private function revokeJson(Request $request, string $id): JsonResponse
+    {
+        // Tenant travels as the console's hidden field or the standard
+        // X-Tenant-Id header (the OpenAPI fragment has always required
+        // it): an invite outside the caller's tenant answers 404 — the
+        // same vocabulary as a plain miss, never an existence oracle.
+        $tenantId = (string) ($request->input('tenant_id') ?? $request->header('X-Tenant-Id'));
+        if (! Str::isUlid($tenantId)) {
+            return new JsonResponse([
+                'error' => ['code' => 'validation_failed', 'message' => 'tenant_id is required.', 'details' => ['fields' => ['tenant_id' => ['required']]], 'request_id' => $this->requestId($request)],
+            ], 422);
+        }
+
+        $membership = $this->issuerMembership($request, $tenantId);
+        if ($membership instanceof JsonResponse) {
+            return $membership;
+        }
+
+        $invite = Invite::query()->where('tenant_id', $tenantId)->find($id);
 
         if ($invite === null) {
             return new JsonResponse([

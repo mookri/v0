@@ -174,6 +174,9 @@
                                    <a class="sub-nav-link" href="{{ route('second', ['platform', 'users'])}}">Users</a>
                               </li>
                               <li class="sub-nav-item">
+                                   <a class="sub-nav-link" href="{{ route('second', ['platform', 'invites'])}}">Invites</a>
+                              </li>
+                              <li class="sub-nav-item">
                                    <a class="sub-nav-link" href="{{ route('second', ['platform', 'api-keys'])}}">API Keys</a>
                               </li>
                          </ul>

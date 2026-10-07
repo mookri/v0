@@ -87,6 +87,12 @@ Route::group(['prefix' => '/platform', 'middleware' => 'auth'], function (): voi
         ->middleware('stepup:2');
     Route::post('/api-keys/{id}:rotate', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'rotate'])
         ->middleware('stepup:2');
+    // Invites mirror the API exactly (no capability or step-up on either
+    // side — the actions check tenant + issuer membership, and revoke is
+    // tenant-scoped). The one-time acceptance token rides the success
+    // flash on web.
+    Route::post('/invites', [\App\Platform\Identity\Http\Controllers\InviteController::class, 'issue']);
+    Route::post('/invites/{id}:revoke', [\App\Platform\Identity\Http\Controllers\InviteController::class, 'revoke']);
     Route::post('/sod-rules', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'store']);
     Route::patch('/sod-rules/{id}', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'update']);
     Route::delete('/sod-rules/{id}', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'destroy']);

@@ -55,6 +55,35 @@ active / suspended ──(offboarding)──▶ deactivated (terminal, data reta
 - `suspended`: all tokens/sessions revoked immediately; cannot authenticate.
 - `deactivated`: terminal; login blocked; audit history preserved.
 
+### Implementation note A-SEC-001-1 — invite administration hardened + console (2026-10-08)
+
+**Status:** ACTIVE · **Supersedes:** nothing (gap fix + additive surface)
+
+- `POST /api/v1/identity/invites/{id}:revoke` now enforces what the
+  OpenAPI fragment always declared (required `X-Tenant-Id`) and never
+  enforced: the tenant must be present (422 when absent, accepting the
+  header or a `tenant_id` field), the caller needs an active membership
+  in it (403 `membership_inactive`), and the invite is looked up scoped
+  to that tenant — an invite outside the caller's tenant answers 404,
+  the same vocabulary as a plain miss, never an existence oracle. The
+  previous unscoped `find($id)` let any authenticated principal revoke
+  any tenant's invite by identifier.
+- New `GET /api/v1/identity/invites?tenant_id=` lists invite metadata
+  for the tenant (issued/accepted/revoked state, track, identifier,
+  roles, expiry) behind the same issuer-membership gate as issue —
+  token material (one-time token, SHA-256 hash) never appears in the
+  listing.
+- Console surface `/platform/invites` (Administration → Invites): an
+  issue form (track, identifier, comma roles split to `roles[]`,
+  optional TTL) and a live list with confirm-gated revoke on issued
+  rows. One-action rule (doc 06 §7): the forms post the SHARED
+  actions, no step-up on either side — invites carry no step-up on the
+  API, and the actions check tenant + issuer membership themselves.
+  The one-time acceptance token rides the success flash, consumed by
+  that single render; API envelopes stay byte-identical (`InviteTest`
+  + the full suite are the parity pin). Verified by
+  `AdminInvitesSurfaceTest`.
+
 ### 1.3 Key schema decisions
 
 `users`: `id BIGINT UNSIGNED PK`, `name`, `email UNIQUE`, `email_verified_at`,

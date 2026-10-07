@@ -1730,6 +1730,32 @@ paths:
                   data: { type: object, required: [object, channel] }
                   meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
   /api/v1/identity/invites:
+    get:
+      operationId: listInvites
+      x-gate: ownership
+      summary: 'List tenant invites (metadata only; tokens never listed).'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+      responses:
+        200:
+          description: 'Invite metadata for the tenant (no token material).'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array, items: { type: object, required: [id, object, track, identifier, state, expires_at], properties: { id: { $ref: '#/components/schemas/Ulid' }, object: { type: string }, track: { type: string }, identifier: { type: string }, roles: { type: array, items: { type: string } }, state: { type: string, enum: [ISSUED, ACCEPTED, EXPIRED, REVOKED] }, expires_at: { type: string }, created_at: { type: [string, 'null'] }, accepted_by: { type: [string, 'null'] } } } }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        403:
+          $ref: '#/components/responses/AuthorizationDenied'
+        404:
+          $ref: '#/components/responses/NotFound'
+        422:
+          $ref: '#/components/responses/ValidationFailed'
     post:
       operationId: issueInvite
       x-gate: ownership
@@ -1810,8 +1836,12 @@ paths:
                 properties:
                   data: { type: object, required: [id, object, state] }
                   meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        403:
+          $ref: '#/components/responses/AuthorizationDenied'
         404:
           $ref: '#/components/responses/NotFound'
+        422:
+          $ref: '#/components/responses/ValidationFailed'
   '/api/v1/identity/invites:accept':
     post:
       operationId: acceptInvite

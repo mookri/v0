@@ -106,6 +106,8 @@ Route::prefix(config('platform.api_version', 'v1'))
         Route::post('identity/mfa/recovery-codes', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'recoveryCodes'])
             ->middleware('throttle:10,1')
             ->name('identity.mfa.recovery-codes');
+        Route::get('identity/invites', [\App\Platform\Identity\Http\Controllers\InviteController::class, 'index'])
+            ->name('identity.invites.index');
         Route::post('identity/invites', [\App\Platform\Identity\Http\Controllers\InviteController::class, 'issue'])
             ->name('identity.invites.issue');
         Route::post('identity/invites/{id}:revoke', [\App\Platform\Identity\Http\Controllers\InviteController::class, 'revoke'])
