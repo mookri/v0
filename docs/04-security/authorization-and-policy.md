@@ -619,6 +619,12 @@ The chain integrates at the effective-authority step (§5.1 step 5 of this
 register's migrated content). Every decision records which stage decided it
 in the decision log (SEC-024).
 
+Console consumer: Administration → Explain access (`/platform/explain`)
+replays this chain for one member + capability through
+`GET /api/v1/authz/explain` (capability `platform:authz:explain`;
+evaluation bypasses the decision cache, so the trace is always current)
+and renders the per-stage trace — stage, outcome, reason, details.
+
 ## SEC-023 Delegation
 
 - id: SEC-023

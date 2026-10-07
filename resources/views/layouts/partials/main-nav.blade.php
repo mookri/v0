@@ -179,6 +179,9 @@
                               <li class="sub-nav-item">
                                    <a class="sub-nav-link" href="{{ route('second', ['platform', 'api-keys'])}}">API Keys</a>
                               </li>
+                              <li class="sub-nav-item">
+                                   <a class="sub-nav-link" href="{{ route('second', ['platform', 'explain'])}}">Explain access</a>
+                              </li>
                          </ul>
                     </div>
                </li> <!-- end Administration Menu -->

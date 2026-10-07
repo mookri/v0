@@ -268,7 +268,7 @@ once per scope by resolution middleware and cleared on termination.
    - Missing header on a tenant-scoped route → 400 (`tenant_header_missing`).
    - Platform-global routes (e.g. `/api/v1/platform/tenants` for the
      authenticated user's memberships) are exempt and marked in the route
-     registry.
+     registry.; the console's `/account/workspaces` page renders exactly this payload (every membership state, so denials are explainable)
 3. The tenant's `status` and the membership's `status` MUST both be active.
 
 ### 4.4 Asynchronous scopes (queues, scheduler, listeners)
