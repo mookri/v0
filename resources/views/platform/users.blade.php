@@ -39,6 +39,26 @@
     </div>
 </div>
 
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card d-none" id="user-roles-card">
+            <div class="card-header border-0 d-flex flex-wrap justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Roles for <span class="text-muted font-monospace" id="user-roles-title"></span></h5>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="user-roles-cancel">Cancel</button>
+            </div>
+            <div class="card-body">
+                {{-- Assignments read through the shared endpoint; every
+                     mutation posts the shared grant/revoke actions behind
+                     stepup:2 (doc 06 §7.1, §7.5). JS fills both regions. --}}
+                <div id="user-roles-list" class="mb-3">
+                    <div class="text-muted">Loading…</div>
+                </div>
+                <div id="user-roles-grant"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('script-bottom')

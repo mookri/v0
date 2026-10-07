@@ -158,7 +158,67 @@ final class RoleController
         ], 201), 'Role created.');
     }
 
-    public function grant(Request $request, string $membershipId): JsonResponse
+    /**
+     * Role assignments of one membership (doc 06 §7: the console's roles
+     * panel reads through this endpoint): scoped exactly like index —
+     * tenant_id required, issuer active in the tenant — and fail-closed
+     * cross-tenant: a membership outside the scoped tenant is a 404, the
+     * same vocabulary as a plain miss.
+     */
+    public function assignments(Request $request, string $membershipId): JsonResponse
+    {
+        $validated = $request->validate(['tenant_id' => ['required', 'string']]);
+
+        $scoped = $this->scopeToTenant($request, $validated['tenant_id']);
+        if ($scoped instanceof JsonResponse) {
+            return $scoped;
+        }
+
+        try {
+            $membership = TenantMembership::query()->find($membershipId);
+
+            if ($membership === null
+                || (string) $membership->tenant_id !== (string) $scoped['tenant']->getKey()) {
+                return new JsonResponse([
+                    'error' => ['code' => 'not_found', 'message' => 'Membership not found.', 'request_id' => $this->requestId($request)],
+                ], 404);
+            }
+
+            $assignments = MembershipRoleAssignment::query()
+                ->where('membership_id', (string) $membership->getKey())
+                ->with('role')
+                ->orderBy('id')
+                ->get();
+        } finally {
+            if ($scoped['ownsContext']) {
+                $scoped['context']->clear();
+            }
+        }
+
+        return new JsonResponse([
+            'data' => $assignments->map(static fn (MembershipRoleAssignment $assignment): array => [
+                'id' => (string) $assignment->getKey(),
+                'object' => 'role_assignment',
+                'membership_id' => (string) $assignment->membership_id,
+                'role_code' => (string) ($assignment->role->code ?? ''),
+            ])->all(),
+            'meta' => ['request_id' => $this->requestId($request)],
+        ]);
+    }
+
+    // Shared action (doc 06 §7.1-7.2): the console's grant form and
+    // /api/v1 point here — one SoD-checked path, negotiation only (web
+    // redirects back with a coded flash, API keeps its envelope).
+    public function grant(Request $request, string $membershipId): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->grantJson($request, $membershipId),
+            'Role granted.',
+        );
+    }
+
+    private function grantJson(Request $request, string $membershipId): JsonResponse
     {
         $validated = $request->validate([
             'tenant_id' => ['required', 'string'],
@@ -291,7 +351,16 @@ final class RoleController
         return null;
     }
 
-    public function revoke(Request $request, string $membershipId, string $assignmentId): JsonResponse
+    public function revoke(Request $request, string $membershipId, string $assignmentId): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->revokeJson($request, $membershipId, $assignmentId),
+            'Role revoked.',
+        );
+    }
+
+    private function revokeJson(Request $request, string $membershipId, string $assignmentId): JsonResponse
     {
         $validated = $request->validate(['tenant_id' => ['required', 'string']]);
 

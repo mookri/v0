@@ -134,6 +134,8 @@ Route::prefix(config('platform.api_version', 'v1'))
             ->name('roles.index');
         Route::post('platform/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'store'])
             ->name('roles.store');
+        Route::get('platform/memberships/{membershipId}/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'assignments'])
+            ->name('memberships.roles.index');
         Route::post('platform/memberships/{membershipId}/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'grant'])
             ->middleware('stepup:2')
             ->name('memberships.roles.grant');

@@ -111,12 +111,12 @@ export function appendHiddenInput(form, name, value) {
  * Append a CSRF-carrying mutation form (doc 06 §7.4) — JS-rendered rows
  * build what Blade's @csrf would for a server-rendered one: _token from
  * the page meta, _method spoofing for PATCH/DELETE, extra hidden fields
- * (workspace id), and an optional submit confirmation. These forms post
- * to the SHARED web actions, never to /api/v1 (cookie sessions never
- * authenticate API writes). Returns the form so callers can attach the
- * step-up gate (`stepUp: true` via appendRow).
+ * (workspace id), an optional submit confirmation, and the step-up gate
+ * for `stepUp: true` (sensitive) forms. These forms post to the SHARED
+ * web actions, never to /api/v1 (cookie sessions never authenticate
+ * API writes). Returns the form so callers can enrich it further.
  */
-export function appendPostForm(parent, { action, label, cls = 'btn-outline-primary', method = 'POST', fields = {}, confirmMessage = '' }) {
+export function appendPostForm(parent, { action, label, cls = 'btn-outline-primary', method = 'POST', fields = {}, confirmMessage = '', stepUp = false }) {
   const form = document.createElement('form');
   form.method = 'POST';
   form.action = action;
@@ -141,6 +141,11 @@ export function appendPostForm(parent, { action, label, cls = 'btn-outline-prima
       if (!window.confirm(confirmMessage)) event.preventDefault();
     });
   }
+
+  // Sensitive forms (stepup:2 server gate): the gate registers AFTER the
+  // optional confirm, so a cancelled confirm leaves defaultPrevented set
+  // and the gate stays quiet.
+  if (stepUp) attachStepUpGate(form);
 
   parent.appendChild(form);
 
@@ -175,11 +180,9 @@ export function appendRow(rowsEl, cells) {
       td.appendChild(span);
     } else if (spec && Array.isArray(spec.forms)) {
       for (const options of spec.forms) {
-        const form = appendPostForm(td, options);
-        // Sensitive forms (stepup:2 server gate) pass `stepUp: true`:
-        // the gate sits AFTER the optional confirm listener so a
-        // cancelled confirm never opens the verify modal.
-        if (options.stepUp) attachStepUpGate(form);
+        // appendPostForm wires csrf/_method/fields, the optional confirm
+        // and the step-up gate itself.
+        appendPostForm(td, options);
       }
     } else {
       td.textContent = spec && spec.text !== undefined ? String(spec.text) : '';

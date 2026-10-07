@@ -52,10 +52,10 @@ Route::post('/oauth/stepup', [\App\Platform\Identity\Http\Controllers\MfaControl
 // untouched. The workspace travels as a hidden `tenant_id` form field
 // (forms cannot set headers); ResolveTenantContext reads it only for
 // non-api paths, so API header posture does not move. Step-up-gated
-// mutations: user suspend/activate share their API actions behind the
-// same tenant + capability + `stepup:2` guards, satisfied by the
-// /oauth/stepup form below (doc 06 §7.5). Role grants/revokes and
-// api-keys stay API-only until their console surfaces land.
+// mutations: user suspend/activate and role grant/revoke share their
+// API actions behind the same guards the API uses (stepup:2 satisfied
+// by the /oauth/stepup form below — doc 06 §7.5); api-keys stay
+// API-only until their console surface lands.
 Route::group(['prefix' => '/platform', 'middleware' => 'auth'], function (): void {
     Route::post('/policies', [\App\Platform\Authz\Http\Controllers\PolicyController::class, 'store'])
         ->middleware(['tenant', 'capability:platform:policy:configure']);
@@ -70,6 +70,13 @@ Route::group(['prefix' => '/platform', 'middleware' => 'auth'], function (): voi
         ->middleware(['tenant', 'capability:platform:user:manage', 'stepup:2']);
     Route::post('/users/{id}:activate', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'activate'])
         ->middleware(['tenant', 'capability:platform:user:manage', 'stepup:2']);
+    // Grant/revoke mirror the API exactly (route: stepup:2 only; the
+    // action's scopeToTenant does the issuer/tenant work; SoD runs on
+    // first-time grants).
+    Route::post('/memberships/{membershipId}/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'grant'])
+        ->middleware('stepup:2');
+    Route::delete('/memberships/{membershipId}/roles/{assignmentId}', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'revoke'])
+        ->middleware('stepup:2');
     Route::post('/sod-rules', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'store']);
     Route::patch('/sod-rules/{id}', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'update']);
     Route::delete('/sod-rules/{id}', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'destroy']);

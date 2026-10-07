@@ -57,6 +57,33 @@ paths:
                     properties:
                       request_id: { type: string }
   /api/v1/platform/memberships/{membershipId}/roles:
+    get:
+      operationId: listMembershipRoleAssignments
+      x-gate: ownership
+      summary: List a membership's role assignments (tenant_id query required).
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: membershipId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: "Assignments — role_assignment items (id, membership_id, role_code)."
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
     post:
       operationId: grantMembershipRole
       x-gate: ownership
