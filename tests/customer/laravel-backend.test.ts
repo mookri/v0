@@ -17,6 +17,7 @@ import { GET as listBookings } from '@apps/customer/app/api/bookings/route';
 import { GET as bookingDetail } from '@apps/customer/app/api/bookings/[bookingId]/route';
 import { GET as templeDetail } from '@apps/customer/app/api/temples/[templeId]/route';
 import { GET as panditDetail } from '@apps/customer/app/api/pandits/[panditId]/route';
+import { GET as listPandits } from '@apps/customer/app/api/pandits/route';
 import { GET as panditAvailability } from '@apps/customer/app/api/pandits/[panditId]/availability/route';
 import { POST as login } from '@apps/customer/app/api/auth/login/route';
 import { GET as getProfile } from '@apps/customer/app/api/profile/route';
@@ -280,6 +281,43 @@ test('wired pandit detail maps PANDIT_NOT_FOUND to NOT_FOUND', async () => {
   });
   expect(res.status).toBe(404);
   expect(((await res.json()) as { error: { code: string } }).error.code).toBe('NOT_FOUND');
+});
+
+test('wired pandit list forwards cursor and limit untouched and returns next cursor', async () => {
+  wiredEnv();
+  stubLaravel((url) => {
+    expect(url).toContain('/api/v1/pandit/profiles');
+    expect(url).toContain('limit=2');
+    expect(url).toContain('cursor=CUR_PAGE_ONE');
+    return {
+      data: [{ id: 'p1' }, { id: 'p2' }],
+      meta: { page: { limit: 2, has_more: true, next_cursor: 'CUR_PAGE_TWO' } },
+    };
+  });
+
+  const res = await listPandits(authed('https://app.navdhya.com/api/pandits?limit=2&cursor=CUR_PAGE_ONE'));
+  expect(res.status).toBe(200);
+  const body = (await res.json()) as {
+    data: { items: { id: string }[]; pagination: { hasMore: boolean; nextCursor: string | null } };
+  };
+  expect(body.data.items.map((i) => i.id)).toEqual(['p1', 'p2']);
+  expect(body.data.pagination).toEqual({ hasMore: true, nextCursor: 'CUR_PAGE_TWO' });
+});
+
+test('wired pandit list reports an exhausted last page', async () => {
+  wiredEnv();
+  stubLaravel(() => ({
+    data: [{ id: 'p3' }],
+    meta: { page: { limit: 2, has_more: false, next_cursor: null } },
+  }));
+
+  const res = await listPandits(authed('https://app.navdhya.com/api/pandits?limit=2&cursor=CUR_PAGE_TWO'));
+  expect(res.status).toBe(200);
+  const body = (await res.json()) as {
+    data: { items: { id: string }[]; pagination: { hasMore: boolean; nextCursor: string | null } };
+  };
+  expect(body.data.items).toHaveLength(1);
+  expect(body.data.pagination).toEqual({ hasMore: false, nextCursor: null });
 });
 
 test('wired pandit availability maps PANDIT_NOT_FOUND to NOT_FOUND', async () => {

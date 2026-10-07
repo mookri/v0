@@ -17,17 +17,6 @@ interface PanditProfile {
   created_at: string;
 }
 
-interface PanditPage {
-  limit: number;
-  has_more: boolean;
-  next_cursor: string | null;
-}
-
-interface PanditListResponse {
-  data: PanditProfile[];
-  meta: { page?: PanditPage; request_id?: string };
-}
-
 export async function GET(req: Request) {
   const requestId = newRequestId();
 
@@ -36,9 +25,10 @@ export async function GET(req: Request) {
     if (!ctx.actor) {
       return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
     }
-    return Response.json(ok({ data: [] as PanditProfile[], meta: { page: { limit: 20, has_more: false, next_cursor: null } } }, requestId), {
-      headers: { 'Cache-Control': 'private, max-age=60' },
-    });
+    return Response.json(
+      ok({ items: [] as PanditProfile[], pagination: { hasMore: false, nextCursor: null } }, requestId),
+      { headers: { 'Cache-Control': 'private, max-age=60' } },
+    );
   }
 
   const actor = wiredActor(req, requestId);
@@ -51,7 +41,7 @@ export async function GET(req: Request) {
       query[k] = v;
     }
 
-    const { data } = await laravelGet<PanditListResponse>(
+    const page = await laravelGet<PanditProfile[]>(
       actor.token,
       '/pandit/profiles',
       query,
@@ -62,7 +52,16 @@ export async function GET(req: Request) {
     );
 
     return Response.json(
-      ok(data, requestId),
+      ok(
+        {
+          items: page.data ?? [],
+          pagination: {
+            hasMore: page.meta?.page?.has_more ?? false,
+            nextCursor: page.meta?.page?.next_cursor ?? null,
+          },
+        },
+        requestId,
+      ),
       { headers: { 'Cache-Control': 'private, max-age=60' } },
     );
   } catch (e) {

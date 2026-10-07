@@ -74,7 +74,7 @@ subset of the contract union with identical statuses. New codes:
 
 | BFF endpoint | Backend source |
 |---|---|
-| `GET /api/pandits` | `GET /api/v1/pandit/profiles` — **wired behind flag** (kernel envelope unwrapped, items mapped to `{id, name, bio, specializations[], market, languages[], experience_years, rating_avg, review_count}`) |
+| `GET /api/pandits` | `GET /api/v1/pandit/profiles` — **wired behind flag** (kernel envelope unwrapped to `{items, pagination: {hasMore, nextCursor}}`; `?cursor=`/`?limit=` forwarded untouched, items mapped to `{id, name, bio, specializations[], market, languages[], experience_years, rating_avg, review_count}`) |
 | `GET /api/pandits/:panditId` | `GET /api/v1/pandit/profiles/{id}` — **wired behind flag** (404 `PANDIT_NOT_FOUND` → `NOT_FOUND`) |
 | `GET /api/pandits/:panditId/availability` | `GET /api/v1/pandit/profiles/{id}/availability` — **wired behind flag** (404 `PANDIT_NOT_FOUND` → `NOT_FOUND`) |
 

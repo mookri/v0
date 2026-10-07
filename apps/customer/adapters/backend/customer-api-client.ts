@@ -100,12 +100,13 @@ export const customerApi = {
     }),
 
   // Pandit directory
-  getPandits: (params?: { specialization?: string; market?: string; min_rating?: number; limit?: number }) => {
+  getPandits: (params?: { specialization?: string; market?: string; min_rating?: number; limit?: number; cursor?: string }) => {
     const qs = new URLSearchParams();
     if (params?.specialization) qs.set('specialization', params.specialization);
     if (params?.market) qs.set('market', params.market);
     if (params?.min_rating !== undefined) qs.set('min_rating', String(params.min_rating));
     if (params?.limit !== undefined) qs.set('limit', String(params.limit));
+    if (params?.cursor) qs.set('cursor', params.cursor);
     const suffix = qs.toString() ? `?${qs.toString()}` : '';
     return request(`/api/pandits${suffix}`);
   },
