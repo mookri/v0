@@ -102,6 +102,58 @@
     </div>
 </div>
 
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card d-none" id="sod-edit-card">
+            <div class="card-header border-0 d-flex flex-wrap justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Edit SoD rule <span class="text-muted font-monospace" id="sod-edit-title"></span></h5>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="sod-edit-cancel">Cancel</button>
+            </div>
+            <div class="card-body">
+                {{-- Shared PATCH action (plan slice 5, doc 06 §7): code and
+                     kind are immutable on update, so they are not editable;
+                     a blank set input keeps that set unchanged. --}}
+                <form method="POST" action="" id="sod-edit-form">
+                    @csrf
+                    <input type="hidden" name="_method" value="PATCH">
+                    <input type="hidden" name="tenant_id" data-workspace-field value="">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="sod-edit-name">Name</label>
+                            <input class="form-control" id="sod-edit-name" name="name" maxlength="190" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" for="sod-edit-severity">Severity</label>
+                            <select class="form-select" id="sod-edit-severity" name="severity">
+                                <option value="block">block</option>
+                                <option value="warn">warn</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" for="sod-edit-status">Status</label>
+                            <select class="form-select" id="sod-edit-status" name="status">
+                                <option value="active">active</option>
+                                <option value="disabled">disabled</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="sod-edit-role-set">Role set (comma-separated, blank = keep)</label>
+                            <input class="form-control font-monospace" id="sod-edit-role-set" name="role_set_text"
+                                   placeholder="approver, payer">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="sod-edit-permission-set">Permission set (comma-separated, blank = keep)</label>
+                            <input class="form-control font-monospace" id="sod-edit-permission-set" name="permission_set_text"
+                                   placeholder="sales:order:approve">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Save changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('script-bottom')

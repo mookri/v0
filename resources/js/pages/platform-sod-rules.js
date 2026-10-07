@@ -79,9 +79,37 @@ function rowForms(item) {
   return forms;
 }
 
+// The edit card carries the immutable code/kind as heading text only;
+// a blank set input means "keep unchanged" (the validator only sees a
+// set when splitSet appends its array inputs on submit).
+function openEdit(item) {
+  const form = document.getElementById('sod-edit-form');
+  const card = document.getElementById('sod-edit-card');
+  if (!form || !card) return;
+
+  form.action = `/platform/sod-rules/${item.id}`;
+
+  const title = document.getElementById('sod-edit-title');
+  if (title) title.textContent = item.code || item.id;
+
+  const name = document.getElementById('sod-edit-name');
+  if (name) name.value = item.name || '';
+  const severity = document.getElementById('sod-edit-severity');
+  if (severity) severity.value = item.severity || 'block';
+  const status = document.getElementById('sod-edit-status');
+  if (status) status.value = item.status || 'active';
+  const roles = document.getElementById('sod-edit-role-set');
+  if (roles) roles.value = Array.isArray(item.role_set) ? item.role_set.join(', ') : '';
+  const perms = document.getElementById('sod-edit-permission-set');
+  if (perms) perms.value = Array.isArray(item.permission_set) ? item.permission_set.join(', ') : '';
+
+  card.classList.remove('d-none');
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 function appendItems(items) {
   for (const item of items) {
-    appendRow(rowsEl, [
+    const tr = appendRow(rowsEl, [
       { text: item.code || '', cls: 'font-monospace' },
       item.name || '',
       item.kind || '',
@@ -90,6 +118,13 @@ function appendItems(items) {
       sourceBadge(item.source),
       { forms: rowForms(item) },
     ]);
+
+    const edit = document.createElement('button');
+    edit.type = 'button';
+    edit.className = 'btn btn-outline-primary btn-sm me-1';
+    edit.textContent = 'Edit';
+    edit.addEventListener('click', () => openEdit(item));
+    tr.lastElementChild.insertBefore(edit, tr.lastElementChild.firstChild);
   }
 }
 
@@ -148,6 +183,21 @@ function main() {
     createForm.addEventListener('submit', () => {
       splitSet(createForm, 'role_set_text', 'role_set');
       splitSet(createForm, 'permission_set_text', 'permission_set');
+    });
+  }
+
+  const editForm = document.getElementById('sod-edit-form');
+  if (editForm) {
+    editForm.addEventListener('submit', () => {
+      splitSet(editForm, 'role_set_text', 'role_set');
+      splitSet(editForm, 'permission_set_text', 'permission_set');
+    });
+  }
+
+  const cancelBtn = document.getElementById('sod-edit-cancel');
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', () => {
+      document.getElementById('sod-edit-card').classList.add('d-none');
     });
   }
 

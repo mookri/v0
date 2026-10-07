@@ -50,6 +50,8 @@ Route::group(['prefix' => '/platform', 'middleware' => 'auth'], function (): voi
         ->middleware(['tenant', 'capability:platform:policy:configure']);
     Route::post('/policies/{policy}:disable', [\App\Platform\Authz\Http\Controllers\PolicyController::class, 'disable'])
         ->middleware(['tenant', 'capability:platform:policy:configure']);
+    Route::patch('/policies/{policy}', [\App\Platform\Authz\Http\Controllers\PolicyController::class, 'update'])
+        ->middleware(['tenant', 'capability:platform:policy:configure']);
     Route::post('/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'store']);
     Route::post('/sod-rules', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'store']);
     Route::patch('/sod-rules/{id}', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'update']);

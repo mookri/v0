@@ -97,14 +97,22 @@ final class PolicyController
         ]);
     }
 
-    public function update(Request $request, string $policy): JsonResponse
+    // Shared action (plan slice 5, doc 06 §7.1-7.2): the console's edit
+    // form posts here with the transport keys stripped by payload(); the
+    // API path feeds $request->all() through untouched — one strict
+    // validator, one service, per-surface negotiation only.
+    public function update(Request $request, string $policy): JsonResponse|RedirectResponse
     {
-        $updated = $this->service->update(Policy::findOrFail($policy), $request->all());
+        $updated = $this->service->update(Policy::findOrFail($policy), self::payload($request));
 
-        return new JsonResponse([
-            'data' => $this->serialize($updated),
-            'meta' => ['request_id' => $this->requestId($request)],
-        ]);
+        return WebMutations::negotiate(
+            $request,
+            new JsonResponse([
+                'data' => $this->serialize($updated),
+                'meta' => ['request_id' => $this->requestId($request)],
+            ]),
+            'Policy updated.',
+        );
     }
 
     public function activate(Request $request, string $policy): JsonResponse|RedirectResponse

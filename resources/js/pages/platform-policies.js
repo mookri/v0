@@ -68,9 +68,40 @@ function rowForms(item) {
   return forms;
 }
 
+// The edit card shares the create grammar; JS points its action at the
+// row being edited — a form-fill, not a mutation, until Save posts to
+// the shared PATCH action (doc 06 §7.1-7.2).
+function setField(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.value = value;
+}
+
+function openEdit(item) {
+  const form = document.getElementById('policy-edit-form');
+  const card = document.getElementById('policy-edit-card');
+  if (!form || !card) return;
+
+  form.action = `/platform/policies/${item.id}`;
+  setField('policy-edit-title', item.name || item.id);
+  setField('policy-edit-name', item.name || '');
+  setField('policy-edit-effect', item.effect || 'allow');
+  setField('policy-edit-priority', String(item.priority ?? 0));
+
+  const selector = item.capability_selector && typeof item.capability_selector === 'object'
+    ? item.capability_selector
+    : {};
+  setField('policy-edit-selector-module', selector.module || '');
+  setField('policy-edit-selector-resource', selector.resource || '');
+  setField('policy-edit-selector-action', selector.action || '');
+  setField('policy-edit-description', item.description || '');
+
+  card.classList.remove('d-none');
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 function appendItems(items) {
   for (const item of items) {
-    appendRow(rowsEl, [
+    const tr = appendRow(rowsEl, [
       item.name || '',
       effectBadge(item.effect),
       { text: selectorText(item.capability_selector), cls: 'font-monospace' },
@@ -79,6 +110,13 @@ function appendItems(items) {
       { text: String(item.version ?? ''), cls: 'text-end' },
       { forms: rowForms(item) },
     ]);
+
+    const edit = document.createElement('button');
+    edit.type = 'button';
+    edit.className = 'btn btn-outline-primary btn-sm me-1';
+    edit.textContent = 'Edit';
+    edit.addEventListener('click', () => openEdit(item));
+    tr.lastElementChild.insertBefore(edit, tr.lastElementChild.firstChild);
   }
 }
 
@@ -113,6 +151,13 @@ async function loadPage() {
 function main() {
   fillWorkspaceBadge(document.getElementById('policy-workspace'));
   fillWorkspaceFields();
+
+  const cancelBtn = document.getElementById('policy-edit-cancel');
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', () => {
+      document.getElementById('policy-edit-card').classList.add('d-none');
+    });
+  }
 
   if (!apiMeta('api-tenant')) {
     setStateRow(rowsEl, 'No active workspace — ask an administrator to add you to a tenant.', COLS);
