@@ -37,6 +37,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->appendToGroup('api', 'limit.body');
+
+        // Session context for API reads only (doc 06 §8.4): interactive
+        // admin-shell components fetch module JSON with the web session's
+        // user. Unsafe methods never start a session, so cookie-authenticated
+        // writes stay impossible and the CSRF posture does not move.
+        $middleware->appendToGroup('api', \App\Platform\Http\Middleware\SessionContextForReads::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // JSON error envelope for API clients (doc 06 §4). Blade/admin
