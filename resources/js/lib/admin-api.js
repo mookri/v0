@@ -157,7 +157,8 @@ export function setStateRow(rowsEl, message, colSpan) {
 }
 
 /** Append one row of cells (strings, {text, cls}, badge specs, or
- * {forms: [...]} action cells built by appendPostForm). */
+ * {forms: [...]} action cells built by appendPostForm) and return the
+ * row so pages can enrich the last cell (e.g. a read-only Open button). */
 export function appendRow(rowsEl, cells) {
   const tr = document.createElement('tr');
   for (const spec of cells) {
@@ -180,6 +181,7 @@ export function appendRow(rowsEl, cells) {
     tr.appendChild(td);
   }
   rowsEl.appendChild(tr);
+  return tr;
 }
 
 /** Render a coded kernel error (code — message — request id) in the alert. */

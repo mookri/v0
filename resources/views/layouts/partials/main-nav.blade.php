@@ -137,6 +137,22 @@
                </li> <!-- end Pandits Menu -->
 
                <li class="nav-item">
+                    <a class="nav-link menu-arrow" href="#sidebarCustomers" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarCustomers">
+                         <span class="nav-icon">
+                              <i class="ri-customer-service-2-line"></i>
+                         </span>
+                         <span class="nav-text"> Customers </span>
+                    </a>
+                    <div class="collapse" id="sidebarCustomers">
+                         <ul class="nav sub-navbar-nav">
+                              <li class="sub-nav-item">
+                                   <a class="sub-nav-link" href="{{ route('second', ['customers', 'support'])}}">Support</a>
+                              </li>
+                         </ul>
+                    </div>
+               </li> <!-- end Customers Menu -->
+
+               <li class="nav-item">
                     <a class="nav-link menu-arrow" href="#sidebarAdministration" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarAdministration">
                          <span class="nav-icon">
                               <i class="ri-shield-check-line"></i>

@@ -11,6 +11,7 @@ use App\Modules\Customers\Http\Controllers\CustomerProfileController;
 use App\Modules\Customers\Http\Controllers\CustomerSettingController;
 use App\Modules\Customers\Http\Controllers\CustomerVerificationController;
 use App\Modules\Customers\Http\Controllers\SavedItemController;
+use App\Modules\Customers\Http\Controllers\StaffSupportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -126,3 +127,21 @@ Route::post('support/tickets/{id}/messages', [CustomerSupportController::class, 
     ->name('support.reply');
 Route::post('support/tickets/{id}:close', [CustomerSupportController::class, 'close'])
     ->name('support.close');
+
+// Staff console (plan slice 4, doc 06 §7): the tenant-wide queue over
+// the SAME rows — capability-gated (customers:support:view/manage),
+// while every customer-side route above stays ownership-scoped. Reads
+// also serve the console pages over the session cookie; writes are the
+// shared actions the console's forms post to.
+Route::get('support/staff/tickets', [StaffSupportController::class, 'index'])
+    ->middleware('capability:customers:support:view')
+    ->name('support.staff.index');
+Route::get('support/staff/tickets/{id}', [StaffSupportController::class, 'show'])
+    ->middleware('capability:customers:support:view')
+    ->name('support.staff.show');
+Route::post('support/staff/tickets/{id}/messages', [StaffSupportController::class, 'reply'])
+    ->middleware('capability:customers:support:manage')
+    ->name('support.staff.reply');
+Route::post('support/staff/tickets/{id}:close', [StaffSupportController::class, 'close'])
+    ->middleware('capability:customers:support:manage')
+    ->name('support.staff.close');

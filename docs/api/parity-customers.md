@@ -33,7 +33,7 @@ updates this doc and both test suites in the same change.
 | discover | `GET /api/discover` → always-empty feed | `GET /api/v1/customers/discover` → `{recommended, popular, recent}` (SQL-only: recency + 30d booking rank + novelty exclusion; no ML) | backend real; kernel envelope wraps the feed object (BFF unwraps in F2) |
 | activity | `/` recentActivity mock strings | `GET /api/v1/customers/activity` (cursor + `?kind=`, caller-scoped, dedicated read model — never audit rows) | backend only until F2 |
 | referrals | — | `GET /api/v1/customers/referrals` (code + count + masked list; attribution only, no rewards) | backend only until F2 |
-| support | `/support`, `/help` (validation only) | `POST /api/v1/customers/support/tickets` (cap 10 open), `GET …` (cursor), `GET …/{id}` (thread), `POST …/{id}/messages` (re-opens CLOSED), `POST …/{id}:close` | backend real; staff console is a separate surface |
+| support | `/support`, `/help` (validation only) | `POST /api/v1/customers/support/tickets` (cap 10 open), `GET …` (cursor), `GET …/{id}` (thread), `POST …/{id}/messages` (re-opens CLOSED), `POST …/{id}:close` | backend real; staff console is a separate surface (S4, below) |
 | mfa status | `GET /api/mfa/status` → `{enabled, enrolled_at}` | `GET /api/v1/identity/mfa` → 200 `{object: mfa_status, enabled, enrolled_at}` | **wired behind flag** |
 | mfa enroll | `POST /api/mfa/enroll` → `{otpauth_url, secret}` | `POST /api/v1/identity/mfa/enroll` → 201 `{otpauth_url, secret}` | **wired behind flag** |
 | mfa confirm | `POST /api/mfa/confirm {code}` → `{recovery_codes}` | `POST /api/v1/identity/mfa/confirm` → 200 `{recovery_codes}` | **wired behind flag** |
@@ -79,6 +79,10 @@ Profile/saved/notifications/settings/bookings/discover/activity/support rows bel
 | review on non-completed booking | `REVIEW_NOT_ALLOWED` (409, new additive) | `state_forbidden` (409) |
 | duplicate review | `REVIEW_EXISTS` (409, new additive) | `conflict` (409) |
 | support cap / close-when-closed | `CONFLICT` (409) | `conflict` / `state_forbidden` (409) |
+| staff: missing capability / guest | — | `authorization_denied` (403) / `unauthenticated` (401) |
+| staff: foreign or unknown ticket id | — | `not_found` (404) |
+| staff: close already-closed / bad status filter | — | `state_forbidden` (409, same code as customer side) / `validation_failed` (422) |
+| machine principal on the staff console | — | `membership_inactive` (403, customer data is human-only) |
 | missing Idempotency-Key on booking create | `VALIDATION_ERROR` (422) | `validation_failed` (422, `details.fields.Idempotency-Key`) |
 | invalid/inactive service SKU on create | `VALIDATION_ERROR` (422) | `validation_failed` (422, `details.fields.service_sku`) |
 | account deletion (soft delete) | `VALIDATION_ERROR` (422, bad OTP) / `FORBIDDEN` (403, no membership) | `validation_failed` (422) / `membership_inactive` (403) |
@@ -133,3 +137,20 @@ ids.)
 | unknown temple on dashboard (overview, settings) | `NOT_FOUND` (404) | `not_found` (404 — kernel rendering of the scoped lookup) |
 | invalid query params (limit, start_date/end_date) | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
 | guest / unauthenticated caller | `UNAUTHENTICATED` (401) | `unauthenticated` / `tenant_not_in_token` (401) — kernel binds tenant only for a principal |
+
+## Support staff console (S4)
+
+The staff side of support: a tenant-wide queue over the customers module's
+rows, capability-gated (`customers:support:view` / `customers:support:manage`),
+reachable from `/api/v1` (bearer) and from the Blade console's shared web
+actions (session + CSRF → redirect + coded flash — doc 06 §7). Queue and
+thread reads run over the session cookie; customer-side rows above are
+unchanged (CustomerSupportTest stays the pin).
+
+| Step | Next.js BFF | Laravel module | Match |
+|---|---|---|---|
+| staff queue | (no BFF endpoint yet) | `GET /api/v1/customers/support/staff/tickets?status=OPEN/CLOSED` → 200 cursor page with masked customer identity | backend only (S4 — the Blade console consumes it directly) |
+| staff thread | (no BFF endpoint yet) | `GET /api/v1/customers/support/staff/tickets/{id}` → 200 messages with `by: customer/staff` authorship + author names; foreign id → 404 `not_found` | backend only (S4) |
+| staff reply | (no BFF endpoint yet) | `POST /api/v1/customers/support/staff/tickets/{id}/messages` → 201, re-opens CLOSED (same documented semantics as the customer's own reply), audited `via: staff` | backend only (S4) |
+| staff close | (no BFF endpoint yet) | `POST /api/v1/customers/support/staff/tickets/{id}:close` → 200; repeat → 409 `state_forbidden` (same code as the customer side) | backend only (S4) |
+| console reply/close forms | — | web `POST /customers/support/tickets/{id}/messages` and `…/:close` share the staff actions: session + CSRF → redirect back with `flash`/`flash_error`, API envelopes untouched | web transport over the same actions (doc 06 §7.1-7.2) |

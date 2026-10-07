@@ -5,8 +5,11 @@
   "phase": 2,
   "priority": 150,
   "dependencies": [],
-  "actions": ["deactivate", "verify"],
-  "permissions": [],
+  "actions": ["deactivate", "verify", "manage"],
+  "permissions": [
+    { "code": "customers:support:view", "name": "View support tickets (staff console)" },
+    { "code": "customers:support:manage", "name": "Reply to and close support tickets (staff console)", "sensitive": true }
+  ],
   "scopes": ["customers:self"],
   "events": [
     { "name": "customers.account.signed_up", "schema": "v1" },

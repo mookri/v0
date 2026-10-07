@@ -1340,6 +1340,160 @@ paths:
                 properties:
                   data: { type: object, required: [object, settings] }
                   meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/support/staff/tickets:
+    get:
+      operationId: listStaffSupportTickets
+      summary: 'Tenant-wide ticket queue (staff console, capability-gated).'
+      x-permission: 'customers:support:view'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          $ref: '#/components/parameters/Limit'
+        -
+          $ref: '#/components/parameters/Cursor'
+        -
+          name: status
+          in: query
+          schema:
+            type: string
+            enum:
+              - OPEN
+              - CLOSED
+      responses:
+        200:
+          description: 'Queue page (newest first) with masked customer identities.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        401:
+          $ref: '#/components/responses/Unauthenticated'
+        403:
+          $ref: '#/components/responses/AuthorizationDenied'
+        422:
+          $ref: '#/components/responses/ValidationFailed'
+  '/api/v1/customers/support/staff/tickets/{id}':
+    get:
+      operationId: getStaffSupportTicket
+      summary: 'Ticket detail with the full thread and authorship.'
+      x-permission: 'customers:support:view'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: 'Ticket with messages (customer/staff authorship on each row).'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        401:
+          $ref: '#/components/responses/Unauthenticated'
+        403:
+          $ref: '#/components/responses/AuthorizationDenied'
+        404:
+          $ref: '#/components/responses/NotFound'
+  '/api/v1/customers/support/staff/tickets/{id}/messages':
+    post:
+      operationId: staffReplySupportTicket
+      summary: 'Staff reply (re-opens CLOSED tickets; shared console action).'
+      x-permission: 'customers:support:manage'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - body
+      responses:
+        201:
+          description: 'Reply recorded (ticket status included).'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        401:
+          $ref: '#/components/responses/Unauthenticated'
+        403:
+          $ref: '#/components/responses/AuthorizationDenied'
+        404:
+          $ref: '#/components/responses/NotFound'
+        422:
+          $ref: '#/components/responses/ValidationFailed'
+  '/api/v1/customers/support/staff/tickets/{id}:close':
+    post:
+      operationId: staffCloseSupportTicket
+      summary: 'Close a ticket (already-closed is 409; shared console action).'
+      x-permission: 'customers:support:manage'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: 'Closed ticket.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, object, status] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        401:
+          $ref: '#/components/responses/Unauthenticated'
+        403:
+          $ref: '#/components/responses/AuthorizationDenied'
+        404:
+          $ref: '#/components/responses/NotFound'
+        409:
+          description: 'state_forbidden - ticket already closed.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/v1/customers/support/tickets:
     get:
       operationId: listSupportTickets

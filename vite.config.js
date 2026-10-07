@@ -36,6 +36,7 @@ export default defineConfig({
                 'resources/js/pages/platform-roles.js',
                 'resources/js/pages/platform-sod-rules.js',
                 'resources/js/pages/platform-users.js',
+                'resources/js/pages/support-console.js',
                 'resources/js/pages/app-chat.js',
                 'resources/js/pages/app-blog-create.js',
                 'resources/js/pages/app-blog-create.js',
