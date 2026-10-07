@@ -8,6 +8,7 @@ import {
   appendRow,
   badge,
   fillWorkspaceBadge,
+  fillWorkspaceFields,
   setStateRow,
   showError,
 } from '../lib/admin-api.js';
@@ -61,6 +62,7 @@ async function load() {
 
 function main() {
   fillWorkspaceBadge(document.getElementById('role-workspace'));
+  fillWorkspaceFields();
 
   if (!apiMeta('api-tenant')) {
     setStateRow(rowsEl, 'No active workspace — ask an administrator to add you to a tenant.', COLS);

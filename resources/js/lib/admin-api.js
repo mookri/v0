@@ -90,6 +90,60 @@ export function fillWorkspaceBadge(el) {
   }
 }
 
+/** Fill hidden workspace fields (web form transport for tenant_id). */
+export function fillWorkspaceFields() {
+  const tenant = apiMeta('api-tenant');
+  document.querySelectorAll('input[data-workspace-field]').forEach((el) => {
+    el.value = tenant;
+  });
+}
+
+/** Append a hidden input to a form. */
+export function appendHiddenInput(form, name, value) {
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = name;
+  input.value = String(value ?? '');
+  form.appendChild(input);
+}
+
+/**
+ * Append a CSRF-carrying mutation form (doc 06 §7.4) — JS-rendered rows
+ * build what Blade's @csrf would for a server-rendered one: _token from
+ * the page meta, _method spoofing for PATCH/DELETE, extra hidden fields
+ * (workspace id), and an optional submit confirmation. These forms post
+ * to the SHARED web actions, never to /api/v1 (cookie sessions never
+ * authenticate API writes).
+ */
+export function appendPostForm(parent, { action, label, cls = 'btn-outline-primary', method = 'POST', fields = {}, confirmMessage = '' }) {
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = action;
+  form.className = 'd-inline';
+
+  const token = apiMeta('csrf-token');
+  if (token) appendHiddenInput(form, '_token', token);
+  if (method !== 'POST') appendHiddenInput(form, '_method', method);
+
+  for (const [name, value] of Object.entries(fields)) {
+    appendHiddenInput(form, name, value);
+  }
+
+  const button = document.createElement('button');
+  button.type = 'submit';
+  button.className = `btn ${cls}`;
+  button.textContent = label;
+  form.appendChild(button);
+
+  if (confirmMessage) {
+    form.addEventListener('submit', (event) => {
+      if (!window.confirm(confirmMessage)) event.preventDefault();
+    });
+  }
+
+  parent.appendChild(form);
+}
+
 /** Replace the table body with a single centered state row. */
 export function setStateRow(rowsEl, message, colSpan) {
   rowsEl.innerHTML = '';
@@ -102,7 +156,8 @@ export function setStateRow(rowsEl, message, colSpan) {
   rowsEl.appendChild(tr);
 }
 
-/** Append one row of cells (strings, {text, cls}, or badge specs). */
+/** Append one row of cells (strings, {text, cls}, badge specs, or
+ * {forms: [...]} action cells built by appendPostForm). */
 export function appendRow(rowsEl, cells) {
   const tr = document.createElement('tr');
   for (const spec of cells) {
@@ -114,6 +169,10 @@ export function appendRow(rowsEl, cells) {
       span.className = spec.badge.cls || 'badge bg-secondary-subtle text-secondary';
       span.textContent = spec.badge.text || '';
       td.appendChild(span);
+    } else if (spec && Array.isArray(spec.forms)) {
+      for (const options of spec.forms) {
+        appendPostForm(td, options);
+      }
     } else {
       td.textContent = spec && spec.text !== undefined ? String(spec.text) : '';
       if (spec && spec.cls) td.className = spec.cls;

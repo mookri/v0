@@ -4,12 +4,14 @@ namespace App\Platform\Authz\Http\Controllers;
 
 use App\Platform\Api\CodedHttpException;
 use App\Platform\Api\CursorPagination;
+use App\Platform\Api\WebMutations;
 use App\Platform\Authz\Contracts\Effect;
 use App\Platform\Authz\Contracts\PolicyStatus;
 use App\Platform\Authz\Exceptions\InvalidPolicyPayloadException;
 use App\Platform\Authz\Models\Policy;
 use App\Platform\Authz\PolicyService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 /**
@@ -17,7 +19,9 @@ use Illuminate\Http\Request;
  *
  * Mounted behind auth + tenant resolution + capability middleware
  * (routes/platform/api.php): `platform:policy:view` for reads,
- * `platform:policy:configure` (sensitive) for mutations. Deliberately does
+ * `platform:policy:configure` (sensitive) for mutations. The web console's
+ * form routes point at the same action methods (doc 06 §7.1-7.2) — one
+ * service, one validation path, negotiated responses. Deliberately does
  * not extend the app-shell Controller base class so the kernel layer keeps
  * its dependency boundary (doc 01 §7).
  */
@@ -71,14 +75,18 @@ final class PolicyController
         ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse|RedirectResponse
     {
-        $policy = $this->service->create($request->all());
+        $policy = $this->service->create(self::payload($request));
 
-        return new JsonResponse([
-            'data' => $this->serialize($policy),
-            'meta' => ['request_id' => $this->requestId($request)],
-        ], 201);
+        return WebMutations::negotiate(
+            $request,
+            new JsonResponse([
+                'data' => $this->serialize($policy),
+                'meta' => ['request_id' => $this->requestId($request)],
+            ], 201),
+            'Policy created.',
+        );
     }
 
     public function show(Request $request, string $policy): JsonResponse
@@ -99,24 +107,65 @@ final class PolicyController
         ]);
     }
 
-    public function activate(Request $request, string $policy): JsonResponse
+    public function activate(Request $request, string $policy): JsonResponse|RedirectResponse
     {
         $updated = $this->service->transitionStatus(Policy::findOrFail($policy), PolicyStatus::Active);
 
-        return new JsonResponse([
-            'data' => $this->serialize($updated),
-            'meta' => ['request_id' => $this->requestId($request)],
-        ]);
+        return WebMutations::negotiate(
+            $request,
+            new JsonResponse([
+                'data' => $this->serialize($updated),
+                'meta' => ['request_id' => $this->requestId($request)],
+            ]),
+            'Policy activated.',
+        );
     }
 
-    public function disable(Request $request, string $policy): JsonResponse
+    public function disable(Request $request, string $policy): JsonResponse|RedirectResponse
     {
         $updated = $this->service->transitionStatus(Policy::findOrFail($policy), PolicyStatus::Disabled);
 
-        return new JsonResponse([
-            'data' => $this->serialize($updated),
-            'meta' => ['request_id' => $this->requestId($request)],
-        ]);
+        return WebMutations::negotiate(
+            $request,
+            new JsonResponse([
+                'data' => $this->serialize($updated),
+                'meta' => ['request_id' => $this->requestId($request)],
+            ]),
+            'Policy disabled.',
+        );
+    }
+
+    /**
+     * API bodies are the payload itself — strict unknown-key validation
+     * stays untouched. Web form posts add transport-only keys (CSRF token,
+     * method spoof, the workspace id the tenant resolver read) that never
+     * belong to the policy grammar, and HTML transport is string-typed:
+     * the declared scalars are adapted (not relaxed — anything uncastable
+     * still fails the shared validator exactly like a bad API payload).
+     *
+     * @return array<string, mixed>
+     */
+    private static function payload(Request $request): array
+    {
+        if ($request->is('api/*')) {
+            return $request->all();
+        }
+
+        $input = $request->except(['_token', '_method', 'tenant_id']);
+
+        if (isset($input['priority']) && is_string($input['priority'])) {
+            $priority = filter_var($input['priority'], FILTER_VALIDATE_INT);
+
+            if ($priority !== false) {
+                $input['priority'] = $priority;
+            }
+        }
+
+        if (array_key_exists('description', $input) && $input['description'] === '') {
+            $input['description'] = null;
+        }
+
+        return $input;
     }
 
     private function assertKnownQueryParams(Request $request): void

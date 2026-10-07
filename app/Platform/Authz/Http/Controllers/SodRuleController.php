@@ -3,6 +3,7 @@
 namespace App\Platform\Authz\Http\Controllers;
 
 use App\Platform\Api\CursorPagination;
+use App\Platform\Api\WebMutations;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Authz\Events\SodRuleCreated;
 use App\Platform\Authz\Events\SodRuleUpdated;
@@ -12,6 +13,7 @@ use App\Platform\Tenancy\Models\Tenant;
 use App\Platform\Tenancy\Models\TenantMembership;
 use App\Platform\Tenancy\TenantContext;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 /**
@@ -111,7 +113,16 @@ final class SodRuleController
         ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->storeJson($request),
+            'Rule created.',
+        );
+    }
+
+    private function storeJson(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'tenant_id' => ['required', 'string'],
@@ -182,7 +193,16 @@ final class SodRuleController
         ], 201);
     }
 
-    public function update(Request $request, string $id): JsonResponse
+    public function update(Request $request, string $id): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->updateJson($request, $id),
+            'Rule updated.',
+        );
+    }
+
+    private function updateJson(Request $request, string $id): JsonResponse
     {
         $validated = $request->validate([
             'tenant_id' => ['required', 'string'],
@@ -264,7 +284,16 @@ final class SodRuleController
         ]);
     }
 
-    public function destroy(Request $request, string $id): JsonResponse
+    public function destroy(Request $request, string $id): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->destroyJson($request, $id),
+            'Rule deleted.',
+        );
+    }
+
+    private function destroyJson(Request $request, string $id): JsonResponse
     {
         $validated = $request->validate(['tenant_id' => ['required', 'string']]);
 

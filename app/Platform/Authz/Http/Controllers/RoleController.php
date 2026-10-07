@@ -14,7 +14,9 @@ use App\Platform\Tenancy\ConnectionResolver;
 use App\Platform\Tenancy\Models\Tenant;
 use App\Platform\Tenancy\Models\TenantMembership;
 use App\Platform\Tenancy\TenantContext;
+use App\Platform\Api\WebMutations;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 /**
@@ -111,7 +113,7 @@ final class RoleController
         ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse|RedirectResponse
     {
         $validated = $request->validate([
             'tenant_id' => ['required', 'string'],
@@ -121,14 +123,14 @@ final class RoleController
 
         $scoped = $this->scopeToTenant($request, $validated['tenant_id']);
         if ($scoped instanceof JsonResponse) {
-            return $scoped;
+            return WebMutations::negotiate($request, $scoped, '');
         }
 
         try {
             if (Role::query()->where('code', $validated['code'])->exists()) {
-                return new JsonResponse([
+                return WebMutations::negotiate($request, new JsonResponse([
                     'error' => ['code' => 'conflict', 'message' => 'Role code already exists in this tenant.', 'request_id' => $this->requestId($request)],
-                ], 409);
+                ], 409), '');
             }
 
             $role = new Role();
@@ -144,7 +146,7 @@ final class RoleController
             }
         }
 
-        return new JsonResponse([
+        return WebMutations::negotiate($request, new JsonResponse([
             'data' => [
                 'id' => (string) $role->getKey(),
                 'object' => 'role',
@@ -153,7 +155,7 @@ final class RoleController
                 'state' => $role->state,
             ],
             'meta' => ['request_id' => $this->requestId($request)],
-        ], 201);
+        ], 201), 'Role created.');
     }
 
     public function grant(Request $request, string $membershipId): JsonResponse

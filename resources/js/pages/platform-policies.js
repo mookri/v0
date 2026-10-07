@@ -9,6 +9,7 @@ import {
   appendRow,
   badge,
   fillWorkspaceBadge,
+  fillWorkspaceFields,
   setStateRow,
   showError,
 } from '../lib/admin-api.js';
@@ -17,7 +18,7 @@ const rowsEl = document.getElementById('policy-rows');
 const alertEl = document.getElementById('policy-alert');
 const moreBtn = document.getElementById('policy-load-more');
 
-const COLS = 6;
+const COLS = 7;
 let cursor = null;
 let loaded = false;
 
@@ -33,15 +34,50 @@ function effectBadge(effect) {
     : badge('allow', 'bg-success-subtle text-success');
 }
 
+function selectorText(selector) {
+  if (selector && typeof selector === 'object') {
+    return [selector.module, selector.resource, selector.action].filter(Boolean).join(':');
+  }
+  return String(selector || '');
+}
+
+// State transitions post to the SHARED web actions (doc 06 §7.1-7.2) —
+// cookie sessions never authenticate API writes. Draft activates; active
+// disables; disabled activates again.
+function rowForms(item) {
+  const tenant = apiMeta('api-tenant');
+  const forms = [];
+
+  if (item.status === 'draft' || item.status === 'disabled') {
+    forms.push({
+      action: `/platform/policies/${item.id}:activate`,
+      label: 'Activate',
+      cls: 'btn-outline-success btn-sm',
+      fields: { tenant_id: tenant },
+    });
+  }
+  if (item.status === 'active') {
+    forms.push({
+      action: `/platform/policies/${item.id}:disable`,
+      label: 'Disable',
+      cls: 'btn-outline-danger btn-sm',
+      fields: { tenant_id: tenant },
+    });
+  }
+
+  return forms;
+}
+
 function appendItems(items) {
   for (const item of items) {
     appendRow(rowsEl, [
       item.name || '',
       effectBadge(item.effect),
-      { text: item.capability_selector || '', cls: 'font-monospace' },
+      { text: selectorText(item.capability_selector), cls: 'font-monospace' },
       { text: String(item.priority ?? ''), cls: 'text-end' },
       statusBadge(item.status),
       { text: String(item.version ?? ''), cls: 'text-end' },
+      { forms: rowForms(item) },
     ]);
   }
 }
@@ -76,6 +112,7 @@ async function loadPage() {
 
 function main() {
   fillWorkspaceBadge(document.getElementById('policy-workspace'));
+  fillWorkspaceFields();
 
   if (!apiMeta('api-tenant')) {
     setStateRow(rowsEl, 'No active workspace — ask an administrator to add you to a tenant.', COLS);

@@ -38,6 +38,14 @@ final class ResolveTenantContext
     {
         $tenantId = trim((string) $request->header('X-Tenant-Id', ''));
 
+        if ($tenantId === '' && ! $request->is('api/*')) {
+            // Web console form posts cannot set request headers (doc 06
+            // §7.4): they carry the workspace as a hidden form field, read
+            // only after the header is absent. API surfaces stay header-only
+            // — their fail-closed posture does not move.
+            $tenantId = trim((string) $request->input('tenant_id', ''));
+        }
+
         if ($tenantId === '') {
             throw new TenantHeaderMissingException();
         }
