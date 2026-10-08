@@ -14,8 +14,12 @@
 
 export const DEV_ROLE_COOKIE = "navdhya-dev-role";
 
-/** Session cookie name (placeholder for the real auth integration in PR 1). */
-export const SESSION_COOKIE = "navdhya-session";
+/**
+ * Session cookie name (real implementation in `server/session-cookie.ts`,
+ * which owns the `__Host-` / dev-HTTP policy per auth/p0-contract.md §7).
+ * Re-exported here so consumers keep one import path.
+ */
+export { LEGACY_COOKIE_NAME as SESSION_COOKIE } from "@/server/session-cookie";
 
 /** Consent cookie (placeholder for PR 1's cookie-consent work). */
 export const CONSENT_COOKIE = "navdhya-consent";
