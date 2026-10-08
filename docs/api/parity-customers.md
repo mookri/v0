@@ -1,6 +1,6 @@
 # Customer Contract Parity — Next.js BFF ↔ Laravel modules
 
-**Backend status:** COMPLETE (B1–B8 + P7 + P8a, suite 490 passed) · Frontend wiring (F1–F2) pending.
+**Backend status:** COMPLETE (B1–B8 + P7 + P8a, suite 617 passed) · Frontend wiring **F1–F2 landed behind `CUSTOMER_BACKEND=laravel`** (mocks remain the default).
 
 Both surfaces implement the same flow with their platform's envelope and
 code registry. This table is the contract: either side changing a row
@@ -11,29 +11,29 @@ updates this doc and both test suites in the same change.
 | Step | Next.js BFF | Laravel module | Match |
 |---|---|---|---|
 | OTP request | `POST /api/auth/login {identityId, proof}` → `{token, sessionId, expiresAt}` (single call, memory identity) | `POST /api/v1/customers/auth/otp {tenant_id, purpose, identity}` → 202 `{challenge_id, expires_in}` | **diverged by design** — BFF keeps its shape; backend splits challenge + redeem (rate control). BFF maps: otp call, then redeem, then shapes `{token, sessionId, expiresAt}` from `{token, actor.session_id, expires_at}` |
-| signup | (no BFF endpoint yet) | `POST /api/v1/customers/auth/signup` → 202 `{challenge_id}` | backend only until F2 |
-| signup verify | (no BFF endpoint yet) | `POST /api/v1/customers/auth/verify` → 201 `{token, expires_at, tenant_id, actor}` | backend only until F2 |
-| login redeem | (folded into BFF login, optional `totpCode` passthrough) | `POST /api/v1/customers/auth/login` → 200 `{token, expires_at, tenant_id, actor}` (+ optional `totp_code` when the account has MFA enrolled — absent/wrong collapses to 401) | backend only until F2 |
+| signup | `POST /api/auth/signup {phone, name}` → 202 `{challengeId, expiresIn}` | `POST /api/v1/customers/auth/signup` → 202 `{challenge_id}` | **wired behind flag** |
+| signup verify | `POST /api/auth/verify {challengeId, code}` → 201 `{sessionId, expiresAt}` + session cookie (no token to the client) | `POST /api/v1/customers/auth/verify` → 201 `{token, expires_at, tenant_id, actor}` | **wired behind flag** |
+| login redeem | `POST /api/auth/login {identityId, proof, totpCode?}` → `{sessionId, expiresAt}` (bearer in HttpOnly cookie, `token` omitted by design) | `POST /api/v1/customers/auth/login` → 200 `{token, expires_at, tenant_id, actor}` (+ optional `totp_code` when the account has MFA enrolled — absent/wrong collapses to 401) | **wired behind flag** (BFF fans out otp → redeem; `totpCode` passthrough) |
 | logout | `POST /api/auth/logout` → `{signedOut:true}` | `POST /api/v1/customers/auth/logout` → 200 `{signed_out:true}` | equal semantics (both best-effort until jti store) |
 | profile read | `GET /api/profile` → `{profile}` | `GET /api/v1/customers/profile` → 200 masked profile | **wired behind flag** |
 | profile update | `PATCH /api/profile` → `{profile}` | `PATCH /api/v1/customers/profile` → 200 (strict fields) | **wired behind flag** |
 | deactivate/reactivate | `POST /api/profile:deactivate` (fresh OTP) / `POST /api/profile:reactivate` (public OTP) | `POST /api/v1/customers/profile:deactivate` (authed + fresh OTP) / `:reactivate` (**public** OTP — suspended members cannot pass the tenant gate) → 200 | **wired behind flag** |
 | account deletion | `POST /api/profile:delete` (fresh OTP) → 200 `{id, status, deleted_at}` | `POST /api/v1/customers/profile:delete` → 200 (soft delete: sets deleted_at, suspends membership, audit `customers.account.deleted`) | **wired behind flag** |
 | verifications | `GET /api/verifications` → `{verifications[]}` / `POST /api/verifications` → 202 `{challenge_id}` / `POST /api/verifications/confirm {id, code}` → 200 | `GET /api/v1/customers/verifications`, `POST …` → 202, `POST …/{id}:confirm` → 200 | **wired behind flag** |
-| addresses | web `/user/*` mock | `GET/POST /api/v1/customers/addresses`, `PATCH/DELETE …/{id}`, `POST …/{id}:default` (cap 20, default promotion) | backend only until F2 |
-| saved | `GET /api/saved` → mock cards | `GET/POST /api/v1/customers/saved` (opaque ULID refs, enriched by readers — deliberate: bookmarks, not FKs), `DELETE …/{id}` | shape differs by design (backend stores refs; BFF enriches) |
-| notifications | `GET /api/notifications` → `items:[]` | `GET /api/v1/customers/notifications` (cursor), `POST …/{id}:read`, `POST …:read-all` (reports flip count) | backend real; producers land B5+ |
-| settings | `GET /api/settings` → `{sections, values}` / `PATCH /api/settings` → `{sections, values}` | `GET/PATCH /api/v1/customers/settings` (closed key set over defaults; BFF maps key-values → sections in F2) | **wired behind flag** |
-| bookings list/detail | `GET /api/bookings` → cards, `GET /api/bookings/:id` → details+actions | `GET /api/v1/booking/reservations` (cursor + `?section=` upcoming/active/completed/cancelled), `GET …/{id}` (+ live `actions`) | backend real; section mapping documented here (upcoming = pre-service states, active = ASSIGNED/IN_PROGRESS, completed = COMPLETED, cancelled = terminal rest) |
+| addresses | `GET/POST /api/addresses`, `PATCH/DELETE /api/addresses/:id`, `POST /api/addresses/:id/default` | `GET/POST /api/v1/customers/addresses`, `PATCH/DELETE …/{id}`, `POST …/{id}:default` (cap 20, default promotion) | **wired behind flag** |
+| saved | `GET /api/saved` → items | `GET/POST /api/v1/customers/saved` (opaque ULID refs, enriched by readers — deliberate: bookmarks, not FKs), `DELETE …/{id}` | **wired behind flag** (interim `title=ref` mapping; catalog enrichment later) |
+| notifications | `GET /api/notifications` → cursor page | `GET /api/v1/customers/notifications` (cursor), `POST …/{id}:read`, `POST …:read-all` (reports flip count) | **wired behind flag** (producers land B5+) |
+| settings | `GET /api/settings` → `{sections, values}` / `PATCH /api/settings` → `{sections, values}` | `GET/PATCH /api/v1/customers/settings` (closed key set over defaults; the BFF maps key-values → sections) | **wired behind flag** |
+| bookings list/detail | `GET /api/bookings` → cards, `GET /api/bookings/:id` → details+actions | `GET /api/v1/booking/reservations` (cursor + `?section=` upcoming/active/completed/cancelled), `GET …/{id}` (+ live `actions`) | **wired behind flag, drilled live** (section mapping: upcoming = pre-service states, active = ASSIGNED/IN_PROGRESS, completed = COMPLETED, cancelled = terminal rest) |
 | bookings create | `POST /api/bookings` → 201 `{booking}` | `POST /api/v1/booking/reservations` → 201 (DRAFT, idempotent on Idempotency-Key, overlap guard, SKU validity via Catalog port) | **wired behind flag** |
-| cancel | `POST …/cancel` → 409 `BOOKING_CANNOT_CANCEL` | `POST /api/v1/booking/reservations/{id}:cancel` → 200 (idempotent on CANCELLED), else 409 `state_forbidden` | BFF maps 409 → `BOOKING_CANNOT_CANCEL`; idempotent replay is new (safe retries) |
-| reschedule | `POST …/reschedule {newStartTime}` → 409 | `POST …/{id}:reschedule {new_start_time, version}` → 200; stale → 409 `version_conflict`, overlap → 409 `conflict`, off-state → 409 `state_forbidden` | version + overlap are new (BFF sends `version` from detail read in F2) |
+| cancel | `POST …/cancel` → 409 `BOOKING_CANNOT_CANCEL` | `POST /api/v1/booking/reservations/{id}:cancel` → 200 (idempotent on CANCELLED), else 409 `state_forbidden` | **wired behind flag** (409 → `BOOKING_CANNOT_CANCEL`; idempotent replay is safe to retry) |
+| reschedule | `POST …/reschedule {newStartTime}` → 409 | `POST …/{id}:reschedule {new_start_time, version}` → 200; stale → 409 `version_conflict`, overlap → 409 `conflict`, off-state → 409 `state_forbidden` | **wired behind flag** (BFF reads the live version first; stale → `STALE_RESOURCE`, overlap → `BOOKING_SLOT_CONFLICT`) |
 | history | `GET /api/bookings/:bookingId/history` → `{transitions[]}` | `GET …/{id}/history` (append-only transitions) | **wired behind flag** |
-| reviews | web `/user/*` mock | `POST …/{id}/reviews` (COMPLETED only, one per booking), `GET /api/v1/booking/reviews`, `DELETE …/{id}` | backend only until F2 |
-| discover | `GET /api/discover` → always-empty feed | `GET /api/v1/customers/discover` → `{recommended, popular, recent}` (SQL-only: recency + 30d booking rank + novelty exclusion; no ML) | backend real; kernel envelope wraps the feed object (BFF unwraps in F2) |
-| activity | `/` recentActivity mock strings | `GET /api/v1/customers/activity` (cursor + `?kind=`, caller-scoped, dedicated read model — never audit rows) | backend only until F2 |
-| referrals | — | `GET /api/v1/customers/referrals` (code + count + masked list; attribution only, no rewards) | backend only until F2 |
-| support | `/support`, `/help` (validation only) | `POST /api/v1/customers/support/tickets` (cap 10 open), `GET …` (cursor), `GET …/{id}` (thread), `POST …/{id}/messages` (re-opens CLOSED), `POST …/{id}:close` | backend real; staff console is a separate surface (S4, below) |
+| reviews | `GET /api/reviews`, `POST /api/bookings/:bookingId/reviews`, `DELETE /api/reviews/:id` | `POST …/{id}/reviews` (COMPLETED only, one per booking), `GET /api/v1/booking/reviews`, `DELETE …/{id}` | **wired behind flag** |
+| discover | `GET /api/discover` → composed feed | `GET /api/v1/customers/discover` → `{recommended, popular, recent}` (SQL-only: recency + 30d booking rank + novelty exclusion; no ML) | **wired behind flag** (BFF unwraps kernel envelope) |
+| activity | `GET /api/activity` → cursor items | `GET /api/v1/customers/activity` (cursor + `?kind=`, caller-scoped, dedicated read model — never audit rows) | **wired behind flag** |
+| referrals | `GET /api/referrals` → code + count + list | `GET /api/v1/customers/referrals` (code + count + masked list; attribution only, no rewards) | **wired behind flag** |
+| support | `GET/POST /api/support/tickets`, thread + reply + close | `POST /api/v1/customers/support/tickets` (cap 10 open), `GET …` (cursor), `GET …/{id}` (thread), `POST …/{id}/messages` (re-opens CLOSED), `POST …/{id}:close` | **wired behind flag**; staff console is a separate surface (S4, below) |
 | mfa status | `GET /api/mfa/status` → `{enabled, enrolled_at}` | `GET /api/v1/identity/mfa` → 200 `{object: mfa_status, enabled, enrolled_at}` | **wired behind flag** |
 | mfa enroll | `POST /api/mfa/enroll` → `{otpauth_url, secret}` | `POST /api/v1/identity/mfa/enroll` → 201 `{otpauth_url, secret}` | **wired behind flag** |
 | mfa confirm | `POST /api/mfa/confirm {code}` → `{recovery_codes}` | `POST /api/v1/identity/mfa/confirm` → 200 `{recovery_codes}` | **wired behind flag** |
@@ -98,7 +98,7 @@ cross-surface contract (validation: 422 both sides after the F1 alignment).
 |---|---|---|---|
 | pandit directory | `GET /api/pandits` → `{data: {items: PanditProfile[], pagination: {hasMore, nextCursor}}, requestId}` | `GET /api/v1/pandit/profiles` → 200 kernel envelope with items + cursor page (verified + ACTIVE only) | **wired behind flag** (BFF unwraps kernel envelope; `?cursor=`/`?limit=` forwarded untouched, `meta.page` mapped to `pagination`) |
 | pandit detail | `GET /api/pandits/:panditId` → `{id, name, bio, specializations[], market, languages[], experience_years, rating_avg, review_count, verification_status, status, created_at}` | `GET /api/v1/pandit/profiles/{id}` → 200 kernel envelope with profile (404 `PANDIT_NOT_FOUND` for unknown/unverified/suspended) | **wired behind flag** (404 → NOT_FOUND) |
-| pandit availability | `GET /api/pandits/:panditId/availability?start_date&end_date` → `{data: AvailabilitySlot[], meta}` | `GET /api/v1/pandit/profiles/{id}/availability` → 200 kernel envelope with slots (404 `PANDIT_NOT_FOUND` for unknown/unverified/suspended) | **wired behind flag** (404 → NOT_FOUND) |
+| pandit availability | `GET /api/pandits/:panditId/availability?start_date&end_date` → `AvailabilitySlot[]` (kernel envelope unwrapped to a bare array) | `GET /api/v1/pandit/profiles/{id}/availability` → 200 kernel envelope with slots (404 `PANDIT_NOT_FOUND` for unknown/unverified/suspended) | **wired behind flag** (404 → NOT_FOUND) |
 
 ### Pandit code correspondence
 
@@ -112,14 +112,14 @@ cross-surface contract (validation: 422 both sides after the F1 alignment).
 
 | Step | Next.js BFF | Laravel module | Match |
 |---|---|---|---|
-| temple directory (customer) | `GET /api/temples` → `{data: TempleProfile[], meta: {page}}` | `GET /api/v1/temple/profiles` → 200 kernel envelope with items + cursor page (VERIFIED + ACTIVE only) | **wired behind flag** (BFF unwraps kernel envelope, passes query params — `?cursor=` honored end-to-end since S12; the API previously dropped it and replayed page 1) |
+| temple directory (customer) | `GET /api/temples` → `{data: TempleProfile[], meta: {page}}` | `GET /api/v1/temple/profiles` → 200 kernel envelope with items + cursor page (VERIFIED + ACTIVE only) | **wired behind flag** (BFF unwraps the kernel envelope to the `{data, meta: {page}}` payload the page reads — S13 fixed a wired branch that returned a bare array and rendered an empty directory; `?cursor=` honored end-to-end since S12, where the API previously dropped it and replayed page 1) |
 | temple detail (customer) | `GET /api/temples/:templeId` → profile | `GET /api/v1/temple/profiles/{id}` → 200 kernel envelope with profile (404 `TEMPLE_NOT_FOUND` for unknown/unverified/suspended id) | **wired behind flag** (404 `TEMPLE_NOT_FOUND` → `NOT_FOUND`) |
 | temple directory (partner) | `GET /api/temples` → `{data: TempleProfile[], meta: {page}}` | `GET /api/v1/temple/profiles` → same backend as the customer directory | **wired behind flag** (`PARTNER_BACKEND=laravel`) |
 | temple detail (partner) | `GET /api/temples/:templeId` → profile | `GET /api/v1/temple/profiles/{id}` → same backend as the customer detail | **wired behind flag** (404 `TEMPLE_NOT_FOUND` → `NOT_FOUND`) |
 | temple dashboard (partner) | `GET /api/temples/:templeId/dashboard/:section` → section payload | `GET /api/v1/temple/partner/temples/{id}/dashboard/{section}` — overview, pujas, bookings, calendar, analytics, settings (overview + settings resolve the temple row: unknown → 404 `not_found`; the other sections scope-query and answer 200 with empty data) | **wired behind flag** (`not_found` → `NOT_FOUND`, `permission_missing` → `FORBIDDEN`, `validation_failed` → `VALIDATION_ERROR`) |
-| temple pujas (public) | (no BFF endpoint yet) | `GET /api/v1/temple/profiles/{templeId}/pujas?limit` → 200 `{data: assignments, meta: {request_id, page}}`; 404 `TEMPLE_NOT_FOUND` | backend only (P11g) |
-| temple availability (public) | (no BFF endpoint yet) | `GET /api/v1/temple/profiles/{templeId}/availability?start_date&end_date` → 200 `{data: slots, meta: {request_id}}`; 404 `TEMPLE_NOT_FOUND`, 422 `validation_failed` | backend only (P11g) |
-| temple puja show (partner) | (no BFF endpoint yet) | `GET /api/v1/temple/partner/temples/{templeId}/pujas/{pujaId}` → 200 assignment; 404 `TEMPLE_PUJA_NOT_FOUND` | backend only (P11g) |
+| temple pujas (public) | `GET /api/temples/:templeId/pujas?limit&cursor` → `{data: assignments, meta: {page}}` | `GET /api/v1/temple/profiles/{templeId}/pujas?limit` → 200 `{data: assignments, meta: {request_id, page}}`; 404 `TEMPLE_NOT_FOUND` | **wired behind flag** (query forwarded untouched, 404 → `NOT_FOUND`, 422 → `VALIDATION_ERROR`) |
+| temple availability (public) | `GET /api/temples/:templeId/availability?start_date&end_date` → `AvailabilitySlot[]` (bare array, like pandit availability) | `GET /api/v1/temple/profiles/{templeId}/availability?start_date&end_date` → 200 `{data: slots, meta: {request_id}}`; 404 `TEMPLE_NOT_FOUND`, 422 `validation_failed` | **wired behind flag** (404 → `NOT_FOUND`, 422 → `VALIDATION_ERROR`) |
+| temple puja show (partner) | `GET /api/temples/:templeId/pujas/:pujaId` → assignment | `GET /api/v1/temple/partner/temples/{templeId}/pujas/{pujaId}` → 200 assignment; 404 `TEMPLE_PUJA_NOT_FOUND` | **wired behind flag** (`PARTNER_BACKEND=laravel`; 404 → `NOT_FOUND`, `permission_missing` → `FORBIDDEN`) |
 
 Public visibility is fail-closed: the directory, detail, pujas and availability
 expose only VERIFIED + ACTIVE temples — unverified, suspended and unknown ids
@@ -133,7 +133,7 @@ ids.)
 | Situation | Next.js code | Laravel code |
 |---|---|---|
 | unknown/unverified/suspended temple (public detail, pujas, availability) | `NOT_FOUND` (404) | `TEMPLE_NOT_FOUND` (404) |
-| unknown/foreign puja assignment (partner show) | — (no BFF surface yet) | `TEMPLE_PUJA_NOT_FOUND` (404) |
+| unknown/foreign puja assignment (partner show) | `NOT_FOUND` (404) | `TEMPLE_PUJA_NOT_FOUND` (404) |
 | unknown temple on dashboard (overview, settings) | `NOT_FOUND` (404) | `not_found` (404 — kernel rendering of the scoped lookup) |
 | invalid query params (limit, start_date/end_date) | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
 | guest / unauthenticated caller | `UNAUTHENTICATED` (401) | `unauthenticated` / `tenant_not_in_token` (401) — kernel binds tenant only for a principal |
