@@ -12,11 +12,8 @@ interface PanditAvailabilitySlot {
   specific_date: string | null;
 }
 
-interface PanditAvailabilityResponse {
-  data: PanditAvailabilitySlot[];
-  meta: { request_id?: string };
-}
-
+// Kernel envelope unwrapped here: the BFF payload is the bare slots
+// array (parity-customers.md row: pandit availability → AvailabilitySlot[]).
 export async function GET(req: Request, { params }: { params: Promise<{ panditId: string }> }) {
   const requestId = newRequestId();
   const { panditId } = await params;
@@ -39,7 +36,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ panditId
       query[k] = v;
     }
 
-    const { data } = await laravelGet<PanditAvailabilityResponse>(
+    const { data } = await laravelGet<PanditAvailabilitySlot[]>(
       actor.token,
       `/pandit/profiles/${encodeURIComponent(panditId)}/availability`,
       query,

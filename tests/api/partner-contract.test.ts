@@ -109,6 +109,7 @@ const MAPPINGS: BackendMapping[] = [
   // Temple directory + dashboard (P11)
   { bff: 'GET /api/temples', backend: ['GET /api/v1/temple/profiles'], inRegistry: true },
   { bff: 'GET /api/temples/:templeId', backend: ['GET /api/v1/temple/profiles/{id}'], inRegistry: true },
+  { bff: 'GET /api/temples/:templeId/pujas/:pujaId', backend: ['GET /api/v1/temple/partner/temples/{id}/pujas/{pujaId}'], inRegistry: true },
   { bff: 'GET /api/temples/:templeId/dashboard/overview', backend: ['GET /api/v1/temple/partner/temples/{id}/dashboard/overview'], inRegistry: true },
   { bff: 'GET /api/temples/:templeId/dashboard/pujas', backend: ['GET /api/v1/temple/partner/temples/{id}/dashboard/pujas'], inRegistry: true },
   { bff: 'GET /api/temples/:templeId/dashboard/bookings', backend: ['GET /api/v1/temple/partner/temples/{id}/dashboard/bookings'], inRegistry: true },

@@ -63,4 +63,6 @@ export const apiRoutes: ApiRouteMeta[] = [
   // Temple directory (P11)
   { routeId: 'customer.temples', method: 'GET', path: '/api/temples', access: 'authenticated', capability: 'temple:read', cache: 'private-short' },
   { routeId: 'customer.temple.detail', method: 'GET', path: '/api/temples/:templeId', access: 'authenticated', capability: 'temple:read', cache: 'private-short' },
+  { routeId: 'customer.temple.pujas', method: 'GET', path: '/api/temples/:templeId/pujas', access: 'authenticated', capability: 'temple:read', cache: 'private-short' },
+  { routeId: 'customer.temple.availability', method: 'GET', path: '/api/temples/:templeId/availability', access: 'authenticated', capability: 'temple:read', cache: 'private-short' },
 ];

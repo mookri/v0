@@ -16,6 +16,9 @@ import {
 import { GET as listBookings } from '@apps/customer/app/api/bookings/route';
 import { GET as bookingDetail } from '@apps/customer/app/api/bookings/[bookingId]/route';
 import { GET as templeDetail } from '@apps/customer/app/api/temples/[templeId]/route';
+import { GET as listTemples } from '@apps/customer/app/api/temples/route';
+import { GET as templePujas } from '@apps/customer/app/api/temples/[templeId]/pujas/route';
+import { GET as templeAvailability } from '@apps/customer/app/api/temples/[templeId]/availability/route';
 import { GET as panditDetail } from '@apps/customer/app/api/pandits/[panditId]/route';
 import { GET as listPandits } from '@apps/customer/app/api/pandits/route';
 import { GET as panditAvailability } from '@apps/customer/app/api/pandits/[panditId]/availability/route';
@@ -510,4 +513,170 @@ test('wired signup intent and verify set the session cookie', async () => {
     }),
   );
   expect(cold.status).toBe(401);
+});
+
+test('wired temple directory returns the {data, meta} payload the page reads', async () => {
+  wiredEnv();
+  stubLaravel((url) => {
+    expect(url).toContain('/api/v1/temple/profiles');
+    expect(url).toContain('limit=20');
+    return {
+      data: [{ id: 't1', name: 'Kashi Vishwanath' }],
+      meta: { request_id: 'kernel-req-1', page: { limit: 20, has_more: true, next_cursor: 'CUR_PAGE_TWO' } },
+    };
+  });
+
+  const res = await listTemples(authed('https://app.navdhya.com/api/temples?limit=20'));
+  expect(res.status).toBe(200);
+  const body = (await res.json()) as {
+    data: { data: { id: string }[]; meta: { page: { has_more: boolean; next_cursor: string | null } } };
+  };
+  // (protected)/temples/page.tsx reads payload.data — a bare array here
+  // would render an empty directory in wired mode.
+  expect(body.data.data.map((t) => t.id)).toEqual(['t1']);
+  expect(body.data.meta.page).toEqual({ limit: 20, has_more: true, next_cursor: 'CUR_PAGE_TWO' });
+});
+
+test('wired temple pujas forward limit/cursor and return the page payload', async () => {
+  wiredEnv();
+  stubLaravel((url) => {
+    expect(url).toContain('/api/v1/temple/profiles/t1/pujas');
+    expect(url).toContain('limit=2');
+    expect(url).toContain('cursor=CUR1');
+    return {
+      data: [
+        {
+          id: 'as1',
+          temple_id: 't1',
+          puja_id: 'p1',
+          price_override_minor: 210000,
+          capacity: 40,
+          schedule_json: null,
+          status: 'ACTIVE',
+          created_at: '2030-01-01T00:00:00.000Z',
+        },
+      ],
+      meta: { request_id: 'kernel-req-2', page: { limit: 2, has_more: true, next_cursor: 'CUR2' } },
+    };
+  });
+
+  const res = await templePujas(authed('https://app.navdhya.com/api/temples/t1/pujas?limit=2&cursor=CUR1'), {
+    params: Promise.resolve({ templeId: 't1' }),
+  });
+  expect(res.status).toBe(200);
+  const body = (await res.json()) as {
+    data: { data: { id: string; puja_id: string }[]; meta: { page: { has_more: boolean; next_cursor: string | null } } };
+  };
+  expect(body.data.data[0]).toMatchObject({ id: 'as1', puja_id: 'p1' });
+  expect(body.data.meta.page).toEqual({ limit: 2, has_more: true, next_cursor: 'CUR2' });
+});
+
+test('wired temple pujas map TEMPLE_NOT_FOUND to NOT_FOUND', async () => {
+  wiredEnv();
+  stubLaravelStatuses(() => ({
+    status: 404,
+    body: { error: { code: 'TEMPLE_NOT_FOUND', message: 'Temple not found.', requestId: 'r' } },
+  }));
+  const res = await templePujas(authed('https://app.navdhya.com/api/temples/t404/pujas'), {
+    params: Promise.resolve({ templeId: 't404' }),
+  });
+  expect(res.status).toBe(404);
+  expect(((await res.json()) as { error: { code: string } }).error.code).toBe('NOT_FOUND');
+});
+
+test('wired temple availability forwards dates and unwraps to a bare slots array', async () => {
+  wiredEnv();
+  stubLaravel((url) => {
+    expect(url).toContain('/api/v1/temple/profiles/t1/availability');
+    expect(url).toContain('start_date=2030-05-01');
+    expect(url).toContain('end_date=2030-05-07');
+    return {
+      data: [
+        {
+          assignment_id: 'as1',
+          puja_id: 'p1',
+          day_of_week: 3,
+          start: '09:00',
+          end: '11:00',
+          capacity: 40,
+          price_override_minor: null,
+        },
+      ],
+      meta: { request_id: 'kernel-req-3' },
+    };
+  });
+
+  const res = await templeAvailability(
+    authed('https://app.navdhya.com/api/temples/t1/availability?start_date=2030-05-01&end_date=2030-05-07'),
+    { params: Promise.resolve({ templeId: 't1' }) },
+  );
+  expect(res.status).toBe(200);
+  const body = (await res.json()) as { data: { assignment_id: string; day_of_week: number }[] };
+  expect(body.data).toHaveLength(1);
+  expect(body.data[0]).toMatchObject({ assignment_id: 'as1', day_of_week: 3 });
+});
+
+test('wired temple availability maps 404 and 422 to BFF codes', async () => {
+  wiredEnv();
+  stubLaravelStatuses((url) =>
+    url.includes('start_date=broken')
+      ? { status: 422, body: { error: { code: 'validation_failed', message: 'Invalid dates.', requestId: 'r' } } }
+      : { status: 404, body: { error: { code: 'TEMPLE_NOT_FOUND', message: 'Temple not found.', requestId: 'r' } } },
+  );
+
+  const missing = await templeAvailability(authed('https://app.navdhya.com/api/temples/t1/availability'), {
+    params: Promise.resolve({ templeId: 't1' }),
+  });
+  expect(missing.status).toBe(404);
+  expect(((await missing.json()) as { error: { code: string } }).error.code).toBe('NOT_FOUND');
+
+  const invalid = await templeAvailability(
+    authed('https://app.navdhya.com/api/temples/t1/availability?start_date=broken'),
+    { params: Promise.resolve({ templeId: 't1' }) },
+  );
+  expect(invalid.status).toBe(422);
+  expect(((await invalid.json()) as { error: { code: string } }).error.code).toBe('VALIDATION_ERROR');
+});
+
+test('wired pandit availability unwraps to a bare slots array', async () => {
+  wiredEnv();
+  stubLaravel((url) => {
+    expect(url).toContain('/api/v1/pandit/profiles/p1/availability');
+    return {
+      data: [
+        {
+          id: 'sl1',
+          day_of_week: 3,
+          start_time: '09:00',
+          end_time: '11:00',
+          slot_duration_minutes: 30,
+          is_recurring: true,
+          specific_date: null,
+        },
+      ],
+      meta: { request_id: 'kernel-req-4' },
+    };
+  });
+
+  const res = await panditAvailability(authed('https://app.navdhya.com/api/pandits/p1/availability'), {
+    params: Promise.resolve({ panditId: 'p1' }),
+  });
+  expect(res.status).toBe(200);
+  const body = (await res.json()) as { data: { id: string }[] };
+  expect(body.data.map((s) => s.id)).toEqual(['sl1']);
+});
+
+test('new temple surfaces stay unauthenticated-only on mocks', async () => {
+  vi.stubEnv('CUSTOMER_BACKEND', '');
+
+  const pujas = await templePujas(new Request('https://app.navdhya.com/api/temples/t1/pujas'), {
+    params: Promise.resolve({ templeId: 't1' }),
+  });
+  expect(pujas.status).toBe(401);
+  expect(((await pujas.json()) as { error: { code: string } }).error.code).toBe('UNAUTHENTICATED');
+
+  const availability = await templeAvailability(new Request('https://app.navdhya.com/api/temples/t1/availability'), {
+    params: Promise.resolve({ templeId: 't1' }),
+  });
+  expect(availability.status).toBe(401);
 });

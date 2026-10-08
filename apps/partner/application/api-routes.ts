@@ -16,6 +16,7 @@ export const apiRoutes: PartnerApiRouteMeta[] = [
   // Temple directory + dashboard (P11)
   { routeId: 'partner.temples', method: 'GET', path: '/api/temples', access: 'authenticated', capability: 'temple:read', cache: 'private-short' },
   { routeId: 'partner.temple.detail', method: 'GET', path: '/api/temples/:templeId', access: 'authenticated', capability: 'temple:read', cache: 'private-short' },
+  { routeId: 'partner.temple.puja', method: 'GET', path: '/api/temples/:templeId/pujas/:pujaId', access: 'authenticated', capability: 'temple:partner', cache: 'private-short' },
   { routeId: 'partner.temple.dashboard', method: 'GET', path: '/api/temples/:templeId/dashboard/overview', access: 'authenticated', capability: 'temple:partner', cache: 'none' },
   { routeId: 'partner.temple.dashboard', method: 'GET', path: '/api/temples/:templeId/dashboard/pujas', access: 'authenticated', capability: 'temple:partner', cache: 'none' },
   { routeId: 'partner.temple.dashboard', method: 'GET', path: '/api/temples/:templeId/dashboard/bookings', access: 'authenticated', capability: 'temple:partner', cache: 'none' },

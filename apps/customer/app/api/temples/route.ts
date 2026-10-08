@@ -22,12 +22,14 @@ interface TempleProfile {
 }
 
 interface TemplePage {
-  limit: number;
-  has_more: boolean;
-  next_cursor: string | null;
+  limit?: number;
+  has_more?: boolean;
+  next_cursor?: string | null;
 }
 
-interface TempleListResponse {
+// Payload shape the mock branch, parity-customers.md and
+// (protected)/temples/page.tsx all agree on: `{data, meta: {page}}`.
+interface TempleListPayload {
   data: TempleProfile[];
   meta: { page?: TemplePage; request_id?: string };
 }
@@ -55,7 +57,7 @@ export async function GET(req: Request) {
       query[k] = v;
     }
 
-    const { data } = await laravelGet<TempleListResponse>(
+    const response = await laravelGet<TempleProfile[]>(
       actor.token,
       '/temple/profiles',
       query,
@@ -66,7 +68,7 @@ export async function GET(req: Request) {
     );
 
     return Response.json(
-      ok(data, requestId),
+      ok({ data: response.data, meta: response.meta } satisfies TempleListPayload, requestId),
       { headers: { 'Cache-Control': 'private, max-age=60' } },
     );
   } catch (e) {
