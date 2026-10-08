@@ -10,6 +10,7 @@ import { AuthSocialButtons } from './AuthSocialButtons'
 import { AuthDivider } from './AuthDivider'
 import { AuthHeader } from './AuthHeader'
 import type { AuthState } from './UnifiedAuthConsole'
+import { authPost, setChallenge, toE164, newIdempotencyKey, AuthRequestError } from '@/lib/auth/auth-client'
 
 interface SignupScreenProps {
   phone: string
@@ -73,28 +74,25 @@ export function SignupScreen({
     setIsLoading(true)
 
     try {
-      const res = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, name: phone }), // Using phone as name for now
-      })
+      const e164 = toE164(countryCode, phone)
+      const res = await authPost<{ data?: { challengeId?: string; expiresIn?: number } }>(
+        '/api/auth/signup',
+        { phone: e164, name: phone },
+        { idempotencyKey: newIdempotencyKey() },
+      )
 
-      if (!res.ok) {
-        const data = await res.json()
-        setErrors({ general: data.error?.message || 'Signup failed' })
-        return
-      }
-
-      const data = await res.json()
-      const challengeId = data.data?.challengeId
+      const challengeId = res.data.data?.challengeId
       if (!challengeId) {
         setErrors({ general: 'Failed to get challenge ID' })
         return
       }
 
-      sessionStorage.setItem('auth_challenge_id', challengeId)
+      setChallenge(challengeId, 'signup', res.data.data?.expiresIn ?? 600)
       setOtpSentReason('SIGNUP')
       transitionTo('OTP')
+    } catch (err) {
+      const e = err as AuthRequestError
+      setErrors({ general: e.message || 'Signup failed' })
     } finally {
       setIsLoading(false)
     }
