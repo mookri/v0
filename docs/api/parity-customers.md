@@ -1,6 +1,6 @@
 # Customer Contract Parity — Next.js BFF ↔ Laravel modules
 
-**Backend status:** COMPLETE (B1–B8 + P7 + P8a, suite 617 passed) · Frontend wiring **F1–F2 landed behind `CUSTOMER_BACKEND=laravel`** (mocks remain the default).
+**Backend status:** COMPLETE (B1—B8 + P7 + P8a, suite 628 passed) · Frontend wiring **F1–F2 landed behind `CUSTOMER_BACKEND=laravel`** (mocks remain the default).
 
 Both surfaces implement the same flow with their platform's envelope and
 code registry. This table is the contract: either side changing a row

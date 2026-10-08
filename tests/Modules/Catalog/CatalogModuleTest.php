@@ -2,6 +2,8 @@
 
 namespace Tests\Modules\Catalog;
 
+use App\Modules\Catalog\Contracts\ListsCatalogItems;
+use App\Modules\Catalog\Models\CatalogItem;
 use Tests\TenantIntegrationTestCase;
 
 /**
@@ -88,5 +90,51 @@ final class CatalogModuleTest extends TenantIntegrationTestCase
             ->assertStatus(409);
         $authed()->postJson("/api/v1/catalog/items/{$id}:archive", [], $headers)
             ->assertStatus(409);
+    }
+
+    public function test_items_by_ids_resolves_in_requested_order_and_drops_unknown(): void
+    {
+        $tenant = $this->makeTenant();
+        $this->resolveContext($tenant);
+
+        $alpha = CatalogItem::factory()->create([
+            'tenant_id' => (string) $tenant->getKey(),
+            'sku' => 'BYID-A',
+            'name' => 'Alpha Puja',
+            'price_minor' => 1000,
+        ]);
+        $beta = CatalogItem::factory()->create([
+            'tenant_id' => (string) $tenant->getKey(),
+            'sku' => 'BYID-B',
+            'name' => 'Beta Puja',
+            'price_minor' => 2000,
+        ]);
+
+        $port = app(ListsCatalogItems::class);
+
+        // Requested order preserved; unknown and empty ids dropped; shape
+        // carries what the temple join needs (sku, name, price).
+        $resolved = $port->itemsByIds([
+            (string) $beta->getKey(),
+            'puja_missing',
+            (string) $alpha->getKey(),
+            '',
+        ]);
+
+        $this->assertSame(['BYID-B', 'BYID-A'], array_column($resolved, 'sku'));
+        $this->assertSame([2000, 1000], array_column($resolved, 'price_minor'));
+        $this->assertSame('Beta Puja', $resolved[0]['name']);
+        $this->assertSame($resolved[0]['id'], (string) $beta->getKey());
+
+        // Empty input: no query, no rows (fail closed).
+        $this->assertSame([], $port->itemsByIds([]));
+
+        // Cross-tenant ids never resolve.
+        $foreign = $this->makeTenant();
+        $foreignItem = CatalogItem::factory()->create([
+            'tenant_id' => (string) $foreign->getKey(),
+            'sku' => 'BYID-X',
+        ]);
+        $this->assertSame([], $port->itemsByIds([(string) $foreignItem->getKey()]));
     }
 }

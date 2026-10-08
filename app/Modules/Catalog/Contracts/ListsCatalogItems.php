@@ -23,6 +23,18 @@ interface ListsCatalogItems
     public function itemsBySkus(array $skus): array;
 
     /**
+     * Resolve items by id (temple puja assignments reference pujas by
+     * item id). Every status is returned — dashboard displays must name
+     * paused items too. Unknown/empty ids are dropped, requested order
+     * preserved. price_minor rides along so consumers can price a
+     * booking line without a second lookup.
+     *
+     * @param list<string> $ids
+     * @return list<array{id: string, sku: string, name: string, status: string, price_minor: int}>
+     */
+    public function itemsByIds(array $ids): array;
+
+    /**
      * All items owned by the given vendor (vendor management view: every
      * status, newest first). Empty when the vendor has none.
      *
