@@ -12,12 +12,26 @@ export interface BookingIntent {
   expiresAtIso: string;
 }
 
+// Browser- and node-safe base64url (RFC 4648 §5, unpadded). This module
+// runs in client components — book/start decodes inside an effect, where
+// the node-only buffer global does not exist — so the codec is built from
+// web standards (TextEncoder/btoa) available in every runtime. Output is
+// byte-identical to node's `base64url` encoding, so previously shared
+// links keep decoding, and atob throws on malformed input, which the
+// decoder maps to INTENT_MALFORMED (same outcome lenient node decoding
+// produced before, via JSON.parse failing one step later).
 function toBase64Url(json: string): string {
-  return Buffer.from(json, 'utf8').toString('base64url');
+  const bytes = new TextEncoder().encode(json);
+  let binary = '';
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 function fromBase64Url(raw: string): string {
-  return Buffer.from(raw, 'base64url').toString('utf8');
+  const base64 = raw.replace(/-/g, '+').replace(/_/g, '/');
+  const binary = atob(base64);
+  const bytes = Uint8Array.from(binary, (ch) => ch.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
 }
 
 export function encodeBookingIntent(intent: BookingIntent): string {

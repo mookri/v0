@@ -21,7 +21,7 @@ subset of the contract union with identical statuses. New codes:
 | `GET /api/home` | composes `GET /api/v1/booking/reservations` + `GET /api/v1/customers/profile` — **wired behind flag** (profile + upcoming + discover + activity, fail-closed) |
 | `GET /api/bookings` | `GET /api/v1/booking/reservations` — **wired behind flag, drilled live** |
 | `GET /api/bookings/:bookingId` | `GET /api/v1/booking/reservations/{id}` — **wired behind flag, drilled live** |
-| `POST /api/bookings` | `POST /api/v1/booking/reservations` — **wired behind flag** (DRAFT, idempotent on Idempotency-Key; 409 `conflict` → `BOOKING_SLOT_CONFLICT`, 422 → `VALIDATION_ERROR`) |
+| `POST /api/bookings` | `POST /api/v1/booking/reservations` — **wired behind flag** (DRAFT, idempotent on Idempotency-Key; 409 `conflict` → `BOOKING_SLOT_CONFLICT`, 422 → `VALIDATION_ERROR`; S15: `service_sku` is the catalog SKU, never the item id — the review step resolves item id → SKU via `GET /api/pujas/:id` before POST, and the slot is chosen on the review step) |
 | `POST /api/bookings/:bookingId/cancel` | `POST /api/v1/booking/reservations/{id}:cancel` — **wired behind flag** (idempotent; 409 → `BOOKING_CANNOT_CANCEL`) |
 | `POST /api/bookings/:bookingId/reschedule` | `POST …/{id}:reschedule` — **wired behind flag** (reads live version first; stale → `STALE_RESOURCE`, overlap → `BOOKING_SLOT_CONFLICT`) |
 | `GET /api/profile` | `GET /api/v1/customers/profile` (masked contacts) — **wired behind flag** |

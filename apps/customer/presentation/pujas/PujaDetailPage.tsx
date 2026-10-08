@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { generateIdempotencyKey } from '@/application/idempotency';
+import { pujaBookStartUrl } from '@/application/bookings/puja-book-start-url';
 
 interface PujaDetailPageProps {
   puja: {
@@ -68,12 +70,22 @@ export function PujaDetailPageView({ puja, error }: PujaDetailPageProps) {
             <span className="text-2xl font-bold text-gray-900">{price}</span>
           </div>
 
-          <Link
-            href={`/book/start?intent=${encodeURIComponent(JSON.stringify({ pujaId: puja.id }))}`}
+          {/* Click-time intent build: the receiver needs a versioned,
+              encoded intent, and building it here keeps the timestamps
+              fresh without render/hydration drift. */}
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href = pujaBookStartUrl(
+                puja.id,
+                generateIdempotencyKey(),
+                new Date().toISOString(),
+              );
+            }}
             className="w-full sm:w-auto px-6 py-3 bg-indigo-600 text-white rounded-lg text-center hover:bg-indigo-700 transition-colors"
           >
             Book this puja
-          </Link>
+          </button>
         </footer>
       </article>
     </main>
