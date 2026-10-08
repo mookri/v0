@@ -1,17 +1,27 @@
-import { newRequestId, ok, err } from '@/application/api-envelope';
-import { laravelEnabled, laravelGet, laravelTenant, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { newRequestId, ok } from '@/application/api-envelope';
+import { laravelGet, laravelTenant, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { getRequestContext } from '@/server/route-guard';
 
-// Wired sessions list (CUSTOMER_BACKEND=laravel): GET /api/sessions
+/**
+ * GET /api/sessions — list active sessions.
+ *
+ * Contract §7: cookie-first actor (raw `Authorization` reads removed —
+ * header tokens only via LEGACY_HEADER_AUTH=1). §8: X-Request-Id
+ * propagated to Laravel for log correlation.
+ */
 export async function GET(req: Request) {
   const requestId = newRequestId();
-  if (!laravelEnabled()) {
-    return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-  }
+  const ctx = await getRequestContext(req, requestId);
+  if (!ctx.ok) return ctx.response;
 
   try {
-    const token = req.headers.get('Authorization')?.replace('Bearer ', '') ?? null;
-    const tenant = laravelTenant();
-    const { data } = await laravelGet(token, '/identity/sessions', { tenant_id: tenant });
+    const { data } = await laravelGet(
+      ctx.actor.token,
+      '/identity/sessions',
+      { tenant_id: laravelTenant() },
+      {},
+      { timeout: 'fast', requestId },
+    );
     return Response.json(ok(data, requestId));
   } catch (e) {
     return laravelErrorResponse(e, 'Sessions unavailable.', requestId);

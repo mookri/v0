@@ -130,8 +130,9 @@ export function laravelDelete<T>(
   token: string | null,
   path: string,
   codeMap: BackendCodeMap = {},
+  options: LaravelCallOptions = {},
 ): Promise<LaravelResponse<T>> {
-  return callLaravel<T>(token, 'DELETE', path, {}, undefined, codeMap);
+  return callLaravel<T>(token, 'DELETE', path, {}, undefined, codeMap, options);
 }
 
 export function laravelPatch<T>(
@@ -139,8 +140,9 @@ export function laravelPatch<T>(
   path: string,
   body: unknown,
   codeMap: BackendCodeMap = {},
+  options: LaravelCallOptions = {},
 ): Promise<LaravelResponse<T>> {
-  return callLaravel<T>(token, 'PATCH', path, {}, body, codeMap);
+  return callLaravel<T>(token, 'PATCH', path, {}, body, codeMap, options);
 }
 
 // Shared failure mapping for branched handlers: backend-mapped BFF codes
