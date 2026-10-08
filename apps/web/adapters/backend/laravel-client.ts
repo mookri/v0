@@ -1,4 +1,4 @@
-import { TIMEOUT_MS } from '@/application/api-policy';
+import { TIMEOUT_MS, type TimeoutClass } from '@/application/api-policy';
 import { CustomerApiError } from '@/adapters/backend/customer-api-client';
 import { err, type ApiErrorCode } from '@/application/api-envelope';
 
@@ -62,6 +62,17 @@ export interface LaravelResponse<T> {
   meta: { request_id?: string; page?: LaravelPage };
 }
 
+export interface LaravelCallOptions {
+  /**
+   * Per-class timeout (contract / P0 plan): OTP issue = 'fast' (2s),
+   * login/verify = 'normal' (8s). Auth POSTs are never retried by this
+   * client — a retry could double-send an SMS or re-attempt redemption.
+   */
+  timeout?: TimeoutClass;
+  /** Correlation id forwarded as `X-Request-Id` (contract §8). */
+  requestId?: string;
+}
+
 async function callLaravel<T>(
   token: string | null,
   method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
@@ -69,6 +80,7 @@ async function callLaravel<T>(
   query: Record<string, string> = {},
   body: unknown = undefined,
   codeMap: BackendCodeMap = {},
+  options: LaravelCallOptions = {},
 ): Promise<LaravelResponse<T>> {
   const params = new URLSearchParams(query);
   const qs = params.size > 0 ? `?${params.toString()}` : '';
@@ -76,11 +88,12 @@ async function callLaravel<T>(
   if (token) headers['Authorization'] = `Bearer ${token}`;
   const tenant = laravelTenant();
   if (tenant) headers['X-Tenant-Id'] = tenant;
+  if (options.requestId) headers['X-Request-Id'] = options.requestId;
   const res = await fetch(`${laravelBase()}/api/v1${path}${qs}`, {
     method,
     headers,
     body: body === undefined ? undefined : JSON.stringify(body),
-    signal: AbortSignal.timeout(TIMEOUT_MS.normal),
+    signal: AbortSignal.timeout(TIMEOUT_MS[options.timeout ?? 'normal']),
   });
   const parsed = (await res.json().catch(() => null)) as LaravelEnvelope | null;
   if (!res.ok) {
@@ -98,8 +111,9 @@ export function laravelGet<T>(
   path: string,
   query: Record<string, string> = {},
   codeMap: BackendCodeMap = {},
+  options: LaravelCallOptions = {},
 ): Promise<LaravelResponse<T>> {
-  return callLaravel<T>(token, 'GET', path, query, undefined, codeMap);
+  return callLaravel<T>(token, 'GET', path, query, undefined, codeMap, options);
 }
 
 export function laravelPost<T>(
@@ -107,8 +121,9 @@ export function laravelPost<T>(
   path: string,
   body: unknown,
   codeMap: BackendCodeMap = {},
+  options: LaravelCallOptions = {},
 ): Promise<LaravelResponse<T>> {
-  return callLaravel<T>(token, 'POST', path, {}, body, codeMap);
+  return callLaravel<T>(token, 'POST', path, {}, body, codeMap, options);
 }
 
 export function laravelDelete<T>(

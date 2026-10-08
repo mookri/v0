@@ -1,3 +1,5 @@
+import { createRuntimeId } from '@/lib/ad-orchestration/ids';
+
 export type ApiErrorCode =
   | 'UNAUTHENTICATED'
   | 'FORBIDDEN'
@@ -33,5 +35,7 @@ export function err(code: ApiErrorCode, message: string, requestId: string): Api
 }
 
 export function newRequestId(): string {
-  return `req_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+  // Contract §8: every request carries a unique id used for log
+  // correlation with the backend (`X-Request-Id`).
+  return createRuntimeId('req');
 }
