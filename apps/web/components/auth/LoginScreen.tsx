@@ -8,6 +8,7 @@ import { AuthSocialButtons } from './AuthSocialButtons'
 import { AuthDivider } from './AuthDivider'
 import { AuthHeader } from './AuthHeader'
 import type { AuthState } from './UnifiedAuthConsole'
+import { authPost, setChallenge, toE164, newIdempotencyKey, AuthRequestError } from '@/lib/auth/auth-client'
 
 interface LoginScreenProps {
   phone: string
@@ -54,29 +55,27 @@ export function LoginScreen({
     setIsLoading(true)
 
     try {
-      const res = await fetch('/api/auth/otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identity: phone, purpose: 'login' }),
-      })
+      // E.164 normalization — the backend binds the challenge to a
+      // normalized identity (contract §1/I3).
+      const identity = toE164(countryCode, phone)
+      const res = await authPost<{ data?: { challengeId?: string; expiresIn?: number } }>(
+        '/api/auth/otp',
+        { identity, purpose: 'login' },
+        { idempotencyKey: newIdempotencyKey() },
+      )
 
-      if (!res.ok) {
-        const data = await res.json()
-        setErrors({ phone: data.error?.message || 'Failed to send code' })
-        return
-      }
-
-      const data = await res.json()
-      const challengeId = data.data?.challengeId
+      const challengeId = res.data.data?.challengeId
       if (!challengeId) {
         setErrors({ phone: 'Failed to get challenge ID' })
         return
       }
 
-      // Store challengeId for OTP screen (could use context or pass via transition)
-      sessionStorage.setItem('auth_challenge_id', challengeId)
+      setChallenge(challengeId, 'login', res.data.data?.expiresIn ?? 600)
       setOtpSentReason('LOGIN')
       transitionTo('OTP')
+    } catch (err) {
+      const e = err as AuthRequestError
+      setErrors({ phone: e.message || 'Failed to send code' })
     } finally {
       setIsLoading(false)
     }

@@ -10,6 +10,19 @@ import { PrimaryButton } from './AuthButtons'
 import { AuthHeader } from './AuthHeader'
 import type { AuthState } from './UnifiedAuthConsole'
 import { getCountryByCode } from '@/lib/auth/countries'
+import {
+  authPost,
+  getChallenge,
+  setChallenge,
+  clearChallenge,
+  redeemBody,
+  toE164,
+  newIdempotencyKey,
+  AuthRequestError,
+} from '@/lib/auth/auth-client'
+
+/** Contract §3 mirror: backend is authoritative; this only bounds UX. */
+const MAX_ATTEMPTS = 5
 
 interface OtpScreenProps {
   phone: string
@@ -35,6 +48,8 @@ export function OtpScreen({
     Record<string, string>
   >({})
   const [generalError, setGeneralError] = useState('')
+  const [attempts, setAttempts] = useState(0)
+  const [lockedUntil, setLockedUntil] = useState<number | null>(null)
 
   const dialCode =
     getCountryByCode(countryCode).dialCode
@@ -62,6 +77,12 @@ export function OtpScreen({
   ) => {
     if (e) e.preventDefault()
 
+    if (lockedUntil && Date.now() < lockedUntil) {
+      const waitSec = Math.ceil((lockedUntil - Date.now()) / 1000)
+      setGeneralError(`Too many attempts. Try again in ${waitSec}s.`)
+      return
+    }
+
     if (otp.length !== 6) {
       setErrors({
         otp: 'Enter complete code'
@@ -73,61 +94,87 @@ export function OtpScreen({
     setGeneralError('')
 
     try {
-      const challengeId = sessionStorage.getItem('auth_challenge_id')
-      if (!challengeId) {
+      const challenge = getChallenge()
+      if (!challenge) {
         setGeneralError('Session expired. Please request a new code.')
+        clearChallenge()
         setIsLoading(false)
         return
       }
 
-      const endpoint = otpSentReason === 'LOGIN' ? '/api/auth/login' : '/api/auth/verify'
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ challengeId, code: otp }),
-      })
+      // Contract §2: canonical field is `proof`. The old `code` field
+      // here was sending an empty credential to /auth/login.
+      const endpoint =
+        otpSentReason === 'LOGIN' ? '/api/auth/login' : '/api/auth/verify'
+      const body =
+        otpSentReason === 'LOGIN'
+          ? redeemBody(challenge.id, otp)
+          : { challengeId: challenge.id, code: otp }
 
-      if (!res.ok) {
-        const data = await res.json()
-        setGeneralError(data.error?.message || 'Invalid code')
-        return
-      }
+      await authPost(endpoint, body)
 
-      sessionStorage.removeItem('auth_challenge_id')
+      clearChallenge()
       transitionTo('SUCCESS')
+    } catch (err) {
+      const e = err as AuthRequestError
+
+      if (e.code === 'RATE_LIMITED') {
+        const retryAfter = e.retryAfter ?? 60
+        setLockedUntil(Date.now() + retryAfter * 1000)
+        setGeneralError(e.message)
+      } else if (e.status === 401) {
+        // Wrong code — count locally; backend lock is authoritative (I8).
+        const next = attempts + 1
+        setAttempts(next)
+        if (next >= MAX_ATTEMPTS) {
+          setLockedUntil(Date.now() + 15 * 60 * 1000)
+          setGeneralError('Too many failed attempts. Please request a new code.')
+        } else {
+          setGeneralError(`${e.message} (${MAX_ATTEMPTS - next} attempts remaining)`)
+        }
+      } else {
+        setGeneralError(e.message || 'Invalid code')
+      }
     } finally {
       setIsLoading(false)
     }
   }
 
   const handleResend = async () => {
-    setResendTimer(60)
     setGeneralError('')
+    setAttempts(0)
+    setLockedUntil(null)
 
     try {
       const purpose = otpSentReason === 'LOGIN' ? 'login' : 'signup'
-      const endpoint = purpose === 'login' ? '/api/auth/otp' : '/api/auth/signup'
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: purpose === 'login'
-          ? JSON.stringify({ identity: phone, purpose: 'login' })
-          : JSON.stringify({ phone, name: phone }),
-      })
+      const e164 = toE164(countryCode, phone)
 
-      if (!res.ok) {
-        const data = await res.json()
-        setGeneralError(data.error?.message || 'Failed to resend code')
-        return
+      if (purpose === 'login') {
+        const res = await authPost<{ data?: { challengeId?: string; expiresIn?: number } }>(
+          '/api/auth/otp',
+          { identity: e164, purpose: 'login' },
+          { idempotencyKey: newIdempotencyKey() },
+        )
+        const challengeId = res.data.data?.challengeId
+        if (challengeId) setChallenge(challengeId, 'login', res.data.data?.expiresIn ?? 600)
+      } else {
+        const res = await authPost<{ data?: { challengeId?: string; expiresIn?: number } }>(
+          '/api/auth/signup',
+          { phone: e164, name: phone },
+          { idempotencyKey: newIdempotencyKey() },
+        )
+        const challengeId = res.data.data?.challengeId
+        if (challengeId) setChallenge(challengeId, 'signup', res.data.data?.expiresIn ?? 600)
       }
 
-      const data = await res.json()
-      const challengeId = data.data?.challengeId
-      if (challengeId) {
-        sessionStorage.setItem('auth_challenge_id', challengeId)
+      setResendTimer(60)
+    } catch (err) {
+      const e = err as AuthRequestError
+      if (e.code === 'RATE_LIMITED') {
+        const retryAfter = e.retryAfter ?? 60
+        setResendTimer(retryAfter)
       }
-    } catch {
-      setGeneralError('Failed to resend code')
+      setGeneralError(e.message || 'Failed to resend code')
     }
   }
 
