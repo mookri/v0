@@ -57,7 +57,9 @@ export const verificationConfirmSchema = z.object({
 });
 
 /** Bodyless command — unknown keys are never forwarded. */
-export const revokeOthersSchema = z.object({});
+export const emptyCommandSchema = z.object({});
+/** Alias kept for the sessions revoke-others call site. */
+export const revokeOthersSchema = emptyCommandSchema;
 
 export type SavedAdd = z.infer<typeof savedAddSchema>;
 export type VerificationCreate = z.infer<typeof verificationCreateSchema>;
