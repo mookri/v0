@@ -1,28 +1,30 @@
-import { newRequestId, ok, err } from '@/application/api-envelope';
-import { laravelEnabled, laravelPost, laravelTenant, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { newRequestId, ok } from '@/application/api-envelope';
+import { laravelPost, laravelTenant, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { mfaPostContext } from '@/server/mfa-guard';
+import { mfaRecoveryCodesSchema } from '@/application/auth-schemas';
 
-// Wired MFA recovery codes regeneration (CUSTOMER_BACKEND=laravel): POST /api/mfa/recovery-codes
+/**
+ * POST /api/mfa/recovery-codes — regenerate recovery codes.
+ *
+ * Contract §5: **AAL2** — live TOTP required (Laravel-authoritative);
+ * regenerating recovery codes is a credential-adjacent mutation and a
+ * normal session cookie must not suffice.
+ *
+ * Explicit payload (`code` only); no `{...body}` spread (§5).
+ */
 export async function POST(req: Request) {
   const requestId = newRequestId();
-  if (!laravelEnabled()) {
-    return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-  }
-
-  let body: { code?: string } = {};
-  try {
-    body = await req.json();
-  } catch {
-    return Response.json(err('VALIDATION_ERROR', 'Invalid request body.', requestId), { status: 422 });
-  }
-
-  if (!body.code) {
-    return Response.json(err('VALIDATION_ERROR', 'code is required.', requestId), { status: 422 });
-  }
+  const ctx = await mfaPostContext(req, requestId, mfaRecoveryCodesSchema);
+  if (!ctx.ok) return ctx.response;
 
   try {
-    const token = req.headers.get('Authorization')?.replace('Bearer ', '') ?? null;
-    const tenant = laravelTenant();
-    const { data } = await laravelPost(token, '/identity/mfa/recovery-codes', { ...body, tenant_id: tenant });
+    const { data } = await laravelPost(
+      ctx.actor.token,
+      '/identity/mfa/recovery-codes',
+      { tenant_id: laravelTenant(), code: ctx.data.code },
+      {},
+      { timeout: 'normal', requestId },
+    );
     return Response.json(ok(data, requestId));
   } catch (e) {
     return laravelErrorResponse(e, 'MFA recovery codes unavailable.', requestId);

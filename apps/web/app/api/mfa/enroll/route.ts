@@ -1,18 +1,29 @@
-import { newRequestId, ok, err } from '@/application/api-envelope';
-import { laravelEnabled, laravelPost, laravelTenant, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { newRequestId, ok } from '@/application/api-envelope';
+import { laravelPost, laravelTenant, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { mfaPostContext } from '@/server/mfa-guard';
+import { mfaEnrollSchema } from '@/application/auth-schemas';
 
-// Wired MFA enroll (CUSTOMER_BACKEND=laravel): POST /api/mfa/enroll
+/**
+ * POST /api/mfa/enroll — start TOTP enrollment.
+ *
+ * Contract §5: **AAL2** required — a fresh step-up must already exist;
+ * Laravel checks its freshness (BFF cannot judge assurance, I18).
+ *
+ * Explicit payload (`type` only); no `{...body}` spread (§5).
+ */
 export async function POST(req: Request) {
   const requestId = newRequestId();
-  if (!laravelEnabled()) {
-    return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-  }
+  const ctx = await mfaPostContext(req, requestId, mfaEnrollSchema);
+  if (!ctx.ok) return ctx.response;
 
   try {
-    const token = req.headers.get('Authorization')?.replace('Bearer ', '') ?? null;
-    const tenant = laravelTenant();
-    const body = await req.json().catch(() => ({}));
-    const { data } = await laravelPost(token, '/identity/mfa/enroll', { ...body, tenant_id: tenant });
+    const { data } = await laravelPost(
+      ctx.actor.token,
+      '/identity/mfa/enroll',
+      { tenant_id: laravelTenant(), type: ctx.data.type },
+      {},
+      { timeout: 'normal', requestId },
+    );
     return Response.json(ok(data, requestId), { status: 201 });
   } catch (e) {
     return laravelErrorResponse(e, 'MFA enroll unavailable.', requestId);

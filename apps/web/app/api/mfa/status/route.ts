@@ -1,17 +1,27 @@
-import { newRequestId, ok, err } from '@/application/api-envelope';
-import { laravelEnabled, laravelGet, laravelTenant, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { newRequestId, ok } from '@/application/api-envelope';
+import { laravelGet, laravelTenant, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { mfaGetContext } from '@/server/mfa-guard';
 
-// Wired MFA status (CUSTOMER_BACKEND=laravel): GET /api/mfa/status
+/**
+ * GET /api/mfa/status — read MFA enrollment state.
+ *
+ * Contract §5: **AAL1** (cookie session). Read-only; no body, no
+ * spread. Cookie-first actor per §7 (legacy header only behind
+ * LEGACY_HEADER_AUTH=1).
+ */
 export async function GET(req: Request) {
   const requestId = newRequestId();
-  if (!laravelEnabled()) {
-    return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-  }
+  const ctx = await mfaGetContext(req, requestId);
+  if (!ctx.ok) return ctx.response;
 
   try {
-    const token = req.headers.get('Authorization')?.replace('Bearer ', '') ?? null;
-    const tenant = laravelTenant();
-    const { data } = await laravelGet(token, '/identity/mfa', { tenant_id: tenant });
+    const { data } = await laravelGet(
+      ctx.actor.token,
+      '/identity/mfa',
+      { tenant_id: laravelTenant() ?? '' },
+      {},
+      { timeout: 'fast', requestId },
+    );
     return Response.json(ok(data, requestId));
   } catch (e) {
     return laravelErrorResponse(e, 'MFA status unavailable.', requestId);
