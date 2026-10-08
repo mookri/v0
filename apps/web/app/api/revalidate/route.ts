@@ -33,6 +33,7 @@ const rateLimiter = new InProcessRateLimiter(
 // Hard caps
 const MAX_SLUGS_PER_REQUEST = 100;
 const MAX_SLUG_LENGTH = 200;
+const MAX_BODY_BYTES = 64 * 1024; // 100 slugs x 200 chars ≈ 20 KB; 64 KB is generous
 const SLUG_FORMAT = /^[a-z0-9](?:[a-z0-9-]{0,198}[a-z0-9])?$/i;
 
 // ---------------------------------------------------------------------------
@@ -150,6 +151,16 @@ export async function POST(req: NextRequest) {
         { message: 'CSRF validation failed', reason: csrf.reason },
         { status: 403 },
       );
+    }
+  }
+
+  // Body size cap — `req.json()` buffers the whole body before
+  // validation, so bound it before parsing (contract §8 posture).
+  const contentLength = req.headers.get('content-length');
+  if (contentLength) {
+    const n = Number(contentLength);
+    if (Number.isFinite(n) && n > MAX_BODY_BYTES) {
+      return NextResponse.json({ message: 'Request body too large' }, { status: 413 });
     }
   }
 
