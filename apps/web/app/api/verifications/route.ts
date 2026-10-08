@@ -1,52 +1,100 @@
-import { newRequestId, ok, err } from '@/application/api-envelope';
-import { laravelEnabled, laravelGet, laravelPost, laravelErrorResponse } from '@/adapters/backend/laravel-client';
-import { wiredActor } from '@/server/wired-actor';
+import { newRequestId, ok } from '@/application/api-envelope';
+import { laravelGet, laravelPost, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { getRequestContext, postContext, rejectRequest } from '@/server/route-guard';
+import { verificationCreateSchema } from '@/application/state-schemas';
+import {
+  authRateLimiter,
+  identityKey,
+  ipKey,
+  idempotencyStore,
+  requestFingerprint,
+  THROTTLE,
+} from '@/application/auth-throttle';
 
-// Wired verifications list (CUSTOMER_BACKEND=laravel): GET /api/verifications
+/**
+ * GET /api/verifications — list verifications (AAL1 cookie actor, §7).
+ */
 export async function GET(req: Request) {
   const requestId = newRequestId();
-  if (!laravelEnabled()) {
-    return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-  }
-
-  const actor = wiredActor(req, requestId);
-  if (actor instanceof Response) return actor;
+  const ctx = await getRequestContext(req, requestId);
+  if (!ctx.ok) return ctx.response;
 
   try {
-    const { data } = await laravelGet<unknown>(actor.token, '/customers/verifications');
+    const { data } = await laravelGet(
+      ctx.actor.token,
+      '/customers/verifications',
+      {},
+      {},
+      { timeout: 'fast', requestId },
+    );
     return Response.json(ok(data, requestId));
   } catch (e) {
     return laravelErrorResponse(e, 'Verifications unavailable.', requestId);
   }
 }
 
-// Wired verification create (CUSTOMER_BACKEND=laravel): POST /api/verifications
+/**
+ * POST /api/verifications — start a phone/email verification (sends a
+ * code), mirroring `/auth/otp` protections:
+ *
+ * - §1/I3: phone contacts normalized to E.164 by the schema, so the
+ *   backend binds to one identity form
+ * - §3: per-identity + per-IP throttle → 429 + Retry-After (this sends
+ *   SMS/email — same abuse class as OTP issue)
+ * - §4: Idempotency-Key with response replay; same key + different
+ *   body → 409 (double-tap must not double-send)
+ * - §8: cap, 400/422 statuses, X-Request-Id
+ */
 export async function POST(req: Request) {
   const requestId = newRequestId();
-  if (!laravelEnabled()) {
-    return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
+  const ctx = await postContext(req, requestId, {
+    schema: verificationCreateSchema,
+    throttle: { purpose: 'verification', limit: THROTTLE.otpIp.limit, windowSeconds: THROTTLE.otpIp.windowSeconds },
+  });
+  if (!ctx.ok) return ctx.response;
+  const { type, contact } = ctx.data;
+
+  const idDecision = await authRateLimiter.consume(
+    identityKey('verification', contact),
+    THROTTLE.otpIdentity.limit,
+    THROTTLE.otpIdentity.windowSeconds,
+  );
+  if (!idDecision.allowed) {
+    return rejectRequest(requestId, 'RATE_LIMITED', 'Too many codes requested. Please try again later.', 429, {
+      'Retry-After': String(idDecision.retryAfter),
+    });
   }
 
-  let body: { type?: 'phone' | 'email'; contact?: string } = {};
+  const idemKeyHeader = req.headers.get('idempotency-key');
+  let idemKey: string | null = null;
+  if (idemKeyHeader) {
+    const fingerprint = await requestFingerprint({ type, contact });
+    const scope = `verification:${type}:${contact}`;
+    const claim = await idempotencyStore.claim(`${scope}:${idemKeyHeader}`, fingerprint);
+    if (claim === 'conflict') {
+      return rejectRequest(requestId, 'CONFLICT', 'Idempotency-Key reused with a different request.', 409);
+    }
+    if (claim === 'in-progress') {
+      return rejectRequest(requestId, 'RATE_LIMITED', 'A code is already being sent.', 429, {
+        'Retry-After': '2',
+      });
+    }
+    if (claim === 'completed') {
+      const prior = idempotencyStore.getResult(`${scope}:${idemKeyHeader}`);
+      return Response.json(ok(prior, requestId), { status: 202 });
+    }
+    idemKey = `${scope}:${idemKeyHeader}`;
+  }
+
   try {
-    body = await req.json();
-  } catch {
-    return Response.json(err('VALIDATION_ERROR', 'Invalid request body.', requestId), { status: 422 });
-  }
-
-  if (!body.type || !body.contact) {
-    return Response.json(err('VALIDATION_ERROR', 'type and contact are required.', requestId), { status: 422 });
-  }
-
-  const actor = wiredActor(req, requestId);
-  if (actor instanceof Response) return actor;
-
-  try {
-    const { data } = await laravelPost<unknown>(
-      actor.token,
+    const { data } = await laravelPost(
+      ctx.actor.token,
       '/customers/verifications',
-      { type: body.type, contact: body.contact }
+      { type, contact },
+      {},
+      { timeout: 'fast', requestId },
     );
+    if (idemKey) await idempotencyStore.complete(idemKey, data);
     return Response.json(ok(data, requestId), { status: 202 });
   } catch (e) {
     return laravelErrorResponse(e, 'Failed to start verification.', requestId);

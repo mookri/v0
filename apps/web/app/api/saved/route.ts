@@ -1,25 +1,38 @@
-import { newRequestId, ok, err } from '@/application/api-envelope';
-import { laravelEnabled, laravelGet, laravelPost, laravelDelete, laravelErrorResponse } from '@/adapters/backend/laravel-client';
-import { wiredActor } from '@/server/wired-actor';
+import { newRequestId, ok } from '@/application/api-envelope';
+import { laravelGet, laravelPost, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { getRequestContext, postContext } from '@/server/route-guard';
+import { savedAddSchema } from '@/application/state-schemas';
 
-// Wired saved list (CUSTOMER_BACKEND=laravel): GET /api/saved
+interface SavedBackendItem {
+  id?: string;
+  ref_id?: string;
+  refId?: string;
+  ref_type?: string;
+  refType?: string;
+}
+
+/**
+ * GET /api/saved — list saved items (AAL1 cookie actor, §7).
+ */
 export async function GET(req: Request) {
   const requestId = newRequestId();
-  if (!laravelEnabled()) {
-    return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-  }
-
-  const actor = wiredActor(req, requestId);
-  if (actor instanceof Response) return actor;
+  const ctx = await getRequestContext(req, requestId);
+  if (!ctx.ok) return ctx.response;
 
   try {
-    const { data: backendData } = await laravelGet<{ items?: unknown[] } | unknown[]>(actor.token, '/customers/saved');
+    const { data: backendData } = await laravelGet<{ items?: SavedBackendItem[] } | SavedBackendItem[]>(
+      ctx.actor.token,
+      '/customers/saved',
+      {},
+      {},
+      { timeout: 'fast', requestId },
+    );
 
     // Handle both array and object-with-items responses
     const rawItems = Array.isArray(backendData) ? backendData : (backendData?.items ?? []);
 
     // Enrich saved items for BFF consumption (interim title=ref mapping)
-    const enrichedItems = rawItems.map((item: any) => {
+    const enrichedItems = rawItems.map((item) => {
       const refId = item.ref_id ?? item.refId ?? '';
       const refType = item.ref_type ?? item.refType ?? 'puja';
       return {
@@ -36,32 +49,24 @@ export async function GET(req: Request) {
   }
 }
 
-// Wired saved add (CUSTOMER_BACKEND=laravel): POST /api/saved
+/**
+ * POST /api/saved — add a saved item.
+ *
+ * Contract §8: 1 MB cap, malformed JSON → 400, schema failure → 422.
+ * Forwarded keys are exactly `{ref_id, title}` — never a body spread.
+ */
 export async function POST(req: Request) {
   const requestId = newRequestId();
-  if (!laravelEnabled()) {
-    return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-  }
-
-  let body: { ref_id?: string; title?: string } = {};
-  try {
-    body = await req.json();
-  } catch {
-    return Response.json(err('VALIDATION_ERROR', 'Invalid request body.', requestId), { status: 422 });
-  }
-
-  if (!body.ref_id) {
-    return Response.json(err('VALIDATION_ERROR', 'ref_id is required.', requestId), { status: 422 });
-  }
-
-  const actor = wiredActor(req, requestId);
-  if (actor instanceof Response) return actor;
+  const ctx = await postContext(req, requestId, { schema: savedAddSchema });
+  if (!ctx.ok) return ctx.response;
 
   try {
-    const { data } = await laravelPost<unknown>(
-      actor.token,
+    const { data } = await laravelPost(
+      ctx.actor.token,
       '/customers/saved',
-      { ref_id: body.ref_id, title: body.title }
+      { ref_id: ctx.data.ref_id, title: ctx.data.title },
+      {},
+      { timeout: 'normal', requestId },
     );
     return Response.json(ok(data, requestId), { status: 201 });
   } catch (e) {
