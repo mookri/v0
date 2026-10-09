@@ -159,8 +159,10 @@ export default function BookStartPage({ searchParams }: BookStartPageProps) {
     );
   }
 
-  // draft ready for review
-  const idempotencyKey = generateIdempotencyKey();
+  // Draft ready for review. The intent's key is stable per handoff, so
+  // a retry of the same web intent dedups server-side; a generated key
+  // only covers in-app flows that arrive without one.
+  const idempotencyKey = draft.idempotencyKey || generateIdempotencyKey();
   storeIdempotencyKey(draft.pujaId, idempotencyKey);
 
   return (
