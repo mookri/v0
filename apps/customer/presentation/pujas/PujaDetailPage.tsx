@@ -70,22 +70,34 @@ export function PujaDetailPageView({ puja, error }: PujaDetailPageProps) {
             <span className="text-2xl font-bold text-gray-900">{price}</span>
           </div>
 
-          {/* Click-time intent build: the receiver needs a versioned,
-              encoded intent, and building it here keeps the timestamps
-              fresh without render/hydration drift. */}
-          <button
-            type="button"
-            onClick={() => {
-              window.location.href = pujaBookStartUrl(
-                puja.id,
-                generateIdempotencyKey(),
-                new Date().toISOString(),
-              );
-            }}
-            className="w-full sm:w-auto px-6 py-3 bg-indigo-600 text-white rounded-lg text-center hover:bg-indigo-700 transition-colors"
-          >
-            Book this puja
-          </button>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            {/* B2 entry: search by date/slot with this puja pre-scoped —
+                the selection handoff needs the puja to reach a ready
+                draft, so the context travels in the URL. */}
+            <Link
+              href={`/book/search?puja_id=${encodeURIComponent(puja.id)}`}
+              className="px-6 py-3 border border-indigo-600 text-indigo-600 rounded-lg text-center hover:bg-indigo-50 transition-colors"
+            >
+              Find an instant slot
+            </Link>
+
+            {/* Click-time intent build: the receiver needs a versioned,
+                encoded intent, and building it here keeps the timestamps
+                fresh without render/hydration drift. */}
+            <button
+              type="button"
+              onClick={() => {
+                window.location.href = pujaBookStartUrl(
+                  puja.id,
+                  generateIdempotencyKey(),
+                  new Date().toISOString(),
+                );
+              }}
+              className="w-full sm:w-auto px-6 py-3 bg-indigo-600 text-white rounded-lg text-center hover:bg-indigo-700 transition-colors"
+            >
+              Book this puja
+            </button>
+          </div>
         </footer>
       </article>
     </main>

@@ -65,4 +65,7 @@ export const apiRoutes: ApiRouteMeta[] = [
   { routeId: 'customer.temple.detail', method: 'GET', path: '/api/temples/:templeId', access: 'authenticated', capability: 'temple:read', cache: 'private-short' },
   { routeId: 'customer.temple.pujas', method: 'GET', path: '/api/temples/:templeId/pujas', access: 'authenticated', capability: 'temple:read', cache: 'private-short' },
   { routeId: 'customer.temple.availability', method: 'GET', path: '/api/temples/:templeId/availability', access: 'authenticated', capability: 'temple:read', cache: 'private-short' },
+
+  // Instant-book search (B2)
+  { routeId: 'customer.instant_search', method: 'GET', path: '/api/instant-search', access: 'authenticated', capability: 'booking', cache: 'none' },
 ];

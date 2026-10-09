@@ -124,6 +124,9 @@ const MAPPINGS: BackendMapping[] = [
   { bff: 'GET /api/temples/:templeId', backend: ['GET /api/v1/temple/profiles/{id}'], inRegistry: true },
   { bff: 'GET /api/temples/:templeId/pujas', backend: ['GET /api/v1/temple/profiles/{id}/pujas'], inRegistry: true },
   { bff: 'GET /api/temples/:templeId/availability', backend: ['GET /api/v1/temple/profiles/{id}/availability'], inRegistry: true },
+
+  // Instant-book search (B2)
+  { bff: 'GET /api/instant-search', backend: ['GET /api/v1/booking/instant-search'], inRegistry: true },
 ];
 
 test('backend mappings use module prefixes and registries agree', () => {

@@ -119,6 +119,18 @@ export const customerApi = {
     return request(`/api/pandits/${id}/availability${suffix}`);
   },
 
+  // Instant-book search (B2): date + slot (+ optional puja) → assignable
+  // pandits + open temple slots (backend-gated; never invented here).
+  instantSearch: (params: { date: string; start: string; end: string; puja_id?: string; limit?: number }) => {
+    const qs = new URLSearchParams();
+    qs.set('date', params.date);
+    qs.set('start', params.start);
+    qs.set('end', params.end);
+    if (params.puja_id) qs.set('puja_id', params.puja_id);
+    if (params.limit !== undefined) qs.set('limit', String(params.limit));
+    return request(`/api/instant-search?${qs.toString()}`);
+  },
+
   // Temple directory
   getTemples: (params?: { city?: string; state?: string; amenities?: string[]; lat?: number; lng?: number; radius?: number; q?: string; sort?: string; limit?: number }) => {
     const qs = new URLSearchParams();

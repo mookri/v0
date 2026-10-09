@@ -22,6 +22,7 @@ import { GET as templeAvailability } from '@apps/customer/app/api/temples/[templ
 import { GET as panditDetail } from '@apps/customer/app/api/pandits/[panditId]/route';
 import { GET as listPandits } from '@apps/customer/app/api/pandits/route';
 import { GET as panditAvailability } from '@apps/customer/app/api/pandits/[panditId]/availability/route';
+import { GET as instantSearch } from '@apps/customer/app/api/instant-search/route';
 import { POST as login } from '@apps/customer/app/api/auth/login/route';
 import { GET as getProfile } from '@apps/customer/app/api/profile/route';
 import { GET as listSaved } from '@apps/customer/app/api/saved/route';
@@ -679,4 +680,66 @@ test('new temple surfaces stay unauthenticated-only on mocks', async () => {
     params: Promise.resolve({ templeId: 't1' }),
   });
   expect(availability.status).toBe(401);
+});
+
+test('wired instant search forwards the window untouched and unwraps the results', async () => {
+  wiredEnv();
+  stubLaravel((rawUrl) => {
+    const u = new URL(rawUrl);
+    expect(u.pathname).toBe('/api/v1/booking/instant-search');
+    expect(u.searchParams.get('date')).toBe('2030-05-01');
+    expect(u.searchParams.get('start')).toBe('10:00');
+    expect(u.searchParams.get('end')).toBe('11:00');
+    expect(u.searchParams.get('puja_id')).toBe('PUJA123');
+    return {
+      data: {
+        object: 'instant_search',
+        date: '2030-05-01',
+        start: '10:00',
+        end: '11:00',
+        puja_id: 'PUJA123',
+        pandits: [
+          { id: 'pd1', display_name: 'Acharya Dev', rating_avg: 4.8, rating_count: 12, specializations: ['griha-pravesh'], base_rate_minor: 150000, currency: 'INR' },
+        ],
+        temple_slots: [
+          { temple_id: 't1', temple_name: 'Sri Ram Temple', city: 'Delhi', puja_id: 'PUJA123', day_of_week: 5, start: '10:00', end: '12:00', capacity: 7, price_override_minor: null },
+        ],
+      },
+      meta: { request_id: 'r1' },
+    };
+  });
+
+  const res = await instantSearch(
+    authed('https://app.navdhya.com/api/instant-search?date=2030-05-01&start=10:00&end=11:00&puja_id=PUJA123'),
+  );
+  expect(res.status).toBe(200);
+  const body = (await res.json()) as {
+    data: { pandits: { id: string }[]; temple_slots: { temple_id: string }[] };
+  };
+  expect(body.data.pandits.map((p) => p.id)).toEqual(['pd1']);
+  expect(body.data.temple_slots[0].temple_id).toBe('t1');
+  // Search results are window-sensitive: never cacheable at the edge.
+  expect(res.headers.get('Cache-Control')).toContain('max-age=0');
+});
+
+test('wired instant search maps backend validation failures to VALIDATION_ERROR', async () => {
+  wiredEnv();
+  stubLaravelStatuses(() => ({
+    status: 422,
+    body: { error: { code: 'validation_failed', message: 'Invalid window.', requestId: 'r' } },
+  }));
+
+  const res = await instantSearch(authed('https://app.navdhya.com/api/instant-search?date=yesterday&start=10:00&end=11:00'));
+  expect(res.status).toBe(422);
+  expect(((await res.json()) as { error: { code: string } }).error.code).toBe('VALIDATION_ERROR');
+});
+
+test('instant search stays unauthenticated-only on mocks', async () => {
+  vi.stubEnv('CUSTOMER_BACKEND', '');
+
+  const res = await instantSearch(
+    new Request('https://app.navdhya.com/api/instant-search?date=2030-05-01&start=10:00&end=11:00'),
+  );
+  expect(res.status).toBe(401);
+  expect(((await res.json()) as { error: { code: string } }).error.code).toBe('UNAUTHENTICATED');
 });

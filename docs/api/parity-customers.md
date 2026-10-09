@@ -97,6 +97,20 @@ subset of the contract union with identical statuses. New codes:
 | `GET /api/pujas/:pujaId` | `GET /api/v1/catalog/items/{id}` — **wired behind flag** (404 → `NOT_FOUND`) |
 | `POST /api/pujas/:pujaId/quote` | `POST /api/v1/catalog/quote` — **wired behind flag** (422 `validation_failed` → `VALIDATION_ERROR`) |
 
+## Instant-book search (B2)
+
+| BFF endpoint | Backend source |
+|---|---|
+| `GET /api/instant-search?date&start&end&puja_id&limit` | `GET /api/v1/booking/instant-search` — **wired behind flag** (payload `{object:'instant_search', date, start, end, puja_id, pandits[], temple_slots[]}`; the window is forwarded untouched, 422 `validation_failed` → `VALIDATION_ERROR`; mock backend degrades to an empty result set — never an invented pandit or slot) |
+
+Assignability is backend-authoritative: VERIFIED + ACTIVE pandits whose
+availability windows cover the **whole** slot (containment) with no
+PENDING/CONFIRMED assignment conflict, plus weekday schedule windows of
+VERIFIED + ACTIVE temples covering the slot (`puja_id` filters those).
+A selection hands `book/start` a versioned intent (`source:
+instant-search`) carrying puja + pandit + slot — the reservation itself
+still books puja + schedule (assignment wiring lands with checkout).
+
 ## Code correspondence (BFF codes)
 
 | Situation | BFF code | Backend code |
