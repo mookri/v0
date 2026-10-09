@@ -11,6 +11,15 @@ use Illuminate\Support\Facades\Route;
 | item capabilities.
 */
 
+// Public product browse (B1): the marketing site's anonymous Quick Book
+// needs ACTIVE items before any session exists — no auth, no tenant
+// header (the tenant is an explicit validated query param), reads only,
+// IP-throttled like the other public surfaces.
+Route::get('public/items', [CatalogItemController::class, 'publicIndex'])
+    ->withoutMiddleware(['auth.any', 'tenant'])
+    ->middleware('throttle:30,1')
+    ->name('public.items');
+
 Route::get('items', [CatalogItemController::class, 'index'])
     ->middleware(['scope:catalog:read', 'throttle.tier'])
     ->name('items.index');

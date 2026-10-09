@@ -4,6 +4,7 @@ namespace App\Modules\Catalog\Http\Controllers;
 
 use App\Modules\Catalog\Models\CatalogItem;
 use App\Platform\Api\CursorPagination;
+use App\Platform\Tenancy\Models\Tenant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -18,6 +19,55 @@ final class CatalogItemController
     private function requestId(Request $request): string
     {
         return (string) $request->attributes->get('request_id', '');
+    }
+
+    /**
+     * Public browse (B1): the marketing site's Quick Book lists ACTIVE
+     * items for one ACTIVE tenant without a session (route opts out of
+     * auth.any + tenant, IP-throttled). Scope bypass is the documented
+     * kernel pattern — the tenant filter is explicit here, the field set
+     * is minimal (no attributes / vendor internals), writes impossible.
+     */
+    public function publicIndex(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'tenant_id' => ['required', 'string', 'max:26'],
+        ]);
+
+        $tenant = Tenant::query()->find($validated['tenant_id']);
+
+        if ($tenant === null || $tenant->state !== Tenant::STATE_ACTIVE) {
+            return new JsonResponse([
+                'error' => ['code' => 'not_found', 'message' => 'Tenant unavailable.', 'request_id' => $this->requestId($request)],
+            ], 404);
+        }
+
+        $items = CatalogItem::query()
+            ->withoutGlobalScopes()
+            ->where('tenant_id', (string) $tenant->getKey())
+            ->where('status', CatalogItem::STATUS_ACTIVE)
+            ->orderBy('name')
+            ->get()
+            ->map(static fn (CatalogItem $item): array => [
+                'id' => (string) $item->getKey(),
+                'object' => 'catalog_item',
+                'sku' => $item->sku,
+                'name' => $item->name,
+                'description' => $item->description,
+                'currency' => $item->currency,
+                'price_minor' => $item->price_minor,
+            ])
+            ->values()
+            ->all();
+
+        return new JsonResponse(
+            [
+                'data' => $items,
+                'meta' => ['request_id' => $this->requestId($request)],
+            ],
+            200,
+            ['Cache-Control' => 'public, max-age=60'],
+        );
     }
 
     public function index(Request $request): JsonResponse
