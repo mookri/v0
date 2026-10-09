@@ -28,4 +28,15 @@ interface ManagesPanditAvailability
      * @return list<array{id: string, day_of_week: int, start_time: string, end_time: string, slot_duration_minutes: int, is_recurring: bool, specific_date: string|null}>
      */
     public function getPublicAvailability(string $panditId, ?string $startDate = null, ?string $endDate = null): array;
+
+    /**
+     * Windows applicable to ONE concrete date (B2 instant-book search):
+     * recurring rows whose day_of_week matches the date plus one-off rows
+     * (is_recurring = false) for that exact date. Empty when the profile
+     * is not publicly assignable (VERIFIED + ACTIVE, same gate as
+     * getPublicAvailability).
+     *
+     * @return list<array{id: string, day_of_week: int, start_time: string, end_time: string, slot_duration_minutes: int, is_recurring: bool, specific_date: string|null}>
+     */
+    public function windowsOnDate(string $panditId, string $date): array;
 }

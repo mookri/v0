@@ -111,6 +111,32 @@ final class PanditAvailabilityManager implements ManagesPanditAvailability
     }
 
     /**
+     * Windows applicable to ONE concrete date: recurring rows whose
+     * day_of_week matches, plus one-off rows for that exact date. Loads
+     * the profile's whole (small) schedule through the public gate and
+     * filters here — the range query's `specific_date <= end` bound is
+     * lexicographic and drops one-off rows stored with a midnight time
+     * suffix when start = end, which must not happen on an equality day.
+     *
+     * @return list<array{id: string, day_of_week: int, start_time: string, end_time: string, slot_duration_minutes: int, is_recurring: bool, specific_date: string|null}>
+     */
+    public function windowsOnDate(string $panditId, string $date): array
+    {
+        $target = CarbonImmutable::parse($date);
+        $weekday = (int) $target->format('w');
+        $dateString = $target->toDateString();
+
+        return array_values(array_filter(
+            $this->getPublicAvailability($panditId),
+            static function (array $window) use ($weekday, $dateString): bool {
+                return $window['is_recurring']
+                    ? $window['day_of_week'] === $weekday
+                    : $window['specific_date'] === $dateString;
+            },
+        ));
+    }
+
+    /**
      * Grouped overlap guard: recurring slots collide per weekday, one-off
      * overrides per specific date. Touching windows (10:00 ends exactly
      * when the next starts) are allowed.

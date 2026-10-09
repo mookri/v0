@@ -123,6 +123,59 @@ paths:
           $ref: '#/components/responses/AuthorizationDenied'
         422:
           $ref: '#/components/responses/ValidationFailed'
+  /api/v1/booking/instant-search:
+    get:
+      operationId: instantBookSearch
+      summary: 'Date + slot (+ optional puja) → assignable pandits and open temple slots.'
+      x-gate: ownership
+      x-scope: 'booking:read'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        -
+          name: start
+          in: query
+          required: true
+          schema:
+            type: string
+            example: '10:00'
+        -
+          name: end
+          in: query
+          required: true
+          schema:
+            type: string
+            example: '11:00'
+        -
+          name: puja_id
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/Ulid'
+        -
+          $ref: '#/components/parameters/Limit'
+      responses:
+        200:
+          description: 'Assignable pandits and open temple slots for the requested window.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, date, start, end, pandits, temple_slots], properties: { object: { type: string, enum: [instant_search] }, date: { type: string, format: date }, start: { type: string }, end: { type: string }, puja_id: { type: string, nullable: true }, pandits: { type: array }, temple_slots: { type: array } } }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        422:
+          $ref: '#/components/responses/ValidationFailed'
   /api/v1/booking/reservations:
     get:
       operationId: listReservations

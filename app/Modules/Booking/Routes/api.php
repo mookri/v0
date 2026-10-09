@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Booking\Http\Controllers\BookingReviewController;
+use App\Modules\Booking\Http\Controllers\InstantSearchController;
 use App\Modules\Booking\Http\Controllers\ReservationController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,13 @@ Route::post('reservations', [ReservationController::class, 'store'])
 Route::get('reservations', [ReservationController::class, 'index'])
     ->middleware(['scope:booking:read', 'throttle.tier'])
     ->name('reservations.index');
+
+// B2 instant-book search: date + slot (+ optional puja) → assignable
+// pandits + temple slots. Directory read, not caller data — human and
+// scoped machine principals alike (scope gates machines only).
+Route::get('instant-search', [InstantSearchController::class, 'index'])
+    ->middleware(['scope:booking:read', 'throttle:60,1'])
+    ->name('instant-search');
 Route::get('reservations/{id}', [ReservationController::class, 'show'])
     ->middleware(['scope:booking:read', 'throttle.tier'])
     ->name('reservations.show');

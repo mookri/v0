@@ -189,6 +189,24 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
     }
 
     /**
+     * Read-only twin of the assign() overlap guard (B2 instant-book
+     * search): does any PENDING/CONFIRMED assignment of this pandit
+     * occupy the requested window?
+     */
+    public function hasWindowConflict(string $panditId, string $startIso, string $endIso): bool
+    {
+        $tenantId = (string) app(TenantContext::class)->tenantId();
+
+        return $this->conflictExists(
+            $tenantId,
+            $panditId,
+            CarbonImmutable::parse($startIso),
+            CarbonImmutable::parse($endIso),
+            null,
+        );
+    }
+
+    /**
      * The caller's own assignment, still actionable (404 for foreign rows —
      * ownership is the actor — 409 for anything but PENDING).
      *
@@ -230,13 +248,30 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
         $start = CarbonImmutable::parse($window['scheduled_at']);
         $end = $start->addMinutes($window['duration_minutes']);
 
-        $otherIds = PanditAssignment::query()
+        if ($this->conflictExists($tenantId, $panditId, $start, $end, $bookingId)) {
+            throw new \InvalidArgumentException('Pandit has a scheduling conflict with another booking.');
+        }
+    }
+
+    /**
+     * Shared overlap probe behind checkConflict() (write path, excludes
+     * the booking being assigned) and hasWindowConflict() (B2 search read
+     * path, no exclusion).
+     *
+     * @param  string|null  $excludeBookingId
+     */
+    private function conflictExists(string $tenantId, string $panditId, CarbonImmutable $start, CarbonImmutable $end, ?string $excludeBookingId): bool
+    {
+        $query = PanditAssignment::query()
             ->where('tenant_id', $tenantId)
             ->where('pandit_id', $panditId)
-            ->whereIn('status', [PanditAssignment::STATUS_PENDING, PanditAssignment::STATUS_CONFIRMED])
-            ->where('booking_id', '!=', $bookingId)
-            ->pluck('booking_id')
-            ->all();
+            ->whereIn('status', [PanditAssignment::STATUS_PENDING, PanditAssignment::STATUS_CONFIRMED]);
+
+        if ($excludeBookingId !== null) {
+            $query->where('booking_id', '!=', $excludeBookingId);
+        }
+
+        $otherIds = $query->pluck('booking_id')->all();
 
         foreach ($this->bookings->windowsByIds($otherIds) as $other) {
             if ($other['scheduled_at'] === null) {
@@ -247,9 +282,11 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
             $otherEnd = $otherStart->addMinutes($other['duration_minutes']);
 
             if ($otherStart < $end && $start < $otherEnd) {
-                throw new \InvalidArgumentException('Pandit has a scheduling conflict with another booking.');
+                return true;
             }
         }
+
+        return false;
     }
 
     /**

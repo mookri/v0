@@ -138,6 +138,24 @@ ids.)
 | invalid query params (limit, start_date/end_date) | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
 | guest / unauthenticated caller | `UNAUTHENTICATED` (401) | `unauthenticated` / `tenant_not_in_token` (401) — kernel binds tenant only for a principal |
 
+## Instant-book search (B2)
+
+| Step | Next.js BFF | Laravel module | Match |
+|---|---|---|---|
+| instant search | `GET /api/instant-search?date&start&end&puja_id&limit` → `{data: {object: 'instant_search', date, start, end, puja_id, pandits[], temple_slots[]}, requestId}` | `GET /api/v1/booking/instant-search` (Booking module; `scope:booking:read` + `throttle:60,1`) → 200 `{data, meta: {request_id}}`; 422 `validation_failed` | **wired behind flag** (window forwarded untouched, 422 → `VALIDATION_ERROR`; mock backend → empty result set, never an invented pandit or slot) |
+
+Assignability is computed here, never in the BFF: pandits are VERIFIED +
+ACTIVE with an availability window that **contains** the whole slot
+(containment, not overlap — clock-only rows compared as
+minutes-since-midnight) and no PENDING/CONFIRMED assignment conflict
+(fail-closed); temple slots come from VERIFIED + ACTIVE temples'
+weekday schedule windows covering the slot, filtered by `puja_id` when
+given. Capacity is surfaced as-is (never decremented). The BFF hands a
+selection to `book/start` as a versioned intent (`source:
+instant-search`) carrying puja + pandit + slot; the reservation contract
+itself still books puja + schedule only — assignment wiring lands with
+the checkout track.
+
 ## Support staff console (S4)
 
 The staff side of support: a tenant-wide queue over the customers module's

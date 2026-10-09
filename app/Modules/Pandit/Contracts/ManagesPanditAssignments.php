@@ -53,4 +53,12 @@ interface ManagesPanditAssignments
      * @return void
      */
     public function adminUnassign(string $assignmentId): void;
+
+    /**
+     * Whether the pandit already holds a PENDING or CONFIRMED assignment
+     * whose booking window intersects [startIso, endIso) (B2 instant-book
+     * search — the read-only twin of assign()'s fail-closed overlap
+     * guard). Unknown/unscheduled windows never conflict.
+     */
+    public function hasWindowConflict(string $panditId, string $startIso, string $endIso): bool;
 }
