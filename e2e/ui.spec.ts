@@ -86,7 +86,13 @@ test('signup → login → OTP 3-attempt exhaustion → login again → logout',
   // race: navigate ourselves, then wait for the URL either way.
   await page.goto('/login').catch(() => {});
   await page.waitForURL('**/login', { timeout: 30_000 });
-  await page.getByPlaceholder('Phone number').fill(PHONE);
+  // …and the same race can commit both navigations' renders for a beat:
+  // TWO Phone inputs (identical, transient) exist at fill time, which
+  // trips strict mode (observed 2026-10-10). Wait for the form to settle
+  // to exactly one visible input instead of grabbing the first match.
+  const loginPhone = page.locator('input[placeholder="Phone number"]:visible');
+  await expect(loginPhone).toHaveCount(1, { timeout: 15_000 });
+  await loginPhone.fill(PHONE);
   await page.getByRole('button', { name: /^continue$/i }).click();
   await expect(page.getByText('Confirm Code')).toBeVisible({ timeout: 30_000 });
 
