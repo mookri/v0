@@ -108,6 +108,30 @@ final class CustomerVerificationTest extends TenantIntegrationTestCase
         ], $headers)->assertStatus(409)->assertJsonPath('error.code', 'conflict');
     }
 
+    public function test_confirm_conflicts_when_contact_belongs_to_another_account(): void
+    {
+        $codes = $this->freshOtp();
+        [$tenant, $user] = $this->customer();
+        $headers = $this->tenantHeaders($tenant);
+
+        // F-SMOKE5: users.email is globally unique — confirming a contact
+        // that already belongs to another account must be a graceful 409,
+        // not an unhandled unique-violation 500.
+        $owner = User::factory()->create(['phone' => '+912222222222', 'email' => 'taken@example.com']);
+
+        $challengeId = $this->actingAs($user)->postJson('/api/v1/customers/verifications', [
+            'channel' => 'email', 'value' => 'taken@example.com',
+        ], $headers)->assertStatus(202)->json('data.challenge_id');
+
+        $this->actingAs($user)->postJson("/api/v1/customers/verifications/{$challengeId}:confirm", [
+            'code' => $codes->lastFor($challengeId),
+        ], $headers)->assertStatus(409)->assertJsonPath('error.code', 'conflict');
+
+        // Nothing was written: requester keeps their email, owner intact.
+        $this->assertDatabaseHas('users', ['id' => $user->id, 'email' => '911234567890@phone.local'], 'central');
+        $this->assertDatabaseHas('users', ['id' => $owner->id, 'email' => 'taken@example.com'], 'central');
+    }
+
     public function test_bad_shapes_are_422(): void
     {
         [$tenant, $user] = $this->customer();

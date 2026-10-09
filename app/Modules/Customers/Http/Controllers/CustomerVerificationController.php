@@ -9,6 +9,7 @@ use App\Modules\Customers\CustomerActivityRecorder;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -17,7 +18,8 @@ use Illuminate\Http\Request;
  * changes. Challenges bind identifier = the new value and payload user_id
  * = the requester; confirm enforces both, so a code cannot be replayed
  * across accounts. Re-verifying an already-verified current value is a
- * 409 (nothing to prove).
+ * 409 (nothing to prove), and a contact already owned by another
+ * account is a 409 (unique-collision guard on the write).
  */
 final class CustomerVerificationController extends CustomerSelfServiceController
 {
@@ -182,10 +184,22 @@ final class CustomerVerificationController extends CustomerSelfServiceController
 
         $now = CarbonImmutable::parse(gmdate('Y-m-d\TH:i:s.v\Z'))->toDateTimeString();
 
-        if ($channel === 'phone') {
-            $user->forceFill(['phone' => $value, 'phone_verified_at' => $now])->save();
-        } else {
-            $user->forceFill(['email' => $value, 'email_verified_at' => $now])->save();
+        try {
+            if ($channel === 'phone') {
+                $user->forceFill(['phone' => $value, 'phone_verified_at' => $now])->save();
+            } else {
+                $user->forceFill(['email' => $value, 'email_verified_at' => $now])->save();
+            }
+        } catch (UniqueConstraintViolationException) {
+            // F-SMOKE5: users.email / users.phone are globally unique, so a
+            // contact that already belongs to another account is a
+            // collision — a 409, not an unhandled unique-violation 500.
+            // The challenge was consumed by verifyForPurposes above; the
+            // caller requests a fresh one (same shape as signup's
+            // duplicate-phone conflict).
+            return new JsonResponse([
+                'error' => ['code' => 'conflict', 'message' => 'This contact is already in use by another account.', 'request_id' => $this->requestId($request)],
+            ], 409);
         }
 
         $this->audit->record(
