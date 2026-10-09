@@ -19,6 +19,9 @@ use App\Platform\Authz\Models\SodRule;
 use App\Platform\Authz\PolicyEvaluationEngine;
 use App\Platform\Authz\PolicyValidator;
 use App\Platform\Authz\PrincipalResolver;
+use App\Platform\Features\Console\FeatureFlagListCommand;
+use App\Platform\Features\Console\FeatureFlagSetCommand;
+use App\Platform\Features\FeatureFlags;
 use App\Platform\Tenancy\Console\TenantAdoptLegacyCommand;
 use App\Platform\Tenancy\Console\TenantBackfillV2Command;
 use App\Platform\Tenancy\Console\TenantProvisionSchemaCommand;
@@ -74,6 +77,12 @@ final class PlatformServiceProvider extends ServiceProvider
         // drain command dispatches through the same singleton.
         $this->app->singleton(Outbox::class);
         $this->app->singleton(OutboxHandlers::class);
+
+        // Feature flags (F3 / doc 07 §10): one evaluator per process,
+        // exposed under the reserved `platform.feature_flags` id that
+        // ModuleRegistry::enabled() consults for per-tenant module gating.
+        $this->app->singleton(FeatureFlags::class);
+        $this->app->singleton('platform.feature_flags', fn (Application $app): FeatureFlags => $app->make(FeatureFlags::class));
     }
 
     public function boot(): void
@@ -84,6 +93,8 @@ final class PlatformServiceProvider extends ServiceProvider
                 DoctorCommand::class,
                 CleanupExpiredCommand::class,
                 OutboxDrainCommand::class,
+                FeatureFlagSetCommand::class,
+                FeatureFlagListCommand::class,
                 ApiComposeCommand::class,
                 SyncPermissionsCommand::class,
                 AuthzExplainCommand::class,

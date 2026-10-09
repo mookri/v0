@@ -210,6 +210,20 @@ include/exclude modules per tenant ([domain framework §2](../02-architecture/ar
    60 s (cache TTL).
 4. Ops flags (e.g. `ops.outbox.pause`) are platform-operator only.
 
+**Status (2026-10-10, F3):** implemented —
+`app/Platform/Features/FeatureFlags.php` bound as `platform.feature_flags`
+(the id `ModuleRegistry::enabled()` consults; a flagged module defaults to
+enabled while its flag is undefined — default-safe branch, rule 1). Tables
++ seeds (`payments.enabled` B3, `notify.email` N3, both default-off) in
+`database/migrations/2026_10_10_000001_create_feature_flags_tables.php`.
+Plan bundle resolves via `tenants.plan_code` → `plans.flag_bundle` (flat
+`{code: bool}`). Operator surface: `php artisan flags:list|flags:set`
+(tenant overrides audit `platform.flags.changed` into the target tenant's
+chain; global defaults are central state — logged as
+`platform.flags.changed` + row `updated_at`, and ride migrations/seed so
+they stay git-reviewed; audit rows are tenant-scoped per K-025). Tests:
+`tests/Platform/Features/FeatureFlagsTest.php`.
+
 ---
 ---
 

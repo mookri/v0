@@ -182,10 +182,12 @@ final class ModuleRegistry
     }
 
     /**
-     * Feature-flag gate for per-tenant module enablement (doc 01 §2-5).
-     * The FeatureFlags kernel service lands in M3; until then a module with
-     * no feature_flag is always enabled and a flagged module defaults to
-     * enabled (default-safe branch, doc 05 §10.2 rule 1).
+     * Feature-flag gate for per-tenant module enablement (doc 01 §2-5,
+     * doc 07 §10). A module with no feature_flag is always enabled; a
+     * flagged module consults the FeatureFlags kernel service and
+     * defaults to enabled while the flag is undefined (default-safe
+     * branch, doc 05 §10.2 rule 1) — an explicit seeded default or a
+     * tenant override/bundle value turns it off.
      */
     public function enabled(ModuleManifest $module, mixed $tenant = null): bool
     {
@@ -198,7 +200,7 @@ final class ModuleRegistry
         }
 
         return (bool) $this->app->make('platform.feature_flags')
-            ->enabled($module->featureFlag, $tenant);
+            ->enabled($module->featureFlag, $tenant, true);
     }
 
     /**
