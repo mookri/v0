@@ -6,6 +6,7 @@ use App\Platform\Authz\Http\Middleware\CheckScope;
 use App\Platform\Authz\Http\Middleware\RequiresAcr;
 use App\Platform\Authz\Http\Middleware\ThrottleTier;
 use App\Platform\Http\Middleware\AttachRequestId;
+use App\Platform\Http\Middleware\RequestTiming;
 use App\Platform\Tenancy\Http\Middleware\ResolveTenantContext;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -23,6 +24,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Request correlation generated at the edge (doc 05 §11.1).
         $middleware->prepend(AttachRequestId::class);
+
+        // Perf timing (drill-only, PERF_TIMING-gated): prepended after
+        // AttachRequestId so it sits outermost and reads the rid that
+        // AttachRequestId sets one layer in; no-op when the flag is off.
+        $middleware->prepend(RequestTiming::class);
 
         $middleware->alias([
             'tenant' => ResolveTenantContext::class,
