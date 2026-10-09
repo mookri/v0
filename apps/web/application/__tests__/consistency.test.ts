@@ -184,3 +184,20 @@ describe('shared route guard (§7/§8 statuses)', () => {
     if (!denied.ok) expect(denied.response.status).toBe(401);
   });
 });
+
+describe('backend error-code map (laravel-contract §4)', () => {
+  test('step_up_required maps to FORBIDDEN, not opaque INTERNAL_ERROR (M9)', async () => {
+    const { mapBackendCode } = await import('@/adapters/backend/laravel-client');
+    expect(mapBackendCode('step_up_required')).toBe('FORBIDDEN');
+  });
+
+  test('known auth-shaped codes map as documented', async () => {
+    const { mapBackendCode } = await import('@/adapters/backend/laravel-client');
+    expect(mapBackendCode('unauthenticated')).toBe('UNAUTHENTICATED');
+    expect(mapBackendCode('rate_limited')).toBe('RATE_LIMITED');
+    expect(mapBackendCode('conflict')).toBe('CONFLICT');
+    expect(mapBackendCode('validation_failed')).toBe('VALIDATION_ERROR');
+    // Unmapped codes stay deliberately opaque.
+    expect(mapBackendCode('some_future_code')).toBe('INTERNAL_ERROR');
+  });
+});

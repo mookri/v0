@@ -10,9 +10,11 @@
  *   - §1/§2 transport schemas (E.164, proof/code migration)
  *   - §8 body cap
  *
- * Backend-authoritative behaviors (wrong-OTP ×5 lock, challenge
- * expiry, C1/C2/C4 atomicity, session rotation) are enforced in
- * Laravel and gate-tested there — see auth/p0-contract.md §9.
+ * Backend-authoritative behaviors (OTP expiry, 3-attempt exhaustion,
+ * C1/C2/C4 atomicity, session rotation) are enforced in Laravel and
+ * gate-tested there — see auth/p0-contract.md §9. The gate is split:
+ * §9a (current-system truth) vs §9b (M2–M5 security-improvement half —
+ * landed 2026-10-09, re-run green).
  */
 import {
   InProcessAuthRateLimiter,

@@ -53,7 +53,10 @@ export async function GET(req: Request) {
  * POST /api/saved — add a saved item.
  *
  * Contract §8: 1 MB cap, malformed JSON → 400, schema failure → 422.
- * Forwarded keys are exactly `{ref_id, title}` — never a body spread.
+ * Forwarded keys are exactly `{ref_type, ref_id}` — never a body
+ * spread. `title` is not part of the contract: the backend store has
+ * no title column, so forwarding one would promise a write that can
+ * never round-trip.
  */
 export async function POST(req: Request) {
   const requestId = newRequestId();
@@ -64,7 +67,7 @@ export async function POST(req: Request) {
     const { data } = await laravelPost(
       ctx.actor.token,
       '/customers/saved',
-      { ref_id: ctx.data.ref_id, title: ctx.data.title },
+      { ref_type: ctx.data.ref_type, ref_id: ctx.data.ref_id },
       {},
       { timeout: 'normal', requestId },
     );

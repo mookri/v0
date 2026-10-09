@@ -38,6 +38,9 @@ export const DEFAULT_BACKEND_CODE_MAP: BackendCodeMap = {
   state_forbidden: 'CONFLICT',
   rate_limited: 'RATE_LIMITED',
   service_unavailable: 'DEPENDENCY_UNAVAILABLE',
+  // RequiresAcr denial (403 step_up_required) — without this the code
+  // fell through to INTERNAL_ERROR (mismatch M9).
+  step_up_required: 'FORBIDDEN',
   internal_error: 'INTERNAL_ERROR',
 };
 
@@ -69,7 +72,9 @@ export interface LaravelCallOptions {
    * client — a retry could double-send an SMS or re-attempt redemption.
    */
   timeout?: TimeoutClass;
-  /** Correlation id forwarded as `X-Request-Id` (contract §8). */
+  /** Correlation id forwarded as `X-Request-Id` (contract §8) and as
+   * `Navdhya-Request-Id` — the header the backend's AttachRequestId
+   * actually reads, so BFF and Laravel logs share one `rid`. */
   requestId?: string;
 }
 
@@ -88,22 +93,67 @@ async function callLaravel<T>(
   if (token) headers['Authorization'] = `Bearer ${token}`;
   const tenant = laravelTenant();
   if (tenant) headers['X-Tenant-Id'] = tenant;
-  if (options.requestId) headers['X-Request-Id'] = options.requestId;
-  const res = await fetch(`${laravelBase()}/api/v1${path}${qs}`, {
-    method,
-    headers,
-    body: body === undefined ? undefined : JSON.stringify(body),
-    signal: AbortSignal.timeout(TIMEOUT_MS[options.timeout ?? 'normal']),
-  });
-  const parsed = (await res.json().catch(() => null)) as LaravelEnvelope | null;
-  if (!res.ok) {
-    throw new CustomerApiError({
-      code: mapBackendCode(parsed?.error?.code ?? '', codeMap),
-      status: res.status,
-      requestId: parsed?.error?.requestId ?? parsed?.meta?.request_id ?? 'unknown',
-    });
+  if (options.requestId) {
+    headers['X-Request-Id'] = options.requestId; // contract §8
+    // The backend's AttachRequestId reads ONLY `Navdhya-Request-Id` —
+    // without it the server minted its own id and the two logs could
+    // never be joined. Same value, both headers: strict backend charset
+    // `A-Za-z0-9._-` (≤64) accepts `req_<uuid>`.
+    headers['Navdhya-Request-Id'] = options.requestId;
   }
-  return { data: (parsed?.data ?? null) as T, meta: parsed?.meta ?? {} };
+
+  // PERF_TIMING (drill-only): one [upstream] line per call — method,
+  // path, status, duration. Never the token, body or query string.
+  const startedAt = performance.now();
+  let status = 0;
+  let failure = '';
+  try {
+    const res = await fetch(`${laravelBase()}/api/v1${path}${qs}`, {
+      method,
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
+      signal: AbortSignal.timeout(TIMEOUT_MS[options.timeout ?? 'normal']),
+    });
+    status = res.status;
+    const parsed = (await res.json().catch(() => null)) as LaravelEnvelope | null;
+    if (!res.ok) {
+      throw new CustomerApiError({
+        code: mapBackendCode(parsed?.error?.code ?? '', codeMap),
+        status: res.status,
+        requestId: parsed?.error?.requestId ?? parsed?.meta?.request_id ?? 'unknown',
+        // Contract §8: a forwarded 429 must keep the backend's
+        // Retry-After — dropping it renders an unactionable rate-limit
+        // response (the BFF's own throttle already sets the header).
+        retryAfter: res.headers.get('retry-after') ?? undefined,
+      });
+    }
+    return { data: (parsed?.data ?? null) as T, meta: parsed?.meta ?? {} };
+  } catch (e) {
+    failure = e instanceof Error ? e.constructor.name : 'unknown';
+    // AbortSignal.timeout rejects with a DOMException named 'TimeoutError',
+    // which is not a CustomerApiError — every route's catch let it escape
+    // as a bare 500: no envelope, no requestId (contract §8 violation;
+    // observed on the cold-start run, report §7). Map it here so all
+    // routes render the standard envelope with the BFF's own rid. Other
+    // failures keep the documented convention: propagate to framework 500.
+    // Property check, not `instanceof Error`: a DOMException from another
+    // realm (jest's vm context) fails the instanceof test while behaving
+    // identically.
+    if ((e as { name?: string } | null)?.name === 'TimeoutError') {
+      throw new CustomerApiError({
+        code: 'DEPENDENCY_UNAVAILABLE',
+        status: 504,
+        requestId: options.requestId ?? 'unknown',
+      });
+    }
+    throw e;
+  } finally {
+    if (process.env.PERF_TIMING === '1') {
+      console.log(
+        `[upstream] rid=${options.requestId ?? '-'} method=${method} path=${path} status=${status} ms=${(performance.now() - startedAt).toFixed(1)}${failure ? ` error=${failure}` : ''}`,
+      );
+    }
+  }
 }
 
 export function laravelGet<T>(
@@ -150,7 +200,12 @@ export function laravelPatch<T>(
 // (BFF convention: no explicit 500 envelopes).
 export function laravelErrorResponse(e: unknown, message: string, requestId: string): Response {
   if (e instanceof CustomerApiError) {
-    return Response.json(err(e.code as ApiErrorCode, message, requestId), { status: e.status });
+    const headers: Record<string, string> = {};
+    if (e.retryAfter) headers['Retry-After'] = e.retryAfter;
+    return Response.json(err(e.code as ApiErrorCode, message, requestId), {
+      status: e.status,
+      headers,
+    });
   }
   throw e;
 }

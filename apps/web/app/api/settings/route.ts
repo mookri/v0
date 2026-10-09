@@ -46,8 +46,11 @@ export async function GET(req: Request) {
  *
  * Two-layer validation: this schema guarantees a plain object (§8
  * statuses: malformed → 400, wrong shape → 422), then the BFF-owned
- * closed key set (`validateSettingsUpdate`) filters to known keys —
- * unknown keys are dropped, never forwarded to Laravel.
+ * closed key set (`validateSettingsUpdate`) mirrors the backend's
+ * `CustomerSetting::KEYS` — unknown keys are rejected with a 422 here,
+ * never forwarded to Laravel. Forwarded values are FLAT: the backend
+ * diffs top-level request keys against its key set (a `settings`
+ * wrapper reads as the unknown key "settings").
  */
 export async function PATCH(req: Request) {
   const requestId = newRequestId();
@@ -63,7 +66,7 @@ export async function PATCH(req: Request) {
     const { data } = await laravelPatch<{ settings: Record<string, unknown> }>(
       ctx.actor.token,
       '/customers/settings',
-      { settings: validation.values },
+      validation.values,
       {},
       { timeout: 'normal', requestId },
     );

@@ -14,30 +14,22 @@ export const customerSettingsSections: SettingsSection[] = [
   { id: 'security', title: 'Security', owner: 'identity', href: '/settings' },
 ];
 
-// Closed key set - backend validates, BFF mirrors for UX
+// Closed key set - the BFF mirrors `CustomerSetting::KEYS` (Laravel)
+// one for one: flat keys, same names, so GET `values` and PATCH keys
+// round-trip. The backend stays the authority (hostile-BFF posture);
+// this list only rejects unknown keys early with a field-level 422.
 export const KNOWN_SETTINGS_KEYS = [
   'locale',
-  'timezone',
-  'currency',
-  'email_notifications',
-  'push_notifications',
-  'sms_notifications',
-  'marketing_emails',
-  'security_alerts',
-  'two_factor_enabled',
-  'theme',
+  'notifications_email',
+  'notifications_sms',
+  'marketing_opt_in',
 ] as const;
 
 export type KnownSettingsKey = (typeof KNOWN_SETTINGS_KEYS)[number];
 
-export interface SettingsValidationResult {
-  ok: true;
-  values: Record<string, unknown>;
-} | {
-  ok: false;
-  reason: 'VALIDATION_ERROR';
-  fieldErrors: Record<string, string>;
-}
+export type SettingsValidationResult =
+  | { ok: true; values: Record<string, unknown> }
+  | { ok: false; reason: 'VALIDATION_ERROR'; fieldErrors: Record<string, string> };
 
 export function validateSettingsUpdate(input: Record<string, unknown>): SettingsValidationResult {
   const fieldErrors: Record<string, string> = {};
@@ -48,22 +40,18 @@ export function validateSettingsUpdate(input: Record<string, unknown>): Settings
       continue;
     }
 
-    // Type validation per key
+    // Type validation per key - mirrors the backend rules
+    // (CustomerSettingController::rules: locale is a string of at most
+    // 8 chars, everything else a boolean).
     switch (key) {
       case 'locale':
-      case 'timezone':
-      case 'currency':
-      case 'theme':
-        if (typeof value !== 'string' || value.length === 0) {
-          fieldErrors[key] = 'Must be a non-empty string';
+        if (typeof value !== 'string' || value.length === 0 || value.length > 8) {
+          fieldErrors[key] = 'Must be a non-empty string of at most 8 characters';
         }
         break;
-      case 'email_notifications':
-      case 'push_notifications':
-      case 'sms_notifications':
-      case 'marketing_emails':
-      case 'security_alerts':
-      case 'two_factor_enabled':
+      case 'notifications_email':
+      case 'notifications_sms':
+      case 'marketing_opt_in':
         if (typeof value !== 'boolean') {
           fieldErrors[key] = 'Must be a boolean';
         }

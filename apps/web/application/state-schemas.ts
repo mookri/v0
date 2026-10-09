@@ -8,15 +8,21 @@ import { e164, challengeCode } from '@/application/auth-schemas';
  * forward (no `{...body}` spreads anywhere).
  */
 
-/** Saved item reference — restricted charset so ids can't smuggle path segments. */
+/**
+ * Saved item reference — the wire mirrors `SavedItemController::store`
+ * exactly: a typed reference (`ref_type` in puja|content|service) plus
+ * a ULID-shaped `ref_id` (Crockford base32, 26 chars) so bookmarks are
+ * deterministic keys. Backend re-validates (hostile-BFF); rejecting
+ * here surfaces the field error with the BFF's own wording (§8).
+ */
 export const savedAddSchema = z.object({
+  ref_type: z.enum(['puja', 'content', 'service']),
   ref_id: z
     .string()
     .trim()
     .min(1)
     .max(64)
-    .regex(/^[A-Za-z0-9_-]+$/, 'ref_id must be alphanumeric with - or _'),
-  title: z.string().trim().max(200).optional(),
+    .regex(/^[0-9A-HJKMNP-TV-Z]{26}$/i, 'ref_id must be a 26-character ULID'),
 });
 
 /**
@@ -30,15 +36,17 @@ export const settingsUpdateSchema = z.custom<Record<string, unknown>>(
 );
 
 /**
- * Verification start — contact format must match its type, and phone
- * contacts are normalized to E.164 so "9876543210" and "+919876543210"
- * never become two identities (contract §1/I3).
+ * Verification start — wire keys are `channel` + `value` because that is
+ * exactly what `CustomerVerificationController` validates (`{channel:
+ * phone|email, value}`); the previous `{type, contact}` shape 422'd every
+ * call (mismatch M1). Phone values are normalized to E.164 so "9876543210"
+ * and "+919876543210" never become two identities (contract §1/I3).
  */
-export const verificationCreateSchema = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('phone'), contact: e164 }),
+export const verificationCreateSchema = z.discriminatedUnion('channel', [
+  z.object({ channel: z.literal('phone'), value: e164 }),
   z.object({
-    type: z.literal('email'),
-    contact: z.string().trim().min(3).max(254).email('Must be a valid email'),
+    channel: z.literal('email'),
+    value: z.string().trim().min(3).max(254).email('Must be a valid email'),
   }),
 ]);
 

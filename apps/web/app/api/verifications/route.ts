@@ -52,10 +52,10 @@ export async function POST(req: Request) {
     throttle: { purpose: 'verification', limit: THROTTLE.otpIp.limit, windowSeconds: THROTTLE.otpIp.windowSeconds },
   });
   if (!ctx.ok) return ctx.response;
-  const { type, contact } = ctx.data;
+  const { channel, value } = ctx.data;
 
   const idDecision = await authRateLimiter.consume(
-    identityKey('verification', contact),
+    identityKey('verification', value),
     THROTTLE.otpIdentity.limit,
     THROTTLE.otpIdentity.windowSeconds,
   );
@@ -68,8 +68,8 @@ export async function POST(req: Request) {
   const idemKeyHeader = req.headers.get('idempotency-key');
   let idemKey: string | null = null;
   if (idemKeyHeader) {
-    const fingerprint = await requestFingerprint({ type, contact });
-    const scope = `verification:${type}:${contact}`;
+    const fingerprint = await requestFingerprint({ channel, value });
+    const scope = `verification:${channel}:${value}`;
     const claim = await idempotencyStore.claim(`${scope}:${idemKeyHeader}`, fingerprint);
     if (claim === 'conflict') {
       return rejectRequest(requestId, 'CONFLICT', 'Idempotency-Key reused with a different request.', 409);
@@ -90,7 +90,7 @@ export async function POST(req: Request) {
     const { data } = await laravelPost(
       ctx.actor.token,
       '/customers/verifications',
-      { type, contact },
+      { channel, value },
       {},
       { timeout: 'fast', requestId },
     );

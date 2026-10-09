@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { DevRoleSwitcher } from '@/components/dev/DevRoleSwitcher'
 import { getMockSessionSync } from '@/lib/auth/mock-session-client'
+import { authPost } from '@/lib/auth/auth-client'
 import { getWorkspaceConfig } from '@/lib/product/role-config'
 import type { Role } from '@/lib/dlo-x/types'
 import {
@@ -234,7 +235,21 @@ export function DashboardShell({ children }: DashboardShellProps) {
                       <Headphones className="size-4" /> Support
                     </Link>
                     <div className="dropdown-divider" />
-                    <button className="dropdown-item w-full text-left">
+                    <button
+                      className="dropdown-item w-full text-left"
+                      onClick={async () => {
+                        // End the session through the BFF (contract §6:
+                        // idempotent — the cookie is cleared even when the
+                        // backend revoke fails), then leave the dashboard.
+                        try {
+                          await authPost('/api/auth/logout', {})
+                        } catch {
+                          // Logout never needs a retry: the route clears
+                          // the cookie on every response it sends.
+                        }
+                        window.location.href = '/login'
+                      }}
+                    >
                       <LogOut className="size-4" /> Logout
                     </button>
                   </div>

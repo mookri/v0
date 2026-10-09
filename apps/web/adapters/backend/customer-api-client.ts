@@ -2,18 +2,22 @@ export interface CustomerApiErrorShape {
   code: string;
   status: number;
   requestId: string;
+  /** Backend `Retry-After` (seconds) — relayed on forwarded 429s (§8). */
+  retryAfter?: string;
 }
 
 export class CustomerApiError extends Error {
   code: string;
   status: number;
   requestId: string;
+  retryAfter?: string;
 
   constructor(shape: CustomerApiErrorShape) {
     super(shape.code);
     this.code = shape.code;
     this.status = shape.status;
     this.requestId = shape.requestId;
+    this.retryAfter = shape.retryAfter;
   }
 }
 

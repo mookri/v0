@@ -14,18 +14,29 @@ import {
 } from '@/application/state-schemas';
 
 describe('savedAddSchema', () => {
-  test('accepts a safe reference and trims', () => {
-    const parsed = savedAddSchema.safeParse({ ref_id: ' puja-123 ', title: 'Ganesh Puja' });
+  // Mirrors the backend wire: ref_type enum + Crockford-base32 ULID.
+  const ULID = '01ARZ3NDEKTSV4RRFFQ69G5FAV';
+
+  test('accepts the backend contract (ref_type + ULID) and trims', () => {
+    const parsed = savedAddSchema.safeParse({ ref_type: 'puja', ref_id: ` ${ULID} ` });
     expect(parsed.success).toBe(true);
-    if (parsed.success) expect(parsed.data.ref_id).toBe('puja-123');
+    if (parsed.success) expect(parsed.data.ref_id).toBe(ULID);
   });
 
   test('rejects path-smuggling characters', () => {
-    expect(savedAddSchema.safeParse({ ref_id: '../admin' }).success).toBe(false);
-    expect(savedAddSchema.safeParse({ ref_id: 'a/b' }).success).toBe(false);
-    expect(savedAddSchema.safeParse({ ref_id: 'a:b' }).success).toBe(false);
-    expect(savedAddSchema.safeParse({ ref_id: '' }).success).toBe(false);
+    expect(savedAddSchema.safeParse({ ref_type: 'puja', ref_id: '../admin' }).success).toBe(false);
+    expect(savedAddSchema.safeParse({ ref_type: 'puja', ref_id: 'a/b' }).success).toBe(false);
+    expect(savedAddSchema.safeParse({ ref_type: 'puja', ref_id: 'a:b' }).success).toBe(false);
+    expect(savedAddSchema.safeParse({ ref_type: 'puja', ref_id: '' }).success).toBe(false);
+    expect(savedAddSchema.safeParse({ ref_type: 'puja', ref_id: ULID.slice(0, 25) }).success).toBe(false);
+    expect(savedAddSchema.safeParse({ ref_type: 'puja', ref_id: 'puja-123' }).success).toBe(false);
     expect(savedAddSchema.safeParse({}).success).toBe(false);
+  });
+
+  test('ref_type is required and closed (backend in:puja,content,service)', () => {
+    expect(savedAddSchema.safeParse({ ref_id: ULID }).success).toBe(false);
+    expect(savedAddSchema.safeParse({ ref_type: 'admin', ref_id: ULID }).success).toBe(false);
+    expect(savedAddSchema.safeParse({ ref_type: 'puja', ref_id: ULID }).success).toBe(true);
   });
 });
 
@@ -40,25 +51,29 @@ describe('settingsUpdateSchema', () => {
 });
 
 describe('verificationCreateSchema', () => {
-  test('normalizes phone contacts to E.164 (§1/I3 identity dedupe)', () => {
-    const parsed = verificationCreateSchema.safeParse({ type: 'phone', contact: '+91 98765-43210' });
+  test('normalizes phone values to E.164 (§1/I3 identity dedupe)', () => {
+    const parsed = verificationCreateSchema.safeParse({ channel: 'phone', value: '+91 98765-43210' });
     expect(parsed.success).toBe(true);
-    if (parsed.success && parsed.data.type === 'phone') {
-      expect(parsed.data.contact).toBe('+919876543210');
+    if (parsed.success && parsed.data.channel === 'phone') {
+      expect(parsed.data.value).toBe('+919876543210');
     }
   });
 
-  test('rejects phone contact that is not E.164', () => {
-    expect(verificationCreateSchema.safeParse({ type: 'phone', contact: 'call-me' }).success).toBe(false);
+  test('rejects phone value that is not E.164', () => {
+    expect(verificationCreateSchema.safeParse({ channel: 'phone', value: 'call-me' }).success).toBe(false);
   });
 
-  test('validates email contacts for type=email', () => {
-    expect(verificationCreateSchema.safeParse({ type: 'email', contact: 'a@b.co' }).success).toBe(true);
-    expect(verificationCreateSchema.safeParse({ type: 'email', contact: 'not-an-email' }).success).toBe(false);
+  test('validates email values for channel=email', () => {
+    expect(verificationCreateSchema.safeParse({ channel: 'email', value: 'a@b.co' }).success).toBe(true);
+    expect(verificationCreateSchema.safeParse({ channel: 'email', value: 'not-an-email' }).success).toBe(false);
   });
 
-  test('rejects unknown types', () => {
-    expect(verificationCreateSchema.safeParse({ type: 'fax', contact: 'a@b.co' }).success).toBe(false);
+  test('rejects unknown channels', () => {
+    expect(verificationCreateSchema.safeParse({ channel: 'fax', value: 'a@b.co' }).success).toBe(false);
+  });
+
+  test('rejects the legacy {type, contact} wire shape (M1 — backend expects channel/value)', () => {
+    expect(verificationCreateSchema.safeParse({ type: 'phone', contact: '+919876543210' }).success).toBe(false);
   });
 });
 

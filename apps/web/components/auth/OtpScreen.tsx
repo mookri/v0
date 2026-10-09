@@ -21,8 +21,14 @@ import {
   AuthRequestError,
 } from '@/lib/auth/auth-client'
 
-/** Contract §3 mirror: backend is authoritative; this only bounds UX. */
-const MAX_ATTEMPTS = 5
+/**
+ * Backend truth (`CustomerOtpService::MAX_ATTEMPTS = 3`): three wrong
+ * codes exhaust the challenge row — the backend deletes it and every
+ * further redeem 401s until a new challenge is issued. There is no
+ * time-based lock (`locked_until` does not exist), so this component
+ * never fabricates one; the local counter is a UX mirror only (I18).
+ */
+const MAX_ATTEMPTS = 3
 
 interface OtpScreenProps {
   phone: string
@@ -50,6 +56,9 @@ export function OtpScreen({
   const [generalError, setGeneralError] = useState('')
   const [attempts, setAttempts] = useState(0)
   const [lockedUntil, setLockedUntil] = useState<number | null>(null)
+  // Set once the local mirror reaches MAX_ATTEMPTS: the backend has
+  // deleted the challenge row, so redeeming again is pointless.
+  const [exhausted, setExhausted] = useState(false)
 
   const dialCode =
     getCountryByCode(countryCode).dialCode
@@ -80,6 +89,11 @@ export function OtpScreen({
     if (lockedUntil && Date.now() < lockedUntil) {
       const waitSec = Math.ceil((lockedUntil - Date.now()) / 1000)
       setGeneralError(`Too many attempts. Try again in ${waitSec}s.`)
+      return
+    }
+
+    if (exhausted) {
+      setGeneralError('Too many failed attempts. Please request a new code.')
       return
     }
 
@@ -124,10 +138,14 @@ export function OtpScreen({
         setGeneralError(e.message)
       } else if (e.status === 401) {
         // Wrong code — count locally; backend lock is authoritative (I8).
+        // Backend truth: the 3rd failure exhausts the challenge (the row
+        // is deleted), so drop the challenge and require a restart — no
+        // fabricated time-based lock.
         const next = attempts + 1
         setAttempts(next)
         if (next >= MAX_ATTEMPTS) {
-          setLockedUntil(Date.now() + 15 * 60 * 1000)
+          setExhausted(true)
+          clearChallenge()
           setGeneralError('Too many failed attempts. Please request a new code.')
         } else {
           setGeneralError(`${e.message} (${MAX_ATTEMPTS - next} attempts remaining)`)
@@ -144,6 +162,7 @@ export function OtpScreen({
     setGeneralError('')
     setAttempts(0)
     setLockedUntil(null)
+    setExhausted(false)
 
     try {
       const purpose = otpSentReason === 'LOGIN' ? 'login' : 'signup'
