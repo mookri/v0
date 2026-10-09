@@ -16,3 +16,7 @@ Artisan::command('inspire', function () {
 //   retention for expired rows, matching the forensics window).
 Schedule::command('cleanup:expired --force')->daily();
 Schedule::command('passport:purge --hours=168')->weekly();
+// Transactional outbox (F2): dispatch pending events once a minute —
+// producers only append; consumers exist only once handlers register
+// (until then the drain reports unhandled and leaves rows pending).
+Schedule::command('outbox:drain')->everyMinute()->withoutOverlapping();

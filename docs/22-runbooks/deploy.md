@@ -41,6 +41,7 @@ Order matters — keys before traffic, migrations before seed:
 |---------|---------|---------|
 | `cleanup:expired --force` | daily | expired OTP challenges, invites, sessions, step-up proofs |
 | `passport:purge --hours=168` | weekly | revoked/expired OAuth tokens + auth codes (168 h forensics window) |
+| `outbox:drain` | every minute | dispatches pending outbox events to registered handlers (F2); rows whose `event_type` has no consumer yet stay pending untouched |
 
 Install **one** cron entry (system crontab, not per-command timers):
 
@@ -48,8 +49,31 @@ Install **one** cron entry (system crontab, not per-command timers):
 * * * * * cd /path/to/platform-navdhya && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-Verify with `php artisan schedule:list` — both commands must appear.
+Verify with `php artisan schedule:list` — all three commands must appear.
 To run a sweep ad hoc: `php artisan cleanup:expired --force`.
+
+## 2.1 Queue worker (required once consumers enqueue)
+
+Notification dispatch and mail enqueue on the **database** queue
+(`QUEUE_CONNECTION=database`). HTTP requests never run jobs — without a
+worker they sit in the `jobs` table unprocessed. Supervisor unit (or
+any process manager):
+
+```ini
+[program:navdhya-worker]
+command=php artisan queue:work --sleep=1 --tries=3 --max-time=3600
+directory=/path/to/platform-navdhya
+autostart=true
+autorestart=true
+user=www-data
+```
+
+`--max-time=3600` bounds memory drift (the supervisor restarts).
+Verify: rows in `jobs`, or `php artisan queue:monitor jobs:pending`.
+The scheduler cron drives `outbox:drain`; handlers that enqueue work
+hand off to this worker. The app has no container image in this repo —
+worker and scheduler run on the host (compose carries postgres/redis
+only).
 
 ## 3. Every deploy
 
@@ -59,7 +83,9 @@ To run a sweep ad hoc: `php artisan cleanup:expired --force`.
    a migration that drops/renames is a reject at review).
 4. `php artisan config:cache && php artisan route:cache`.
 5. Health: `/up` → 200, `/ready` → 200 before adding the node
-   back to the load balancer.
+   back to the load balancer. The web BFF ships its own probes:
+   `/api/healthz` (liveness, static) and `/api/readyz` (readiness —
+   probes this `/up` with a 2 s budget when `CUSTOMER_BACKEND=laravel`).
 6. Watch P1 alert classes post-deploy (audit chain, refresh reuse,
    isolation failure) per [SRE operations](../20-sre/sre-operations.md#alert-classes--response).
 

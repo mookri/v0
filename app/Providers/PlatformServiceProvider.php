@@ -29,6 +29,9 @@ use App\Platform\Modules\Console\ModuleListCommand;
 use App\Platform\Api\Console\ApiComposeCommand;
 use App\Platform\Console\CleanupExpiredCommand;
 use App\Platform\Console\DoctorCommand;
+use App\Platform\Console\OutboxDrainCommand;
+use App\Platform\Outbox\Outbox;
+use App\Platform\Outbox\OutboxHandlers;
 use App\Platform\Modules\ManifestValidator;
 use App\Platform\Modules\ModuleRegistry;
 use App\Platform\Tenancy\TenantContext;
@@ -65,6 +68,12 @@ final class PlatformServiceProvider extends ServiceProvider
         $this->app->singleton(PolicyEvaluationEngine::class);
         $this->app->singleton(AuthzCacheInvalidator::class);
         $this->app->singleton(PrincipalResolver::class);
+
+        // Transactional outbox (F2): one writer + one registry per
+        // process; handlers register at boot (module providers) and the
+        // drain command dispatches through the same singleton.
+        $this->app->singleton(Outbox::class);
+        $this->app->singleton(OutboxHandlers::class);
     }
 
     public function boot(): void
@@ -74,6 +83,7 @@ final class PlatformServiceProvider extends ServiceProvider
                 ModuleListCommand::class,
                 DoctorCommand::class,
                 CleanupExpiredCommand::class,
+                OutboxDrainCommand::class,
                 ApiComposeCommand::class,
                 SyncPermissionsCommand::class,
                 AuthzExplainCommand::class,
