@@ -13,6 +13,7 @@ use App\Platform\Tenancy\Models\TenantMembership;
 use App\Platform\Tenancy\TenantContext;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Schema;
 use PHPUnit\Framework\Assert as PHPUnit;
 
 /**
@@ -26,12 +27,39 @@ use PHPUnit\Framework\Assert as PHPUnit;
  */
 abstract class TenantIntegrationTestCase extends KernelTestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase {
+        migrateDatabases as protected refreshDatabaseMigrateDatabases;
+    }
 
     /**
      * @var list<string>
      */
     protected $connectionsToTransact = ['central', 'tenant_shared'];
+
+    /**
+     * RefreshDatabase recovers a poisoned test database (a test ran DDL,
+     * MySQL implicitly committed the shared transaction, and the teardown
+     * guard flipped RefreshDatabaseState::$migrated back to false) by
+     * re-running `migrate:fresh` — but that only wipes the DEFAULT
+     * connection (central). The tenant_shared tables are created by
+     * migrations that declare their connection explicitly, so on MySQL the
+     * re-run dies on "Table 'audit_logs' already exists", the flag stays
+     * false, and every remaining database test repeats the same failure.
+     * Wipe tenant_shared first so the recovery path reaches genuine
+     * first-run state on BOTH kernel connections.
+     *
+     * MySQL only: the sqlite :memory: baseline never trips the guard (sqlite
+     * DDL is transactional, so the transaction survives) and its schema
+     * builder cannot drop all tables.
+     */
+    protected function migrateDatabases(): void
+    {
+        if (config('database.connections.tenant_shared.driver') === 'mysql') {
+            Schema::connection('tenant_shared')->dropAllTables();
+        }
+
+        $this->refreshDatabaseMigrateDatabases();
+    }
 
     /**
      * @param  array<string, mixed>  $attributes
