@@ -15,16 +15,16 @@ Playwright UI (`e2e/ui.spec.ts`), orchestrated by `e2e/run.ps1`.
 
 | Gate | How | Result |
 |---|---|---|
-| Build | `NEXT_STANDALONE=0 pnpm --filter @navdhya/web run build` | ✅ green (fresh, post-F-SMOKE1..4 route/schema changes) |
-| Typecheck | `pnpm --filter @navdhya/web run typecheck` | ✅ green |
-| Jest (BFF contract units) | `pnpm --filter @navdhya/web run test` | ✅ **342 passed / 20 failed** — known baseline + saved-schema contract test + 2 new laravel-client timeout→504 tests; the 20 are pre-existing failures in 9 non-auth suites; **0 auth failures** |
-| Pint (full suite) | `vendor/bin/pint --test` in `platform-navdhya` | ✅ clean (re-run post-cost-10 signup change) |
-| PHPUnit (sqlite) | `vendor/bin/phpunit` in `platform-navdhya` | ✅ **649 tests / 3709 assertions — 0 failures, 0 errors** (re-run post-F-SMOKE5; includes the duplicate-contact 409 regression) |
-| PHPUnit-on-MySQL | `vendor/bin/phpunit -c phpunit.mysql.xml` against fresh `navdhya_test_*` | ✅ **649 tests · 0 failures · 14 errors** — same documented non-auth baseline F-DB3a–c (TenantPromotion ×3, CleanupExpired ×1, TempleCursor/Puja ×10); **0 auth failures**; re-run post-F-SMOKE5 |
-| E2E HTTP (S1–S13) | `e2e/run.ps1` phase 1 | ✅ **83/83 assertions · 13/13 scenarios · exit 0** — incl. §9b wire gates C1/C2/C4 (S13) and G1–G4 (S9/S10/S11); re-run 21:12–21:18 post-both-perf-optimizations |
-| E2E Playwright (UI) | `e2e/run.ps1` phase 2 (BFF restarted, `cache:clear`) | ✅ exit 0 (1/1) — signup → 3-attempt exhaustion → login → **UI logout**; re-run 21:12–21:18 post-both-perf-optimizations |
-| API surface smoke (non-auth) | `e2e/smoke.ps1` (+ `-Script api-smoke2.mjs`) | ✅ re-run 21:54–21:58 post-F-SMOKE5: campaign **22/22** · probes **13/13** — **F-SMOKE1..5 all fixed** (F-SMOKE5 backend 409 guard closed 2026-10-09) |
-| Perf before/after (retention bar) | `e2e/smoke.ps1 -Script api-perf.mjs` ×2 (baseline + settled after) | ✅ see `e2e/api-perf-report.md` — signup-verify p50/p95 **324.9/350.7 → 152.5/203.8** (−53%/−42%), errors 0→0, every other endpoint ≤ baseline, join 100% |
+| Build | `NEXT_STANDALONE=0 pnpm --filter @navdhya/web run build` | ✅ green — re-run 2026-10-10 (F1/F2/B1: healthz/readyz/pujas routes, QuickBook handoff) |
+| Typecheck | `pnpm --filter @navdhya/web run typecheck` (+ customer) | ✅ green (both apps) — re-run 2026-10-10 |
+| Jest (BFF contract units) | `pnpm --filter @navdhya/web run test` | ✅ **353 passed / 20 failed** — 20 remain the pre-existing failures in the same 9 non-auth suites; **0 auth failures**; delta **+11** = this cycle's new healthz/readyz/pujas/QuickBook tests; root `vitest run tests/customer` **69/69** |
+| Pint (full suite) | `vendor/bin/pint --test` in `platform-navdhya` | ✅ clean — re-run 2026-10-10 (outbox + public catalog) |
+| PHPUnit (sqlite) | `vendor/bin/phpunit` in `platform-navdhya` | ✅ **663 tests / 3762 assertions — 0 failures, 0 errors** (2026-10-10; +14 = OutboxTest 6 + PublicCatalogTest 4 + prior) |
+| PHPUnit-on-MySQL | `vendor/bin/phpunit -c phpunit.mysql.xml` against fresh `navdhya_test_*` | ✅ **663 tests · 0 failures · 14 errors** — same documented non-auth baseline F-DB3a–c (TenantPromotion ×3, CleanupExpired ×1, TempleCursor/Puja ×10); **0 failures in new tests** (2026-10-10, fresh DB incl. `2026_10_09_000003_create_outbox_events_table`) |
+| E2E HTTP (S1–S13) | `e2e/run.ps1` phase 1 | ✅ **83/83 assertions · 13/13 scenarios · exit 0** — incl. §9b wire gates C1/C2/C4 (S13) and G1–G4 (S9/S10/S11); re-run 2026-10-10 00:27–00:33 (migration applies outbox table on fresh DB) |
+| E2E Playwright (UI) | `e2e/run.ps1` phase 2 (BFF restarted, `cache:clear`) | ✅ exit 0 (1/1) — signup → 3-attempt exhaustion → login → **UI logout**; re-run 2026-10-10 |
+| API surface smoke (non-auth) | `e2e/smoke.ps1` (+ `-Script api-smoke2.mjs`) | ✅ 2026-10-10 00:34–00:35: campaign **22/22** · probes **13/13** — **F-SMOKE1..5 all fixed** |
+| Perf before/after (retention bar) | `e2e/smoke.ps1 -Script api-perf.mjs` | ✅ 2026-10-10 00:36–00:39: **130 samples · 0 errors · join 100% · all budgets met**; every endpoint within ambient variance of the official AFTER in `e2e/api-perf-report.md` §3.1 (signup-verify 155.5/199.5 vs 152.5/203.8 — cost-10 win retained; several endpoints faster) |
 
 Latest full pipeline: 15:18:44 → 15:24:49 (~6.1 min, 2026-10-09,
 **post-F-SMOKE1..4 fixes**: HTTP 83/83 + Playwright exit 0). A first
@@ -52,6 +52,20 @@ and preserves `api-perf-*`/`phpunit-*` artifacts.
 F-SMOKE5 backend 409 guard landed next (2026-10-09 evening); gates
 re-run: Pint ✓ · sqlite **649**/3709 ✓ · MySQL 649/0 failures/14
 documented ✓ · campaign 22/22 + probes 13/13 ✓ (see §5).
+
+F1/F2/B1 cycle (2026-10-10 00:27 → 00:39, full gate cadence green):
+web build ✓ · web+customer typecheck ✓ · Pint ✓ · sqlite **663/3762**
+0 failures ✓ · MySQL **663 · 0 failures · 14 documented errors** (fresh
+`navdhya_test_*`, outbox migration applies) ✓ · web Jest **353** passed
+(+11 new: healthz/readyz/pujas routes + QuickBook handoff; same 20
+pre-existing failures in the same 9 suites) ✓ · customer vitest 69/69 ✓
+· `run.ps1` **83/83 + Playwright 1/1 ALL PHASES PASS** exit 0 ✓ ·
+smokes **22/22 + 13/13** ✓ · perf 130 samples 0 errors all budgets met
+(no regression) ✓. New scope this cycle: F1 ops probes (BFF
+`/api/healthz`/`/api/readyz` + runbook), F2 transactional outbox
+(`outbox_events` on tenant_shared, `outbox:drain`, 6 unit tests), B1
+public catalog (`GET /api/v1/catalog/public/items` anonymous + BFF
+forward + QuickBook real-catalog handoff, 4 backend + 3 web tests).
 
 ---
 
