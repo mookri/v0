@@ -4,6 +4,7 @@ namespace App\Platform\Identity;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use OTPHP\TOTP;
 
@@ -11,13 +12,22 @@ use OTPHP\TOTP;
  * TOTP second factor (SEC-004 §1.4): RFC 6238, 30 s step, ±1 window.
  * Secrets are application-encrypted at rest and activated only after a
  * confirming code; recovery codes are single-use SHA-256 hashes shown
- * once. All verification failures collapse (no oracle on state).
+ * once. Verification failures collapse (no oracle on state); since M4 a
+ * shared per-user counter locks the factor for 15 min after 5 failures
+ * (429 + Retry-After at the controllers) and the last accepted step is
+ * remembered so a code can never be burned twice.
  */
 final class MfaService
 {
     public const RECOVERY_CODES = 10;
 
     public const WINDOW = 1;
+
+    /** Failures (TOTP + recovery, shared) before the lockout trips. */
+    public const LOCKOUT_ATTEMPTS = 5;
+
+    /** Lockout duration in seconds. */
+    public const LOCKOUT_SECONDS = 900;
 
     /**
      * @return array{otpauth_url: string}
@@ -73,13 +83,135 @@ final class MfaService
             return false;
         }
 
+        $this->guardLockout($user, $now);
+
         $totp = $this->totpFor($user);
 
-        if ($totp !== null && $totp->verify($code, $now, self::WINDOW)) {
-            return true;
+        // M4 replay: the step the code burns is remembered on success —
+        // the same code presented again within its ±1 window collapses
+        // to an ordinary failure (and counts toward the lockout).
+        if ($totp !== null && ($step = $this->matchingStep($totp, $code, $now)) !== null
+            && (int) ($user->mfa_last_used_step ?? 0) !== $step) {
+            return $this->recordSuccess($user, $step, $now);
         }
 
-        return $this->consumeRecoveryCode($user, $code);
+        if ($this->consumeRecoveryCode($user, $code)) {
+            return $this->recordSuccess($user, null, $now);
+        }
+
+        $this->recordFailure($user, $now);
+
+        return false;
+    }
+
+    /**
+     * Fail closed once the lockout window is open — anything presented
+     * while locked (even the correct code) waits out the window.
+     */
+    private function guardLockout(User $user, int $now): void
+    {
+        $lockedUntil = $user->mfa_locked_until;
+
+        if ($lockedUntil === null) {
+            return;
+        }
+
+        $until = $lockedUntil instanceof \DateTimeInterface
+            ? $lockedUntil->getTimestamp()
+            : (int) strtotime((string) $lockedUntil);
+
+        if ($until > $now) {
+            throw new MfaLockedException($until - $now);
+        }
+    }
+
+    /**
+     * RFC 6238 step the presented code was generated for — the ±1 s
+     * leeway window of the verifier expressed as candidate steps, so a
+     * replayed code is recognised by the step it burns, not by wall
+     * time. Null when the code matches no live step.
+     */
+    private function matchingStep(TOTP $totp, string $code, int $now): ?int
+    {
+        $period = $totp->getPeriod();
+        $epoch = $totp->getEpoch();
+
+        $steps = [];
+        foreach ([-1, 0, 1] as $delta) {
+            $steps[] = intdiv(($now + $delta) - $epoch, $period);
+        }
+
+        foreach (array_unique($steps) as $step) {
+            if (hash_equals($totp->at($epoch + ($step * $period)), $code)) {
+                return $step;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Success writes are guarded: a user locked out between the entry
+     * check and this write stays locked (fail closed), and the counters
+     * reset only for an unlocked row.
+     */
+    private function recordSuccess(User $user, ?int $step, int $now): bool
+    {
+        $affected = User::query()
+            ->whereKey($user->getKey())
+            ->where(static function ($query) use ($now): void {
+                $query->whereNull('mfa_locked_until')
+                    ->orWhere('mfa_locked_until', '<=', gmdate('Y-m-d H:i:s', $now));
+            })
+            ->update([
+                'mfa_failed_attempts' => 0,
+                'mfa_last_used_step' => $step,
+                'mfa_locked_until' => null,
+            ]);
+
+        if ($affected === 0) {
+            throw new MfaLockedException(self::LOCKOUT_SECONDS);
+        }
+
+        $user->forceFill([
+            'mfa_failed_attempts' => 0,
+            'mfa_last_used_step' => $step,
+            'mfa_locked_until' => null,
+        ]);
+
+        return true;
+    }
+
+    /**
+     * Atomic under a row lock: concurrent failures cannot lose
+     * increments, and the threshold transition (attempt 5 sets
+     * locked_until) happens in the same critical section. The lockout
+     * exception is thrown only after the transaction commits.
+     */
+    private function recordFailure(User $user, int $now): void
+    {
+        $locked = DB::connection('central')->transaction(function () use ($user, $now): bool {
+            $row = User::query()->whereKey($user->getKey())->lockForUpdate()->first();
+
+            if ($row === null) {
+                return true;
+            }
+
+            $attempts = (int) $row->mfa_failed_attempts + 1;
+            $row->forceFill(['mfa_failed_attempts' => $attempts]);
+
+            if ($attempts >= self::LOCKOUT_ATTEMPTS) {
+                $row->mfa_locked_until = gmdate('Y-m-d H:i:s', $now + self::LOCKOUT_SECONDS);
+            }
+
+            $row->save();
+
+            return $attempts >= self::LOCKOUT_ATTEMPTS;
+        });
+
+        if ($locked) {
+            throw new MfaLockedException(self::LOCKOUT_SECONDS);
+        }
     }
 
     /**
@@ -128,6 +260,11 @@ final class MfaService
             'mfa_enabled' => false,
             'mfa_recovery_hashes' => null,
             'mfa_enrolled_at' => null,
+            // M4: a disabled factor carries no lockout state — a later
+            // re-enrollment starts from a clean counter.
+            'mfa_failed_attempts' => 0,
+            'mfa_locked_until' => null,
+            'mfa_last_used_step' => null,
         ])->save();
 
         return true;

@@ -11,7 +11,9 @@ use App\Modules\Customers\Models\ReferralAttribution;
 use App\Modules\Customers\Models\ReferralCode;
 use App\Modules\Customers\CustomerActivityRecorder;
 use App\Platform\Audit\AuditWriter;
+use App\Platform\Identity\ActorSessionRotation;
 use App\Platform\Identity\ActorTokenIssuer;
+use App\Platform\Identity\Models\ActorSession;
 use App\Platform\Tenancy\ConnectionResolver;
 use App\Platform\Tenancy\Models\Tenant;
 use App\Platform\Tenancy\Models\TenantMembership;
@@ -24,7 +26,8 @@ use Illuminate\Support\Str;
 /**
  * Customer authentication (B2): OTP request, OTP-before-account signup,
  * signup verification (201 + HMAC actor token), login (200 + token), and
- * best-effort logout. otp/signup/verify/login are public by design
+ * logout (revokes the presented session server-side, M5/TOKEN-001).
+ * otp/signup/verify/login are public by design
  * (withoutMiddleware in Routes/api.php + throttle); logout rides the
  * module's auth.any + tenant group middleware.
  *
@@ -37,8 +40,6 @@ use Illuminate\Support\Str;
  */
 final class CustomerAuthController
 {
-    private const TOKEN_TTL_SECONDS = 86400;
-
     public function __construct(
         private readonly CustomerOtpService $otp,
         private readonly AuditWriter $audit,
@@ -111,10 +112,16 @@ final class CustomerAuthController
             ], 500);
         }
 
+        // M5 / I15 rotation: the moment a new token is minted, the
+        // session the caller presented (validly signed, same actor) is
+        // revoked — every login/identity change supersedes its
+        // predecessor instead of leaving it alive for 24 h.
+        ActorSessionRotation::revokePredecessor($request, (string) $user->external_id);
+
         $minted = ActorTokenIssuer::mint(
             $secret,
             (string) $user->external_id,
-            self::TOKEN_TTL_SECONDS,
+            ActorTokenIssuer::TOKEN_TTL_SECONDS,
             gmdate('Y-m-d\TH:i:s.v\Z'),
         );
 
@@ -270,10 +277,20 @@ final class CustomerAuthController
             'email' => is_string($payload['email'] ?? null) && $payload['email'] !== ''
                 ? $payload['email']
                 : preg_replace('/[^0-9]/', '', $phone).'@phone.local',
-            'password' => bcrypt(Str::random(32)),
             'phone' => $phone,
             'phone_verified_at' => $this->now()->toDateTimeString(),
             'external_id' => 'cust_'.strtolower((string) Str::ulid()),
+        ]);
+        // The password is a discarded placeholder (OTP-only accounts have no
+        // password-login path), so cost 10 instead of the framework default
+        // 12 — ~160 ms less per signup. It is written as a RAW attribute:
+        // the `hashed` cast verifies pre-hashes against configured
+        // BCRYPT_ROUNDS and rejects stronger ones (tests run at 4), while
+        // Hash::check only ever verifies the algorithm — and the plaintext
+        // random exists only inside this expression.
+        $user->setRawAttributes([
+            ...$user->getAttributes(),
+            'password' => bcrypt(Str::random(32), ['rounds' => 10]),
         ]);
         $user->save();
 
@@ -435,11 +452,23 @@ final class CustomerAuthController
 
         // Enrolled MFA upgrades login to two factors: possession (OTP)
         // plus the TOTP code. Absent or wrong codes collapse to the
-        // single 401 (no oracle on MFA state).
+        // single 401 (no oracle on MFA state); the M4 lockout is the one
+        // observable state, surfaced as 429 + Retry-After.
         if ((bool) $user->mfa_enabled) {
             $totp = (string) ($validated['totp_code'] ?? '');
 
-            if ($totp === '' || ! app(\App\Platform\Identity\MfaService::class)->verify($user, $totp, time())) {
+            $verified = false;
+            if ($totp !== '') {
+                try {
+                    $verified = app(\App\Platform\Identity\MfaService::class)->verify($user, $totp, time());
+                } catch (\App\Platform\Identity\MfaLockedException $locked) {
+                    return new JsonResponse([
+                        'error' => ['code' => 'rate_limited', 'message' => 'Too many failed attempts. Try again later.', 'request_id' => $this->requestId($request)],
+                    ], 429)->header('Retry-After', (string) $locked->retryAfter);
+                }
+            }
+
+            if (! $verified) {
                 return new JsonResponse([
                     'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
                 ], 401);
@@ -487,9 +516,16 @@ final class CustomerAuthController
 
     public function logout(Request $request): JsonResponse
     {
-        // Best-effort until the jti revocation store lands (TOKEN-001):
-        // the client discards the bearer; the server records the event.
-        // The token stays technically valid until its 24 h expiry.
+        // M5 / TOKEN-001: the presented jti dies server-side — logout
+        // revokes the credential (G4), it is no longer a client-side
+        // discard that stays valid until the 24 h expiry.
+        $actor = $request->attributes->get('actor');
+        $sessionId = is_array($actor) && is_string($actor['session_id'] ?? null) ? $actor['session_id'] : null;
+
+        if ($sessionId !== null) {
+            ActorSession::revoke($sessionId);
+        }
+
         $this->audit->record(
             'customers.auth.logged_out',
             ['module' => 'customers', 'resource_type' => 'customer_session', 'resource_id' => (string) $request->user()->getAuthIdentifier()],

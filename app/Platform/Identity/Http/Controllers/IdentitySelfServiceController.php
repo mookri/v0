@@ -3,6 +3,7 @@
 namespace App\Platform\Identity\Http\Controllers;
 
 use App\Platform\Api\WebMutations;
+use App\Platform\Identity\Models\ActorSession;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -134,6 +135,34 @@ final class IdentitySelfServiceController
             ->where('user_id', $user->getAuthIdentifier())
             ->where('id', '!=', $currentId)
             ->delete();
+
+        // M5/TOKEN-001: "revoke others" also revokes every HMAC actor
+        // session (bearer jtis) — the web-session count above stays the
+        // response's only number, but the bearer half dies with it.
+        // The session the caller PRESENTED is spared: on the bearer
+        // path (BFF) AuthenticateAny stamps the verified actor onto the
+        // request (same attribute logout reads), so excluding it keeps
+        // "others" honest instead of logging the caller out of its own
+        // request (F-SMOKE3). The cookie path presents no actor session
+        // (session user wins auth precedence), so every actor session
+        // there belongs to another device and the full sweep stands.
+        $externalId = (string) $user->external_id;
+        if ($externalId !== '') {
+            $presented = $request->attributes->get('actor');
+            $presentedId = is_array($presented) && is_string($presented['session_id'] ?? null)
+                ? $presented['session_id']
+                : null;
+
+            if ($presentedId !== null) {
+                ActorSession::query()
+                    ->where('user_id', $externalId)
+                    ->whereNull('revoked_at')
+                    ->where('id', '!=', $presentedId)
+                    ->update(['revoked_at' => gmdate('Y-m-d H:i:s')]);
+            } else {
+                ActorSession::revokeForUser($externalId);
+            }
+        }
 
         return new JsonResponse([
             'data' => ['object' => 'session_revocation', 'revoked' => $revoked],

@@ -143,7 +143,8 @@ final class UserAdminController
 
     /**
      * Bulk revocation trigger (SEC-015 §8.1): all OAuth tokens for the
-     * user die, and every web session row goes with them.
+     * user die, every web session row goes with them, and — since
+     * M5/TOKEN-001 — the HMAC actor sessions too.
      */
     private function revokeCredentials(string $userId): void
     {
@@ -158,5 +159,10 @@ final class UserAdminController
             ->table('sessions')
             ->where('user_id', $userId)
             ->delete();
+
+        $externalId = \App\Models\User::query()->whereKey($userId)->value('external_id');
+        if (is_string($externalId) && $externalId !== '') {
+            \App\Platform\Identity\Models\ActorSession::revokeForUser($externalId);
+        }
     }
 }

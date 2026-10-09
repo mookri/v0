@@ -3,6 +3,8 @@
 namespace Tests\Platform\Identity;
 
 use App\Models\User;
+use App\Platform\Identity\ActorTokenIssuer;
+use App\Platform\Identity\ActorTokenVerifier;
 use Tests\TenantIntegrationTestCase;
 
 /**
@@ -104,6 +106,53 @@ final class IdentitySelfServiceTest extends TenantIntegrationTestCase
         $this->actingAs($user)->postJson('/api/v1/identity/sessions:revoke-others')
             ->assertOk()
             ->assertJsonPath('data.revoked', 0);
+    }
+
+    public function test_bearer_path_revoke_others_spares_the_presented_session(): void
+    {
+        // F-SMOKE3: the BFF authenticates with a bearer and no session
+        // cookie, so StartSession mints an ad-hoc web-session id that
+        // matches no row — the web-row exclusion is a no-op there, and the
+        // actor sweep used to revoke the caller's OWN jti, logging it out
+        // of the very request that asked to end *other* sessions. The
+        // verified actor AuthenticateAny stamps on the request is the
+        // session that must survive (same attribute logout reads).
+        config(['session.driver' => 'database']);
+        $secret = 'revoke-others-bearer-test-secret';
+        config()->set('identity.hmac_secret', $secret);
+
+        $user = User::factory()->create(['email_verified_at' => now()]);
+        $user->forceFill(['external_id' => 'ext_revoke_others_bearer'])->save();
+
+        $now = gmdate('Y-m-d\TH:i:s.v\Z');
+        $presented = ActorTokenIssuer::mint($secret, 'ext_revoke_others_bearer', 86400, $now);
+        $other = ActorTokenIssuer::mint($secret, 'ext_revoke_others_bearer', 86400, $now);
+
+        // A second device's web session: the sweep must still count it.
+        \Illuminate\Support\Facades\DB::connection(config('database.default'))->table('sessions')->insert([
+            'id' => str_repeat('c', 40),
+            'user_id' => $user->id,
+            'ip_address' => '203.0.113.9',
+            'user_agent' => 'OtherDevice/1.0',
+            'payload' => 'x',
+            'last_activity' => time(),
+        ]);
+
+        $this->postJson('/api/v1/identity/sessions:revoke-others', [], [
+            'Authorization' => 'Bearer '.$presented['token'],
+        ])->assertOk()->assertJsonPath('data.revoked', 1);
+        auth()->logout();
+
+        // The presented session survives (contract: end every OTHER one)…
+        $this->assertNotNull(
+            ActorTokenVerifier::verify($secret, $presented['token'], gmdate('Y-m-d\TH:i:s.v\Z')),
+            'The presented actor session must survive its own revoke-others call.'
+        );
+        // …while every other actor session dies with the call.
+        $this->assertNull(
+            ActorTokenVerifier::verify($secret, $other['token'], gmdate('Y-m-d\TH:i:s.v\Z')),
+            'A non-presented actor session must be revoked.'
+        );
     }
 
     public function test_users_only_ever_see_themselves(): void

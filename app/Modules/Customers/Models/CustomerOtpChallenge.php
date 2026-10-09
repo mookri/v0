@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $code_hash
  * @property array<string, mixed>|null $payload
  * @property \Illuminate\Support\Carbon|null $expires_at
+ * @property \Illuminate\Support\Carbon|null $superseded_at
  * @property int $attempts
  * @property int $max_attempts
  */
@@ -64,6 +65,7 @@ final class CustomerOtpChallenge extends Model
         return [
             'payload' => 'array',
             'expires_at' => 'datetime',
+            'superseded_at' => 'datetime',
         ];
     }
 

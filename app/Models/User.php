@@ -49,6 +49,7 @@ class User extends Authenticatable
             'mfa_enrolled_at' => 'datetime',
             'mfa_enabled' => 'boolean',
             'mfa_recovery_hashes' => 'array',
+            'mfa_locked_until' => 'datetime',
             'password' => 'hashed',
         ];
     }

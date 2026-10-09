@@ -9,9 +9,15 @@ namespace App\Platform\Identity;
  * tokens (customer login today) verify under the same secret as the
  * frontend-minted ones, so AuthenticateAny resolves both identically.
  * No refresh semantics: absolute TTL only (Passport rotation later).
+ *
+ * Since M5/TOKEN-001 every mint also persists its jti in actor_sessions —
+ * the revocation store ActorTokenVerifier fails closed against.
  */
 final class ActorTokenIssuer
 {
+    /** Absolute TTL for backend-issued customer sessions. */
+    public const TOKEN_TTL_SECONDS = 86400;
+
     /**
      * @param list<string> $roles
      * @return array{token: string, session_id: string, expires_at: string}
@@ -41,6 +47,15 @@ final class ActorTokenIssuer
         $signature = ActorTokenVerifier::base64UrlEncode(
             hash_hmac('sha256', $payload, $secret, true)
         );
+
+        // M5 / TOKEN-001: persist the jti so logout, rotation and
+        // suspension can revoke this token before its absolute expiry.
+        Models\ActorSession::query()->create([
+            'id' => $sessionId,
+            'user_id' => $userId,
+            'issued_at' => gmdate('Y-m-d H:i:s', $now),
+            'expires_at' => gmdate('Y-m-d H:i:s', $now + $ttlSeconds),
+        ]);
 
         return [
             'token' => $payload.'.'.$signature,

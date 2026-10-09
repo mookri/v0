@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\DB;
  * - Invites past expiry → mark EXPIRED (rows retained as audit history).
  * - Web sessions past expiry → delete.
  * - Step-up proofs past 24 h → delete (authority is the first 15 min).
+ * - Customer OTP challenges past expiry → delete (module table, kernel rule).
+ * - Actor sessions revoked or past expiry → delete (M5/TOKEN-001: a
+ *   missing jti already fails closed in ActorTokenVerifier).
  *
  * Kernel-maintenance bypass (TEN-009): global scopes are lifted explicitly
  * here and only here for sweep purposes; every swept row is tenant-scoped
@@ -98,6 +101,36 @@ final class CleanupExpiredCommand extends Command
         $report['mfa_step_ups'] = (clone $stepUpQuery)->count();
         if (! $dryRun) {
             $stepUpQuery->delete();
+        }
+
+        // Customer OTP challenges (central): expired → delete, same rule
+        // as tenant_shared OTP challenges. Table-level (module table) —
+        // the kernel sweeper must never import modules.
+        $customerChallengeQuery = DB::connection('central')->table('customer_otp_challenges')
+            ->where('expires_at', '<', $now);
+        if ($tenant !== null) {
+            $customerChallengeQuery->where('tenant_id', $tenant);
+        }
+        $customerChallengeIds = $customerChallengeQuery->pluck('id');
+        $report['customer_otp_challenges'] = $customerChallengeIds->count();
+        if (! $dryRun) {
+            DB::connection('central')->table('customer_otp_challenges')
+                ->whereIn('id', $customerChallengeIds->all())->delete();
+        }
+
+        // Actor sessions (M5/TOKEN-001): revoked or past-expiry jtis →
+        // delete. Safe for revocation semantics: a missing row already
+        // fails closed in ActorTokenVerifier, so sweeping a revoked jti
+        // early keeps the bearer dead.
+        $actorSessionQuery = DB::connection('central')->table('actor_sessions')
+            ->where(function ($query) use ($now): void {
+                $query->where('expires_at', '<', $now)->orWhereNotNull('revoked_at');
+            });
+        $actorSessionIds = $actorSessionQuery->pluck('id');
+        $report['actor_sessions'] = $actorSessionIds->count();
+        if (! $dryRun) {
+            DB::connection('central')->table('actor_sessions')
+                ->whereIn('id', $actorSessionIds->all())->delete();
         }
 
         foreach ($report as $class => $count) {

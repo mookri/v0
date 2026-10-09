@@ -72,6 +72,8 @@ final class SuspensionEnforcementTest extends TenantIntegrationTestCase
         [$issuer] = $this->actingAsMembership($tenant, ['platform:user:manage']);
         [$user] = $this->actingAsMembership($tenant);
         [, $tokens] = $this->userTokensFor($user);
+        $hmac = $this->hmacFor($user);
+        auth()->logout();
 
         // A live web session row for the target user.
         \Illuminate\Support\Facades\DB::connection(config('database.default'))->table('sessions')->insert([
@@ -102,6 +104,12 @@ final class SuspensionEnforcementTest extends TenantIntegrationTestCase
         // ...sessions gone...
         $this->assertSame(0, \Illuminate\Support\Facades\DB::connection(config('database.default'))
             ->table('sessions')->where('user_id', $user->getAuthIdentifier())->count());
+
+        // ...HMAC actor sessions revoked too (M5/TOKEN-001 bulk trigger)...
+        $this->assertSame(0, \App\Platform\Identity\Models\ActorSession::query()
+            ->where('user_id', (string) $user->fresh()->external_id)
+            ->whereNull('revoked_at')->count());
+        $this->assertNotEmpty($hmac);
 
         // ...and the JWT fails dual-accept.
         auth()->logout();

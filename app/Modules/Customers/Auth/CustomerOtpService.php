@@ -4,6 +4,7 @@ namespace App\Modules\Customers\Auth;
 
 use App\Modules\Customers\Models\CustomerOtpChallenge;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Customer OTP issuance + verification (auth slice). Same policy as
@@ -36,44 +37,64 @@ final class CustomerOtpService
         CarbonImmutable $now,
         array $payload = [],
     ): CustomerOtpChallenge {
-        $recent = CustomerOtpChallenge::query()
-            ->where('tenant_id', $tenantId)
-            ->where('purpose', $purpose)
-            ->where('identifier', $identifier)
-            ->where('created_at', '>=', $now->subHour()->toDateTimeString())
-            ->count();
+        // M2/M3: one transaction serialised on the tenant row — a
+        // concurrent resend waits here, then supersedes what the first
+        // one inserted, so exactly one challenge per
+        // (tenant, purpose, identifier) is ever active (C2/G1). The
+        // hourly cap still counts every issuance: mark, not delete,
+        // keeps superseded rows inside the window.
+        return DB::connection('central')->transaction(function () use ($tenantId, $purpose, $identifier, $now, $payload): CustomerOtpChallenge {
+            DB::connection('central')->table('tenants')
+                ->where('id', $tenantId)
+                ->lockForUpdate()
+                ->first();
 
-        if ($recent >= self::MAX_PER_HOUR) {
-            throw new OtpRateLimitedException();
-        }
+            $recent = CustomerOtpChallenge::query()
+                ->where('tenant_id', $tenantId)
+                ->where('purpose', $purpose)
+                ->where('identifier', $identifier)
+                ->where('created_at', '>=', $now->subHour()->toDateTimeString())
+                ->count();
 
-        $code = $this->codes->generate(self::CODE_LENGTH);
+            if ($recent >= self::MAX_PER_HOUR) {
+                throw new OtpRateLimitedException();
+            }
 
-        $challenge = new CustomerOtpChallenge();
-        $challenge->forceFill([
-            'tenant_id' => $tenantId,
-            'purpose' => $purpose,
-            'identifier' => $identifier,
-            'code_hash' => hash('sha256', $code),
-            'payload' => $payload === [] ? null : $payload,
-            'expires_at' => $now->addSeconds(self::TTL_SECONDS)->toDateTimeString(),
-            'attempts' => 0,
-            'max_attempts' => self::MAX_ATTEMPTS,
-        ]);
-        $challenge->save();
-        $this->codes->record((string) $challenge->getKey(), $code);
+            CustomerOtpChallenge::query()
+                ->where('tenant_id', $tenantId)
+                ->where('purpose', $purpose)
+                ->where('identifier', $identifier)
+                ->whereNull('superseded_at')
+                ->update(['superseded_at' => $now->toDateTimeString()]);
 
-        // Drill-only code log (config/customers.php): no delivery channel
-        // exists outside tests yet, so local/staging drills read the code
-        // from the log. Off by default; never enable in production.
-        if (config('customers.log_otp_codes') === true) {
-            \Illuminate\Support\Facades\Log::info('OTP challenge issued (drill-only code log)', [
-                'challenge_id' => (string) $challenge->getKey(),
-                'code' => $code,
+            $code = $this->codes->generate(self::CODE_LENGTH);
+
+            $challenge = new CustomerOtpChallenge();
+            $challenge->forceFill([
+                'tenant_id' => $tenantId,
+                'purpose' => $purpose,
+                'identifier' => $identifier,
+                'code_hash' => hash('sha256', $code),
+                'payload' => $payload === [] ? null : $payload,
+                'expires_at' => $now->addSeconds(self::TTL_SECONDS)->toDateTimeString(),
+                'attempts' => 0,
+                'max_attempts' => self::MAX_ATTEMPTS,
             ]);
-        }
+            $challenge->save();
+            $this->codes->record((string) $challenge->getKey(), $code);
 
-        return $challenge;
+            // Drill-only code log (config/customers.php): no delivery channel
+            // exists outside tests yet, so local/staging drills read the code
+            // from the log. Off by default; never enable in production.
+            if (config('customers.log_otp_codes') === true) {
+                \Illuminate\Support\Facades\Log::info('OTP challenge issued (drill-only code log)', [
+                    'challenge_id' => (string) $challenge->getKey(),
+                    'code' => $code,
+                ]);
+            }
+
+            return $challenge;
+        });
     }
 
     public function lastCodeFor(string $challengeId): ?string
@@ -107,30 +128,40 @@ final class CustomerOtpService
         string $code,
         CarbonImmutable $now,
     ): ?CustomerOtpChallenge {
-        $challenge = CustomerOtpChallenge::query()
-            ->where('id', $challengeId)
-            ->where('tenant_id', $tenantId)
-            ->whereIn('purpose', $purposes)
-            ->first();
+        // M3: one transaction per redemption with the challenge row
+        // locked — concurrent submits serialise on the row, so exactly
+        // one can consume it (C1), attempt bumps cannot be lost (C4),
+        // and the loser re-reads committed absence and collapses to the
+        // same 401. M2: superseded rows are dead in that same uniform
+        // way (absent from the lock scope, no supersession oracle).
+        return DB::connection('central')->transaction(function () use ($tenantId, $purposes, $challengeId, $code, $now): ?CustomerOtpChallenge {
+            $challenge = CustomerOtpChallenge::query()
+                ->where('id', $challengeId)
+                ->where('tenant_id', $tenantId)
+                ->whereIn('purpose', $purposes)
+                ->whereNull('superseded_at')
+                ->lockForUpdate()
+                ->first();
 
-        if ($challenge === null) {
-            return null;
-        }
+            if ($challenge === null) {
+                return null;
+            }
 
-        if ($challenge->expires_at <= $now->toDateTimeString() || $challenge->attempts >= $challenge->max_attempts) {
+            if ($challenge->expires_at <= $now->toDateTimeString() || $challenge->attempts >= $challenge->max_attempts) {
+                $challenge->delete();
+
+                return null;
+            }
+
+            $challenge->forceFill(['attempts' => $challenge->attempts + 1])->save();
+
+            if (! hash_equals($challenge->code_hash, hash('sha256', $code))) {
+                return null;
+            }
+
             $challenge->delete();
 
-            return null;
-        }
-
-        $challenge->forceFill(['attempts' => $challenge->attempts + 1])->save();
-
-        if (! hash_equals($challenge->code_hash, hash('sha256', $code))) {
-            return null;
-        }
-
-        $challenge->delete();
-
-        return $challenge;
+            return $challenge;
+        });
     }
 }

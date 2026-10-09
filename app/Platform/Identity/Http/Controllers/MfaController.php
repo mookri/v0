@@ -4,8 +4,10 @@ namespace App\Platform\Identity\Http\Controllers;
 
 use App\Models\User;
 use App\Platform\Api\WebMutations;
+use App\Platform\Identity\ActorSessionRotation;
 use App\Platform\Identity\Events\MfaEnrolled;
 use App\Platform\Identity\Events\MfaRevoked;
+use App\Platform\Identity\MfaLockedException;
 use App\Platform\Identity\MfaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -159,7 +161,21 @@ final class MfaController
 
         $validated = $request->validate(['code' => ['required', 'string']]);
 
-        if (! $this->mfa->verify($user, $validated['code'], time())) {
+        try {
+            $verified = $this->mfa->verify($user, $validated['code'], time());
+        } catch (MfaLockedException $locked) {
+            // M4: lockout is a 429 with Retry-After (contract §8) — a
+            // locked-out human must learn to wait, not to keep hammering.
+            return WebMutations::negotiate(
+                $request,
+                new JsonResponse([
+                    'error' => ['code' => 'rate_limited', 'message' => 'Too many failed attempts. Try again later.', 'request_id' => $this->requestId($request)],
+                ], 429)->header('Retry-After', (string) $locked->retryAfter),
+                '',
+            );
+        }
+
+        if (! $verified) {
             return WebMutations::negotiate($request, new JsonResponse([
                 'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
             ], 401), '');
@@ -175,10 +191,21 @@ final class MfaController
         ]);
         $stepUp->save();
 
+        // M5 / I15 rotation: MFA completion is a privilege elevation —
+        // a presented bearer session dies and comes back rotated in the
+        // login envelope shape (API only; web step-ups ride the
+        // server-side session and have nothing to mint).
+        $rotation = ActorSessionRotation::rotate($request, (string) $user->external_id);
+
+        $data = ['object' => 'mfa_verification', 'verified' => true];
+        if ($rotation !== null) {
+            $data = array_merge($data, $rotation);
+        }
+
         return WebMutations::negotiate(
             $request,
             new JsonResponse([
-                'data' => ['object' => 'mfa_verification', 'verified' => true],
+                'data' => $data,
                 'meta' => ['request_id' => $this->requestId($request)],
             ]),
             'Identity verified — sensitive actions are unlocked for 15 minutes.',

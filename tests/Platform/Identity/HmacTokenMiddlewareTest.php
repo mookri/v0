@@ -22,6 +22,21 @@ final class HmacTokenMiddlewareTest extends TenantIntegrationTestCase
         }
     }
 
+    /**
+     * Hand-built tokens carry no mint-side jti persistence (M5/TOKEN-001
+     * revocation store), so the tests that present them seed the row the
+     * verifier now requires.
+     */
+    private function actorSession(string $sessionId = 'sess_9', string $externalId = 'u9'): void
+    {
+        \App\Platform\Identity\Models\ActorSession::query()->create([
+            'id' => $sessionId,
+            'user_id' => $externalId,
+            'issued_at' => gmdate('Y-m-d H:i:s'),
+            'expires_at' => gmdate('Y-m-d H:i:s', time() + 86400),
+        ]);
+    }
+
     private function probe(string $token): \Illuminate\Testing\TestResponse
     {
         return $this->getJson('/api/v1/identity/profile', ['Authorization' => "Bearer {$token}"]);
@@ -32,6 +47,7 @@ final class HmacTokenMiddlewareTest extends TenantIntegrationTestCase
         config()->set('identity.hmac_secret', 'bridge-secret');
         $user = User::factory()->create();
         $user->forceFill(['external_id' => 'u9'])->save();
+        $this->actorSession();
 
         $payload = $this->b64url(json_encode([
             'v' => 1, 'u' => 'u9', 's' => 'sess_9', 'r' => 'partner',
@@ -65,6 +81,7 @@ final class HmacTokenMiddlewareTest extends TenantIntegrationTestCase
         $this->makeMembership($tenant, $user);
 
         // Mint with the frontend algorithm (HMAC-SHA256, base64url segments).
+        $this->actorSession();
         $payload = $this->b64url(json_encode([
             'v' => 1, 'u' => 'u9', 's' => 'sess_9', 'r' => 'partner',
             'm' => null, 'o' => null, 'e' => '2099-01-01T00:00:00.000Z',

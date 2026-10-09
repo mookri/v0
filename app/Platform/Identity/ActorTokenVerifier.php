@@ -8,7 +8,9 @@ namespace App\Platform\Identity;
  * Verifies the opaque bearer tokens minted by the Next.js BFFs:
  * base64url(payload).base64url(HMAC-SHA256) over the payload segment,
  * claims {v,u,s,r[,m,o],e}. Timing-safe compare, expiry enforced,
- * field hygiene (no dots/commas) matching the minter.
+ * field hygiene (no dots/commas) matching the minter, and — since
+ * M5/TOKEN-001 — a live jti lookup against actor_sessions: missing or
+ * revoked sessions fail closed before the claims ever surface.
  *
  * Second half (Passport JWT + dual-accept window) lands with the token
  * program; this verifier lets Laravel authoritative-check frontend
@@ -61,6 +63,14 @@ final class ActorTokenVerifier
             if (str_contains($field, '.') || str_contains($field, ',')) {
                 return null;
             }
+        }
+
+        // M5 / TOKEN-001 revocation: the session id is a persisted jti —
+        // a missing (swept or never-issued) or revoked row fails closed
+        // here, after the timing-safe signature compare.
+        $session = Models\ActorSession::query()->find($sessionId);
+        if ($session === null || $session->revoked_at !== null) {
+            return null;
         }
 
         $roles = [];
