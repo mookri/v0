@@ -18,7 +18,7 @@ interface ListsCatalogItems
 
     /**
      * @param list<string> $skus
-     * @return list<array{id: string, sku: string, name: string, status: string}>
+     * @return list<array{id: string, sku: string, name: string, status: string, currency: string}>
      */
     public function itemsBySkus(array $skus): array;
 

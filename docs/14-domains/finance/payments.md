@@ -3,6 +3,17 @@
 **Status:** ACTIVE · **Version:** 1.1.0 · **Date:** 2026-08-27
 **Derived from:** [commercial core domains §8](./payments.md)
 
+> **Implementation status (B3, 2026-10-10):** the checkout slice has
+> landed as module code `payment` (singular — see
+> `app/Modules/Payment/`): `payment_intents` (the amount snapshot,
+> unique per tenant+booking), `POST /api/v1/booking/reservations/{id}
+> :confirm` (DRAFT → PENDING_PAYMENT, flag-gated on `payments.enabled`),
+> and a signature-verified Razorpay webhook driving capture → CONFIRMED,
+> failure → FAILED, full refund → REFUNDED. The invoicing-linked
+> payments/payouts surface below (`payments` plural, capture-apply,
+> payout batches, partial refunds) is still target-state — payouts and
+> the refund UI are explicit non-goals of the current roadmap cycle.
+
 Payment gateways, captures, refunds, and payout batches ([commercial core domains §8](./payments.md)). Module code `payments`. Checkout-side payment capability flags were added in [Shopify parity extensions §13](../commerce/store-checkout.md) under store & checkout.
 
 ---

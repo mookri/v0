@@ -339,6 +339,41 @@ paths:
                   meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
         404:
           $ref: '#/components/responses/NotFound'
+  '/api/v1/booking/reservations/{id}:confirm':
+    post:
+      operationId: confirmReservation
+      summary: 'Begin checkout (B3) — DRAFT → PENDING_PAYMENT with a payment intent for the freshly re-quoted amount (idempotent; flag-gated on payments.enabled, absent while off).'
+      x-gate: ownership
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        201:
+          description: 'Payment intent for the booking (same intent on replay).'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, id, booking_id, status, amount_minor, currency] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+        409:
+          $ref: '#/components/responses/Conflict'
+        422:
+          $ref: '#/components/responses/ValidationFailed'
+        503:
+          $ref: '#/components/responses/DependencyUnavailable'
   '/api/v1/booking/reservations/{id}:reschedule':
     post:
       operationId: rescheduleReservation
@@ -3462,6 +3497,44 @@ paths:
                 $ref: '#/components/schemas/ErrorEnvelope'
         422:
           $ref: '#/components/responses/ValidationFailed'
+  /api/v1/payment/webhook:
+    post:
+      operationId: paymentWebhook
+      summary: 'Signature-verified provider webhook — payment.captured confirms (PENDING_PAYMENT → PAYMENT_CONFIRMED → CONFIRMED), payment.failed fails, refund.processed refunds. Replay-safe by status guard; ignored receipts answer 200 so the provider stops retrying.'
+      x-gate: public
+      parameters:
+        -
+          name: X-Razorpay-Signature
+          in: header
+          required: true
+          description: 'HMAC-SHA256 of the raw request body, hex-encoded, keyed by RAZORPAY_WEBHOOK_SECRET.'
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          description: 'Receipt — processed or ignored (replays, unknown orders, money mismatches, out-of-order legs).'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [object, status], properties: { object: { type: string, enum: [webhook_receipt] }, status: { type: string, enum: [processed, ignored] }, intent_id: { type: string, nullable: true }, reason: { type: string, nullable: true } } }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        401:
+          $ref: '#/components/responses/Unauthenticated'
+        422:
+          $ref: '#/components/responses/ValidationFailed'
+        503:
+          $ref: '#/components/responses/DependencyUnavailable'
   /api/v1/platform/api-keys:
     get:
       operationId: listApiKeys
@@ -6410,6 +6483,12 @@ components:
             $ref: '#/components/schemas/ErrorEnvelope'
     NotFound:
       description: 'Absent or outside tenant scope (no existence leakage).'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    DependencyUnavailable:
+      description: 'An upstream dependency (payment provider, external API) is unavailable — retry later.'
       content:
         application/json:
           schema:

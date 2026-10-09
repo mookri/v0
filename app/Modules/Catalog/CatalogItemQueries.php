@@ -40,6 +40,8 @@ final class CatalogItemQueries implements ListsCatalogItems
             ->keyBy(static fn (CatalogItem $item): string => $item->sku);
 
         // Preserve the requested order (popularity rank), drop unknown SKUs.
+        // Currency rides along so checkout re-quotes in the item's currency
+        // of record without a second lookup (B3).
         $ordered = [];
         foreach ($skus as $sku) {
             if (isset($items[$sku])) {
@@ -49,6 +51,7 @@ final class CatalogItemQueries implements ListsCatalogItems
                     'sku' => $item->sku,
                     'name' => $item->name,
                     'status' => $item->status,
+                    'currency' => $item->currency,
                 ];
             }
         }

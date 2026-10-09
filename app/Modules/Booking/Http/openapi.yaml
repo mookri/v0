@@ -161,6 +161,34 @@ paths:
                     required: [id, object, status, version, actions]
                   meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
         '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/booking/reservations/{id}:confirm:
+    post:
+      operationId: confirmReservation
+      summary: Begin checkout (B3) — DRAFT → PENDING_PAYMENT with a payment intent for the freshly re-quoted amount (idempotent; flag-gated on payments.enabled, absent while off).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '201':
+          description: Payment intent for the booking (same intent on replay).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, id, booking_id, status, amount_minor, currency]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+        '503': { $ref: '#/components/responses/DependencyUnavailable' }
   /api/v1/booking/reservations/{id}/history:
     get:
       operationId: getReservationHistory

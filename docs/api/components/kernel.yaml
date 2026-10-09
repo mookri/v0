@@ -82,3 +82,8 @@ components:
       content:
         application/json:
           schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+    DependencyUnavailable:
+      description: An upstream dependency (payment provider, external API) is unavailable — retry later.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorEnvelope' }

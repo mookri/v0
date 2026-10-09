@@ -5,7 +5,7 @@
   "phase": 3,
   "priority": 250,
   "dependencies": [],
-  "actions": ["cancel", "reschedule"],
+  "actions": ["cancel", "reschedule", "confirm"],
   "permissions": [],
   "scopes": ["booking:self"],
   "events": [

@@ -156,6 +156,32 @@ instant-search`) carrying puja + pandit + slot; the reservation contract
 itself still books puja + schedule only — assignment wiring lands with
 the checkout track.
 
+## Checkout (B3)
+
+Backend authority only this cycle: Laravel is the single money
+authority; no BFF or customer UI is wired until the checkout frontend
+track lands (the flow is absent end-to-end until then — the flag stays
+off in every deployed environment).
+
+| Step | Laravel module | Match |
+|---|---|---|
+| begin checkout | `POST /api/v1/booking/reservations/{id}:confirm` (Booking; `throttle.tier`, ownership gate, flag-gated on `payments.enabled` → 404 while off) → 201 `{data: {object: 'payment_intent', id, booking_id, status: PENDING, amount_minor, currency, provider, provider_order_id, test_mode}, meta: {request_id}}`; 409 `state_forbidden`; 422 `validation_failed`; 503 `dependency_unavailable` | **backend only** (idempotent per booking — replay returns the same intent, one provider order ever) |
+| provider webhook | `POST /api/v1/payment/webhook` (Payment; anonymous — `withoutMiddleware(['auth.any', 'tenant'])`, `throttle:30,1`) → 200 receipt `{data: {object: 'webhook_receipt', status: processed\|ignored, intent_id, reason}}`; 401 forged signature; 503 verification unconfigured | **backend only** (HMAC-SHA256 over the raw body vs `RAZORPAY_WEBHOOK_SECRET`) |
+
+Money discipline: `:confirm` re-quotes through the catalog quote port
+(QuoteCalculator — integer minor-unit arithmetic) and snapshots the
+amount into `payment_intents` (unique per tenant+booking) and onto
+`bookings.total_minor/currency`; the client never supplies a total.
+DRAFT → PENDING_PAYMENT happens in the same transaction as the intent.
+The webhook is the ONLY confirmation path: `payment.captured` drives
+PENDING_PAYMENT → PAYMENT_CONFIRMED → CONFIRMED, `payment.failed` →
+FAILED, `refund.processed` (full refunds only) → REFUNDED — each leg
+refused with a 200-ignored receipt (never a retry storm or an oracle)
+when the intent status guard, the money guard (exact snapshot match) or
+the booking lifecycle matrix says no. Every applied leg is audited on
+both sides and appends its `payment.*` outbox event in the same
+transaction.
+
 ## Support staff console (S4)
 
 The staff side of support: a tenant-wide queue over the customers module's

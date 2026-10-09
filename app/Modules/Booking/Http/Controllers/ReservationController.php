@@ -6,23 +6,33 @@ use App\Models\User;
 use App\Modules\Booking\Domain\BookingLifecycle;
 use App\Modules\Booking\Models\Booking;
 use App\Modules\Booking\Models\BookingTransition;
+use App\Modules\Catalog\Contracts\CalculatesQuotes;
 use App\Modules\Catalog\Contracts\ListsCatalogItems;
 use App\Modules\Customers\Contracts\NotifiesCustomers;
+use App\Modules\Payment\Contracts\CreatesPaymentIntents;
 use App\Platform\Api\CursorPagination;
 use App\Platform\Audit\AuditWriter;
+use App\Platform\Features\FeatureFlags;
 use App\Platform\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Reservations (B5, ADR-005): caller-scoped reads plus the cancel /
- * reschedule verbs through BookingLifecycle. Cancel is idempotent on
- * CANCELLED; every mutation appends a transition row, audits, and
- * notifies via the customers Contracts port (never a cross-module model
- * import). Machine principals are denied — reservations are human-only.
- * Creation endpoint (P8): DRAFT status, idempotent on Idempotency-Key,
- * overlap guard via existing overlaps().
+ * reschedule / confirm verbs through BookingLifecycle. Cancel is
+ * idempotent on CANCELLED; every mutation appends a transition row,
+ * audits, and notifies via the customers Contracts port (never a
+ * cross-module model import). Machine principals are denied —
+ * reservations are human-only. Creation endpoint (P8): DRAFT status,
+ * idempotent on Idempotency-Key, overlap guard via existing overlaps().
+ *
+ * Checkout (B3): :confirm re-quotes the SKU through the catalog quote
+ * port, snapshots the amount, begins a payment intent through the
+ * payment Contracts port and moves DRAFT → PENDING_PAYMENT in one
+ * transaction; replaying it returns the same intent. Gated on the
+ * fail-closed `payments.enabled` feature flag.
  */
 final class ReservationController
 {
@@ -30,6 +40,9 @@ final class ReservationController
         private readonly AuditWriter $audit,
         private readonly NotifiesCustomers $notifier,
         private readonly ListsCatalogItems $catalog,
+        private readonly CalculatesQuotes $quotes,
+        private readonly CreatesPaymentIntents $payments,
+        private readonly FeatureFlags $flags,
     ) {
     }
 
@@ -316,6 +329,176 @@ final class ReservationController
         ]);
     }
 
+    /**
+     * Begin checkout (B3): DRAFT → PENDING_PAYMENT with a payment intent
+     * for the freshly re-quoted amount (server authority — the client
+     * never supplies a total). Idempotent: a booking already awaiting
+     * payment returns its existing intent, so safe retries never open a
+     * second provider order.
+     */
+    public function confirm(Request $request, string $id): JsonResponse
+    {
+        $found = $this->ownBooking($request, $id);
+        if ($found instanceof JsonResponse) {
+            return $found;
+        }
+        ['user' => $user, 'booking' => $booking] = $found;
+
+        // Feature gate (doc 07 §10 rule 1): payments.enabled is seeded
+        // default-off; while off the checkout surface does not exist
+        // (fail-closed, no oracle).
+        if (! $this->flags->enabled('payments.enabled')) {
+            return new JsonResponse([
+                'error' => ['code' => 'not_found', 'message' => 'Booking not found.', 'request_id' => $this->requestId($request)],
+            ], 404);
+        }
+
+        $tenantId = (string) app(TenantContext::class)->tenantId();
+        $bookingId = (string) $booking->getKey();
+
+        // Idempotent replay: checkout already began — the same intent
+        // comes back (safe retries, no second provider order).
+        if ($booking->status === BookingLifecycle::STATUS_PENDING_PAYMENT) {
+            $intent = $this->payments->forBooking($tenantId, $bookingId);
+            if ($intent === null) {
+                return new JsonResponse([
+                    'error' => ['code' => 'state_forbidden', 'message' => 'Booking awaits payment without an intent — operator attention.', 'request_id' => $this->requestId($request)],
+                ], 409);
+            }
+
+            return new JsonResponse([
+                'data' => $intent,
+                'meta' => ['request_id' => $this->requestId($request)],
+            ], 201);
+        }
+
+        if ($booking->status !== BookingLifecycle::STATUS_DRAFT) {
+            return new JsonResponse([
+                'error' => ['code' => 'state_forbidden', 'message' => 'Cannot initiate payment in this state.', 'request_id' => $this->requestId($request)],
+            ], 409);
+        }
+
+        // Currency of record rides the catalog item (the read port
+        // carries it); the amount is re-quoted HERE via QuoteCalculator,
+        // never client-supplied.
+        $items = $this->catalog->itemsBySkus([(string) $booking->service_sku]);
+        $currency = $items[0]['currency'] ?? null;
+        if ($items === [] || ! is_string($currency) || $currency === '') {
+            return new JsonResponse([
+                'error' => ['code' => 'validation_failed', 'message' => 'Service SKU is no longer payable.', 'request_id' => $this->requestId($request)],
+            ], 422);
+        }
+
+        $quote = $this->quotes->quote($currency, [
+            ['sku' => (string) $booking->service_sku, 'quantity' => 1],
+        ], CarbonImmutable::now('UTC'));
+
+        if (! ($quote['ok'] ?? false)) {
+            return new JsonResponse([
+                'error' => ['code' => 'validation_failed', 'message' => 'Quote failed: '.(string) ($quote['error'] ?? 'unavailable'), 'request_id' => $this->requestId($request)],
+            ], 422);
+        }
+
+        // One transaction: intent + snapshot + transition + audit. The
+        // row lock serializes concurrent confirms (no-op on sqlite,
+        // WHERE … FOR UPDATE on MySQL), so a racing pair can never open
+        // two provider orders.
+        $outcome = DB::transaction(function () use ($booking, $user, $tenantId, $currency, $quote): array {
+            $locked = Booking::query()
+                ->whereKey((string) $booking->getKey())
+                ->lockForUpdate()
+                ->first();
+
+            if ($locked === null) {
+                return ['not_found' => true];
+            }
+
+            if ($locked->status === BookingLifecycle::STATUS_PENDING_PAYMENT) {
+                return ['replay' => true];
+            }
+
+            if ($locked->status !== BookingLifecycle::STATUS_DRAFT) {
+                return ['conflict' => true];
+            }
+
+            $intent = $this->payments->begin(
+                tenantId: $tenantId,
+                bookingId: (string) $locked->getKey(),
+                userId: (int) $user->getAuthIdentifier(),
+                amountMinor: (int) $quote['total_minor'],
+                currency: $currency,
+                quote: $quote,
+            );
+
+            if (! ($intent['ok'] ?? false)) {
+                return $intent;
+            }
+
+            $locked->forceFill([
+                'status' => BookingLifecycle::STATUS_PENDING_PAYMENT,
+                'total_minor' => (int) $quote['total_minor'],
+                'currency' => $currency,
+                'version' => $locked->version + 1,
+            ])->save();
+
+            $this->recordTransition(
+                $locked,
+                BookingLifecycle::STATUS_DRAFT,
+                BookingLifecycle::STATUS_PENDING_PAYMENT,
+                'payment_initiated',
+                (string) $user->getAuthIdentifier(),
+            );
+
+            $this->audit->record(
+                'booking.payment.initiated',
+                ['module' => 'booking', 'resource_type' => 'booking', 'resource_id' => (string) $locked->getKey()],
+                ['status' => BookingLifecycle::STATUS_DRAFT],
+                ['status' => BookingLifecycle::STATUS_PENDING_PAYMENT, 'total_minor' => (int) $quote['total_minor'], 'currency' => $currency],
+            );
+
+            return ['intent' => $intent['intent']];
+        });
+
+        if (isset($outcome['not_found'])) {
+            return new JsonResponse([
+                'error' => ['code' => 'not_found', 'message' => 'Booking not found.', 'request_id' => $this->requestId($request)],
+            ], 404);
+        }
+
+        if (isset($outcome['replay'])) {
+            // Same-tx construction: the intent exists with the booking's
+            // PENDING_PAYMENT row it raced past.
+            $intent = $this->payments->forBooking($tenantId, $bookingId);
+            if ($intent === null) {
+                return new JsonResponse([
+                    'error' => ['code' => 'state_forbidden', 'message' => 'Booking awaits payment without an intent — operator attention.', 'request_id' => $this->requestId($request)],
+                ], 409);
+            }
+
+            return new JsonResponse([
+                'data' => $intent,
+                'meta' => ['request_id' => $this->requestId($request)],
+            ], 201);
+        }
+
+        if (isset($outcome['conflict'])) {
+            return new JsonResponse([
+                'error' => ['code' => 'state_forbidden', 'message' => 'Cannot initiate payment in this state.', 'request_id' => $this->requestId($request)],
+            ], 409);
+        }
+
+        if (($outcome['reason'] ?? null) === 'gateway_unavailable') {
+            return new JsonResponse([
+                'error' => ['code' => 'dependency_unavailable', 'message' => 'Payment provider is unavailable.', 'request_id' => $this->requestId($request)],
+            ], 503);
+        }
+
+        return new JsonResponse([
+            'data' => $outcome['intent'],
+            'meta' => ['request_id' => $this->requestId($request)],
+        ], 201);
+    }
+
     public function reschedule(Request $request, string $id): JsonResponse
     {
         $found = $this->ownBooking($request, $id);
@@ -452,6 +635,9 @@ final class ReservationController
             'service_sku' => $booking->service_sku,
             'scheduled_at' => $booking->scheduled_at,
             'duration_minutes' => $booking->duration_minutes,
+            // Checkout snapshot (B3): null until :confirm re-quotes.
+            'total_minor' => $booking->total_minor,
+            'currency' => $booking->currency,
             'version' => $booking->version,
             'actions' => BookingLifecycle::actions($booking->status),
         ];

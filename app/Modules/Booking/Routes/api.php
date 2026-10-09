@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Route;
 | Booking Module API Routes (mounted by the registry at
 | /api/v1/booking/* with auth.any + tenant, ADR-005). Reservations are
 | caller-scoped (ownership gates, never capabilities); creation endpoint
-| is DRAFT-only (no payment), idempotent on Idempotency-Key.
+| is DRAFT-only (no payment), idempotent on Idempotency-Key. :confirm
+| begins checkout (B3) — throttled like creation (money-moving write).
 |--------------------------------------------------------------------------
 */
 
@@ -33,6 +34,9 @@ Route::get('reservations/{id}', [ReservationController::class, 'show'])
     ->name('reservations.show');
 Route::post('reservations/{id}:cancel', [ReservationController::class, 'cancel'])
     ->name('reservations.cancel');
+Route::post('reservations/{id}:confirm', [ReservationController::class, 'confirm'])
+    ->middleware(['throttle.tier'])
+    ->name('reservations.confirm');
 Route::post('reservations/{id}:reschedule', [ReservationController::class, 'reschedule'])
     ->name('reservations.reschedule');
 Route::get('reservations/{id}/history', [ReservationController::class, 'history'])

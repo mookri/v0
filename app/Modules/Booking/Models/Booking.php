@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null $scheduled_at
  * @property int $duration_minutes
  * @property array<string, mixed>|null $address_snapshot
+ * @property int|null $total_minor
+ * @property string|null $currency
  * @property int $version
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -37,7 +39,8 @@ final class Booking extends Model
 
     protected $fillable = [
         'tenant_id', 'user_id', 'service_sku', 'status', 'scheduled_at',
-        'duration_minutes', 'address_snapshot', 'version',
+        'duration_minutes', 'address_snapshot', 'total_minor', 'currency',
+        'version',
     ];
 
     protected function casts(): array
