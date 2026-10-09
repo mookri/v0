@@ -111,6 +111,23 @@ A selection hands `book/start` a versioned intent (`source:
 instant-search`) carrying puja + pandit + slot — the reservation itself
 still books puja + schedule (assignment wiring lands with checkout).
 
+## Checkout (B3)
+
+Backend authority only — no BFF endpoints and no customer UI are wired
+this cycle (the roadmap's backend-first order). The Laravel surface the
+frontend track will forward to:
+
+| Backend endpoint | Contract |
+|---|---|
+| `POST /api/v1/booking/reservations/{id}:confirm` | 201 `{data: {object:'payment_intent', id, booking_id, status, amount_minor, currency, provider, provider_order_id, test_mode}}` — flag-gated on `payments.enabled` (404 while off — the surface does not exist), idempotent per booking (replay returns the same intent, one provider order ever), re-quotes server-side at confirm time (client never supplies a total); 409 `state_forbidden`, 422 `validation_failed`, 503 `dependency_unavailable` |
+| `POST /api/v1/payment/webhook` | Signature-verified provider callback (HMAC-SHA256 over the raw body vs `RAZORPAY_WEBHOOK_SECRET`; forged → 401) → 200 receipt `{status: processed\|ignored, intent_id, reason}`. `payment.captured` → booking CONFIRMED, `payment.failed` → FAILED, `refund.processed` → REFUNDED; replays/unknown orders/money mismatches answer ignored and write nothing |
+
+Booking rows carry `total_minor`/`currency` (null until `:confirm`
+snapshots them); the authoritative quote snapshot lives on
+`payment_intents` (unique per tenant+booking). Every applied money leg
+is audited and appends its `payment.*` outbox event in the same
+transaction.
+
 ## Code correspondence (BFF codes)
 
 | Situation | BFF code | Backend code |

@@ -106,6 +106,35 @@ environmental/harness — no product-code cause found or suspected:
   `ui.spec.ts` now settles on exactly one *visible* input before
   filling; run 4 → ALL PHASES PASS.
 
+B3 cycle (2026-10-10 03:30 → 05:30, full gate cadence green): web build
+✓ · web+customer typecheck ✓ · Pint ✓ · sqlite **700/4027** 0 failures
+0 errors ✓ · MySQL **700 · 0 failures · 14 documented errors F-DB3a–c**
+(fresh `navdhya_test_*`; the cycle's 17 new tests are **17/17 clean on
+MySQL**) ✓ · web Jest **353 passed** (same 20 pre-existing failures, same
+9 suites) ✓ · root vitest `tests/customer` + `tests/api` **90/90** ✓ ·
+`run.ps1` **83/83 + Playwright 1/1 ALL PHASES PASS** exit 0 ✓ · smokes
+**22/22 + 13/13** ✓ · perf **130 samples · 0 errors · 100% join · all
+budgets met** ✓. New scope this cycle: B3 checkout backend authority —
+Payment module (`payment_intents` amount snapshot unique per
+tenant+booking, `CreatesPaymentIntents` port, razorpay/fake gateways
+behind `config/payments.php`), Booking `POST
+/api/v1/booking/reservations/{id}:confirm` (flag-gated on
+`payments.enabled` → 404 while off; re-quotes through the new catalog
+`CalculatesQuotes` port at confirm time; DRAFT → PENDING_PAYMENT with
+snapshot columns in one transaction; idempotent per booking — one
+provider order ever), signature-verified replay-safe webhook `POST
+/api/v1/payment/webhook` (HMAC-SHA256 raw-body vs
+`RAZORPAY_WEBHOOK_SECRET`; captured → CONFIRMED, failed → FAILED, full
+refund → REFUNDED via the Booking `TransitionsBookingPayment` port;
+replays/unknown orders/money mismatches/out-of-order legs answer 200
+ignored and write nothing; every applied leg audited both sides +
+`payment.*` outbox same-tx). Test-count delta: 683 + 17 (PaymentCheckout
+8 + PaymentWebhook 9) = 700. Deptrac informational: 95 violations =
+unchanged baseline, no new file implicated. Composed OpenAPI regenerated
+(+79 lines: webhook path, `:confirm` op, new kernel
+`DependencyUnavailable` response); parity sections added in both mirrors
++ payments.md implementation-status note. No incidents this cycle.
+
 Out-of-scope observation (not in the gate table): root `vitest run
 tests/architecture` carries 1 pre-existing failure —
 `import-alias` (`apps/web/app/api/ads/track-beacon/route.ts ->
