@@ -3,10 +3,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, Clock, User, CheckCircle } from "lucide-react";
+import { buildBookStartUrl } from "@/lib/booking-handoff/handoff-url";
+import { navigateTo } from "@/lib/navigation";
 
 /**
  * QuickBook: 3-step modal: Choose -> Schedule -> Checkout
- * - Local mock submit (replace submit handler with your API)
+ * - Real catalog (B1): loads /api/pujas, then hands the choice to the
+ *   customer app through a signed one-time book/start intent — identity,
+ *   quoting and the booking POST live there.
+ * - Sample catalog: the original local demo path (backend not wired).
  * - Lightweight validation
  */
 
@@ -22,6 +27,8 @@ type PujaChoice = {
   durationMin: number;
   basePrice: number;
   short: string;
+  /** true = a real catalog item (handoff path); false/absent = sample. */
+  real?: boolean;
 };
 
 const SAMPLE_PUJAS: PujaChoice[] = [
@@ -59,6 +66,8 @@ export const QuickBook: React.FC<QuickBookProps> = ({ open, onClose, prefill }) 
   const [includeSamagri, setIncludeSamagri] = useState<boolean>(true);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<{ id: string; message: string } | null>(null);
+  const [choices, setChoices] = useState<PujaChoice[]>(SAMPLE_PUJAS);
+  const [realCatalog, setRealCatalog] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -74,6 +83,47 @@ export const QuickBook: React.FC<QuickBookProps> = ({ open, onClose, prefill }) 
     }
   }, [open]);
 
+  // Load the public catalog once per open (B1). Any failure or empty
+  // list is a SUPPORTED state: the sample catalog stays and the modal
+  // keeps working — a backend blip never breaks the page.
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/pujas");
+        if (!res.ok) return;
+        const body = (await res.json()) as {
+          data?: { items?: Array<Record<string, unknown>> };
+        };
+        const items = Array.isArray(body?.data?.items) ? body.data.items : [];
+        if (items.length === 0) return;
+        const mapped: PujaChoice[] = items.map((p) => ({
+          id: String(p.id),
+          title: String(p.name ?? "Puja"),
+          durationMin: 60,
+          basePrice: Math.round(Number(p.price_minor ?? 0) / 100),
+          short:
+            typeof p.description === "string" && p.description.length > 0
+              ? p.description
+              : "Book online — confirmed and paid in the app.",
+          real: true,
+        }));
+        if (cancelled) return;
+        setChoices(mapped);
+        setRealCatalog(true);
+        setChoiceId((current) =>
+          current && mapped.some((m) => m.id === current) ? current : mapped[0].id,
+        );
+      } catch {
+        // degrade to samples (supported state)
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [open]);
+
   useEffect(() => {
     // Clicking outside closes
     const handler = (e: MouseEvent) => {
@@ -84,12 +134,18 @@ export const QuickBook: React.FC<QuickBookProps> = ({ open, onClose, prefill }) 
     return () => document.removeEventListener("mousedown", handler);
   }, [onClose]);
 
-  const selectedPuja = SAMPLE_PUJAS.find((p) => p.id === choiceId) ?? SAMPLE_PUJAS[0];
+  const selectedPuja = choices.find((p) => p.id === choiceId) ?? choices[0];
+  const isRealHandoff = Boolean(selectedPuja.real);
 
   function validateStep() {
     if (step === 1) return !!choiceId;
     if (step === 2) return !!date && !!time;
-    if (step === 3) return name.trim().length > 1 && /^\+?\d{7,15}$/.test(mobile);
+    if (step === 3) {
+      // Real catalog: identity + payment happen in the customer app
+      // after the handoff — nothing more to collect here.
+      if (isRealHandoff && realCatalog) return true;
+      return name.trim().length > 1 && /^\+?\d{7,15}$/.test(mobile);
+    }
     return false;
   }
 
@@ -97,7 +153,29 @@ export const QuickBook: React.FC<QuickBookProps> = ({ open, onClose, prefill }) 
     if (!validateStep()) return;
     setLoading(true);
     try {
-      // Fake API - replace with real API call
+      if (isRealHandoff && realCatalog) {
+        // Signed one-time intent (B1): the customer app owns sign-in,
+        // the real quote and POST /api/bookings. slotRef mirrors the
+        // app's slot picker semantics — local wall time, stored as ISO.
+        const slotIso = new Date(`${date}T${time}:00`).toISOString();
+        const idempotencyKey =
+          typeof crypto.randomUUID === "function"
+            ? crypto.randomUUID()
+            : `idem_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+        navigateTo(
+          buildBookStartUrl(
+            process.env.NEXT_PUBLIC_CUSTOMER_ORIGIN ?? "https://app.navdhya.com",
+            {
+              pujaId: selectedPuja.id,
+              slotRef: slotIso,
+              idempotencyKey,
+              nowIso: new Date().toISOString(),
+            },
+          ),
+        );
+        return;
+      }
+      // Sample catalog demo path (backend not wired).
       await new Promise((r) => setTimeout(r, 900));
       const bookingId = `NV-${Date.now().toString().slice(-6)}`;
       setSuccess({ id: bookingId, message: "Booking confirmed — pandit will call you shortly." });
@@ -154,7 +232,7 @@ export const QuickBook: React.FC<QuickBookProps> = ({ open, onClose, prefill }) 
                   Choose Puja
                 </div>
                 <div className="grid grid-cols-1 gap-3">
-                  {SAMPLE_PUJAS.map((p) => (
+                  {choices.map((p) => (
                     <button
                       key={p.id}
                       onClick={() => setChoiceId(p.id)}
@@ -271,33 +349,40 @@ export const QuickBook: React.FC<QuickBookProps> = ({ open, onClose, prefill }) 
               <div className="p-4">
                 <div className="text-sm font-bold text-[#0E3F2E] mb-3 flex items-center gap-2">
                   <span className="bg-[#0E3F2E] text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">3</span>
-                  Contact & Payment
+                  {isRealHandoff && realCatalog ? "Review & Continue" : "Contact & Payment"}
                 </div>
 
-                <div className="grid grid-cols-1 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-2">Full Name</label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                {isRealHandoff && realCatalog ? (
+                  <div className="p-3 rounded-xl bg-[#FEFBEA] border border-[#D4AF37]/40 text-sm text-gray-700">
+                    You'll continue in the Navdhya app to sign in and confirm — the final
+                    price and slot are re-checked there before anything is charged.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-2">Full Name</label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <input
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          placeholder="Enter your full name"
+                          className="w-full py-3 pl-10 pr-3 rounded-xl border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0E3F2E]/30 focus:border-[#0E3F2E]"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-2">Mobile Number</label>
                       <input
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter your full name"
-                        className="w-full py-3 pl-10 pr-3 rounded-xl border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0E3F2E]/30 focus:border-[#0E3F2E]"
+                        value={mobile}
+                        onChange={(e) => setMobile(e.target.value)}
+                        placeholder="+91 00000 00000"
+                        className="w-full py-3 px-4 rounded-xl border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0E3F2E]/30 focus:border-[#0E3F2E]"
                       />
                     </div>
                   </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-2">Mobile Number</label>
-                    <input
-                      value={mobile}
-                      onChange={(e) => setMobile(e.target.value)}
-                      placeholder="+91 00000 00000"
-                      className="w-full py-3 px-4 rounded-xl border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0E3F2E]/30 focus:border-[#0E3F2E]"
-                    />
-                  </div>
-                </div>
+                )}
 
                 <div className="mt-4 border-2 border-gray-200 rounded-xl p-4 bg-gray-50">
                   <div className="flex items-center justify-between mb-3">
@@ -309,9 +394,14 @@ export const QuickBook: React.FC<QuickBookProps> = ({ open, onClose, prefill }) 
                     <div className="font-medium">{includeSamagri ? "Included" : "Not included"}</div>
                   </div>
                   <div className="flex items-center justify-between text-lg font-bold text-[#0E3F2E] mt-3 pt-3 border-t border-gray-200">
-                    <div>Total Amount</div>
+                    <div>{isRealHandoff && realCatalog ? "Estimated Total" : "Total Amount"}</div>
                     <div>₹{price}</div>
                   </div>
+                  {isRealHandoff && realCatalog && (
+                    <p className="text-xs text-gray-500 mt-2">
+                      Final pricing and availability are confirmed in the app before payment.
+                    </p>
+                  )}
                 </div>
 
                 <div className="mt-6 flex gap-3">
@@ -325,7 +415,13 @@ export const QuickBook: React.FC<QuickBookProps> = ({ open, onClose, prefill }) 
                       validateStep() ? "bg-[#D4AF37] text-[#0E3F2E] hover:bg-[#C9A02B] shadow-md" : "bg-gray-300 cursor-not-allowed"
                     }`}
                   >
-                    {loading ? "Processing..." : `Pay & Book ₹${price}`}
+                    {loading
+                      ? isRealHandoff && realCatalog
+                        ? "Redirecting..."
+                        : "Processing..."
+                      : isRealHandoff && realCatalog
+                        ? "Continue to Book"
+                        : `Pay & Book ₹${price}`}
                   </button>
                 </div>
               </div>
