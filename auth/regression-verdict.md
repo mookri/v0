@@ -67,6 +67,51 @@ smokes **22/22 + 13/13** ✓ · perf 130 samples 0 errors all budgets met
 public catalog (`GET /api/v1/catalog/public/items` anonymous + BFF
 forward + QuickBook real-catalog handoff, 4 backend + 3 web tests).
 
+F3/B2 cycle (2026-10-10 02:00 → 03:25, full gate cadence green):
+web build ✓ · web+customer typecheck ✓ · Pint ✓ · sqlite **683/3892**
+0 failures 0 errors ✓ · MySQL **683 · 0 failures · 14 documented errors
+F-DB3a–c** (fresh `navdhya_test_*`; feature-flag migration applies;
+the cycle's 16 new tests are **16/16 clean on MySQL**) ✓ · web Jest
+**353 passed** (same 20 pre-existing failures in the same 9 suites) ✓ ·
+root vitest `tests/customer` + `tests/api` **90/90** (+21: instant-search
+window/intent logic, BFF route forwards, parity rows) ✓ · `run.ps1`
+**83/83 + Playwright 1/1 ALL PHASES PASS** exit 0 ✓ · smokes **22/22 +
+13/13** ✓ · perf **130 samples · 0 errors · 100% join · all budgets
+met** ✓. New scope this cycle: F3 feature-flag convention (central
+`feature_flags`/`tenant_feature_flags`, `FeatureFlags` service with
+tenant-override → plan-bundle → default → fail-closed evaluation,
+`flags:set`/`flags:list` ops commands, 9 tests), B2 instant-book search
+(`GET /api/v1/booking/instant-search` — containment + conflict gates
+through Pandit ports — + BFF forward + `/book/search` UI with versioned
+intent handoff, 7 backend + 5 frontend tests). Test-count delta
+explained: 663 + 9 (FeatureFlagsTest) + 7 (InstantSearchTest) + 4
+(`KernelBoundaryTest`'s per-file provider grows with the new
+`app/Platform/Features` files) = 683. Two incidents en route, both
+environmental/harness — no product-code cause found or suspected:
+
+- **F-E2E7 — disk-full cascade**. C: reached **0 GB free** mid-cycle;
+  E2E run 1 → 79/82 (S13 C4 three `504`s + S12 `fetch failed`) with
+  concurrent backend logins at **~19 s** (MySQL starvation under
+  `artisan serve`; `laravel-err.log` empty, `bff*-err.log` only the
+  documented pre-existing noise), run 2 died at `migrate:fresh`
+  (`SQLSTATE[HY000] … disk is full`). Freed ~11 GB (`pnpm store prune`,
+  npm cache clean, user-temp sweep — no project artifacts touched);
+  run 1's HTTP phase had already been code-green on the same build, and
+  the post-cleanup re-run reproduced **83/83**.
+- **F-E2E8 — login duplicate-input race**. Run 3's Playwright tripped
+  strict mode: `getByPlaceholder('Phone number')` resolved to **2**
+  elements at the raced `goto('/login')` (same navigation-race family
+  as the 2026-10-09 tolerance at `ui.spec.ts` L82–86 — the a11y
+  snapshot showed one visible input; the duplicate is transient).
+  `ui.spec.ts` now settles on exactly one *visible* input before
+  filling; run 4 → ALL PHASES PASS.
+
+Out-of-scope observation (not in the gate table): root `vitest run
+tests/architecture` carries 1 pre-existing failure —
+`import-alias` (`apps/web/app/api/ads/track-beacon/route.ts ->
+../tracking-handler`, committed code outside this mission's files,
+stable across 3 runs).
+
 ---
 
 ## 2. Verdict matrix — scenario × wire × db × contract
