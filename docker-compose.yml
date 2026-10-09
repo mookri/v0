@@ -5,6 +5,11 @@
 # default. Each binding (outbox store, session store, event bus, search
 # index) moves behind its port in a separate, reversible commit.
 # Start/stop never touches code or data contracts.
+#
+# Ops note (F1): the Laravel app ships no container image here — the
+# queue worker and scheduler run on the host (deploy runbook §2/§2.1,
+# platform-navdhya/docs/22-runbooks/deploy.md), so compose carries no
+# worker service.
 
 services:
   postgres:
