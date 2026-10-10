@@ -525,7 +525,51 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/ErrorEnvelope' }
         '409':
-          description: PANDIT_ASSIGNMENT_WRONG_STATE — the assignment is no longer PENDING.
+          description: PANDIT_ASSIGNMENT_WRONG_STATE — the assignment is no longer PENDING. PANDIT_BOOKING_WRONG_STATE — the booking's lifecycle state refuses the acceptance (nothing written).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/pandit/assignments/{id}:complete:
+    post:
+      operationId: completePanditAssignment
+      summary: 'Complete a CONFIRMED assignment owned by the caller (completes the booking: ASSIGNED → IN_PROGRESS → COMPLETED).'
+      x-gate: ownership
+      x-scope: pandit:self
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Completed assignment.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status]
+                    properties:
+                      id: { $ref: '#/components/schemas/Ulid' }
+                      status: { type: string, enum: [COMPLETED] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_ASSIGNMENT_NOT_FOUND — unknown or foreign assignment (or no own profile).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '409':
+          description: PANDIT_ASSIGNMENT_WRONG_STATE — the assignment is no longer CONFIRMED. PANDIT_BOOKING_WRONG_STATE — the booking's lifecycle state refuses the completion (nothing written).
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ErrorEnvelope' }

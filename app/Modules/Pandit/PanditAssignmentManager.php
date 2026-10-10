@@ -3,6 +3,7 @@
 namespace App\Modules\Pandit;
 
 use App\Modules\Booking\Contracts\ReadsBookings;
+use App\Modules\Booking\Contracts\TransitionsBookingFulfillment;
 use App\Modules\Pandit\Contracts\ManagesPanditAssignments;
 use App\Modules\Pandit\Models\PanditAssignment;
 use App\Modules\Pandit\Models\PanditProfile;
@@ -15,8 +16,9 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Pandit assignment management (deptrac-blessed Contracts implementation).
- * Booking rows are resolved through the ReadsBookings port — no booking
- * model import. Ambient tenant context scopes every call.
+ * Booking rows are resolved through the ReadsBookings port and booking
+ * STATE changes flow through the TransitionsBookingFulfillment port — no
+ * booking model import. Ambient tenant context scopes every call.
  *
  * @phpstan-import-type PanditAssignmentData from ManagesPanditAssignments
  * @phpstan-import-type PanditAssignmentPage from ManagesPanditAssignments
@@ -26,6 +28,7 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
     public function __construct(
         private readonly AuditWriter $audit,
         private readonly ReadsBookings $bookings,
+        private readonly TransitionsBookingFulfillment $fulfillment,
     ) {
     }
 
@@ -92,12 +95,33 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
      */
     public function confirm(string $panditId, string $assignmentId): array
     {
-        $assignment = $this->ownedPending($panditId, $assignmentId);
+        $assignment = $this->ownedInStatus($panditId, $assignmentId, PanditAssignment::STATUS_PENDING, 'Can only act on pending assignments.');
 
-        $assignment->forceFill([
-            'status' => PanditAssignment::STATUS_CONFIRMED,
-            'confirmed_at' => CarbonImmutable::now()->toDateTimeString(),
-        ])->save();
+        // The transaction must wrap the connection the models actually
+        // write on — assignment and booking both follow the ambient
+        // tenant (TEN-012), never the default connection.
+        $assignment->getConnection()->transaction(function () use ($assignment, $panditId): void {
+            $assignment->forceFill([
+                'status' => PanditAssignment::STATUS_CONFIRMED,
+                'confirmed_at' => CarbonImmutable::now()->toDateTimeString(),
+            ])->save();
+
+            // One fact, two module states: the acceptance moves the booking
+            // CONFIRMED → ASSIGNED through the lifecycle port. A booking
+            // that no longer wants the work refuses the verb and rolls the
+            // assignment back (resolution path: admin unassign).
+            $outcome = $this->fulfillment->assignmentAccepted(
+                (string) $assignment->booking_id,
+                $this->panditUserId($panditId),
+            );
+
+            if ($outcome['ok'] !== true) {
+                throw new BookingWrongStateException(
+                    'Booking is not in a state that accepts fulfillment.',
+                    $outcome['from'] ?? '',
+                );
+            }
+        });
 
         $this->audit->record(
             'pandit.assignment.confirmed',
@@ -112,9 +136,50 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
     /**
      * @return PanditAssignmentData
      */
+    public function complete(string $panditId, string $assignmentId): array
+    {
+        $assignment = $this->ownedInStatus($panditId, $assignmentId, PanditAssignment::STATUS_CONFIRMED, 'Can only complete a confirmed assignment.');
+
+        // Same ambient-connection transaction as confirm(): the
+        // assignment status change and the booking lifecycle hops commit
+        // together or not at all.
+        $assignment->getConnection()->transaction(function () use ($assignment, $panditId): void {
+            $assignment->forceFill([
+                'status' => PanditAssignment::STATUS_COMPLETED,
+            ])->save();
+
+            // One fact, two module states: completion drives the booking
+            // ASSIGNED → IN_PROGRESS → COMPLETED through the lifecycle
+            // port (both matrix hops, one recorded fact).
+            $outcome = $this->fulfillment->assignmentCompleted(
+                (string) $assignment->booking_id,
+                $this->panditUserId($panditId),
+            );
+
+            if ($outcome['ok'] !== true) {
+                throw new BookingWrongStateException(
+                    'Booking is not in a state that accepts completion.',
+                    $outcome['from'] ?? '',
+                );
+            }
+        });
+
+        $this->audit->record(
+            'pandit.assignment.completed',
+            ['module' => 'pandit', 'resource_type' => 'pandit_assignment', 'resource_id' => (string) $assignment->getKey()],
+            null,
+            ['pandit_id' => $panditId, 'booking_id' => (string) $assignment->booking_id],
+        );
+
+        return $this->serialize($assignment, $this->bookings->windowsByIds([(string) $assignment->booking_id]));
+    }
+
+    /**
+     * @return PanditAssignmentData
+     */
     public function decline(string $panditId, string $assignmentId, string $reason): array
     {
-        $assignment = $this->ownedPending($panditId, $assignmentId);
+        $assignment = $this->ownedInStatus($panditId, $assignmentId, PanditAssignment::STATUS_PENDING, 'Can only act on pending assignments.');
 
         $assignment->forceFill([
             'status' => PanditAssignment::STATUS_DECLINED,
@@ -207,12 +272,12 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
     }
 
     /**
-     * The caller's own assignment, still actionable (404 for foreign rows —
-     * ownership is the actor — 409 for anything but PENDING).
+     * The caller's own assignment in the required status (404 for
+     * foreign rows — ownership is the actor — 409 for any other state).
      *
      * @return PanditAssignment
      */
-    private function ownedPending(string $panditId, string $assignmentId): PanditAssignment
+    private function ownedInStatus(string $panditId, string $assignmentId, string $status, string $message): PanditAssignment
     {
         $tenantId = (string) app(TenantContext::class)->tenantId();
 
@@ -226,11 +291,27 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
             throw new AssignmentNotFoundException('Assignment not found.');
         }
 
-        if ($assignment->status !== PanditAssignment::STATUS_PENDING) {
-            throw new \InvalidArgumentException('Can only act on pending assignments.');
+        if ($assignment->status !== $status) {
+            throw new \InvalidArgumentException($message);
         }
 
         return $assignment;
+    }
+
+    /**
+     * The acting principal's user id — attributed on the booking
+     * transition rows (K-029; contrast the payment port's system actor).
+     * The profile row always exists here (ownership was just verified on
+     * the assignment); the fallback keeps the actor stable regardless.
+     */
+    private function panditUserId(string $panditId): string
+    {
+        $userId = PanditProfile::query()
+            ->where('tenant_id', (string) app(TenantContext::class)->tenantId())
+            ->where('id', $panditId)
+            ->value('user_id');
+
+        return $userId !== null ? (string) $userId : 'system:pandit';
     }
 
     /**

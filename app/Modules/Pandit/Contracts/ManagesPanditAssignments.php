@@ -22,12 +22,30 @@ interface ManagesPanditAssignments
     public function assign(string $panditId, string $bookingId, int $compensationMinor): array;
 
     /**
+     * Accept the assignment: the booking follows through the fulfillment
+     * port (CONFIRMED → ASSIGNED) in the same transaction — a booking
+     * that no longer wants the work refuses the whole verb.
+     *
      * @throws \App\Modules\Pandit\AssignmentNotFoundException when the assignment is unknown or foreign
      * @throws \InvalidArgumentException when the assignment is no longer PENDING
+     * @throws \App\Modules\Pandit\BookingWrongStateException when the booking's lifecycle state refuses the acceptance
      *
      * @return PanditAssignmentData
      */
     public function confirm(string $panditId, string $assignmentId): array;
+
+    /**
+     * Complete the work: assignment → COMPLETED and the booking follows
+     * through the fulfillment port (ASSIGNED → IN_PROGRESS → COMPLETED)
+     * in the same transaction.
+     *
+     * @throws \App\Modules\Pandit\AssignmentNotFoundException when the assignment is unknown or foreign
+     * @throws \InvalidArgumentException when the assignment is no longer CONFIRMED
+     * @throws \App\Modules\Pandit\BookingWrongStateException when the booking's lifecycle state refuses the completion
+     *
+     * @return PanditAssignmentData
+     */
+    public function complete(string $panditId, string $assignmentId): array;
 
     /**
      * @throws \App\Modules\Pandit\AssignmentNotFoundException when the assignment is unknown or foreign

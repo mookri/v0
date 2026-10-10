@@ -3,6 +3,7 @@
 namespace App\Modules\Pandit\Http\Controllers;
 
 use App\Modules\Pandit\AssignmentNotFoundException;
+use App\Modules\Pandit\BookingWrongStateException;
 use App\Modules\Pandit\Contracts\ManagesPanditAssignments;
 use App\Modules\Pandit\Models\PanditProfile;
 use App\Modules\Pandit\UnknownBookingException;
@@ -99,7 +100,7 @@ final class PanditAssignmentController
         ]);
     }
 
-    // SELF: Confirm assignment
+    // SELF: Confirm assignment (accepts the booking: CONFIRMED → ASSIGNED)
     public function confirm(Request $request, string $id): JsonResponse
     {
         $profile = $this->ownProfile($request);
@@ -112,6 +113,33 @@ final class PanditAssignmentController
             $assignment = $this->assignments->confirm((string) $profile->getKey(), $id);
         } catch (AssignmentNotFoundException $e) {
             return $this->error($request, 'PANDIT_ASSIGNMENT_NOT_FOUND', $e->getMessage())->setStatusCode(404);
+        } catch (BookingWrongStateException $e) {
+            return $this->error($request, 'PANDIT_BOOKING_WRONG_STATE', $e->getMessage())->setStatusCode(409);
+        } catch (\InvalidArgumentException $e) {
+            return $this->error($request, 'PANDIT_ASSIGNMENT_WRONG_STATE', $e->getMessage())->setStatusCode(409);
+        }
+
+        return new JsonResponse([
+            'data' => $assignment,
+            'meta' => ['request_id' => $this->requestId($request)],
+        ]);
+    }
+
+    // SELF: Complete assignment (completes the booking: ASSIGNED → IN_PROGRESS → COMPLETED)
+    public function complete(Request $request, string $id): JsonResponse
+    {
+        $profile = $this->ownProfile($request);
+
+        if ($profile instanceof JsonResponse) {
+            return $profile;
+        }
+
+        try {
+            $assignment = $this->assignments->complete((string) $profile->getKey(), $id);
+        } catch (AssignmentNotFoundException $e) {
+            return $this->error($request, 'PANDIT_ASSIGNMENT_NOT_FOUND', $e->getMessage())->setStatusCode(404);
+        } catch (BookingWrongStateException $e) {
+            return $this->error($request, 'PANDIT_BOOKING_WRONG_STATE', $e->getMessage())->setStatusCode(409);
         } catch (\InvalidArgumentException $e) {
             return $this->error($request, 'PANDIT_ASSIGNMENT_WRONG_STATE', $e->getMessage())->setStatusCode(409);
         }
