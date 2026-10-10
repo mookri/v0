@@ -10,10 +10,11 @@ use Carbon\CarbonImmutable;
  * handling, dedupKey identity). Pure functions over already-resolved
  * inputs; no I/O, no ambient state — the dispatcher job consults it.
  *
- * N1 executes only the in_app leg (roadmap posture: in_app always).
- * Email/sms are ROUTED here (preference + quiet-hours decisions are
- * real and tested) but delivered from N3 when their channels land —
- * the matrix never changes, only the executors grow.
+ * N1 executes the in_app leg; N3 executes email through the mailable +
+ * per-channel claim row (roadmap posture: in_app + email first). Sms is
+ * ROUTED (preference + quiet-hours decisions are real and tested) but
+ * delivered only when its provider track lands — the matrix never
+ * changes, only the executors grow.
  */
 final class NotificationChannels
 {

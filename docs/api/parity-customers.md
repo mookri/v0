@@ -22,7 +22,7 @@ updates this doc and both test suites in the same change.
 | verifications | `GET /api/verifications` → `{verifications[]}` / `POST /api/verifications` → 202 `{challenge_id}` / `POST /api/verifications/confirm {id, code}` → 200 | `GET /api/v1/customers/verifications`, `POST …` → 202, `POST …/{id}:confirm` → 200 | **wired behind flag** |
 | addresses | `GET/POST /api/addresses`, `PATCH/DELETE /api/addresses/:id`, `POST /api/addresses/:id/default` | `GET/POST /api/v1/customers/addresses`, `PATCH/DELETE …/{id}`, `POST …/{id}:default` (cap 20, default promotion) | **wired behind flag** |
 | saved | `GET /api/saved` → items | `GET/POST /api/v1/customers/saved` (opaque ULID refs, enriched by readers — deliberate: bookmarks, not FKs), `DELETE …/{id}` | **wired behind flag** (interim `title=ref` mapping; catalog enrichment later) |
-| notifications | `GET /api/notifications` → cursor page | `GET /api/v1/customers/notifications` (cursor), `POST …/{id}:read`, `POST …:read-all` (reports flip count) | **wired behind flag** (producers land B5+) |
+| notifications | `GET /api/notifications` → cursor page | `GET /api/v1/customers/notifications` (cursor), `POST …/{id}:read`, `POST …:read-all` (reports flip count) | **wired behind flag** (producers live: N2 lifecycle facts → N1 dispatch) |
 | settings | `GET /api/settings` → `{sections, values}` / `PATCH /api/settings` → `{sections, values}` | `GET/PATCH /api/v1/customers/settings` (closed key set over defaults; the BFF maps key-values → sections) | **wired behind flag** |
 | bookings list/detail | `GET /api/bookings` → cards, `GET /api/bookings/:id` → details+actions | `GET /api/v1/booking/reservations` (cursor + `?section=` upcoming/active/completed/cancelled), `GET …/{id}` (+ live `actions`) | **wired behind flag, drilled live** (section mapping: upcoming = pre-service states, active = ASSIGNED/IN_PROGRESS, completed = COMPLETED, cancelled = terminal rest) |
 | bookings create | `POST /api/bookings` → 201 `{booking}` | `POST /api/v1/booking/reservations` → 201 (DRAFT, idempotent on Idempotency-Key, overlap guard, SKU validity via Catalog port) | **wired behind flag** (S15: `service_sku` is the catalog SKU, never the item id — the review step resolves item id → SKU via `GET /api/pujas/:id` before POST, and the slot is chosen on the review step) |
@@ -222,8 +222,65 @@ stored per row under a unique (tenant, dedup_key) index, so repeated
 deliveries of one event collapse (idempotent insert, raced retries
 never double an inbox). The settings surface gains `timezone`
 (default Asia/Kolkata) and `quiet_hours` (nullable) inside the same
-closed-key 422 posture. Email execution lands N3; outbox-driven
-producers (event ids as dedup identities) land N2.
+closed-key 422 posture.
+
+## Booking lifecycle events (N2)
+
+Booking verbs and both outcome ports write `booking.reservation.*`
+facts to the transactional outbox **inside the same tenant transaction
+as the state change** (same-tx guarantee — a crash can lose neither);
+the controller no longer notifies directly. `outbox:drain` replays each
+fact into the customer's inbox through `NotifiesCustomers`, passing the
+outbox event id as dedup identity — a handler replay collapses into the
+same row instead of doubling it.
+
+| Fact | Producer (same tx) | Payload (schema v1) | Inbox copy |
+|---|---|---|---|
+| `booking.reservation.created` | `POST …/reservations` (store; added to the manifest) | `booking_id, user_id, service_sku, scheduled_at` | "Booking created" |
+| `booking.reservation.cancelled` | `{id}:cancel` | `booking_id, user_id, from, to` | "Booking cancelled" |
+| `booking.reservation.rescheduled` | `{id}:reschedule` | `booking_id, user_id, old_start, new_start` | "Booking rescheduled" |
+| `booking.reservation.transitioned` | payment port (webhook legs) + fulfillment port (pandit assignment legs), reason + `actor_id` carried (`system:payment-webhook` vs the pandit's user id — K-029) | `booking_id, user_id, from, to, reason, actor_id` | mapped per `to`: CONFIRMED → Payment received, ASSIGNED → Pandit assigned, COMPLETED → Booking completed, FAILED → Payment failed, REFUNDED → Payment refunded; any other hop is a fact without an inbox row (never a wrong message) |
+
+A malformed payload fails the claim loudly (attempts grow, `last_error`
+records it) — a customer-facing fact is never silently dropped. The
+declared-but-unproduced `booking.review.*` events are unchanged. `:confirm`
+(DRAFT → PENDING_PAYMENT) still produces no lifecycle fact — payment
+state carries that leg, and B3's surface is untouched.
+
+SSE: `/api/events` gains its **first producer** — while a stream is
+open, a per-channel notification tail polls the caller's backend
+notifications (one poll per channel regardless of open tabs, seeded on
+retain so history stays the REST list's job) and publishes
+`notification.created` live events to the bus; streams heartbeat every
+25s. Wired deployments authenticate the stream with the session cookie
+when no bearer is sent (EventSource cannot set headers — the F2b
+pattern), and that cookie token is the same bearer the tail reads
+with. The bus stays single-instance (memory) behind the EventBus port —
+a shared broker is the documented swap for multi-instance.
+
+## Email channel (N3)
+
+Email executes inside `DispatchCustomerNotification` after the in-app
+leg: the N1 matrix decides (flag + preference + quiet hours), the job
+obeys — provider-agnostic through Laravel's mailer config (`MAIL_*`;
+the stock `log` default is the safety net — no compose service added).
+Subjects render per kind through `NotificationEmailTemplates` (en, kind
+unknown → generic subject, locale carried from settings for translated
+copy later); the body renders the notification's own title/body through
+an escaping Blade template — producer copy can never inject markup.
+
+Idempotency is the `notification_deliveries` claim row (tenant_shared,
+unique `(tenant_id, dedup_key)` = `kind:eventId:userId:email`): `pending`
+is written before the hand-off, `sent` after it — a retry after a
+partial run resumes its own pending row instead of re-sending, and a
+sent row collapses replays. No contactable address (blank, or the
+synthetic `{phone}@phone.local` OTP placeholder — the `maskEmail`
+posture, inlined because the job must not import the HTTP layer) writes
+`suppressed` with the reason, never a guessed recipient. A null event id
+(one-shot fact) sends without a claim row — documented: unkeyed legs
+cannot dedup. Send exceptions propagate into the job's backoff; the
+attempts cap leaves the row `pending` for ops (`failed_jobs` carries the
+cause).
 
 ## Support staff console (S4)
 
