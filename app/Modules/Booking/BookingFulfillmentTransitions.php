@@ -7,6 +7,7 @@ use App\Modules\Booking\Domain\BookingLifecycle;
 use App\Modules\Booking\Models\Booking;
 use App\Modules\Booking\Models\BookingTransition;
 use App\Platform\Audit\AuditWriter;
+use App\Platform\Outbox\Outbox;
 
 /**
  * Fulfillment-outcome port implementation (B4): applies pandit-side
@@ -18,11 +19,16 @@ use App\Platform\Audit\AuditWriter;
  * Actor is the acting pandit's user id — a human principal requested
  * these transitions (K-029 attribution; contrast the payment port's
  * system actor).
+ *
+ * N2: every applied outcome appends booking.reservation.transitioned
+ * with the assignment fact's reason — the drain replays it into
+ * customer notifications (pandit assigned/booking completed).
  */
 final class BookingFulfillmentTransitions implements TransitionsBookingFulfillment
 {
     public function __construct(
         private readonly AuditWriter $audit,
+        private readonly Outbox $outbox,
     ) {
     }
 
@@ -95,6 +101,24 @@ final class BookingFulfillmentTransitions implements TransitionsBookingFulfillme
             ['module' => 'booking', 'resource_type' => 'booking', 'resource_id' => (string) $booking->getKey()],
             ['status' => $from],
             ['status' => $to],
+        );
+
+        // N2: the lifecycle fact rides the assignment manager's
+        // transaction (same ambient tenant connection as the state
+        // change — same-tx outbox guarantee).
+        $this->outbox->append(
+            (string) $booking->tenant_id,
+            'booking',
+            (string) $booking->getKey(),
+            'booking.reservation.transitioned',
+            [
+                'booking_id' => (string) $booking->getKey(),
+                'user_id' => (string) $booking->user_id,
+                'from' => (string) $from,
+                'to' => (string) $to,
+                'reason' => $reason,
+                'actor_id' => $actorId,
+            ],
         );
 
         return ['ok' => true, 'from' => $from, 'to' => $to];

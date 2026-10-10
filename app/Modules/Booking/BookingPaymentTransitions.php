@@ -7,6 +7,7 @@ use App\Modules\Booking\Domain\BookingLifecycle;
 use App\Modules\Booking\Models\Booking;
 use App\Modules\Booking\Models\BookingTransition;
 use App\Platform\Audit\AuditWriter;
+use App\Platform\Outbox\Outbox;
 
 /**
  * Payment-outcome port implementation (B3): applies webhook-driven money
@@ -17,6 +18,10 @@ use App\Platform\Audit\AuditWriter;
  *
  * Actor is the system: the customer did not request these transitions —
  * the payment provider reported them (K-029 attribution).
+ *
+ * N2: every applied outcome appends booking.reservation.transitioned
+ * with the money fact's reason — the drain replays it into customer
+ * notifications (payment received/failed/refunded).
  */
 final class BookingPaymentTransitions implements TransitionsBookingPayment
 {
@@ -24,6 +29,7 @@ final class BookingPaymentTransitions implements TransitionsBookingPayment
 
     public function __construct(
         private readonly AuditWriter $audit,
+        private readonly Outbox $outbox,
     ) {
     }
 
@@ -92,6 +98,23 @@ final class BookingPaymentTransitions implements TransitionsBookingPayment
             ['module' => 'booking', 'resource_type' => 'booking', 'resource_id' => (string) $booking->getKey()],
             ['status' => $from],
             ['status' => $to],
+        );
+
+        // N2: the lifecycle fact rides the webhook leg's transaction
+        // (same ambient tenant connection as the state change).
+        $this->outbox->append(
+            (string) $booking->tenant_id,
+            'booking',
+            (string) $booking->getKey(),
+            'booking.reservation.transitioned',
+            [
+                'booking_id' => (string) $booking->getKey(),
+                'user_id' => (string) $booking->user_id,
+                'from' => (string) $from,
+                'to' => (string) $to,
+                'reason' => $reason,
+                'actor_id' => self::SYSTEM_ACTOR,
+            ],
         );
 
         return ['ok' => true, 'from' => $from, 'to' => $to];

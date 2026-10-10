@@ -9,6 +9,7 @@ use App\Modules\Booking\Models\BookingTransition;
 use App\Modules\Customers\Models\BuyerProfile;
 use App\Platform\Tenancy\Models\Tenant;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 use Tests\TenantIntegrationTestCase;
 
@@ -97,11 +98,14 @@ final class BookingReservationTest extends TenantIntegrationTestCase
         $this->assertSame([], $cancelled->json('data.actions'));
         $this->assertSame(2, $cancelled->json('data.version'));
 
-        // Transition row + audit + customer notification produced.
+        // Transition row + audit + customer notification produced. The
+        // notification arrives via the N2 outbox path: the cancel wrote
+        // the lifecycle fact same-tx, the drain replays it into the inbox.
         $this->assertDatabaseHas('booking_transitions', [
             'booking_id' => $id, 'from_status' => 'CONFIRMED', 'to_status' => 'CANCELLED',
         ], 'tenant_shared');
         $this->assertAuditRecorded($tenant, 'booking.reservation.cancelled');
+        Artisan::call('outbox:drain');
         $this->assertDatabaseHas('customer_notifications', [
             'tenant_id' => $tid, 'user_id' => $user->getAuthIdentifier(), 'kind' => 'booking',
         ], 'tenant_shared');

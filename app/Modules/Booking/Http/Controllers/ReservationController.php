@@ -8,11 +8,11 @@ use App\Modules\Booking\Models\Booking;
 use App\Modules\Booking\Models\BookingTransition;
 use App\Modules\Catalog\Contracts\CalculatesQuotes;
 use App\Modules\Catalog\Contracts\ListsCatalogItems;
-use App\Modules\Customers\Contracts\NotifiesCustomers;
 use App\Modules\Payment\Contracts\CreatesPaymentIntents;
 use App\Platform\Api\CursorPagination;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Features\FeatureFlags;
+use App\Platform\Outbox\Outbox;
 use App\Platform\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
@@ -23,8 +23,10 @@ use Illuminate\Support\Facades\DB;
  * Reservations (B5, ADR-005): caller-scoped reads plus the cancel /
  * reschedule / confirm verbs through BookingLifecycle. Cancel is
  * idempotent on CANCELLED; every mutation appends a transition row,
- * audits, and notifies via the customers Contracts port (never a
- * cross-module model import). Machine principals are denied —
+ * audits, and writes its lifecycle fact to the transactional outbox in
+ * the same tenant transaction (N2 — the drain replays facts into
+ * customer notifications through the customers port; the controller
+ * never notifies directly). Machine principals are denied —
  * reservations are human-only. Creation endpoint (P8): DRAFT status,
  * idempotent on Idempotency-Key, overlap guard via existing overlaps().
  *
@@ -38,7 +40,7 @@ final class ReservationController
 {
     public function __construct(
         private readonly AuditWriter $audit,
-        private readonly NotifiesCustomers $notifier,
+        private readonly Outbox $outbox,
         private readonly ListsCatalogItems $catalog,
         private readonly CalculatesQuotes $quotes,
         private readonly CreatesPaymentIntents $payments,
@@ -238,24 +240,36 @@ final class ReservationController
             'address_snapshot' => $addressSnapshot,
             'version' => 1,
         ]);
-        $booking->save();
 
-        // Record creation transition (null → DRAFT)
-        $this->recordTransition($booking, '', BookingLifecycle::STATUS_DRAFT, 'created', $userId);
+        // Same-tx outbox (N2): the booking row, its creation transition
+        // and the lifecycle fact commit atomically on the ambient tenant
+        // connection — a crash between them can lose neither the state
+        // nor the fact. The drain replays the fact into notifications.
+        $booking->getConnection()->transaction(function () use ($booking, $tenantId, $userId, $validated, $newStart): void {
+            $booking->save();
+
+            // Record creation transition (null → DRAFT)
+            $this->recordTransition($booking, '', BookingLifecycle::STATUS_DRAFT, 'created', $userId);
+
+            $this->outbox->append(
+                $tenantId,
+                'booking',
+                (string) $booking->getKey(),
+                'booking.reservation.created',
+                [
+                    'booking_id' => (string) $booking->getKey(),
+                    'user_id' => $userId,
+                    'service_sku' => (string) $validated['service_sku'],
+                    'scheduled_at' => $newStart->toDateTimeString(),
+                ],
+            );
+        });
 
         $this->audit->record(
             'booking.reservation.created',
             ['module' => 'booking', 'resource_type' => 'booking', 'resource_id' => (string) $booking->getKey()],
             null,
             ['user_id' => $userId, 'service_sku' => $validated['service_sku']]
-        );
-
-        $this->notifier->notify(
-            $tenantId,
-            $userId,
-            'booking',
-            'Booking created',
-            'Your booking '.(string) $booking->getKey().' was created for '.$newStart->toDateTimeString().'.'
         );
 
         return new JsonResponse([
@@ -301,26 +315,37 @@ final class ReservationController
         }
 
         $from = $booking->status;
-        $booking->forceFill([
-            'status' => BookingLifecycle::STATUS_CANCELLED,
-            'version' => $booking->version + 1,
-        ])->save();
 
-        $this->recordTransition($booking, $from, BookingLifecycle::STATUS_CANCELLED, 'cancelled', (string) $user->getAuthIdentifier());
+        // Same-tx outbox (N2): cancel state + transition + lifecycle fact
+        // commit together on the ambient tenant connection; the drain
+        // replays the fact into the customer's inbox.
+        $booking->getConnection()->transaction(function () use ($booking, $from, $user): void {
+            $booking->forceFill([
+                'status' => BookingLifecycle::STATUS_CANCELLED,
+                'version' => $booking->version + 1,
+            ])->save();
+
+            $this->recordTransition($booking, $from, BookingLifecycle::STATUS_CANCELLED, 'cancelled', (string) $user->getAuthIdentifier());
+
+            $this->outbox->append(
+                (string) $booking->tenant_id,
+                'booking',
+                (string) $booking->getKey(),
+                'booking.reservation.cancelled',
+                [
+                    'booking_id' => (string) $booking->getKey(),
+                    'user_id' => (string) $user->getAuthIdentifier(),
+                    'from' => (string) $from,
+                    'to' => BookingLifecycle::STATUS_CANCELLED,
+                ],
+            );
+        });
 
         $this->audit->record(
             'booking.reservation.cancelled',
             ['module' => 'booking', 'resource_type' => 'booking', 'resource_id' => (string) $booking->getKey()],
             null,
             ['user_id' => (string) $user->getAuthIdentifier(), 'from' => $from]
-        );
-
-        $this->notifier->notify(
-            (string) app(TenantContext::class)->tenantId(),
-            (string) $user->getAuthIdentifier(),
-            'booking',
-            'Booking cancelled',
-            'Your booking '.(string) $booking->getKey().' was cancelled.'
         );
 
         return new JsonResponse([
@@ -533,26 +558,37 @@ final class ReservationController
             ], 409);
         }
 
-        $booking->forceFill([
-            'scheduled_at' => $newStart->toDateTimeString(),
-            'version' => $booking->version + 1,
-        ])->save();
+        $oldStart = $booking->scheduled_at?->toDateTimeString() ?? '';
 
-        $this->recordTransition($booking, $booking->status, $booking->status, 'rescheduled', (string) $user->getAuthIdentifier());
+        // Same-tx outbox (N2): reschedule state + transition + lifecycle
+        // fact commit together on the ambient tenant connection.
+        $booking->getConnection()->transaction(function () use ($booking, $oldStart, $newStart, $user): void {
+            $booking->forceFill([
+                'scheduled_at' => $newStart->toDateTimeString(),
+                'version' => $booking->version + 1,
+            ])->save();
+
+            $this->recordTransition($booking, $booking->status, $booking->status, 'rescheduled', (string) $user->getAuthIdentifier());
+
+            $this->outbox->append(
+                (string) $booking->tenant_id,
+                'booking',
+                (string) $booking->getKey(),
+                'booking.reservation.rescheduled',
+                [
+                    'booking_id' => (string) $booking->getKey(),
+                    'user_id' => (string) $user->getAuthIdentifier(),
+                    'old_start' => $oldStart,
+                    'new_start' => $newStart->toDateTimeString(),
+                ],
+            );
+        });
 
         $this->audit->record(
             'booking.reservation.rescheduled',
             ['module' => 'booking', 'resource_type' => 'booking', 'resource_id' => (string) $booking->getKey()],
             null,
             ['user_id' => (string) $user->getAuthIdentifier(), 'version' => $booking->version]
-        );
-
-        $this->notifier->notify(
-            (string) app(TenantContext::class)->tenantId(),
-            (string) $user->getAuthIdentifier(),
-            'booking',
-            'Booking rescheduled',
-            'Your booking '.(string) $booking->getKey().' moved to '.$newStart->toDateTimeString().'.'
         );
 
         return new JsonResponse([

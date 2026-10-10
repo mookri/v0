@@ -9,6 +9,7 @@
   "permissions": [],
   "scopes": ["booking:self"],
   "events": [
+    { "name": "booking.reservation.created", "schema": "v1" },
     { "name": "booking.reservation.cancelled", "schema": "v1" },
     { "name": "booking.reservation.rescheduled", "schema": "v1" },
     { "name": "booking.reservation.transitioned", "schema": "v1" },
