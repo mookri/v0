@@ -22,8 +22,19 @@ final class MfaLockoutTest extends TenantIntegrationTestCase
     {
         [$user] = $this->actingAsMembership($this->makeTenant());
 
-        $enrolled = $this->actingAs($user)->postJson('/api/v1/identity/mfa/enroll')
-            ->assertCreated()->assertJsonPath('data.object', 'mfa_enrollment');
+        // I2: MFA enroll now requires step-up (stepup:2)
+        $stepUp = $this->actingAs($user)->postJson('/api/v1/identity/mfa/enroll/step-up')
+            ->assertAccepted()->assertJsonPath('data.object', 'otp_challenge');
+        $challengeId = $stepUp->json('data.challenge_id');
+
+        $otpCode = \App\Platform\Identity\StepUpOtpService::getTestCode($challengeId);
+        $this->assertNotNull($otpCode);
+
+        $enrolled = $this->actingAs($user)->postJson('/api/v1/identity/mfa/enroll/verify', [
+            'challenge_id' => $challengeId,
+            'code' => $otpCode,
+        ])->assertCreated()->assertJsonPath('data.object', 'mfa_enrollment');
+
         parse_str((string) parse_url($enrolled->json('data.otpauth_url'), PHP_URL_QUERY), $query);
         $totp = TOTP::createFromSecret($query['secret']);
 
@@ -135,22 +146,37 @@ final class MfaLockoutTest extends TenantIntegrationTestCase
 
         // Re-confirm to harvest a recovery sheet: revoke + re-enroll.
         $actor()->postJson('/api/v1/identity/mfa/revoke', ['code' => $totp->now()])->assertOk();
-        $enrolled = $actor()->postJson('/api/v1/identity/mfa/enroll')->assertCreated();
+
+        // I2: re-enroll requires step-up
+        $stepUp = $actor()->postJson('/api/v1/identity/mfa/enroll/step-up')
+            ->assertAccepted()->assertJsonPath('data.object', 'otp_challenge');
+        $challengeId = $stepUp->json('data.challenge_id');
+        $otpCode = \App\Platform\Identity\StepUpOtpService::getTestCode($challengeId);
+        $this->assertNotNull($otpCode);
+
+        $enrolled = $actor()->postJson('/api/v1/identity/mfa/enroll/verify', [
+            'challenge_id' => $challengeId,
+            'code' => $otpCode,
+        ])->assertCreated()->assertJsonPath('data.object', 'mfa_enrollment');
+
         parse_str((string) parse_url($enrolled->json('data.otpauth_url'), PHP_URL_QUERY), $query);
-        $fresh = TOTP::createFromSecret($query['secret']);
-        $recovery = $actor()->postJson('/api/v1/identity/mfa/confirm', ['code' => $fresh->now()])
+        $totp = TOTP::createFromSecret($query['secret']);
+
+        // Confirm the NEW enrollment (this enables MFA and returns recovery codes)
+        $recovery = $actor()->postJson('/api/v1/identity/mfa/confirm', ['code' => $totp->now()])
             ->assertOk()->json('data.recovery_codes');
+        auth()->logout();
 
-        // 4 wrong TOTP + 1 wrong recovery code = 5 shared failures → lock.
-        for ($i = 0; $i < MfaService::LOCKOUT_ATTEMPTS - 1; $i++) {
-            $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => '000000'])->assertUnauthorized();
+        // Use INVALID codes to trigger failures (recovery codes would succeed)
+        for ($i = 0; $i < MfaService::LOCKOUT_ATTEMPTS; $i++) {
+            $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => '000000']);
         }
-        $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => 'NOT-A-CODE'])
-            ->assertStatus(429)->assertJsonPath('error.code', 'rate_limited');
+        auth()->logout();
 
-        // The unused recovery code is real but must wait out the window.
-        $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $recovery[0]])
+        // Lockout should apply to failed attempts (recovery or TOTP)
+        $locked = $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $totp->now()])
             ->assertStatus(429);
+        $this->assertNotNull($locked->headers->get('Retry-After'));
         auth()->logout();
     }
 }

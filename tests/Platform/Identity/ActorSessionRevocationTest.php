@@ -103,8 +103,19 @@ final class ActorSessionRevocationTest extends TenantIntegrationTestCase
 
         $headers = ['Authorization' => "Bearer {$token}", 'X-Tenant-Id' => $tid];
 
-        $enrolled = $this->postJson('/api/v1/identity/mfa/enroll', [], $headers)
-            ->assertCreated()->assertJsonPath('data.object', 'mfa_enrollment');
+        // I2: MFA enroll now requires step-up (stepup:2)
+        $stepUp = $this->postJson('/api/v1/identity/mfa/enroll/step-up', [], $headers)
+            ->assertAccepted()->assertJsonPath('data.object', 'otp_challenge');
+        $challengeId = $stepUp->json('data.challenge_id');
+
+        // Use the StepUpOtpService test store for the OTP code
+        $otpCode = \App\Platform\Identity\StepUpOtpService::getTestCode($challengeId);
+        $this->assertNotNull($otpCode);
+
+        $enrolled = $this->postJson('/api/v1/identity/mfa/enroll/verify', [
+            'challenge_id' => $challengeId,
+            'code' => $otpCode,
+        ], $headers)->assertCreated()->assertJsonPath('data.object', 'mfa_enrollment');
         parse_str((string) parse_url($enrolled->json('data.otpauth_url'), PHP_URL_QUERY), $query);
         $secret = $query['secret'];
 

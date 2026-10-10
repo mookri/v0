@@ -94,6 +94,10 @@ Route::prefix(config('platform.api_version', 'v1'))
             ->name('identity.sessions.revoke');
         Route::get('identity/mfa', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'status'])
             ->name('identity.mfa.status');
+        Route::post('identity/mfa/enroll/step-up', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'enrollStepUp'])
+            ->name('identity.mfa.enroll.step-up');
+        Route::post('identity/mfa/enroll/verify', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'enrollVerify'])
+            ->name('identity.mfa.enroll.verify');
         Route::post('identity/mfa/enroll', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'enroll'])
             ->name('identity.mfa.enroll');
         Route::post('identity/mfa/confirm', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'confirm'])

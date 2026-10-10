@@ -9,9 +9,12 @@ use App\Platform\Identity\Events\MfaEnrolled;
 use App\Platform\Identity\Events\MfaRevoked;
 use App\Platform\Identity\MfaLockedException;
 use App\Platform\Identity\MfaService;
+use App\Platform\Identity\StepUpOtpService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\CarbonImmutable;
 
 /**
  * TOTP second factor (SEC-004 §1.4): enroll (otpauth URL out, secret
@@ -103,10 +106,131 @@ final class MfaController
             return $user;
         }
 
+        // I2: enroll now requires a completed step-up (stepup:2) - the
+        // step-up verified flag is set by the verify-step-up endpoint.
+        if (! $request->attributes->get('mfa_step_up_verified', false)) {
+            return new JsonResponse([
+                'error' => [
+                    'code' => 'step_up_required',
+                    'message' => 'Step-up verification required before MFA enrollment. Use /identity/mfa/enroll/step-up then /identity/mfa/enroll/verify.',
+                    'request_id' => $this->requestId($request),
+                ],
+            ], 422);
+        }
+
         return new JsonResponse([
             'data' => array_merge(
                 ['object' => 'mfa_enrollment'],
                 $this->mfa->enroll($user)
+            ),
+            'meta' => ['request_id' => $this->requestId($request)],
+        ], 201);
+    }
+
+    /**
+     * I2 step-up for MFA enrollment: creates an OTP challenge that must
+     * be verified before the enroll endpoint generates the TOTP secret.
+     * The challenge purpose is 'mfa_enroll_stepup' (distinct from
+     * login/signup purposes). The payload carries the user's external_id
+     * so the verify endpoint can bind the step-up to the same user.
+     */
+    public function enrollStepUp(Request $request): JsonResponse
+    {
+        $user = $this->actor($request);
+        if ($user instanceof JsonResponse) {
+            return $user;
+        }
+
+        // Ensure MFA is not already enrolled
+        if ((bool) $user->mfa_enabled) {
+            return new JsonResponse([
+                'error' => [
+                    'code' => 'already_enrolled',
+                    'message' => 'MFA is already enabled.',
+                    'request_id' => $this->requestId($request),
+                ],
+            ], 422);
+        }
+
+        // Get tenant_id from the user's active membership (works for both
+        // cookie and bearer auth — TenantContext may be null in tests)
+        $membership = \App\Platform\Tenancy\Models\TenantMembership::query()
+            ->where('user_id', $user->getAuthIdentifier())
+            ->where('state', \App\Platform\Tenancy\Models\TenantMembership::STATE_ACTIVE)
+            ->firstOrFail();
+        $tenantId = (string) $membership->tenant_id;
+
+        $challenge = app(StepUpOtpService::class)->issue(
+            $tenantId,
+            'mfa_enroll_stepup',
+            (string) $user->external_id,
+            CarbonImmutable::now(),
+            ['external_id' => (string) $user->external_id],
+        );
+
+        return new JsonResponse([
+            'data' => [
+                'object' => 'otp_challenge',
+                'challenge_id' => $challenge['challenge_id'],
+                'expires_in' => StepUpOtpService::TTL_SECONDS,
+            ],
+            'meta' => ['request_id' => $this->requestId($request)],
+        ], 202);
+    }
+
+    /**
+     * I2: verifies the step-up OTP for MFA enrollment. On success,
+     * generates the TOTP secret and returns the otpauth_url (same shape
+     * as the original enroll response).
+     */
+    public function enrollVerify(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'challenge_id' => ['required', 'string'],
+            'code' => ['required', 'string'],
+        ]);
+
+        $user = $this->actor($request);
+        if ($user instanceof JsonResponse) {
+            return $user;
+        }
+
+        // Get tenant_id from the user's active membership
+        $membership = \App\Platform\Tenancy\Models\TenantMembership::query()
+            ->where('user_id', $user->getAuthIdentifier())
+            ->where('state', \App\Platform\Tenancy\Models\TenantMembership::STATE_ACTIVE)
+            ->firstOrFail();
+        $tenantId = (string) $membership->tenant_id;
+
+        $challenge = app(StepUpOtpService::class)->verify(
+            $tenantId,
+            'mfa_enroll_stepup',
+            $validated['challenge_id'],
+            $validated['code'],
+            CarbonImmutable::now(),
+        );
+
+        if ($challenge === null) {
+            return new JsonResponse([
+                'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
+            ], 401);
+        }
+
+        // Verify the payload matches the authenticated user
+        $payload = $challenge['payload'] ?? [];
+        if (($payload['external_id'] ?? '') !== (string) $user->external_id) {
+            return new JsonResponse([
+                'error' => ['code' => 'forbidden', 'message' => 'Step-up challenge does not belong to this user.', 'request_id' => $this->requestId($request)],
+            ], 403);
+        }
+
+        // Step-up verified - generate the TOTP secret (same as enrollJson)
+        $enrollment = $this->mfa->enroll($user);
+
+        return new JsonResponse([
+            'data' => array_merge(
+                ['object' => 'mfa_enrollment'],
+                $enrollment
             ),
             'meta' => ['request_id' => $this->requestId($request)],
         ], 201);

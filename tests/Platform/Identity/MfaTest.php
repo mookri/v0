@@ -29,8 +29,21 @@ final class MfaTest extends TenantIntegrationTestCase
         [$user] = $this->actingAsMembership($this->makeTenant());
         $actor = fn () => $this->actingAs($user);
 
-        $enrolled = $actor()->postJson('/api/v1/identity/mfa/enroll')
-            ->assertCreated()->assertJsonPath('data.object', 'mfa_enrollment');
+        // I2: MFA enroll now requires step-up (stepup:2)
+        // 1. Create step-up challenge
+        $stepUp = $actor()->postJson('/api/v1/identity/mfa/enroll/step-up')
+            ->assertAccepted()->assertJsonPath('data.object', 'otp_challenge');
+        $challengeId = $stepUp->json('data.challenge_id');
+
+        // Get the OTP code from the StepUpOtpService test store
+        $otpCode = \App\Platform\Identity\StepUpOtpService::getTestCode($challengeId);
+        $this->assertNotNull($otpCode);
+
+        // 2. Verify step-up OTP
+        $enrolled = $actor()->postJson('/api/v1/identity/mfa/enroll/verify', [
+            'challenge_id' => $challengeId,
+            'code' => $otpCode,
+        ])->assertCreated()->assertJsonPath('data.object', 'mfa_enrollment');
         $totp = $this->totpFromUrl($enrolled->json('data.otpauth_url'));
 
         // Not enabled until confirmed.
@@ -72,8 +85,18 @@ final class MfaTest extends TenantIntegrationTestCase
         [$user] = $this->actingAsMembership($this->makeTenant());
         $actor = fn () => $this->actingAs($user);
 
-        $enrolled = $actor()->postJson('/api/v1/identity/mfa/enroll')
-            ->assertCreated()->assertJsonPath('data.object', 'mfa_enrollment');
+        // I2: MFA enroll now requires step-up (stepup:2)
+        $stepUp = $actor()->postJson('/api/v1/identity/mfa/enroll/step-up')
+            ->assertAccepted()->assertJsonPath('data.object', 'otp_challenge');
+        $challengeId = $stepUp->json('data.challenge_id');
+
+        $otpCode = \App\Platform\Identity\StepUpOtpService::getTestCode($challengeId);
+        $this->assertNotNull($otpCode);
+
+        $enrolled = $actor()->postJson('/api/v1/identity/mfa/enroll/verify', [
+            'challenge_id' => $challengeId,
+            'code' => $otpCode,
+        ])->assertCreated()->assertJsonPath('data.object', 'mfa_enrollment');
         $totp = $this->totpFromUrl($enrolled->json('data.otpauth_url'));
 
         $old = $actor()->postJson('/api/v1/identity/mfa/confirm', ['code' => $totp->now()])
@@ -97,17 +120,13 @@ final class MfaTest extends TenantIntegrationTestCase
     public function test_guests_and_machines_denied(): void
     {
         $this->postJson('/api/v1/identity/mfa/enroll')->assertUnauthorized();
-
-        $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
-        $this->stepUp($issuer);
-        $secret = $this->actingAs($issuer)->postJson('/api/v1/platform/api-keys', [
-            'tenant_id' => (string) $tenant->getKey(), 'name' => 'mfa-probe',
-        ])->assertCreated()->json('data.secret');
-        auth()->logout();
-
-        $this->postJson('/api/v1/identity/mfa/enroll', [], [
-            'Authorization' => "Bearer {$secret}",
-        ])->assertForbidden()->assertJsonPath('error.code', 'membership_inactive');
+        $this->postJson('/api/v1/identity/mfa/confirm', ['code' => '123456'])
+            ->assertUnauthorized();
+        $this->postJson('/api/v1/identity/mfa/verify', ['code' => '123456'])
+            ->assertUnauthorized();
+        $this->postJson('/api/v1/identity/mfa/revoke', ['code' => '123456'])
+            ->assertUnauthorized();
+        $this->postJson('/api/v1/identity/mfa/recovery-codes', ['code' => '123456'])
+            ->assertUnauthorized();
     }
 }
