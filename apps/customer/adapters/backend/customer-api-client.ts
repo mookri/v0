@@ -72,6 +72,7 @@ export const customerApi = {
   deleteSaved: (id: string) =>
     request(`/api/saved/${id}`, { method: 'DELETE' }),
   getNotifications: () => request('/api/notifications'),
+  getUnreadCount: () => request<{ count: number }>('/api/notifications/unread-count'),
   markNotificationRead: (id: string) =>
     request(`/api/notifications/${id}/read`, { method: 'POST' }),
   markAllNotificationsRead: () =>

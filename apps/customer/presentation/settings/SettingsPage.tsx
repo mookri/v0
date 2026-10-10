@@ -113,21 +113,17 @@ export function SettingsPageView({ sections, values }: SettingsPageViewProps) {
             <div className="space-y-4">
               {KNOWN_SETTINGS_KEYS
                 .filter(k => {
-                  // Group keys by section (simplified mapping)
-                  const notificationKeys = ['email_notifications', 'push_notifications', 'sms_notifications', 'marketing_emails', 'security_alerts'];
-                  const i18nKeys = ['locale', 'timezone', 'currency'];
-                  const identityKeys = ['two_factor_enabled'];
-                  const userKeys = ['theme'];
+                  const notificationKeys = ['notifications_email', 'notifications_sms', 'marketing_opt_in'];
+                  const i18nKeys = ['locale', 'timezone'];
+                  const profileKeys = ['quiet_hours'];
 
                   switch (section.id) {
                     case 'notifications':
                       return notificationKeys.includes(k);
                     case 'language':
                       return i18nKeys.includes(k);
-                    case 'security':
-                      return identityKeys.includes(k);
                     case 'profile':
-                      return userKeys.includes(k);
+                      return profileKeys.includes(k);
                     default:
                       return false;
                   }

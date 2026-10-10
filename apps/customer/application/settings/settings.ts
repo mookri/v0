@@ -14,18 +14,15 @@ export const customerSettingsSections: SettingsSection[] = [
   { id: 'security', title: 'Security', owner: 'identity', href: '/settings' },
 ];
 
-// Closed key set - backend validates, BFF mirrors for UX
+// Closed key set - backend validates, BFF mirrors for UX.
+// Must match CustomerSetting::KEYS in platform-navdhya exactly.
 export const KNOWN_SETTINGS_KEYS = [
   'locale',
+  'notifications_email',
+  'notifications_sms',
+  'marketing_opt_in',
   'timezone',
-  'currency',
-  'email_notifications',
-  'push_notifications',
-  'sms_notifications',
-  'marketing_emails',
-  'security_alerts',
-  'two_factor_enabled',
-  'theme',
+  'quiet_hours',
 ] as const;
 
 export type KnownSettingsKey = (typeof KNOWN_SETTINGS_KEYS)[number];
@@ -47,20 +44,28 @@ export function validateSettingsUpdate(input: Record<string, unknown>): Settings
     switch (key) {
       case 'locale':
       case 'timezone':
-      case 'currency':
-      case 'theme':
         if (typeof value !== 'string' || value.length === 0) {
           fieldErrors[key] = 'Must be a non-empty string';
         }
         break;
-      case 'email_notifications':
-      case 'push_notifications':
-      case 'sms_notifications':
-      case 'marketing_emails':
-      case 'security_alerts':
-      case 'two_factor_enabled':
+      case 'notifications_email':
+      case 'notifications_sms':
+      case 'marketing_opt_in':
         if (typeof value !== 'boolean') {
           fieldErrors[key] = 'Must be a boolean';
+        }
+        break;
+      case 'quiet_hours':
+        if (value !== null && value !== undefined) {
+          if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+            fieldErrors[key] = 'Must be an object or null';
+          } else {
+            const qh = value as Record<string, unknown>;
+            if ('start' in qh && typeof qh.start !== 'string') fieldErrors[key] = 'start must be HH:MM';
+            if ('end' in qh && typeof qh.end !== 'string') fieldErrors[key] = 'end must be HH:MM';
+            if ('start' in qh && !/^([01]\d|2[0-3]):([0-5]\d)$/.test(qh.start as string)) fieldErrors[key] = 'start must be HH:MM';
+            if ('end' in qh && !/^([01]\d|2[0-3]):([0-5]\d)$/.test(qh.end as string)) fieldErrors[key] = 'end must be HH:MM';
+          }
         }
         break;
     }
