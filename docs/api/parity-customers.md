@@ -154,7 +154,41 @@ quiet hours suppress service/marketing outbound legs only
 `rule:event:recipient:channel` under a unique (tenant, dedup_key)
 index. Settings gain `timezone` (default Asia/Kolkata) + `quiet_hours`
 ({start, end} HH:MM, nullable) inside the closed-key 422 posture.
-Email execution lands N3; outbox-driven producers land N2.
+
+## Booking lifecycle events (N2)
+
+The booking verbs and both outcome ports no longer notify directly:
+each appends a `booking.reservation.*` fact to the transactional outbox
+inside the same tenant transaction as the state change, and
+`outbox:drain` replays it into the inbox through the customers port
+with the outbox event id as dedup identity (handler replays collapse).
+Producers: `created` (store), `cancelled`, `rescheduled`, and
+`transitioned` from the payment webhook legs + pandit fulfillment legs
+(reason + actor carried — system vs pandit user id). Inbox copy maps
+per `to` (CONFIRMED/ASSIGNED/COMPLETED/FAILED/REFUNDED); other hops are
+facts without an inbox row, malformed payloads fail the claim loudly.
+
+`GET /api/events` gains its first producer: a per-channel notification
+tail (one poll per channel, seeded on connect — history stays the REST
+list's job) publishing `notification.created` live events, with 25s
+stream heartbeats. Wired streams accept the session cookie as auth
+(EventSource cannot set headers — F2b pattern), and that token is the
+tail's backend bearer. Bus stays single-instance behind the EventBus
+port (documented broker swap for multi-instance).
+
+## Email channel (N3)
+
+The dispatch job's email leg executes what the N1 matrix routes:
+provider-agnostic Laravel mailer config (`MAIL_*`, stock `log`
+default), per-kind subjects (`NotificationEmailTemplates`), escaping
+Blade body (producer copy can never inject markup). Idempotency is the
+`notification_deliveries` claim row (unique `(tenant_id, dedup_key)` =
+`kind:eventId:userId:email`): pending before the hand-off, sent after —
+retries resume, sent rows collapse replays. Blank or synthetic
+`{phone}@phone.local` addresses suppress with a reason (never guessed);
+null event ids send without a claim row (unkeyed legs cannot dedup);
+send exceptions ride the job's backoff, exhausted attempts leave
+`pending` for ops.
 
 ## Code correspondence (BFF codes)
 
