@@ -45,6 +45,12 @@ export const customerApi = {
       headers: { 'Idempotency-Key': idempotencyKey },
       body: JSON.stringify({}),
     }),
+  rescheduleBooking: (id: string, newStartTime: string, idempotencyKey: string) =>
+    request(`/api/bookings/${id}/reschedule`, {
+      method: 'POST',
+      headers: { 'Idempotency-Key': idempotencyKey },
+      body: JSON.stringify({ newStartTime }),
+    }),
   getProfile: () => request('/api/profile'),
   getVerifications: () => request('/api/verifications'),
   addVerification: (type: 'phone' | 'email', contact: string) =>

@@ -128,6 +128,34 @@ snapshots them); the authoritative quote snapshot lives on
 is audited and appends its `payment.*` outbox event in the same
 transaction.
 
+## Fulfillment (B4)
+
+Pandit self-serve verbs drive the booking lifecycle through a
+Booking-module port (the assignment is the fact, the lifecycle matrix
+the authority — the payment port's posture). The customer-facing half
+this cycle is the cancel/reschedule UI on the booking detail page.
+
+| Surface | Contract |
+|---|---|
+| `POST /api/v1/pandit/assignments/{id}:confirm` | 200 assignment CONFIRMED and booking CONFIRMED → ASSIGNED in ONE ambient-connection transaction (transition row actor = the pandit's user id); 409 `PANDIT_BOOKING_WRONG_STATE` when the booking refuses (cancelled / already ASSIGNED by another pandit) — assignment rolled back, nothing written; 409 `PANDIT_ASSIGNMENT_WRONG_STATE` (not PENDING); 404 foreign/unknown |
+| `POST /api/v1/pandit/assignments/{id}:complete` | 200 assignment COMPLETED and booking ASSIGNED → IN_PROGRESS → COMPLETED (both matrix hops recorded, one fact); same 404/409 matrix (assignment must be CONFIRMED); COMPLETED rows count into pandit earnings |
+| booking detail UI | cancel + reschedule render as real controls when the lifecycle-derived `actions` allow them: cancel = confirm + POST (Idempotency-Key), reschedule = datetime-local → ISO (empty/malformed/past fail closed client-side) + POST; flash + refresh, errors inline — the BFF/backend gates (state, version, slot) stay the authority |
+
+## Notification dispatch (N1)
+
+`NotifiesCustomers::notify()` is now a queue-backed dispatcher entry
+(HTTP enqueues; database queue deployed, sync in tests). The worker
+resolves its own tenant context and delivers the in-app inbox under
+the packages/communication semantics: in_app always; email gated by
+the `notify.email` flag + the notifications_email preference; sms by
+notifications_sms (routed, undelivered until the SMS provider track);
+quiet hours suppress service/marketing outbound legs only
+(transactional/security bypass); dedup on the spec identity
+`rule:event:recipient:channel` under a unique (tenant, dedup_key)
+index. Settings gain `timezone` (default Asia/Kolkata) + `quiet_hours`
+({start, end} HH:MM, nullable) inside the closed-key 422 posture.
+Email execution lands N3; outbox-driven producers land N2.
+
 ## Code correspondence (BFF codes)
 
 | Situation | BFF code | Backend code |

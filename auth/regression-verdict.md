@@ -135,6 +135,46 @@ unchanged baseline, no new file implicated. Composed OpenAPI regenerated
 `DependencyUnavailable` response); parity sections added in both mirrors
 + payments.md implementation-status note. No incidents this cycle.
 
+B4+N1 cycle (2026-10-10, full gate cadence green): web build ✓ ·
+web+customer typecheck ✓ · Pint ✓ · sqlite **714/4112** 0 failures 0
+errors ✓ · MySQL **714 · 0 failures · 14 documented errors F-DB3a–c**
+(fresh `navdhya_test_*`; the cycle's 14 new tests clean on MySQL — one
+`assertSame` JSON-key-order fragility caught on MySQL and fixed
+field-wise) ✓ · web Jest **353 passed** (same 20 pre-existing failures,
+same 9 suites) ✓ · root vitest `tests/customer` + `tests/api`
+**92/92** (+2 reschedule-helper tests) ✓ · `run.ps1` **83/83 +
+Playwright 1/1 ALL PHASES PASS** exit 0 ✓ · smokes **22/22 + 13/13**
+(settings probe now returns the `timezone`/`quiet_hours` keys) ✓ ·
+perf **130 samples · 0 errors · 100% join · all budgets met** ✓.
+Deptrac informational: 95 violations = unchanged baseline. New scope
+this cycle (two tracks): **B4 fulfillment** — Booking
+`TransitionsBookingFulfillment` port + `BookingFulfillmentTransitions`
+(two-hop ASSIGNED → IN_PROGRESS → COMPLETED on completion, one fact;
+actor = the pandit's user id, contrast the payment port's system
+actor), Pandit `POST /api/v1/pandit/assignments/{id}:confirm` now moves
+the booking CONFIRMED → ASSIGNED in the same ambient-connection
+transaction (refusals — cancelled booking, second-pandit double
+accept — roll the assignment back, 409 `PANDIT_BOOKING_WRONG_STATE`,
+nothing written) and new `:complete` verb (assignment must be
+CONFIRMED; same 404/409 matrix; COMPLETED rows count into earnings),
+plus the customer booking-detail cancel/reschedule UI (lifecycle-derived
+actions render as confirm + POST with idempotency keys; reschedule
+input fails closed client-side) — **N1 notification dispatcher** —
+`NotifiesCustomers::notify()` now returns void and enqueues
+`DispatchCustomerNotification` (database queue deployed / sync tests,
+spec backoff min(30s, 500·2^n), worker resolves its own tenant context
+TEN-012 and only when it owns it), customer_notifications gains
+`category` + `dedup_key` (unique per tenant — replays collapse,
+idempotent insert), `NotificationChannels` policy ports the
+packages/communication matrix (in_app always; email gated by
+`notify.email` + preference; sms routed-undelivered; quiet hours
+suppress service/marketing outbound legs only), settings gain `timezone`
++ `quiet_hours` ({start,end} HH:MM, nullable) inside the closed-key 422
+posture. Test-count delta: 700 + 14 (BookingFulfillment 6 +
+NotificationDispatch 8) = 714. Composed OpenAPI regenerated (17
+fragments, 142 paths — `:complete` op). Parity sections added in both
+mirrors. No incidents this cycle.
+
 Out-of-scope observation (not in the gate table): root `vitest run
 tests/architecture` carries 1 pre-existing failure —
 `import-alias` (`apps/web/app/api/ads/track-beacon/route.ts ->

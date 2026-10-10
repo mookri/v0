@@ -1,7 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { CustomerBookingDetails } from '@/application/bookings/get-customer-booking-details';
+import { rescheduleIsoFromInput } from '@/application/bookings/reschedule-from-input';
+import { generateIdempotencyKey } from '@/application/idempotency';
+import { customerApi } from '@/adapters/backend/customer-api-client';
 
 interface BookingDetailPageProps {
   details: CustomerBookingDetails | null;
@@ -11,6 +15,54 @@ interface BookingDetailPageProps {
 
 export function BookingDetailPage({ details, history, error }: BookingDetailPageProps) {
   const [activeTab, setActiveTab] = useState<'details' | 'history'>('details');
+  const [busy, setBusy] = useState<'cancel' | 'reschedule' | null>(null);
+  const [flash, setFlash] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [rescheduleValue, setRescheduleValue] = useState('');
+  const router = useRouter();
+
+  const canCancel = details?.actions.includes('cancel') ?? false;
+  const canReschedule = details?.actions.includes('reschedule') ?? false;
+  const infoActions = (details?.actions ?? []).filter((a) => a !== 'cancel' && a !== 'reschedule');
+
+  async function handleCancel() {
+    if (!details || busy) return;
+    if (!window.confirm('Cancel this booking? This cannot be undone.')) return;
+    setBusy('cancel');
+    setActionError(null);
+    setFlash(null);
+    try {
+      await customerApi.cancelBooking(details.id, generateIdempotencyKey());
+      setFlash('Booking cancelled.');
+      router.refresh();
+    } catch (e: any) {
+      setActionError(e?.message ?? 'Could not cancel this booking.');
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function handleReschedule() {
+    if (!details || busy) return;
+    const iso = rescheduleIsoFromInput(rescheduleValue);
+    if (!iso) {
+      setActionError('Pick a future date and time.');
+      return;
+    }
+    setBusy('reschedule');
+    setActionError(null);
+    setFlash(null);
+    try {
+      await customerApi.rescheduleBooking(details.id, iso, generateIdempotencyKey());
+      setFlash('Booking rescheduled.');
+      setRescheduleValue('');
+      router.refresh();
+    } catch (e: any) {
+      setActionError(e?.message ?? 'Could not reschedule this booking.');
+    } finally {
+      setBusy(null);
+    }
+  }
 
   if (error) {
     return (
@@ -102,17 +154,65 @@ export function BookingDetailPage({ details, history, error }: BookingDetailPage
             </dl>
           </div>
 
-          {details.actions && details.actions.length > 0 && (
+          {(canCancel || canReschedule || infoActions.length > 0) && (
             <div className="bg-white border border-gray-200 rounded-xl p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Available Actions</h2>
-              <ul className="space-y-2">
-                {details.actions.map((a) => (
-                  <li key={a} className="text-gray-700 flex items-center gap-2">
-                    <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
-                    {a}
-                  </li>
-                ))}
-              </ul>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Actions</h2>
+
+              {flash && (
+                <p className="mb-4 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-3" role="status">
+                  {flash}
+                </p>
+              )}
+              {actionError && (
+                <p className="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3" role="alert">
+                  {actionError}
+                </p>
+              )}
+
+              {canReschedule && (
+                <div className="mb-4">
+                  <label htmlFor="reschedule-datetime" className="block text-sm font-medium text-gray-700 mb-1">
+                    Reschedule to
+                  </label>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <input
+                      id="reschedule-datetime"
+                      type="datetime-local"
+                      value={rescheduleValue}
+                      onChange={(e) => setRescheduleValue(e.target.value)}
+                      className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                    />
+                    <button
+                      onClick={handleReschedule}
+                      disabled={busy !== null}
+                      className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+                    >
+                      {busy === 'reschedule' ? 'Rescheduling…' : 'Reschedule'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {canCancel && (
+                <button
+                  onClick={handleCancel}
+                  disabled={busy !== null}
+                  className="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
+                >
+                  {busy === 'cancel' ? 'Cancelling…' : 'Cancel booking'}
+                </button>
+              )}
+
+              {infoActions.length > 0 && (
+                <ul className="space-y-2 mt-4">
+                  {infoActions.map((a) => (
+                    <li key={a} className="text-gray-700 flex items-center gap-2">
+                      <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
+                      {a}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
         </div>
