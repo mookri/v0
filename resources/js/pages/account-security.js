@@ -12,7 +12,7 @@ const statusEl = document.getElementById('mfa-status');
 const alertEl = document.getElementById('security-alert');
 const rowsEl = document.getElementById('session-rows');
 
-const COLS = 4;
+const COLS = 6;
 
 function toggle(id, show) {
   const el = document.getElementById(id);
@@ -49,6 +49,12 @@ function whenLabel(value) {
   return Number.isNaN(ms) ? String(value ?? '—') : new Date(ms).toLocaleString();
 }
 
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 async function loadSessions() {
   if (!rowsEl) return;
   setStateRow(rowsEl, 'Loading…', COLS);
@@ -64,13 +70,27 @@ async function loadSessions() {
     }
 
     for (const item of items) {
+      const isCurrent = Boolean(item.current);
+      const revokeBtn = !isCurrent
+        ? `<form method="POST" action="/account/security/sessions/${item.id}/revoke" class="d-inline" onsubmit="return window.confirm('Revoke this session?')">
+             <input type="hidden" name="_token" value="{{ csrf_token() }}">
+             <button class="btn btn-sm btn-outline-danger" type="submit">Revoke</button>
+           </form>`
+        : '<span class="text-muted">Current</span>';
+
+      const labelHtml = item.label
+        ? `<span class="badge bg-info-subtle text-info">${escapeHtml(item.label)}</span>`
+        : '<span class="text-muted">—</span>';
+
       appendRow(rowsEl, [
         { text: item.ip_address || '—', cls: 'font-monospace' },
         { text: item.user_agent || '—' },
-        { text: whenLabel(item.last_activity_at) },
-        item.current
+        { html: labelHtml },
+        { text: whenLabel(item.issued_at) },
+        isCurrent
           ? badge('current', 'bg-success-subtle text-success')
           : badge('other', 'bg-secondary-subtle text-secondary'),
+        { html: revokeBtn, cls: 'text-end' },
       ]);
     }
   } catch (error) {

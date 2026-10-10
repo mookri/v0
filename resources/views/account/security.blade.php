@@ -107,8 +107,10 @@
                         <tr>
                             <th>IP address</th>
                             <th>Device</th>
+                            <th>Label</th>
                             <th>Last active</th>
                             <th>Status</th>
+                            <th class="text-end">Action</th>
                         </tr>
                         </thead>
                         <tbody id="session-rows"></tbody>

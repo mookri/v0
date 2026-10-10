@@ -90,6 +90,8 @@ Route::prefix(config('platform.api_version', 'v1'))
             ->name('identity.sessions');
         Route::post('identity/sessions:revoke-others', [\App\Platform\Identity\Http\Controllers\IdentitySelfServiceController::class, 'revokeOtherSessions'])
             ->name('identity.sessions.revoke-others');
+        Route::post('identity/sessions/{id}:revoke', [\App\Platform\Identity\Http\Controllers\IdentitySelfServiceController::class, 'revokeSession'])
+            ->name('identity.sessions.revoke');
         Route::get('identity/mfa', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'status'])
             ->name('identity.mfa.status');
         Route::post('identity/mfa/enroll', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'enroll'])

@@ -123,6 +123,11 @@ final class CustomerAuthController
             (string) $user->external_id,
             ActorTokenIssuer::TOKEN_TTL_SECONDS,
             gmdate('Y-m-d\TH:i:s.v\Z'),
+            ['customer'],
+            null,
+            null,
+            $request->userAgent(),
+            $request->ip(),
         );
 
         return [

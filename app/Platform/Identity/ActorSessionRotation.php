@@ -61,6 +61,11 @@ final class ActorSessionRotation
             $externalUserId,
             ActorTokenIssuer::TOKEN_TTL_SECONDS,
             gmdate('Y-m-d\TH:i:s.v\Z'),
+            [], // no roles carried in rotation — inherits from predecessor
+            null,
+            null,
+            $request->userAgent(),
+            $request->ip(),
         );
 
         return [

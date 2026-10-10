@@ -85,20 +85,33 @@ final class IdentitySelfServiceController
     public function sessions(Request $request): JsonResponse
     {
         $user = $request->user();
-        $currentId = $request->hasSession() ? $request->session()->getId() : null;
-        $rows = DB::connection(config('database.default'))->table('sessions')
-            ->where('user_id', $user->getAuthIdentifier())
-            ->orderByDesc('last_activity')
+        $externalId = (string) $user->external_id;
+
+        // The "current" session is the one whose actor_sessions.id matches
+        // the actor_sessions.id the caller presented (bearer path) or the
+        // web session id (cookie path). We resolve the presented actor session
+        // id from the request attributes (AuthenticateAny stamps it).
+        $presented = $request->attributes->get('actor');
+        $presentedId = is_array($presented) && is_string($presented['session_id'] ?? null)
+            ? $presented['session_id']
+            : ($request->hasSession() ? $request->session()->getId() : null);
+
+        $rows = ActorSession::query()
+            ->where('user_id', $externalId)
+            ->whereNull('revoked_at')
+            ->orderByDesc('issued_at')
             ->get();
 
         return new JsonResponse([
             'data' => $rows->map(static fn ($row): array => [
                 'id' => $row->id,
                 'object' => 'user_session',
-                'current' => $row->id === $currentId,
+                'current' => $row->id === $presentedId,
                 'ip_address' => $row->ip_address,
                 'user_agent' => $row->user_agent ? mb_substr($row->user_agent, 0, 120) : null,
-                'last_activity_at' => gmdate('Y-m-d\TH:i:s.v\Z', (int) $row->last_activity),
+                'label' => $row->label,
+                'issued_at' => $row->issued_at?->toIso8601String(),
+                'expires_at' => $row->expires_at?->toIso8601String(),
             ])->values()->all(),
             'meta' => ['request_id' => (string) $request->attributes->get('request_id', '')],
         ]);
@@ -166,6 +179,69 @@ final class IdentitySelfServiceController
 
         return new JsonResponse([
             'data' => ['object' => 'session_revocation', 'revoked' => $revoked],
+            'meta' => ['request_id' => (string) $request->attributes->get('request_id', '')],
+        ]);
+    }
+
+    /**
+     * I1: revoke a specific actor session by id (selective revoke-by-id).
+     * The caller must own the session (matching external_id). The presented
+     * session cannot be revoked here — use logout for that.
+     */
+    public function revokeSession(Request $request, string $id): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->revokeSessionJson($request, $id),
+            static function (JsonResponse $result): string {
+                return 'Session revoked.';
+            },
+        );
+    }
+
+    private function revokeSessionJson(Request $request, string $id): JsonResponse
+    {
+        $user = $request->user();
+        $externalId = (string) $user->external_id;
+
+        // Find the session and verify ownership
+        $session = Models\ActorSession::query()
+            ->where('id', $id)
+            ->where('user_id', $externalId)
+            ->whereNull('revoked_at')
+            ->first();
+
+        if ($session === null) {
+            return new JsonResponse([
+                'error' => [
+                    'code' => 'not_found',
+                    'message' => 'Session not found or already revoked.',
+                    'request_id' => (string) $request->attributes->get('request_id', ''),
+                ],
+            ], 404);
+        }
+
+        // Prevent revoking the currently presented session — use logout for that
+        $presented = $request->attributes->get('actor');
+        $presentedId = is_array($presented) && is_string($presented['session_id'] ?? null)
+            ? $presented['session_id']
+            : null;
+
+        if ($presentedId !== null && $session->id === $presentedId) {
+            return new JsonResponse([
+                'error' => [
+                    'code' => 'cannot_revoke_current',
+                    'message' => 'Cannot revoke the active session. Use logout instead.',
+                    'request_id' => (string) $request->attributes->get('request_id', ''),
+                ],
+            ], 422);
+        }
+
+        $session->revoked_at = gmdate('Y-m-d H:i:s');
+        $session->save();
+
+        return new JsonResponse([
+            'data' => ['object' => 'session_revocation', 'revoked' => 1],
             'meta' => ['request_id' => (string) $request->attributes->get('request_id', '')],
         ]);
     }

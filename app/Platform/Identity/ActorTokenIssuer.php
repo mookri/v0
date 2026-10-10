@@ -30,6 +30,8 @@ final class ActorTokenIssuer
         array $roles = [],
         ?string $market = null,
         ?string $orgId = null,
+        ?string $userAgent = null,
+        ?string $ipAddress = null,
     ): array {
         $now = strtotime($nowIso) ?: time();
         $expiresAt = gmdate('Y-m-d\TH:i:s.v\Z', $now + $ttlSeconds);
@@ -50,11 +52,14 @@ final class ActorTokenIssuer
 
         // M5 / TOKEN-001: persist the jti so logout, rotation and
         // suspension can revoke this token before its absolute expiry.
+        // I1: capture device metadata (UA/IP) for the security page.
         Models\ActorSession::query()->create([
             'id' => $sessionId,
             'user_id' => $userId,
             'issued_at' => gmdate('Y-m-d H:i:s', $now),
             'expires_at' => gmdate('Y-m-d H:i:s', $now + $ttlSeconds),
+            'user_agent' => $userAgent,
+            'ip_address' => $ipAddress,
         ]);
 
         return [

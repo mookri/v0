@@ -112,4 +112,5 @@ Route::group(['prefix' => '/account/security', 'middleware' => 'auth'], function
     Route::post('/mfa/revoke', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'revoke']);
     Route::post('/mfa/recovery-codes', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'recoveryCodes']);
     Route::post('/sessions/revoke-others', [\App\Platform\Identity\Http\Controllers\IdentitySelfServiceController::class, 'revokeOtherSessions']);
+    Route::post('/sessions/{id}/revoke', [\App\Platform\Identity\Http\Controllers\IdentitySelfServiceController::class, 'revokeSession']);
 });

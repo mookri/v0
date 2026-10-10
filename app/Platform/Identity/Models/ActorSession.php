@@ -19,7 +19,7 @@ final class ActorSession extends Model
     /** @var string */
     protected $keyType = 'string';
 
-    protected $fillable = ['id', 'user_id', 'issued_at', 'expires_at', 'revoked_at'];
+    protected $fillable = ['id', 'user_id', 'issued_at', 'expires_at', 'revoked_at', 'user_agent', 'ip_address', 'label'];
 
     protected function casts(): array
     {
@@ -28,6 +28,14 @@ final class ActorSession extends Model
             'expires_at' => 'datetime',
             'revoked_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Set a user-friendly label for the device (I1 — security page).
+     */
+    public function setLabel(string $label): void
+    {
+        $this->forceFill(['label' => $label])->save();
     }
 
     /**
