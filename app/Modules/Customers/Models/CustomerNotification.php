@@ -10,15 +10,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Customer notification row (tenant_shared): written by producers
- * (booking transitions B5+, system notices), read + marked read here.
+ * Customer notification row (tenant_shared): written by the N1
+ * dispatcher (routing/dedup/quiet-hours policy in NotificationChannels),
+ * read + marked read here. category = communication class (routing
+ * matrix), dedup_key = spec identity rule:event:recipient:channel
+ * (unique per tenant — replays collapse).
  *
  * @property string $id
  * @property string $tenant_id
  * @property int $user_id
  * @property string $kind
+ * @property string $category
  * @property string $title
  * @property string|null $body
+ * @property string|null $dedup_key
  * @property \Illuminate\Support\Carbon|null $read_at
  */
 final class CustomerNotification extends Model
@@ -31,7 +36,7 @@ final class CustomerNotification extends Model
     protected $connection = 'tenant_shared';
 
     protected $fillable = [
-        'tenant_id', 'user_id', 'kind', 'title', 'body', 'read_at',
+        'tenant_id', 'user_id', 'kind', 'category', 'title', 'body', 'dedup_key', 'read_at',
     ];
 
     protected function casts(): array

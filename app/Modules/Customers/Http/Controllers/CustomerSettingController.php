@@ -105,6 +105,10 @@ final class CustomerSettingController extends CustomerSelfServiceController
             'notifications_email' => ['sometimes', 'boolean'],
             'notifications_sms' => ['sometimes', 'boolean'],
             'marketing_opt_in' => ['sometimes', 'boolean'],
+            'timezone' => ['sometimes', 'string', 'max:64'],
+            'quiet_hours' => ['sometimes', 'nullable', 'array'],
+            'quiet_hours.start' => ['required_with:quiet_hours', 'date_format:H:i'],
+            'quiet_hours.end' => ['required_with:quiet_hours', 'date_format:H:i'],
         ];
     }
 }

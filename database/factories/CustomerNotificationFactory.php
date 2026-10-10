@@ -20,8 +20,10 @@ final class CustomerNotificationFactory extends Factory
         return [
             'user_id' => \App\Models\User::factory(),
             'kind' => 'booking',
+            'category' => 'transactional',
             'title' => $this->faker->sentence(4),
             'body' => $this->faker->sentence(10),
+            'dedup_key' => null,
             'read_at' => null,
         ];
     }

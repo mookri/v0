@@ -35,6 +35,8 @@ final class CustomerSetting extends Model
         'notifications_email' => true,
         'notifications_sms' => true,
         'marketing_opt_in' => false,
+        'timezone' => 'Asia/Kolkata',
+        'quiet_hours' => null,
     ];
 
     protected $connection = 'tenant_shared';

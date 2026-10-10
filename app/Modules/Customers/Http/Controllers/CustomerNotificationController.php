@@ -94,6 +94,7 @@ final class CustomerNotificationController extends CustomerSelfServiceController
             'id' => (string) $notification->getKey(),
             'object' => 'customer_notification',
             'kind' => $notification->kind,
+            'category' => $notification->category,
             'title' => $notification->title,
             'body' => $notification->body,
             'read_at' => $notification->read_at,
