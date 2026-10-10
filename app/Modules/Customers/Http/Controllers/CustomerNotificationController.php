@@ -100,4 +100,26 @@ final class CustomerNotificationController extends CustomerSelfServiceController
             'read_at' => $notification->read_at,
         ];
     }
+
+    /**
+     * Unread count (N4): lightweight endpoint for the badge — no
+     * pagination, no body, just the scalar count of unread rows.
+     */
+    public function unreadCount(Request $request): JsonResponse
+    {
+        $user = $this->ownUser($request);
+        if ($user instanceof JsonResponse) {
+            return $user;
+        }
+
+        $count = CustomerNotification::query()
+            ->where('user_id', (string) $user->getAuthIdentifier())
+            ->whereNull('read_at')
+            ->count();
+
+        return new JsonResponse([
+            'data' => ['object' => 'notification_unread_count', 'count' => $count],
+            'meta' => ['request_id' => $this->requestId($request)],
+        ]);
+    }
 }

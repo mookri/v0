@@ -107,4 +107,42 @@ final class CustomerNotificationTest extends TenantIntegrationTestCase
             $headers
         )->assertNotFound()->assertJsonPath('error.code', 'not_found');
     }
+
+    public function test_unread_count_endpoint(): void
+    {
+        [$tenant, $user] = $this->customer();
+        $headers = $this->tenantHeaders($tenant);
+        $actor = fn () => $this->actingAs($user);
+
+        $this->seedNotifications($tenant, $user, 3, 2);
+
+        $res = $actor()->getJson('/api/v1/customers/notifications/unread-count', $headers)->assertOk();
+        $this->assertSame(3, $res->json('data.count'));
+
+        // Read one notification
+        $listed = $actor()->getJson('/api/v1/customers/notifications?limit=1', $headers)->assertOk();
+        $firstId = $listed->json('data.0.id');
+        $actor()->postJson("/api/v1/customers/notifications/{$firstId}:read", [], $headers)->assertOk();
+
+        $res = $actor()->getJson('/api/v1/customers/notifications/unread-count', $headers)->assertOk();
+        $this->assertSame(2, $res->json('data.count'));
+
+        // Read all
+        $actor()->postJson('/api/v1/customers/notifications:read-all', [], $headers)->assertOk();
+
+        $res = $actor()->getJson('/api/v1/customers/notifications/unread-count', $headers)->assertOk();
+        $this->assertSame(0, $res->json('data.count'));
+    }
+
+    public function test_unread_count_foreign_and_guests(): void
+    {
+        [$tenant, $user] = $this->customer();
+        $headers = $this->tenantHeaders($tenant);
+
+        auth()->logout();
+        $this->getJson('/api/v1/customers/notifications/unread-count', $headers)->assertUnauthorized();
+
+        $other = $this->makeTenant();
+        [$otherUser] = $this->actingAsMembership($other);
+    }
 }

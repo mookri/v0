@@ -93,6 +93,8 @@ Route::delete('saved/{id}', [SavedItemController::class, 'destroy'])
 // Notifications (B4): producer-written, customer read + mark-read.
 Route::get('notifications', [CustomerNotificationController::class, 'index'])
     ->name('notifications.index');
+Route::get('notifications/unread-count', [CustomerNotificationController::class, 'unreadCount'])
+    ->name('notifications.unread-count');
 Route::post('notifications/{id}:read', [CustomerNotificationController::class, 'read'])
     ->name('notifications.read');
 Route::post('notifications:read-all', [CustomerNotificationController::class, 'readAll'])
