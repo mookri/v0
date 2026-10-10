@@ -182,6 +182,49 @@ the booking lifecycle matrix says no. Every applied leg is audited on
 both sides and appends its `payment.*` outbox event in the same
 transaction.
 
+## Fulfillment (B4)
+
+The pandit's own verbs drive the booking lifecycle — the assignment is
+the FACT, the lifecycle matrix is the AUTHORITY (same posture as the
+payment port). Backend + customer cancel/reschedule UI this cycle; the
+pandit app surface is outside the customer parity scope.
+
+| Step | Next.js BFF | Laravel module | Match |
+|---|---|---|---|
+| accept work | (no BFF — pandit app) | `POST /api/v1/pandit/assignments/{id}:confirm` (Pandit; ownership gate) → 200 CONFIRMED assignment; the booking follows CONFIRMED → ASSIGNED through the fulfillment port in the same transaction; 409 `PANDIT_BOOKING_WRONG_STATE` when the booking no longer wants the work (assignment rolled back, nothing written); 409 `PANDIT_ASSIGNMENT_WRONG_STATE` (assignment not PENDING); 404 foreign/unknown | backend only |
+| complete work | (no BFF — pandit app) | `POST /api/v1/pandit/assignments/{id}:complete` → 200 COMPLETED assignment; the booking drives ASSIGNED → IN_PROGRESS → COMPLETED (both matrix hops, one fact); COMPLETED rows count into earnings; same 404/409 matrix (assignment must be CONFIRMED) | backend only |
+| cancel booking | `POST /api/bookings/{id}/cancel` (`Idempotency-Key`) | `POST /api/v1/booking/reservations/{id}:cancel` (B5, unchanged) | **wired** (B4 UI: the booking detail renders the lifecycle-derived action as confirm + POST with flash + refresh; errors surface inline, never a silent no-op) |
+| reschedule booking | `POST /api/bookings/{id}/reschedule` `{newStartTime}` (`Idempotency-Key`; BFF reads the current version first — races surface STALE_RESOURCE) | `POST /api/v1/booking/reservations/{id}:reschedule` (B5, unchanged) | **wired** (B4 UI: datetime-local picker; empty/malformed/past values fail closed client-side — the backend stays the authority on lifecycle state and slot availability) |
+
+One acceptance fact, two module states: `:confirm` and `:complete`
+wrap the assignment write and the booking lifecycle hops in ONE
+ambient-connection transaction — any refusal (booking cancelled, a
+second pandit accepting after the first, completion after
+cancellation) rolls the assignment back and writes nothing. Transition
+rows carry the pandit's user id as actor (human principal — contrast
+the payment webhook's system actor); refusals are the ops/refund
+track's input, never silently forced.
+
+## Notification dispatch (N1)
+
+`NotifiesCustomers::notify()` is the dispatcher entry point: HTTP
+enqueues on the configured queue connection (database deployed, sync
+in tests), the worker resolves its own tenant context (TEN-012, the
+outbox-drain posture) and delivers the in-app inbox. Routing follows
+packages/communication: **in_app always**; email gated by the
+`notify.email` flag AND the notifications_email preference; sms by
+notifications_sms (routed, never delivered until the SMS provider
+track); quiet hours — a per-user `quiet_hours` window ({start, end}
+HH:MM, cross-midnight supported) read in the `timezone` setting —
+suppress service/marketing outbound legs only, transactional/security
+bypass. Dedup: the spec identity `rule:event:recipient:channel` is
+stored per row under a unique (tenant, dedup_key) index, so repeated
+deliveries of one event collapse (idempotent insert, raced retries
+never double an inbox). The settings surface gains `timezone`
+(default Asia/Kolkata) and `quiet_hours` (nullable) inside the same
+closed-key 422 posture. Email execution lands N3; outbox-driven
+producers (event ids as dedup identities) land N2.
+
 ## Support staff console (S4)
 
 The staff side of support: a tenant-wide queue over the customers module's
