@@ -18,6 +18,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { getRegistryEntry, getClusterMeta } from '@/lib/content/registry';
 import { invalidatePageCache } from '@/lib/linking/graph';
+import { invalidateSearchIndex } from '@/lib/search/federated';
 import { InProcessRateLimiter, clientIp } from '@/lib/security/rate-limit';
 import { validateCsrfToken, extractCsrfToken } from '@/lib/security/csrf';
 
@@ -239,6 +240,12 @@ export async function POST(req: NextRequest) {
 
   // Revalidate each slug
   const results: RevalidateResult[] = slugList.map(revalidateSlug);
+
+  // A content edit changed the BM25 corpus too — drop it so the next
+  // search rebuilds from disk (S39; cheap module-level null-out).
+  if (results.some((r) => r.status === 'ok')) {
+    invalidateSearchIndex();
+  }
 
   const allOk = results.every((r) => r.status === 'ok');
   const status = allOk ? 200 : results.some((r) => r.status === 'ok') ? 207 : 422;
