@@ -6,6 +6,7 @@ use App\Modules\Search\Models\SearchDocument;
 use App\Modules\Search\Models\SearchQuery;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class SearchController
 {
@@ -140,13 +141,13 @@ class SearchController
                 }
             });
 
-        $driver = config('database.connections.central.driver');
-
-        if ($driver === 'mysql') {
-            $baseQuery->whereRaw('MATCH(title) AGAINST(? IN BOOLEAN MODE)', [$query . '*']);
-        } else {
-            $baseQuery->where('title', 'LIKE', "{$query}%");
-        }
+        // Prefix LIKE on every driver: type-ahead must match prefixes shorter
+        // than ngram_token_size, and the table's FULLTEXT index covers
+        // (title, subtitle, body) — a MATCH(title) alone raises error 1191
+        // ("Can't find FULLTEXT index matching the column list") on MySQL.
+        // LIKE 'prefix%' over a ≤~1.3K-row table is a sub-millisecond scan.
+        $escaped = addcslashes($query, '%_\\');
+        $baseQuery->where('title', 'LIKE', "{$escaped}%");
 
         $results = $baseQuery->limit($limit)->get();
 
@@ -173,8 +174,11 @@ class SearchController
     public function indexDocs(): JsonResponse
     {
         $docs = SearchDocument::active()
-            ->whereNull('tenant_id') // platform-global for BFF (web is single-tenant)
-            ->orWhere('tenant_id', config('platform.default_tenant'))
+            ->where(function ($q) {
+                // platform-global for BFF (web is single-tenant) + default tenant
+                $q->whereNull('tenant_id')
+                    ->orWhere('tenant_id', config('platform.default_tenant'));
+            })
             ->get(['entity_type', 'entity_id', 'slug', 'title', 'subtitle', 'body', 'city', 'card_json', 'url_path'])
             ->map(fn ($d) => [
                 'entity_type' => $d->entity_type,
@@ -185,7 +189,7 @@ class SearchController
                 'subtitle' => $d->subtitle,
                 'body' => $d->body,
                 'city' => $d->city,
-                'card' => $d->card_json,
+                'card' => $this->cardOf($d),
             ])
             ->toArray();
 
@@ -291,9 +295,26 @@ class SearchController
             'snippet' => $this->buildSnippet($doc->body, $doc->title),
             'city' => $doc->city,
             'image' => $doc->image_url,
-            'card' => $doc->card_json,
+            'card' => $this->cardOf($doc),
             'score' => 1.0, // placeholder; actual score from FULLTEXT when available
         ];
+    }
+
+    /**
+     * Normalise card_json to an array. Rows written before the array cast was
+     * relied upon (or double-encoded by a json_encode()d write) arrive as a
+     * JSON string — decode instead of fataling on string offset access.
+     */
+    private function cardOf(SearchDocument $doc): array
+    {
+        $card = $doc->card_json;
+
+        if (is_string($card)) {
+            $decoded = json_decode($card, true);
+            $card = is_array($decoded) ? $decoded : [];
+        }
+
+        return is_array($card) ? $card : [];
     }
 
     private function buildSnippet(?string $body, string $title): string
@@ -363,7 +384,7 @@ class SearchController
 
     private function buildSubtitle(SearchDocument $doc): string
     {
-        $card = $doc->card_json ?? [];
+        $card = $this->cardOf($doc);
         return match ($doc->entity_type) {
             'temple' => ($card['verified'] ? '✓ Verified • ' : '') . ($card['city'] ?? ''),
             'pandit' => ($card['rating'] ? "★ {$card['rating']} • " : '') . ($card['specializations'][0] ?? ''),

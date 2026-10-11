@@ -8,12 +8,16 @@ use Illuminate\Support\Facades\Route;
 | Search Public API (platform-global + tenant-scoped)
 |--------------------------------------------------------------------------
 |
-| All routes are anonymous, throttled, and mounted at /api/v1/search/*
+| Public, anonymous, throttled, mounted at /api/v1/search/*. The module
+| mount already contributes the `search` segment, so no inner prefix.
+| The web BFF's federated search and autocomplete call these on every
+| keystroke without a session; analytics is a public ingestion sink
+| (sanitised + batched).
 |
 */
 
-Route::prefix('search')
-    ->middleware(['throttle:60,1'])
+Route::middleware(['throttle:60,1'])
+    ->withoutMiddleware(['auth.any', 'tenant'])
     ->group(function () {
         Route::get('/', [SearchController::class, 'search'])->name('search.search');
         Route::get('suggest', [SearchController::class, 'suggest'])->name('search.suggest');

@@ -8,9 +8,7 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
 {
     public function registerModule(): void
     {
-        \Log::info('[SeoContent] registerModule called');
         if ($this->app->runningInConsole()) {
-            \Log::info('[SeoContent] registering seo:import command');
             $this->commands([
                 \App\Modules\SeoContent\Console\SeoImportCommand::class,
             ]);
@@ -19,7 +17,6 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
 
     public function bootModule(): void
     {
-        \Log::info('[SeoContent] bootModule called');
         $this->loadModuleMigrations();
     }
 }

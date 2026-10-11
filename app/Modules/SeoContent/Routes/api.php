@@ -8,12 +8,15 @@ use Illuminate\Support\Facades\Route;
 | SEO Content Public API (platform-global, no tenant)
 |--------------------------------------------------------------------------
 |
-| All routes are public, anonymous, and throttled.
-| Mounted by the registry at /api/v1/seo/*
+| Public, anonymous, throttled, mounted at /api/v1/seo_content/seo/*.
+| The web app's ISR pages read these endpoints on every render
+| (SEO_CONTENT_SOURCE=api), so they must answer without a session and
+| without a tenant header.
 |
 */
 
 Route::prefix('seo')
+    ->withoutMiddleware(['auth.any', 'tenant'])
     ->middleware(['throttle:60,1'])
     ->group(function () {
         Route::get('pages/{slug}', [SeoPageController::class, 'show'])->name('seo.pages.show');

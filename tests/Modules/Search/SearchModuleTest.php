@@ -7,12 +7,18 @@ use App\Modules\Search\Models\SearchQuery;
 use App\Modules\Search\SearchIndexer;
 use App\Modules\SeoContent\Models\SeoPage;
 use App\Modules\SeoContent\Models\SeoCluster;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Tests\TestCase;
 
 class SearchModuleTest extends TestCase
 {
-    use RefreshDatabase;
+    // Truncation, not RefreshDatabase's wrapping transaction: InnoDB
+    // FULLTEXT cannot see uncommitted rows (proven on MySQL 8 — a row
+    // inserted inside a transaction is invisible to MATCH AGAINST until
+    // commit), so transactional seeding would make every FULLTEXT
+    // assertion silently return zero results on MySQL while passing on
+    // sqlite. Truncated seeding commits immediately on both drivers.
+    use DatabaseTruncation;
 
     protected function setUp(): void
     {
@@ -31,14 +37,12 @@ class SearchModuleTest extends TestCase
 
     public function test_search_documents_table_exists(): void
     {
-        $tables = \DB::connection('central')->select("SELECT name FROM sqlite_master WHERE type='table' AND name='search_documents'");
-        $this->assertNotEmpty($tables);
+        $this->assertTrue(\Schema::connection('central')->hasTable('search_documents'));
     }
 
     public function test_search_queries_table_exists(): void
     {
-        $tables = \DB::connection('central')->select("SELECT name FROM sqlite_master WHERE type='table' AND name='search_queries'");
-        $this->assertNotEmpty($tables);
+        $this->assertTrue(\Schema::connection('central')->hasTable('search_queries'));
     }
 
     public function test_search_indexer_can_be_resolved(): void
@@ -151,5 +155,62 @@ class SearchModuleTest extends TestCase
             }
         }
         $this->assertTrue($found, "Search/SEO routes should be registered");
+    }
+
+    public function test_search_endpoints_answer_anonymously(): void
+    {
+        // The web BFF calls these without a session and without a tenant
+        // header (public discovery + autocomplete), so the module routes must
+        // opt out of auth.any/tenant.
+        SearchDocument::create([
+            'entity_type' => 'temple',
+            'entity_id' => 'temple-1',
+            'tenant_id' => null,
+            'slug' => 'shree-ganesh-temple',
+            'url_path' => '/temples/shree-ganesh-temple',
+            'title' => 'Ganesh Temple Pune',
+            'subtitle' => 'Pune',
+            'body' => 'A well known temple for Ganesh chaturthi pujas.',
+            'city' => 'Pune',
+            'card_json' => ['verified' => true, 'city' => 'Pune'],
+            'status' => 'ACTIVE',
+            'indexed_at' => now(),
+        ]);
+
+        $this->getJson('/api/v1/search?q=Ganesh')
+            ->assertOk()
+            ->assertJsonPath('data.results.0.slug', 'shree-ganesh-temple');
+
+        $this->getJson('/api/v1/search/suggest?q=Ga')
+            ->assertOk()
+            ->assertJsonStructure(['data' => ['suggestions' => [['type', 'label', 'items']]]]);
+
+        $this->getJson('/api/v1/search/entities/temple/shree-ganesh-temple')
+            ->assertOk()
+            ->assertJsonPath('data.slug', 'shree-ganesh-temple');
+
+        $this->getJson('/api/v1/search/trending')->assertOk();
+    }
+
+    public function test_search_analytics_ingest_accepts_anonymous_batch(): void
+    {
+        $this->postJson('/api/v1/search/analytics', [
+            'queries' => [
+                ['q' => 'ganesh puja', 'results' => 3],
+                ['q' => 'unknown ritual xyz', 'results' => 0],
+            ],
+        ])
+            ->assertOk()
+            ->assertJsonPath('data.accepted', 2);
+
+        $this->assertDatabaseCount('search_queries', 2);
+    }
+
+    public function test_search_analytics_rejects_oversized_batch(): void
+    {
+        $queries = array_fill(0, 101, ['q' => 'spam', 'results' => 1]);
+
+        $this->postJson('/api/v1/search/analytics', ['queries' => $queries])
+            ->assertStatus(422);
     }
 }

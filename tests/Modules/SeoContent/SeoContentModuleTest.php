@@ -26,14 +26,12 @@ class SeoContentModuleTest extends TestCase
 
     public function test_seo_pages_table_exists(): void
     {
-        $tables = \DB::connection('central')->select("SELECT name FROM sqlite_master WHERE type='table' AND name='seo_pages'");
-        $this->assertNotEmpty($tables);
+        $this->assertTrue(\Schema::connection('central')->hasTable('seo_pages'));
     }
 
     public function test_seo_clusters_table_exists(): void
     {
-        $tables = \DB::connection('central')->select("SELECT name FROM sqlite_master WHERE type='table' AND name='seo_clusters'");
-        $this->assertNotEmpty($tables);
+        $this->assertTrue(\Schema::connection('central')->hasTable('seo_clusters'));
     }
 
     public function test_seo_page_model_can_store_and_retrieve(): void
@@ -99,5 +97,46 @@ class SeoContentModuleTest extends TestCase
             }
         }
         $this->assertTrue($found, "SEO routes should be registered");
+    }
+
+    public function test_seo_api_answers_anonymously(): void
+    {
+        // The web app's ISR pages call these on every render
+        // (SEO_CONTENT_SOURCE=api), so they must answer without a session
+        // and without a tenant header.
+        SeoCluster::create([
+            'cluster' => 'test_cluster',
+            'label' => 'Test Cluster',
+            'base_path' => 'test',
+        ]);
+
+        SeoPage::create([
+            'slug' => 'public-page',
+            'cluster' => 'test_cluster',
+            'noindex' => false,
+            'title' => 'Public Page',
+            'meta_title' => 'Public Page',
+            'meta_description' => 'Public description',
+            'content_hash' => 'hash-public',
+            'page_json' => ['id' => 'seo-1', 'slug' => 'public-page', 'title' => 'Public Page', 'content' => '<p>Body</p>'],
+            'search_text' => 'public page content',
+        ]);
+
+        $this->getJson('/api/v1/seo_content/seo/pages/public-page')
+            ->assertOk()
+            ->assertJsonPath('data.slug', 'public-page')
+            ->assertJsonPath('data.page_json.slug', 'public-page');
+
+        $this->getJson('/api/v1/seo_content/seo/registry')
+            ->assertOk()
+            ->assertJsonPath('data.pages.public-page.cluster', 'test_cluster')
+            ->assertJsonPath('data.clusters.test_cluster.base_path', 'test');
+
+        $this->getJson('/api/v1/seo_content/seo/pages?cluster=test_cluster')
+            ->assertOk()
+            ->assertJsonCount(1, 'data');
+
+        $this->getJson('/api/v1/seo_content/seo/pages/missing-page')
+            ->assertNotFound();
     }
 }

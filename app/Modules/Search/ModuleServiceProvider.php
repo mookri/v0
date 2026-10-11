@@ -18,7 +18,6 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
 {
     public function registerModule(): void
     {
-        \Log::info('[Search] registerModule called');
         $this->app->singleton(SearchIndexer::class, fn () => new SearchIndexer());
 
         // Bind the search document providers for each module
@@ -28,7 +27,6 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
         $this->app->bind(ProvidesSearchDocuments::class . ':puja_service', fn () => new \App\Modules\Search\Contracts\PujaServiceSearchProvider($this->app->make(ListsCatalogItems::class)));
 
         if ($this->app->runningInConsole()) {
-            \Log::info('[Search] registering search:reindex command');
             $this->commands([
                 \App\Modules\Search\Console\SearchReindexCommand::class,
             ]);
@@ -37,7 +35,6 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
 
     public function bootModule(): void
     {
-        \Log::info('[Search] bootModule called');
         $this->loadModuleMigrations();
 
         // Register model observers for live reindex
