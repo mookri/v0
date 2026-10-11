@@ -87,6 +87,11 @@ final class PlatformServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Boot modules before our own registrations so their commands are
+        // registered before the console kernel resolves them (S32: seo:import
+        // and search:reindex must be visible to `php artisan`).
+        $this->app->make(ModuleRegistry::class)->boot();
+
         if ($this->app->runningInConsole()) {
             $this->commands([
                 ModuleListCommand::class,
@@ -108,10 +113,6 @@ final class PlatformServiceProvider extends ServiceProvider
         }
 
         $this->registerAuthzCacheInvalidation($this->app->make(AuthzCacheInvalidator::class));
-
-        // Discover + validate + order modules eagerly so manifest errors
-        // surface at boot, not lazily on first use (doc 01 §2-2).
-        $this->app->make(ModuleRegistry::class)->boot();
     }
 
     /**

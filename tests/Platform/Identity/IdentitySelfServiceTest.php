@@ -74,7 +74,7 @@ final class IdentitySelfServiceTest extends TenantIntegrationTestCase
         // Call sessions() with the first token (bearer auth) - use postJson like test_bearer
         $headers = ['Authorization' => 'Bearer '.$first['token']];
         $listed = $this->getJson('/api/v1/identity/sessions', $headers);
-        
+
         // Debug: dump response if it fails
         if ($listed->status() !== 200) {
             $this->fail('sessions() returned '.$listed->status().': '.json_encode($listed->json()));
