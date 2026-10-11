@@ -6,8 +6,7 @@ import { mfaGetContext } from '@/server/mfa-guard';
  * GET /api/mfa/status — read MFA enrollment state.
  *
  * Contract §5: **AAL1** (cookie session). Read-only; no body, no
- * spread. Cookie-first actor per §7 (legacy header only behind
- * LEGACY_HEADER_AUTH=1).
+ * spread. Cookie actor per §7 — cookie is the only credential source.
  */
 export async function GET(req: Request) {
   const requestId = newRequestId();

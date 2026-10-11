@@ -5,9 +5,10 @@ import { getRequestContext } from '@/server/route-guard';
 /**
  * GET /api/sessions — list active sessions.
  *
- * Contract §7: cookie-first actor (raw `Authorization` reads removed —
- * header tokens only via LEGACY_HEADER_AUTH=1). §8: X-Request-Id
- * propagated to Laravel for log correlation.
+ * Contract §7: cookie-only actor (raw `Authorization` reads and the
+ * LEGACY_HEADER_AUTH path both removed — header tokens are not
+ * credentials). §8: X-Request-Id propagated to Laravel for log
+ * correlation.
  */
 export async function GET(req: Request) {
   const requestId = newRequestId();

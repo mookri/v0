@@ -154,56 +154,66 @@ describe('contract §7 — cookie policy', () => {
   });
 });
 
-describe('contract §7 — authentication precedence matrix', () => {
-  const savedLegacy = process.env.LEGACY_HEADER_AUTH;
-
-  afterEach(() => {
-    if (savedLegacy === undefined) delete process.env.LEGACY_HEADER_AUTH;
-    else process.env.LEGACY_HEADER_AUTH = savedLegacy;
-  });
-
+describe('contract §7 — authentication precedence matrix (cookie-only credential)', () => {
   function req(headers: Record<string, string>): Request {
     return new Request('http://localhost/api/mfa/status', { headers });
   }
 
-  test('row 1: cookie wins; header alongside is flagged but ignored', () => {
-    process.env.LEGACY_HEADER_AUTH = '1';
+  test('row 1: cookie wins; Authorization alongside is ignored entirely', () => {
     const extraction = extractSessionToken(
       req({ cookie: 'navdhya-session=cookie-tok', authorization: 'Bearer header-tok' }),
     );
     expect(extraction.source).toBe('cookie');
     expect(extraction.token).toBe('cookie-tok');
-    expect(extraction.legacyHeaderWithCookie).toBe(true);
+    // The removed legacy path had a `legacyHeaderWithCookie` anomaly flag;
+    // cookie-only extraction has no header state at all.
+    expect(extraction).not.toHaveProperty('legacyHeaderWithCookie');
   });
 
-  test('row 3: header-only allowed only when LEGACY_HEADER_AUTH=1', () => {
+  test('row 3: header-only is never a credential — even with the removed LEGACY_HEADER_AUTH flag set', () => {
+    // The env var is dead code now; setting it proves the flag buys nothing.
     process.env.LEGACY_HEADER_AUTH = '1';
-    const extraction = extractSessionToken(req({ authorization: 'Bearer header-tok' }));
-    expect(extraction.source).toBe('header');
-    expect(extraction.token).toBe('header-tok');
+    try {
+      const extraction = extractSessionToken(req({ authorization: 'Bearer header-tok' }));
+      expect(extraction.source).toBe('none');
+      expect(extraction.token).toBeNull();
+    } finally {
+      delete process.env.LEGACY_HEADER_AUTH;
+    }
   });
 
-  test('row 2/4 sibling: header-only without flag → no credential (401, no fallback)', () => {
-    delete process.env.LEGACY_HEADER_AUTH;
+  test('row 2/4 sibling: header-only → no credential (401, no fallback)', () => {
     const extraction = extractSessionToken(req({ authorization: 'Bearer header-tok' }));
     expect(extraction.source).toBe('none');
     expect(extraction.token).toBeNull();
   });
 
   test('row 4: nothing → no credential', () => {
-    delete process.env.LEGACY_HEADER_AUTH;
     const extraction = extractSessionToken(req({}));
     expect(extraction.source).toBe('none');
     expect(extraction.token).toBeNull();
   });
 
   test('cookie token is never fallen back from — a header cannot shadow it', () => {
-    delete process.env.LEGACY_HEADER_AUTH;
     const extraction = extractSessionToken(
       req({ cookie: 'navdhya-session=cookie-tok', authorization: 'Bearer header-tok' }),
     );
     expect(extraction.source).toBe('cookie');
     expect(extraction.token).toBe('cookie-tok');
+  });
+
+  test('legacy cookie name still extracts (secure-name rotation window)', () => {
+    process.env.SESSION_COOKIE_SECURE = '1';
+    try {
+      // Current name is __Host-navdhya-session; a session minted before the
+      // rotation still arrives on the legacy plain name.
+      expect(sessionCookieName()).toBe('__Host-navdhya-session');
+      const extraction = extractSessionToken(req({ cookie: 'navdhya-session=old-tok' }));
+      expect(extraction.source).toBe('cookie');
+      expect(extraction.token).toBe('old-tok');
+    } finally {
+      delete process.env.SESSION_COOKIE_SECURE;
+    }
   });
 });
 

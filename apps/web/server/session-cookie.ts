@@ -61,20 +61,21 @@ export function clearSessionCookie(): string {
  * |--------|-------------|-----------------------------------------------|
  * | valid  | any         | cookie wins                                   |
  * | present+invalid | any | 401 — never fall back (blocks downgrade)      |
- * | absent | valid       | allowed only when LEGACY_HEADER_AUTH=1        |
+ * | absent | any         | 401 — header tokens are not credentials      |
  * | absent | absent      | 401                                           |
+ *
+ * The legacy header-token path (LEGACY_HEADER_AUTH) was removed: cookie
+ * is the only credential source, so `source` is 'cookie' | 'none'.
  *
  * "Cookie present" = cookie header contains either the current or the
  * legacy cookie name. Token *validity* is decided by the caller — this
  * function only reports provenance so the matrix can be applied.
  */
-export type TokenSource = 'cookie' | 'header' | 'none';
+export type TokenSource = 'cookie' | 'none';
 
 export interface TokenExtraction {
   token: string | null;
   source: TokenSource;
-  /** Set when the request carried a header token alongside a cookie. */
-  legacyHeaderWithCookie: boolean;
 }
 
 export function extractSessionToken(req: Request): TokenExtraction {
@@ -82,22 +83,15 @@ export function extractSessionToken(req: Request): TokenExtraction {
   const cookieToken =
     readCookie(cookieHeader, sessionCookieName()) ??
     readCookie(cookieHeader, LEGACY_COOKIE_NAME);
-  const headerRaw = req.headers.get('authorization');
-  const headerToken = headerRaw?.startsWith('Bearer ') ? headerRaw.slice(7) : null;
 
   if (cookieToken !== null) {
     return {
       token: cookieToken,
       source: 'cookie',
-      legacyHeaderWithCookie: headerToken !== null,
     };
   }
 
-  if (headerToken !== null && process.env.LEGACY_HEADER_AUTH === '1') {
-    return { token: headerToken, source: 'header', legacyHeaderWithCookie: false };
-  }
-
-  return { token: null, source: 'none', legacyHeaderWithCookie: headerToken !== null };
+  return { token: null, source: 'none' };
 }
 
 function readCookie(header: string, name: string): string | null {
