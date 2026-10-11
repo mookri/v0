@@ -15,7 +15,7 @@
 //      beyond the cap — we will reject the request anyway).
 
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { getRegistryEntry, getClusterMeta } from '@/lib/content/registry';
 import { invalidatePageCache } from '@/lib/linking/graph';
 import { InProcessRateLimiter, clientIp } from '@/lib/security/rate-limit';
@@ -111,6 +111,11 @@ function revalidateSlug(slug: string): RevalidateResult {
     const path = `/${clusterMeta.basePath}/${slug}`;
 
     revalidatePath(path);
+    // Cache Components build: the hourly "use cache" entries in dal/seo.ts
+    // are tagged per slug — bust both route shapes on a content edit.
+    // ("max" = expire immediately; required second arg on Next 16.)
+    revalidateTag(`seo:route:${slug}`, "max");
+    revalidateTag(`seo:puja:${slug}`, "max");
     invalidatePageCache(slug);
 
     return { slug, status: 'ok', path };

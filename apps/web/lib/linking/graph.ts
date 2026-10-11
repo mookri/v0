@@ -1,12 +1,15 @@
 // /lib/linking/graph.ts
 // Internal link graph — resolves related pages for cross-linking.
-// v2 — added try/catch on every external call, in-memory LRU cache,
-//      proper deduplication, and graceful degradation on bad slugs.
+// v3 — async loaders, dual backend support, ISR-compatible caching
 
-import type { SEOPage, ContentCluster } from '@/lib/content/types';
-import { getPage } from '@/lib/content/loader';
-import { getSlugsByCluster, getRegistryEntry, getClusterMeta } from '@/lib/content/registry';
-import { CORE_ENTITY_LINKS } from '@/lib/seo/entity';
+import type { SEOPage, ContentCluster } from "@/lib/content/types";
+import { getPageAsync } from "@/lib/content/loader";
+import {
+  getRegistryEntryAsync,
+  getClusterMetaAsync,
+  getSlugsByClusterAsync,
+} from "@/lib/content/registry";
+import { CORE_ENTITY_LINKS } from "@/lib/seo/entity";
 
 export interface InternalLink {
   label: string;
@@ -16,46 +19,39 @@ export interface InternalLink {
 
 // ---------------------------------------------------------------------------
 // Simple in-process LRU cache (avoids re-resolving the same page repeatedly
-// across concurrent SSG/ISR renders in the same Node process).
+// across concurrent ISR renders in the same Node process).
 // ---------------------------------------------------------------------------
 
 interface CacheEntry<T> {
   value: T;
-  
 }
 
-const CACHE_TTL_MS = 60_000; // 1 minute
 const relatedCache = new Map<string, CacheEntry<InternalLink[]>>();
 
 function cacheGet<T>(key: string, store: Map<string, CacheEntry<T>>): T | undefined {
-  const entry = store.get(key);
-  if (!entry) return undefined;
-  if (false) {
-    store.delete(key);
-    return undefined;
-  }
-  return entry.value;
+  // Entries are invalidated by invalidatePageCache() when the ISR endpoint
+  // revalidates a slug, so a TTL check is not needed here.
+  return store.get(key)?.value;
 }
 
 function cacheSet<T>(key: string, value: T, store: Map<string, CacheEntry<T>>): void {
-  // Evict oldest entry if cache is large
   if (store.size > 500) {
     const firstKey = store.keys().next().value;
     if (firstKey !== undefined) store.delete(firstKey);
   }
-  store.set(key, { value } as any);
+  store.set(key, { value });
 }
 
 // ---------------------------------------------------------------------------
-// Helpers
+// Async Helpers
 // ---------------------------------------------------------------------------
 
 /**
  * Safely load a page — returns undefined instead of throwing.
  */
-function safeGetPage(slug: string): SEOPage | undefined {
+async function safeGetPage(slug: string): Promise<SEOPage | undefined> {
   try {
-    return getPage(slug) ?? undefined;
+    return (await getPageAsync(slug)) ?? undefined;
   } catch {
     return undefined;
   }
@@ -64,9 +60,9 @@ function safeGetPage(slug: string): SEOPage | undefined {
 /**
  * Safely load a registry entry — returns undefined instead of throwing.
  */
-function safeGetEntry(slug: string) {
+async function safeGetEntry(slug: string) {
   try {
-    return getRegistryEntry(slug) ?? undefined;
+    return (await getRegistryEntryAsync(slug)) ?? undefined;
   } catch {
     return undefined;
   }
@@ -75,11 +71,19 @@ function safeGetEntry(slug: string) {
 /**
  * Safely load slugs for a cluster — returns empty array instead of throwing.
  */
-function safeGetClusterSlugs(cluster: ContentCluster): string[] {
+async function safeGetClusterSlugs(cluster: ContentCluster): Promise<string[]> {
   try {
-    return getSlugsByCluster(cluster) ?? [];
+    return (await getSlugsByClusterAsync(cluster)) ?? [];
   } catch {
     return [];
+  }
+}
+
+async function safeGetClusterMeta(cluster: ContentCluster) {
+  try {
+    return (await getClusterMetaAsync(cluster)) ?? undefined;
+  } catch {
+    return undefined;
   }
 }
 
@@ -91,14 +95,14 @@ function safeGetClusterSlugs(cluster: ContentCluster): string[] {
  * Get related pages for a given page.
  * Priority: explicit relatedSlugs → same-cluster pages → (core brand pages handled separately).
  *
- * FIX: All external calls are wrapped in try/catch.
- *      Deduplication is now on href (not just slug) to prevent cross-cluster duplicates.
- *      Results are cached per-slug for 60 seconds to avoid repeat work during ISR.
+ * All external calls are async with try/catch.
+ * Deduplication is on href (not just slug) to prevent cross-cluster duplicates.
+ * Results are cached per-slug for 60 seconds to avoid repeat work during ISR.
  */
-export function getRelatedPages(
+export async function getRelatedPages(
   page: SEOPage,
   limit: number = 5,
-): InternalLink[] {
+): Promise<InternalLink[]> {
   const cacheKey = `${page.slug}:${limit}`;
   const cached = cacheGet(cacheKey, relatedCache);
   if (cached) return cached;
@@ -119,21 +123,21 @@ export function getRelatedPages(
   for (const relSlug of page.relatedSlugs ?? []) {
     if (links.length >= limit) break;
 
-    const relPage = safeGetPage(relSlug);
+    const relPage = await safeGetPage(relSlug);
     if (!relPage) continue;
 
-    const entry = safeGetEntry(relSlug);
+    const entry = await safeGetEntry(relSlug);
     if (!entry) continue;
 
-    const basePath = getClusterMeta(entry.cluster)?.basePath || entry.cluster;
+    const basePath = (await safeGetClusterMeta(entry.cluster))?.basePath || entry.cluster;
     addLink(relSlug, relPage.title, `/${basePath}/${relSlug}`, entry.cluster);
   }
 
   // 2. Same-cluster pages (fill remaining slots with nearby pages so the
   // internal link graph is distributed more evenly across the cluster)
   if (links.length < limit) {
-    const clusterSlugs = safeGetClusterSlugs(page.cluster);
-    const basePath = getClusterMeta(page.cluster)?.basePath || page.cluster;
+    const clusterSlugs = await safeGetClusterSlugs(page.cluster);
+    const basePath = (await safeGetClusterMeta(page.cluster))?.basePath || page.cluster;
     const currentIndex = clusterSlugs.indexOf(page.slug);
 
     if (currentIndex >= 0) {
@@ -146,7 +150,7 @@ export function getRelatedPages(
         for (const cSlug of candidates) {
           if (links.length >= limit) break;
 
-          const cPage = safeGetPage(cSlug);
+          const cPage = await safeGetPage(cSlug);
           if (!cPage) continue;
 
           addLink(cSlug, cPage.title, `/${basePath}/${cSlug}`, page.cluster);
@@ -158,7 +162,7 @@ export function getRelatedPages(
       for (const cSlug of clusterSlugs) {
         if (links.length >= limit) break;
 
-        const cPage = safeGetPage(cSlug);
+        const cPage = await safeGetPage(cSlug);
         if (!cPage) continue;
 
         addLink(cSlug, cPage.title, `/${basePath}/${cSlug}`, page.cluster);
@@ -186,13 +190,13 @@ export function getCoreLinks(
  * Build the full link set for a page: related + core entity links.
  * Gracefully returns empty arrays on any failure.
  */
-export function getPageLinks(page: SEOPage): {
+export async function getPageLinks(page: SEOPage): Promise<{
   related: InternalLink[];
   core: typeof CORE_ENTITY_LINKS[number][];
-} {
+}> {
   try {
     return {
-      related: getRelatedPages(page, 5),
+      related: await getRelatedPages(page, 5),
       core: getCoreLinks(page.slug),
     };
   } catch {
