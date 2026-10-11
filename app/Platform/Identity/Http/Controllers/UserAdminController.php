@@ -89,6 +89,15 @@ final class UserAdminController
         );
     }
 
+    public function deactivate(Request $request, string $id): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->setStatusJson($request, $id, self::STATUS_DEACTIVATED),
+            'User deactivated.',
+        );
+    }
+
     private function setStatusJson(Request $request, string $id, string $status): JsonResponse
     {
         $validated = $request->validate(['tenant_id' => ['required', 'string']]);

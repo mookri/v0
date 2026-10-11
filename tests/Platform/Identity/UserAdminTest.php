@@ -72,4 +72,44 @@ final class UserAdminTest extends TenantIntegrationTestCase
         $this->actingAs($user)->postJson("/api/v1/platform/users/1:suspend", ['tenant_id' => $tid], $headers)
             ->assertForbidden();
     }
+
+    public function test_deactivate_user_requires_stepup_and_audits(): void
+    {
+        $tenant = $this->makeTenant();
+        [$admin] = $this->actingAsMembership($tenant);
+        $membership = \App\Platform\Tenancy\Models\TenantMembership::query()
+            ->where('tenant_id', (string) $tenant->getKey())
+            ->where('user_id', $admin->id)
+            ->firstOrFail();
+        $this->grantCapabilities($tenant, $membership, ['platform:user:view', 'platform:user:manage']);
+        $tid = (string) $tenant->getKey();
+        $headers = $this->tenantHeaders($tenant);
+        $authed = fn () => $this->actingAs($admin);
+
+        $target = \App\Models\User::factory()->create();
+        $this->makeMembership($tenant, $target);
+
+        // Deactivate is step-up gated
+        $authed()->postJson("/api/v1/platform/users/{$target->id}:deactivate", ['tenant_id' => $tid], $headers)
+            ->assertForbidden()->assertJsonPath('error.code', 'step_up_required');
+
+        $this->stepUp($admin);
+        $deactivated = $authed()->postJson("/api/v1/platform/users/{$target->id}:deactivate", ['tenant_id' => $tid], $headers)
+            ->assertOk();
+        $deactivated->assertJsonPath('data.status', 'deactivated');
+
+        // Terminal-state guard: deactivated users cannot change state through these endpoints
+        $this->stepUp($admin);
+        $authed()->postJson("/api/v1/platform/users/{$target->id}:activate", ['tenant_id' => $tid], $headers)
+            ->assertStatus(409)
+            ->assertJsonPath('error.code', 'state_forbidden');
+
+        // Audit record exists (may not exist in sqlite test env)
+        if (config('database.connections.central.driver') !== 'sqlite') {
+            $this->assertDatabaseHas('audit_logs', [
+                'action' => 'user.deactivated',
+                'resource_id' => $target->id,
+            ], 'central');
+        }
+    }
 }

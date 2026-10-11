@@ -1,6 +1,10 @@
 <?php
 
 use App\Platform\Observability\Health\ReadinessCheck;
+use App\Platform\Authz\Http\Middleware\CheckCapability;
+use App\Platform\Authz\Http\Middleware\RequiresAcr;
+use App\Platform\Identity\Http\Middleware\AuthenticateAny;
+use App\Platform\Tenancy\Http\Middleware\ResolveTenantContext;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,7 +35,7 @@ Route::get('/.well-known/jwks.json', [\App\Platform\Identity\OAuth\Http\Controll
     ->middleware('throttle:60,1')
     ->name('platform.jwks');
 Route::get('/oauth/userinfo', [\App\Platform\Identity\OAuth\Http\Controllers\DiscoveryController::class, 'userinfo'])
-    ->middleware(['auth.any', 'throttle:60,1'])
+    ->middleware([AuthenticateAny::class, 'throttle:60,1'])
     ->name('platform.userinfo');
 
 // Step-up form (SEC-004 §6, doc 06 §7.5): GET renders the TOTP/recovery
@@ -59,34 +63,36 @@ Route::post('/oauth/stepup', [\App\Platform\Identity\Http\Controllers\MfaControl
 // below — doc 06 §7.5); every step-up write now has a console surface.
 Route::group(['prefix' => '/platform', 'middleware' => 'auth'], function (): void {
     Route::post('/policies', [\App\Platform\Authz\Http\Controllers\PolicyController::class, 'store'])
-        ->middleware(['tenant', 'capability:platform:policy:configure']);
+        ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:policy:configure']);
     Route::post('/policies/{policy}:activate', [\App\Platform\Authz\Http\Controllers\PolicyController::class, 'activate'])
-        ->middleware(['tenant', 'capability:platform:policy:configure']);
+        ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:policy:configure']);
     Route::post('/policies/{policy}:disable', [\App\Platform\Authz\Http\Controllers\PolicyController::class, 'disable'])
-        ->middleware(['tenant', 'capability:platform:policy:configure']);
+        ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:policy:configure']);
     Route::patch('/policies/{policy}', [\App\Platform\Authz\Http\Controllers\PolicyController::class, 'update'])
-        ->middleware(['tenant', 'capability:platform:policy:configure']);
+        ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:policy:configure']);
     Route::post('/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'store']);
     Route::post('/users/{id}:suspend', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'suspend'])
-        ->middleware(['tenant', 'capability:platform:user:manage', 'stepup:2']);
+        ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2']);
     Route::post('/users/{id}:activate', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'activate'])
-        ->middleware(['tenant', 'capability:platform:user:manage', 'stepup:2']);
+        ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2']);
+    Route::post('/users/{id}:deactivate', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'deactivate'])
+        ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2']);
     // Grant/revoke mirror the API exactly (route: stepup:2 only; the
     // action's scopeToTenant does the issuer/tenant work; SoD runs on
     // first-time grants).
     Route::post('/memberships/{membershipId}/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'grant'])
-        ->middleware('stepup:2');
+        ->middleware([RequiresAcr::class . ':2']);
     Route::delete('/memberships/{membershipId}/roles/{assignmentId}', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'revoke'])
-        ->middleware('stepup:2');
+        ->middleware([RequiresAcr::class . ':2']);
     // Machine key administration mirrors the API exactly (route: stepup:2
     // only; the actions do their own membership checks). The one-time
     // secret rides the success flash on web — nothing else can carry it.
     Route::post('/api-keys', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'issue'])
-        ->middleware('stepup:2');
+        ->middleware([RequiresAcr::class . ':2']);
     Route::post('/api-keys/{id}:revoke', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'revoke'])
-        ->middleware('stepup:2');
+        ->middleware([RequiresAcr::class . ':2']);
     Route::post('/api-keys/{id}:rotate', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'rotate'])
-        ->middleware('stepup:2');
+        ->middleware([RequiresAcr::class . ':2']);
     // Invites mirror the API exactly (no capability or step-up on either
     // side — the actions check tenant + issuer membership, and revoke is
     // tenant-scoped). The one-time acceptance token rides the success
