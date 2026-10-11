@@ -2,6 +2,8 @@ import { VerificationsPageView } from '@/presentation/verifications/Verification
 import { customerApi } from '@/adapters/backend/customer-api-client';
 import type { CustomerVerification } from '@/application/verifications/verifications';
 
+export const dynamic = 'force-dynamic';
+
 export default async function VerificationsPage() {
   try {
     const data = await customerApi.getVerifications();

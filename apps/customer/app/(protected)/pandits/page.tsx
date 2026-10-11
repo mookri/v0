@@ -1,6 +1,8 @@
 import { PanditsPageView } from '@/presentation/pandits/PanditsPage';
 import { customerApi } from '@/adapters/backend/customer-api-client';
 
+export const dynamic = 'force-dynamic';
+
 export default async function PanditsPage() {
   try {
     const data = await customerApi.getPandits({ limit: 20 });

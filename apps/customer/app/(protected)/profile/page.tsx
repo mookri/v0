@@ -3,6 +3,8 @@ import { customerApi } from '@/adapters/backend/customer-api-client';
 import { toCustomerProfile } from '@/application/profile/customer-profile';
 import { notFound } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProfilePage() {
   try {
     const data = await customerApi.getProfile();

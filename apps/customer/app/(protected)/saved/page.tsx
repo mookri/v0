@@ -2,6 +2,8 @@ import { SavedPageView } from '@/presentation/saved/SavedPage';
 import { customerApi } from '@/adapters/backend/customer-api-client';
 import type { SavedItemCard, SavedItemType } from '@/application/saved/saved-items';
 
+export const dynamic = 'force-dynamic';
+
 export default async function SavedPage() {
   try {
     const data = await customerApi.getSaved();

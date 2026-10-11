@@ -2,6 +2,8 @@ import { BookingDetailPage } from '@/presentation/bookings/BookingDetailPage';
 import { customerApi } from '@/adapters/backend/customer-api-client';
 import type { CustomerBookingDetails } from '@/application/bookings/get-customer-booking-details';
 
+export const dynamic = 'force-dynamic';
+
 export default async function BookingDetail({ params }: { params: Promise<{ bookingId: string }> }) {
   const { bookingId } = await params;
   try {

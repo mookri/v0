@@ -15,6 +15,8 @@ interface RouteParams {
   params: Promise<{ pujaId: string }>;
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function PujaDetailPage({ params }: RouteParams) {
   const { pujaId } = await params;
 
