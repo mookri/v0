@@ -12,6 +12,24 @@ import { stranglerTarget, stranglerFlagsFromEnv } from '@/lib/strangler/route-ma
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // W1: user-facing dashboards (/user /pandit /vendor /manager) live in the
+  // customer app — redirect there, production only. Flag-gated like the
+  // strangler below (default off) so dev/staging keep serving locally.
+  if (process.env.NEXT_PUBLIC_PRODUCTION_REDIRECTS === 'true') {
+    const dashboardPaths = ['/user', '/pandit', '/vendor', '/manager'];
+    for (const path of dashboardPaths) {
+      // Same class shape as ROUTE_RULES "/user/*": bare path + descendants.
+      if (pathname === path || pathname.startsWith(`${path}/`)) {
+        const origin = process.env.NEXT_PUBLIC_CUSTOMER_ORIGIN ?? 'https://app.navdhya.com';
+        const destination = new URL(`${origin}${pathname}`);
+        // Carry the query string — deep links like /user/?tab=bookings
+        // must survive the hop (the strangler redirect below does too).
+        destination.search = request.nextUrl.search;
+        return NextResponse.redirect(destination, 301);
+      }
+    }
+  }
+
   // Strangler: redirect cut-over classes to their app origin. Flag-gated;
   // default off (serve-local everywhere) so this is a no-op until cutover.
   const decision = stranglerTarget(
