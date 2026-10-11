@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Search, Phone, User, ShoppingCart, ChevronDown, Bell, MapPin } from 'lucide-react'
 import { MENU_GROUPS } from "@/lib/menuData"
+import { SearchBox } from "@/components/search/search-box"
 
 // Function to transform MENU_GROUPS data into the format needed for site header
 const transformMenuData = () => {
@@ -135,14 +136,7 @@ export function SiteHeader() {
 
             {/* 3. Search Bar */}
             <div className="flex-1 max-w-[450px]">
-              <div className="relative flex items-center w-full">
-                <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="Search for puja, pandit, temple or festival..."
-                  className="w-full rounded-sm border border-border bg-transparent pl-9 pr-4 py-2 text-[13px] focus:border-[#FF4500] focus:outline-none focus:ring-1 focus:ring-[#FF4500]"
-                />
-              </div>
+              <SearchBox variant="header" />
             </div>
 
             {/* Right Actions */}
@@ -193,6 +187,15 @@ export function SiteHeader() {
 
               {/* Right Side: Auth and Notification Icons (Circular BG) */}
               <div className="flex items-center gap-3">
+                {/* Search (routes to the /search page — the compact box is desktop-only) */}
+                <Link
+                  href="/search"
+                  aria-label="Search"
+                  className="flex items-center justify-center w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+                >
+                  <Search className="w-4 h-4 text-gray-700" />
+                </Link>
+
                 {/* Notification Icon (Just next to Profile) */}
                 <button className="flex items-center justify-center w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors relative">
                   <Bell className="w-4 h-4 text-gray-700" />

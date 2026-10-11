@@ -28,6 +28,18 @@ import {
 import { Bm25Index, type IndexableDoc } from "@/lib/search/bm25";
 import { getClusterMeta } from "@/lib/content/registry";
 import type { ContentCluster } from "@/lib/content/types";
+import {
+  MAX_QUERY_LENGTH,
+  MAX_SUGGEST_QUERY_LENGTH,
+  typeLabel,
+  type SuggestionItem,
+  type SuggestionGroup,
+} from "@/lib/search/params";
+
+// Constants and suggestion shapes live in the client-safe params module;
+// re-exported here so the S39 surface keeps working unchanged.
+export { MAX_QUERY_LENGTH, MAX_SUGGEST_QUERY_LENGTH };
+export type { SuggestionItem, SuggestionGroup };
 
 // ---------------------------------------------------------------------------
 // Public shapes
@@ -49,20 +61,6 @@ export interface SearchResult {
   source: "bm25" | "fulltext" | "both";
 }
 
-export interface SuggestionItem {
-  title: string;
-  url: string;
-  slug?: string | null;
-  city?: string | null;
-  subtitle?: string | null;
-}
-
-export interface SuggestionGroup {
-  type: string;
-  label: string;
-  items: SuggestionItem[];
-}
-
 export interface SearchParams {
   q: string;
   type?: string | null;
@@ -75,8 +73,6 @@ export interface SearchOutcome {
   sources: { bm25: number; fulltext: number };
 }
 
-export const MAX_QUERY_LENGTH = 200;
-export const MAX_SUGGEST_QUERY_LENGTH = 80;
 const MAX_RESULTS_LIMIT = 20;
 const DEFAULT_RESULTS_LIMIT = 10;
 const SUGGEST_GROUP_LIMIT = 5;
@@ -485,21 +481,6 @@ export async function federateSuggestions(
   return [...groups.values()]
     .map((group) => ({ ...group, items: group.items.slice(0, SUGGEST_GROUP_LIMIT) }))
     .filter((group) => group.items.length > 0);
-}
-
-function typeLabel(type: string): string {
-  switch (type) {
-    case "seo_page":
-      return "Guides & Blogs";
-    case "temple":
-      return "Temples";
-    case "pandit":
-      return "Pandits";
-    case "puja_service":
-      return "Puja Services";
-    default:
-      return type.charAt(0).toUpperCase() + type.slice(1).replace(/[_-]/g, " ");
-  }
 }
 
 /**

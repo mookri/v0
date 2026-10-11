@@ -26,6 +26,11 @@ const DEFAULT_META: RouteMeta = {
 
 const ROUTE_RULES: RouteRule[] = [
   {
+    // Per-query search results: never indexed, never in the sitemap.
+    pattern: "/search",
+    meta: { noindex: true },
+  },
+  {
     pattern: "/login",
     meta: { noindex: true },
   },
