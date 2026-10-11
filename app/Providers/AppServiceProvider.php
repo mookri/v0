@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Platform\Authz\Http\Middleware\CheckCapability;
+use App\Platform\Authz\Http\Middleware\CheckScope;
+use App\Platform\Authz\Http\Middleware\RequiresAcr;
+use App\Platform\Authz\Http\Middleware\ThrottleTier;
+use App\Platform\Identity\Http\Middleware\AuthenticateAny;
+use App\Platform\Identity\Http\Middleware\AuthenticateHmacToken;
 use App\Platform\Identity\OAuth\CheckOAuthGrant;
 use App\Platform\Identity\OAuth\Console\CreateClientCommand;
 use App\Platform\Identity\OAuth\Console\ListDeviceCodesCommand;
@@ -9,6 +15,7 @@ use App\Platform\Identity\OAuth\Console\RevokeClientCommand;
 use App\Platform\Identity\OAuth\Console\RevokeDeviceCodeCommand;
 use App\Platform\Identity\OAuth\Console\RotateClientSecretCommand;
 use App\Platform\Identity\OAuth\RotatingRefreshTokenRepository;
+use App\Platform\Tenancy\Http\Middleware\ResolveTenantContext;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
@@ -25,6 +32,16 @@ class AppServiceProvider extends ServiceProvider
         // league rotates by default; our subclass adds lineage kill +
         // security event on revoked-token reuse.
         $this->app->bind(RefreshTokenRepository::class, RotatingRefreshTokenRepository::class);
+
+        // Middleware bindings (I4: replace aliases with concrete classes)
+        $this->app->bind('auth.any', AuthenticateAny::class);
+        $this->app->bind('auth.hmac', AuthenticateHmacToken::class);
+        $this->app->bind('tenant', ResolveTenantContext::class);
+        $this->app->bind('capability', CheckCapability::class);
+        $this->app->bind('scope', CheckScope::class);
+        $this->app->bind('throttle.tier', ThrottleTier::class);
+        $this->app->bind('stepup', RequiresAcr::class);
+        $this->app->bind('limit.body', \App\Platform\Http\Middleware\LimitJsonBody::class);
 
         if ($this->app->runningInConsole()) {
             $this->commands([

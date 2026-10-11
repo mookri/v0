@@ -1,13 +1,9 @@
 <?php
 
 use App\Platform\Api\ErrorEnvelope;
-use App\Platform\Authz\Http\Middleware\CheckCapability;
-use App\Platform\Authz\Http\Middleware\CheckScope;
-use App\Platform\Authz\Http\Middleware\RequiresAcr;
-use App\Platform\Authz\Http\Middleware\ThrottleTier;
 use App\Platform\Http\Middleware\AttachRequestId;
+use App\Platform\Http\Middleware\LimitJsonBody;
 use App\Platform\Http\Middleware\RequestTiming;
-use App\Platform\Tenancy\Http\Middleware\ResolveTenantContext;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -30,19 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // AttachRequestId sets one layer in; no-op when the flag is off.
         $middleware->prepend(RequestTiming::class);
 
-        $middleware->alias([
-            'tenant' => ResolveTenantContext::class,
-            'capability' => CheckCapability::class,
-            'scope' => CheckScope::class,
-            'throttle.tier' => ThrottleTier::class,
-            'stepup' => RequiresAcr::class,
-            'auth.hmac' => \App\Platform\Identity\Http\Middleware\AuthenticateHmacToken::class,
-            'auth.any' => \App\Platform\Identity\Http\Middleware\AuthenticateAny::class,
-            'limit.body' => \App\Platform\Http\Middleware\LimitJsonBody::class,
-            // 'stepup' lands with the token platform (docs 03-04).
-        ]);
-
-        $middleware->appendToGroup('api', 'limit.body');
+        $middleware->appendToGroup('api', LimitJsonBody::class);
 
         // Session context for API reads only (doc 06 §8.4): interactive
         // admin-shell components fetch module JSON with the web session's
