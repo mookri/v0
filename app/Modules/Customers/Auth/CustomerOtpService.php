@@ -7,8 +7,11 @@ use App\Platform\Identity\Otp\EmailOtpDelivery;
 use App\Platform\Identity\Otp\EmailOtpDeliveryProvider;
 use App\Platform\Identity\Otp\LocalCodeProvider;
 use App\Platform\Identity\Otp\NullEmailOtpDelivery;
+use App\Platform\Identity\Otp\OtpAudienceRouter;
+use App\Platform\Identity\Otp\OtpCaptchaRequiredException;
 use App\Platform\Identity\Otp\OtpProviderRegistry;
 use App\Platform\Identity\Otp\OtpProviderUnavailableException;
+use App\Platform\Identity\Otp\OtpPurposePolicy;
 use App\Platform\Identity\Otp\OtpSendContext;
 use App\Platform\Identity\Otp\OtpVerifyOutcome;
 use App\Platform\Identity\Otp\OtpVerifyRequest;
@@ -23,14 +26,17 @@ use Illuminate\Support\Facades\DB;
  * intent travels with the challenge until verification creates the
  * account). Rate caps are DB-backed (REDIS-001 interim posture).
  *
- * Verification Fabric (S46): send/match delegate to the
+ * Verification Fabric: send/match delegate to the
  * PhoneVerificationProvider port — this service keeps the entire state
  * machine (caps, supersession, TTL, attempt counting, uniform 401) and
- * dispatches verification on the row's own `provider` column. Local is
- * the only provider S46 registers (behavior-identical extraction);
- * Firebase-per-audience arrives via OtpProviderRegistry in S47+ and the
- * email delivery port (NullEmailOtpDelivery today) swaps bindings in
- * S48 — neither changes this file.
+ * dispatches verification on the row's own `provider` column. S48
+ * routing resolves the sending provider from the purpose policy table
+ * (config/otp-policy.php: audience + risk tier) through the audience
+ * registry (config/otp-providers.php) — local everywhere by default,
+ * firebase-<audience> once an environment selects it — and enforces
+ * the audience's reCAPTCHA requirement before any remote send. The
+ * email delivery port (NullEmailOtpDelivery or the mailer channel,
+ * config-selected) runs only for email identifiers on local sends.
  */
 final class CustomerOtpService
 {
@@ -67,6 +73,7 @@ final class CustomerOtpService
         string $identifier,
         CarbonImmutable $now,
         array $payload = [],
+        ?string $attestation = null,
     ): CustomerOtpChallenge {
         // M2/M3: one transaction serialised on the tenant row — a
         // concurrent resend waits here, then supersedes what the first
@@ -74,7 +81,7 @@ final class CustomerOtpService
         // (tenant, purpose, identifier) is ever active (C2/G1). The
         // hourly cap still counts every issuance: mark, not delete,
         // keeps superseded rows inside the window.
-        return DB::connection('central')->transaction(function () use ($tenantId, $purpose, $identifier, $now, $payload): CustomerOtpChallenge {
+        return DB::connection('central')->transaction(function () use ($tenantId, $purpose, $identifier, $now, $payload, $attestation): CustomerOtpChallenge {
             DB::connection('central')->table('tenants')
                 ->where('id', $tenantId)
                 ->lockForUpdate()
@@ -98,18 +105,37 @@ final class CustomerOtpService
                 ->whereNull('superseded_at')
                 ->update(['superseded_at' => $now->toDateTimeString()]);
 
+            // S48 routing: purpose -> audience + risk tier (config
+            // otp-policy.php; unknown purposes fail closed), then
+            // audience -> provider via otp-providers.php (local unless
+            // an environment selects a remote one). The resolved name
+            // lands on the row either way, so verify() keeps
+            // dispatching on the row's own provenance.
+            $policy = OtpPurposePolicy::resolve($purpose);
+            $provider = $this->providerFor(OtpAudienceRouter::providerName($policy->audience));
+
+            if ($provider->name() !== LocalCodeProvider::NAME
+                && $policy->captchaRequired()
+                && $attestation === null) {
+                // Fail closed BEFORE any provider call: the rollback
+                // leaves no supersession marks behind. A remote send
+                // without its reCAPTCHA attestation is a typed domain
+                // error (controllers map it to 422) — never a
+                // downgrade to a channel that skips attestation.
+                throw new OtpCaptchaRequiredException($policy->audience);
+            }
+
             // Pre-generate the row id (identical ULID to what HasUlids
             // would assign) so the provider can record the send against
-            // it. S46 routes every audience local; S48 resolves the
-            // provider by audience/purpose here — the row carries the
-            // choice either way.
+            // it.
             $id = (string) \Illuminate\Support\Str::ulid();
-            $provider = $this->providerFor(LocalCodeProvider::NAME);
             $send = $provider->send(new OtpSendContext(
                 challengeId: $id,
                 identifier: $identifier,
                 purpose: $purpose,
                 codeLength: self::CODE_LENGTH,
+                attestation: $attestation,
+                audience: $policy->audience,
             ));
 
             if ($send->isEmpty()) {

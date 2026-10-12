@@ -53,4 +53,10 @@ return [
             'provider' => 'local',
         ],
     ],
+
+    // Email OTP delivery channel (S48): 'null' (the S46 silent default
+    // — codes surface only via the drill-only OTP_LOG_CODES log) or
+    // 'mailer' (MailerEmailOtpDelivery through Laravel's MAIL_*).
+    // Delivery only; verification stays the local hash path.
+    'email_delivery' => env('OTP_EMAIL_DELIVERY', 'null'),
 ];

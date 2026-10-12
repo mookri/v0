@@ -8,7 +8,11 @@ use App\Platform\Authz\Http\Middleware\RequiresAcr;
 use App\Platform\Authz\Http\Middleware\ThrottleTier;
 use App\Platform\Identity\Http\Middleware\AuthenticateAny;
 use App\Platform\Identity\Http\Middleware\AuthenticateHmacToken;
+use App\Platform\Identity\Otp\EmailOtpDeliveryProvider;
 use App\Platform\Identity\Otp\FirebasePhoneVerificationProvider;
+use App\Platform\Identity\Otp\MailerEmailOtpDelivery;
+use App\Platform\Identity\Otp\NullEmailOtpDelivery;
+use App\Platform\Identity\Otp\OtpAudienceRouter;
 use App\Platform\Identity\Otp\OtpProviderRegistry;
 use App\Platform\Identity\OAuth\CheckOAuthGrant;
 use App\Platform\Identity\OAuth\Console\CreateClientCommand;
@@ -66,7 +70,7 @@ class AppServiceProvider extends ServiceProvider
                     continue; // fail closed: incomplete creds register no provider
                 }
 
-                $name = 'firebase-'.$audience;
+                $name = OtpAudienceRouter::nameFor((string) $audience, 'firebase');
                 $providers[$name] = new FirebasePhoneVerificationProvider(
                     name: $name,
                     apiKey: $apiKey,
@@ -75,6 +79,16 @@ class AppServiceProvider extends ServiceProvider
             }
 
             return new OtpProviderRegistry($providers);
+        });
+
+        // Email OTP delivery channel (S48): config-selected between the
+        // S46 silent default and the mailer-backed provider. Default
+        // 'null' delivers nothing — behavior-identical until an
+        // environment opts in with OTP_EMAIL_DELIVERY=mailer.
+        $this->app->singleton(EmailOtpDeliveryProvider::class, static function (): EmailOtpDeliveryProvider {
+            return config('otp-providers.email_delivery') === MailerEmailOtpDelivery::NAME
+                ? new MailerEmailOtpDelivery()
+                : new NullEmailOtpDelivery();
         });
 
         if ($this->app->runningInConsole()) {

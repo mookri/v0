@@ -42,6 +42,13 @@ Route::post('auth/login', [CustomerAuthController::class, 'login'])
     ->middleware('throttle:10,1')
     ->name('auth.login');
 
+// Public captcha config (S48): site key + whether the policy demands
+// an attestation — clients render the widget exactly when required.
+Route::get('auth/captcha', [CustomerAuthController::class, 'captchaConfig'])
+    ->withoutMiddleware(['auth.any', 'tenant'])
+    ->middleware('throttle:30,1')
+    ->name('auth.captcha');
+
 Route::post('auth/logout', [CustomerAuthController::class, 'logout'])
     ->name('auth.logout');
 

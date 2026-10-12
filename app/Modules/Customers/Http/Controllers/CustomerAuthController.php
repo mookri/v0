@@ -14,6 +14,8 @@ use App\Platform\Audit\AuditWriter;
 use App\Platform\Identity\ActorSessionRotation;
 use App\Platform\Identity\ActorTokenIssuer;
 use App\Platform\Identity\Models\ActorSession;
+use App\Platform\Identity\Otp\OtpCaptchaRequiredException;
+use App\Platform\Identity\Otp\OtpProviderUnavailableException;
 use App\Platform\Tenancy\ConnectionResolver;
 use App\Platform\Tenancy\Models\Tenant;
 use App\Platform\Tenancy\Models\TenantMembership;
@@ -137,6 +139,50 @@ final class CustomerAuthController
         ];
     }
 
+    /**
+     * S48 typed failure envelopes: a missing reCAPTCHA attestation is
+     * a 422 (the client must render the widget and retry); a provider
+     * outage is a 503 — a dependency failure is never folded into the
+     * uniform 401 set and never downgrades to another channel.
+     */
+    private function captchaRequired(Request $request): JsonResponse
+    {
+        return new JsonResponse([
+            'error' => [
+                'code' => 'validation_failed',
+                'message' => 'Captcha verification is required.',
+                'details' => ['fields' => ['captcha_token' => ['captcha_required']]],
+                'request_id' => $this->requestId($request),
+            ],
+        ], 422);
+    }
+
+    private function dependencyUnavailable(Request $request): JsonResponse
+    {
+        return new JsonResponse([
+            'error' => ['code' => 'dependency_unavailable', 'message' => 'Verification is temporarily unavailable. Try again shortly.', 'request_id' => $this->requestId($request)],
+        ], 503);
+    }
+
+    /**
+     * Public captcha config (S48): lets clients render the reCAPTCHA
+     * widget exactly when the server will demand an attestation. The
+     * site key is public by design (Google serves it in every page
+     * that renders the widget).
+     */
+    public function captchaConfig(Request $request): JsonResponse
+    {
+        return new JsonResponse([
+            'data' => [
+                'object' => 'captcha_config',
+                'provider' => 'recaptcha',
+                'site_key' => config('otp-providers.audiences.customer.firebase.recaptcha_key'),
+                'required' => filter_var(config('otp-policy.captcha.customer', false), FILTER_VALIDATE_BOOLEAN),
+            ],
+            'meta' => ['request_id' => $this->requestId($request)],
+        ]);
+    }
+
     public function requestOtp(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -145,6 +191,10 @@ final class CustomerAuthController
             // (B3+); until then only login + signup challenges are issued.
             'purpose' => ['required', 'string', 'in:login,signup'],
             'identity' => ['required', 'string', 'max:64'],
+            // reCAPTCHA v2 token (S48 pass-through): forwarded as the
+            // provider attestation; only demanded when the audience's
+            // policy says so (remote providers, per otp-policy.php).
+            'captcha_token' => ['nullable', 'string', 'max:4096'],
         ]);
 
         $tenant = $this->activeTenant($request, $validated['tenant_id']);
@@ -173,12 +223,17 @@ final class CustomerAuthController
                 $tenantId,
                 $validated['purpose'],
                 $validated['identity'],
-                $this->now()
+                $this->now(),
+                attestation: $validated['captcha_token'] ?? null,
             );
         } catch (OtpRateLimitedException) {
             return new JsonResponse([
                 'error' => ['code' => 'rate_limited', 'message' => 'Too many attempts.', 'request_id' => $this->requestId($request)],
             ], 429);
+        } catch (OtpCaptchaRequiredException) {
+            return $this->captchaRequired($request);
+        } catch (OtpProviderUnavailableException) {
+            return $this->dependencyUnavailable($request);
         }
 
         return new JsonResponse([
@@ -202,6 +257,7 @@ final class CustomerAuthController
             // Reserved for the referrals wave: carried in the challenge
             // payload, unattributed until then.
             'referral_code' => ['nullable', 'string', 'max:64'],
+            'captcha_token' => ['nullable', 'string', 'max:4096'],
         ]);
 
         $tenant = $this->activeTenant($request, $validated['tenant_id']);
@@ -221,12 +277,17 @@ final class CustomerAuthController
                     'email' => $validated['email'] ?? null,
                     'locale' => $validated['locale'] ?? 'en',
                     'referral_code' => $validated['referral_code'] ?? null,
-                ]
+                ],
+                attestation: $validated['captcha_token'] ?? null,
             );
         } catch (OtpRateLimitedException) {
             return new JsonResponse([
                 'error' => ['code' => 'rate_limited', 'message' => 'Too many attempts.', 'request_id' => $this->requestId($request)],
             ], 429);
+        } catch (OtpCaptchaRequiredException) {
+            return $this->captchaRequired($request);
+        } catch (OtpProviderUnavailableException) {
+            return $this->dependencyUnavailable($request);
         }
 
         return new JsonResponse([

@@ -7,6 +7,8 @@ use App\Modules\Customers\Auth\OtpRateLimitedException;
 use App\Modules\Customers\Models\CustomerOtpChallenge;
 use App\Modules\Customers\CustomerActivityRecorder;
 use App\Platform\Audit\AuditWriter;
+use App\Platform\Identity\Otp\OtpCaptchaRequiredException;
+use App\Platform\Identity\Otp\OtpProviderUnavailableException;
 use App\Platform\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -73,6 +75,9 @@ final class CustomerVerificationController extends CustomerSelfServiceController
         $validated = $request->validate([
             'channel' => ['required', 'string', 'in:phone,email'],
             'value' => ['required', 'string', 'max:190'],
+            // reCAPTCHA v2 token (S48 pass-through) — demanded by
+            // policy only for remote providers.
+            'captcha_token' => ['nullable', 'string', 'max:4096'],
         ]);
 
         $user = $found['user'];
@@ -121,12 +126,31 @@ final class CustomerVerificationController extends CustomerSelfServiceController
                 $purpose,
                 $value,
                 CarbonImmutable::parse(gmdate('Y-m-d\TH:i:s.v\Z')),
-                ['user_id' => (string) $user->getAuthIdentifier(), 'channel' => $channel, 'value' => $value]
+                ['user_id' => (string) $user->getAuthIdentifier(), 'channel' => $channel, 'value' => $value],
+                attestation: $validated['captcha_token'] ?? null,
             );
         } catch (OtpRateLimitedException) {
             return new JsonResponse([
                 'error' => ['code' => 'rate_limited', 'message' => 'Too many attempts.', 'request_id' => $this->requestId($request)],
             ], 429);
+        } catch (OtpCaptchaRequiredException) {
+            // S48: policy demands a reCAPTCHA attestation for this
+            // audience and none arrived — a typed 422, never a silent
+            // downgrade to a channel that skips attestation.
+            return new JsonResponse([
+                'error' => [
+                    'code' => 'validation_failed',
+                    'message' => 'Captcha verification is required.',
+                    'details' => ['fields' => ['captcha_token' => ['captcha_required']]],
+                    'request_id' => $this->requestId($request),
+                ],
+            ], 422);
+        } catch (OtpProviderUnavailableException) {
+            // Provider outage stays a typed dependency error — never a
+            // 401, never a fallback channel.
+            return new JsonResponse([
+                'error' => ['code' => 'dependency_unavailable', 'message' => 'Verification is temporarily unavailable. Try again shortly.', 'request_id' => $this->requestId($request)],
+            ], 503);
         }
 
         return new JsonResponse([
