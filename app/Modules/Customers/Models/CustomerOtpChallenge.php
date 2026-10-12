@@ -18,7 +18,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $tenant_id
  * @property string $purpose
  * @property string $identifier
- * @property string $code_hash
+ * @property string|null $code_hash
+ * @property string $provider
+ * @property string|null $provider_ref
+ * @property string $status
+ * @property array<string, mixed>|null $decision
  * @property array<string, mixed>|null $payload
  * @property \Illuminate\Support\Carbon|null $expires_at
  * @property \Illuminate\Support\Carbon|null $superseded_at
@@ -57,6 +61,7 @@ final class CustomerOtpChallenge extends Model
 
     protected $fillable = [
         'tenant_id', 'purpose', 'identifier', 'code_hash', 'payload',
+        'provider', 'provider_ref', 'status', 'decision',
         'expires_at', 'attempts', 'max_attempts',
     ];
 
@@ -64,6 +69,7 @@ final class CustomerOtpChallenge extends Model
     {
         return [
             'payload' => 'array',
+            'decision' => 'array',
             'expires_at' => 'datetime',
             'superseded_at' => 'datetime',
         ];

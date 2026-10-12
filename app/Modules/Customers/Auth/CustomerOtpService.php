@@ -3,6 +3,16 @@
 namespace App\Modules\Customers\Auth;
 
 use App\Modules\Customers\Models\CustomerOtpChallenge;
+use App\Platform\Identity\Otp\EmailOtpDelivery;
+use App\Platform\Identity\Otp\EmailOtpDeliveryProvider;
+use App\Platform\Identity\Otp\LocalCodeProvider;
+use App\Platform\Identity\Otp\NullEmailOtpDelivery;
+use App\Platform\Identity\Otp\OtpProviderRegistry;
+use App\Platform\Identity\Otp\OtpProviderUnavailableException;
+use App\Platform\Identity\Otp\OtpSendContext;
+use App\Platform\Identity\Otp\OtpVerifyOutcome;
+use App\Platform\Identity\Otp\OtpVerifyRequest;
+use App\Platform\Identity\Otp\PhoneVerificationProvider;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 
@@ -12,6 +22,15 @@ use Illuminate\Support\Facades\DB;
  * identifier+purpose) plus purpose scoping and an opaque payload (signup
  * intent travels with the challenge until verification creates the
  * account). Rate caps are DB-backed (REDIS-001 interim posture).
+ *
+ * Verification Fabric (S46): send/match delegate to the
+ * PhoneVerificationProvider port — this service keeps the entire state
+ * machine (caps, supersession, TTL, attempt counting, uniform 401) and
+ * dispatches verification on the row's own `provider` column. Local is
+ * the only provider S46 registers (behavior-identical extraction);
+ * Firebase-per-audience arrives via OtpProviderRegistry in S47+ and the
+ * email delivery port (NullEmailOtpDelivery today) swaps bindings in
+ * S48 — neither changes this file.
  */
 final class CustomerOtpService
 {
@@ -23,8 +42,20 @@ final class CustomerOtpService
 
     public const MAX_PER_HOUR = 5;
 
-    public function __construct(private readonly OtpCodeGenerator $codes)
-    {
+    private readonly PhoneVerificationProvider $local;
+
+    private readonly ?OtpProviderRegistry $providers;
+
+    private readonly EmailOtpDeliveryProvider $emailDelivery;
+
+    public function __construct(
+        private readonly OtpCodeGenerator $codes,
+        ?OtpProviderRegistry $providers = null,
+        ?EmailOtpDeliveryProvider $emailDelivery = null,
+    ) {
+        $this->local = new LocalCodeProvider($codes);
+        $this->providers = $providers;
+        $this->emailDelivery = $emailDelivery ?? new NullEmailOtpDelivery();
     }
 
     /**
@@ -67,30 +98,64 @@ final class CustomerOtpService
                 ->whereNull('superseded_at')
                 ->update(['superseded_at' => $now->toDateTimeString()]);
 
-            $code = $this->codes->generate(self::CODE_LENGTH);
+            // Pre-generate the row id (identical ULID to what HasUlids
+            // would assign) so the provider can record the send against
+            // it. S46 routes every audience local; S48 resolves the
+            // provider by audience/purpose here — the row carries the
+            // choice either way.
+            $id = (string) \Illuminate\Support\Str::ulid();
+            $provider = $this->providerFor(LocalCodeProvider::NAME);
+            $send = $provider->send(new OtpSendContext(
+                challengeId: $id,
+                identifier: $identifier,
+                purpose: $purpose,
+                codeLength: self::CODE_LENGTH,
+            ));
+
+            if ($send->isEmpty()) {
+                // A send with neither code nor provider ref is a
+                // misconfigured provider — fail closed, no row.
+                throw new OtpProviderUnavailableException('otp provider produced neither code nor provider_ref');
+            }
 
             $challenge = new CustomerOtpChallenge();
             $challenge->forceFill([
+                'id' => $id,
                 'tenant_id' => $tenantId,
                 'purpose' => $purpose,
                 'identifier' => $identifier,
-                'code_hash' => hash('sha256', $code),
+                'code_hash' => $send->code === null ? null : hash('sha256', $send->code),
+                'provider' => $provider->name(),
+                'provider_ref' => $send->providerRef,
+                'status' => 'sent',
                 'payload' => $payload === [] ? null : $payload,
                 'expires_at' => $now->addSeconds(self::TTL_SECONDS)->toDateTimeString(),
                 'attempts' => 0,
                 'max_attempts' => self::MAX_ATTEMPTS,
             ]);
             $challenge->save();
-            $this->codes->record((string) $challenge->getKey(), $code);
 
-            // Drill-only code log (config/customers.php): no delivery channel
-            // exists outside tests yet, so local/staging drills read the code
-            // from the log. Off by default; never enable in production.
-            if (config('customers.log_otp_codes') === true) {
+            // Drill-only code log (config/customers.php): the only
+            // channel codes surface through today. Off by default;
+            // never enable in production. Remote sends expose no code,
+            // so they never log here.
+            if ($send->code !== null && config('customers.log_otp_codes') === true) {
                 \Illuminate\Support\Facades\Log::info('OTP challenge issued (drill-only code log)', [
-                    'challenge_id' => (string) $challenge->getKey(),
-                    'code' => $code,
+                    'challenge_id' => $id,
+                    'code' => $send->code,
                 ]);
+            }
+
+            // Email channel delivery port (S46: NullEmailOtpDelivery —
+            // no channel bound yet, call site + contract in place).
+            if ($send->code !== null && str_contains($identifier, '@')) {
+                $this->emailDelivery->deliver(new EmailOtpDelivery(
+                    to: $identifier,
+                    code: $send->code,
+                    challengeId: $id,
+                    purpose: $purpose,
+                    expiresAt: $now->addSeconds(self::TTL_SECONDS)->toDateTimeString(),
+                ));
             }
 
             return $challenge;
@@ -106,7 +171,8 @@ final class CustomerOtpService
      * Single-use verification scoped to tenant + purpose: missing,
      * foreign-tenant, wrong-purpose, expired, exhausted, or mismatched
      * codes all return false (the controller collapses them to one 401 —
-     * no oracle).
+     * no oracle). Provider outages throw OtpProviderUnavailableException
+     * instead — a dependency failure is never folded into the 401 set.
      */
     public function verify(
         string $tenantId,
@@ -155,7 +221,24 @@ final class CustomerOtpService
 
             $challenge->forceFill(['attempts' => $challenge->attempts + 1])->save();
 
-            if (! hash_equals($challenge->code_hash, hash('sha256', $code))) {
+            // Verification dispatches on the row's own provenance, not
+            // on current config: a challenge issued under provider X is
+            // always matched by provider X (hybrid fleets survive a
+            // later routing change; unknown names fail closed).
+            $outcome = $this->providerFor($challenge->provider)->verify(new OtpVerifyRequest(
+                codeHash: $challenge->code_hash,
+                providerRef: $challenge->provider_ref,
+                code: $code,
+            ));
+
+            if ($outcome === OtpVerifyOutcome::Unavailable) {
+                // Roll the attempt back with the transaction and surface
+                // a typed dependency error — an outage is not a wrong
+                // code and must not look like one.
+                throw new OtpProviderUnavailableException('otp provider unavailable during verify');
+            }
+
+            if ($outcome !== OtpVerifyOutcome::Match) {
                 return null;
             }
 
@@ -163,5 +246,21 @@ final class CustomerOtpService
 
             return $challenge;
         });
+    }
+
+    /**
+     * @throws OtpProviderUnavailableException for unregistered providers
+     */
+    private function providerFor(?string $name): PhoneVerificationProvider
+    {
+        if ($name === null || $name === LocalCodeProvider::NAME) {
+            return $this->local;
+        }
+
+        if ($this->providers === null) {
+            throw new OtpProviderUnavailableException(sprintf('otp provider [%s] is not registered', $name));
+        }
+
+        return $this->providers->get($name);
     }
 }
