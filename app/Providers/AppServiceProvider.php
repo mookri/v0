@@ -8,6 +8,8 @@ use App\Platform\Authz\Http\Middleware\RequiresAcr;
 use App\Platform\Authz\Http\Middleware\ThrottleTier;
 use App\Platform\Identity\Http\Middleware\AuthenticateAny;
 use App\Platform\Identity\Http\Middleware\AuthenticateHmacToken;
+use App\Platform\Identity\Otp\FirebasePhoneVerificationProvider;
+use App\Platform\Identity\Otp\OtpProviderRegistry;
 use App\Platform\Identity\OAuth\CheckOAuthGrant;
 use App\Platform\Identity\OAuth\Console\CreateClientCommand;
 use App\Platform\Identity\OAuth\Console\ListDeviceCodesCommand;
@@ -42,6 +44,38 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind('throttle.tier', ThrottleTier::class);
         $this->app->bind('stepup', RequiresAcr::class);
         $this->app->bind('limit.body', \App\Platform\Http\Middleware\LimitJsonBody::class);
+
+        // Verification Fabric S47: name -> provider registry built from
+        // config/otp-providers.php. Each audience that selects 'firebase'
+        // with a complete credential set registers firebase-<audience>;
+        // an audience selecting 'firebase' without an API key registers
+        // nothing, so dispatch fails closed (typed unavailable error)
+        // instead of ever downgrading to a channel that cannot deliver.
+        // 'local' is never registered here — services special-case it.
+        $this->app->singleton(OtpProviderRegistry::class, static function (): OtpProviderRegistry {
+            $providers = [];
+            foreach ((array) config('otp-providers.audiences', []) as $audience => $config) {
+                $config = (array) $config;
+                if (($config['provider'] ?? 'local') !== 'firebase') {
+                    continue;
+                }
+
+                $firebase = (array) ($config['firebase'] ?? []);
+                $apiKey = $firebase['api_key'] ?? null;
+                if (! is_string($apiKey) || $apiKey === '' || ! is_string($firebase['project'] ?? null)) {
+                    continue; // fail closed: incomplete creds register no provider
+                }
+
+                $name = 'firebase-'.$audience;
+                $providers[$name] = new FirebasePhoneVerificationProvider(
+                    name: $name,
+                    apiKey: $apiKey,
+                    timeoutSeconds: (int) ($firebase['timeout_seconds'] ?? 5),
+                );
+            }
+
+            return new OtpProviderRegistry($providers);
+        });
 
         if ($this->app->runningInConsole()) {
             $this->commands([

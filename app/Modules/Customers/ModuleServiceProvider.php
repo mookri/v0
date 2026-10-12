@@ -6,6 +6,7 @@ use App\Modules\Customers\Auth\CustomerOtpService;
 use App\Modules\Customers\Auth\RandomOtpCodes;
 use App\Modules\Customers\Contracts\NotifiesCustomers;
 use App\Platform\Identity\Contracts\TrackSeeder;
+use App\Platform\Identity\Otp\OtpProviderRegistry;
 use App\Platform\Modules\ModuleServiceProvider as BaseModuleServiceProvider;
 
 /**
@@ -20,9 +21,16 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
     {
         $this->app->bind(TrackSeeder::class, CustomersTrackSeeder::class);
         $this->app->bind(NotifiesCustomers::class, CustomerNotifier::class);
+        // S47: the service gets the config-built provider registry so
+        // firebase-<audience> rows can dispatch. Routing (which audience
+        // a challenge takes at issue()) is S48 — issue() still picks
+        // local, verify() honors any row's provider either way.
         $this->app->singleton(
             CustomerOtpService::class,
-            static fn (): CustomerOtpService => new CustomerOtpService(new RandomOtpCodes())
+            static fn ($app): CustomerOtpService => new CustomerOtpService(
+                new RandomOtpCodes(),
+                $app->make(OtpProviderRegistry::class),
+            )
         );
     }
 
