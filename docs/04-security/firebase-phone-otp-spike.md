@@ -1,6 +1,6 @@
 # Firebase Phone-OTP Spike (Verification Fabric S45)
 
-**Status:** DESIGN-VALIDATED · **Date:** 2026-10-12 · **Type:** spike / evidence record
+**Status:** DESIGN-VALIDATED · LIVE-VALIDATED S49 (test numbers, 2026-10-12) · **Date:** 2026-10-12 · **Type:** spike / evidence record
 **Scope:** server-driven Firebase phone OTP as a *verification channel only*; core auth stays in
 Navdhya DBs (Laravel sole authority). Companion to SEC/token platform doc; replaces nothing.
 
@@ -97,3 +97,157 @@ Exact transcript to capture when `FIREBASE_{CUSTOMER,VENDOR}_*` env values arriv
   silent downgrade to a channel that cannot deliver SMS.
 - `customer_otp_challenges.id` width fix rides along in S46 (root cause of the MySQL
   step-up test cluster).
+
+## Live validation (S49 — 2026-10-12, test-numbers gate)
+
+**Harness:** `scripts/firebase-spike-live.ps1 -EnvFile .\platform-navdhya\.env` (ASCII-only,
+PS 5.1-safe). `-SelfTest` runs the whole HTTP + capture + redaction pipeline against a
+deliberately invalid key (`API_KEY_INVALID`) so the pipeline itself can be proven without
+credentials. Redaction is hard-coded: API key never printed, phone masked, `idToken` /
+`refreshToken` stripped, `sessionInfo` replaced by `len+sha256`, OTP codes never printed.
+
+### Environment finding: CLI PHP had no CA bundle (fixed)
+
+The first outbound TLS call this stack ever made (S45–S48 tests all `Http::fake`) failed with
+`SSL certificate OpenSSL verify result: unable to get local issuer certificate` — `curl.cainfo`
+and `openssl.cafile` were empty in `C:\xampp\php\php.ini`, while the served chain was the
+genuine Google Trust Services one (verified subject/issuer — no interception). Fixed by
+downloading the official `https://curl.se/ca/cacert.pem` to
+`C:\xampp\php\extras\ssl\cacert.pem` and pointing both ini settings at it.
+**Deployment note:** Linux images must ship a CA bundle (standard `ca-certificates`);
+without it every provider call fails — and that failure incidentally proved the fail-closed
+path live (see proof table below: typed 503, no downgrade, no challenge row).
+
+### L1–L6 transcript (full, harness output)
+
+```markdown
+# Firebase phone-OTP live spike -- L1..L6 transcript
+
+- **When:** 2026-10-12 15:23:00 UTC
+- **Audience:** customer (project: `navdhya-customer-1`)
+- **Test number:** `+919*******99` (console *Phone numbers for testing*; no SMS, no SMS cost)
+- **API key:** `<redacted>`  -  **reCAPTCHA site key:** `6Lf8zOstAAAAAEnByM8sUzYhxrt51xkLKtCtYady`
+
+## L0 -- recaptchaParams (site key discovery)
+```
+GET /v1/recaptchaParams  ->  HTTP 200  {"kind":"identitytoolkit#GetRecaptchaParamResponse","recaptchaSiteKey":"6LcMZR0UAAAAALgPMcgHwga7gY5p8QMg1Hj-bmUv","producerProjectNumber":"551503664846","recaptchaStoken":"<redacted>"}
+```
+
+## L1 -- send test number WITHOUT attestation
+```
+POST accounts:sendVerificationCode {phoneNumber:+919*******99}  ->  HTTP 200  {"sessionInfo":"<session len=162 sha256=09d3ef6f95f9>"}
+```
+
+**Result:** test number accepted WITHOUT a reCAPTCHA token (captcha demand can stay off for test numbers).
+
+## L2 -- send WITH reCAPTCHA v2 token
+**SKIPPED** -- no `FIREBASE_RECAPTCHA_TOKEN` in env (headless minting is the open question; L5 owns the CI story).
+
+## L3 -- verify taxonomy (wrong code x5, exhausted, garbage session)
+```
+verify attempt 1 (wrong code)  ->  HTTP 400  INVALID_CODE, INVALID
+verify attempt 2 (wrong code)  ->  HTTP 400  INVALID_CODE, INVALID
+verify attempt 3 (wrong code)  ->  HTTP 400  INVALID_CODE, INVALID
+verify attempt 4 (wrong code)  ->  HTTP 400  INVALID_CODE, INVALID
+verify attempt 5 (wrong code)  ->  HTTP 400  INVALID_CODE, INVALID
+verify with garbage sessionInfo  ->  HTTP 400  INVALID_SESSION_INFO, INVALID
+```
+
+## L4 -- happy path round trip
+```
+send  ->  HTTP 200  {"sessionInfo":"<session len=162 sha256=5f204836c3cc>"}
+verify with fixed test code  ->  HTTP 200  {"phoneNumber":"+919*******99","expiresIn":"3600","refreshToken":"<stripped>","idToken":"<stripped>","isNewUser":true,"localId":"<uid len=28>"}
+```
+
+**Result:** round trip OK, `phoneNumber` matches the test number (idToken stripped from transcript).
+
+## L5 -- Playwright / invisible reCAPTCHA v2 in CI (DECISION POINT)
+- L2 outcome above feeds this: token availability = `not provided (skipped)`.
+
+## L6 -- API-key restrictions + App Check posture (MANUAL, per project)
+- Console > APIs & Services > Credentials > Web key: application restrictions (HTTP referrer / IP) + API restrictions (Identity Toolkit only).
+
+## Probe summary (feeds CODE_ERROR_CODES calibration)
+
+| Probe | Outcome |
+|---|---|
+| L0 | `ok` |
+| L1 | `ok` |
+| L2 | `skipped:no-token` |
+| L3-wrong#1..5 | `INVALID_CODE, INVALID` |
+| L3-garbage-session | `INVALID_SESSION_INFO, INVALID` |
+| L4 | `ok:phoneNumber-match` |
+```
+
+(Attempts 1–2 of the live run failed `OPERATION_NOT_ALLOWED : SMS unable to be sent until
+this region enabled by the app developer` until the console SMS region policy / Blaze plan
+were set — the region gate applies to test numbers too.)
+
+### Calibration verdict (L3 → `CODE_ERROR_CODES`)
+
+| Probe | Observed symbolic parts (adapter's `symbolicCodes()`) | Adapter maps to |
+|---|---|---|
+| wrong code ×5 | `INVALID_CODE`, `INVALID` | Mismatch → uniform 401 ✓ |
+| garbage sessionInfo | `INVALID_SESSION_INFO`, `INVALID` | Mismatch → uniform 401 ✓ |
+| region disabled (send) | `OPERATION_NOT_ALLOWED` | not in family → typed 503, fail closed ✓ |
+
+- Both observed heads are already in `CODE_ERROR_CODES` → **calibrated by live evidence, no
+  code change needed**.
+- The generic `INVALID` reason deliberately does not participate (it would misclassify every
+  400). No lockout/exhaustion transition occurred within 5 wrong attempts (message never
+  changed across attempts).
+- **L1 verdict:** test numbers are accepted with **no** reCAPTCHA token →
+  `OTP_CAPTCHA_REQUIRED_*` stays off while the gate runs on test numbers; real-number sends
+  (S50+) reopen the L2/L5 token question.
+
+### L5 (headless reCAPTCHA v2) — OPEN by decision
+
+Token minting was not attempted in CI (`FIREBASE_RECAPTCHA_TOKEN` unset → L2 skipped).
+Decision: the gate runs on test numbers with captcha demand OFF, so no UI/widget change is
+needed now; the headless question reopens when `OTP_CAPTCHA_REQUIRED_*` turns on.
+
+### L6 (console posture) — MANUAL, pending
+
+- [ ] API key: application restrictions (HTTP referrer/IP) + API restriction to Identity
+      Toolkit, per project.
+- [ ] App Check posture recorded per project (N/A for pure server-side REST).
+- [ ] **Site-key mismatch:** `.env` `FIREBASE_CUSTOMER_RECAPTCHA_KEY` (`6Lf8zOst…`) ≠ this
+      project's own `recaptchaParams` key (`6LcMZR0U…`, authoritative). Replace the `.env`
+      value before any captcha-on (real-number) send.
+- [ ] Vendor project not provisioned (no `FIREBASE_VENDOR_*` in `.env`) → vendor audience
+      stays local; flipping it without creds fails closed by design (registry registers
+      nothing).
+
+### Live-path proof through the app (gate flip)
+
+Flip = **process env only**: `OTP_PROVIDER_CUSTOMER=firebase` — never into
+`platform-navdhya\.env` (test suites load `.env` and would aim every suite at live Google).
+
+| Step | Result |
+|---|---|
+| `POST auth/signup` (T1) | `202` challenge issued — Firebase send succeeded |
+| `POST auth/verify` (fixed test code) | `201` customer session — account created |
+| `POST auth/otp purpose=login` (T0) | `202` challenge issued |
+| challenge row after send | `provider=firebase-customer`, `code_hash` **NULL**, `provider_ref` len **162**, `status=sent`, `attempts=0` |
+| `POST auth/login` (fixed test code) | `200` customer session |
+| challenge row after verify | consumed (row removed) — no local code existed at any point |
+
+Bonus fail-closed evidence: during the CA-bundle outage the same call returned the typed
+`503 dependency_unavailable` envelope with **no** downgrade to local and **no** challenge row.
+
+**Observability gap (S50 candidate):** provider outages are caught and rendered as the typed
+envelope without `report()` — the CA outage produced zero log lines. The exception message
+contains only symbolic parts (HTTP status + Google codes), so reporting it is PII-safe.
+
+### Runbook — flipping the gate (production)
+
+1. Console: Blaze plan; Phone sign-in enabled; SMS region policy allows the target region;
+   test numbers registered (gate phase).
+2. Boot env / secret manager (**not** `.env`): `OTP_PROVIDER_CUSTOMER=firebase`,
+   `FIREBASE_CUSTOMER_PROJECT`, `FIREBASE_CUSTOMER_API_KEY`, optional
+   `FIREBASE_CUSTOMER_RECAPTCHA_KEY` / `_TIMEOUT` / `_SERVICE_ACCOUNT`.
+3. PHP must have a CA bundle (`curl.cainfo`/`openssl.cafile` pointing at a real
+   `cacert.pem`).
+4. Verify: harness L0–L6 against test numbers → flip → one send/verify round trip as in the
+   proof table → keep the harness runbook output as evidence.
+5. Vendor audience: repeat with `FIREBASE_VENDOR_*` twins once the second project exists.

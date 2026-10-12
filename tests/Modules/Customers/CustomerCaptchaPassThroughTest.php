@@ -61,6 +61,13 @@ final class CustomerCaptchaPassThroughTest extends TenantIntegrationTestCase
 
     public function test_captcha_config_defaults_to_no_key_and_not_required(): void
     {
+        // Hermetic: a local .env may carry the live
+        // FIREBASE_CUSTOMER_RECAPTCHA_KEY / OTP_CAPTCHA_REQUIRED_*
+        // (S49 creds) - config() reads both, so the "nothing
+        // configured" default path must be pinned here.
+        config()->set('otp-providers.audiences.customer.firebase.recaptcha_key', null);
+        config()->set('otp-policy.captcha.customer', null);
+
         $this->getJson('/api/v1/customers/auth/captcha')
             ->assertOk()
             ->assertJsonPath('data.object', 'captcha_config')

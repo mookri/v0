@@ -49,8 +49,10 @@ final class FirebasePhoneVerificationProvider implements PhoneVerificationProvid
      * Wrong-code / dead-session error heads -> Mismatch (uniform 401).
      * Compared against symbolic parts only (message head before the
      * first ':', error.status, error.errors[*].reason) — never free
-     * prose. Calibrated by spike checklist L3 while the gate is still
-     * test-numbers-only.
+     * prose. Calibrated by LIVE spike L3 on 2026-10-12: observed heads
+     * INVALID_CODE (x5, no lockout within 5) and INVALID_SESSION_INFO
+     * (garbage session), both present here — spike doc "Live
+     * validation". Gate is test-numbers-only.
      */
     private const CODE_ERROR_CODES = [
         'INVALID_SESSION_INFO',
