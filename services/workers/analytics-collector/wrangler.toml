@@ -1,0 +1,18 @@
+# Cloudflare Worker adapter for the Navdhya Signals collector (plan B3b).
+# SAME contract, SAME validator module as the Vercel Edge route at
+# apps/web/app/api/ae/v1/batch — swapped in by configuration (decision #5).
+#
+# Source uses relative imports into packages/analytics on purpose: wrangler's
+# esbuild bundles them without any alias plugin, and services/ is outside the
+# import-alias lint roots.
+#
+# Secrets are set per-environment with wrangler, never committed here:
+#   npx wrangler secret put SIGNALS_HMAC_SECRET
+#   npx wrangler secret put SIGNALS_CONSENT_TOKEN_SECRET
+#   npx wrangler secret put SIGNALS_INGEST_URL
+# (wrangler is a declared devDependency — see plan known-debt items 7 & 9:
+# the lockfile refresh is a deliberate, human-reviewed step.)
+
+name = "navdhya-signals-collector"
+main = "src/worker.ts"
+compatibility_date = "2026-09-01"

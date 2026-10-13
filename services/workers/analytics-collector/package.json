@@ -1,0 +1,19 @@
+{
+  "name": "@navdhya/fn-analytics-collector",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/worker.ts",
+  "exports": { ".": "./src/worker.ts" },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@navdhya/analytics": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "wrangler": "^3.99.0"
+  }
+}
