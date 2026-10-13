@@ -11,20 +11,21 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "next": "16.0.10",
-    "react": "^19",
-    "react-dom": "^19",
     "@navdhya/booking": "workspace:*",
-    "@navdhya/user": "workspace:*",
-    "@navdhya/puja": "workspace:*",
-    "@navdhya/pricing": "workspace:*",
-    "@navdhya/contracts": "workspace:*",
     "@navdhya/config": "workspace:*",
+    "@navdhya/contracts": "workspace:*",
+    "@navdhya/design-system": "workspace:*",
+    "@navdhya/layout-engine": "workspace:*",
+    "@navdhya/observability": "workspace:*",
+    "@navdhya/pricing": "workspace:*",
+    "@navdhya/puja": "workspace:*",
     "@navdhya/routing": "workspace:*",
     "@navdhya/security": "workspace:*",
-    "@navdhya/observability": "workspace:*",
-    "@navdhya/design-system": "workspace:*",
-    "@navdhya/layout-engine": "workspace:*"
+    "@navdhya/user": "workspace:*",
+    "firebase": "^13.0.0",
+    "next": "16.0.10",
+    "react": "^19",
+    "react-dom": "^19"
   },
   "devDependencies": {
     "@types/node": "^22",

@@ -3,6 +3,14 @@
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { firebaseLoginEnabled } from '@/adapters/firebase/client';
+import {
+  beginFirebaseLogin,
+  completeFirebaseLogin,
+  firebaseFlowActive,
+  friendlyFirebaseError,
+  resendFirebaseLogin,
+} from '@/adapters/firebase/login';
 
 const SESSION_COOKIE = 'navdhya-session';
 
@@ -25,6 +33,22 @@ export default function LoginClient() {
 
     if (!phone || phone.replace(/\D/g, '').length < 10) {
       setError('Enter a valid mobile number');
+      return;
+    }
+
+    // Firebase path (S50 kit): record the intent, let the SDK send +
+    // verify the SMS; the otp step completes the exchange. Legacy
+    // /api/auth/otp stays the default until cutover.
+    if (firebaseLoginEnabled()) {
+      setIsLoading(true);
+      try {
+        await beginFirebaseLogin(phone);
+        setStep('otp');
+      } catch (err) {
+        setError(friendlyFirebaseError(err) ?? ((err as Error).message || 'Failed to send code'));
+      } finally {
+        setIsLoading(false);
+      }
       return;
     }
 
@@ -60,6 +84,36 @@ export default function LoginClient() {
 
     if (otp.length !== 6) {
       setError('Enter complete code');
+      return;
+    }
+
+    // Firebase path: confirm against the SDK, then exchange the ID
+    // token — no backend challenge, so no local attempt mirror (the
+    // backend MFA lock arrives as an exchange 429).
+    if (firebaseFlowActive()) {
+      setIsLoading(true);
+      try {
+        await completeFirebaseLogin(otp);
+        router.push(redirect);
+        router.refresh();
+      } catch (err) {
+        const status = (err as { status?: number }).status;
+        const friendly = friendlyFirebaseError(err);
+        if (friendly) {
+          setError(friendly);
+        } else if (status === 401) {
+          // The phone factor already passed at Firebase; the backend
+          // collapses every credential-shaped failure into one 401 (no
+          // oracle on MFA state), so a first-401 most often means the
+          // account demands its TOTP second factor.
+          setStep('totp');
+          setError('');
+        } else {
+          setError((err as Error).message || 'Invalid code');
+        }
+      } finally {
+        setIsLoading(false);
+      }
       return;
     }
 
@@ -100,6 +154,22 @@ export default function LoginClient() {
       return;
     }
 
+    // Firebase path: exchange-only retry — the SMS code was already
+    // confirmed, so this re-runs the exchange with the TOTP factor.
+    if (firebaseFlowActive()) {
+      setIsLoading(true);
+      try {
+        await completeFirebaseLogin(otp, totpCode);
+        router.push(redirect);
+        router.refresh();
+      } catch (err) {
+        setError(friendlyFirebaseError(err) ?? ((err as Error).message || 'Invalid code'));
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
     setIsLoading(true);
     try {
       const res = await fetch('/api/auth/login', {
@@ -122,6 +192,20 @@ export default function LoginClient() {
   };
 
   const handleResend = async () => {
+    // Firebase path: fresh intent + fresh SMS (TTL restarts).
+    if (firebaseFlowActive()) {
+      setIsLoading(true);
+      try {
+        await resendFirebaseLogin(phone);
+        setError('');
+      } catch (err) {
+        setError(friendlyFirebaseError(err) ?? ((err as Error).message || 'Failed to resend code'));
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
     setError('');
     setIsLoading(true);
     try {
@@ -148,6 +232,9 @@ export default function LoginClient() {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4 py-12">
+      {/* Invisible reCAPTCHA widget mounts here for Firebase phone
+          login (S50); empty until the SDK renders its badge. */}
+      <div id="firebase-recaptcha-container" />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Welcome back</h1>

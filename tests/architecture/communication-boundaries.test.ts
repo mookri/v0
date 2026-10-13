@@ -15,14 +15,24 @@ function getAllFiles(dir: string): string[] {
   return results;
 }
 
-const SDKS = ['twilio', 'nodemailer', 'firebase-admin', 'firebase/', 'aws-sdk', '@aws-sdk', 'onesignal'];
+const SDKS = ['twilio', 'nodemailer', 'firebase-admin', 'aws-sdk', '@aws-sdk', 'onesignal'];
+
+/**
+ * Firebase phone login (S50): the customer surface may use the client
+ * SDK's entry points only — `firebase/app` (init) + `firebase/auth`
+ * (phone/OTP + ID token). Every other `firebase/*` subpath (firestore,
+ * functions, storage, …) stays out; `firebase-admin` stays banned
+ * everywhere via SDKS; business packages keep the outright `firebase/`
+ * ban (test 1 below).
+ */
+const CLIENT_FIREBASE_ALLOW = ['firebase/app', 'firebase/auth'];
 
 test('no business package imports provider SDKs', () => {
   for (const pkg of ['booking', 'payment', 'identity', 'user', 'puja']) {
     const dir = path.join(process.cwd(), 'packages', pkg, 'src');
     for (const file of getAllFiles(dir)) {
       const content = fs.readFileSync(file, 'utf8');
-      for (const sdk of SDKS) expect(content, `no ${sdk} in ${file}`).not.toContain(sdk);
+      for (const sdk of [...SDKS, 'firebase/']) expect(content, `no ${sdk} in ${file}`).not.toContain(sdk);
     }
   }
 });
@@ -41,5 +51,11 @@ test('customer frontend has no provider access', () => {
   for (const file of getAllFiles(path.join(process.cwd(), 'apps', 'customer'))) {
     const content = fs.readFileSync(file, 'utf8');
     for (const sdk of SDKS) expect(content, `no ${sdk} in ${file}`).not.toContain(sdk);
+    // Quoted module specifiers only (import/require/dynamic import) —
+    // backend *path* strings like '/customers/auth/firebase/intent'
+    // never open provider access and must keep working.
+    for (const spec of content.match(/['"]firebase\/[^'"]+['"]/g) ?? []) {
+      expect(CLIENT_FIREBASE_ALLOW, `firebase subpath ${spec.slice(1, -1)} in ${file}`).toContain(spec.slice(1, -1));
+    }
   }
 });

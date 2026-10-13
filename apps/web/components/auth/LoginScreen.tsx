@@ -9,6 +9,8 @@ import { AuthDivider } from './AuthDivider'
 import { AuthHeader } from './AuthHeader'
 import type { AuthState } from './UnifiedAuthConsole'
 import { authPost, setChallenge, toE164, newIdempotencyKey, AuthRequestError } from '@/lib/auth/auth-client'
+import { firebaseLoginEnabled } from '@/lib/firebase/client'
+import { beginFirebaseLogin, friendlyFirebaseError } from '@/lib/firebase/login'
 
 interface LoginScreenProps {
   phone: string
@@ -58,6 +60,17 @@ export function LoginScreen({
       // E.164 normalization — the backend binds the challenge to a
       // normalized identity (contract §1/I3).
       const identity = toE164(countryCode, phone)
+
+      // Firebase path (S50 kit): record the intent, let the SDK send +
+      // verify the SMS; the OTP screen completes the exchange. Legacy
+      // /api/auth/otp stays the default until cutover.
+      if (firebaseLoginEnabled()) {
+        await beginFirebaseLogin(identity)
+        setOtpSentReason('LOGIN')
+        transitionTo('OTP')
+        return
+      }
+
       const res = await authPost<{ data?: { challengeId?: string; expiresIn?: number } }>(
         '/api/auth/otp',
         { identity, purpose: 'login' },
@@ -75,7 +88,8 @@ export function LoginScreen({
       transitionTo('OTP')
     } catch (err) {
       const e = err as AuthRequestError
-      setErrors({ phone: e.message || 'Failed to send code' })
+      // friendlyFirebaseError maps SDK codes; null for AuthRequestError.
+      setErrors({ phone: friendlyFirebaseError(err) ?? (e.message || 'Failed to send code') })
     } finally {
       setIsLoading(false)
     }

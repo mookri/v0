@@ -38,6 +38,11 @@ export const DEFAULT_BACKEND_CODE_MAP: BackendCodeMap = {
   state_forbidden: 'CONFLICT',
   rate_limited: 'RATE_LIMITED',
   service_unavailable: 'DEPENDENCY_UNAVAILABLE',
+  // Firebase phone-login exchange (S50): the typed 503 — admin creds
+  // absent or Google unreachable — must not fall through to
+  // INTERNAL_ERROR; the UI needs to say "try again shortly", not
+  // "invalid credentials".
+  dependency_unavailable: 'DEPENDENCY_UNAVAILABLE',
   internal_error: 'INTERNAL_ERROR',
 };
 
@@ -89,6 +94,9 @@ async function callLaravel<T>(
       code: mapBackendCode(parsed?.error?.code ?? '', codeMap),
       status: res.status,
       requestId: parsed?.error?.requestId ?? parsed?.meta?.request_id ?? 'unknown',
+      // 429s carry actionable timing (backend throttle, MFA lock) —
+      // the web console's client forwards it; parity here (S50).
+      retryAfter: res.headers.get('retry-after') ?? undefined,
     });
   }
   return { data: (parsed?.data ?? null) as T, meta: parsed?.meta ?? {} };
@@ -144,7 +152,15 @@ export function laravelPut<T>(
 // (BFF convention: no explicit 500 envelopes).
 export function laravelErrorResponse(e: unknown, message: string, requestId: string): Response {
   if (e instanceof CustomerApiError) {
-    return Response.json(err(e.code as ApiErrorCode, message, requestId), { status: e.status });
+    // Forward the upstream Retry-After on 429s (backend throttle, MFA
+    // lock) so screens can surface an honest countdown — parity with
+    // the web console's client (S50).
+    const headers: Record<string, string> = {};
+    if (e.retryAfter) headers['Retry-After'] = e.retryAfter;
+    return Response.json(err(e.code as ApiErrorCode, message, requestId), {
+      status: e.status,
+      headers,
+    });
   }
   throw e;
 }

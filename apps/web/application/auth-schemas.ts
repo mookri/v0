@@ -97,3 +97,26 @@ export type VerifyRequest = z.infer<typeof verifyRequestSchema>;
 export function receivedForm(body: { proof?: string; code?: string }): 'proof' | 'code' {
   return body.proof !== undefined ? 'proof' : 'code';
 }
+
+/**
+ * Firebase phone login (S50 kit): single-use intent + ID-token
+ * exchange. Transport validation only — Laravel re-validates every
+ * field and stays authoritative.
+ */
+export const firebaseIntentSchema = z.object({ phone: e164 });
+
+/** ULID intent id (CHAR(26), firebase_phone_auth_intents). Laravel
+ * mints lowercase ULIDs in this kit, so match the canonical
+ * state-schemas Crockford pattern case-insensitively. */
+export const firebaseIntentId = z
+  .string()
+  .trim()
+  .regex(/^[0-9A-HJKMNP-TV-Z]{26}$/i, 'Invalid intent id');
+
+export const firebaseExchangeSchema = z.object({
+  intentId: firebaseIntentId,
+  // kreait verifies the signature against Google's keyset — length is
+  // the transport guard (backend caps at 8192 too).
+  idToken: z.string().trim().min(20).max(8192),
+  totpCode: z.string().trim().min(6).max(8).optional(),
+});

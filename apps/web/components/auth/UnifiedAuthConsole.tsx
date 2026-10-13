@@ -164,6 +164,9 @@ export function UnifiedAuthConsole({
 
   return (
     <AuthSplitLayout state={state} transitionTo={transitionTo}>
+      {/* Invisible reCAPTCHA widget mounts here for Firebase phone
+          login (S50); empty until the SDK renders its badge. */}
+      <div id="firebase-recaptcha-container" />
       <AnimatePresence mode="wait">
         {renderScreen()}
       </AnimatePresence>
