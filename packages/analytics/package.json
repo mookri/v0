@@ -4,7 +4,12 @@
   "private": true,
   "main": "./src/index.ts",
   "exports": { ".": "./src/index.ts" },
-  "scripts": { "typecheck": "tsc --noEmit", "test": "vitest run" },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "registry:generate": "npx tsx src/registry/generate.ts",
+    "registry:check": "npx tsx src/registry/generate.ts --check"
+  },
   "dependencies": {},
   "devDependencies": { "typescript": "^5.7.3" }
 }

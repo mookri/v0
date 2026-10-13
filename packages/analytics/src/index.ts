@@ -1,3 +1,14 @@
+// packages/analytics/src/index.ts
+//
+// @navdhya/analytics — fire-and-forget product analytics over governed events.
+// Owns taxonomy (`object_action`), metric definitions, event registry and sink
+// fan-out policy. Never a transaction dependency; never business truth.
+//
+// NOTE: node-only tooling (registry/generate.ts, registry/lint.ts) is NOT
+// re-exported here — importing them would pull node:fs into browser bundles.
+// Tests and CLIs import them by relative path.
+
+// ── Legacy surface (kept stable — consumed by tests/data/platform.test.ts) ──
 export interface AnalyticsEvent<T = Record<string, unknown>> {
   eventType: string;
   eventVersion: number;
@@ -46,3 +57,29 @@ export class AnalyticsClient {
     return this.buffer.splice(0);
   }
 }
+
+// ── Signals contracts (B1) ──────────────────────────────────────────────────
+export * from './contracts/envelope';
+export * from './contracts/consent';
+export * from './contracts/delivery-policy';
+
+// ── Event registry (B1) ─────────────────────────────────────────────────────
+export * from './registry/types';
+export { EVENTS, EVENT_MAP } from './registry/events/index';
+export {
+  EVENT_NAMES,
+  EVENT_DEFS,
+} from './registry/generated/event-types';
+export type {
+  EventName,
+  EventParamMap,
+  EventParams,
+} from './registry/generated/event-types';
+export { validateEventParams } from './registry/generated/validator';
+
+// ── Client SDK (B1) ─────────────────────────────────────────────────────────
+export * from './client/breadcrumbs';
+export * from './client/retry-policy';
+export * from './client/outbox';
+export * from './client/batcher';
+export * from './client/analytics-client';
