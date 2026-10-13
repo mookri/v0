@@ -11,5 +11,6 @@ export interface ChallengePolicy {
 
 export interface ChallengePort {
   requestChallenge(identifier: string, policy: ChallengePolicy, nowIso: string): Promise<{ challengeId: string }>;
-  verifyChallenge(challengeId: string, code: string, nowIso: string): Promise<boolean>;
+  verifyChallenge(challengeId: string, token: string, nowIso?: string): Promise<boolean>;
+  resendChallenge?(challengeId: string, nowIso?: string): Promise<unknown>;
 }

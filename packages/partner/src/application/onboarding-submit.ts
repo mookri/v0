@@ -40,14 +40,14 @@ export async function confirmSubmit(
   app: PartnerApplication,
   evidence: DraftEvidence,
   challengeId: string,
-  code: string,
+  token: string,
   nowIso: string,
 ): Promise<{ application: PartnerApplication }> {
   if (!canSubmitApplication(app.status)) throw new Error(`SUBMIT_INVALID_STATE:${app.status}`);
   const def = getTrackDefinition(app.track, app.trackVersion);
   const missing = missingSteps(def, evidence);
   if (missing.length > 0) throw new Error(`SUBMIT_INCOMPLETE:${missing.join(',')}`);
-  const verified = await deps.otp.verifyChallenge(challengeId, code, nowIso);
+  const verified = await deps.otp.verifyChallenge(challengeId, token, nowIso);
   if (!verified) throw new Error('OTP_INVALID');
   assertApplicationTransition(app.status, 'SUBMITTED');
   return { application: { ...app, status: 'SUBMITTED', submittedAt: nowIso } };
