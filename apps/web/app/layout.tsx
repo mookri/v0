@@ -9,6 +9,7 @@ import Preloader from "@/components/ui/preloader"
 import { LoadingProvider } from "@/context/LoadingContext"
 import NavigationLoader from "@/components/NavigationLoader"
 import { AdProvider } from './providers';
+import GtmProvider from './gtm-provider';
 
 const albert = Albert_Sans({
   subsets: ["latin"],
@@ -74,6 +75,9 @@ export default function RootLayout({
       </head>
 
       <body className="font-sans bg-background text-foreground">
+        {/* GTM container bootstrap (plan B4): consent defaults first, then the
+            loader — renders nothing without NEXT_PUBLIC_GTM_CONTAINER_ID_WEB. */}
+        <GtmProvider />
         <LoadingProvider>
           <NavigationLoader />
           <AdProvider>
