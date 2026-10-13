@@ -10,10 +10,16 @@
 | 'firebase' (Identity Toolkit, one Firebase project per audience so
 | quotas and shadow accounts never cross-pollinate).
 |
-| FIREBASE_{CUSTOMER,VENDOR}_SERVICE_ACCOUNT is reserved for the
-| optional Admin SDK idToken cross-check (spike L-item in
+| FIREBASE_{CUSTOMER,VENDOR}_SERVICE_ACCOUNT is the optional admin
+| credential for the Admin SDK idToken cross-check (spike L-item in
 | docs/04-security/firebase-phone-otp-spike.md); the send/verify REST
-| endpoints authenticate with the web API key alone.
+| endpoints authenticate with the web API key alone, so leaving it unset
+| is the supported state. When set it is an ABSOLUTE path to the key file
+| (storage/app/private/ is gitignored for exactly that) or the JSON
+| itself. It is validated at registry boot and must belong to the same
+| project as {AUDIENCE}_PROJECT: an unusable or cross-project credential
+| throws OtpProviderConfigurationException rather than registering a
+| provider whose security control silently does not exist.
 |
 | FAIL CLOSED: an audience that selects 'firebase' without an API key
 | registers no provider at all - dispatch then throws

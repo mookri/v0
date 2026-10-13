@@ -3,8 +3,10 @@
 namespace App\Modules\Customers;
 
 use App\Modules\Customers\Auth\CustomerOtpService;
+use App\Modules\Customers\Auth\FirebasePhoneIdTokenVerifier;
 use App\Modules\Customers\Auth\RandomOtpCodes;
 use App\Modules\Customers\Contracts\NotifiesCustomers;
+use App\Modules\Customers\Contracts\VerifiesPhoneIdTokens;
 use App\Platform\Identity\Contracts\TrackSeeder;
 use App\Platform\Identity\Otp\EmailOtpDeliveryProvider;
 use App\Platform\Identity\Otp\OtpProviderRegistry;
@@ -22,6 +24,8 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
     {
         $this->app->bind(TrackSeeder::class, CustomersTrackSeeder::class);
         $this->app->bind(NotifiesCustomers::class, CustomerNotifier::class);
+        // Firebase phone login: the ID-token seam runs the kreait-backed * // verifier against the shared service-account env; tests rebind it * // with a scripted fake (same pattern as SeededOtpCodes), so no test * // ever needs credentials or a network call.
+        $this->app->bind(VerifiesPhoneIdTokens::class, FirebasePhoneIdTokenVerifier::class);
         // S47/S48: the service gets the config-built provider registry
         // (firebase-<audience> rows dispatch through it; issue() picks
         // the provider per the purpose policy table) and the selected

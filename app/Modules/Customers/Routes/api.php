@@ -42,6 +42,17 @@ Route::post('auth/login', [CustomerAuthController::class, 'login'])
     ->middleware('throttle:10,1')
     ->name('auth.login');
 
+// Firebase phone login (kit): intent binds the phone up-front, exchange * verifies the client SDK's ID token against that single-use intent and * mints the same actor token as auth/login — both public like the other
+// credential-proving auth routes, throttled identically (REDIS-001).
+Route::post('auth/firebase/intent', [CustomerAuthController::class, 'firebaseIntent'])
+    ->withoutMiddleware(['auth.any', 'tenant'])
+    ->middleware('throttle:10,1')
+    ->name('auth.firebase.intent');
+Route::post('auth/firebase/exchange', [CustomerAuthController::class, 'firebaseExchange'])
+    ->withoutMiddleware(['auth.any', 'tenant'])
+    ->middleware('throttle:10,1')
+    ->name('auth.firebase.exchange');
+
 // Public captcha config (S48): site key + whether the policy demands
 // an attestation — clients render the widget exactly when required.
 Route::get('auth/captcha', [CustomerAuthController::class, 'captchaConfig'])

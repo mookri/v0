@@ -30,7 +30,11 @@ interface PhoneVerificationProvider
      * Match one redemption attempt. Unavailable means the provider is
      * down/quota-blocked and must fail closed as a typed dependency
      * error — never as a mismatch oracle and never as a silent
-     * downgrade to a channel that cannot actually deliver.
+     * downgrade to a channel that cannot actually deliver. An adapter
+     * may instead throw OtpProviderUnavailableException (or its
+     * retryable OtpProviderRateLimitedException subclass) when it holds
+     * a provider detail worth logging; callers treat the two as the same
+     * fail-closed outcome.
      */
     public function verify(OtpVerifyRequest $request): OtpVerifyOutcome;
 }

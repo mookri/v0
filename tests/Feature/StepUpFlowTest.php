@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Platform\Identity\Events\MfaEnrolled;
 use App\Platform\Identity\Models\MfaStepUp;
+use App\Platform\Identity\StepUpOtpService;
 use Illuminate\Support\Facades\Event;
 use OTPHP\TOTP;
 use Tests\TenantIntegrationTestCase;
@@ -29,16 +30,24 @@ final class StepUpFlowTest extends TenantIntegrationTestCase
     }
 
     /**
-     * Enroll + confirm through the API — the flow a real user runs
-     * (scoped fake mirrors MfaTest; lifecycle events are not this
-     * surface's contract).
+     * Step-up → enroll → confirm through the API — the flow a real user runs
+     * since I2 made enrollment itself require a step-up (scoped fake mirrors
+     * MfaTest; lifecycle events are not this surface's contract).
      */
     private function enrollMfa(User $user): TOTP
     {
         Event::fake([MfaEnrolled::class]);
 
+        $challengeId = $this->actingAs($user)
+            ->postJson('/api/v1/identity/mfa/enroll/step-up')
+            ->assertAccepted()
+            ->json('data.challenge_id');
+
         $enrolled = $this->actingAs($user)
-            ->postJson('/api/v1/identity/mfa/enroll')
+            ->postJson('/api/v1/identity/mfa/enroll/verify', [
+                'challenge_id' => $challengeId,
+                'code' => StepUpOtpService::getTestCode((string) $challengeId),
+            ])
             ->assertCreated();
 
         $totp = $this->totpFromUrl($enrolled->json('data.otpauth_url'));

@@ -35,7 +35,10 @@ async function loadMfa() {
       ? `Enabled${data.enrolled_at ? ` since ${data.enrolled_at}` : ''} — a code from your app (or a recovery code) is required for sensitive actions.`
       : 'Not enabled — sensitive actions (suspend, role grants, API keys) will refuse until you set it up.';
 
-    toggle('mfa-enroll-form', !enabled);
+    toggle('mfa-stepup-form', !enabled);
+    // Rendered only while an emailed step-up code is pending (server-side),
+    // so reveal it whenever the setup pair is relevant.
+    toggle('mfa-stepup-verify-form', !enabled);
     toggle('mfa-confirm-form', !enabled);
     toggle('mfa-regenerate-form', enabled);
     toggle('mfa-revoke-form', enabled);

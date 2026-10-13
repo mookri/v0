@@ -4,9 +4,13 @@ namespace App\Modules\Customers\Http\Controllers;
 
 use App\Models\User;
 use App\Modules\Customers\Auth\CustomerOtpService;
+use App\Modules\Customers\Auth\FirebaseIdTokenRejectedException;
+use App\Modules\Customers\Auth\FirebaseIdTokenUnavailableException;
 use App\Modules\Customers\Auth\OtpRateLimitedException;
+use App\Modules\Customers\Contracts\VerifiesPhoneIdTokens;
 use App\Modules\Customers\Models\BuyerProfile;
 use App\Modules\Customers\Models\CustomerOtpChallenge;
+use App\Modules\Customers\Models\FirebasePhoneAuthIntent;
 use App\Modules\Customers\Models\ReferralAttribution;
 use App\Modules\Customers\Models\ReferralCode;
 use App\Modules\Customers\CustomerActivityRecorder;
@@ -15,6 +19,7 @@ use App\Platform\Identity\ActorSessionRotation;
 use App\Platform\Identity\ActorTokenIssuer;
 use App\Platform\Identity\Models\ActorSession;
 use App\Platform\Identity\Otp\OtpCaptchaRequiredException;
+use App\Platform\Identity\Otp\OtpProviderRateLimitedException;
 use App\Platform\Identity\Otp\OtpProviderUnavailableException;
 use App\Platform\Tenancy\ConnectionResolver;
 use App\Platform\Tenancy\Models\Tenant;
@@ -46,6 +51,7 @@ final class CustomerAuthController
         private readonly CustomerOtpService $otp,
         private readonly AuditWriter $audit,
         private readonly CustomerActivityRecorder $activity,
+        private readonly VerifiesPhoneIdTokens $phoneIdTokens,
     ) {
     }
 
@@ -165,6 +171,17 @@ final class CustomerAuthController
     }
 
     /**
+     * Provider-side back-off on an identifier: clients keep branching on
+     * `rate_limited` and back off, since every retry re-arms the window.
+     */
+    private function providerRateLimited(Request $request): JsonResponse
+    {
+        return new JsonResponse([
+            'error' => ['code' => 'rate_limited', 'message' => 'Too many attempts.', 'request_id' => $this->requestId($request)],
+        ], 429);
+    }
+
+    /**
      * Public captcha config (S48): lets clients render the reCAPTCHA
      * widget exactly when the server will demand an attestation. The
      * site key is public by design (Google serves it in every page
@@ -232,7 +249,23 @@ final class CustomerAuthController
             ], 429);
         } catch (OtpCaptchaRequiredException) {
             return $this->captchaRequired($request);
-        } catch (OtpProviderUnavailableException) {
+        } catch (OtpProviderRateLimitedException $e) {
+            // Provider-side back-off on this identifier (Google's
+            // TOO_MANY_ATTEMPTS family): retryable, so the same 429 shape
+            // our local caps use — not a 503 implying the whole channel
+            // is down. Recorded like the outage branch: the envelope
+            // hides the provider head, the log keeps it.
+            report($e);
+
+            return $this->providerRateLimited($request);
+        } catch (OtpProviderUnavailableException $e) {
+            // S50 observability: the typed 503 hides the provider's
+            // symbolic error from the client, so record it server-side.
+            // The exception message carries only symbolic codes (HTTP
+            // status + Google error head/reason) — never the phone,
+            // token, code, or session handle — so report() is PII-safe.
+            report($e);
+
             return $this->dependencyUnavailable($request);
         }
 
@@ -286,7 +319,23 @@ final class CustomerAuthController
             ], 429);
         } catch (OtpCaptchaRequiredException) {
             return $this->captchaRequired($request);
-        } catch (OtpProviderUnavailableException) {
+        } catch (OtpProviderRateLimitedException $e) {
+            // Provider-side back-off on this identifier (Google's
+            // TOO_MANY_ATTEMPTS family): retryable, so the same 429 shape
+            // our local caps use — not a 503 implying the whole channel
+            // is down. Recorded like the outage branch: the envelope
+            // hides the provider head, the log keeps it.
+            report($e);
+
+            return $this->providerRateLimited($request);
+        } catch (OtpProviderUnavailableException $e) {
+            // S50 observability: the typed 503 hides the provider's
+            // symbolic error from the client, so record it server-side.
+            // The exception message carries only symbolic codes (HTTP
+            // status + Google error head/reason) — never the phone,
+            // token, code, or session handle — so report() is PII-safe.
+            report($e);
+
             return $this->dependencyUnavailable($request);
         }
 
@@ -604,5 +653,240 @@ final class CustomerAuthController
             'data' => ['object' => 'customer_session', 'signed_out' => true],
             'meta' => ['request_id' => $this->requestId($request)],
         ]);
+    }
+
+    /**
+     * Firebase phone login, step 1 (kit): record WHICH E.164 number the
+     * client is about to authenticate with, BEFORE the client SDK starts
+     * its Firebase handshake. No oracle — a row is created for any
+     * well-formed phone under an active tenant whether or not an account
+     * exists; eligibility is decided at exchange against Firebase's
+     * verified claim, never against this request. The row is the
+     * anti-replay hinge: it binds the phone, expires in 10 minutes, and
+     * is consumed exactly once (see firebaseExchange).
+     */
+    public function firebaseIntent(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'tenant_id' => ['required', 'string'],
+            // Prefix-optional like signup's rule: exchange normalizes to
+            // the +E.164 spelling Firebase's phone_number claim always
+            // carries before comparing.
+            'phone' => ['required', 'string', 'regex:/^\+?[0-9]{6,15}$/'],
+        ]);
+
+        $tenant = $this->activeTenant($request, $validated['tenant_id']);
+        if ($tenant instanceof JsonResponse) {
+            return $tenant;
+        }
+
+        $intent = FirebasePhoneAuthIntent::query()->create([
+            'tenant_id' => (string) $tenant->getKey(),
+            'purpose' => FirebasePhoneAuthIntent::PURPOSE_LOGIN,
+            'phone' => $validated['phone'],
+            'expires_at' => $this->now()->addSeconds(FirebasePhoneAuthIntent::TTL_SECONDS),
+        ]);
+
+        return new JsonResponse([
+            'data' => [
+                'object' => 'firebase_phone_intent',
+                'intent_id' => (string) $intent->getKey(),
+                'expires_in' => FirebasePhoneAuthIntent::TTL_SECONDS,
+            ],
+            'meta' => ['request_id' => $this->requestId($request)],
+        ], 202);
+    }
+
+    /**
+     * Firebase phone login, step 2 (kit): verify the ID token the client
+     * SDK minted after the SMS round-trip, bind it to the intent, and
+     * mint the exact same actor token every other login path issues — so
+     * Laravel stays authoritative for customer lookup, membership, MFA,
+     * and the session itself.
+     *
+     * Every credential-shaped failure collapses to one 401 (no oracle on
+     * token state, account existence, MFA state, or phone binding); only
+     * infrastructure failure is distinguishable, as the typed 503.
+     */
+    public function firebaseExchange(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'tenant_id' => ['required', 'string'],
+            'intent_id' => ['required', 'string', 'max:40'],
+            'id_token' => ['required', 'string', 'max:8192'],
+            'totp_code' => ['sometimes', 'nullable', 'string'],
+        ]);
+
+        $tenant = $this->activeTenant($request, $validated['tenant_id']);
+        if ($tenant instanceof JsonResponse) {
+            return $tenant;
+        }
+        $tenantId = (string) $tenant->getKey();
+
+        $intent = FirebasePhoneAuthIntent::query()
+            ->where('id', $validated['intent_id'])
+            ->where('tenant_id', $tenantId)
+            ->where('purpose', FirebasePhoneAuthIntent::PURPOSE_LOGIN)
+            ->first();
+
+        if ($intent === null || $intent->expires_at->isPast()) {
+            return $this->invalidExchange($request);
+        }
+
+        try {
+            $verified = $this->phoneIdTokens->verify($validated['id_token']);
+        } catch (FirebaseIdTokenRejectedException) {
+            return $this->invalidExchange($request);
+        } catch (FirebaseIdTokenUnavailableException $exception) {
+            // S50: infrastructure failures stay visible (symbolic
+            // message) and typed — a Firebase outage never masquerades
+            // as a wrong token.
+            report($exception);
+
+            return $this->dependencyUnavailable($request);
+        }
+
+        // Phone sign-in only: a token minted by a password or federated
+        // session must never satisfy the phone intent.
+        if ($verified['provider'] !== 'phone') {
+            return $this->invalidExchange($request);
+        }
+
+        // Identity comes from Firebase's verified claim — but it must be
+        // the phone THIS intent was opened for, so a harvested token
+        // cannot be replayed into an intent for another number. Signup's
+        // rule is prefix-optional, so normalize to the claim's +E.164.
+        $intentPhone = str_starts_with((string) $intent->phone, '+')
+            ? (string) $intent->phone
+            : '+' . (string) $intent->phone;
+
+        if ($verified['phone'] !== $intentPhone) {
+            return $this->invalidExchange($request);
+        }
+
+        // Replay floor: the authentication must post-date the intent, so
+        // a token minted for an earlier flow cannot satisfy a later one
+        // (30 s allowance between Google's clock and ours).
+        if ($verified['auth_time'] + 30 < $intent->created_at->getTimestamp()) {
+            return $this->invalidExchange($request);
+        }
+
+        $user = $this->findUserByPhone($verified['phone']);
+
+        if ($user === null) {
+            // Login only: verified phone proof is not account creation.
+            return $this->invalidExchange($request);
+        }
+
+        $membership = TenantMembership::query()
+            ->where('tenant_id', $tenantId)
+            ->where('user_id', $user->getAuthIdentifier())
+            ->where('state', TenantMembership::STATE_ACTIVE)
+            ->first();
+
+        if ($membership === null) {
+            return new JsonResponse([
+                'error' => ['code' => 'membership_inactive', 'message' => 'This account is deactivated.', 'request_id' => $this->requestId($request)],
+            ], 403);
+        }
+
+        // MFA parity with login(): phone possession is factor one on both
+        // paths, so an enrolled TOTP second factor is demanded here too —
+        // absent/wrong codes collapse to the same 401 (no oracle on MFA
+        // state); the M4 lockout is the one observable, as 429 + Retry-After.
+        if ((bool) $user->mfa_enabled) {
+            $totp = (string) ($validated['totp_code'] ?? '');
+
+            $mfaVerified = false;
+            if ($totp !== '') {
+                try {
+                    $mfaVerified = app(\App\Platform\Identity\MfaService::class)->verify($user, $totp, time());
+                } catch (\App\Platform\Identity\MfaLockedException $locked) {
+                    return new JsonResponse([
+                        'error' => ['code' => 'rate_limited', 'message' => 'Too many failed attempts. Try again later.', 'request_id' => $this->requestId($request)],
+                    ], 429)->header('Retry-After', (string) $locked->retryAfter);
+                }
+            }
+
+            if (! $mfaVerified) {
+                return $this->invalidExchange($request);
+            }
+        }
+
+        // Single-use gate: one atomic DELETE decides which of any
+        // concurrent exchanges with this intent proceeds — the loser
+        // finds 0 rows and collapses to the uniform 401 above the mint.
+        $consumed = FirebasePhoneAuthIntent::query()
+            ->where('id', (string) $intent->getKey())
+            ->where('tenant_id', $tenantId)
+            ->delete() === 1;
+
+        if (! $consumed) {
+            return $this->invalidExchange($request);
+        }
+
+        $scoped = $this->resolveTenantScope($tenant);
+        try {
+            // Self-heal like login: profiles predate the module for
+            // invite-seeded accounts, so this backfills instead of failing.
+            BuyerProfile::query()->firstOrCreate(
+                ['user_id' => $user->getAuthIdentifier()],
+                ['display_name' => $user->name, 'status' => BuyerProfile::STATUS_ACTIVE]
+            );
+
+            $this->audit->record(
+                'customers.auth.logged_in',
+                ['module' => 'customers', 'resource_type' => 'customer_session', 'resource_id' => (string) $user->getAuthIdentifier()],
+                null,
+                ['tenant_id' => $tenantId, 'user_id' => (string) $user->getAuthIdentifier(), 'channel' => 'firebase']
+            );
+            $this->activity->record((string) $user->getAuthIdentifier(), 'login', 'Signed in');
+        } finally {
+            if ($scoped['ownsContext']) {
+                $scoped['context']->clear();
+            }
+        }
+
+        $token = $this->mintToken($request, $user);
+        if ($token instanceof JsonResponse) {
+            return $token;
+        }
+
+        return new JsonResponse([
+            'data' => [
+                'object' => 'customer_session',
+                'token' => $token['token'],
+                'expires_at' => $token['expires_at'],
+                'tenant_id' => $tenantId,
+                'actor' => ['user_id' => (string) $user->external_id, 'session_id' => $token['session_id']],
+            ],
+            'meta' => ['request_id' => $this->requestId($request)],
+        ]);
+    }
+
+    /**
+     * The single 401 every credential-shaped exchange failure shares:
+     * unknown/foreign/expired/already-consumed intent, token Firebase
+     * rejected, wrong provider or phone, stale auth_time, unknown
+     * account, failed MFA — indistinguishable by design (no oracle).
+     */
+    private function invalidExchange(Request $request): JsonResponse
+    {
+        return new JsonResponse([
+            'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired credentials.', 'request_id' => $this->requestId($request)],
+        ], 401);
+    }
+
+    /**
+     * Firebase's phone_number claim is always +E.164, but accounts may
+     * have been created through the prefix-optional signup rule, so both
+     * spellings are tried before concluding no account exists.
+     */
+    private function findUserByPhone(string $phone): ?User
+    {
+        return User::query()
+            ->where('phone', $phone)
+            ->orWhere('phone', ltrim($phone, '+'))
+            ->first();
     }
 }

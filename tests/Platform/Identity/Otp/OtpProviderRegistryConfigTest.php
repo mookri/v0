@@ -3,6 +3,7 @@
 namespace Tests\Platform\Identity\Otp;
 
 use App\Platform\Identity\Otp\FirebasePhoneVerificationProvider;
+use App\Platform\Identity\Otp\OtpProviderConfigurationException;
 use App\Platform\Identity\Otp\OtpProviderRegistry;
 use App\Platform\Identity\Otp\OtpProviderUnavailableException;
 use Tests\TestCase;
@@ -87,5 +88,85 @@ final class OtpProviderRegistryConfigTest extends TestCase
         $this->assertFalse($registry->has('firebase-customer'));
         $this->expectException(OtpProviderUnavailableException::class);
         $registry->get('firebase-customer');
+    }
+
+    public function test_admin_credentials_are_optional_and_absent_stays_ok(): void
+    {
+        config([
+            'otp-providers.audiences.customer' => [
+                'provider' => 'firebase',
+                'firebase' => [
+                    'project' => 'navdhya-customer-1',
+                    'api_key' => 'k1',
+                    'service_account' => null,
+                ],
+            ],
+        ]);
+
+        $this->assertTrue($this->registry()->has('firebase-customer'));
+    }
+
+    public function test_service_account_matching_the_audience_project_registers(): void
+    {
+        config([
+            'otp-providers.audiences.customer' => [
+                'provider' => 'firebase',
+                'firebase' => [
+                    'project' => 'navdhya-customer-1',
+                    'api_key' => 'k1',
+                    'service_account' => json_encode([
+                        'project_id' => 'navdhya-customer-1',
+                        'private_key' => '-----BEGIN FAKE KEY-----',
+                        'client_email' => 'svc@navdhya-customer-1.iam.gserviceaccount.com',
+                        'token_uri' => 'https://oauth2.googleapis.com/token',
+                    ]),
+                ],
+            ],
+        ]);
+
+        $this->assertTrue($this->registry()->has('firebase-customer'));
+    }
+
+    public function test_service_account_from_another_project_fails_closed(): void
+    {
+        // The exact class of mistake the RCA records: credentials and site
+        // key borrowed from a different project than the audience uses.
+        config([
+            'otp-providers.audiences.customer' => [
+                'provider' => 'firebase',
+                'firebase' => [
+                    'project' => 'navdhya-customer-1',
+                    'api_key' => 'k1',
+                    'service_account' => json_encode([
+                        'project_id' => 'some-other-project',
+                        'private_key' => '-----BEGIN FAKE KEY-----',
+                        'client_email' => 'svc@some-other-project.iam.gserviceaccount.com',
+                        'token_uri' => 'https://oauth2.googleapis.com/token',
+                    ]),
+                ],
+            ],
+        ]);
+
+        $this->expectException(OtpProviderConfigurationException::class);
+        $this->expectExceptionMessage('belongs to project [some-other-project]');
+        $this->registry();
+    }
+
+    public function test_unreadable_service_account_path_fails_closed(): void
+    {
+        config([
+            'otp-providers.audiences.customer' => [
+                'provider' => 'firebase',
+                'firebase' => [
+                    'project' => 'navdhya-customer-1',
+                    'api_key' => 'k1',
+                    'service_account' => storage_path('app/private/not-installed.json'),
+                ],
+            ],
+        ]);
+
+        $this->expectException(OtpProviderConfigurationException::class);
+        $this->expectExceptionMessage('missing or unreadable');
+        $this->registry();
     }
 }

@@ -2,6 +2,9 @@
 
 namespace App\Platform\Identity;
 
+use App\Platform\Identity\Otp\EmailOtpDelivery;
+use App\Platform\Identity\Otp\EmailOtpDeliveryProvider;
+use App\Platform\Identity\Otp\NullEmailOtpDelivery;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -16,6 +19,13 @@ use Illuminate\Support\Str;
  * Uses the central connection and a dedicated table for step-up
  * challenges (reuses the customer_otp_challenges table with a
  * distinct purpose prefix to avoid collisions).
+ *
+ * An issued challenge is worth nothing until the code reaches the
+ * actor, so issue() hands it to the email delivery port (S46/S48) when
+ * the caller supplies an address. Which provider that is stays
+ * config-selected: OTP_EMAIL_DELIVERY=mailer sends, the default null
+ * provider delivers nothing — same switch the customer email channel
+ * uses, so this path cannot quietly become the only unsilenced one.
  */
 final class StepUpOtpService
 {
@@ -27,11 +37,20 @@ final class StepUpOtpService
 
     public const MAX_PER_HOUR = 5;
 
+    private readonly EmailOtpDeliveryProvider $emailDelivery;
+
+    public function __construct(?EmailOtpDeliveryProvider $emailDelivery = null)
+    {
+        $this->emailDelivery = $emailDelivery ?? new NullEmailOtpDelivery();
+    }
+
     /** @var array<string, string> */
     private static array $testCodes = [];
 
     /**
      * @param array<string, mixed> $payload
+     *
+     * @return array{challenge_id: string, code: string|null, expires_at: string}
      */
     public function issue(
         string $tenantId,
@@ -39,9 +58,10 @@ final class StepUpOtpService
         string $identifier,
         CarbonImmutable $now,
         array $payload = [],
+        ?string $deliverToEmail = null,
     ): array {
         // Same transaction + locking pattern as CustomerOtpService (C2/G1)
-        return DB::connection('central')->transaction(function () use ($tenantId, $purpose, $identifier, $now, $payload): array {
+        return DB::connection('central')->transaction(function () use ($tenantId, $purpose, $identifier, $now, $payload, $deliverToEmail): array {
             DB::connection('central')->table('tenants')
                 ->where('id', $tenantId)
                 ->lockForUpdate()
@@ -55,7 +75,7 @@ final class StepUpOtpService
                 ->count();
 
             if ($recent >= self::MAX_PER_HOUR) {
-                throw new \RuntimeException('Step-up rate limit exceeded');
+                throw new StepUpRateLimitedException('Step-up rate limit exceeded');
             }
 
             DB::connection('central')->table('customer_otp_challenges')
@@ -87,14 +107,30 @@ final class StepUpOtpService
             // Store code for test retrieval (drill-only)
             self::$testCodes[$challengeId] = $code;
 
+            $expiresAt = $now->addSeconds(self::TTL_SECONDS)->toDateTimeString();
+
+            if ($deliverToEmail !== null && $deliverToEmail !== '') {
+                $this->emailDelivery->deliver(new EmailOtpDelivery(
+                    to: $deliverToEmail,
+                    code: $code,
+                    challengeId: $challengeId,
+                    purpose: $purpose,
+                    expiresAt: $expiresAt,
+                ));
+            }
+
             return [
                 'challenge_id' => $challengeId,
                 'code' => config('customers.log_otp_codes') === true ? $code : null,
-                'expires_at' => $now->addSeconds(self::TTL_SECONDS)->toDateTimeString(),
+                'expires_at' => $expiresAt,
             ];
         });
     }
 
+    /**
+     * @return array{id: string, payload: mixed}|null null for every refusal
+     *         (unknown, expired, spent) — the caller never learns which
+     */
     public function verify(
         string $tenantId,
         string $purpose,

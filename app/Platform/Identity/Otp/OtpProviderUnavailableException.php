@@ -8,7 +8,11 @@ namespace App\Platform\Identity\Otp;
  * provider the app was not configured for — the verification fabric
  * never falls back to a different channel, so this surfaces as a typed
  * dependency error rather than an oracle-shaped 401 or a downgrade.
+ *
+ * Not final: a retryable provider refusal extends it (see
+ * OtpProviderRateLimitedException) so fail-closed callers keep failing
+ * closed without knowing the distinction.
  */
-final class OtpProviderUnavailableException extends \RuntimeException
+class OtpProviderUnavailableException extends \RuntimeException
 {
 }

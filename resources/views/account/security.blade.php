@@ -43,15 +43,28 @@
             <div class="card-body">
                 <p class="text-muted mb-3" id="mfa-status">Loading status…</p>
 
-                {{-- Not enabled: start (or restart) enrollment, then enter
-                     a live code to confirm — the setup key arrives on the
-                     flash after the enroll redirect. Enabled: regenerate
-                     the sheet or disable, both behind a live code. Forms
-                     start hidden; page JS reveals the right pair. --}}
-                <form method="POST" action="{{ url('/account/security/mfa/enroll') }}" id="mfa-enroll-form" class="mb-3 d-none">
+                {{-- Not enabled: enroll is two posts since I2 — an emailed
+                     step-up code proves possession of the account's email
+                     before a TOTP secret can be attached (a hijacked session
+                     must not be able to lock the owner out). The setup key
+                     arrives on the flash after the verify redirect, exactly as
+                     the enroll one used to. --}}
+                <form method="POST" action="{{ url('/account/security/mfa/enroll/step-up') }}" id="mfa-stepup-form" class="mb-3 d-none">
                     @csrf
-                    <button class="btn btn-primary" type="submit">Set up authenticator app</button>
+                    <button class="btn btn-primary" type="submit">Send verification code to my email</button>
                 </form>
+
+                @if (filled(session('mfa_enroll_stepup_challenge')))
+                    <form method="POST" action="{{ url('/account/security/mfa/enroll/verify') }}" id="mfa-stepup-verify-form" class="mb-3 d-none">
+                        @csrf
+                        <input type="hidden" name="challenge_id" value="{{ session('mfa_enroll_stepup_challenge') }}">
+                        <label class="form-label" for="mfa-stepup-code">Verification code (from your email)</label>
+                        <div class="input-group">
+                            <input class="form-control font-monospace" id="mfa-stepup-code" name="code" inputmode="numeric" autocomplete="one-time-code" placeholder="123456" required>
+                            <button class="btn btn-primary" type="submit">Get setup key</button>
+                        </div>
+                    </form>
+                @endif
 
                 <form method="POST" action="{{ url('/account/security/mfa/confirm') }}" id="mfa-confirm-form" class="mb-3 d-none">
                     @csrf

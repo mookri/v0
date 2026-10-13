@@ -5,12 +5,13 @@ namespace Tests\Platform\Identity;
 use App\Models\User;
 use App\Platform\Identity\ActorTokenIssuer;
 use App\Platform\Identity\ActorTokenVerifier;
+use Illuminate\Testing\TestResponse;
 use Tests\TenantIntegrationTestCase;
 
 /**
  * Identity self-service (api-platform platform surfaces): own profile
- * read/update with strict unknown-field rejection, web-session inventory,
- * and remote-session revocation that spares the current session.
+ * read/update with strict unknown-field rejection, actor-session inventory,
+ * and remote-session revocation that spares the presented session.
  */
 final class IdentitySelfServiceTest extends TenantIntegrationTestCase
 {
@@ -43,16 +44,33 @@ final class IdentitySelfServiceTest extends TenantIntegrationTestCase
         $this->assertSame('Asha Devi', $user->fresh()->name);
     }
 
-    private function sessionCookieName(): string
+    /**
+     * Bearer call, isolated like a real request. The test kernel reuses one
+     * container across calls, so a previous request's authenticated user
+     * survives on the guard — and AuthenticateAny returns early whenever a
+     * user is already resolved, which skips the actor stamp that tells
+     * revoke-others which session the caller presented (without it the sweep
+     * kills the caller's own row). Each HTTP request boots a fresh app, so
+     * resetting the session state here restores that per-request isolation.
+     */
+    private function bearerGetJson(string $path, string $token): TestResponse
     {
-        return (string) config('session.cookie');
+        $this->resetSessionState();
+
+        return $this->getJson($path, ['Authorization' => 'Bearer '.$token]);
+    }
+
+    private function bearerPostJson(string $path, string $token): TestResponse
+    {
+        $this->resetSessionState();
+
+        return $this->postJson($path, [], ['Authorization' => 'Bearer '.$token]);
     }
 
     public function test_sessions_inventory_and_remote_revoke(): void
     {
-        // This test uses bearer tokens (which create actor_sessions) because
-        // the sessions() endpoint now reads from actor_sessions (bearer
-        // devices) rather than the web sessions table.
+        // The inventory reads actor_sessions (the bearer devices), not the
+        // web sessions table, so this test mints those rows with real tokens.
         config(['session.driver' => 'database']);
         $secret = 'sessions-inventory-test-secret';
         config()->set('identity.hmac_secret', $secret);
@@ -60,38 +78,46 @@ final class IdentitySelfServiceTest extends TenantIntegrationTestCase
         $user = User::factory()->create(['email_verified_at' => now()]);
         $user->forceFill(['external_id' => 'ext_sessions_inventory'])->save();
 
-        // Create two actor_sessions for the same user (simulating two devices)
         $now = gmdate('Y-m-d\TH:i:s.v\Z');
         $first = ActorTokenIssuer::mint($secret, 'ext_sessions_inventory', 86400, $now, [], null, null, 'Chrome/120.0.0.0', '203.0.113.5');
         $second = ActorTokenIssuer::mint($secret, 'ext_sessions_inventory', 86400, $now, [], null, null, 'Firefox/115.0', '198.51.100.10');
 
-        // Debug: check if actor_sessions were created
-        $count = \Illuminate\Support\Facades\DB::connection('central')->table('actor_sessions')
-            ->whereIn('id', [$first['session_id'], $second['session_id']])
-            ->count();
-        $this->assertEquals(2, $count, 'Expected 2 actor_sessions to be created');
+        $listed = $this->bearerGetJson('/api/v1/identity/sessions', $first['token'])->assertOk();
+        $rows = collect($listed->json('data'))->keyBy('id');
+        $this->assertCount(2, $rows);
+        $this->assertTrue($rows[$first['session_id']]['current'], 'The presented token is the current session.');
+        $this->assertFalse($rows[$second['session_id']]['current']);
+        $this->assertSame('203.0.113.5', $rows[$first['session_id']]['ip_address']);
 
-        // Call sessions() with the first token (bearer auth) - use postJson like test_bearer
-        $headers = ['Authorization' => 'Bearer '.$first['token']];
-        $listed = $this->getJson('/api/v1/identity/sessions', $headers);
+        // Every bearer call above persisted its own ad-hoc read session row
+        // (StartSession has no cookie to resume, and the handler stamps the
+        // authenticated user on it). Drop those, then plant one foreign
+        // device row, so `revoked` counts exactly the session that is not
+        // this caller's.
+        $web = \Illuminate\Support\Facades\DB::connection(config('database.default'))->table('sessions');
+        $web->where('user_id', $user->getAuthIdentifier())->delete();
+        $web->insert([
+            'id' => str_repeat('a', 40),
+            'user_id' => $user->getAuthIdentifier(),
+            'ip_address' => '203.0.113.31',
+            'user_agent' => 'OtherDevice/1.0',
+            'payload' => 'x',
+            'last_activity' => time(),
+        ]);
 
-        // Debug: dump response if it fails
-        if ($listed->status() !== 200) {
-            $this->fail('sessions() returned '.$listed->status().': '.json_encode($listed->json()));
-        }
-        $listed->assertOk();
-        $this->assertCount(2, $listed->json('data'));
-        $this->assertTrue($listed->json('data.0.current'), 'First token session should be marked current');
-        $this->assertFalse($listed->json('data.1.current'));
+        $this->bearerPostJson('/api/v1/identity/sessions:revoke-others', $first['token'])
+            ->assertOk()
+            ->assertJsonPath('data.object', 'session_revocation')
+            ->assertJsonPath('data.revoked', 1);
+        $this->assertDatabaseMissing('sessions', ['id' => str_repeat('a', 40)]);
 
-        // Revoke the other session (second device)
-        $revoked = $this->postJson('/api/v1/identity/sessions:revoke-others', [], ['Authorization' => 'Bearer '.$first['token']])->assertOk();
-        $revoked->assertJsonPath('data.revoked', 1);
-
-        // First session should survive, second should be revoked
-        $after = $this->getJson('/api/v1/identity/sessions', ['Authorization' => 'Bearer '.$first['token']])->assertOk();
+        // The presented session survives the call that asked to end the
+        // others (F-SMOKE3); the other device's token does not.
+        $after = $this->bearerGetJson('/api/v1/identity/sessions', $first['token'])->assertOk();
         $this->assertCount(1, $after->json('data'));
+        $this->assertSame($first['session_id'], $after->json('data.0.id'));
         $this->assertTrue($after->json('data.0.current'));
+        $this->assertNull(ActorTokenVerifier::verify($secret, $second['token'], gmdate('Y-m-d\TH:i:s.v\Z')));
     }
 
     public function test_revoke_without_session_cookie_reports_zero(): void

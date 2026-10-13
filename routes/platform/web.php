@@ -114,6 +114,13 @@ Route::group(['prefix' => '/platform', 'middleware' => 'auth'], function (): voi
 Route::group(['prefix' => '/account/security', 'middleware' => 'auth'], function (): void {
     Route::post('/profile', [\App\Platform\Identity\Http\Controllers\IdentitySelfServiceController::class, 'updateProfile']);
     Route::post('/mfa/enroll', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'enroll']);
+    // I2 completion: enrollment step-up proves possession of the actor's
+    // email channel (OTP by mail), not an MFA proof — MFA does not exist yet
+    // on this path, so the group keeps its "no stepup gate" posture. The
+    // console posts these two in order; /mfa/enroll above stays the
+    // already-verified path.
+    Route::post('/mfa/enroll/step-up', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'enrollStepUp']);
+    Route::post('/mfa/enroll/verify', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'enrollVerify']);
     Route::post('/mfa/confirm', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'confirm']);
     Route::post('/mfa/revoke', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'revoke']);
     Route::post('/mfa/recovery-codes', [\App\Platform\Identity\Http\Controllers\MfaController::class, 'recoveryCodes']);

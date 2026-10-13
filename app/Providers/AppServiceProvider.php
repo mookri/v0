@@ -10,9 +10,11 @@ use App\Platform\Identity\Http\Middleware\AuthenticateAny;
 use App\Platform\Identity\Http\Middleware\AuthenticateHmacToken;
 use App\Platform\Identity\Otp\EmailOtpDeliveryProvider;
 use App\Platform\Identity\Otp\FirebasePhoneVerificationProvider;
+use App\Platform\Identity\Otp\FirebaseServiceAccount;
 use App\Platform\Identity\Otp\MailerEmailOtpDelivery;
 use App\Platform\Identity\Otp\NullEmailOtpDelivery;
 use App\Platform\Identity\Otp\OtpAudienceRouter;
+use App\Platform\Identity\Otp\OtpProviderConfigurationException;
 use App\Platform\Identity\Otp\OtpProviderRegistry;
 use App\Platform\Identity\OAuth\CheckOAuthGrant;
 use App\Platform\Identity\OAuth\Console\CreateClientCommand;
@@ -71,6 +73,24 @@ class AppServiceProvider extends ServiceProvider
                 }
 
                 $name = OtpAudienceRouter::nameFor((string) $audience, 'firebase');
+
+                // Optional admin credential (idToken cross-check stays open,
+                // spike L6). Unset is the supported state; set-but-unusable
+                // throws rather than registering a provider whose security
+                // control silently does not exist.
+                $serviceAccount = FirebaseServiceAccount::resolve(
+                    isset($firebase['service_account']) ? (string) $firebase['service_account'] : null,
+                    (string) $audience,
+                );
+                if ($serviceAccount !== null && $serviceAccount->projectId !== $firebase['project']) {
+                    throw new OtpProviderConfigurationException(sprintf(
+                        'firebase otp provider [%s] service account belongs to project [%s], but the audience is configured for [%s]',
+                        $name,
+                        $serviceAccount->projectId,
+                        $firebase['project'],
+                    ));
+                }
+
                 $providers[$name] = new FirebasePhoneVerificationProvider(
                     name: $name,
                     apiKey: $apiKey,

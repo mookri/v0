@@ -8,6 +8,7 @@ use App\Modules\Customers\Models\CustomerOtpChallenge;
 use App\Modules\Customers\CustomerActivityRecorder;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Identity\Otp\OtpCaptchaRequiredException;
+use App\Platform\Identity\Otp\OtpProviderRateLimitedException;
 use App\Platform\Identity\Otp\OtpProviderUnavailableException;
 use App\Platform\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
@@ -145,9 +146,20 @@ final class CustomerVerificationController extends CustomerSelfServiceController
                     'request_id' => $this->requestId($request),
                 ],
             ], 422);
-        } catch (OtpProviderUnavailableException) {
+        } catch (OtpProviderRateLimitedException $e) {
+            // Provider-side back-off on this identifier: retryable 429,
+            // same shape as our local caps. Recorded so the provider head
+            // survives in the log.
+            report($e);
+
+            return new JsonResponse([
+                'error' => ['code' => 'rate_limited', 'message' => 'Too many attempts.', 'request_id' => $this->requestId($request)],
+            ], 429);
+        } catch (OtpProviderUnavailableException $e) {
             // Provider outage stays a typed dependency error — never a
             // 401, never a fallback channel.
+            report($e);
+
             return new JsonResponse([
                 'error' => ['code' => 'dependency_unavailable', 'message' => 'Verification is temporarily unavailable. Try again shortly.', 'request_id' => $this->requestId($request)],
             ], 503);

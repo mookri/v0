@@ -32,9 +32,15 @@ use Illuminate\Support\Facades\Http;
  *                                    uniform 401 as every other miss —
  *                                    expired sessions die there too,
  *                                    like a dead local row)
- *  - 400 anything else            -> Unavailable (fail closed: quota,
- *    captcha, network, 4xx/5xx      misconfig or argument errors never
- *                                    masquerade as a wrong code)
+ *  - 400 anything else            -> typed provider fault (fail closed:
+ *    captcha, network, 4xx/5xx      quota, misconfig or argument errors
+ *                                   never masquerade as a wrong code).
+ *                                   Send and verify both throw it, so
+ *                                   the Google head reaches report()
+ *                                   from either path (send-side since
+ *                                   S50, verify-side now).
+ *  - rate-limit head              -> OtpProviderRateLimitedException
+ *                                   (retryable 429 rather than 503).
  *
  * PII (hard rule): nothing sent to a provider may be echoed into
  * exceptions or logs — messages carry only HTTP status plus Google's
@@ -61,6 +67,19 @@ final class FirebasePhoneVerificationProvider implements PhoneVerificationProvid
         'INVALID_CODE',
         'INVALID_VERIFICATION_CODE',
         'CODE_NOT_FOUND',
+    ];
+
+    /**
+     * Provider-side back-off heads -> a retryable typed fault instead of
+     * a dependency outage. Calibrated by LIVE real-number probes on
+     * 2026-10-13 (spike doc RCA): a hammered number returns
+     * `TOO_MANY_ATTEMPTS_TRY_LATER` (400), which re-arms on every retry —
+     * the client must back off, not hammer, so the envelope says 429.
+     */
+    private const RATE_LIMIT_ERROR_CODES = [
+        'TOO_MANY_ATTEMPTS_TRY_LATER',
+        'TOO_MANY_ATTEMPTS',
+        'RATE_LIMIT_EXCEEDED',
     ];
 
     public function __construct(
@@ -98,7 +117,7 @@ final class FirebasePhoneVerificationProvider implements PhoneVerificationProvid
         }
 
         if (! $response->successful()) {
-            throw $this->unavailable($this->describe($response));
+            throw $this->fault($response);
         }
 
         $sessionInfo = $response->json('sessionInfo');
@@ -111,6 +130,13 @@ final class FirebasePhoneVerificationProvider implements PhoneVerificationProvid
         return new OtpSendResult(providerRef: $sessionInfo);
     }
 
+    /**
+     * @throws OtpProviderUnavailableException when the provider itself
+     *         faults (network, captcha, quota, misconfig, 4xx/5xx) — the
+     *         typed fault carries the symbolic head, so verify failures
+     *         are diagnosable from logs and not just retryable blind.
+     *         Rate-limit heads throw the retryable subclass.
+     */
     public function verify(OtpVerifyRequest $request): OtpVerifyOutcome
     {
         if ($request->providerRef === null || $request->providerRef === '') {
@@ -128,7 +154,7 @@ final class FirebasePhoneVerificationProvider implements PhoneVerificationProvid
                 ],
             );
         } catch (ConnectionException) {
-            return OtpVerifyOutcome::Unavailable;
+            throw $this->unavailable('network error');
         }
 
         if ($response->successful()) {
@@ -139,9 +165,13 @@ final class FirebasePhoneVerificationProvider implements PhoneVerificationProvid
             return OtpVerifyOutcome::Mismatch;
         }
 
-        // 400 outside the code family (quota, captcha, argument,
-        // misconfig) and every 4xx/5xx/network shape fail closed.
-        return OtpVerifyOutcome::Unavailable;
+        // 400 outside the code family (captcha, argument, misconfig) and
+        // every 4xx/5xx shape fail closed as a typed fault. This used to
+        // return a bare `Unavailable`, which collapsed every provider
+        // refusal into one detail-free message — the real cause of a
+        // failed redemption (wrong key class, captcha origin, quota) was
+        // undiagnosable from our side.
+        throw $this->fault($response);
     }
 
     /**
@@ -164,8 +194,14 @@ final class FirebasePhoneVerificationProvider implements PhoneVerificationProvid
         $message = (string) $response->json('error.message', '');
         if ($message !== '') {
             // Google prefixes errors as 'CODE : prose'; prose may echo
-            // the phone number, so only the symbolic head is kept.
-            $codes[] = strtoupper(trim(explode(':', $message, 2)[0]));
+            // the phone number, so only the symbolic head is kept. A head
+            // counts only in the FOO_BAR shape: a message with no colon is
+            // prose end to end ('API key not valid. Please pass a valid
+            // API key.') and must never reach the log as a "code".
+            $head = strtoupper(trim(explode(':', $message, 2)[0]));
+            if (preg_match('/^[A-Z][A-Z0-9_]*$/', $head) === 1) {
+                $codes[] = $head;
+            }
         }
 
         $status = (string) $response->json('error.status', '');
@@ -201,5 +237,26 @@ final class FirebasePhoneVerificationProvider implements PhoneVerificationProvid
             $this->name,
             $reason,
         ));
+    }
+
+    /**
+     * Typed fault for a rejected response: a rate-limit head becomes the
+     * retryable subclass, every other refusal stays a dependency outage.
+     * Only symbolic parts travel in the message — never prose, phone,
+     * code or session handle.
+     */
+    private function fault(Response $response): OtpProviderUnavailableException
+    {
+        $detail = $this->describe($response);
+
+        if (array_intersect(self::RATE_LIMIT_ERROR_CODES, $this->symbolicCodes($response)) !== []) {
+            return new OtpProviderRateLimitedException(sprintf(
+                'firebase otp provider [%s] rate limited: %s',
+                $this->name,
+                $detail,
+            ));
+        }
+
+        return $this->unavailable($detail);
     }
 }

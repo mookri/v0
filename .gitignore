@@ -22,3 +22,9 @@ yarn-error.log
 /storage/codex-tmp
 *.sqlite
 storage/framework/testing-*.sqlite
+
+# Firebase admin service-account keys are secrets. storage/app/.gitignore keeps
+# storage/app/private/* out of git while still shipping the directory itself;
+# this extra rule catches a key downloaded from the console into the repo root,
+# which is where Google's default naming lands it.
+/*-firebase-adminsdk-*.json

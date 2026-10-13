@@ -5,6 +5,8 @@ namespace App\Platform\Api;
 use App\Platform\Authz\Exceptions\AuthorizationDeniedException;
 use App\Platform\Authz\Exceptions\SodConflictException;
 use App\Platform\Authz\Exceptions\InvalidPolicyPayloadException;
+use App\Platform\Identity\Otp\OtpProviderRateLimitedException;
+use App\Platform\Identity\Otp\OtpProviderUnavailableException;
 use App\Platform\Tenancy\Exceptions\MembershipInactiveException;
 use App\Platform\Tenancy\Exceptions\TenantHeaderMissingException;
 use App\Platform\Tenancy\Exceptions\TenantNotInTokenException;
@@ -155,6 +157,22 @@ final class ErrorEnvelope
             // 404 for both "absent" and "outside tenant scope" —
             // no existence leakage (doc 06 §4.2).
             return [404, 'not_found', 'Resource not found.', []];
+        }
+
+        if ($e instanceof OtpProviderRateLimitedException) {
+            // Provider-side back-off (Google's TOO_MANY_ATTEMPTS family):
+            // retryable, so a 429 rather than a dependency outage. The
+            // symbolic Google head belongs in the log, not the envelope.
+            return [429, 'rate_limited', 'Too many attempts.', []];
+        }
+
+        if ($e instanceof OtpProviderUnavailableException) {
+            // Fail-closed provider fault. Without this mapping a
+            // verify-side outage fell through to a bare 500, contradicting
+            // the typed-503 contract recorded in
+            // docs/04-security/firebase-phone-otp-spike.md; the send-side
+            // controllers keep their own catch for the explicit report().
+            return [503, 'dependency_unavailable', 'Verification is temporarily unavailable. Try again shortly.', []];
         }
 
         if ($e instanceof ThrottleRequestsException) {

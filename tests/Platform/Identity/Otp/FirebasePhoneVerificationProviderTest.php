@@ -3,6 +3,7 @@
 namespace Tests\Platform\Identity\Otp;
 
 use App\Platform\Identity\Otp\FirebasePhoneVerificationProvider;
+use App\Platform\Identity\Otp\OtpProviderRateLimitedException;
 use App\Platform\Identity\Otp\OtpProviderUnavailableException;
 use App\Platform\Identity\Otp\OtpSendContext;
 use App\Platform\Identity\Otp\OtpVerifyOutcome;
@@ -99,6 +100,36 @@ final class FirebasePhoneVerificationProviderTest extends TestCase
         }
     }
 
+    public function test_colonless_error_message_stays_out_of_the_fault_text(): void
+    {
+        // Google's shape for some errors is prose with no symbolic head
+        // at all — the whole message would otherwise be logged as a code.
+        Http::fake([
+            'identitytoolkit.googleapis.com/*' => Http::response([
+                'error' => [
+                    'code' => 400,
+                    'message' => 'API key not valid. Please pass a valid API key to +919999999999.',
+                    'status' => 'INVALID_ARGUMENT',
+                ],
+            ], 400),
+        ]);
+
+        try {
+            $this->provider()->send(new OtpSendContext(
+                challengeId: 'c7',
+                identifier: '+919999999999',
+                purpose: 'login',
+                codeLength: 6,
+            ));
+            $this->fail('expected a typed provider fault');
+        } catch (OtpProviderUnavailableException $e) {
+            $this->assertStringContainsString('http 400', $e->getMessage());
+            $this->assertStringContainsString('INVALID_ARGUMENT', $e->getMessage());
+            $this->assertStringNotContainsString('not valid', $e->getMessage());
+            $this->assertStringNotContainsString('+919999999999', $e->getMessage());
+        }
+    }
+
     public function test_send_network_failure_fails_closed(): void
     {
         Http::fake(fn () => throw new ConnectionException('connection refused'));
@@ -125,6 +156,40 @@ final class FirebasePhoneVerificationProviderTest extends TestCase
             purpose: 'login',
             codeLength: 6,
         ));
+    }
+
+    public function test_send_rate_limit_head_is_the_retryable_typed_fault(): void
+    {
+        // Live 2026-10-13 shape: a hammered real number answers 400
+        // TOO_MANY_ATTEMPTS_TRY_LATER, which re-arms on every retry — so
+        // the caller must see "back off", not "the channel is down".
+        Http::fake([
+            'identitytoolkit.googleapis.com/*' => Http::response([
+                'error' => [
+                    'code' => 400,
+                    'message' => 'TOO_MANY_ATTEMPTS_TRY_LATER : Access to this method has been throttled',
+                    'status' => 'TOO_MANY_REQUESTS',
+                ],
+            ], 400),
+        ]);
+
+        try {
+            $this->provider()->send(new OtpSendContext(
+                challengeId: 'c6',
+                identifier: '+919999999999',
+                purpose: 'login',
+                codeLength: 6,
+            ));
+            $this->fail('expected the retryable provider fault');
+        } catch (OtpProviderRateLimitedException $e) {
+            $this->assertStringContainsString('http 400', $e->getMessage());
+            $this->assertStringContainsString('TOO_MANY_ATTEMPTS_TRY_LATER', $e->getMessage());
+            $this->assertStringNotContainsString('+919999999999', $e->getMessage());
+            $this->assertStringNotContainsString('throttled', $e->getMessage());
+            // Fail-closed inheritance: any caller catching the dependency
+            // fault keeps catching this one.
+            $this->assertInstanceOf(OtpProviderUnavailableException::class, $e);
+        }
     }
 
     public function test_verify_success_is_match(): void
@@ -185,52 +250,84 @@ final class FirebasePhoneVerificationProviderTest extends TestCase
         )));
     }
 
-    public function test_verify_400_outside_the_code_family_fails_closed_as_unavailable(): void
+    public function test_verify_400_outside_the_code_family_fails_closed_as_a_typed_fault(): void
     {
         Http::fake([
             'identitytoolkit.googleapis.com/*' => Http::response([
                 'error' => [
                     'code' => 400,
-                    'message' => 'CAPTCHA_BLOCKED : reCAPTCHA verification required',
-                    'errors' => [['message' => 'x', 'reason' => 'captchaBlocked']],
+                    'message' => 'CAPTCHA_CHECK_FAILED : The reCAPTCHA was invalid. Try this again',
+                    'errors' => [['message' => 'x', 'reason' => 'captchaCheckFailed']],
                 ],
             ], 400),
         ]);
 
-        $this->assertSame(OtpVerifyOutcome::Unavailable, $this->provider()->verify(new OtpVerifyRequest(
-            codeHash: null,
-            providerRef: 'opaque-session-info',
-            code: '123456',
-        )));
+        try {
+            $this->provider()->verify(new OtpVerifyRequest(
+                codeHash: null,
+                providerRef: 'opaque-session-info',
+                code: '123456',
+            ));
+            $this->fail('expected a typed provider fault');
+        } catch (OtpProviderRateLimitedException $e) {
+            $this->fail('a captcha refusal is a dependency fault, not a back-off');
+        } catch (OtpProviderUnavailableException $e) {
+            // The whole point of the typed fault: the head that explains
+            // the failure (here — the 2026-10-13 RCA captcha wall)
+            // reaches report(), while the redemption still never looks
+            // like a wrong code.
+            $this->assertStringContainsString('http 400', $e->getMessage());
+            $this->assertStringContainsString('CAPTCHA_CHECK_FAILED', $e->getMessage());
+            $this->assertStringNotContainsString('123456', $e->getMessage());
+            $this->assertStringNotContainsString('opaque-session-info', $e->getMessage());
+            $this->assertStringNotContainsString('was invalid', $e->getMessage());
+        }
     }
 
-    public function test_verify_quota_and_server_errors_are_unavailable(): void
+    public function test_verify_quota_and_server_errors_fail_closed(): void
     {
         Http::fakeSequence('identitytoolkit.googleapis.com/*')
-            ->push(['error' => ['code' => 429, 'message' => 'RATE_LIMIT_EXCEEDED : quota']], 429)
-            ->push(['error' => ['code' => 503, 'message' => 'UNAVAILABLE']], 503);
+            ->push(['error' => ['code' => 429, 'message' => 'RATE_LIMIT_EXCEEDED : quota', 'status' => 'RESOURCE_EXHAUSTED']], 429)
+            ->push(['error' => ['code' => 503, 'message' => 'UNAVAILABLE : backend']], 503);
 
-        $this->assertSame(OtpVerifyOutcome::Unavailable, $this->provider()->verify(new OtpVerifyRequest(
-            codeHash: null,
-            providerRef: 'a-session',
-            code: '123456',
-        )));
-        $this->assertSame(OtpVerifyOutcome::Unavailable, $this->provider()->verify(new OtpVerifyRequest(
-            codeHash: null,
-            providerRef: 'b-session',
-            code: '123456',
-        )));
+        // A provider-side back-off is retryable, so it keeps the subclass
+        // shape...
+        try {
+            $this->provider()->verify(new OtpVerifyRequest(
+                codeHash: null,
+                providerRef: 'a-session',
+                code: '123456',
+            ));
+            $this->fail('expected a retryable provider fault');
+        } catch (OtpProviderRateLimitedException $e) {
+            $this->assertStringContainsString('RATE_LIMIT_EXCEEDED', $e->getMessage());
+        }
+
+        // ...and a backend fault does not.
+        try {
+            $this->provider()->verify(new OtpVerifyRequest(
+                codeHash: null,
+                providerRef: 'b-session',
+                code: '123456',
+            ));
+            $this->fail('expected a typed provider fault');
+        } catch (OtpProviderRateLimitedException $e) {
+            $this->fail('a 503 backend fault is not a back-off');
+        } catch (OtpProviderUnavailableException $e) {
+            $this->assertStringContainsString('http 503', $e->getMessage());
+        }
     }
 
-    public function test_verify_network_failure_is_unavailable(): void
+    public function test_verify_network_failure_fails_closed(): void
     {
         Http::fake(fn () => throw new ConnectionException('connection refused'));
 
-        $this->assertSame(OtpVerifyOutcome::Unavailable, $this->provider()->verify(new OtpVerifyRequest(
+        $this->expectException(OtpProviderUnavailableException::class);
+        $this->provider()->verify(new OtpVerifyRequest(
             codeHash: null,
             providerRef: 'opaque-session-info',
             code: '123456',
-        )));
+        ));
     }
 
     public function test_verify_without_session_ref_short_circuits_to_mismatch(): void

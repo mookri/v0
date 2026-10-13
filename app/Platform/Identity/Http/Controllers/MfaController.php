@@ -10,6 +10,7 @@ use App\Platform\Identity\Events\MfaRevoked;
 use App\Platform\Identity\MfaLockedException;
 use App\Platform\Identity\MfaService;
 use App\Platform\Identity\StepUpOtpService;
+use App\Platform\Identity\StepUpRateLimitedException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,6 +27,13 @@ use Carbon\CarbonImmutable;
  */
 final class MfaController
 {
+    /**
+     * Session key holding the pending MFA-enrollment step-up challenge, so
+     * the console's second form post can reference it without a hidden
+     * secret in the page.
+     */
+    private const STEP_UP_CHALLENGE_KEY = 'mfa_enroll_stepup_challenge';
+
     public function __construct(private readonly MfaService $mfa)
     {
     }
@@ -82,20 +90,28 @@ final class MfaController
         return WebMutations::negotiate(
             $request,
             fn (): JsonResponse => $this->enrollJson($request),
-            static function (JsonResponse $result): string {
-                $url = WebMutations::stringData($result, 'otpauth_url');
-                $secret = '';
-                $query = parse_url($url, PHP_URL_QUERY);
-                if (is_string($query)) {
-                    parse_str($query, $params);
-                    if (isset($params['secret']) && is_string($params['secret'])) {
-                        $secret = $params['secret'];
-                    }
-                }
-
-                return 'Authenticator setup key — enter this key in your app, then confirm below: '.$secret;
-            },
+            fn (JsonResponse $result): string => $this->setupKeyFlash($result),
         );
+    }
+
+    /**
+     * The web flash both enrollment paths end on: the setup key is a
+     * one-time value that exists only inside the success envelope, so the
+     * console learns it from this render and nowhere else.
+     */
+    private function setupKeyFlash(JsonResponse $result): string
+    {
+        $url = WebMutations::stringData($result, 'otpauth_url');
+        $secret = '';
+        $query = parse_url($url, PHP_URL_QUERY);
+        if (is_string($query)) {
+            parse_str($query, $params);
+            if (isset($params['secret']) && is_string($params['secret'])) {
+                $secret = $params['secret'];
+            }
+        }
+
+        return 'Authenticator setup key — enter this key in your app, then confirm below: '.$secret;
     }
 
     private function enrollJson(Request $request): JsonResponse
@@ -133,7 +149,29 @@ final class MfaController
      * login/signup purposes). The payload carries the user's external_id
      * so the verify endpoint can bind the step-up to the same user.
      */
-    public function enrollStepUp(Request $request): JsonResponse
+    public function enrollStepUp(Request $request): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            function () use ($request): JsonResponse {
+                $result = $this->enrollStepUpJson($request);
+
+                // The web form has nowhere else to keep the reference
+                // between the two posts; the code itself never rides here.
+                if ($result->getStatusCode() === 202 && ! $request->is('api/*')) {
+                    $request->session()->put(
+                        self::STEP_UP_CHALLENGE_KEY,
+                        WebMutations::stringData($result, 'challenge_id'),
+                    );
+                }
+
+                return $result;
+            },
+            'We sent a verification code to your email address. Enter it below to receive your authenticator setup key.',
+        );
+    }
+
+    private function enrollStepUpJson(Request $request): JsonResponse
     {
         $user = $this->actor($request);
         if ($user instanceof JsonResponse) {
@@ -159,13 +197,26 @@ final class MfaController
             ->firstOrFail();
         $tenantId = (string) $membership->tenant_id;
 
-        $challenge = app(StepUpOtpService::class)->issue(
-            $tenantId,
-            'mfa_enroll_stepup',
-            (string) $user->external_id,
-            CarbonImmutable::now(),
-            ['external_id' => (string) $user->external_id],
-        );
+        try {
+            $challenge = app(StepUpOtpService::class)->issue(
+                $tenantId,
+                'mfa_enroll_stepup',
+                (string) $user->external_id,
+                CarbonImmutable::now(),
+                ['external_id' => (string) $user->external_id],
+                (string) $user->email,
+            );
+        } catch (StepUpRateLimitedException) {
+            // The 5-per-hour cap is an expected outcome, not a crash:
+            // clients must learn to wait, not hammer (M4 shape).
+            return new JsonResponse([
+                'error' => [
+                    'code' => 'rate_limited',
+                    'message' => 'Too many verification codes requested. Try again later.',
+                    'request_id' => $this->requestId($request),
+                ],
+            ], 429);
+        }
 
         return new JsonResponse([
             'data' => [
@@ -182,7 +233,26 @@ final class MfaController
      * generates the TOTP secret and returns the otpauth_url (same shape
      * as the original enroll response).
      */
-    public function enrollVerify(Request $request): JsonResponse
+    public function enrollVerify(Request $request): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            function () use ($request): JsonResponse {
+                $result = $this->enrollVerifyJson($request);
+
+                if ($result->getStatusCode() === 201 && ! $request->is('api/*')) {
+                    // Spent: the setup key is on its way to the browser and
+                    // the next enrollment attempt must mint a fresh challenge.
+                    $request->session()->forget(self::STEP_UP_CHALLENGE_KEY);
+                }
+
+                return $result;
+            },
+            fn (JsonResponse $result): string => $this->setupKeyFlash($result),
+        );
+    }
+
+    private function enrollVerifyJson(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'challenge_id' => ['required', 'string'],

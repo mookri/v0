@@ -15,6 +15,11 @@
       L3  verify wrong code (x5 / until message changes), garbage sessionInfo
       L4  happy path: send -> fixed test code -> phoneNumber match
       L5/L6  manual markers (Playwright decision; API-key/App Check posture)
+      R1/R2  opt-in REAL number probes (-RealNumber): exactly ONE billable
+             send with a fresh token, then optionally one verify (-RealCode).
+             Runs BEFORE L0-L6 and spends the token, so L2 self-skips.
+             Refuses to run without FIREBASE_RECAPTCHA_TOKEN: an unattested
+             real send is the known-500 path and still burns quota.
 
     REDACTION (hard rules): API key never printed; phone numbers masked;
     idToken/refreshToken stripped; sessionInfo replaced by len+sha256;
@@ -31,6 +36,13 @@
 .EXAMPLE
     # pipeline self-test with a deliberately invalid key (no creds needed)
     .\firebase-spike-live.ps1 -SelfTest -OutFile selftest.md
+
+.EXAMPLE
+    # ONE billable real-number attempt: mint a FRESH v2 token from a domain
+    # in Firebase Auth authorized domains (localhost mints are rejected),
+    # pass it in the environment, and never retry in a loop.
+    $env:FIREBASE_RECAPTCHA_TOKEN = '<freshly minted v2 token>'
+    .\firebase-spike-live.ps1 -RealNumber '+917289000377' -OutFile real-probe.md
 #>
 [CmdletBinding()]
 param(
@@ -40,6 +52,13 @@ param(
     [string]$EnvFile,
 
     [string]$OutFile = '.\firebase-spike-transcript.md',
+
+    # Real number in E.164. Billable; one attempt only -- Google's
+    # per-number back-off re-arms on every retry.
+    [string]$RealNumber,
+
+    # Code read from the handset; runs R2 (one verify) after a successful R1.
+    [string]$RealCode,
 
     # Exercise HTTP + capture + redaction with an invalid key: every probe
     # must come back API_KEY_INVALID / network error. Never real evidence.
@@ -115,6 +134,29 @@ if ($missing.Count -gt 0) {
     Write-Host '  FIREBASE_TEST_CODE=<fixed test code>        # optional, default 123456'
     Write-Host '  FIREBASE_RECAPTCHA_TOKEN=<v2 token>         # optional, enables L2'
     exit 2
+}
+
+# ------------------------------------------------- real-number preflight ---
+
+if ($RealNumber -and $RealNumber -notmatch '^\+\d{8,15}$') {
+    Write-Host 'REAL NUMBER MUST BE E.164 (e.g. +917289000377).' -ForegroundColor Red
+    exit 2
+}
+if ($RealNumber -and -not $captchaToken) {
+    if ($SelfTest) {
+        $captchaToken = 'selftest-token'
+    } else {
+        Write-Host 'REAL-NUMBER PROBE REFUSED -- no FIREBASE_RECAPTCHA_TOKEN.' -ForegroundColor Red
+        Write-Host '  An unattested real send is the known 500 path and still burns quota.'
+        Write-Host '  Mint a FRESH v2 token from a domain listed in Firebase Auth'
+        Write-Host '  authorized domains (localhost-minted tokens are rejected with'
+        Write-Host '  CAPTCHA_CHECK_FAILED), export it as FIREBASE_RECAPTCHA_TOKEN,'
+        Write-Host '  then run ONE attempt. Retries re-arm the back-off window.'
+        exit 2
+    }
+}
+if ($RealNumber) {
+    Write-Host 'REAL-NUMBER PROBE: billable, exactly one send attempt -- do not rerun on a failure.' -ForegroundColor Yellow
 }
 
 # ------------------------------------------------------------ redaction ---
@@ -215,13 +257,16 @@ function Get-ErrorCode([pscustomobject]$Result) {
     if ($null -eq $o.error) { return 'ok' }
 
     # Mirror the adapter's symbolicCodes() exactly: message head before
-    # the first ':', error.status, error.errors[*].reason -- the parts
-    # CODE_ERROR_CODES is calibrated against -- then mask any phone.
+    # the first ':' -- and only when it is FOO_BAR-shaped, since a message
+    # with no colon is prose end to end ('API key not valid. Please pass a
+    # valid API key.') and is not a code -- plus error.status and
+    # error.errors[*].reason, the parts CODE_ERROR_CODES is calibrated
+    # against. Then mask any phone.
     $parts = @()
     $msg = [string]$o.error.message
     if ($msg -ne '') {
         $head = ((($msg -split ':')[0]).Trim()).ToUpperInvariant()
-        if ($head -ne '') { $parts += $head }
+        if ($head -match '^[A-Z][A-Z0-9_]*$') { $parts += $head }
     }
     $status = [string]$o.error.status
     if ($status -ne '') { $parts += $status.ToUpperInvariant() }
@@ -230,7 +275,7 @@ function Get-ErrorCode([pscustomobject]$Result) {
         $reason = [string]$entry.reason
         if ($reason -ne '') { $parts += $reason.ToUpperInvariant() }
     }
-    if ($parts.Count -eq 0) { $parts += 'error' }
+    if ($parts.Count -eq 0) { $parts += 'unknown' }
     return (Protect-Text ($parts -join ', '))
 }
 
@@ -245,6 +290,32 @@ function Test-Session([string]$Session, [string]$Code) {
         sessionInfo = $Session
         code        = $Code
     }
+}
+
+# ------------------------------------------------------ real-probe reading -
+
+# Translate a live head into the next action, per the RCA in
+# docs/04-security/firebase-phone-otp-spike.md (real numbers, 2026-10-13).
+function Get-RealProbeVerdict([string]$Code, $Status) {
+    if ($Status -eq 200) {
+        return 'dispatch accepted -- this SMS is billable; read the code and rerun with -RealCode for R2.'
+    }
+    if ($Code -match 'TOO_MANY') {
+        return 'provider back-off on this number -- do NOT retry, every attempt re-arms the window; wait 30-60 min and use a fresh number.'
+    }
+    if ($Code -match 'CAPTCHA_CHECK_FAILED') {
+        return 'captcha rejected -- mint from an authorized HTTPS origin (localhost mints fail this check) and confirm the console secret pairs this site key.'
+    }
+    if ($Code -match 'INVALID_APP_CREDENTIAL') {
+        return 'wrong key class -- FIREBASE_*_RECAPTCHA_KEY must be the key under Authentication > Phone, not the one /v1/recaptchaParams returns.'
+    }
+    if ($Code -match 'OPERATION_NOT_ALLOWED') {
+        return 'region or billing gate -- enable the SMS region for this project and confirm an active payment method.'
+    }
+    if ($Code -match 'INTERNAL') {
+        return 'no attestation reached Google -- unexpected, this probe requires a token; record the head and do not loop.'
+    }
+    return 'unclassified head -- add it to the spike doc calibration table.'
 }
 
 # ------------------------------------------------------------- transcript --
@@ -268,7 +339,43 @@ Add-Line ('- **Test number:** `' + $maskPhone + '` (console *Phone numbers for t
 $siteKeyShown = if ($siteKey) { $siteKey } else { '<not set>' }
 Add-Line ('- **API key:** `<redacted>`  -  **reCAPTCHA site key:** `' + $siteKeyShown + '`')
 if ($SelfTest) { Add-Line '- **SELF-TEST RUN** -- invalid key on purpose; outcomes are pipeline checks, NOT live evidence.' }
+if ($RealNumber) { Add-Line ('- **Real number probed:** `' + (Get-PhoneMask $RealNumber) + '` (billable SMS; one attempt)') }
 Add-Line ''
+
+# R -- real-number probes (opt-in; run FIRST so the single-use token is
+# spent here and L2 cannot reuse a dead one).
+$l2SkipReason = $null
+if ($RealNumber) {
+    Add-Line '## R1 -- real-number send (ONE attempt, billable)'
+    Add-Line '```'
+    $r1 = Send-Code $RealNumber $captchaToken
+    Add-Line ('POST accounts:sendVerificationCode {phoneNumber:' + (Get-PhoneMask $RealNumber) + ', recaptchaToken:<v2>}  ->  ' + (Format-Redacted $r1))
+    Add-Line '```'
+    $r1code = Get-ErrorCode $r1
+    $r1session = $null
+    try { $r1session = ($r1.Body | ConvertFrom-Json).sessionInfo } catch {}
+    Add-Line ''
+    Add-Line ('- **Head:** `' + $r1code + '`  -  **sessionInfo:** ' + (Get-SessionDigest $r1session))
+    Add-Line ('- **Reading:** ' + (Get-RealProbeVerdict $r1code $r1.Status))
+    Add-Probe 'R1' $r1code
+
+    if ($r1session -and $RealCode) {
+        Add-Line ''
+        Add-Line '## R2 -- verify with the code from the handset (ONE attempt)'
+        Add-Line '```'
+        $r2 = Test-Session $r1session $RealCode
+        Add-Line ('POST accounts:signInWithPhoneNumber {sessionInfo:<digest>, code:<not printed>}  ->  ' + (Format-Redacted $r2))
+        Add-Line '```'
+        Add-Probe 'R2' (Get-ErrorCode $r2)
+    } elseif ($RealCode) {
+        Add-Line ''
+        Add-Line '**R2 skipped** -- R1 produced no session handle to redeem.'
+        Add-Probe 'R2' 'skipped:no-session'
+    }
+    Add-Line ''
+    $captchaToken = $null
+    $l2SkipReason = 'token spent by R1 (v2 tokens are single-use; mint a fresh one to exercise L2)'
+}
 
 # L0 -- site key discovery
 Add-Line '## L0 -- recaptchaParams (site key discovery)'
@@ -300,7 +407,8 @@ Add-Line ''
 # L2 -- send WITH token (optional)
 Add-Line '## L2 -- send WITH reCAPTCHA v2 token'
 if (-not $captchaToken) {
-    Add-Line '**SKIPPED** -- no `FIREBASE_RECAPTCHA_TOKEN` in env (headless minting is the open question; L5 owns the CI story).'
+    $l2why = if ($l2SkipReason) { $l2SkipReason } else { 'no `FIREBASE_RECAPTCHA_TOKEN` in env (headless minting is the open question; L5 owns the CI story)' }
+    Add-Line ('**SKIPPED** -- ' + $l2why)
     Add-Probe 'L2' 'skipped:no-token'
 } else {
     Add-Line '```'
