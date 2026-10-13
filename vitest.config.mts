@@ -2,7 +2,7 @@ import { defineConfig, type Plugin } from 'vitest/config';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const root = __dirname;
+const root = process.cwd();
 const rootPosix = root.replace(/\\/g, '/');
 const pkgNames: string[] = fs
   .readdirSync(path.join(root, 'packages'), { withFileTypes: true })
