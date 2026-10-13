@@ -1,41 +1,18 @@
 import { test, expect, Page, BrowserContext } from '@playwright/test';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { join } from 'node:path';
 
 /**
  * UI flow against the live full-stack stack (see e2e/run.ps1):
  *
- *   signup (real OTP) → logout → login (OTP screen) → 3-attempt
+ *   signup (decoupled MSG91 OTP widget) → logout → login (OTP screen) → 3-attempt
  *   exhaustion (M6: local counter, no fabricated lock) → restart flow →
  *   successful login → logout
  *
- * OTP codes come from the Laravel drill log (OTP_LOG_CODES=true —
- * config/customers.php log_otp_codes, off by default, enabled only by
- * the E2E orchestrator). Codes are unguessable challenge secrets; this
- * reads the server-side drill log, it does not weaken the challenge.
+ * The MSG91 client SDK script (https://verify.msg91.com/otp-provider.js) is
+ * intercepted and mocked: code 000000 fails; any other 6-digit code returns
+ * a verified JWT access token which Laravel redeems against the MSG91 stub.
  */
 
-const LOG_DIR =
-  process.env.E2E_LARAVEL_LOG_DIR ??
-  join(process.cwd(), '..', 'platform-navdhya', 'storage', 'logs');
-
 const PHONE = '9877001122'; // national digits → +919877001122 (dial code IN)
-
-function latestOtpCode(): string {
-  const files = readdirSync(LOG_DIR)
-    .filter((f) => /^laravel.*\.log$/.test(f))
-    .map((f) => ({ f, m: statSync(join(LOG_DIR, f)).mtimeMs }))
-    .sort((a, b) => b.m - a.m);
-  for (const { f } of files) {
-    const text = readFileSync(join(LOG_DIR, f), 'utf8');
-    const re = /OTP challenge issued \(drill-only code log\)[\s\S]{0,500}?"code":"(\d{4,8})"/g;
-    let m: RegExpExecArray | null;
-    let last = '';
-    while ((m = re.exec(text)) !== null) last = m[1];
-    if (last) return last;
-  }
-  throw new Error(`no drill OTP code found in ${LOG_DIR} (OTP_LOG_CODES on?)`);
-}
 
 async function fillOtp(page: Page, code: string): Promise<void> {
   const boxes = page.locator('input[maxlength="1"]');
@@ -63,13 +40,40 @@ async function logout(page: Page): Promise<void> {
 }
 
 test('signup → login → OTP 3-attempt exhaustion → login again → logout', async ({ page, context }) => {
+  // Intercept MSG91 widget script and install mock globals
+  await page.route('**/otp-provider.js', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/javascript',
+      body: `
+        window.initSendOTP = function(config) {
+          window.sendOtp = function(id, success) {
+            success({ type: 'success', message: 'sent' });
+          };
+          window.retryOtp = function(channel, success) {
+            success({ type: 'success', message: 'resent' });
+          };
+          window.verifyOtp = function(code, success, failure) {
+            if (code === '000000') {
+              failure({ type: 'error', message: 'invalid_code' });
+            } else {
+              success({ type: 'success', message: 'msg91-mock-jwt-token' });
+            }
+          };
+          window.getWidgetData = function() { return {}; };
+          window.isCaptchaVerified = function() { return true; };
+        };
+      `,
+    });
+  });
+
   // ---------------------------------------------------------- signup ----
   await page.goto('/signup');
   await page.getByPlaceholder('Phone number').fill(PHONE);
   await page.getByRole('button', { name: /create account/i }).click();
 
   await expect(page.getByText('Confirm Code')).toBeVisible({ timeout: 30_000 });
-  await fillOtp(page, latestOtpCode());
+  await fillOtp(page, '123456');
   await page.getByRole('button', { name: /^verify$/i }).click();
 
   await page.waitForURL('**/user/overview', { timeout: 30_000 });
@@ -80,23 +84,18 @@ test('signup → login → OTP 3-attempt exhaustion → login again → logout',
 
   // -------------------------------------------------- login + exhaustion -
   // DashboardShell's logout routes to /login itself; an explicit goto
-  // racing that client-side navigation aborts both (Playwright
-  // "navigation interrupted by another navigation" — observed in the
-  // 2026-10-09 post-fix run, page already at /login). Tolerate the
+  // racing that client-side navigation aborts both. Tolerate the
   // race: navigate ourselves, then wait for the URL either way.
   await page.goto('/login').catch(() => {});
   await page.waitForURL('**/login', { timeout: 30_000 });
-  // …and the same race can commit both navigations' renders for a beat:
-  // TWO Phone inputs (identical, transient) exist at fill time, which
-  // trips strict mode (observed 2026-10-10). Wait for the form to settle
-  // to exactly one visible input instead of grabbing the first match.
+
   const loginPhone = page.locator('input[placeholder="Phone number"]:visible');
   await expect(loginPhone).toHaveCount(1, { timeout: 15_000 });
   await loginPhone.fill(PHONE);
   await page.getByRole('button', { name: /^continue$/i }).click();
   await expect(page.getByText('Confirm Code')).toBeVisible({ timeout: 30_000 });
 
-  // 3 wrong attempts → local counter exhausts the UX challenge (M6).
+  // 3 wrong attempts (code 000000) → local counter exhausts the UX challenge (M6).
   await fillOtp(page, '000000');
   await page.getByRole('button', { name: /^verify$/i }).click();
   await expect(page.getByText(/2 attempts remaining/)).toBeVisible();
@@ -108,19 +107,18 @@ test('signup → login → OTP 3-attempt exhaustion → login again → logout',
   await expect(page.getByText('Too many failed attempts. Please request a new code.')).toBeVisible();
 
   // Exhausted: further submits stay blocked locally — and crucially there
-  // is NO fabricated time-based lock (M6 fix: the old 15-min lock is gone).
+  // is NO fabricated time-based lock.
   await page.getByRole('button', { name: /^verify$/i }).click();
   await expect(page.getByText('Too many failed attempts. Please request a new code.')).toBeVisible();
   await expect(page.getByText(/Try again in/)).toHaveCount(0);
 
-  // Restart the flow (no waiting on the 60s resend timer): Back → Continue
-  // issues a fresh login challenge.
+  // Restart the flow: Back → Continue issues a fresh login challenge.
   await page.getByRole('button', { name: /^back$/i }).click();
   await page.getByPlaceholder('Phone number').fill(PHONE);
   await page.getByRole('button', { name: /^continue$/i }).click();
   await expect(page.getByText('Confirm Code')).toBeVisible({ timeout: 30_000 });
 
-  await fillOtp(page, latestOtpCode());
+  await fillOtp(page, '123456');
   await page.getByRole('button', { name: /^verify$/i }).click();
   await page.waitForURL('**/user/overview', { timeout: 30_000 });
   await expect.poll(async () => hasSessionCookie(context)).toBe(true);

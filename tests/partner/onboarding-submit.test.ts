@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest';
-import { SeededOtpProvider } from '@navdhya/identity/src/adapters/memory-otp';
+import { SeededChallengePort } from './seeded-challenge-port';
 import { beginSubmit, confirmSubmit } from '@navdhya/partner/src/application/onboarding-submit';
 import { PartnerApplication } from '@navdhya/partner/src/domain/partner-application';
 
@@ -22,7 +22,7 @@ const full = {
   documents: ['id-proof'],
   agreement: { accepted: true },
 };
-const deps = () => ({ otp: new SeededOtpProvider() });
+const deps = () => ({ otp: new SeededChallengePort() });
 
 test('two-phase submit: validate, challenge, confirm transitions', async () => {
   const { application, challengeId } = await beginSubmit(deps(), app(), full, '+91', NOW);

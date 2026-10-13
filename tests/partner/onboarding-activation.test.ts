@@ -2,7 +2,7 @@ import { test, expect } from 'vitest';
 import { activateOnApproval } from '@navdhya/partner/src/application/activation';
 import { MemoryPartnerRepository } from '@navdhya/partner/src/adapters/memory-partners';
 import { MemoryOnboardingRepository } from '@navdhya/partner/src/adapters/memory-applications';
-import { SeededOtpProvider } from '@navdhya/identity/src/adapters/memory-otp';
+import { SeededChallengePort } from './seeded-challenge-port';
 import { beginSubmit, confirmSubmit } from '@navdhya/partner/src/application/onboarding-submit';
 import { reviewApplication } from '@navdhya/partner/src/application/review';
 import { isPartnerWorkEligible } from '@navdhya/partner/src/domain/partner';
@@ -53,7 +53,7 @@ test('activation creates, advances, and never force-exits', async () => {
 test('end-to-end proof: draft → submit → approve → eligible', async () => {
   const apps = new MemoryOnboardingRepository();
   const partners = new MemoryPartnerRepository();
-  const otp = new SeededOtpProvider();
+  const otp = new SeededChallengePort();
   await apps.save({
     id: 'app_e2e',
     identityId: 'u9',

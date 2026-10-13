@@ -159,7 +159,7 @@ test('booking detail maps actions and static entries', async () => {
   expect(body.data.schedule.date).toBe('2030-05-01');
 });
 
-test('wired login fans out to otp+redeem and sets the cookie', async () => {
+test('wired login redeems the challenge token in one call and sets the cookie', async () => {
   wiredEnv();
   const calls: { url: string; body: unknown }[] = [];
   vi.stubGlobal(
@@ -167,28 +167,26 @@ test('wired login fans out to otp+redeem and sets the cookie', async () => {
     vi.fn(async (url: string, init?: RequestInit) => {
       const body = init?.body !== undefined ? JSON.parse(init.body as string) : undefined;
       calls.push({ url, body });
-      const payload =
-        url.endsWith('/customers/auth/otp')
-          ? { data: { challenge_id: 'ch_1', expires_in: 600 }, meta: { request_id: 'r1' } }
-          : { data: { token: 'tok', expires_at: '2030-01-01T00:00:00.000Z', tenant_id: 'tenant_1', actor: { user_id: 'cust_1', session_id: 'sess_9' } }, meta: { request_id: 'r2' } };
-      return new Response(JSON.stringify(payload), { status: 200 });
+      return new Response(
+        JSON.stringify({
+          data: { token: 'tok', expires_at: '2030-01-01T00:00:00.000Z', tenant_id: 'tenant_1', actor: { user_id: 'cust_1', session_id: 'sess_9' } },
+          meta: { request_id: 'r2' },
+        }),
+        { status: 200 },
+      );
     }),
   );
   const res = await login(
     new Request('https://app.navdhya.com/api/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ identityId: '+911234567890', proof: '123456' }),
+      body: JSON.stringify({ challengeId: 'ch_1', token: 'tok_widget_abc' }),
     }),
   );
   expect(res.status).toBe(200);
   expect(calls).toEqual([
     {
-      url: 'https://api.example.test/api/v1/customers/auth/otp',
-      body: { tenant_id: 'tenant_1', purpose: 'login', identity: '+911234567890' },
-    },
-    {
       url: 'https://api.example.test/api/v1/customers/auth/login',
-      body: { tenant_id: 'tenant_1', challenge_id: 'ch_1', code: '123456' },
+      body: { tenant_id: 'tenant_1', challenge_id: 'ch_1', token: 'tok_widget_abc' },
     },
   ]);
   const body = (await res.json()) as { data: { sessionId: string; expiresAt: string } };
@@ -497,7 +495,7 @@ test('wired signup intent and verify set the session cookie', async () => {
   const done = await verify(
     new Request('https://app.navdhya.com/api/auth/verify', {
       method: 'POST',
-      body: JSON.stringify({ challengeId: 'ch_9', code: '123456' }),
+      body: JSON.stringify({ challengeId: 'ch_9', token: 'tok_widget_xyz' }),
     }),
   );
   expect(done.status).toBe(201);

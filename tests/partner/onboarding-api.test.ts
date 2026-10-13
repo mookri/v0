@@ -6,13 +6,10 @@ import { POST as submit } from '@apps/partner/app/api/onboarding/[id]/submit/rou
 import { POST as confirm } from '@apps/partner/app/api/onboarding/[id]/submit/confirm/route';
 import { POST as documents } from '@apps/partner/app/api/onboarding/[id]/documents/route';
 import { GET as status } from '@apps/partner/app/api/onboarding/[id]/status/route';
-import { __useOtpForTests, __resetEvidenceForTests } from '@apps/partner/server/onboarding';
-import { SeededOtpProvider } from '@navdhya/identity/src/adapters/memory-otp';
+import { __resetEvidenceForTests } from '@apps/partner/server/onboarding';
 import { __issuePartnerTestToken } from '@apps/partner/server/auth';
 
-const otp = new SeededOtpProvider();
 beforeEach(() => {
-  __useOtpForTests(otp);
   __resetEvidenceForTests();
 });
 
@@ -71,37 +68,20 @@ test('start validates track; draft reports needs; unknown step rejected', async 
   expect(foreign.status).toBe(403);
 });
 
-test('two-phase submit over HTTP: incomplete blocks, OTP confirms, replay dies', async () => {
+test('submit/confirm are backend-owned: mock mode refuses both phases with 503', async () => {
   const id = await startApp();
-  const early = await submit(await json('POST', `${BASE}/api/onboarding/${id}/submit`, 'p1', {}), {
-    params: Promise.resolve({ id }),
-  });
-  expect(early.status).toBe(422);
   await fillSteps(id, 'p1');
+  // MSG91: the challenge lifecycle moved to Laravel; the BFF routes proxy it
+  // and fail closed when the backend is not configured.
   const begun = await submit(await json('POST', `${BASE}/api/onboarding/${id}/submit`, 'p1', {}), {
     params: Promise.resolve({ id }),
   });
-  expect(begun.status).toBe(200);
-  const { data: { challengeId } } = (await begun.json()) as { data: { challengeId: string } };
-  const wrong = await confirm(await json('POST', `${BASE}/api/onboarding/${id}/submit/confirm`, 'p1', { challengeId, code: '000000' }), {
-    params: Promise.resolve({ id }),
-  });
-  expect(wrong.status).toBe(401);
-  const done = await confirm(
-    await json('POST', `${BASE}/api/onboarding/${id}/submit/confirm`, 'p1', { challengeId, code: otp.codeFor(challengeId) }),
+  expect(begun.status).toBe(503);
+  const confirmed = await confirm(
+    await json('POST', `${BASE}/api/onboarding/${id}/submit/confirm`, 'p1', { challenge_id: 'ch_1', token: 'tok' }),
     { params: Promise.resolve({ id }) },
   );
-  expect(done.status).toBe(200);
-  const st = (await (
-    await status(await json('GET', `${BASE}/api/onboarding/${id}/status`, 'p1'), { params: Promise.resolve({ id }) })
-  ).json()) as { data: { status: string; needs: string[] } };
-  expect(st.data.status).toBe('SUBMITTED');
-  expect(st.data.needs).toEqual([]);
-  const replay = await confirm(
-    await json('POST', `${BASE}/api/onboarding/${id}/submit/confirm`, 'p1', { challengeId, code: otp.codeFor(challengeId) }),
-    { params: Promise.resolve({ id }) },
-  );
-  expect(replay.status).toBe(409);
+  expect(confirmed.status).toBe(503);
 });
 
 test('applicant routes enforce market scope', async () => {

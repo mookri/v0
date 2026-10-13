@@ -114,6 +114,14 @@ function Start-Bff {
     -RedirectStandardError (Join-Path $LogDir "$tag-err.log")
 }
 
+function Start-Msg91Stub {
+  $stubScript = Join-Path $PSScriptRoot 'msg91-stub.mjs'
+  Start-Process -FilePath 'node' -ArgumentList @($stubScript) `
+    -WorkingDirectory $PSScriptRoot -WindowStyle Hidden `
+    -RedirectStandardOutput (Join-Path $LogDir 'msg91-stub-out.log') `
+    -RedirectStandardError (Join-Path $LogDir 'msg91-stub-err.log')
+}
+
 # ---------------------------------------------------------------- guard --
 Say 'E2E run starting'
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
@@ -140,7 +148,12 @@ $env:TENANT_DB_PORT = '3306'
 $env:TENANT_DB_DATABASE = $DbTenant
 $env:TENANT_DB_USERNAME = $DbUser
 $env:TENANT_DB_PASSWORD = $DbPass
-$env:OTP_LOG_CODES = 'true'                       # drill-only code log (config/customers.php)
+$env:MSG91_AUTH_KEY = 'e2e-auth-key'
+$env:MSG91_WIDGET_ID = '36616c6c7465737477696467'
+$env:MSG91_TOKEN_AUTH = '36616c6c74657374746f6b656e'
+$env:MSG91_VERIFY_BASE_URL = 'http://127.0.0.1:9101'
+$env:NEXT_PUBLIC_MSG91_WIDGET_ID = '36616c6c7465737477696467'
+$env:NEXT_PUBLIC_MSG91_TOKEN_AUTH = '36616c6c74657374746f6b656e'
 $env:IDENTITY_HMAC_SECRET = 'e2e-hmac-secret-0123456789abcdef'
 $env:CUSTOMER_BACKEND = 'laravel'
 $env:NAVDHYA_API_BASE = $LaravelUrl
@@ -201,7 +214,12 @@ CREATE DATABASE $DbTenant CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
   }
 
   # ------------------------------------------------------ boot servers --
-  Stop-Port 8000; Stop-Port 3000
+  Stop-Port 8000; Stop-Port 3000; Stop-Port 9101
+  Say 'booting MSG91 verification stub (:9101)'
+  Start-Msg91Stub
+  if (-not (Wait-Http 'http://127.0.0.1:9101/health' 15)) { throw 'MSG91 stub did not become ready on :9101' }
+  Say 'MSG91 stub ready'
+
   Say 'booting Laravel (php artisan serve :8000)'
   Start-Laravel
   if (-not (Wait-Http "$LaravelUrl/up" 90)) { throw 'Laravel did not become ready on :8000' }
@@ -290,6 +308,7 @@ CREATE DATABASE $DbTenant CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
   Say 'teardown: stopping servers'
   Stop-Port 8000
   Stop-Port 3000
+  Stop-Port 9101
 }
 
 Say ('RESULT: ' + ($(if ($failedPhases.Count -eq 0) { 'ALL PHASES PASS' } else { 'FAILURES: ' + ($failedPhases -join ', ') })))
