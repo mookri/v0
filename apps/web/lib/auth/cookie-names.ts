@@ -24,7 +24,7 @@ export { LEGACY_COOKIE_NAME as SESSION_COOKIE } from "@/server/session-cookie";
 /** Consent cookie (placeholder for PR 1's cookie-consent work). */
 export const CONSENT_COOKIE = "navdhya-consent";
 
-/** Analytics opt-in cookie (mirrors PostHog's person-flag). */
+/** Analytics opt-in cookie (mirrors the analytics platform's person-flag). */
 export const ANALYTICS_OPT_IN_COOKIE = "navdhya-analytics-opt-in";
 
 /** A/B experiment cohort cookie (set on first allocation). */

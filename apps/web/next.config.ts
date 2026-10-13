@@ -16,9 +16,10 @@ const contentSecurityPolicy = [
   "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://www.navdhya.com https://navdhya.com https://cdn.navdhya.com https://navdhya-assets.s3.ap-south-1.amazonaws.com",
   "font-src 'self' data: https://fonts.gstatic.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-  "connect-src 'self' data: blob: https://res.cloudinary.com https://www.navdhya.com https://navdhya.com https://navdhya-assets.s3.ap-south-1.amazonaws.com https://*.posthog.com https://graph.facebook.com",
-  "frame-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com",
+  "connect-src 'self' data: blob: https://res.cloudinary.com https://www.navdhya.com https://navdhya.com https://navdhya-assets.s3.ap-south-1.amazonaws.com https://graph.facebook.com https://www.google-analytics.com https://*.google-analytics.com",
+  // GTM no-JS fallback frame (plan B4).
+  "frame-src 'self' https://www.googletagmanager.com",
 ].join("; ");
 
 const nextConfig: NextConfig = {
