@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { widgetAccessTokenSchema } from '@navdhya/otp/schemas';
 
 /**
  * BFF schema validation — `auth/p0-contract.md` §1/§8.
@@ -26,7 +27,7 @@ export const e164 = z
     message: 'Must be a valid E.164 phone number (8-15 digits)',
   });
 
-/** 6-digit challenge code (transport form of `proof`, contract §2). */
+/** 6-digit TOTP/recovery code (MFA commands, unchanged by the OTP cutover). */
 export const challengeCode = z
   .string()
   .trim()
@@ -53,28 +54,24 @@ export const signupRequestSchema = z.object({
 });
 
 /**
- * Login redeem. Canonical field is `proof`; `code` is the temporary
- * migration alias (contract §2 — removal milestone recorded there).
- * The BFF logs which form arrived via `receivedForm()`.
+ * Login redeem. The phone factor is proven by the MSG91 widget's JWT
+ * access token (verified server-side in Laravel); `totpCode` rides
+ * alone on the second submit for MFA-enrolled accounts.
  */
 export const loginRequestSchema = z
   .object({
     challengeId,
-    proof: z.string().trim().min(4).max(32).optional(),
-    code: z.string().trim().min(4).max(32).optional(),
-    totpCode: z.string().trim().min(6).max(8).optional(),
+    token: widgetAccessTokenSchema.optional(),
+    totpCode: z.string().trim().min(6).max(12).optional(),
   })
-  .refine((v) => v.proof !== undefined || v.code !== undefined, {
-    message: 'Either proof or code is required',
-  })
-  .refine((v) => !(v.proof !== undefined && v.code !== undefined), {
-    message: 'Send proof or code, not both',
+  .refine((v) => v.token !== undefined || v.totpCode !== undefined, {
+    message: 'Either token or totpCode is required',
   });
 
 /** Signup verification redeem. */
 export const verifyRequestSchema = z.object({
   challengeId,
-  code: z.string().trim().min(4).max(32),
+  token: widgetAccessTokenSchema,
 });
 
 /** MFA — explicit commands only; `{...body}` spread is forbidden (contract §5). */
@@ -92,31 +89,3 @@ export type OtpRequest = z.infer<typeof otpRequestSchema>;
 export type SignupRequest = z.infer<typeof signupRequestSchema>;
 export type LoginRequest = z.infer<typeof loginRequestSchema>;
 export type VerifyRequest = z.infer<typeof verifyRequestSchema>;
-
-/** Contract §2 migration logging: which vocabulary arrived. */
-export function receivedForm(body: { proof?: string; code?: string }): 'proof' | 'code' {
-  return body.proof !== undefined ? 'proof' : 'code';
-}
-
-/**
- * Firebase phone login (S50 kit): single-use intent + ID-token
- * exchange. Transport validation only — Laravel re-validates every
- * field and stays authoritative.
- */
-export const firebaseIntentSchema = z.object({ phone: e164 });
-
-/** ULID intent id (CHAR(26), firebase_phone_auth_intents). Laravel
- * mints lowercase ULIDs in this kit, so match the canonical
- * state-schemas Crockford pattern case-insensitively. */
-export const firebaseIntentId = z
-  .string()
-  .trim()
-  .regex(/^[0-9A-HJKMNP-TV-Z]{26}$/i, 'Invalid intent id');
-
-export const firebaseExchangeSchema = z.object({
-  intentId: firebaseIntentId,
-  // kreait verifies the signature against Google's keyset — length is
-  // the transport guard (backend caps at 8192 too).
-  idToken: z.string().trim().min(20).max(8192),
-  totpCode: z.string().trim().min(6).max(8).optional(),
-});

@@ -1,18 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { firebaseLoginEnabled } from '@/adapters/firebase/client';
-import {
-  beginFirebaseLogin,
-  completeFirebaseLogin,
-  firebaseFlowActive,
-  friendlyFirebaseError,
-  resendFirebaseLogin,
-} from '@/adapters/firebase/login';
-
-const SESSION_COOKIE = 'navdhya-session';
+import { createOtpClient } from '@navdhya/otp/client';
+import { getWidget, sendOtp, verifyOtp, retryOtp, OtpWidgetError } from '@navdhya/otp/widget';
+import { useResendCountdown, resendLabel } from '@navdhya/otp/resend';
 
 export default function LoginClient() {
   const router = useRouter();
@@ -26,6 +19,20 @@ export default function LoginClient() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [challengeId, setChallengeId] = useState('');
+  const [nextAllowedAt, setNextAllowedAt] = useState<string | null>(null);
+  const [resendsLeft, setResendsLeft] = useState(3);
+
+  const otpClient = useMemo(() => createOtpClient({ basePath: '/api/auth' }), []);
+  const { secondsLeft, canResend, exhausted: resendExhausted } = useResendCountdown(nextAllowedAt);
+
+  const normalizePhone = (raw: string) => {
+    const digits = raw.replace(/\D/g, '');
+    return raw.trim().startsWith('+')
+      ? `+${digits}`
+      : digits.length === 10
+        ? `+91${digits}`
+        : `+${digits}`;
+  };
 
   const handlePhoneSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,42 +43,31 @@ export default function LoginClient() {
       return;
     }
 
-    // Firebase path (S50 kit): record the intent, let the SDK send +
-    // verify the SMS; the otp step completes the exchange. Legacy
-    // /api/auth/otp stays the default until cutover.
-    if (firebaseLoginEnabled()) {
-      setIsLoading(true);
-      try {
-        await beginFirebaseLogin(phone);
-        setStep('otp');
-      } catch (err) {
-        setError(friendlyFirebaseError(err) ?? ((err as Error).message || 'Failed to send code'));
-      } finally {
-        setIsLoading(false);
-      }
-      return;
-    }
-
+    const normalized = normalizePhone(phone);
     setIsLoading(true);
+
     try {
-      const res = await fetch('/api/auth/otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identity: phone, purpose: 'login' }),
+      const challenge = await otpClient.requestChallenge({
+        tenant_id: '',
+        purpose: 'login',
+        identity: normalized,
       });
 
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error?.message || 'Failed to send code');
-        return;
-      }
+      setChallengeId(challenge.challenge_id);
 
-      const data = await res.json();
-      if (data.data?.challengeId) {
-        setChallengeId(data.data.challengeId);
-        setStep('otp');
+      // Initialize widget and send OTP
+      const config = await otpClient.loadConfig();
+      await getWidget({ widgetId: config.widget_id, tokenAuth: config.token_auth });
+      await sendOtp(normalized);
+
+      const delay = config.resend?.delays_seconds?.[0] ?? 60;
+      setNextAllowedAt(new Date(Date.now() + delay * 1000).toISOString());
+      setStep('otp');
+    } catch (err: any) {
+      if (err instanceof OtpWidgetError) {
+        setError(err.message || 'Failed to send verification code.');
       } else {
-        setError('Failed to get challenge ID');
+        setError(err?.message || 'Failed to send code');
       }
     } finally {
       setIsLoading(false);
@@ -87,59 +83,42 @@ export default function LoginClient() {
       return;
     }
 
-    // Firebase path: confirm against the SDK, then exchange the ID
-    // token — no backend challenge, so no local attempt mirror (the
-    // backend MFA lock arrives as an exchange 429).
-    if (firebaseFlowActive()) {
-      setIsLoading(true);
-      try {
-        await completeFirebaseLogin(otp);
-        router.push(redirect);
-        router.refresh();
-      } catch (err) {
-        const status = (err as { status?: number }).status;
-        const friendly = friendlyFirebaseError(err);
-        if (friendly) {
-          setError(friendly);
-        } else if (status === 401) {
-          // The phone factor already passed at Firebase; the backend
-          // collapses every credential-shaped failure into one 401 (no
-          // oracle on MFA state), so a first-401 most often means the
-          // account demands its TOTP second factor.
-          setStep('totp');
-          setError('');
-        } else {
-          setError((err as Error).message || 'Invalid code');
-        }
-      } finally {
-        setIsLoading(false);
-      }
-      return;
-    }
-
     setIsLoading(true);
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ challengeId, proof: otp }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        // Check if MFA is required (step_up_required)
-        if (data.error?.code === 'UNAUTHENTICATED' && data.error?.message?.includes('MFA') || res.status === 403) {
-          setStep('totp');
-          setError('');
+      let token: string;
+      try {
+        token = await verifyOtp(otp);
+      } catch (widgetErr: any) {
+        if (widgetErr instanceof OtpWidgetError) {
+          setError('Invalid or expired code.');
+          setIsLoading(false);
           return;
         }
-        setError(data.error?.message || 'Invalid code');
+        throw widgetErr;
+      }
+
+      const result = await otpClient.redeemLogin({
+        tenant_id: '',
+        challenge_id: challengeId,
+        token,
+      });
+
+      if (result.kind === 'mfa_required') {
+        setStep('totp');
+        setError('');
         return;
       }
 
-      // Success - cookie is set by BFF
+      // Success
       router.push(redirect);
       router.refresh();
+    } catch (err: any) {
+      if (err.status === 401) {
+        setStep('totp');
+        setError('If your account uses two-factor authentication, enter the code from your authenticator app.');
+      } else {
+        setError(err?.message || 'Invalid code');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -154,76 +133,45 @@ export default function LoginClient() {
       return;
     }
 
-    // Firebase path: exchange-only retry — the SMS code was already
-    // confirmed, so this re-runs the exchange with the TOTP factor.
-    if (firebaseFlowActive()) {
-      setIsLoading(true);
-      try {
-        await completeFirebaseLogin(otp, totpCode);
-        router.push(redirect);
-        router.refresh();
-      } catch (err) {
-        setError(friendlyFirebaseError(err) ?? ((err as Error).message || 'Invalid code'));
-      } finally {
-        setIsLoading(false);
-      }
-      return;
-    }
-
     setIsLoading(true);
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ challengeId, proof: otp, totpCode }),
+      await otpClient.redeemTotp({
+        tenant_id: '',
+        challenge_id: challengeId,
+        totp_code: totpCode,
       });
-
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error?.message || 'Invalid code');
-        return;
-      }
 
       router.push(redirect);
       router.refresh();
+    } catch (err: any) {
+      setError(err?.message || 'Invalid authenticator code');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleResend = async () => {
-    // Firebase path: fresh intent + fresh SMS (TTL restarts).
-    if (firebaseFlowActive()) {
-      setIsLoading(true);
-      try {
-        await resendFirebaseLogin(phone);
-        setError('');
-      } catch (err) {
-        setError(friendlyFirebaseError(err) ?? ((err as Error).message || 'Failed to resend code'));
-      } finally {
-        setIsLoading(false);
-      }
-      return;
-    }
+    if (!canResend || resendsLeft <= 0) return;
 
     setError('');
     setIsLoading(true);
+
     try {
-      const res = await fetch('/api/auth/otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identity: phone, purpose: 'login' }),
+      const resendResult = await otpClient.resend({
+        tenant_id: '',
+        challenge_id: challengeId,
       });
 
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error?.message || 'Failed to resend code');
-        return;
-      }
-
-      const data = await res.json();
-      if (data.data?.challengeId) {
-        setChallengeId(data.data.challengeId);
+      await retryOtp(resendResult.channel);
+      setResendsLeft(resendResult.resends_left);
+      setNextAllowedAt(resendResult.next_allowed_at);
+      setOtp('');
+    } catch (err: any) {
+      if (err.retryAfterSeconds) {
+        setNextAllowedAt(new Date(Date.now() + err.retryAfterSeconds * 1000).toISOString());
+        setError(`Too many requests. Please wait ${err.retryAfterSeconds}s.`);
+      } else {
+        setError(err?.message || 'Failed to resend code');
       }
     } finally {
       setIsLoading(false);
@@ -232,9 +180,6 @@ export default function LoginClient() {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4 py-12">
-      {/* Invisible reCAPTCHA widget mounts here for Firebase phone
-          login (S50); empty until the SDK renders its badge. */}
-      <div id="firebase-recaptcha-container" />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Welcome back</h1>
@@ -301,14 +246,28 @@ export default function LoginClient() {
               {isLoading ? 'Verifying...' : 'Verify'}
             </button>
 
-            <button
-              type="button"
-              onClick={handleResend}
-              disabled={isLoading}
-              className="w-full text-sm text-indigo-600 hover:text-indigo-800 font-medium"
-            >
-              Resend code
-            </button>
+            <div className="text-center pt-2">
+              {resendsLeft > 0 && !resendExhausted ? (
+                secondsLeft !== null && secondsLeft > 0 ? (
+                  <span className="text-sm text-gray-500">
+                    Resend in {resendLabel(secondsLeft)}
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    disabled={isLoading || !canResend}
+                    className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+                  >
+                    Resend code
+                  </button>
+                )
+              ) : (
+                <span className="text-xs text-gray-500">
+                  Maximum resends reached (try again in 10 minutes)
+                </span>
+              )}
+            </div>
           </form>
         )}
 

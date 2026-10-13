@@ -22,7 +22,7 @@
     "@navdhya/routing": "workspace:*",
     "@navdhya/security": "workspace:*",
     "@navdhya/user": "workspace:*",
-    "firebase": "^13.0.0",
+    "@navdhya/otp": "workspace:*",
     "next": "16.0.10",
     "react": "^19",
     "react-dom": "^19"

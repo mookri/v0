@@ -1,48 +1,39 @@
-'use client'
+'use client';
 
-import React, {
-  useEffect,
-  useState
-} from 'react'
-import { motion } from 'framer-motion'
-import { OtpInput } from './OtpInput'
-import { PrimaryButton } from './AuthButtons'
-import { AuthHeader } from './AuthHeader'
-import type { AuthState } from './UnifiedAuthConsole'
-import { getCountryByCode } from '@/lib/auth/countries'
+import React, { useEffect, useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { OtpInput } from './OtpInput';
+import { PrimaryButton } from './AuthButtons';
+import { AuthHeader } from './AuthHeader';
+import type { AuthState } from './UnifiedAuthConsole';
+import { getCountryByCode } from '@/lib/auth/countries';
 import {
   authPost,
   getChallenge,
   setChallenge,
   clearChallenge,
-  redeemBody,
   toE164,
   newIdempotencyKey,
   AuthRequestError,
-} from '@/lib/auth/auth-client'
+} from '@/lib/auth/auth-client';
+import { createOtpClient } from '@navdhya/otp/client';
 import {
-  clearFirebaseFlow,
-  completeFirebaseLogin,
-  firebaseFlowActive,
-  friendlyFirebaseError,
-  resendFirebaseLogin,
-} from '@/lib/firebase/login'
+  getWidget,
+  sendOtp,
+  verifyOtp,
+  retryOtp,
+  OtpWidgetError,
+} from '@navdhya/otp/widget';
+import { useResendCountdown, resendLabel } from '@navdhya/otp/resend';
 
-/**
- * Backend truth (`CustomerOtpService::MAX_ATTEMPTS = 3`): three wrong
- * codes exhaust the challenge row — the backend deletes it and every
- * further redeem 401s until a new challenge is issued. There is no
- * time-based lock (`locked_until` does not exist), so this component
- * never fabricates one; the local counter is a UX mirror only (I18).
- */
-const MAX_ATTEMPTS = 3
+const MAX_ATTEMPTS = 3;
 
 interface OtpScreenProps {
-  phone: string
-  countryCode: string
-  otpSentReason: 'LOGIN' | 'SIGNUP'
-  transitionTo: (state: AuthState) => void
-  animationVariants: any
+  phone: string;
+  countryCode: string;
+  otpSentReason: 'LOGIN' | 'SIGNUP';
+  transitionTo: (state: AuthState) => void;
+  animationVariants: any;
 }
 
 export function OtpScreen({
@@ -50,235 +41,293 @@ export function OtpScreen({
   countryCode,
   otpSentReason,
   transitionTo,
-  animationVariants
+  animationVariants,
 }: OtpScreenProps) {
-  const [otp, setOtp] = useState('')
-  const [isLoading, setIsLoading] =
-    useState(false)
-  const [resendTimer, setResendTimer] =
-    useState(60)
-  const [errors, setErrors] = useState<
-    Record<string, string>
-  >({})
-  const [generalError, setGeneralError] = useState('')
-  const [attempts, setAttempts] = useState(0)
-  const [lockedUntil, setLockedUntil] = useState<number | null>(null)
-  // Set once the local mirror reaches MAX_ATTEMPTS: the backend has
-  // deleted the challenge row, so redeeming again is pointless.
-  const [exhausted, setExhausted] = useState(false)
-  // Firebase path (S50 kit): TOTP second-factor prompt, revealed once
-  // the exchange collapses to 401 for an MFA-enrolled account.
-  const [showTotp, setShowTotp] = useState(false)
-  const [totpInput, setTotpInput] = useState('')
-  // After the first exchange the SMS code is consumed — further
-  // submits are exchange-only retries (with the TOTP factor).
-  const [smsConfirmed, setSmsConfirmed] = useState(false)
+  const [otp, setOtp] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [generalError, setGeneralError] = useState('');
+  const [attempts, setAttempts] = useState(0);
+  const [lockedUntil, setLockedUntil] = useState<number | null>(null);
+  const [exhausted, setExhausted] = useState(false);
 
-  const dialCode =
-    getCountryByCode(countryCode).dialCode
+  // Two-phase MFA / TOTP step-up state
+  const [showTotp, setShowTotp] = useState(false);
+  const [totpInput, setTotpInput] = useState('');
+
+  // Resend schedule state (compounding 60s → 180s → 540s, max 3)
+  const [resendsLeft, setResendsLeft] = useState(3);
+  const [nextAllowedAt, setNextAllowedAt] = useState<string | null>(null);
+
+  const dialCode = getCountryByCode(countryCode).dialCode;
+  const targetPhone = useMemo(() => toE164(countryCode, phone), [countryCode, phone]);
+  const otpClient = useMemo(() => createOtpClient({ basePath: '/api/auth' }), []);
+
+  const { secondsLeft, canResend, exhausted: resendExhausted } = useResendCountdown(nextAllowedAt);
 
   const clearError = (field: string) => {
-    setErrors(prev => {
-      const next = { ...prev }
-      delete next[field]
-      return next
-    })
-  }
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  };
 
+  // Mount: bootstrap MSG91 widget & send initial OTP
   useEffect(() => {
-    if (resendTimer <= 0) return
-
-    const timer = setTimeout(() => {
-      setResendTimer(prev => prev - 1)
-    }, 1000)
-
-    return () => clearTimeout(timer)
-  }, [resendTimer])
-
-  const handleVerifyOtp = async (
-    e?: React.FormEvent
-  ) => {
-    if (e) e.preventDefault()
-
-    if (lockedUntil && Date.now() < lockedUntil) {
-      const waitSec = Math.ceil((lockedUntil - Date.now()) / 1000)
-      setGeneralError(`Too many attempts. Try again in ${waitSec}s.`)
-      return
+    let mounted = true;
+    const challenge = getChallenge();
+    if (!challenge) {
+      setGeneralError('Session expired. Please request a new code.');
+      return;
     }
 
-    // Firebase path (S50 kit): confirm against the SDK, then exchange
-    // the ID token — no backend challenge, so the local attempt mirror
-    // does not apply (Firebase enforces its own SMS limits; the
-    // backend M4 lock arrives as the exchange 429 above).
-    if (firebaseFlowActive()) {
-      await verifyFirebaseOtp()
-      return
+    async function init() {
+      try {
+        const config = await otpClient.loadConfig();
+        await getWidget({ widgetId: config.widget_id, tokenAuth: config.token_auth });
+        await sendOtp(targetPhone);
+        if (mounted) {
+          // Initial send schedule: first resend unlocked after 60s
+          const delay = config.resend?.delays_seconds?.[0] ?? 60;
+          setNextAllowedAt(new Date(Date.now() + delay * 1000).toISOString());
+        }
+      } catch (err: any) {
+        if (mounted) {
+          if (err instanceof OtpWidgetError && err.kind === 'unavailable') {
+            setGeneralError('Verification service is temporarily unavailable. Please try again.');
+          } else {
+            setGeneralError(err?.message || 'Failed to send verification code.');
+          }
+        }
+      }
+    }
+
+    void init();
+
+    return () => {
+      mounted = false;
+    };
+  }, [otpClient, targetPhone]);
+
+  const handleVerifyOtp = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+
+    if (lockedUntil && Date.now() < lockedUntil) {
+      const waitSec = Math.ceil((lockedUntil - Date.now()) / 1000);
+      setGeneralError(`Too many attempts. Try again in ${waitSec}s.`);
+      return;
     }
 
     if (exhausted) {
-      setGeneralError('Too many failed attempts. Please request a new code.')
-      return
+      setGeneralError('Too many failed attempts. Please request a new code.');
+      return;
     }
 
+    const challenge = getChallenge();
+    if (!challenge) {
+      setGeneralError('Session expired. Please request a new code.');
+      clearChallenge();
+      return;
+    }
+
+    // Phase 2: TOTP second-factor verification
+    if (showTotp) {
+      if (totpInput.length < 6) {
+        setErrors({ totp: 'Enter complete code' });
+        return;
+      }
+
+      setIsLoading(true);
+      setGeneralError('');
+
+      try {
+        await authPost('/api/auth/login', {
+          challengeId: challenge.id,
+          totpCode: totpInput,
+        });
+        clearChallenge();
+        transitionTo('SUCCESS');
+      } catch (err: any) {
+        if (err.status === 429 || err.code === 'RATE_LIMITED') {
+          const retryAfter = err.retryAfter ?? 60;
+          setLockedUntil(Date.now() + retryAfter * 1000);
+          setGeneralError(err.message || 'Too many attempts.');
+        } else {
+          setGeneralError(err.message || 'Invalid authenticator code.');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
+    // Phase 1: MSG91 Widget OTP verification
     if (otp.length !== 6) {
-      setErrors({
-        otp: 'Enter complete code'
-      })
-      return
+      setErrors({ otp: 'Enter complete code' });
+      return;
     }
 
-    setIsLoading(true)
-    setGeneralError('')
+    setIsLoading(true);
+    setGeneralError('');
 
     try {
-      const challenge = getChallenge()
-      if (!challenge) {
-        setGeneralError('Session expired. Please request a new code.')
-        clearChallenge()
-        setIsLoading(false)
-        return
+      // 1. Verify code against MSG91 widget → returns JWT access token
+      let token: string;
+      try {
+        token = await verifyOtp(otp);
+      } catch (widgetErr: any) {
+        if (widgetErr instanceof OtpWidgetError) {
+          setGeneralError('Invalid or expired code.');
+          setIsLoading(false);
+          return;
+        }
+        throw widgetErr;
       }
 
-      // Contract §2: canonical field is `proof`. The old `code` field
-      // here was sending an empty credential to /auth/login.
-      const endpoint =
-        otpSentReason === 'LOGIN' ? '/api/auth/login' : '/api/auth/verify'
-      const body =
-        otpSentReason === 'LOGIN'
-          ? redeemBody(challenge.id, otp)
-          : { challengeId: challenge.id, code: otp }
+      // 2. Redeem JWT token on BFF
+      const endpoint = otpSentReason === 'LOGIN' ? '/api/auth/login' : '/api/auth/verify';
+      const res = await authPost<{ data?: { status?: string; object?: string } }>(
+        endpoint,
+        {
+          challengeId: challenge.id,
+          token,
+        },
+      );
 
-      await authPost(endpoint, body)
+      // 202 MFA required: phase boundary held
+      if (res.data?.data?.status === 'mfa_required' || res.data?.data?.object === 'otp_challenge') {
+        setShowTotp(true);
+        setGeneralError('Please enter the 6-digit code from your authenticator app to complete sign in.');
+        return;
+      }
 
-      clearChallenge()
-      transitionTo('SUCCESS')
-    } catch (err) {
-      const e = err as AuthRequestError
-
-      if (e.code === 'RATE_LIMITED') {
-        const retryAfter = e.retryAfter ?? 60
-        setLockedUntil(Date.now() + retryAfter * 1000)
-        setGeneralError(e.message)
-      } else if (e.status === 401) {
-        // Wrong code — count locally; backend lock is authoritative (I8).
-        // Backend truth: the 3rd failure exhausts the challenge (the row
-        // is deleted), so drop the challenge and require a restart — no
-        // fabricated time-based lock.
-        const next = attempts + 1
-        setAttempts(next)
-        if (next >= MAX_ATTEMPTS) {
-          setExhausted(true)
-          clearChallenge()
-          setGeneralError('Too many failed attempts. Please request a new code.')
+      clearChallenge();
+      transitionTo('SUCCESS');
+    } catch (err: any) {
+      if (err.status === 429 || err.code === 'RATE_LIMITED') {
+        const retryAfter = err.retryAfter ?? 60;
+        setLockedUntil(Date.now() + retryAfter * 1000);
+        setGeneralError(err.message || 'Too many requests.');
+      } else if (err.status === 401) {
+        if (otpSentReason === 'LOGIN' && !showTotp) {
+          // If server 401 indicates step-up or token mismatch
+          setShowTotp(true);
+          setGeneralError('The code was rejected. If your account uses an authenticator app, enter its code below.');
         } else {
-          setGeneralError(`${e.message} (${MAX_ATTEMPTS - next} attempts remaining)`)
+          const next = attempts + 1;
+          setAttempts(next);
+          if (next >= MAX_ATTEMPTS) {
+            setExhausted(true);
+            clearChallenge();
+            setGeneralError('Too many failed attempts. Please request a new code.');
+          } else {
+            setGeneralError(`${err.message || 'Invalid or expired code.'} (${MAX_ATTEMPTS - next} attempts remaining)`);
+          }
         }
       } else {
-        setGeneralError(e.message || 'Invalid code')
+        setGeneralError(err.message || 'Invalid code');
       }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
-  const verifyFirebaseOtp = async () => {
-    if (!smsConfirmed && otp.length !== 6) {
-      setErrors({ otp: 'Enter complete code' })
-      return
-    }
-    if (showTotp && totpInput.length !== 6) {
-      setErrors({ totp: 'Enter complete code' })
-      return
-    }
-
-    setIsLoading(true)
-    setGeneralError('')
-
-    try {
-      await completeFirebaseLogin(smsConfirmed ? '' : otp, showTotp ? totpInput : undefined)
-      transitionTo('SUCCESS')
-    } catch (err) {
-      const e = err as AuthRequestError
-      const friendly = friendlyFirebaseError(err)
-
-      if (friendly) {
-        setGeneralError(friendly)
-      } else if (e.code === 'RATE_LIMITED') {
-        const retryAfter = e.retryAfter ?? 60
-        setLockedUntil(Date.now() + retryAfter * 1000)
-        setGeneralError(e.message)
-      } else if (e.status === 401) {
-        // The phone factor already passed at Firebase; the backend
-        // collapses every credential-shaped failure into one 401 (no
-        // oracle on MFA state), so a first-401 most often means the
-        // account demands its TOTP second factor. Reveal the prompt
-        // once; the retry reuses the confirmed user, not the code.
-        setSmsConfirmed(true)
-        if (!showTotp) {
-          setShowTotp(true)
-          setGeneralError(
-            'The code was rejected. If your account uses an authenticator app, enter its code below and try again.'
-          )
-        } else {
-          setGeneralError(e.message || 'Invalid code')
-        }
-      } else {
-        setGeneralError(e.message || 'Invalid code')
-      }
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
+  // Server-gated resend (compounding 60s → 180s → 540s)
   const handleResend = async () => {
-    setGeneralError('')
-    setAttempts(0)
-    setLockedUntil(null)
-    setExhausted(false)
+    const challenge = getChallenge();
+    if (!challenge) {
+      setGeneralError('Session expired. Please request a new code.');
+      return;
+    }
+
+    if (!canResend || resendsLeft <= 0) return;
+
+    setIsLoading(true);
+    setGeneralError('');
 
     try {
-      const purpose = otpSentReason === 'LOGIN' ? 'login' : 'signup'
-      const e164 = toE164(countryCode, phone)
+      const res = await authPost<{
+        data?: {
+          channel?: string;
+          channels?: string[];
+          resends_left?: number;
+          next_allowed_at?: string | null;
+        };
+      }>('/api/auth/otp/resend', { challengeId: challenge.id });
 
-      // Firebase path: fresh intent + fresh SMS (TTL restarts).
-      if (firebaseFlowActive()) {
-        await resendFirebaseLogin(e164)
-        setShowTotp(false)
-        setSmsConfirmed(false)
-        setTotpInput('')
-        setOtp('')
-        setResendTimer(60)
-        return
+      const resendData = res.data?.data;
+      const channel = resendData?.channel ?? '11';
+
+      // Call widget retryOtp with the channel granted by Laravel
+      await retryOtp(channel);
+
+      if (resendData?.resends_left !== undefined) {
+        setResendsLeft(resendData.resends_left);
       }
-
-      if (purpose === 'login') {
-        const res = await authPost<{ data?: { challengeId?: string; expiresIn?: number } }>(
-          '/api/auth/otp',
-          { identity: e164, purpose: 'login' },
-          { idempotencyKey: newIdempotencyKey() },
-        )
-        const challengeId = res.data.data?.challengeId
-        if (challengeId) setChallenge(challengeId, 'login', res.data.data?.expiresIn ?? 600)
+      setNextAllowedAt(resendData?.next_allowed_at ?? null);
+      setOtp('');
+      setAttempts(0);
+      setExhausted(false);
+    } catch (err: any) {
+      if (err.status === 429 || err.code === 'RATE_LIMITED') {
+        const retryAfter = err.retryAfter ?? 60;
+        setNextAllowedAt(new Date(Date.now() + retryAfter * 1000).toISOString());
+        setGeneralError(err.message || `Too many resends. Please wait ${retryAfter}s.`);
       } else {
-        const res = await authPost<{ data?: { challengeId?: string; expiresIn?: number } }>(
-          '/api/auth/signup',
-          { phone: e164, name: phone },
-          { idempotencyKey: newIdempotencyKey() },
-        )
-        const challengeId = res.data.data?.challengeId
-        if (challengeId) setChallenge(challengeId, 'signup', res.data.data?.expiresIn ?? 600)
+        setGeneralError(err.message || 'Failed to resend code.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fresh-challenge retry arm after resends are spent
+  const handleFreshChallenge = async () => {
+    setIsLoading(true);
+    setGeneralError('');
+
+    try {
+      const purpose = otpSentReason === 'LOGIN' ? 'login' : 'signup';
+      const endpoint = purpose === 'login' ? '/api/auth/otp' : '/api/auth/signup';
+      const body =
+        purpose === 'login'
+          ? { identity: targetPhone, purpose: 'login' }
+          : { phone: targetPhone, name: phone };
+
+      const res = await authPost<{ data?: { challengeId?: string; expiresIn?: number } }>(
+        endpoint,
+        body,
+        { idempotencyKey: newIdempotencyKey() },
+      );
+
+      const challengeId = res.data?.data?.challengeId;
+      if (!challengeId) {
+        setGeneralError('Failed to create new challenge.');
+        return;
       }
 
-      setResendTimer(60)
-    } catch (err) {
-      const e = err as AuthRequestError
-      if (e.code === 'RATE_LIMITED') {
-        const retryAfter = e.retryAfter ?? 60
-        setResendTimer(retryAfter)
+      setChallenge(challengeId, purpose, res.data?.data?.expiresIn ?? 1200);
+      await sendOtp(targetPhone);
+
+      setResendsLeft(3);
+      setAttempts(0);
+      setExhausted(false);
+      setNextAllowedAt(new Date(Date.now() + 60_000).toISOString());
+      setOtp('');
+      setShowTotp(false);
+      setTotpInput('');
+    } catch (err: any) {
+      if (err.status === 429 || err.code === 'RATE_LIMITED') {
+        const retryAfter = err.retryAfter ?? 600;
+        setGeneralError(`Too many code requests. Please try again in ${Math.ceil(retryAfter / 60)} minutes.`);
+      } else {
+        setGeneralError(err.message || 'Failed to request fresh code.');
       }
-      setGeneralError(e.message || 'Failed to resend code')
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <motion.div
@@ -290,19 +339,11 @@ export function OtpScreen({
       className="w-full"
     >
       <div className="space-y-4">
-
         {/* Back */}
         <button
           type="button"
           onClick={() => {
-            // Back abandons the Firebase confirmation — the next
-            // attempt starts a fresh intent + SMS.
-            if (firebaseFlowActive()) clearFirebaseFlow()
-            transitionTo(
-              otpSentReason === 'LOGIN'
-                ? 'LOGIN'
-                : 'SIGNUP'
-            )
+            transitionTo(otpSentReason === 'LOGIN' ? 'LOGIN' : 'SIGNUP');
           }}
           className="
             group
@@ -325,13 +366,8 @@ export function OtpScreen({
             stroke="currentColor"
             strokeWidth={2.8}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15 19l-7-7 7-7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
-
           Back
         </button>
 
@@ -343,26 +379,24 @@ export function OtpScreen({
         />
 
         {/* Form */}
-        <form
-          onSubmit={handleVerifyOtp}
-          className="space-y-3"
-        >
+        <form onSubmit={handleVerifyOtp} className="space-y-3">
           {generalError && (
             <div className="mb-2 p-3 rounded-xl bg-red-500/5 border border-red-500/20">
               <p className="text-xs text-red-400 font-medium text-center">{generalError}</p>
             </div>
           )}
-          <OtpInput
-            value={otp}
-            onChange={(value) => {
-              setOtp(value)
-              clearError('otp')
-              setGeneralError('')
-            }}
-            error={errors.otp}
-          />
 
-          {showTotp && (
+          {!showTotp ? (
+            <OtpInput
+              value={otp}
+              onChange={(value) => {
+                setOtp(value);
+                clearError('otp');
+                setGeneralError('');
+              }}
+              error={errors.otp}
+            />
+          ) : (
             <div className="space-y-3">
               <p className="text-xs text-[#757575] text-center">
                 Enter the 6-digit code from your authenticator app
@@ -370,43 +404,57 @@ export function OtpScreen({
               <OtpInput
                 value={totpInput}
                 onChange={(value) => {
-                  setTotpInput(value)
-                  clearError('totp')
-                  setGeneralError('')
+                  setTotpInput(value);
+                  clearError('totp');
+                  setGeneralError('');
                 }}
                 error={errors.totp}
               />
             </div>
           )}
 
-          <PrimaryButton
-            type="submit"
-            loading={isLoading}
-            disabled={isLoading}
-          >
+          <PrimaryButton type="submit" loading={isLoading} disabled={isLoading}>
             Verify
           </PrimaryButton>
         </form>
 
         {/* Resend */}
-        <div className="flex justify-center pt-0.5">
-          <div className="inline-flex items-center h-7 px-3.5 rounded-full bg-[#FAFAFA] border border-[rgba(17,17,17,0.06)] text-[11px] font-bold text-[#6B6B6B]">
-            {resendTimer > 0 ? (
-              <span>
-                Resend in <span className="text-[#111]">{resendTimer}s</span>
-              </span>
+        {!showTotp && (
+          <div className="flex flex-col items-center gap-2 pt-0.5">
+            {resendsLeft > 0 && !resendExhausted ? (
+              <div className="inline-flex items-center h-7 px-3.5 rounded-full bg-[#FAFAFA] border border-[rgba(17,17,17,0.06)] text-[11px] font-bold text-[#6B6B6B]">
+                {secondsLeft !== null && secondsLeft > 0 ? (
+                  <span>
+                    Resend in <span className="text-[#111]">{resendLabel(secondsLeft)}</span>
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    disabled={isLoading || !canResend}
+                    className="hover:text-[#111] transition-colors disabled:opacity-50"
+                  >
+                    Resend code
+                  </button>
+                )}
+              </div>
             ) : (
-              <button
-                type="button"
-                onClick={handleResend}
-                disabled={isLoading}
-                className="hover:text-[#111] transition-colors disabled:opacity-50"
-              >
-                Resend code
-              </button>
+              <div className="text-center space-y-1">
+                <p className="text-[11px] text-[#888]">
+                  Maximum resends reached for this code.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleFreshChallenge}
+                  disabled={isLoading}
+                  className="text-[11px] font-bold text-amber-600 hover:text-amber-700 underline"
+                >
+                  Request fresh code (10 min gate)
+                </button>
+              </div>
             )}
           </div>
-        </div>
+        )}
 
         {/* Trust */}
         <p className="text-center text-[10px] font-semibold text-[#A8A8A8]">
@@ -414,5 +462,5 @@ export function OtpScreen({
         </p>
       </div>
     </motion.div>
-  )
+  );
 }

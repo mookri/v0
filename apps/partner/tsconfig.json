@@ -26,41 +26,26 @@
       "@/*": [
         "./*"
       ],
-      "@navdhya/partner/*": [
-        "../../packages/partner/src/*"
+      "@navdhya/otp": [
+        "../../packages/otp/src/index.ts"
       ],
-      "@navdhya/partner/src/*": [
-        "../../packages/partner/src/*"
+      "@navdhya/otp/widget": [
+        "../../packages/otp/src/widget/loader.ts"
       ],
-      "@navdhya/identity/*": [
-        "../../packages/identity/src/*"
+      "@navdhya/otp/client": [
+        "../../packages/otp/src/client.ts"
       ],
-      "@navdhya/identity/src/*": [
-        "../../packages/identity/src/*"
+      "@navdhya/otp/resend": [
+        "../../packages/otp/src/resend.ts"
       ],
-      "@navdhya/fulfillment/*": [
-        "../../packages/fulfillment/src/*"
+      "@navdhya/otp/schemas": [
+        "../../packages/otp/src/schemas.ts"
       ],
-      "@navdhya/fulfillment/src/*": [
-        "../../packages/fulfillment/src/*"
+      "@navdhya/otp/*": [
+        "../../packages/otp/src/*"
       ],
-      "@navdhya/booking/*": [
-        "../../packages/booking/src/*"
-      ],
-      "@navdhya/availability/*": [
-        "../../packages/availability/src/*"
-      ],
-      "@navdhya/pandit/*": [
-        "../../packages/pandit/src/*"
-      ],
-      "@navdhya/puja/*": [
-        "../../packages/puja/src/*"
-      ],
-      "@navdhya/booking/*": [
-        "../../packages/booking/src/*"
-      ],
-      "@navdhya/availability/*": [
-        "../../packages/availability/src/*"
+      "@navdhya/*": [
+        "../../packages/*"
       ]
     }
   },
@@ -69,49 +54,9 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "../../packages/partner/**/*.ts",
-    "../../packages/identity/**/*.ts",
-    "../../packages/fulfillment/**/*.ts",
-    "../../packages/booking/**/*.ts",
-    "../../packages/availability/**/*.ts",
-    "../../packages/pandit/**/*.ts",
-    "../../packages/puja/**/*.ts"
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    "../../packages/ads",
-    "../../packages/analytics",
-    "../../packages/attribution",
-    "../../packages/authorization",
-    "../../packages/aeo",
-    "../../packages/commerce",
-    "../../packages/communication",
-    "../../packages/config",
-    "../../packages/content",
-    "../../packages/contracts",
-    "../../packages/customer-profile",
-    "../../packages/design-system",
-    "../../packages/discovery",
-    "../../packages/events",
-    "../../packages/experimentation",
-    "../../packages/feedback",
-    "../../packages/finance",
-    "../../packages/geography",
-    "../../packages/incident",
-    "../../packages/layout-engine",
-    "../../packages/notifications",
-    "../../packages/payment",
-    "../../packages/personalization",
-    "../../packages/pricing",
-    "../../packages/recommendations",
-    "../../packages/resource-management",
-    "../../packages/routing",
-    "../../packages/scheduling",
-    "../../packages/search",
-    "../../packages/security",
-    "../../packages/seo",
-    "../../packages/support",
-    "../../packages/user"
+    "node_modules"
   ]
 }

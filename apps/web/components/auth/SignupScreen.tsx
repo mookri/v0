@@ -11,6 +11,8 @@ import { AuthDivider } from './AuthDivider'
 import { AuthHeader } from './AuthHeader'
 import type { AuthState } from './UnifiedAuthConsole'
 import { authPost, setChallenge, toE164, newIdempotencyKey, AuthRequestError } from '@/lib/auth/auth-client'
+import { createOtpClient } from '@navdhya/otp/client'
+import { getWidget } from '@navdhya/otp/widget'
 
 interface SignupScreenProps {
   phone: string
@@ -87,7 +89,12 @@ export function SignupScreen({
         return
       }
 
-      setChallenge(challengeId, 'signup', res.data.data?.expiresIn ?? 600)
+      setChallenge(challengeId, 'signup', res.data.data?.expiresIn ?? 1200)
+
+      // Warm up widget config + SDK
+      const otpClient = createOtpClient({ basePath: '/api/auth' })
+      void otpClient.loadConfig().then((cfg: { widget_id: string; token_auth: string }) => getWidget({ widgetId: cfg.widget_id, tokenAuth: cfg.token_auth })).catch(() => {})
+
       setOtpSentReason('SIGNUP')
       transitionTo('OTP')
     } catch (err) {

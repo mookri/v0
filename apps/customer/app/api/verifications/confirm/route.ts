@@ -9,15 +9,15 @@ export async function POST(req: Request) {
     return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
   }
 
-  let body: { id?: string; code?: string } = {};
+  let body: { id?: string; token?: string } = {};
   try {
     body = await req.json();
   } catch {
     return Response.json(err('VALIDATION_ERROR', 'Invalid request body.', requestId), { status: 422 });
   }
 
-  if (!body.id || !body.code) {
-    return Response.json(err('VALIDATION_ERROR', 'id and code are required.', requestId), { status: 422 });
+  if (!body.id || !body.token) {
+    return Response.json(err('VALIDATION_ERROR', 'id and token are required.', requestId), { status: 422 });
   }
 
   const actor = wiredActor(req, requestId);
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     const { data } = await laravelPost<unknown>(
       actor.token,
       `/customers/verifications/${body.id}:confirm`,
-      { code: body.code }
+      { token: body.token }
     );
     return Response.json(ok(data, requestId));
   } catch (e) {

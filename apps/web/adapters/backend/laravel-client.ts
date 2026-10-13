@@ -38,8 +38,8 @@ export const DEFAULT_BACKEND_CODE_MAP: BackendCodeMap = {
   state_forbidden: 'CONFLICT',
   rate_limited: 'RATE_LIMITED',
   service_unavailable: 'DEPENDENCY_UNAVAILABLE',
-  // Firebase phone-login exchange (S50): the typed 503 — admin creds
-  // absent or Google unreachable — must not fall through to
+  // OTP exchange: the typed 503 — provider creds
+  // absent or authority unreachable — must not fall through to
   // INTERNAL_ERROR; the UI needs to say "try again shortly", not
   // "invalid credentials".
   dependency_unavailable: 'DEPENDENCY_UNAVAILABLE',

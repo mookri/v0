@@ -1,6 +1,5 @@
 import { MemoryOnboardingRepository } from '@navdhya/partner/src/adapters/memory-applications';
 import { MemoryDocumentStore, MemoryUploadUrls } from '@navdhya/partner/src/adapters/memory-documents';
-import { MemoryOtpProvider } from '@navdhya/identity/src/adapters/memory-otp';
 import { partnerActorResolver, headersToRecord, readSessionCookie } from '@/application/actor';
 import { partnerSessions, partnerTokenSecret } from '@/server/auth';
 import { resolveSessionToken } from '@navdhya/identity/src/application/token-session';
@@ -15,11 +14,6 @@ export const onboardingApps = new MemoryOnboardingRepository();
 export const onboardingDocs = new MemoryDocumentStore();
 export const onboardingUploads = new MemoryUploadUrls();
 
-let otp: MemoryOtpProvider = new MemoryOtpProvider();
-export function onboardingOtp(): MemoryOtpProvider {
-  return otp;
-}
-
 export const onboardingActors = partnerActorResolver();
 
 // Draft evidence lives here until the repository owns it (stage 6:
@@ -32,9 +26,6 @@ export function saveEvidence(applicationId: string, next: DraftEvidence): void {
   evidence.set(applicationId, next);
 }
 
-export function __useOtpForTests(provider: MemoryOtpProvider): void {
-  otp = provider;
-}
 export function __resetEvidenceForTests(): void {
   evidence.clear();
 }

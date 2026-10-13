@@ -16,7 +16,8 @@
     "react-dom": "^19",
     "@navdhya/fulfillment": "workspace:*",
     "@navdhya/identity": "workspace:*",
-    "@navdhya/partner": "workspace:*"
+    "@navdhya/partner": "workspace:*",
+    "@navdhya/otp": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22",

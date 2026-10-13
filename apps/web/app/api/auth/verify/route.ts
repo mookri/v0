@@ -1,22 +1,21 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
 import { laravelEnabled, laravelPost, laravelTenant, laravelErrorResponse } from '@/adapters/backend/laravel-client';
 import { authRateLimiter, ipKey, THROTTLE } from '@/application/auth-throttle';
-import { verifyRequestSchema, bodyWithinCap } from '@/application/auth-schemas';
+import { bodyWithinCap } from '@/application/auth-schemas';
 import { setSessionCookie } from '@/server/session-cookie';
+import type { CustomerSession } from '@navdhya/otp/schemas';
 
-interface LaravelSession {
-  token: string;
-  expires_at: string;
-  tenant_id: string;
-  actor: { user_id: string; session_id: string };
+interface RawVerifyBody {
+  challengeId?: string;
+  challenge_id?: string;
+  token?: string;
 }
 
 /**
- * POST /api/auth/verify — redeem the signup challenge, issue a session.
+ * POST /api/auth/verify — redeem the signup challenge with the MSG91 widget token, issue a session.
  *
- * Contract: auth/p0-contract.md §2 (atomic verify-and-consume in
- * Laravel), §6 (session issued only after authoritative verification,
- * I14), §7 (cookie policy), §8.
+ * Atomically verifies the token against MSG91 in Laravel, creates customer profile/membership,
+ * and mints the HMAC customer session.
  */
 export async function POST(req: Request) {
   const requestId = newRequestId();
@@ -36,14 +35,17 @@ export async function POST(req: Request) {
     return Response.json(err('VALIDATION_ERROR', 'Invalid request body.', requestId), { status: 400 });
   }
 
-  const parsed = verifyRequestSchema.safeParse(raw);
-  if (!parsed.success) {
-    return Response.json(
-      err('VALIDATION_ERROR', parsed.error.issues[0]?.message ?? 'Invalid request.', requestId),
-      { status: 422 },
-    );
+  const body = raw as RawVerifyBody | null;
+  const challengeId = body?.challengeId ?? body?.challenge_id;
+  const token = body?.token;
+
+  if (!challengeId || typeof challengeId !== 'string') {
+    return Response.json(err('VALIDATION_ERROR', 'challengeId is required.', requestId), { status: 422 });
   }
-  const { challengeId, code } = parsed.data;
+
+  if (!token || typeof token !== 'string') {
+    return Response.json(err('VALIDATION_ERROR', 'token is required.', requestId), { status: 422 });
+  }
 
   const ipDecision = await authRateLimiter.consume(
     ipKey('verify', req.headers),
@@ -58,18 +60,32 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { data: session } = await laravelPost<LaravelSession>(
+    const { data: session } = await laravelPost<CustomerSession>(
       null,
       '/customers/auth/verify',
-      { tenant_id: laravelTenant(), challenge_id: challengeId, code },
+      {
+        tenant_id: laravelTenant(),
+        challenge_id: challengeId,
+        token,
+      },
       {},
       { timeout: 'normal', requestId },
     );
 
     const maxAge = Math.max(60, Math.floor((Date.parse(session.expires_at) - Date.now()) / 1000));
     return Response.json(
-      ok({ sessionId: session.actor.session_id, expiresAt: session.expires_at }, requestId),
-      { status: 201, headers: { 'Set-Cookie': setSessionCookie(session.token, maxAge) } },
+      ok(
+        {
+          ...session,
+          sessionId: session.actor.session_id,
+          expiresAt: session.expires_at,
+        },
+        requestId,
+      ),
+      {
+        status: 201,
+        headers: { 'Set-Cookie': setSessionCookie(session.token, maxAge) },
+      },
     );
   } catch (e) {
     return laravelErrorResponse(e, 'Invalid credentials.', requestId);

@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const SESSION_COOKIE = 'navdhya-session';
+// Session cookie minted by buildSessionCookie (server/backend-session.ts —
+// CUSTOMER_TOKEN_COOKIE is the source of truth; this literal mirrors it on
+// purpose because middleware runs on the edge runtime and must not pull the
+// identity package's node crypto into the import graph).
+const SESSION_COOKIE = '__Host-nv_customer_token';
 const PUBLIC_PATHS = ['/login', '/signup', '/api/auth', '/api/health', '/api/version'];
 
 export function middleware(request: NextRequest) {

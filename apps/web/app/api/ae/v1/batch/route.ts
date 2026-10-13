@@ -12,9 +12,6 @@ import { MAX_BATCH_BODY_BYTES } from '@navdhya/analytics/src/collector/contract'
 import { handleCollectorRequest } from '@navdhya/analytics/src/collector/pipeline';
 import { FixedWindowRateLimiter } from '@navdhya/analytics/src/collector/rate-limit';
 
-export const runtime = 'edge';
-export const dynamic = 'force-dynamic';
-
 // Per-isolate fixed windows: edge isolates do not share bucket state
 // (documented best-effort layer; the ingestion HMAC replay window and
 // per-batch caps remain the hard backstop).

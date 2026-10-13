@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     const { data } = await laravelPost(
       ctx.actor.token,
       `/customers/verifications/${ctx.data.id}:confirm`,
-      { code: ctx.data.code },
+      { token: ctx.data.token },
       {},
       { timeout: 'normal', requestId },
     );

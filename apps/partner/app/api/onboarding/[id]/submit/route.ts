@@ -12,29 +12,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const { id } = await params;
 
   if (!laravelEnabled()) {
-    // Dev/mock fallback
-    const { onboardingOtp, getEvidence, loadOwnApplication } = await import('@/server/onboarding');
-    const { beginSubmit } = await import('@navdhya/partner/src/application/onboarding-submit');
-
-    const loaded = await loadOwnApplication(req, requestId, id);
-    if ('response' in loaded) return loaded.response;
-    const app = loaded.application;
-    try {
-      const { challengeId } = await beginSubmit({ otp: onboardingOtp() }, app, getEvidence(id), app.identityId, new Date().toISOString());
-      return Response.json(ok({ applicationId: id, challengeId }, requestId));
-    } catch (e) {
-      const code = e instanceof Error ? e.message : '';
-      if (code.startsWith('SUBMIT_INCOMPLETE')) {
-        return Response.json(err('ONBOARDING_INCOMPLETE', 'Steps are still missing.', requestId), { status: 422 });
-      }
-      if (code.startsWith('SUBMIT_INVALID_STATE')) {
-        return Response.json(err('ONBOARDING_INVALID_TRANSITION', 'Cannot submit in this state.', requestId), { status: 409 });
-      }
-      if (code === 'OTP_RATE_LIMITED') {
-        return Response.json(err('RATE_LIMITED', 'Too many attempts.', requestId), { status: 429 });
-      }
-      throw e;
-    }
+    return Response.json(
+      err('DEPENDENCY_UNAVAILABLE', 'Submission OTP unavailable in mock mode.', requestId),
+      { status: 503 },
+    );
   }
 
   const actor = await onboardingActors.resolve(headersToRecord(req.headers));

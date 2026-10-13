@@ -26,6 +26,24 @@
       "@/*": [
         "./*"
       ],
+      "@navdhya/otp": [
+        "../../packages/otp/src/index.ts"
+      ],
+      "@navdhya/otp/widget": [
+        "../../packages/otp/src/widget/loader.ts"
+      ],
+      "@navdhya/otp/client": [
+        "../../packages/otp/src/client.ts"
+      ],
+      "@navdhya/otp/resend": [
+        "../../packages/otp/src/resend.ts"
+      ],
+      "@navdhya/otp/schemas": [
+        "../../packages/otp/src/schemas.ts"
+      ],
+      "@navdhya/otp/*": [
+        "../../packages/otp/src/*"
+      ],
       "@navdhya/*": [
         "../../packages/*"
       ]

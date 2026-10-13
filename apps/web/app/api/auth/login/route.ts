@@ -1,29 +1,27 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
 import { laravelEnabled, laravelPost, laravelTenant, laravelErrorResponse } from '@/adapters/backend/laravel-client';
 import { authRateLimiter, ipKey, THROTTLE } from '@/application/auth-throttle';
-import { loginRequestSchema, bodyWithinCap, receivedForm } from '@/application/auth-schemas';
+import { bodyWithinCap } from '@/application/auth-schemas';
 import { setSessionCookie } from '@/server/session-cookie';
+import type { CustomerSession, OtpChallenge } from '@navdhya/otp/schemas';
 
-interface LaravelSession {
-  token: string;
-  expires_at: string;
-  tenant_id: string;
-  actor: { user_id: string; session_id: string };
+interface RawLoginBody {
+  challengeId?: string;
+  challenge_id?: string;
+  token?: string;
+  totpCode?: string;
+  totp_code?: string;
 }
 
 /**
- * POST /api/auth/login — redeem a challenge for a session.
+ * POST /api/auth/login — two-phase login redeem.
  *
- * Contract: auth/p0-contract.md §2 (verify-and-consume is atomic in
- * Laravel; BFF never judges the proof), §7 (session cookie), §8.
+ * Phase 1: {challengeId, token} verifies the MSG91 widget's JWT access token.
+ * Non-MFA accounts mint and return 200 + customer_session + Set-Cookie immediately.
+ * MFA-enrolled accounts hold the row and return 202 + mfa_required.
  *
- * Migration (§2): canonical field is `proof`; `code` is a temporary
- * alias accepted for ONE release. Which form arrived is logged with
- * the requestId so the removal milestone can be verified.
- *
- * P0 change: the old `identityId + proof` fan-out (OTP request →
- * redeem, 2 sequential backend calls) is REMOVED. Callers must request
- * a challenge via /auth/otp first.
+ * Phase 2: {challengeId, totpCode} redeems the held row with the TOTP factor,
+ * minting and returning 200 + customer_session + Set-Cookie.
  */
 export async function POST(req: Request) {
   const requestId = newRequestId();
@@ -43,23 +41,20 @@ export async function POST(req: Request) {
     return Response.json(err('VALIDATION_ERROR', 'Invalid request body.', requestId), { status: 400 });
   }
 
-  const parsed = loginRequestSchema.safeParse(raw);
-  if (!parsed.success) {
-    return Response.json(
-      err('VALIDATION_ERROR', parsed.error.issues[0]?.message ?? 'Invalid request.', requestId),
-      { status: 422 },
-    );
-  }
-  const { challengeId, proof, code, totpCode } = parsed.data;
+  const body = raw as RawLoginBody | null;
+  const challengeId = body?.challengeId ?? body?.challenge_id;
+  const token = body?.token;
+  const totpCode = body?.totpCode ?? body?.totp_code;
 
-  // Migration telemetry (contract §2): record the vocabulary in use.
-  const form = receivedForm({ proof, code });
-  if (form === 'code') {
-    console.warn(`[auth] deprecated 'code' field received on /auth/login (requestId=${requestId}) — migrate to 'proof'`);
+  if (!challengeId || typeof challengeId !== 'string') {
+    return Response.json(err('VALIDATION_ERROR', 'challengeId is required.', requestId), { status: 422 });
   }
 
-  // BFF-side abuse throttle. The attempt/lock counter itself is
-  // backend-authoritative (I8, I9) — this only bounds request volume.
+  if (!token && !totpCode) {
+    return Response.json(err('VALIDATION_ERROR', 'Either token or totpCode is required.', requestId), { status: 422 });
+  }
+
+  // BFF-side abuse throttle. Attempt/lock counter is backend-authoritative.
   const ipDecision = await authRateLimiter.consume(
     ipKey('login', req.headers),
     THROTTLE.loginIp.limit,
@@ -73,30 +68,43 @@ export async function POST(req: Request) {
   }
 
   try {
-    // Single redeem call — verify-and-consume happens atomically
-    // inside Laravel (contract §2). No fan-out.
-    const redeem: Record<string, string> = {
+    const redeemPayload: Record<string, string> = {
       tenant_id: laravelTenant(),
       challenge_id: challengeId,
-      code: proof ?? code ?? '',
     };
-    if (totpCode !== undefined) redeem['totp_code'] = totpCode;
+    if (token) redeemPayload.token = token;
+    if (totpCode) redeemPayload.totp_code = totpCode;
 
-    const { data: session } = await laravelPost<LaravelSession>(
+    const { data } = await laravelPost<CustomerSession | OtpChallenge>(
       null,
       '/customers/auth/login',
-      redeem,
+      redeemPayload,
       {},
       { timeout: 'normal', requestId },
     );
 
+    // Two-phase MFA hold: 202 mfa_required
+    if ((data as OtpChallenge)?.status === 'mfa_required' || (data as OtpChallenge)?.object === 'otp_challenge') {
+      return Response.json(ok(data, requestId), { status: 202 });
+    }
+
+    // Success: CustomerSession
+    const session = data as CustomerSession;
     const maxAge = Math.max(60, Math.floor((Date.parse(session.expires_at) - Date.now()) / 1000));
+
     return Response.json(
       ok(
-        { sessionId: session.actor.session_id, expiresAt: session.expires_at, receivedForm: form },
+        {
+          ...session,
+          sessionId: session.actor.session_id,
+          expiresAt: session.expires_at,
+        },
         requestId,
       ),
-      { headers: { 'Set-Cookie': setSessionCookie(session.token, maxAge) } },
+      {
+        status: 200,
+        headers: { 'Set-Cookie': setSessionCookie(session.token, maxAge) },
+      },
     );
   } catch (e) {
     return laravelErrorResponse(e, 'Invalid credentials.', requestId);

@@ -155,11 +155,6 @@ export function clearChallenge(): void {
   activeChallenge = null;
 }
 
-/** Contract §2: `proof` is canonical; `code` is a migration alias. */
-export function redeemBody(challengeId: string, proof: string): { challengeId: string; proof: string } {
-  return { challengeId, proof };
-}
-
 /** Deterministic-ish key for idempotent OTP/signup posts (contract §4). */
 export function newIdempotencyKey(): string {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {

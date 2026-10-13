@@ -50,6 +50,8 @@ export const verificationCreateSchema = z.discriminatedUnion('channel', [
   }),
 ]);
 
+import { widgetAccessTokenSchema } from '@navdhya/otp/schemas';
+
 /**
  * Verification confirm — `id` is interpolated into a backend path, so
  * the charset excludes `/`, `:`, `.` and whitespace.
@@ -61,7 +63,7 @@ export const verificationConfirmSchema = z.object({
     .min(8)
     .max(128)
     .regex(/^[A-Za-z0-9_-]+$/, 'Invalid verification id'),
-  code: challengeCode,
+  token: widgetAccessTokenSchema,
 });
 
 /** Bodyless command — unknown keys are never forwarded. */

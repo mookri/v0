@@ -1,8 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { createOtpClient } from '@navdhya/otp/client';
+import { getWidget, sendOtp, verifyOtp, retryOtp, OtpWidgetError } from '@navdhya/otp/widget';
+import { useResendCountdown, resendLabel } from '@navdhya/otp/resend';
 
 export default function SignupClient() {
   const router = useRouter();
@@ -14,6 +17,20 @@ export default function SignupClient() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [challengeId, setChallengeId] = useState('');
+  const [nextAllowedAt, setNextAllowedAt] = useState<string | null>(null);
+  const [resendsLeft, setResendsLeft] = useState(3);
+
+  const otpClient = useMemo(() => createOtpClient({ basePath: '/api/auth' }), []);
+  const { secondsLeft, canResend, exhausted: resendExhausted } = useResendCountdown(nextAllowedAt);
+
+  const normalizePhone = (raw: string) => {
+    const digits = raw.replace(/\D/g, '');
+    return raw.trim().startsWith('+')
+      ? `+${digits}`
+      : digits.length === 10
+        ? `+91${digits}`
+        : `+${digits}`;
+  };
 
   const handleDetailsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,26 +46,30 @@ export default function SignupClient() {
       return;
     }
 
+    const normalizedPhone = normalizePhone(phone);
     setIsLoading(true);
+
     try {
-      const res = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, name }),
+      const challenge = await otpClient.signupChallenge({
+        tenant_id: '',
+        phone: normalizedPhone,
+        name,
       });
 
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error?.message || 'Signup failed');
-        return;
-      }
+      setChallengeId(challenge.challenge_id);
 
-      const data = await res.json();
-      if (data.data?.challengeId) {
-        setChallengeId(data.data.challengeId);
-        setStep('otp');
+      const config = await otpClient.loadConfig();
+      await getWidget({ widgetId: config.widget_id, tokenAuth: config.token_auth });
+      await sendOtp(normalizedPhone);
+
+      const delay = config.resend?.delays_seconds?.[0] ?? 60;
+      setNextAllowedAt(new Date(Date.now() + delay * 1000).toISOString());
+      setStep('otp');
+    } catch (err: any) {
+      if (err instanceof OtpWidgetError) {
+        setError(err.message || 'Failed to send verification code.');
       } else {
-        setError('Failed to get challenge ID');
+        setError(err?.message || 'Signup failed');
       }
     } finally {
       setIsLoading(false);
@@ -66,44 +87,55 @@ export default function SignupClient() {
 
     setIsLoading(true);
     try {
-      const res = await fetch('/api/auth/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ challengeId, code: otp }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error?.message || 'Invalid code');
-        return;
+      let token: string;
+      try {
+        token = await verifyOtp(otp);
+      } catch (widgetErr: any) {
+        if (widgetErr instanceof OtpWidgetError) {
+          setError('Invalid or expired code.');
+          setIsLoading(false);
+          return;
+        }
+        throw widgetErr;
       }
+
+      await otpClient.redeemVerify({
+        tenant_id: '',
+        challenge_id: challengeId,
+        token,
+      });
 
       router.push('/');
       router.refresh();
+    } catch (err: any) {
+      setError(err?.message || 'Invalid code');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleResend = async () => {
+    if (!canResend || resendsLeft <= 0) return;
+
     setError('');
     setIsLoading(true);
+
     try {
-      const res = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, name }),
+      const resendResult = await otpClient.resend({
+        tenant_id: '',
+        challenge_id: challengeId,
       });
 
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error?.message || 'Failed to resend code');
-        return;
-      }
-
-      const data = await res.json();
-      if (data.data?.challengeId) {
-        setChallengeId(data.data.challengeId);
+      await retryOtp(resendResult.channel);
+      setResendsLeft(resendResult.resends_left);
+      setNextAllowedAt(resendResult.next_allowed_at);
+      setOtp('');
+    } catch (err: any) {
+      if (err.retryAfterSeconds) {
+        setNextAllowedAt(new Date(Date.now() + err.retryAfterSeconds * 1000).toISOString());
+        setError(`Too many requests. Please wait ${err.retryAfterSeconds}s.`);
+      } else {
+        setError(err?.message || 'Failed to resend code');
       }
     } finally {
       setIsLoading(false);
@@ -196,14 +228,28 @@ export default function SignupClient() {
               {isLoading ? 'Verifying...' : 'Verify'}
             </button>
 
-            <button
-              type="button"
-              onClick={handleResend}
-              disabled={isLoading}
-              className="w-full text-sm text-indigo-600 hover:text-indigo-800 font-medium"
-            >
-              Resend code
-            </button>
+            <div className="text-center pt-2">
+              {resendsLeft > 0 && !resendExhausted ? (
+                secondsLeft !== null && secondsLeft > 0 ? (
+                  <span className="text-sm text-gray-500">
+                    Resend in {resendLabel(secondsLeft)}
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    disabled={isLoading || !canResend}
+                    className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+                  >
+                    Resend code
+                  </button>
+                )
+              ) : (
+                <span className="text-xs text-gray-500">
+                  Maximum resends reached (try again in 10 minutes)
+                </span>
+              )}
+            </div>
           </form>
         )}
 

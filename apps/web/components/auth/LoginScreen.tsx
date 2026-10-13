@@ -9,8 +9,8 @@ import { AuthDivider } from './AuthDivider'
 import { AuthHeader } from './AuthHeader'
 import type { AuthState } from './UnifiedAuthConsole'
 import { authPost, setChallenge, toE164, newIdempotencyKey, AuthRequestError } from '@/lib/auth/auth-client'
-import { firebaseLoginEnabled } from '@/lib/firebase/client'
-import { beginFirebaseLogin, friendlyFirebaseError } from '@/lib/firebase/login'
+import { createOtpClient } from '@navdhya/otp/client'
+import { getWidget } from '@navdhya/otp/widget'
 
 interface LoginScreenProps {
   phone: string
@@ -61,16 +61,6 @@ export function LoginScreen({
       // normalized identity (contract §1/I3).
       const identity = toE164(countryCode, phone)
 
-      // Firebase path (S50 kit): record the intent, let the SDK send +
-      // verify the SMS; the OTP screen completes the exchange. Legacy
-      // /api/auth/otp stays the default until cutover.
-      if (firebaseLoginEnabled()) {
-        await beginFirebaseLogin(identity)
-        setOtpSentReason('LOGIN')
-        transitionTo('OTP')
-        return
-      }
-
       const res = await authPost<{ data?: { challengeId?: string; expiresIn?: number } }>(
         '/api/auth/otp',
         { identity, purpose: 'login' },
@@ -83,13 +73,17 @@ export function LoginScreen({
         return
       }
 
-      setChallenge(challengeId, 'login', res.data.data?.expiresIn ?? 600)
+      setChallenge(challengeId, 'login', res.data.data?.expiresIn ?? 1200)
+
+      // Warm up widget config + SDK
+      const otpClient = createOtpClient({ basePath: '/api/auth' })
+      void otpClient.loadConfig().then((cfg: { widget_id: string; token_auth: string }) => getWidget({ widgetId: cfg.widget_id, tokenAuth: cfg.token_auth })).catch(() => {})
+
       setOtpSentReason('LOGIN')
       transitionTo('OTP')
     } catch (err) {
       const e = err as AuthRequestError
-      // friendlyFirebaseError maps SDK codes; null for AuthRequestError.
-      setErrors({ phone: friendlyFirebaseError(err) ?? (e.message || 'Failed to send code') })
+      setErrors({ phone: e.message || 'Failed to send code' })
     } finally {
       setIsLoading(false)
     }

@@ -1,22 +1,53 @@
 /**
- * OtpScreen — backend-truth attempt semantics (M6).
- *
- * `CustomerOtpService::MAX_ATTEMPTS = 3`: three wrong codes exhaust the
- * challenge row (delete), and no `locked_until` exists — so the UI must
- * show 3 attempts, must drop the challenge on exhaustion, and must never
- * fabricate a time-based lock (the old 15-minute `setLockedUntil` lie).
- * Real `Retry-After` waits from a backend 429 remain legitimate.
+ * OtpScreen — decoupled MSG91 widget OTP & backend-truth attempt semantics.
  */
+import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { OtpScreen } from '@/components/auth/OtpScreen';
 import { authPost, getChallenge, clearChallenge } from '@/lib/auth/auth-client';
+import { verifyOtp, retryOtp, OtpWidgetError } from '@navdhya/otp/widget';
+
+jest.mock('@navdhya/otp/client', () => ({
+  createOtpClient: jest.fn(() => ({
+    loadConfig: jest.fn().mockResolvedValue({
+      widget_id: 'wid_test',
+      token_auth: 'tok_test',
+      resend: { delays_seconds: [60, 180, 540], max_resends: 3 },
+    }),
+  })),
+}));
+
+jest.mock('@navdhya/otp/widget', () => ({
+  getWidget: jest.fn().mockResolvedValue(undefined),
+  sendOtp: jest.fn().mockResolvedValue(undefined),
+  verifyOtp: jest.fn().mockResolvedValue('fake.jwt.token'),
+  retryOtp: jest.fn().mockResolvedValue(undefined),
+  OtpWidgetError: class OtpWidgetError extends Error {
+    kind: string;
+    detail?: string;
+    constructor(kind: string, message: string, detail?: string) {
+      super(message);
+      this.name = 'OtpWidgetError';
+      this.kind = kind;
+      this.detail = detail;
+    }
+  },
+}));
+
+jest.mock('@navdhya/otp/resend', () => ({
+  useResendCountdown: jest.fn(() => ({
+    secondsLeft: 0,
+    canResend: true,
+    exhausted: false,
+  })),
+  resendLabel: jest.fn((sec: number) => `${sec}s`),
+}));
 
 jest.mock('@/lib/auth/auth-client', () => ({
   authPost: jest.fn(),
   getChallenge: jest.fn(),
   setChallenge: jest.fn(),
   clearChallenge: jest.fn(),
-  redeemBody: jest.fn((challengeId: string, proof: string) => ({ challengeId, proof })),
   toE164: jest.fn(() => '+919876543210'),
   newIdempotencyKey: jest.fn(() => 'idem-key'),
   AuthRequestError: class AuthRequestError extends Error {},
@@ -25,6 +56,8 @@ jest.mock('@/lib/auth/auth-client', () => ({
 const authPostMock = authPost as jest.Mock;
 const getChallengeMock = getChallenge as jest.Mock;
 const clearChallengeMock = clearChallenge as jest.Mock;
+const verifyOtpMock = verifyOtp as jest.Mock;
+const retryOtpMock = retryOtp as jest.Mock;
 
 function typeOtp(value = '123456') {
   const inputs = screen.getAllByRole('textbox') as HTMLInputElement[];
@@ -38,7 +71,7 @@ function submit() {
   fireEvent.submit(form);
 }
 
-function renderScreen() {
+function renderScreen(props: Partial<React.ComponentProps<typeof OtpScreen>> = {}) {
   return render(
     <OtpScreen
       phone="9876543210"
@@ -46,6 +79,7 @@ function renderScreen() {
       otpSentReason="LOGIN"
       transitionTo={jest.fn()}
       animationVariants={{}}
+      {...props}
     />,
   );
 }
@@ -59,11 +93,62 @@ const unauthorized = {
 beforeEach(() => {
   jest.clearAllMocks();
   getChallengeMock.mockReturnValue({ id: 'chal_1', purpose: 'login' });
+  verifyOtpMock.mockResolvedValue('fake.jwt.token');
+});
+
+test('successful redeem exchanges widget JWT with BFF and transitions', async () => {
+  authPostMock.mockResolvedValue({ data: {} });
+  const transitionTo = jest.fn();
+  renderScreen({ transitionTo });
+  typeOtp('123456');
+  submit();
+
+  await waitFor(() => expect(verifyOtpMock).toHaveBeenCalledWith('123456'));
+  await waitFor(() =>
+    expect(authPostMock).toHaveBeenCalledWith('/api/auth/login', {
+      challengeId: 'chal_1',
+      token: 'fake.jwt.token',
+    }),
+  );
+  await waitFor(() => expect(transitionTo).toHaveBeenCalledWith('SUCCESS'));
+  expect(clearChallengeMock).toHaveBeenCalledTimes(1);
+});
+
+test('widget verification failure surfaces invalid code error and halts BFF call', async () => {
+  verifyOtpMock.mockRejectedValue(new OtpWidgetError('verify_failed', 'widget error'));
+  renderScreen();
+  typeOtp('123456');
+  submit();
+
+  await screen.findByText('Invalid or expired code.');
+  expect(authPostMock).not.toHaveBeenCalled();
+});
+
+test('202 mfa_required reveals TOTP input and second submit sends totpCode', async () => {
+  authPostMock.mockResolvedValueOnce({ data: { data: { status: 'mfa_required' } } });
+  const transitionTo = jest.fn();
+  renderScreen({ transitionTo });
+  typeOtp('123456');
+  submit();
+
+  await screen.findByText(/Enter the 6-digit code from your authenticator app/);
+
+  authPostMock.mockResolvedValueOnce({ data: {} });
+  typeOtp('654321');
+  submit();
+
+  await waitFor(() =>
+    expect(authPostMock).toHaveBeenLastCalledWith('/api/auth/login', {
+      challengeId: 'chal_1',
+      totpCode: '654321',
+    }),
+  );
+  await waitFor(() => expect(transitionTo).toHaveBeenCalledWith('SUCCESS'));
 });
 
 test('three failed verifies exhaust the challenge — no fabricated 15-minute lock', async () => {
   authPostMock.mockRejectedValue(unauthorized);
-  renderScreen();
+  renderScreen({ otpSentReason: 'SIGNUP' });
   typeOtp();
 
   // Failure 1 → 2 attempts remaining
@@ -105,24 +190,20 @@ test('backend 429 keeps a real Retry-After wait (genuine backend state)', async 
 
   // Second click inside the wait → countdown message from the real window.
   submit();
-  await screen.findByText(/Try again in \d+s\./);
+  await screen.findByText(/Too many attempts\. Try again in \d+s\./);
 });
 
-test('successful redeem clears the challenge and transitions (unchanged happy path)', async () => {
-  authPostMock.mockResolvedValue({ data: {} });
-  const transitionTo = jest.fn();
-  render(
-    <OtpScreen
-      phone="9876543210"
-      countryCode="IN"
-      otpSentReason="LOGIN"
-      transitionTo={transitionTo}
-      animationVariants={{}}
-    />,
-  );
-  typeOtp();
-  submit();
+test('resend triggers BFF /api/auth/otp/resend and invokes widget retryOtp', async () => {
+  authPostMock.mockResolvedValueOnce({ data: { data: { channel: '11', resends_left: 2 } } });
+  renderScreen();
 
-  await waitFor(() => expect(transitionTo).toHaveBeenCalledWith('SUCCESS'));
-  expect(clearChallengeMock).toHaveBeenCalledTimes(1);
+  const resendBtn = screen.getByRole('button', { name: /resend code/i });
+  fireEvent.click(resendBtn);
+
+  await waitFor(() =>
+    expect(authPostMock).toHaveBeenCalledWith('/api/auth/otp/resend', {
+      challengeId: 'chal_1',
+    }),
+  );
+  await waitFor(() => expect(retryOtpMock).toHaveBeenCalledWith('11'));
 });
