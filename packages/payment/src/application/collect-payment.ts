@@ -1,7 +1,7 @@
 import { Payment } from '@navdhya/payment/src/domain/Payment';
 import { assertTransition } from '@navdhya/payment/src/domain/payment-rules';
 import { InitiatePayment, toPaymentSummary, PaymentSummary } from '@navdhya/payment/src/contracts/PaymentContracts';
-import { PaymentProvider, PaymentRepository } from '@navdhya/payment/src/ports/PaymentPorts';
+import { PaymentProvider, PaymentRepository, PaymentSignalSink } from '@navdhya/payment/src/ports/PaymentPorts';
 
 export async function initiatePayment(
   repo: PaymentRepository,
@@ -35,12 +35,22 @@ export async function initiatePayment(
   return toPaymentSummary(payment);
 }
 
+/**
+ * Gateway-result boundary (plan B2): captured → `payment_succeeded`,
+ * failed → `payment_failed` — emitted through the caller-injected signal sink
+ * BEFORE control leaves this function, so emission runs inside whatever
+ * transaction surrounds the call (the sink closes over `tx.outbox`). The
+ * capability declares the port; composition/tests wire the analytics
+ * emitter adapter (architecture rule: capabilities never import analytics).
+ * Optional to preserve legacy call sites.
+ */
 export async function confirmCapture(
   repo: PaymentRepository,
   provider: PaymentProvider,
   paymentId: string,
   providerPaymentId: string,
   nowIso: string,
+  signals?: PaymentSignalSink,
 ): Promise<PaymentSummary> {
   const payment = await repo.findById(paymentId);
   if (!payment) throw new Error('PAYMENT_NOT_FOUND');
@@ -49,6 +59,13 @@ export async function confirmCapture(
     if (verification.status === 'failed') {
       assertTransition(payment.status, 'FAILED');
       await repo.update({ ...payment, status: 'FAILED', updatedAt: nowIso });
+      // Registry `value` is INR major units; gateway carries minor units.
+      await signals?.paymentFailed({
+        aggregateId: payment.id,
+        value: payment.amountMinor / 100,
+        currency: payment.currency,
+        transactionRef: providerPaymentId,
+      });
     }
     throw new Error('PAYMENT_NOT_CAPTURED');
   }
@@ -60,5 +77,11 @@ export async function confirmCapture(
     updatedAt: nowIso,
   };
   await repo.update(next);
+  await signals?.paymentSucceeded({
+    aggregateId: next.id,
+    value: next.amountMinor / 100,
+    currency: next.currency,
+    transactionRef: verification.paymentId,
+  });
   return toPaymentSummary(next);
 }

@@ -28,3 +28,26 @@ export interface PaymentRepository {
   save(payment: Payment): Promise<void>;
   update(payment: Payment): Promise<void>;
 }
+
+/**
+ * Signals port (plan B2): the capability emits SEMANTIC FACTS here; the
+ * composition layer adapts them to SignalEnvelopes (via the analytics
+ * package's server emitters bound to a tx outbox). Keeps capability →
+ * analytics imports forbidden (architecture tests) while emission still
+ * runs inside the business transaction.
+ */
+export interface PaymentSignal {
+  /** payment.id — the aggregate this signal describes. */
+  aggregateId: string;
+  /** INR major units (registry `value` semantics). */
+  value: number;
+  currency: string;
+  /** Gateway payment/order reference (registry `transaction_ref`). */
+  transactionRef: string;
+  failureCode?: string;
+}
+
+export interface PaymentSignalSink {
+  paymentSucceeded(signal: PaymentSignal): Promise<void>;
+  paymentFailed(signal: PaymentSignal): Promise<void>;
+}

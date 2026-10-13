@@ -12,7 +12,8 @@
     "paths": {
       "@navdhya/*": ["./packages/*"],
       "@infra/*": ["./infrastructure/*"],
-      "@apps/*": ["./apps/*"]
+      "@apps/*": ["./apps/*"],
+      "@services/*": ["./services/*"]
     }
   }
 }

@@ -47,6 +47,9 @@ function atLocalPlugin(): Plugin {
       if ((m = source.match(/^@infra\/(.+)$/))) {
         return tryFile(path.join(root, 'infrastructure'), m[1]!);
       }
+      if ((m = source.match(/^@services\/(.+)$/))) {
+        return tryFile(path.join(root, 'services'), m[1]!);
+      }
       if ((m = source.match(/^@apps\/(.+)$/))) {
         return tryFile(path.join(root, 'apps'), m[1]!);
       }
@@ -88,6 +91,7 @@ export default defineConfig({
       ...packageAliases,
       { find: '@infra/', replacement: `${rootPosixAliasNote}/infrastructure/` },
       { find: '@apps/', replacement: `${rootPosixAliasNote}/apps/` },
+      { find: '@services/', replacement: `${rootPosixAliasNote}/services/` },
     ],
   },
   test: {
@@ -95,7 +99,7 @@ export default defineConfig({
   },
   server: {
     deps: {
-      inline: [/@navdhya\//, /^@infra\//, /^@apps\//],
+      inline: [/@navdhya\//, /^@infra\//, /^@apps\//, /^@services\//],
     },
   },
 });

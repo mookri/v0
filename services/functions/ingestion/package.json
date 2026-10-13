@@ -1,0 +1,17 @@
+{
+  "name": "@navdhya/fn-ingestion",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/ingest.ts",
+  "exports": { ".": "./src/ingest.ts" },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@navdhya/analytics": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}
