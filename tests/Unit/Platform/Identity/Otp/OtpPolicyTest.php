@@ -50,27 +50,15 @@ final class OtpPolicyTest extends TestCase
         OtpPurposePolicy::resolve('transfer_ownership');
     }
 
-    public function test_captcha_is_off_by_default_and_follows_config(): void
-    {
-        $this->assertFalse(OtpPurposePolicy::resolve('login')->captchaRequired());
-        $this->assertFalse(OtpPurposePolicy::resolve('signup')->captchaRequired());
-
-        config()->set('otp-policy.captcha.customer', 'true');
-        $this->assertTrue(OtpPurposePolicy::resolve('login')->captchaRequired());
-    }
 
     public function test_audience_router_follows_provider_selection(): void
     {
-        // Default config: every audience stays local.
-        $this->assertSame('local', OtpAudienceRouter::providerName('customer'));
-        $this->assertSame('local', OtpAudienceRouter::providerName('vendor'));
+        // Default config: every audience routes to msg91_widget.
+        $this->assertSame('msg91_widget', OtpAudienceRouter::providerName('customer'));
+        $this->assertSame('msg91_widget', OtpAudienceRouter::providerName('vendor'));
 
-        config()->set('otp-providers.audiences.customer.provider', 'firebase');
-        $this->assertSame('firebase-customer', OtpAudienceRouter::providerName('customer'));
-        $this->assertSame('local', OtpAudienceRouter::providerName('vendor'));
-
-        $this->assertSame('firebase-vendor', OtpAudienceRouter::nameFor('vendor', 'firebase'));
-        $this->assertSame('local', OtpAudienceRouter::nameFor('platform', 'local'));
-        $this->assertSame('local', OtpAudienceRouter::nameFor('customer', ''));
+        config()->set('otp-providers.audiences.customer.provider', 'future_vendor');
+        $this->assertSame('future_vendor', OtpAudienceRouter::providerName('customer'));
+        $this->assertSame('msg91_widget', OtpAudienceRouter::providerName('vendor'));
     }
 }

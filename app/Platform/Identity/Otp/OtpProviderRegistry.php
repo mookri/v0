@@ -3,12 +3,10 @@
 namespace App\Platform\Identity\Otp;
 
 /**
- * Name → provider registry for non-local providers (Verification
- * Fabric). Local is special-cased by each service (it wraps that
- * service's own CodeSource, so the test seam stays per-service);
- * everything else — firebase-per-audience, future Twilio/MSG91 — is
- * registered here by config wiring (S47+). Unknown names throw
- * (fail closed), they never fall back.
+ * Name → provider registry (Verification Fabric). Everything is
+ * registered here by config wiring (AppServiceProvider) — today the
+ * single msg91_widget adapter; future vendors register their NAME the
+ * same way. Unknown names throw (fail closed), they never fall back.
  */
 final class OtpProviderRegistry
 {

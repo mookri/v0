@@ -6,8 +6,8 @@ namespace App\Platform\Identity\Otp;
  * Phone-OTP provider port (Verification Fabric S46). The challenge state
  * machine — rate caps, supersession, TTL, attempt counting, uniform-401
  * redemption — stays in the caller and never changes; only send and
- * match are delegated, so swapping Firebase for any other provider is
- * an adapter + config flip (see docs/04-security/firebase-phone-otp-spike.md).
+ * match are delegated, so swapping providers is an adapter + config
+ * flip (ADR-002 recipe 1).
  */
 interface PhoneVerificationProvider
 {

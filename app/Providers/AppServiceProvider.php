@@ -8,14 +8,14 @@ use App\Platform\Authz\Http\Middleware\RequiresAcr;
 use App\Platform\Authz\Http\Middleware\ThrottleTier;
 use App\Platform\Identity\Http\Middleware\AuthenticateAny;
 use App\Platform\Identity\Http\Middleware\AuthenticateHmacToken;
-use App\Platform\Identity\Otp\EmailOtpDeliveryProvider;
-use App\Platform\Identity\Otp\FirebasePhoneVerificationProvider;
-use App\Platform\Identity\Otp\FirebaseServiceAccount;
-use App\Platform\Identity\Otp\MailerEmailOtpDelivery;
-use App\Platform\Identity\Otp\NullEmailOtpDelivery;
-use App\Platform\Identity\Otp\OtpAudienceRouter;
+use App\Platform\Identity\Otp\DbOtpChallengeStore;
+use App\Platform\Identity\Otp\Msg91Client;
+use App\Platform\Identity\Otp\Msg91WidgetProvider;
+use App\Platform\Identity\Otp\OtpChallengeManager;
+use App\Platform\Identity\Otp\OtpChallengeStore;
 use App\Platform\Identity\Otp\OtpProviderConfigurationException;
 use App\Platform\Identity\Otp\OtpProviderRegistry;
+use App\Platform\Identity\Otp\VerifiesOtpTokens;
 use App\Platform\Identity\OAuth\CheckOAuthGrant;
 use App\Platform\Identity\OAuth\Console\CreateClientCommand;
 use App\Platform\Identity\OAuth\Console\ListDeviceCodesCommand;
@@ -51,65 +51,42 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind('stepup', RequiresAcr::class);
         $this->app->bind('limit.body', \App\Platform\Http\Middleware\LimitJsonBody::class);
 
-        // Verification Fabric S47: name -> provider registry built from
-        // config/otp-providers.php. Each audience that selects 'firebase'
-        // with a complete credential set registers firebase-<audience>;
-        // an audience selecting 'firebase' without an API key registers
-        // nothing, so dispatch fails closed (typed unavailable error)
-        // instead of ever downgrading to a channel that cannot deliver.
-        // 'local' is never registered here — services special-case it.
+        // OTP subsystem (ADR-002): MSG91 widget provider everywhere.
+        // Fail closed at boot — MSG91 is the only channel, so a
+        // missing server-only auth key is a broken deployment, not a
+        // degraded one: refuse to boot rather than serve challenges
+        // that can never verify.
+        $authKey = (string) config('services.msg91.auth_key', '');
+        if ($authKey === '') {
+            throw new OtpProviderConfigurationException('services.msg91.auth_key is not configured; the msg91_widget OTP provider cannot verify tokens');
+        }
+
+        $this->app->singleton(Msg91Client::class, static function (): Msg91Client {
+            return new Msg91Client(
+                authKey: (string) config('services.msg91.auth_key', ''),
+                baseUrl: (string) config('services.msg91.verify_base_url', 'https://control.msg91.com'),
+                timeoutSeconds: (int) config('services.msg91.timeout', 5),
+            );
+        });
+
+        // Token-verification port -> client. A future provider swap
+        // rebinds this interface; nothing else in the subsystem knows
+        // the vendor (ADR-002 recipe 1).
+        $this->app->bind(VerifiesOtpTokens::class, Msg91Client::class);
+
         $this->app->singleton(OtpProviderRegistry::class, static function (): OtpProviderRegistry {
-            $providers = [];
-            foreach ((array) config('otp-providers.audiences', []) as $audience => $config) {
-                $config = (array) $config;
-                if (($config['provider'] ?? 'local') !== 'firebase') {
-                    continue;
-                }
-
-                $firebase = (array) ($config['firebase'] ?? []);
-                $apiKey = $firebase['api_key'] ?? null;
-                if (! is_string($apiKey) || $apiKey === '' || ! is_string($firebase['project'] ?? null)) {
-                    continue; // fail closed: incomplete creds register no provider
-                }
-
-                $name = OtpAudienceRouter::nameFor((string) $audience, 'firebase');
-
-                // Optional admin credential (idToken cross-check stays open,
-                // spike L6). Unset is the supported state; set-but-unusable
-                // throws rather than registering a provider whose security
-                // control silently does not exist.
-                $serviceAccount = FirebaseServiceAccount::resolve(
-                    isset($firebase['service_account']) ? (string) $firebase['service_account'] : null,
-                    (string) $audience,
-                );
-                if ($serviceAccount !== null && $serviceAccount->projectId !== $firebase['project']) {
-                    throw new OtpProviderConfigurationException(sprintf(
-                        'firebase otp provider [%s] service account belongs to project [%s], but the audience is configured for [%s]',
-                        $name,
-                        $serviceAccount->projectId,
-                        $firebase['project'],
-                    ));
-                }
-
-                $providers[$name] = new FirebasePhoneVerificationProvider(
-                    name: $name,
-                    apiKey: $apiKey,
-                    timeoutSeconds: (int) ($firebase['timeout_seconds'] ?? 5),
-                );
-            }
-
-            return new OtpProviderRegistry($providers);
+            return new OtpProviderRegistry([
+                Msg91WidgetProvider::NAME => new Msg91WidgetProvider(app(VerifiesOtpTokens::class)),
+            ]);
         });
 
-        // Email OTP delivery channel (S48): config-selected between the
-        // S46 silent default and the mailer-backed provider. Default
-        // 'null' delivers nothing — behavior-identical until an
-        // environment opts in with OTP_EMAIL_DELIVERY=mailer.
-        $this->app->singleton(EmailOtpDeliveryProvider::class, static function (): EmailOtpDeliveryProvider {
-            return config('otp-providers.email_delivery') === MailerEmailOtpDelivery::NAME
-                ? new MailerEmailOtpDelivery()
-                : new NullEmailOtpDelivery();
-        });
+        // One manager class, two stores: customer auth + MFA step-up
+        // ride the central table (default); modules on a different
+        // table declare their store with a contextual binding (see
+        // Onboarding's registration) — ADR-002 recipe 3.
+        $this->app->when(OtpChallengeManager::class)
+            ->needs(OtpChallengeStore::class)
+            ->give(static fn (): OtpChallengeStore => DbOtpChallengeStore::customer());
 
         if ($this->app->runningInConsole()) {
             $this->commands([

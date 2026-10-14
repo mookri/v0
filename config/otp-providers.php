@@ -2,67 +2,38 @@
 
 /*
 |--------------------------------------------------------------------------
-| Verification Fabric - per-audience OTP provider registry (S47)
+| Verification Fabric - per-audience OTP provider registry
 |--------------------------------------------------------------------------
 |
-| Each audience selects its phone-OTP provider: 'local' (the in-house
-| hash path - default, and the permanent platform/step-up provider) or
-| 'firebase' (Identity Toolkit, one Firebase project per audience so
-| quotas and shadow accounts never cross-pollinate).
+| Each audience selects its OTP provider. The default everywhere is
+| 'msg91_widget' (the MSG91 OTP widget in custom-SDK mode: the browser
+| drives sendOtp/retryOtp/verifyOtp, Laravel verifies the resulting
+| access token server-side — OTP codes never transit the backend).
 |
-| FIREBASE_{CUSTOMER,VENDOR}_SERVICE_ACCOUNT is the optional admin
-| credential for the Admin SDK idToken cross-check (spike L-item in
-| docs/04-security/firebase-phone-otp-spike.md); the send/verify REST
-| endpoints authenticate with the web API key alone, so leaving it unset
-| is the supported state. When set it is an ABSOLUTE path to the key file
-| (storage/app/private/ is gitignored for exactly that) or the JSON
-| itself. It is validated at registry boot and must belong to the same
-| project as {AUDIENCE}_PROJECT: an unusable or cross-project credential
-| throws OtpProviderConfigurationException rather than registering a
-| provider whose security control silently does not exist.
+| PROVIDER SWAP (ADR-002 recipe 1): implement PhoneVerificationProvider
+| + VerifiesOtpTokens for the new vendor, register it in the
+| OtpProviderRegistry singleton (AppServiceProvider) under its NAME,
+| and flip these keys. No call site changes — the challenge rows carry
+| the provider name, so in-flight challenges keep verifying under
+| their original provider.
 |
-| FAIL CLOSED: an audience that selects 'firebase' without an API key
-| registers no provider at all - dispatch then throws
-| OtpProviderUnavailableException instead of silently downgrading to
-| local, which cannot deliver SMS. There is no production fallback.
+| FAIL CLOSED: a selected name the registry does not know (e.g. the
+| provider was never registered because its credentials are missing)
+| throws OtpProviderUnavailableException at dispatch — there is no
+| fallback channel that cannot actually deliver.
 |
 */
 
 return [
     'audiences' => [
         'customer' => [
-            'provider' => env('OTP_PROVIDER_CUSTOMER', 'local'),
-            'firebase' => [
-                'project' => env('FIREBASE_CUSTOMER_PROJECT'),
-                'api_key' => env('FIREBASE_CUSTOMER_API_KEY'),
-                'service_account' => env('FIREBASE_CUSTOMER_SERVICE_ACCOUNT'),
-                // reCAPTCHA v2 site key bound to the audience's project
-                // (S48 captcha pass-through; the same key is discoverable
-                // at runtime via GET /v1/recaptchaParams).
-                'recaptcha_key' => env('FIREBASE_CUSTOMER_RECAPTCHA_KEY'),
-                'timeout_seconds' => (int) env('FIREBASE_CUSTOMER_TIMEOUT', 5),
-            ],
+            'provider' => env('OTP_PROVIDER_CUSTOMER', 'msg91_widget'),
         ],
         'vendor' => [
-            'provider' => env('OTP_PROVIDER_VENDOR', 'local'),
-            'firebase' => [
-                'project' => env('FIREBASE_VENDOR_PROJECT'),
-                'api_key' => env('FIREBASE_VENDOR_API_KEY'),
-                'service_account' => env('FIREBASE_VENDOR_SERVICE_ACCOUNT'),
-                'recaptcha_key' => env('FIREBASE_VENDOR_RECAPTCHA_KEY'),
-                'timeout_seconds' => (int) env('FIREBASE_VENDOR_TIMEOUT', 5),
-            ],
+            'provider' => env('OTP_PROVIDER_VENDOR', 'msg91_widget'),
         ],
         'platform' => [
-            // Step-up/MFA stays on the local provider forever (S45
-            // decision): Firebase never verifies platform assertions.
-            'provider' => 'local',
+            'provider' => env('OTP_PROVIDER_PLATFORM', 'msg91_widget'),
         ],
     ],
-
-    // Email OTP delivery channel (S48): 'null' (the S46 silent default
-    // — codes surface only via the drill-only OTP_LOG_CODES log) or
-    // 'mailer' (MailerEmailOtpDelivery through Laravel's MAIL_*).
-    // Delivery only; verification stays the local hash path.
-    'email_delivery' => env('OTP_EMAIL_DELIVERY', 'null'),
 ];

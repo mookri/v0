@@ -33,16 +33,4 @@ final readonly class OtpPurposePolicy
 
         return new self($purpose, $row['audience'], OtpRiskTier::from($row['tier']));
     }
-
-    /**
-     * Whether remote sends for this purpose's audience must carry a
-     * reCAPTCHA attestation. Off by default everywhere: local delivery
-     * has nothing to attest and Firebase test phone numbers don't
-     * require a token (spike L1); flip per environment before real
-     * numbers go live.
-     */
-    public function captchaRequired(): bool
-    {
-        return filter_var(config('otp-policy.captcha.'.$this->audience, false), FILTER_VALIDATE_BOOLEAN);
-    }
 }

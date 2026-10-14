@@ -3,12 +3,11 @@
 namespace App\Platform\Identity\Otp;
 
 /**
- * Audience -> provider-name routing (Verification Fabric S48). The
- * name is resolved from current config at call time: an audience
- * selects 'local' (default) or a remote provider name; remote
- * instances are registry-keyed <selected>-<audience> (S47 convention
- * — one Firebase project per audience), and 'local' is special-cased
- * by each service.
+ * Audience -> provider-name routing (Verification Fabric). The name is
+ * resolved from current config at call time; the default everywhere is
+ * the MSG91 widget. The selected value is the registry name itself
+ * (one widget serves every audience) — swapping vendors is a new
+ * adapter + a config flip, never a code change (ADR-002 recipe 1).
  */
 final class OtpAudienceRouter
 {
@@ -16,18 +15,9 @@ final class OtpAudienceRouter
     {
         $selected = (string) config(
             'otp-providers.audiences.'.$audience.'.provider',
-            LocalCodeProvider::NAME,
+            Msg91WidgetProvider::NAME,
         );
 
-        return self::nameFor($audience, $selected);
-    }
-
-    public static function nameFor(string $audience, string $selected): string
-    {
-        if ($selected === '' || $selected === LocalCodeProvider::NAME) {
-            return LocalCodeProvider::NAME;
-        }
-
-        return $selected.'-'.$audience;
+        return $selected === '' ? Msg91WidgetProvider::NAME : $selected;
     }
 }

@@ -167,11 +167,10 @@ final class ErrorEnvelope
         }
 
         if ($e instanceof OtpProviderUnavailableException) {
-            // Fail-closed provider fault. Without this mapping a
-            // verify-side outage fell through to a bare 500, contradicting
-            // the typed-503 contract recorded in
-            // docs/04-security/firebase-phone-otp-spike.md; the send-side
-            // controllers keep their own catch for the explicit report().
+            // Fail-closed provider fault: a verify-side outage is a
+            // typed 503, never a bare 500 and never a uniform 401 that
+            // would read as a wrong code; the send-side controllers keep
+            // their own catch for the explicit report().
             return [503, 'dependency_unavailable', 'Verification is temporarily unavailable. Try again shortly.', []];
         }
 
