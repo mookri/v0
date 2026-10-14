@@ -3,29 +3,34 @@
 namespace App\Modules\Onboarding\Http\Controllers;
 
 use App\Modules\Onboarding\Models\PartnerApplication;
-use App\Modules\Onboarding\OtpRateLimitedException;
-use App\Modules\Onboarding\OtpService;
-use App\Modules\Onboarding\RandomOtpCodes;
 use App\Modules\Onboarding\TrackCatalog;
+use App\Platform\Identity\Otp\OtpChallengeManager;
+use App\Platform\Identity\Otp\OtpDeliveryPolicy;
+use App\Platform\Identity\Otp\OtpProviderUnavailableException;
+use App\Platform\Identity\Otp\OtpRateLimitedException;
+use App\Platform\Identity\Otp\OtpVerifyStatus;
+use App\Platform\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
  * Two-phase submit (stage 2 port): begin validates the draft against the
- * pinned track version and issues an OTP challenge; confirm re-validates,
- * verifies the code, and transitions to SUBMITTED. Wrong/expired/
- * exhausted/replayed codes collapse to one error (no oracle).
+ * pinned track version, resolves the contact phone from the identity
+ * evidence step, and issues an OTP challenge for it (MSG91 widget — the
+ * code is delivered and judged in the browser, the runtime only ever
+ * sees the token); resend grants a server-gated retry; confirm
+ * re-validates, redeems the token, and transitions to SUBMITTED.
+ * Wrong/expired/exhausted/replayed tokens collapse to one 401
+ * (no oracle). The challenge binds to the application via its payload,
+ * so it cannot be replayed across applications.
  */
 final class SubmitController
 {
-    public function __construct(private readonly OtpService $otp)
-    {
-    }
+    private const PURPOSE = 'partner_submit';
 
-    public static function withRandomCodes(): self
+    public function __construct(private readonly OtpChallengeManager $otp)
     {
-        return new self(new OtpService(new RandomOtpCodes()));
     }
 
     private function requestId(Request $request): string
@@ -77,6 +82,25 @@ final class SubmitController
         return $missing;
     }
 
+    /**
+     * The OTP identifier is the phone the applicant declared in the
+     * identity evidence step (its only home — partner_applications has
+     * no contact columns), normalized to e164 so the MSG91-verified
+     * digits and this value always canonicalize to the same number.
+     */
+    private function contactPhone(PartnerApplication $application): ?string
+    {
+        $phone = ($application->evidence ?? [])['identity']['phone'] ?? null;
+
+        if (! is_string($phone) || trim($phone) === '') {
+            return null;
+        }
+
+        $digits = preg_replace('/[^0-9]/', '', $phone);
+
+        return $digits === '' ? null : '+'.$digits;
+    }
+
     public function begin(Request $request, string $id): JsonResponse
     {
         $found = $this->ownApplication($request, $id);
@@ -98,21 +122,104 @@ final class SubmitController
             ], 422);
         }
 
+        $phone = $this->contactPhone($application);
+        if ($phone === null) {
+            return new JsonResponse([
+                'error' => [
+                    'code' => 'validation_failed',
+                    'message' => 'A contact phone number is required to submit.',
+                    'details' => ['fields' => ['identity.phone' => ['required']]],
+                    'request_id' => $this->requestId($request),
+                ],
+            ], 422);
+        }
+
         try {
             $challenge = $this->otp->issue(
-                (string) $application->identity_id,
-                CarbonImmutable::parse($this->nowIso())
+                (string) app(TenantContext::class)->tenantId(),
+                self::PURPOSE,
+                $phone,
+                CarbonImmutable::parse($this->nowIso()),
+                ['application_id' => (string) $application->getKey()],
             );
-        } catch (OtpRateLimitedException) {
-            return new JsonResponse([
+        } catch (OtpRateLimitedException $e) {
+            $response = new JsonResponse([
                 'error' => ['code' => 'rate_limited', 'message' => 'Too many attempts.', 'request_id' => $this->requestId($request)],
             ], 429);
+
+            if ($e->retryAfterSeconds !== null && $e->retryAfterSeconds > 0) {
+                $response->header('Retry-After', (string) $e->retryAfterSeconds);
+            }
+
+            return $response;
+        } catch (OtpProviderUnavailableException $e) {
+            report($e);
+
+            return new JsonResponse([
+                'error' => ['code' => 'dependency_unavailable', 'message' => 'Verification is temporarily unavailable. Try again shortly.', 'request_id' => $this->requestId($request)],
+            ], 503);
         }
 
         return new JsonResponse([
-            'data' => ['id' => (string) $application->getKey(), 'object' => 'submit_challenge', 'challenge_id' => (string) $challenge->getKey()],
+            'data' => [
+                'id' => (string) $application->getKey(),
+                'object' => 'submit_challenge',
+                'challenge_id' => $challenge->id,
+                'expires_in' => OtpDeliveryPolicy::load()->ttlSeconds,
+            ],
             'meta' => ['request_id' => $this->requestId($request)],
         ]);
+    }
+
+    /**
+     * Server-gated resend on a live submit challenge: the compounding
+     * schedule (60s → 180s → 540s, max 3) is validated against the row
+     * before the client may call the widget's retryOtp.
+     */
+    public function resend(Request $request, string $id): JsonResponse
+    {
+        $found = $this->ownApplication($request, $id);
+        if ($found instanceof JsonResponse) {
+            return $found;
+        }
+
+        $validated = $request->validate(['challenge_id' => ['required', 'string']]);
+
+        try {
+            $result = $this->otp->resend(
+                (string) app(TenantContext::class)->tenantId(),
+                self::PURPOSE,
+                $validated['challenge_id'],
+                CarbonImmutable::parse($this->nowIso()),
+            );
+        } catch (OtpRateLimitedException $e) {
+            $response = new JsonResponse([
+                'error' => ['code' => 'rate_limited', 'message' => 'Too many attempts.', 'request_id' => $this->requestId($request)],
+            ], 429);
+
+            if ($e->retryAfterSeconds !== null && $e->retryAfterSeconds > 0) {
+                $response->header('Retry-After', (string) $e->retryAfterSeconds);
+            }
+
+            return $response;
+        }
+
+        if ($result === null) {
+            return new JsonResponse([
+                'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
+            ], 401);
+        }
+
+        return new JsonResponse([
+            'data' => [
+                'object' => 'otp_resend',
+                'channel' => $result->channel,
+                'channels' => $result->channels,
+                'resends_left' => $result->resendsLeft,
+                'next_allowed_at' => $result->nextAllowedAt?->toIso8601String(),
+            ],
+            'meta' => ['request_id' => $this->requestId($request)],
+        ], 202);
     }
 
     public function confirm(Request $request, string $id): JsonResponse
@@ -131,7 +238,7 @@ final class SubmitController
 
         $validated = $request->validate([
             'challenge_id' => ['required', 'string'],
-            'code' => ['required', 'string'],
+            'token' => ['required', 'string', 'max:4096'],
         ]);
 
         if (self::missingSteps($application) !== []) {
@@ -140,9 +247,35 @@ final class SubmitController
             ], 422);
         }
 
-        $verified = $this->otp->verify($validated['challenge_id'], $validated['code'], CarbonImmutable::parse($this->nowIso()));
+        try {
+            $result = $this->otp->verify(
+                (string) app(TenantContext::class)->tenantId(),
+                [self::PURPOSE],
+                $validated['challenge_id'],
+                $validated['token'],
+                CarbonImmutable::parse($this->nowIso()),
+            );
+        } catch (OtpProviderUnavailableException $e) {
+            // Outage during judging: the attempt bump rolls back with
+            // the transaction — an outage never burns an attempt.
+            report($e);
 
-        if (! $verified) {
+            return new JsonResponse([
+                'error' => ['code' => 'dependency_unavailable', 'message' => 'Verification is temporarily unavailable. Try again shortly.', 'request_id' => $this->requestId($request)],
+            ], 503);
+        }
+
+        if ($result->status !== OtpVerifyStatus::Match) {
+            return new JsonResponse([
+                'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
+            ], 401);
+        }
+
+        // The challenge is bound to this application: a token issued for
+        // another application's phone verifies structurally but applies
+        // to nothing.
+        $payload = $result->challenge->payload ?? [];
+        if (($payload['application_id'] ?? '') !== (string) $application->getKey()) {
             return new JsonResponse([
                 'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
             ], 401);

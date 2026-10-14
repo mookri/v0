@@ -5,9 +5,9 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Platform\Identity\Events\MfaEnrolled;
 use App\Platform\Identity\Models\MfaStepUp;
-use App\Platform\Identity\StepUpOtpService;
 use Illuminate\Support\Facades\Event;
 use OTPHP\TOTP;
+use Tests\Support\InteractsWithMsg91;
 use Tests\TenantIntegrationTestCase;
 
 /**
@@ -22,6 +22,14 @@ use Tests\TenantIntegrationTestCase;
  */
 final class StepUpFlowTest extends TenantIntegrationTestCase
 {
+    use InteractsWithMsg91;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->fakeMsg91();
+    }
+
     private function totpFromUrl(string $url): TOTP
     {
         parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
@@ -43,10 +51,12 @@ final class StepUpFlowTest extends TenantIntegrationTestCase
             ->assertAccepted()
             ->json('data.challenge_id');
 
+        $token = $this->msg91TokenFor((string) $user->email);
+
         $enrolled = $this->actingAs($user)
             ->postJson('/api/v1/identity/mfa/enroll/verify', [
                 'challenge_id' => $challengeId,
-                'code' => StepUpOtpService::getTestCode((string) $challengeId),
+                'token' => $token,
             ])
             ->assertCreated();
 

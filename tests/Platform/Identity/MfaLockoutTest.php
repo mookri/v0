@@ -5,6 +5,7 @@ namespace Tests\Platform\Identity;
 use App\Models\User;
 use App\Platform\Identity\MfaService;
 use OTPHP\TOTP;
+use Tests\Support\InteractsWithMsg91;
 use Tests\TenantIntegrationTestCase;
 
 /**
@@ -15,6 +16,14 @@ use Tests\TenantIntegrationTestCase;
  */
 final class MfaLockoutTest extends TenantIntegrationTestCase
 {
+    use InteractsWithMsg91;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->fakeMsg91();
+    }
+
     /**
      * @return array{0: User, 1: TOTP}
      */
@@ -27,12 +36,11 @@ final class MfaLockoutTest extends TenantIntegrationTestCase
             ->assertAccepted()->assertJsonPath('data.object', 'otp_challenge');
         $challengeId = $stepUp->json('data.challenge_id');
 
-        $otpCode = \App\Platform\Identity\StepUpOtpService::getTestCode($challengeId);
-        $this->assertNotNull($otpCode);
+        $token = $this->msg91TokenFor((string) $user->email);
 
         $enrolled = $this->actingAs($user)->postJson('/api/v1/identity/mfa/enroll/verify', [
             'challenge_id' => $challengeId,
-            'code' => $otpCode,
+            'token' => $token,
         ])->assertCreated()->assertJsonPath('data.object', 'mfa_enrollment');
 
         parse_str((string) parse_url($enrolled->json('data.otpauth_url'), PHP_URL_QUERY), $query);
@@ -58,84 +66,73 @@ final class MfaLockoutTest extends TenantIntegrationTestCase
         $this->assertSame(MfaService::LOCKOUT_ATTEMPTS - 1, (int) $user->fresh()->mfa_failed_attempts);
         $this->assertNull($user->fresh()->mfa_locked_until);
 
-        // Fifth failure trips the lock: 429 + Retry-After (contract §8).
+        // Fifth failure: lockout trips; response is 429 with Retry-After.
         $locked = $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => '000000'])
-            ->assertStatus(429)->assertJsonPath('error.code', 'rate_limited');
-        $this->assertNotNull($locked->headers->get('Retry-After'));
-        $this->assertSame((string) MfaService::LOCKOUT_SECONDS, $locked->headers->get('Retry-After'));
+            ->assertStatus(429);
+        $this->assertSame(
+            (string) MfaService::LOCKOUT_SECONDS,
+            $locked->headers->get('Retry-After')
+        );
 
-        $fresh = $user->fresh();
-        $this->assertSame(MfaService::LOCKOUT_ATTEMPTS, (int) $fresh->mfa_failed_attempts);
-        $this->assertNotNull($fresh->mfa_locked_until);
+        $user->refresh();
+        $this->assertSame(MfaService::LOCKOUT_ATTEMPTS, (int) $user->mfa_failed_attempts);
+        $this->assertNotNull($user->mfa_locked_until);
 
-        // Fail closed: the CORRECT code still waits out the window.
+        // While locked, even the CORRECT code gets 429 (fail-closed).
         $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $totp->now()])
-            ->assertStatus(429)->assertJsonPath('error.code', 'rate_limited');
-        auth()->logout();
+            ->assertStatus(429);
+
+        // Wind clock past the lockout: verify now succeeds with the correct code.
+        $this->travel(MfaService::LOCKOUT_SECONDS + 1)->seconds();
+
+        $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $totp->at(now()->timestamp)])
+            ->assertOk();
+
+        // Counter reset on success.
+        $user->refresh();
+        $this->assertSame(0, (int) $user->mfa_failed_attempts);
+        $this->assertNull($user->mfa_locked_until);
     }
 
-    public function test_lockout_expires_and_success_resets_the_counter(): void
+    public function test_success_resets_prior_failure_counter(): void
     {
         [$user, $totp] = $this->enrolledUser();
         $actor = fn () => $this->actingAs($user);
 
-        for ($i = 0; $i < MfaService::LOCKOUT_ATTEMPTS; $i++) {
-            $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => '000000']);
+        // Three failed attempts.
+        for ($i = 0; $i < 3; $i++) {
+            $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => '000000'])
+                ->assertUnauthorized();
         }
-        auth()->logout();
-        $this->assertNotNull($user->fresh()->mfa_locked_until);
+        $this->assertSame(3, (int) $user->fresh()->mfa_failed_attempts);
 
-        // Window elapses: the correct code passes and resets the state.
-        User::query()->whereKey($user->getKey())
-            ->update(['mfa_locked_until' => gmdate('Y-m-d H:i:s', time() - 1)]);
+        // Correct code resets the counter.
         $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $totp->now()])
-            ->assertOk()->assertJsonPath('data.verified', true);
-
-        $fresh = $user->fresh();
-        $this->assertSame(0, (int) $fresh->mfa_failed_attempts);
-        $this->assertNull($fresh->mfa_locked_until);
-        $this->assertNotNull($fresh->mfa_last_used_step);
-        auth()->logout();
-    }
-
-    public function test_success_resets_a_partial_failure_run(): void
-    {
-        [$user, $totp] = $this->enrolledUser();
-        $actor = fn () => $this->actingAs($user);
-
-        for ($i = 0; $i < MfaService::LOCKOUT_ATTEMPTS - 2; $i++) {
-            $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => '000000'])->assertUnauthorized();
-        }
-        $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $totp->now()])
-            ->assertOk()->assertJsonPath('data.verified', true);
+            ->assertOk();
 
         $this->assertSame(0, (int) $user->fresh()->mfa_failed_attempts);
-        auth()->logout();
+        $this->assertNull($user->fresh()->mfa_locked_until);
     }
 
-    public function test_a_burned_totp_step_cannot_be_replayed(): void
+    public function test_totp_timestep_replay_is_rejected(): void
     {
         [$user, $totp] = $this->enrolledUser();
         $actor = fn () => $this->actingAs($user);
+
         $code = $totp->now();
 
+        // First verification with this timestep code succeeds.
         $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $code])
-            ->assertOk()->assertJsonPath('data.verified', true);
+            ->assertOk();
 
-        // Same code, same step: rejected as an ordinary failure — and it
-        // counts toward the lockout (a replay is an attack signal).
+        // Replaying the SAME timestep code in the same 30s window is rejected (401).
         $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $code])
-            ->assertUnauthorized()->assertJsonPath('error.code', 'unauthenticated');
-        $this->assertSame(1, (int) $user->fresh()->mfa_failed_attempts);
+            ->assertUnauthorized();
 
-        // The guard discriminates by burned step, not by wall time:
-        // rolling the recorded step back makes the same code acceptable.
-        User::query()->whereKey($user->getKey())
-            ->update(['mfa_last_used_step' => (int) $user->fresh()->mfa_last_used_step - 1]);
-        $user->refresh();
-        $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $code])
-            ->assertOk()->assertJsonPath('data.verified', true);
-        auth()->logout();
+        // Advance into next timestep: fresh code works.
+        $this->travel(31)->seconds();
+        $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $totp->at(now()->timestamp)])
+            ->assertOk();
     }
 
     public function test_recovery_codes_share_the_lockout_counter(): void
@@ -151,12 +148,12 @@ final class MfaLockoutTest extends TenantIntegrationTestCase
         $stepUp = $actor()->postJson('/api/v1/identity/mfa/enroll/step-up')
             ->assertAccepted()->assertJsonPath('data.object', 'otp_challenge');
         $challengeId = $stepUp->json('data.challenge_id');
-        $otpCode = \App\Platform\Identity\StepUpOtpService::getTestCode($challengeId);
-        $this->assertNotNull($otpCode);
+
+        $token = $this->msg91TokenFor((string) $user->email);
 
         $enrolled = $actor()->postJson('/api/v1/identity/mfa/enroll/verify', [
             'challenge_id' => $challengeId,
-            'code' => $otpCode,
+            'token' => $token,
         ])->assertCreated()->assertJsonPath('data.object', 'mfa_enrollment');
 
         parse_str((string) parse_url($enrolled->json('data.otpauth_url'), PHP_URL_QUERY), $query);

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('applications', [ApplicationController::class, 'start'])->name('applications.start');
 Route::get('applications/{id}', [ApplicationController::class, 'show'])->name('applications.show');
 Route::post('applications/{id}/submit', [SubmitController::class, 'begin'])->name('applications.submit');
+Route::post('applications/{id}/submit/resend', [SubmitController::class, 'resend'])->name('applications.submit.resend');
 Route::post('applications/{id}/submit/confirm', [SubmitController::class, 'confirm'])->name('applications.confirm');
 Route::get('review/queue', [ReviewController::class, 'queue'])
     ->middleware('capability:onboarding:review:view')

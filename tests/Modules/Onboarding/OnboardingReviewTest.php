@@ -4,36 +4,10 @@ namespace Tests\Modules\Onboarding;
 
 use App\Models\User;
 use App\Modules\Onboarding\Models\PartnerApplication;
-use App\Modules\Onboarding\OtpCodeGenerator;
-use App\Modules\Onboarding\OtpService;
 use App\Platform\Tenancy\Models\Tenant;
 use App\Platform\Tenancy\TenantScope;
+use Tests\Support\InteractsWithMsg91;
 use Tests\TenantIntegrationTestCase;
-
-final class FakeReviewOtpCodes implements OtpCodeGenerator
-{
-    /** @var array<string, string> */
-    public array $issued = [];
-
-    private int $seq = 0;
-
-    public function generate(int $length): string
-    {
-        $this->seq++;
-
-        return str_pad((string) (100000 + ($this->seq % 900000)), $length, '0', STR_PAD_LEFT);
-    }
-
-    public function record(string $challengeId, string $code): void
-    {
-        $this->issued[$challengeId] = $code;
-    }
-
-    public function lastFor(string $challengeId): ?string
-    {
-        return $this->issued[$challengeId] ?? null;
-    }
-}
 
 /**
  * Reviewer surface: capability-gated queue and verb decisions with
@@ -41,10 +15,18 @@ final class FakeReviewOtpCodes implements OtpCodeGenerator
  */
 final class OnboardingReviewTest extends TenantIntegrationTestCase
 {
+    use InteractsWithMsg91;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->fakeMsg91();
+    }
+
     /**
      * Submit one fully-evidenced application for the given applicant.
      */
-    private function submitOne(Tenant $tenant, User $applicant, FakeReviewOtpCodes $codes): string
+    private function submitOne(Tenant $tenant, User $applicant, string $phone = '+919876543210'): string
     {
         $started = $this->actingAs($applicant)->postJson(
             '/api/v1/onboarding/applications',
@@ -56,7 +38,7 @@ final class OnboardingReviewTest extends TenantIntegrationTestCase
 
         PartnerApplication::withoutGlobalScope(TenantScope::class)->where('id', $id)->update([
             'evidence' => json_encode([
-                'identity' => ['name' => 'Ravi', 'phone' => '+91'],
+                'identity' => ['name' => 'Ravi', 'phone' => $phone],
                 'credentials' => ['certifications' => ['vedic']],
                 'services' => ['lakshmi-puja'],
                 'areas' => ['delhi'],
@@ -76,7 +58,7 @@ final class OnboardingReviewTest extends TenantIntegrationTestCase
 
         $this->actingAs($applicant)->postJson(
             "/api/v1/onboarding/applications/{$id}/submit/confirm",
-            ['challenge_id' => $challengeId, 'code' => $codes->lastFor($challengeId)],
+            ['challenge_id' => $challengeId, 'token' => $this->msg91TokenFor($phone)],
             $this->tenantHeaders($tenant)
         )->assertOk();
 
@@ -89,12 +71,9 @@ final class OnboardingReviewTest extends TenantIntegrationTestCase
      */
     private function submittedApp(array $reviewerCaps): array
     {
-        $codes = new FakeReviewOtpCodes();
-        $this->app->singleton(OtpService::class, static fn (): OtpService => new OtpService($codes));
-
         $tenant = $this->makeTenant();
         [$applicant] = $this->actingAsMembership($tenant);
-        $id = $this->submitOne($tenant, $applicant, $codes);
+        $id = $this->submitOne($tenant, $applicant);
 
         $reviewer = User::factory()->create();
         $membership = $this->makeMembership($tenant, $reviewer);
@@ -176,15 +155,12 @@ final class OnboardingReviewTest extends TenantIntegrationTestCase
 
     public function test_queue_paginates_with_cursor(): void
     {
-        $codes = new FakeReviewOtpCodes();
-        $this->app->singleton(OtpService::class, static fn (): OtpService => new OtpService($codes));
-
         $tenant = $this->makeTenant();
         [$applicant] = $this->actingAsMembership($tenant);
         $ids = [
-            $this->submitOne($tenant, $applicant, $codes),
-            $this->submitOne($tenant, $applicant, $codes),
-            $this->submitOne($tenant, $applicant, $codes),
+            $this->submitOne($tenant, $applicant, '+919876543201'),
+            $this->submitOne($tenant, $applicant, '+919876543202'),
+            $this->submitOne($tenant, $applicant, '+919876543203'),
         ];
 
         $reviewer = User::factory()->create();
@@ -218,13 +194,10 @@ final class OnboardingReviewTest extends TenantIntegrationTestCase
 
     public function test_queue_status_filter(): void
     {
-        $codes = new FakeReviewOtpCodes();
-        $this->app->singleton(OtpService::class, static fn (): OtpService => new OtpService($codes));
-
         $tenant = $this->makeTenant();
         [$applicant] = $this->actingAsMembership($tenant);
-        $staying = $this->submitOne($tenant, $applicant, $codes);
-        $leaving = $this->submitOne($tenant, $applicant, $codes);
+        $staying = $this->submitOne($tenant, $applicant, '+919876543211');
+        $leaving = $this->submitOne($tenant, $applicant, '+919876543212');
 
         $reviewer = User::factory()->create();
         $membership = $this->makeMembership($tenant, $reviewer);

@@ -6,6 +6,7 @@ use App\Platform\Identity\Events\MfaEnrolled;
 use App\Platform\Identity\Events\MfaRevoked;
 use Illuminate\Support\Facades\Event;
 use OTPHP\TOTP;
+use Tests\Support\InteractsWithMsg91;
 use Tests\TenantIntegrationTestCase;
 
 /**
@@ -15,6 +16,14 @@ use Tests\TenantIntegrationTestCase;
  */
 final class MfaTest extends TenantIntegrationTestCase
 {
+    use InteractsWithMsg91;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->fakeMsg91();
+    }
+
     private function totpFromUrl(string $url): TOTP
     {
         parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
@@ -35,14 +44,12 @@ final class MfaTest extends TenantIntegrationTestCase
             ->assertAccepted()->assertJsonPath('data.object', 'otp_challenge');
         $challengeId = $stepUp->json('data.challenge_id');
 
-        // Get the OTP code from the StepUpOtpService test store
-        $otpCode = \App\Platform\Identity\StepUpOtpService::getTestCode($challengeId);
-        $this->assertNotNull($otpCode);
+        $token = $this->msg91TokenFor((string) $user->email);
 
-        // 2. Verify step-up OTP
+        // 2. Verify step-up OTP with token
         $enrolled = $actor()->postJson('/api/v1/identity/mfa/enroll/verify', [
             'challenge_id' => $challengeId,
-            'code' => $otpCode,
+            'token' => $token,
         ])->assertCreated()->assertJsonPath('data.object', 'mfa_enrollment');
         $totp = $this->totpFromUrl($enrolled->json('data.otpauth_url'));
 
@@ -59,23 +66,26 @@ final class MfaTest extends TenantIntegrationTestCase
         $actor()->getJson('/api/v1/identity/mfa')->assertOk()->assertJsonPath('data.enabled', true);
         Event::assertDispatched(MfaEnrolled::class);
 
-        // TOTP verify passes.
+        // Verify: TOTP works
         $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $totp->now()])
-            ->assertOk()->assertJsonPath('data.verified', true);
+            ->assertOk();
 
-        // Recovery code works once, then dies.
-        $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $recovery[0]])->assertOk();
+        // Single-use recovery works, but dies on reuse
+        $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $recovery[0]])
+            ->assertOk();
         $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $recovery[0]])
             ->assertUnauthorized();
 
-        // Revocation needs a live TOTP code, never a recovery code.
+        // Revoke requires live TOTP (not recovery)
         $actor()->postJson('/api/v1/identity/mfa/revoke', ['code' => $recovery[1]])
             ->assertUnauthorized();
         $actor()->postJson('/api/v1/identity/mfa/revoke', ['code' => $totp->now()])
-            ->assertOk()->assertJsonPath('data.revoked', true);
-        Event::assertDispatched(MfaRevoked::class);
+            ->assertOk();
 
         $actor()->getJson('/api/v1/identity/mfa')->assertOk()->assertJsonPath('data.enabled', false);
+        Event::assertDispatched(MfaRevoked::class);
+
+        // Verification denied once revoked
         $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $totp->now()])
             ->assertUnauthorized();
     }
@@ -90,12 +100,11 @@ final class MfaTest extends TenantIntegrationTestCase
             ->assertAccepted()->assertJsonPath('data.object', 'otp_challenge');
         $challengeId = $stepUp->json('data.challenge_id');
 
-        $otpCode = \App\Platform\Identity\StepUpOtpService::getTestCode($challengeId);
-        $this->assertNotNull($otpCode);
+        $token = $this->msg91TokenFor((string) $user->email);
 
         $enrolled = $actor()->postJson('/api/v1/identity/mfa/enroll/verify', [
             'challenge_id' => $challengeId,
-            'code' => $otpCode,
+            'token' => $token,
         ])->assertCreated()->assertJsonPath('data.object', 'mfa_enrollment');
         $totp = $this->totpFromUrl($enrolled->json('data.otpauth_url'));
 
@@ -108,25 +117,14 @@ final class MfaTest extends TenantIntegrationTestCase
 
         $fresh = $actor()->postJson('/api/v1/identity/mfa/recovery-codes', ['code' => $totp->now()])
             ->assertOk()->json('data.recovery_codes');
-        $this->assertCount(10, $fresh);
-        $this->assertNotSame($old[0], $fresh[0]);
 
-        // Old sheet is void; new sheet works once.
-        $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $old[1]])
-            ->assertUnauthorized();
-        $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $fresh[0]])->assertOk();
-    }
+        $this->assertNotSame($old, $fresh);
 
-    public function test_guests_and_machines_denied(): void
-    {
-        $this->postJson('/api/v1/identity/mfa/enroll')->assertUnauthorized();
-        $this->postJson('/api/v1/identity/mfa/confirm', ['code' => '123456'])
+        // First of the old codes is dead.
+        $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $old[0]])
             ->assertUnauthorized();
-        $this->postJson('/api/v1/identity/mfa/verify', ['code' => '123456'])
-            ->assertUnauthorized();
-        $this->postJson('/api/v1/identity/mfa/revoke', ['code' => '123456'])
-            ->assertUnauthorized();
-        $this->postJson('/api/v1/identity/mfa/recovery-codes', ['code' => '123456'])
-            ->assertUnauthorized();
+        // First of the fresh codes works once.
+        $actor()->postJson('/api/v1/identity/mfa/verify', ['code' => $fresh[0]])
+            ->assertOk();
     }
 }

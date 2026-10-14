@@ -3,24 +3,25 @@
 namespace App\Modules\Customers\Http\Controllers;
 
 use App\Models\User;
-use App\Modules\Customers\Auth\CustomerOtpService;
-use App\Modules\Customers\Auth\FirebaseIdTokenRejectedException;
-use App\Modules\Customers\Auth\FirebaseIdTokenUnavailableException;
-use App\Modules\Customers\Auth\OtpRateLimitedException;
-use App\Modules\Customers\Contracts\VerifiesPhoneIdTokens;
+use App\Modules\Customers\CustomerActivityRecorder;
 use App\Modules\Customers\Models\BuyerProfile;
 use App\Modules\Customers\Models\CustomerOtpChallenge;
-use App\Modules\Customers\Models\FirebasePhoneAuthIntent;
 use App\Modules\Customers\Models\ReferralAttribution;
 use App\Modules\Customers\Models\ReferralCode;
-use App\Modules\Customers\CustomerActivityRecorder;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Identity\ActorSessionRotation;
 use App\Platform\Identity\ActorTokenIssuer;
+use App\Platform\Identity\MfaLockedException;
+use App\Platform\Identity\MfaService;
 use App\Platform\Identity\Models\ActorSession;
-use App\Platform\Identity\Otp\OtpCaptchaRequiredException;
+use App\Platform\Identity\Otp\Msg91Identifier;
+use App\Platform\Identity\Otp\OtpChallengeManager;
+use App\Platform\Identity\Otp\OtpDeliveryPolicy;
 use App\Platform\Identity\Otp\OtpProviderRateLimitedException;
 use App\Platform\Identity\Otp\OtpProviderUnavailableException;
+use App\Platform\Identity\Otp\OtpRateLimitedException;
+use App\Platform\Identity\Otp\OtpVerifyStatus;
+use App\Platform\Identity\Otp\StoredOtpChallenge;
 use App\Platform\Tenancy\ConnectionResolver;
 use App\Platform\Tenancy\Models\Tenant;
 use App\Platform\Tenancy\Models\TenantMembership;
@@ -31,27 +32,38 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 /**
- * Customer authentication (B2): OTP request, OTP-before-account signup,
- * signup verification (201 + HMAC actor token), login (200 + token), and
- * logout (revokes the presented session server-side, M5/TOKEN-001).
- * otp/signup/verify/login are public by design
+ * Customer authentication: OTP request/resend, OTP-before-account
+ * signup, signup verification (201 + HMAC actor token), two-phase
+ * login (200 + token), and logout (revokes the presented session
+ * server-side, M5/TOKEN-001).
+ *
+ * otp/request/resend/signup/verify/login are public by design
  * (withoutMiddleware in Routes/api.php + throttle); logout rides the
  * module's auth.any + tenant group middleware.
  *
- * No-oracle rule: unknown identities, wrong/expired/exhausted/replayed
- * codes, and purpose mismatches all collapse to identical 202s (request)
- * or 401s (redeem). Tokens are backend-minted HMAC actor tokens
+ * OTP is the shared subsystem (OtpChallengeManager + MSG91 widget):
+ * codes are delivered and judged by MSG91 in the browser; the runtime
+ * never sees one. The client redeems the widget's JWT access token
+ * here, Laravel verifies it server-side against MSG91, and the
+ * canonical identifier decides the account. No-oracle rule: unknown
+ * identities, wrong/expired/exhausted/replayed tokens and purpose
+ * mismatches all collapse to identical 202s (request) or 401s
+ * (redeem). Tokens are backend-minted HMAC actor tokens
  * (ActorTokenIssuer, 24 h absolute TTL, interim until Passport) with
- * u = the user's external_id so AuthenticateAny resolves them with zero
- * auth-chain changes.
+ * u = the user's external_id so AuthenticateAny resolves them with
+ * zero auth-chain changes.
+ *
+ * Login is two-phase for MFA-enrolled accounts: the token verifies to
+ * a HELD row (status token_verified), answered 202 mfa_required; the
+ * TOTP arrives as a second submit that consumes the held row and
+ * mints. Non-MFA accounts consume and mint in the same call.
  */
 final class CustomerAuthController
 {
     public function __construct(
-        private readonly CustomerOtpService $otp,
+        private readonly OtpChallengeManager $otp,
         private readonly AuditWriter $audit,
         private readonly CustomerActivityRecorder $activity,
-        private readonly VerifiesPhoneIdTokens $phoneIdTokens,
     ) {
     }
 
@@ -84,6 +96,23 @@ final class CustomerAuthController
             ->where('phone', $identity)
             ->orWhere('email', $identity)
             ->first();
+    }
+
+    private function membership(Request $request, string $tenantId, User $user): ?JsonResponse
+    {
+        $membership = TenantMembership::query()
+            ->where('tenant_id', $tenantId)
+            ->where('user_id', $user->getAuthIdentifier())
+            ->where('state', TenantMembership::STATE_ACTIVE)
+            ->first();
+
+        if ($membership === null) {
+            return new JsonResponse([
+                'error' => ['code' => 'membership_inactive', 'message' => 'This account is deactivated.', 'request_id' => $this->requestId($request)],
+            ], 403);
+        }
+
+        return null;
     }
 
     /**
@@ -146,73 +175,94 @@ final class CustomerAuthController
     }
 
     /**
-     * S48 typed failure envelopes: a missing reCAPTCHA attestation is
-     * a 422 (the client must render the widget and retry); a provider
-     * outage is a 503 — a dependency failure is never folded into the
-     * uniform 401 set and never downgrades to another channel.
+     * Public widget config (the only bootstrap a client needs): the
+     * MSG91 widget credentials are public-by-design (MSG91 serves them
+     * in every page that renders the widget) and the delivery-policy
+     * numbers mirror the server so the UI countdown never drifts from
+     * what the manager will enforce.
      */
-    private function captchaRequired(Request $request): JsonResponse
+    public function otpConfig(Request $request): JsonResponse
     {
-        return new JsonResponse([
-            'error' => [
-                'code' => 'validation_failed',
-                'message' => 'Captcha verification is required.',
-                'details' => ['fields' => ['captcha_token' => ['captcha_required']]],
-                'request_id' => $this->requestId($request),
-            ],
-        ], 422);
-    }
+        $policy = OtpDeliveryPolicy::load();
 
-    private function dependencyUnavailable(Request $request): JsonResponse
-    {
-        return new JsonResponse([
-            'error' => ['code' => 'dependency_unavailable', 'message' => 'Verification is temporarily unavailable. Try again shortly.', 'request_id' => $this->requestId($request)],
-        ], 503);
-    }
-
-    /**
-     * Provider-side back-off on an identifier: clients keep branching on
-     * `rate_limited` and back off, since every retry re-arms the window.
-     */
-    private function providerRateLimited(Request $request): JsonResponse
-    {
-        return new JsonResponse([
-            'error' => ['code' => 'rate_limited', 'message' => 'Too many attempts.', 'request_id' => $this->requestId($request)],
-        ], 429);
-    }
-
-    /**
-     * Public captcha config (S48): lets clients render the reCAPTCHA
-     * widget exactly when the server will demand an attestation. The
-     * site key is public by design (Google serves it in every page
-     * that renders the widget).
-     */
-    public function captchaConfig(Request $request): JsonResponse
-    {
         return new JsonResponse([
             'data' => [
-                'object' => 'captcha_config',
-                'provider' => 'recaptcha',
-                'site_key' => config('otp-providers.audiences.customer.firebase.recaptcha_key'),
-                'required' => filter_var(config('otp-policy.captcha.customer', false), FILTER_VALIDATE_BOOLEAN),
+                'object' => 'otp_config',
+                'provider' => 'msg91_widget',
+                'widget_id' => (string) config('services.msg91.widget_id', ''),
+                'token_auth' => (string) config('services.msg91.widget_token_auth', ''),
+                'otp' => [
+                    'digits' => 6,
+                    'expires_in_seconds' => $policy->ttlSeconds,
+                ],
+                'resend' => [
+                    'max' => $policy->resendMax,
+                    'delays_seconds' => $policy->resendDelays,
+                    'fresh_retry_after_seconds' => $policy->freshRetryAfterSeconds,
+                    'channels' => $policy->resendChannels,
+                ],
             ],
             'meta' => ['request_id' => $this->requestId($request)],
         ]);
+    }
+
+    /**
+     * Server-gated resend: the manager validates the compounding
+     * schedule (60s → 180s → 540s, max 3) against the row BEFORE the
+     * client is allowed to call the widget's retryOtp; the 202 carries
+     * the channel code for that call. 429 + Retry-After otherwise.
+     */
+    public function otpResend(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'tenant_id' => ['required', 'string'],
+            'challenge_id' => ['required', 'string'],
+        ]);
+
+        $tenant = $this->activeTenant($request, $validated['tenant_id']);
+        if ($tenant instanceof JsonResponse) {
+            return $tenant;
+        }
+
+        try {
+            $result = $this->otp->resend(
+                (string) $tenant->getKey(),
+                CustomerOtpChallenge::PURPOSES,
+                $validated['challenge_id'],
+                $this->now(),
+            );
+        } catch (OtpRateLimitedException $e) {
+            return $this->rateLimited($request, $e);
+        }
+
+        if ($result === null) {
+            return $this->invalidRedeem($request);
+        }
+
+        return new JsonResponse([
+            'data' => [
+                'object' => 'otp_resend',
+                'channel' => $result->channel,
+                'channels' => $result->channels,
+                'resends_left' => $result->resendsLeft,
+                'next_allowed_at' => $result->nextAllowedAt?->toIso8601String(),
+            ],
+            'meta' => ['request_id' => $this->requestId($request)],
+        ], 202);
     }
 
     public function requestOtp(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'tenant_id' => ['required', 'string'],
-            // verify_*/change_* purposes unlock with their confirm endpoints
-            // (B3+); until then only login + signup challenges are issued.
-            'purpose' => ['required', 'string', 'in:login,signup'],
-            'identity' => ['required', 'string', 'max:64'],
-            // reCAPTCHA v2 token (S48 pass-through): forwarded as the
-            // provider attestation; only demanded when the audience's
-            // policy says so (remote providers, per otp-policy.php).
-            'captcha_token' => ['nullable', 'string', 'max:4096'],
+            // verify_*/change_* purposes unlock with their confirm
+            // endpoints; only login + signup challenges are issued here.
+            'purpose' => ['nullable', 'string', 'in:login,signup'],
+            'identity' => ['required_without:phone', 'string', 'max:64'],
+            'phone' => ['required_without:identity', 'string', 'max:64'],
         ]);
+        $identity = (string) ($validated['identity'] ?? $validated['phone']);
+        $purpose = (string) ($validated['purpose'] ?? CustomerOtpChallenge::PURPOSE_LOGIN);
 
         $tenant = $this->activeTenant($request, $validated['tenant_id']);
         if ($tenant instanceof JsonResponse) {
@@ -221,15 +271,15 @@ final class CustomerAuthController
         $tenantId = (string) $tenant->getKey();
 
         // No oracle: unknown login identities get an identical 202 with a
-        // challenge id that can never verify (verify finds no row → 401,
-        // the same code a wrong OTP produces).
-        if ($validated['purpose'] === CustomerOtpChallenge::PURPOSE_LOGIN
-            && $this->findUser($validated['identity']) === null) {
+        // challenge id that can never verify (redeem finds no row → 401,
+        // the same code a wrong token produces).
+        if ($purpose === CustomerOtpChallenge::PURPOSE_LOGIN
+            && $this->findUser($identity) === null) {
             return new JsonResponse([
                 'data' => [
                     'object' => 'otp_challenge',
                     'challenge_id' => (string) Str::ulid(),
-                    'expires_in' => CustomerOtpService::TTL_SECONDS,
+                    'expires_in' => OtpDeliveryPolicy::load()->ttlSeconds,
                 ],
                 'meta' => ['request_id' => $this->requestId($request)],
             ], 202);
@@ -238,32 +288,25 @@ final class CustomerAuthController
         try {
             $challenge = $this->otp->issue(
                 $tenantId,
-                $validated['purpose'],
-                $validated['identity'],
+                $purpose,
+                $identity,
                 $this->now(),
-                attestation: $validated['captcha_token'] ?? null,
             );
-        } catch (OtpRateLimitedException) {
-            return new JsonResponse([
-                'error' => ['code' => 'rate_limited', 'message' => 'Too many attempts.', 'request_id' => $this->requestId($request)],
-            ], 429);
-        } catch (OtpCaptchaRequiredException) {
-            return $this->captchaRequired($request);
+        } catch (OtpRateLimitedException $e) {
+            return $this->rateLimited($request, $e);
         } catch (OtpProviderRateLimitedException $e) {
-            // Provider-side back-off on this identifier (Google's
-            // TOO_MANY_ATTEMPTS family): retryable, so the same 429 shape
-            // our local caps use — not a 503 implying the whole channel
-            // is down. Recorded like the outage branch: the envelope
-            // hides the provider head, the log keeps it.
+            // Provider-side back-off on this identifier: retryable, so
+            // the same 429 shape our local caps use — not a 503
+            // implying the whole channel is down. The envelope hides
+            // the provider head, the log keeps it.
             report($e);
 
             return $this->providerRateLimited($request);
         } catch (OtpProviderUnavailableException $e) {
-            // S50 observability: the typed 503 hides the provider's
-            // symbolic error from the client, so record it server-side.
-            // The exception message carries only symbolic codes (HTTP
-            // status + Google error head/reason) — never the phone,
-            // token, code, or session handle — so report() is PII-safe.
+            // The typed 503 hides the provider's symbolic error from
+            // the client, so record it server-side. Provider exception
+            // messages carry only symbolic codes — never identifiers —
+            // so report() is PII-safe.
             report($e);
 
             return $this->dependencyUnavailable($request);
@@ -272,8 +315,8 @@ final class CustomerAuthController
         return new JsonResponse([
             'data' => [
                 'object' => 'otp_challenge',
-                'challenge_id' => (string) $challenge->getKey(),
-                'expires_in' => CustomerOtpService::TTL_SECONDS,
+                'challenge_id' => (string) $challenge->id,
+                'expires_in' => OtpDeliveryPolicy::load()->ttlSeconds,
             ],
             'meta' => ['request_id' => $this->requestId($request)],
         ], 202);
@@ -287,10 +330,9 @@ final class CustomerAuthController
             'name' => ['required', 'string', 'max:190'],
             'email' => ['nullable', 'email', 'max:190'],
             'locale' => ['nullable', 'string', 'max:8'],
-            // Reserved for the referrals wave: carried in the challenge
-            // payload, unattributed until then.
+            // Carried in the challenge payload, attributed after the
+            // phone verifies.
             'referral_code' => ['nullable', 'string', 'max:64'],
-            'captcha_token' => ['nullable', 'string', 'max:4096'],
         ]);
 
         $tenant = $this->activeTenant($request, $validated['tenant_id']);
@@ -311,29 +353,14 @@ final class CustomerAuthController
                     'locale' => $validated['locale'] ?? 'en',
                     'referral_code' => $validated['referral_code'] ?? null,
                 ],
-                attestation: $validated['captcha_token'] ?? null,
             );
-        } catch (OtpRateLimitedException) {
-            return new JsonResponse([
-                'error' => ['code' => 'rate_limited', 'message' => 'Too many attempts.', 'request_id' => $this->requestId($request)],
-            ], 429);
-        } catch (OtpCaptchaRequiredException) {
-            return $this->captchaRequired($request);
+        } catch (OtpRateLimitedException $e) {
+            return $this->rateLimited($request, $e);
         } catch (OtpProviderRateLimitedException $e) {
-            // Provider-side back-off on this identifier (Google's
-            // TOO_MANY_ATTEMPTS family): retryable, so the same 429 shape
-            // our local caps use — not a 503 implying the whole channel
-            // is down. Recorded like the outage branch: the envelope
-            // hides the provider head, the log keeps it.
             report($e);
 
             return $this->providerRateLimited($request);
         } catch (OtpProviderUnavailableException $e) {
-            // S50 observability: the typed 503 hides the provider's
-            // symbolic error from the client, so record it server-side.
-            // The exception message carries only symbolic codes (HTTP
-            // status + Google error head/reason) — never the phone,
-            // token, code, or session handle — so report() is PII-safe.
             report($e);
 
             return $this->dependencyUnavailable($request);
@@ -342,8 +369,8 @@ final class CustomerAuthController
         return new JsonResponse([
             'data' => [
                 'object' => 'otp_challenge',
-                'challenge_id' => (string) $challenge->getKey(),
-                'expires_in' => CustomerOtpService::TTL_SECONDS,
+                'challenge_id' => (string) $challenge->id,
+                'expires_in' => OtpDeliveryPolicy::load()->ttlSeconds,
             ],
             'meta' => ['request_id' => $this->requestId($request)],
         ], 202);
@@ -354,7 +381,7 @@ final class CustomerAuthController
         $validated = $request->validate([
             'tenant_id' => ['required', 'string'],
             'challenge_id' => ['required', 'string'],
-            'code' => ['required', 'string'],
+            'token' => ['required', 'string', 'max:4096'],
         ]);
 
         $tenant = $this->activeTenant($request, $validated['tenant_id']);
@@ -363,24 +390,35 @@ final class CustomerAuthController
         }
         $tenantId = (string) $tenant->getKey();
 
-        $challenge = $this->otp->verify(
-            $tenantId,
-            CustomerOtpChallenge::PURPOSE_SIGNUP,
-            $validated['challenge_id'],
-            $validated['code'],
-            $this->now()
-        );
+        try {
+            $result = $this->otp->verify(
+                $tenantId,
+                [CustomerOtpChallenge::PURPOSE_SIGNUP],
+                $validated['challenge_id'],
+                $validated['token'],
+                $this->now(),
+            );
+        } catch (OtpProviderUnavailableException $e) {
+            report($e);
 
-        if ($challenge === null) {
-            return new JsonResponse([
-                'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
-            ], 401);
+            return $this->dependencyUnavailable($request);
         }
 
+        if ($result->status !== OtpVerifyStatus::Match) {
+            return $this->invalidRedeem($request);
+        }
+
+        $challenge = $result->challenge;
         $payload = $challenge->payload ?? [];
         $phone = (string) ($payload['phone'] ?? '');
 
-        if ($phone === '' || User::query()->where('phone', $phone)->exists()) {
+        // The verified identifier and the payload phone must be the
+        // same number (payload rows are written at issue time, so a
+        // divergence is tampering) — and the account must not already
+        // exist. Both fold into the same 409.
+        if ($phone === ''
+            || Msg91Identifier::canonical((string) $challenge->identifier) !== Msg91Identifier::canonical($phone)
+            || User::query()->where('phone', $phone)->exists()) {
             return new JsonResponse([
                 'error' => ['code' => 'conflict', 'message' => 'An account already exists for this phone number. Use login.', 'request_id' => $this->requestId($request)],
             ], 409);
@@ -455,74 +493,19 @@ final class CustomerAuthController
     }
 
     /**
-     * Referral code issuance (idempotent) + attribution. Invalid and
-     * self codes are ignored, never errors — a typo must not fail
-     * signup. Reward rules are out of scope (attribution only).
+     * Two-phase login. Phase 1 redeems the widget's JWT: verified on a
+     * HELD row (status token_verified) so an MFA-enrolled account can
+     * add its TOTP as phase 2 — either in the same call (totp_code
+     * present) or via a 202 mfa_required round-trip that keeps the row
+     * parked. Non-MFA accounts consume and mint immediately.
      */
-    private function issueReferralCode(string $tenantId, string $userId): void
-    {
-        if (ReferralCode::query()->where('user_id', $userId)->exists()) {
-            return;
-        }
-
-        for ($attempts = 0; $attempts < 5; $attempts++) {
-            try {
-                $code = new ReferralCode();
-                $code->forceFill([
-                    'tenant_id' => $tenantId,
-                    'user_id' => $userId,
-                    'code' => ReferralCode::generate(),
-                ]);
-                $code->save();
-
-                return;
-            } catch (\Illuminate\Database\QueryException) {
-                // Globally-unique code collision (astronomically rare):
-                // regenerate instead of failing signup.
-            }
-        }
-    }
-
-    private function attributeReferral(Request $request, string $tenantId, string $userId, string $code): void
-    {
-        if ($code === '') {
-            return;
-        }
-
-        $referral = ReferralCode::query()->where('code', $code)->first();
-
-        // Unknown codes, foreign-tenant codes, and self codes are
-        // ignored — a typo must not fail signup.
-        if ($referral === null
-            || (string) $referral->tenant_id !== $tenantId
-            || (string) $referral->user_id === $userId) {
-            return;
-        }
-
-        $attribution = new ReferralAttribution();
-        $attribution->forceFill([
-            'tenant_id' => $tenantId,
-            'referrer_user_id' => (string) $referral->user_id,
-            'referred_user_id' => $userId,
-            'code' => $code,
-        ]);
-        $attribution->save();
-
-        $this->audit->record(
-            'customers.referral.attributed',
-            ['module' => 'customers', 'resource_type' => 'referral_attribution', 'resource_id' => (string) $attribution->getKey()],
-            null,
-            ['tenant_id' => $tenantId, 'referrer_user_id' => (string) $referral->user_id, 'referred_user_id' => $userId]
-        );
-    }
-
     public function login(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'tenant_id' => ['required', 'string'],
             'challenge_id' => ['required', 'string'],
-            'code' => ['required', 'string'],
-            'totp_code' => ['sometimes', 'nullable', 'string'],
+            'token' => ['sometimes', 'nullable', 'string', 'max:4096'],
+            'totp_code' => ['sometimes', 'nullable', 'string', 'max:12'],
         ]);
 
         $tenant = $this->activeTenant($request, $validated['tenant_id']);
@@ -531,64 +514,123 @@ final class CustomerAuthController
         }
         $tenantId = (string) $tenant->getKey();
 
-        $challenge = $this->otp->verify(
-            $tenantId,
-            CustomerOtpChallenge::PURPOSE_LOGIN,
-            $validated['challenge_id'],
-            $validated['code'],
-            $this->now()
-        );
+        $token = (string) ($validated['token'] ?? '');
+        $totp = (string) ($validated['totp_code'] ?? '');
 
-        if ($challenge === null) {
-            return new JsonResponse([
-                'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
-            ], 401);
+        if ($token === '' && $totp === '') {
+            return $this->invalidRedeem($request);
         }
 
-        $user = $this->findUser((string) $challenge->identifier);
+        if ($token !== '') {
+            try {
+                $result = $this->otp->verify(
+                    $tenantId,
+                    [CustomerOtpChallenge::PURPOSE_LOGIN],
+                    $validated['challenge_id'],
+                    $token,
+                    $this->now(),
+                    holdOnMatch: true,
+                );
+            } catch (OtpProviderUnavailableException $e) {
+                report($e);
 
-        if ($user === null) {
-            return new JsonResponse([
-                'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
-            ], 401);
-        }
+                return $this->dependencyUnavailable($request);
+            }
 
-        $membership = TenantMembership::query()
-            ->where('tenant_id', $tenantId)
-            ->where('user_id', $user->getAuthIdentifier())
-            ->where('state', TenantMembership::STATE_ACTIVE)
-            ->first();
+            if ($result->status !== OtpVerifyStatus::Held) {
+                return $this->invalidRedeem($request);
+            }
 
-        if ($membership === null) {
-            return new JsonResponse([
-                'error' => ['code' => 'membership_inactive', 'message' => 'This account is deactivated.', 'request_id' => $this->requestId($request)],
-            ], 403);
-        }
+            $user = $this->findUser((string) $result->challenge->identifier);
+            if ($user === null) {
+                return $this->invalidRedeem($request);
+            }
 
-        // Enrolled MFA upgrades login to two factors: possession (OTP)
-        // plus the TOTP code. Absent or wrong codes collapse to the
-        // single 401 (no oracle on MFA state); the M4 lockout is the one
-        // observable state, surfaced as 429 + Retry-After.
-        if ((bool) $user->mfa_enabled) {
-            $totp = (string) ($validated['totp_code'] ?? '');
+            $inactive = $this->membership($request, $tenantId, $user);
+            if ($inactive instanceof JsonResponse) {
+                return $inactive;
+            }
 
-            $verified = false;
-            if ($totp !== '') {
-                try {
-                    $verified = app(\App\Platform\Identity\MfaService::class)->verify($user, $totp, time());
-                } catch (\App\Platform\Identity\MfaLockedException $locked) {
+            if ((bool) $user->mfa_enabled) {
+                if ($totp === '') {
+                    // Phase boundary: the row stays parked at
+                    // token_verified; the second submit consumes it.
                     return new JsonResponse([
-                        'error' => ['code' => 'rate_limited', 'message' => 'Too many failed attempts. Try again later.', 'request_id' => $this->requestId($request)],
-                    ], 429)->header('Retry-After', (string) $locked->retryAfter);
+                        'data' => [
+                            'object' => 'otp_challenge',
+                            'challenge_id' => $validated['challenge_id'],
+                            'status' => 'mfa_required',
+                            'next_action' => 'complete_mfa',
+                            'methods' => ['totp'],
+                        ],
+                        'meta' => ['request_id' => $this->requestId($request)],
+                    ], 202);
+                }
+
+                $gate = $this->totpGate($request, $user, $totp);
+                if ($gate instanceof JsonResponse) {
+                    // Wrong code: the row stays held so the next submit
+                    // can retry the TOTP within the hold window.
+                    return $gate;
                 }
             }
 
-            if (! $verified) {
-                return new JsonResponse([
-                    'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
-                ], 401);
+            if (! $this->otp->consumeVerified($tenantId, [CustomerOtpChallenge::PURPOSE_LOGIN], $validated['challenge_id'], $this->now()) instanceof StoredOtpChallenge) {
+                return $this->invalidRedeem($request);
+            }
+
+            return $this->finishLogin($request, $tenant, $user);
+        }
+
+        // Phase 2: second factor only ({challenge_id, totp_code}) on a held row.
+        $challenge = $this->otp->findVerified($tenantId, [CustomerOtpChallenge::PURPOSE_LOGIN], $validated['challenge_id'], $this->now());
+        if (! $challenge instanceof StoredOtpChallenge) {
+            return $this->invalidRedeem($request);
+        }
+
+        $user = $this->findUser((string) $challenge->identifier);
+        if ($user === null) {
+            return $this->invalidRedeem($request);
+        }
+
+        $inactive = $this->membership($request, $tenantId, $user);
+        if ($inactive instanceof JsonResponse) {
+            return $inactive;
+        }
+
+        if ((bool) $user->mfa_enabled) {
+            $gate = $this->totpGate($request, $user, $totp);
+            if ($gate instanceof JsonResponse) {
+                return $gate;
             }
         }
+
+        if (! $this->otp->consumeVerified($tenantId, [CustomerOtpChallenge::PURPOSE_LOGIN], $validated['challenge_id'], $this->now()) instanceof StoredOtpChallenge) {
+            return $this->invalidRedeem($request);
+        }
+
+        return $this->finishLogin($request, $tenant, $user);
+    }
+
+    /**
+     * @return true|JsonResponse
+     */
+    private function totpGate(Request $request, User $user, string $totp): JsonResponse|bool
+    {
+        try {
+            $verified = app(MfaService::class)->verify($user, $totp, time());
+        } catch (MfaLockedException $locked) {
+            return new JsonResponse([
+                'error' => ['code' => 'rate_limited', 'message' => 'Too many failed attempts. Try again later.', 'request_id' => $this->requestId($request)],
+            ], 429)->header('Retry-After', (string) $locked->retryAfter);
+        }
+
+        return $verified ? true : $this->invalidRedeem($request);
+    }
+
+    private function finishLogin(Request $request, Tenant $tenant, User $user): JsonResponse
+    {
+        $tenantId = (string) $tenant->getKey();
 
         $scoped = $this->resolveTenantScope($tenant);
         try {
@@ -656,237 +698,119 @@ final class CustomerAuthController
     }
 
     /**
-     * Firebase phone login, step 1 (kit): record WHICH E.164 number the
-     * client is about to authenticate with, BEFORE the client SDK starts
-     * its Firebase handshake. No oracle — a row is created for any
-     * well-formed phone under an active tenant whether or not an account
-     * exists; eligibility is decided at exchange against Firebase's
-     * verified claim, never against this request. The row is the
-     * anti-replay hinge: it binds the phone, expires in 10 minutes, and
-     * is consumed exactly once (see firebaseExchange).
+     * Typed failure envelopes: a dependency outage is a 503 — a
+     * provider failure is never folded into the uniform 401 set and
+     * never downgrades to another channel.
      */
-    public function firebaseIntent(Request $request): JsonResponse
+    private function dependencyUnavailable(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'tenant_id' => ['required', 'string'],
-            // Prefix-optional like signup's rule: exchange normalizes to
-            // the +E.164 spelling Firebase's phone_number claim always
-            // carries before comparing.
-            'phone' => ['required', 'string', 'regex:/^\+?[0-9]{6,15}$/'],
-        ]);
-
-        $tenant = $this->activeTenant($request, $validated['tenant_id']);
-        if ($tenant instanceof JsonResponse) {
-            return $tenant;
-        }
-
-        $intent = FirebasePhoneAuthIntent::query()->create([
-            'tenant_id' => (string) $tenant->getKey(),
-            'purpose' => FirebasePhoneAuthIntent::PURPOSE_LOGIN,
-            'phone' => $validated['phone'],
-            'expires_at' => $this->now()->addSeconds(FirebasePhoneAuthIntent::TTL_SECONDS),
-        ]);
-
         return new JsonResponse([
-            'data' => [
-                'object' => 'firebase_phone_intent',
-                'intent_id' => (string) $intent->getKey(),
-                'expires_in' => FirebasePhoneAuthIntent::TTL_SECONDS,
-            ],
-            'meta' => ['request_id' => $this->requestId($request)],
-        ], 202);
+            'error' => ['code' => 'dependency_unavailable', 'message' => 'Verification is temporarily unavailable. Try again shortly.', 'request_id' => $this->requestId($request)],
+        ], 503);
     }
 
     /**
-     * Firebase phone login, step 2 (kit): verify the ID token the client
-     * SDK minted after the SMS round-trip, bind it to the intent, and
-     * mint the exact same actor token every other login path issues — so
-     * Laravel stays authoritative for customer lookup, membership, MFA,
-     * and the session itself.
-     *
-     * Every credential-shaped failure collapses to one 401 (no oracle on
-     * token state, account existence, MFA state, or phone binding); only
-     * infrastructure failure is distinguishable, as the typed 503.
+     * Provider-side back-off on an identifier: clients keep branching
+     * on `rate_limited` and back off, since every retry re-arms the
+     * window.
      */
-    public function firebaseExchange(Request $request): JsonResponse
+    private function providerRateLimited(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'tenant_id' => ['required', 'string'],
-            'intent_id' => ['required', 'string', 'max:40'],
-            'id_token' => ['required', 'string', 'max:8192'],
-            'totp_code' => ['sometimes', 'nullable', 'string'],
-        ]);
-
-        $tenant = $this->activeTenant($request, $validated['tenant_id']);
-        if ($tenant instanceof JsonResponse) {
-            return $tenant;
-        }
-        $tenantId = (string) $tenant->getKey();
-
-        $intent = FirebasePhoneAuthIntent::query()
-            ->where('id', $validated['intent_id'])
-            ->where('tenant_id', $tenantId)
-            ->where('purpose', FirebasePhoneAuthIntent::PURPOSE_LOGIN)
-            ->first();
-
-        if ($intent === null || $intent->expires_at->isPast()) {
-            return $this->invalidExchange($request);
-        }
-
-        try {
-            $verified = $this->phoneIdTokens->verify($validated['id_token']);
-        } catch (FirebaseIdTokenRejectedException) {
-            return $this->invalidExchange($request);
-        } catch (FirebaseIdTokenUnavailableException $exception) {
-            // S50: infrastructure failures stay visible (symbolic
-            // message) and typed — a Firebase outage never masquerades
-            // as a wrong token.
-            report($exception);
-
-            return $this->dependencyUnavailable($request);
-        }
-
-        // Phone sign-in only: a token minted by a password or federated
-        // session must never satisfy the phone intent.
-        if ($verified['provider'] !== 'phone') {
-            return $this->invalidExchange($request);
-        }
-
-        // Identity comes from Firebase's verified claim — but it must be
-        // the phone THIS intent was opened for, so a harvested token
-        // cannot be replayed into an intent for another number. Signup's
-        // rule is prefix-optional, so normalize to the claim's +E.164.
-        $intentPhone = str_starts_with((string) $intent->phone, '+')
-            ? (string) $intent->phone
-            : '+' . (string) $intent->phone;
-
-        if ($verified['phone'] !== $intentPhone) {
-            return $this->invalidExchange($request);
-        }
-
-        // Replay floor: the authentication must post-date the intent, so
-        // a token minted for an earlier flow cannot satisfy a later one
-        // (30 s allowance between Google's clock and ours).
-        if ($verified['auth_time'] + 30 < $intent->created_at->getTimestamp()) {
-            return $this->invalidExchange($request);
-        }
-
-        $user = $this->findUserByPhone($verified['phone']);
-
-        if ($user === null) {
-            // Login only: verified phone proof is not account creation.
-            return $this->invalidExchange($request);
-        }
-
-        $membership = TenantMembership::query()
-            ->where('tenant_id', $tenantId)
-            ->where('user_id', $user->getAuthIdentifier())
-            ->where('state', TenantMembership::STATE_ACTIVE)
-            ->first();
-
-        if ($membership === null) {
-            return new JsonResponse([
-                'error' => ['code' => 'membership_inactive', 'message' => 'This account is deactivated.', 'request_id' => $this->requestId($request)],
-            ], 403);
-        }
-
-        // MFA parity with login(): phone possession is factor one on both
-        // paths, so an enrolled TOTP second factor is demanded here too —
-        // absent/wrong codes collapse to the same 401 (no oracle on MFA
-        // state); the M4 lockout is the one observable, as 429 + Retry-After.
-        if ((bool) $user->mfa_enabled) {
-            $totp = (string) ($validated['totp_code'] ?? '');
-
-            $mfaVerified = false;
-            if ($totp !== '') {
-                try {
-                    $mfaVerified = app(\App\Platform\Identity\MfaService::class)->verify($user, $totp, time());
-                } catch (\App\Platform\Identity\MfaLockedException $locked) {
-                    return new JsonResponse([
-                        'error' => ['code' => 'rate_limited', 'message' => 'Too many failed attempts. Try again later.', 'request_id' => $this->requestId($request)],
-                    ], 429)->header('Retry-After', (string) $locked->retryAfter);
-                }
-            }
-
-            if (! $mfaVerified) {
-                return $this->invalidExchange($request);
-            }
-        }
-
-        // Single-use gate: one atomic DELETE decides which of any
-        // concurrent exchanges with this intent proceeds — the loser
-        // finds 0 rows and collapses to the uniform 401 above the mint.
-        $consumed = FirebasePhoneAuthIntent::query()
-            ->where('id', (string) $intent->getKey())
-            ->where('tenant_id', $tenantId)
-            ->delete() === 1;
-
-        if (! $consumed) {
-            return $this->invalidExchange($request);
-        }
-
-        $scoped = $this->resolveTenantScope($tenant);
-        try {
-            // Self-heal like login: profiles predate the module for
-            // invite-seeded accounts, so this backfills instead of failing.
-            BuyerProfile::query()->firstOrCreate(
-                ['user_id' => $user->getAuthIdentifier()],
-                ['display_name' => $user->name, 'status' => BuyerProfile::STATUS_ACTIVE]
-            );
-
-            $this->audit->record(
-                'customers.auth.logged_in',
-                ['module' => 'customers', 'resource_type' => 'customer_session', 'resource_id' => (string) $user->getAuthIdentifier()],
-                null,
-                ['tenant_id' => $tenantId, 'user_id' => (string) $user->getAuthIdentifier(), 'channel' => 'firebase']
-            );
-            $this->activity->record((string) $user->getAuthIdentifier(), 'login', 'Signed in');
-        } finally {
-            if ($scoped['ownsContext']) {
-                $scoped['context']->clear();
-            }
-        }
-
-        $token = $this->mintToken($request, $user);
-        if ($token instanceof JsonResponse) {
-            return $token;
-        }
-
         return new JsonResponse([
-            'data' => [
-                'object' => 'customer_session',
-                'token' => $token['token'],
-                'expires_at' => $token['expires_at'],
-                'tenant_id' => $tenantId,
-                'actor' => ['user_id' => (string) $user->external_id, 'session_id' => $token['session_id']],
-            ],
-            'meta' => ['request_id' => $this->requestId($request)],
-        ]);
+            'error' => ['code' => 'rate_limited', 'message' => 'Too many attempts.', 'request_id' => $this->requestId($request)],
+        ], 429);
     }
 
     /**
-     * The single 401 every credential-shaped exchange failure shares:
-     * unknown/foreign/expired/already-consumed intent, token Firebase
-     * rejected, wrong provider or phone, stale auth_time, unknown
-     * account, failed MFA — indistinguishable by design (no oracle).
+     * Policy-shaped rate limit (resend schedule, fresh gate, hourly
+     * cap): 429 with the manager's exact Retry-After so client
+     * countdowns match the server window.
      */
-    private function invalidExchange(Request $request): JsonResponse
+    private function rateLimited(Request $request, OtpRateLimitedException $e): JsonResponse
+    {
+        $response = new JsonResponse([
+            'error' => ['code' => 'rate_limited', 'message' => 'Too many attempts. Retry later.', 'request_id' => $this->requestId($request)],
+        ], 429);
+
+        if ($e->retryAfterSeconds !== null && $e->retryAfterSeconds > 0) {
+            $response->header('Retry-After', (string) $e->retryAfterSeconds);
+        }
+
+        return $response;
+    }
+
+    /**
+     * The single 401 every credential-shaped redeem failure shares:
+     * unknown/foreign/expired/already-consumed/superseded challenge,
+     * token MSG91 rejected, held row gone — indistinguishable by
+     * design (no oracle).
+     */
+    private function invalidRedeem(Request $request): JsonResponse
     {
         return new JsonResponse([
-            'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired credentials.', 'request_id' => $this->requestId($request)],
+            'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
         ], 401);
     }
 
     /**
-     * Firebase's phone_number claim is always +E.164, but accounts may
-     * have been created through the prefix-optional signup rule, so both
-     * spellings are tried before concluding no account exists.
+     * Referral code issuance (idempotent) + attribution. Invalid and
+     * self codes are ignored, never errors — a typo must not fail
+     * signup. Reward rules are out of scope (attribution only).
      */
-    private function findUserByPhone(string $phone): ?User
+    private function issueReferralCode(string $tenantId, string $userId): void
     {
-        return User::query()
-            ->where('phone', $phone)
-            ->orWhere('phone', ltrim($phone, '+'))
-            ->first();
+        if (ReferralCode::query()->where('user_id', $userId)->exists()) {
+            return;
+        }
+
+        for ($attempts = 0; $attempts < 5; $attempts++) {
+            try {
+                $code = new ReferralCode();
+                $code->forceFill([
+                    'tenant_id' => $tenantId,
+                    'user_id' => $userId,
+                    'code' => ReferralCode::generate(),
+                ]);
+                $code->save();
+
+                return;
+            } catch (\Illuminate\Database\QueryException) {
+                // Globally-unique code collision (astronomically rare):
+                // regenerate instead of failing signup.
+            }
+        }
+    }
+
+    private function attributeReferral(Request $request, string $tenantId, string $userId, string $code): void
+    {
+        if ($code === '') {
+            return;
+        }
+
+        $referral = ReferralCode::query()->where('code', $code)->first();
+
+        // Unknown codes, foreign-tenant codes, and self codes are
+        // ignored — a typo must not fail signup.
+        if ($referral === null
+            || (string) $referral->tenant_id !== $tenantId
+            || (string) $referral->user_id === $userId) {
+            return;
+        }
+
+        $attribution = new ReferralAttribution();
+        $attribution->forceFill([
+            'tenant_id' => $tenantId,
+            'referrer_user_id' => (string) $referral->user_id,
+            'referred_user_id' => $userId,
+            'code' => $code,
+        ]);
+        $attribution->save();
+
+        $this->audit->record(
+            'customers.referral.attributed',
+            ['module' => 'customers', 'resource_type' => 'referral_attribution', 'resource_id' => (string) $attribution->getKey()],
+            null,
+            ['tenant_id' => $tenantId, 'referrer_user_id' => (string) $referral->user_id, 'referred_user_id' => $userId]
+        );
     }
 }

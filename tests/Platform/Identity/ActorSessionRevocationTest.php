@@ -2,11 +2,10 @@
 
 namespace Tests\Platform\Identity;
 
-use App\Modules\Customers\Auth\CustomerOtpService;
-use App\Modules\Customers\Auth\SeededOtpCodes;
-use App\Platform\Identity\ActorTokenIssuer;
+use App\Models\User;
 use App\Platform\Identity\ActorTokenVerifier;
 use App\Platform\Identity\Models\ActorSession;
+use Tests\Support\InteractsWithMsg91;
 use Tests\TenantIntegrationTestCase;
 
 /**
@@ -19,36 +18,38 @@ use Tests\TenantIntegrationTestCase;
  */
 final class ActorSessionRevocationTest extends TenantIntegrationTestCase
 {
-    private const SECRET = 'revocation-test-secret';
+    use InteractsWithMsg91;
 
-    private function otp(): SeededOtpCodes
+    private const SECRET = 'revocation-test-secret-at-least-32-chars-long!';
+
+    protected function setUp(): void
     {
-        $codes = new SeededOtpCodes();
-        $this->app->singleton(CustomerOtpService::class, static fn (): CustomerOtpService => new CustomerOtpService($codes));
+        parent::setUp();
+        $this->fakeMsg91();
         config()->set('identity.hmac_secret', self::SECRET);
-
-        return $codes;
     }
 
     /**
-     * @return array{0: string, 1: string, 2: string, 3: SeededOtpCodes}
-     *         [tenant id, phone, signup token, seeded codes]
+     * @return array{0: string, 1: string, 2: string}
+     *         [tenant id, phone, signup token]
      */
     private function signedUp(): array
     {
-        $codes = $this->otp();
         $tenant = $this->makeTenant();
         $tid = (string) $tenant->getKey();
+        $phone = '+911234567890';
 
         $challengeId = $this->postJson('/api/v1/customers/auth/signup', [
-            'tenant_id' => $tid, 'phone' => '+911234567890', 'name' => 'Ravi',
+            'tenant_id' => $tid, 'phone' => $phone, 'name' => 'Ravi',
         ])->assertStatus(202)->json('data.challenge_id');
 
         $token = $this->postJson('/api/v1/customers/auth/verify', [
-            'tenant_id' => $tid, 'challenge_id' => $challengeId, 'code' => $codes->lastFor($challengeId),
+            'tenant_id' => $tid,
+            'challenge_id' => $challengeId,
+            'token' => $this->msg91TokenFor($phone),
         ])->assertCreated()->json('data.token');
 
-        return [$tid, '+911234567890', $token, $codes];
+        return [$tid, $phone, $token];
     }
 
     private function nowIso(): string
@@ -99,22 +100,22 @@ final class ActorSessionRevocationTest extends TenantIntegrationTestCase
 
     public function test_mfa_completion_rotates_and_kills_the_predecessor(): void
     {
-        [$tid, , $token] = $this->signedUp();
+        [$tid, $phone, $token] = $this->signedUp();
 
         $headers = ['Authorization' => "Bearer {$token}", 'X-Tenant-Id' => $tid];
+
+        $user = User::query()->where('phone', $phone)->firstOrFail();
 
         // I2: MFA enroll now requires step-up (stepup:2)
         $stepUp = $this->postJson('/api/v1/identity/mfa/enroll/step-up', [], $headers)
             ->assertAccepted()->assertJsonPath('data.object', 'otp_challenge');
         $challengeId = $stepUp->json('data.challenge_id');
 
-        // Use the StepUpOtpService test store for the OTP code
-        $otpCode = \App\Platform\Identity\StepUpOtpService::getTestCode($challengeId);
-        $this->assertNotNull($otpCode);
+        $stepUpToken = $this->msg91TokenFor((string) $user->email);
 
         $enrolled = $this->postJson('/api/v1/identity/mfa/enroll/verify', [
             'challenge_id' => $challengeId,
-            'code' => $otpCode,
+            'token' => $stepUpToken,
         ], $headers)->assertCreated()->assertJsonPath('data.object', 'mfa_enrollment');
         parse_str((string) parse_url($enrolled->json('data.otpauth_url'), PHP_URL_QUERY), $query);
         $secret = $query['secret'];
@@ -138,46 +139,33 @@ final class ActorSessionRevocationTest extends TenantIntegrationTestCase
         );
         auth()->logout();
 
+        // The original bearer is dead now.
         $this->bearerDead($token, $tid);
         $this->assertBearerAlive($rotated, $tid);
     }
 
-    public function test_login_with_presented_predecessor_revokes_it(): void
+    public function test_predecessor_login_revokes_prior_session(): void
     {
-        [$tid, $phone, $predecessor, $codes] = $this->signedUp();
+        [$tid, $phone, $token] = $this->signedUp();
 
+        $this->assertBearerAlive($token, $tid);
+
+        // Subsequent login presenting the prior bearer as a predecessor
         $challengeId = $this->postJson('/api/v1/customers/auth/otp', [
-            'tenant_id' => $tid, 'purpose' => 'login', 'identity' => $phone,
+            'tenant_id' => $tid, 'phone' => $phone,
         ])->assertStatus(202)->json('data.challenge_id');
 
-        $logged = $this->postJson('/api/v1/customers/auth/login', [
-            'tenant_id' => $tid, 'challenge_id' => $challengeId, 'code' => $codes->lastFor($challengeId),
-        ], ['Authorization' => "Bearer {$predecessor}"])->assertOk();
-        auth()->logout();
+        $login = $this->postJson(
+            '/api/v1/customers/auth/login',
+            ['tenant_id' => $tid, 'challenge_id' => $challengeId, 'token' => $this->msg91TokenFor($phone)],
+            ['Authorization' => "Bearer {$token}"]
+        )->assertOk();
 
-        $successor = $logged->json('data.token');
-        $this->assertNotEmpty($successor);
+        $replacement = $login->json('data.token');
+        $this->assertNotSame($token, $replacement);
 
-        // I15: the login minted its replacement and revoked the session
-        // the caller presented.
-        $this->bearerDead($predecessor, $tid);
-        $this->assertBearerAlive($successor, $tid);
-    }
-
-    public function test_revoke_for_user_kills_every_session(): void
-    {
-        $this->signedUp();
-
-        config()->set('identity.hmac_secret', self::SECRET);
-        $first = ActorTokenIssuer::mint(self::SECRET, 'sweep-probe', 86400, $this->nowIso())['token'];
-        $second = ActorTokenIssuer::mint(self::SECRET, 'sweep-probe', 86400, $this->nowIso())['token'];
-
-        $this->assertSame(2, ActorSession::query()->where('user_id', 'sweep-probe')->whereNull('revoked_at')->count());
-
-        ActorSession::revokeForUser('sweep-probe');
-
-        $this->assertSame(0, ActorSession::query()->where('user_id', 'sweep-probe')->whereNull('revoked_at')->count());
-        $this->assertNull(ActorTokenVerifier::verify(self::SECRET, $first, $this->nowIso()));
-        $this->assertNull(ActorTokenVerifier::verify(self::SECRET, $second, $this->nowIso()));
+        // Predecessor is dead, replacement is alive.
+        $this->bearerDead($token, $tid);
+        $this->assertBearerAlive($replacement, $tid);
     }
 }

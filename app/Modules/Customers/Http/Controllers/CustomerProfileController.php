@@ -3,11 +3,13 @@
 namespace App\Modules\Customers\Http\Controllers;
 
 use App\Models\User;
-use App\Modules\Customers\Auth\CustomerOtpService;
 use App\Modules\Customers\Models\BuyerProfile;
 use App\Modules\Customers\Models\CustomerOtpChallenge;
 use App\Modules\Customers\CustomerActivityRecorder;
 use App\Platform\Audit\AuditWriter;
+use App\Platform\Identity\Otp\OtpChallengeManager;
+use App\Platform\Identity\Otp\OtpProviderUnavailableException;
+use App\Platform\Identity\Otp\OtpVerifyStatus;
 use App\Platform\Tenancy\ConnectionResolver;
 use App\Platform\Tenancy\Models\Tenant;
 use App\Platform\Tenancy\Models\TenantMembership;
@@ -111,7 +113,7 @@ final class CustomerProfileController extends CustomerSelfServiceController
         $validated = $request->validate([
             'tenant_id' => ['required', 'string'],
             'challenge_id' => ['required', 'string'],
-            'code' => ['required', 'string'],
+            'token' => ['required', 'string', 'max:4096'],
         ]);
 
         $tenant = Tenant::query()->find($validated['tenant_id']);
@@ -122,23 +124,33 @@ final class CustomerProfileController extends CustomerSelfServiceController
         }
         $tenantId = (string) $tenant->getKey();
 
-        $proof = app(CustomerOtpService::class)->verify(
-            $tenantId,
-            CustomerOtpChallenge::PURPOSE_LOGIN,
-            $validated['challenge_id'],
-            $validated['code'],
-            CarbonImmutable::parse(gmdate('Y-m-d\TH:i:s.v\Z'))
-        );
+        try {
+            $result = app(OtpChallengeManager::class)->verify(
+                $tenantId,
+                [CustomerOtpChallenge::PURPOSE_LOGIN],
+                $validated['challenge_id'],
+                $validated['token'],
+                CarbonImmutable::parse(gmdate('Y-m-d\TH:i:s.v\Z'))
+            );
+        } catch (OtpProviderUnavailableException $e) {
+            report($e);
 
-        if ($proof === null) {
+            return new JsonResponse([
+                'error' => ['code' => 'dependency_unavailable', 'message' => 'Verification is temporarily unavailable. Try again shortly.', 'request_id' => $this->requestId($request)],
+            ], 503);
+        }
+
+        if ($result->status !== OtpVerifyStatus::Match) {
             return new JsonResponse([
                 'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
             ], 401);
         }
 
+        $identifier = (string) $result->challenge->identifier;
+
         $user = User::query()
-            ->where('phone', (string) $proof->identifier)
-            ->orWhere('email', (string) $proof->identifier)
+            ->where('phone', $identifier)
+            ->orWhere('email', $identifier)
             ->first();
 
         if ($user === null) {
@@ -206,20 +218,28 @@ final class CustomerProfileController extends CustomerSelfServiceController
 
         $validated = $request->validate([
             'challenge_id' => ['required', 'string'],
-            'code' => ['required', 'string'],
+            'token' => ['required', 'string', 'max:4096'],
         ]);
 
         // Fresh OTP proof (login-purpose challenge, single-use): possession
         // re-verified at decision time, never a stale session alone.
-        $proof = app(CustomerOtpService::class)->verify(
-            (string) app(TenantContext::class)->tenantId(),
-            CustomerOtpChallenge::PURPOSE_LOGIN,
-            $validated['challenge_id'],
-            $validated['code'],
-            CarbonImmutable::parse(gmdate('Y-m-d\TH:i:s.v\Z'))
-        );
+        try {
+            $result = app(OtpChallengeManager::class)->verify(
+                (string) app(TenantContext::class)->tenantId(),
+                [CustomerOtpChallenge::PURPOSE_LOGIN],
+                $validated['challenge_id'],
+                $validated['token'],
+                CarbonImmutable::parse(gmdate('Y-m-d\TH:i:s.v\Z'))
+            );
+        } catch (OtpProviderUnavailableException $e) {
+            report($e);
 
-        if ($proof === null) {
+            return new JsonResponse([
+                'error' => ['code' => 'dependency_unavailable', 'message' => 'Verification is temporarily unavailable. Try again shortly.', 'request_id' => $this->requestId($request)],
+            ], 503);
+        }
+
+        if ($result->status !== OtpVerifyStatus::Match) {
             return new JsonResponse([
                 'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
             ], 401);
@@ -300,19 +320,27 @@ final class CustomerProfileController extends CustomerSelfServiceController
 
         $validated = $request->validate([
             'challenge_id' => ['required', 'string'],
-            'code' => ['required', 'string'],
+            'token' => ['required', 'string', 'max:4096'],
         ]);
 
         // Fresh OTP proof (login-purpose challenge, single-use)
-        $proof = app(CustomerOtpService::class)->verify(
-            (string) app(TenantContext::class)->tenantId(),
-            CustomerOtpChallenge::PURPOSE_LOGIN,
-            $validated['challenge_id'],
-            $validated['code'],
-            CarbonImmutable::parse(gmdate('Y-m-d\TH:i:s.v\Z'))
-        );
+        try {
+            $result = app(OtpChallengeManager::class)->verify(
+                (string) app(TenantContext::class)->tenantId(),
+                [CustomerOtpChallenge::PURPOSE_LOGIN],
+                $validated['challenge_id'],
+                $validated['token'],
+                CarbonImmutable::parse(gmdate('Y-m-d\TH:i:s.v\Z'))
+            );
+        } catch (OtpProviderUnavailableException $e) {
+            report($e);
 
-        if ($proof === null) {
+            return new JsonResponse([
+                'error' => ['code' => 'dependency_unavailable', 'message' => 'Verification is temporarily unavailable. Try again shortly.', 'request_id' => $this->requestId($request)],
+            ], 503);
+        }
+
+        if ($result->status !== OtpVerifyStatus::Match) {
             return new JsonResponse([
                 'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
             ], 401);

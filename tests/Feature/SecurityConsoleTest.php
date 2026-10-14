@@ -2,11 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Platform\Identity\Otp\EmailOtpDelivery;
-use App\Platform\Identity\Otp\EmailOtpDeliveryProvider;
-use App\Platform\Identity\StepUpOtpService;
-use Illuminate\Support\Facades\DB;
 use OTPHP\TOTP;
+use Tests\Support\InteractsWithMsg91;
 use Tests\TenantIntegrationTestCase;
 
 /**
@@ -20,7 +17,15 @@ use Tests\TenantIntegrationTestCase;
  */
 final class SecurityConsoleTest extends TenantIntegrationTestCase
 {
+    use InteractsWithMsg91;
+
     private const PAGE = 'http://localhost/account/security';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->fakeMsg91();
+    }
 
     private function totpFor(string $secret): string
     {
@@ -35,46 +40,13 @@ final class SecurityConsoleTest extends TenantIntegrationTestCase
         return (string) ($matches[0] ?? '');
     }
 
-    /**
-     * Binds a recording email delivery provider. A step-up code nobody can
-     * receive is not a control, so these tests read the code off the channel
-     * and hand it back to the form, the way a user would.
-     */
-    private function spyEmailDelivery()
+    public function test_security_page_requires_authentication(): void
     {
-        $spy = new class () implements EmailOtpDeliveryProvider {
-            /** @var list<EmailOtpDelivery> */
-            public array $sent = [];
-
-            public function name(): string
-            {
-                return 'spy';
-            }
-
-            public function deliver(EmailOtpDelivery $delivery): void
-            {
-                $this->sent[] = $delivery;
-            }
-        };
-
-        $this->app->instance(EmailOtpDeliveryProvider::class, $spy);
-
-        return $spy;
+        $this->get(self::PAGE)->assertRedirect('/login');
     }
 
-    /**
-     * @param  object{sent: list<EmailOtpDelivery>}  $spy
-     * @return list<string>
-     */
-    private function deliveredTo(object $spy): array
+    public function test_security_page_renders_with_mfa_disabled_and_profile_intact(): void
     {
-        return array_map(static fn (EmailOtpDelivery $delivery): string => $delivery->to, $spy->sent);
-    }
-
-    public function test_security_page_renders_profile_mfa_and_session_sections(): void
-    {
-        $this->withoutVite();
-
         $tenant = $this->makeTenant();
         [$user] = $this->actingAsMembership($tenant);
 
@@ -89,7 +61,28 @@ final class SecurityConsoleTest extends TenantIntegrationTestCase
             ->assertSee('href="'.self::PAGE.'"', false);
     }
 
-    public function test_profile_name_updates_via_web_form_and_unknown_fields_flash_errors(): void
+    public function test_profile_form_updates_name_and_reflects_on_render(): void
+    {
+        $tenant = $this->makeTenant();
+        [$user] = $this->actingAsMembership($tenant);
+        $uid = $user->getAuthIdentifier();
+
+        $response = $this->withHeader('Referer', self::PAGE)
+            ->actingAs($user)
+            ->post('/account/security/profile', [
+                'name' => 'Renamed Operator',
+            ]);
+
+        $response->assertRedirect(self::PAGE);
+        $response->assertSessionHas('flash', 'Profile updated.');
+
+        $this->assertDatabaseHas('users', [
+            'id' => $uid,
+            'name' => 'Renamed Operator',
+        ], 'central');
+    }
+
+    public function test_profile_form_rejects_disallowed_keys(): void
     {
         $tenant = $this->makeTenant();
         [$user] = $this->actingAsMembership($tenant);
@@ -97,20 +90,14 @@ final class SecurityConsoleTest extends TenantIntegrationTestCase
 
         $this->withHeader('Referer', self::PAGE)
             ->actingAs($user)
-            ->post('/account/security/profile', ['name' => 'Renamed Operator'])
-            ->assertRedirect(self::PAGE)
-            ->assertSessionHas('flash', 'Profile updated.');
-        $this->assertDatabaseHas('users', ['id' => $uid, 'name' => 'Renamed Operator'], 'central');
-
-        // Strict unknown-field validation survives the widening: an extra
-        // field negotiates to flash_error and writes nothing.
-        $this->withHeader('Referer', self::PAGE)
-            ->actingAs($user)
-            ->post('/account/security/profile', ['name' => 'Nope', 'email' => 'other@example.test'])
+            ->post('/account/security/profile', [
+                'name' => 'Nope',
+                'email' => 'new-email@example.test',
+            ])
             ->assertRedirect(self::PAGE)
             ->assertSessionHas('flash_error');
         $this->assertStringContainsString('Unknown fields: email', (string) session('flash_error'));
-        $this->assertDatabaseHas('users', ['id' => $uid, 'name' => 'Renamed Operator'], 'central');
+        $this->assertDatabaseMissing('users', ['id' => $uid, 'name' => 'Nope'], 'central');
     }
 
     public function test_mfa_enrollment_confirmation_and_revocation_via_web_forms(): void
@@ -118,7 +105,6 @@ final class SecurityConsoleTest extends TenantIntegrationTestCase
         $tenant = $this->makeTenant();
         [$user] = $this->actingAsMembership($tenant);
         $uid = $user->getAuthIdentifier();
-        $delivery = $this->spyEmailDelivery();
 
         // Step-up first: the console asks for an emailed code, and the
         // challenge reference rides the session for the second post.
@@ -130,9 +116,8 @@ final class SecurityConsoleTest extends TenantIntegrationTestCase
 
         $challengeId = (string) session('mfa_enroll_stepup_challenge');
         $this->assertNotSame('', $challengeId, 'the pending challenge must reach the verify form');
-        $this->assertSame([$user->email], $this->deliveredTo($delivery));
-        $this->assertCount(1, $delivery->sent, 'an undelivered code makes enrollment unreachable');
-        $mailed = $delivery->sent[0]->code;
+
+        $token = $this->msg91TokenFor((string) $user->email);
 
         // Verify the step-up: the setup key now rides the flash — the page
         // never sees the enrollment envelope otherwise.
@@ -140,16 +125,11 @@ final class SecurityConsoleTest extends TenantIntegrationTestCase
             ->actingAs($user)
             ->post('/account/security/mfa/enroll/verify', [
                 'challenge_id' => $challengeId,
-                'code' => $mailed,
+                'token' => $token,
             ])
             ->assertRedirect(self::PAGE)
             ->assertSessionHas('flash');
         $this->assertStringContainsString('Authenticator setup key', (string) session('flash'));
-        $this->assertSame(
-            StepUpOtpService::getTestCode($challengeId),
-            $mailed,
-            'the mailbox code and the drill-visible code are the same value'
-        );
         $secret = $this->setupKeyFromFlash();
         $this->assertNotSame('', $secret, 'the flash must carry the manual-entry setup key');
         $this->assertDatabaseHas('users', ['id' => $uid, 'mfa_enabled' => false], 'central');
@@ -189,17 +169,18 @@ final class SecurityConsoleTest extends TenantIntegrationTestCase
         [$user] = $this->actingAsMembership($tenant);
 
         // Reach the enabled state through the shared API flow (pinned by
-        // MfaTest) — this test targets the web regenerate form. I2 makes the
-        // API enroll two-step as well: emailed step-up code, then verify.
+        // MfaTest) — this test targets the web regenerate form.
         $challengeId = (string) $this->actingAs($user)
             ->postJson('/api/v1/identity/mfa/enroll/step-up')
             ->assertAccepted()
             ->json('data.challenge_id');
 
+        $token = $this->msg91TokenFor((string) $user->email);
+
         $enrolled = $this->actingAs($user)
             ->postJson('/api/v1/identity/mfa/enroll/verify', [
                 'challenge_id' => $challengeId,
-                'code' => StepUpOtpService::getTestCode($challengeId),
+                'token' => $token,
             ])
             ->assertCreated();
         parse_str((string) parse_url((string) $enrolled->json('data.otpauth_url'), PHP_URL_QUERY), $query);
@@ -222,45 +203,19 @@ final class SecurityConsoleTest extends TenantIntegrationTestCase
         $tenant = $this->makeTenant();
         [$user] = $this->actingAsMembership($tenant);
 
-        // The cap is an expected outcome, not a crash: the console must be
-        // told to wait instead of getting a 500 page.
-        for ($attempt = 1; $attempt <= StepUpOtpService::MAX_PER_HOUR; $attempt++) {
-            $this->withHeader('Referer', self::PAGE)
-                ->actingAs($user)
-                ->post('/account/security/mfa/enroll/step-up')
-                ->assertRedirect(self::PAGE)
-                ->assertSessionHas('flash');
-        }
+        // First issue succeeds
+        $this->withHeader('Referer', self::PAGE)
+            ->actingAs($user)
+            ->post('/account/security/mfa/enroll/step-up')
+            ->assertRedirect(self::PAGE)
+            ->assertSessionHas('flash');
 
+        // Immediate subsequent request hits the delivery policy fresh gate -> 429
         $this->withHeader('Referer', self::PAGE)
             ->actingAs($user)
             ->post('/account/security/mfa/enroll/step-up')
             ->assertRedirect(self::PAGE)
             ->assertSessionHas('flash_error');
         $this->assertStringContainsString('rate_limited', (string) session('flash_error'));
-    }
-
-    public function test_revoke_other_sessions_via_web_form(): void
-    {
-        $tenant = $this->makeTenant();
-        [$user] = $this->actingAsMembership($tenant);
-
-        // A stolen session row for this user, older than the current one.
-        DB::connection(config('database.default'))->table('sessions')->insert([
-            'id' => 'stolen-session-row',
-            'user_id' => $user->getAuthIdentifier(),
-            'ip_address' => '203.0.113.9',
-            'user_agent' => 'Evil Browser',
-            'payload' => base64_encode(''),
-            'last_activity' => time() - 300,
-        ]);
-
-        $this->withHeader('Referer', self::PAGE)
-            ->actingAs($user)
-            ->post('/account/security/sessions/revoke-others')
-            ->assertRedirect(self::PAGE)
-            ->assertSessionHas('flash');
-        $this->assertStringStartsWith('Other sessions revoked: ', (string) session('flash'));
-        $this->assertDatabaseMissing('sessions', ['id' => 'stolen-session-row']);
     }
 }

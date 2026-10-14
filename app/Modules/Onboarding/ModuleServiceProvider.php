@@ -2,6 +2,9 @@
 
 namespace App\Modules\Onboarding;
 
+use App\Modules\Onboarding\Http\Controllers\SubmitController;
+use App\Platform\Identity\Otp\DbOtpChallengeStore;
+use App\Platform\Identity\Otp\OtpChallengeStore;
 use App\Platform\Modules\ModuleServiceProvider as BaseModuleServiceProvider;
 
 /**
@@ -13,7 +16,14 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
 {
     public function registerModule(): void
     {
-        $this->app->singleton(OtpService::class, static fn (): OtpService => new OtpService(new RandomOtpCodes()));
+        // Submit OTP rides the shared OtpChallengeManager; this module's
+        // challenges live in the tenant-shared otp_challenges table, so
+        // the store seam is bound contextually (every other consumer of
+        // the manager keeps the platform default).
+        $this->app->when(SubmitController::class)
+            ->needs(OtpChallengeStore::class)
+            ->give(static fn (): OtpChallengeStore => DbOtpChallengeStore::onboarding());
+
         $this->app->bind(
             \App\Platform\Identity\Contracts\TrackSeeder::class,
             OnboardingTrackSeeder::class

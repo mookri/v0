@@ -9,8 +9,11 @@ use App\Platform\Identity\Events\MfaEnrolled;
 use App\Platform\Identity\Events\MfaRevoked;
 use App\Platform\Identity\MfaLockedException;
 use App\Platform\Identity\MfaService;
-use App\Platform\Identity\StepUpOtpService;
-use App\Platform\Identity\StepUpRateLimitedException;
+use App\Platform\Identity\Otp\OtpChallengeManager;
+use App\Platform\Identity\Otp\OtpDeliveryPolicy;
+use App\Platform\Identity\Otp\OtpProviderUnavailableException;
+use App\Platform\Identity\Otp\OtpRateLimitedException;
+use App\Platform\Identity\Otp\OtpVerifyStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -198,31 +201,49 @@ final class MfaController
         $tenantId = (string) $membership->tenant_id;
 
         try {
-            $challenge = app(StepUpOtpService::class)->issue(
+            // Identifier is the account email: the MSG91 widget delivers
+            // there; the payload binds the challenge to this user so a
+            // challenge minted on account A cannot enroll account B.
+            $challenge = app(OtpChallengeManager::class)->issue(
                 $tenantId,
                 'mfa_enroll_stepup',
-                (string) $user->external_id,
+                (string) $user->email,
                 CarbonImmutable::now(),
                 ['external_id' => (string) $user->external_id],
-                (string) $user->email,
             );
-        } catch (StepUpRateLimitedException) {
-            // The 5-per-hour cap is an expected outcome, not a crash:
-            // clients must learn to wait, not hammer (M4 shape).
-            return new JsonResponse([
+        } catch (OtpRateLimitedException $e) {
+            // The delivery policy's caps are an expected outcome, not a
+            // crash: clients must learn to wait, not hammer (M4 shape).
+            $response = new JsonResponse([
                 'error' => [
                     'code' => 'rate_limited',
                     'message' => 'Too many verification codes requested. Try again later.',
                     'request_id' => $this->requestId($request),
                 ],
             ], 429);
+
+            if ($e->retryAfterSeconds !== null && $e->retryAfterSeconds > 0) {
+                $response->header('Retry-After', (string) $e->retryAfterSeconds);
+            }
+
+            return $response;
+        } catch (OtpProviderUnavailableException $e) {
+            report($e);
+
+            return new JsonResponse([
+                'error' => [
+                    'code' => 'dependency_unavailable',
+                    'message' => 'Verification is temporarily unavailable. Try again shortly.',
+                    'request_id' => $this->requestId($request),
+                ],
+            ], 503);
         }
 
         return new JsonResponse([
             'data' => [
                 'object' => 'otp_challenge',
-                'challenge_id' => $challenge['challenge_id'],
-                'expires_in' => StepUpOtpService::TTL_SECONDS,
+                'challenge_id' => $challenge->id,
+                'expires_in' => OtpDeliveryPolicy::load()->ttlSeconds,
             ],
             'meta' => ['request_id' => $this->requestId($request)],
         ], 202);
@@ -256,7 +277,7 @@ final class MfaController
     {
         $validated = $request->validate([
             'challenge_id' => ['required', 'string'],
-            'code' => ['required', 'string'],
+            'token' => ['required', 'string', 'max:4096'],
         ]);
 
         $user = $this->actor($request);
@@ -271,22 +292,32 @@ final class MfaController
             ->firstOrFail();
         $tenantId = (string) $membership->tenant_id;
 
-        $challenge = app(StepUpOtpService::class)->verify(
-            $tenantId,
-            'mfa_enroll_stepup',
-            $validated['challenge_id'],
-            $validated['code'],
-            CarbonImmutable::now(),
-        );
+        try {
+            $result = app(OtpChallengeManager::class)->verify(
+                $tenantId,
+                ['mfa_enroll_stepup'],
+                $validated['challenge_id'],
+                $validated['token'],
+                CarbonImmutable::now(),
+            );
+        } catch (OtpProviderUnavailableException $e) {
+            // Outage during judging: the attempt bump rolls back with
+            // the transaction — an outage never burns an attempt.
+            report($e);
 
-        if ($challenge === null) {
+            return new JsonResponse([
+                'error' => ['code' => 'dependency_unavailable', 'message' => 'Verification is temporarily unavailable. Try again shortly.', 'request_id' => $this->requestId($request)],
+            ], 503);
+        }
+
+        if ($result->status !== OtpVerifyStatus::Match) {
             return new JsonResponse([
                 'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
             ], 401);
         }
 
         // Verify the payload matches the authenticated user
-        $payload = $challenge['payload'] ?? [];
+        $payload = $result->challenge->payload ?? [];
         if (($payload['external_id'] ?? '') !== (string) $user->external_id) {
             return new JsonResponse([
                 'error' => ['code' => 'forbidden', 'message' => 'Step-up challenge does not belong to this user.', 'request_id' => $this->requestId($request)],
@@ -324,7 +355,7 @@ final class MfaController
 
         $validated = $request->validate(['code' => ['required', 'string']]);
 
-        $codes = $this->mfa->confirm($user, $validated['code'], time());
+        $codes = $this->mfa->confirm($user, $validated['code'], now()->timestamp);
 
         if ($codes === null) {
             return new JsonResponse([
@@ -355,7 +386,7 @@ final class MfaController
         $validated = $request->validate(['code' => ['required', 'string']]);
 
         try {
-            $verified = $this->mfa->verify($user, $validated['code'], time());
+            $verified = $this->mfa->verify($user, $validated['code'], now()->timestamp);
         } catch (MfaLockedException $locked) {
             // M4: lockout is a 429 with Retry-After (contract §8) — a
             // locked-out human must learn to wait, not to keep hammering.
@@ -424,7 +455,7 @@ final class MfaController
 
         $validated = $request->validate(['code' => ['required', 'string']]);
 
-        if (! $this->mfa->revoke($user, $validated['code'], time())) {
+        if (! $this->mfa->revoke($user, $validated['code'], now()->timestamp)) {
             return new JsonResponse([
                 'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
             ], 401);

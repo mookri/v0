@@ -4,6 +4,7 @@ namespace Tests\Modules\Onboarding;
 
 use App\Models\User;
 use App\Platform\Tenancy\Models\Tenant;
+use Tests\Support\InteractsWithMsg91;
 use Tests\TenantIntegrationTestCase;
 
 /**
@@ -13,6 +14,14 @@ use Tests\TenantIntegrationTestCase;
  */
 final class OnboardingParityTest extends TenantIntegrationTestCase
 {
+    use InteractsWithMsg91;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->fakeMsg91();
+    }
+
     /**
      * @return array{0: Tenant, 1: User, 2: string}
      */
@@ -60,7 +69,7 @@ final class OnboardingParityTest extends TenantIntegrationTestCase
         // 401 bad OTP (seed a challenge via a filled draft first).
         $app = \App\Modules\Onboarding\Models\PartnerApplication::withoutGlobalScope(\App\Platform\Tenancy\TenantScope::class)->findOrFail($id);
         $app->forceFill(['evidence' => [
-            'identity' => ['name' => 'R', 'phone' => 'p'],
+            'identity' => ['name' => 'Ravi Pandit', 'phone' => '+919876543210'],
             'credentials' => ['certifications' => ['c']],
             'services' => ['s'],
             'areas' => ['a'],
@@ -71,7 +80,7 @@ final class OnboardingParityTest extends TenantIntegrationTestCase
         $begun = $authed()->postJson("/api/v1/onboarding/applications/{$id}/submit", [], $headers)->assertOk();
         $authed()->postJson("/api/v1/onboarding/applications/{$id}/submit/confirm", [
             'challenge_id' => $begun->json('data.challenge_id'),
-            'code' => '000000',
+            'token' => 'invalid.jwt.token',
         ], $headers)->assertUnauthorized()->assertJsonPath('error.code', 'unauthenticated');
     }
 }

@@ -2,14 +2,15 @@
 
 namespace App\Modules\Customers\Http\Controllers;
 
-use App\Modules\Customers\Auth\CustomerOtpService;
-use App\Modules\Customers\Auth\OtpRateLimitedException;
 use App\Modules\Customers\Models\CustomerOtpChallenge;
 use App\Modules\Customers\CustomerActivityRecorder;
 use App\Platform\Audit\AuditWriter;
-use App\Platform\Identity\Otp\OtpCaptchaRequiredException;
+use App\Platform\Identity\Otp\OtpChallengeManager;
+use App\Platform\Identity\Otp\OtpDeliveryPolicy;
 use App\Platform\Identity\Otp\OtpProviderRateLimitedException;
 use App\Platform\Identity\Otp\OtpProviderUnavailableException;
+use App\Platform\Identity\Otp\OtpRateLimitedException;
+use App\Platform\Identity\Otp\OtpVerifyStatus;
 use App\Platform\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -35,7 +36,7 @@ final class CustomerVerificationController extends CustomerSelfServiceController
     ];
 
     public function __construct(
-        private readonly CustomerOtpService $otp,
+        private readonly OtpChallengeManager $otp,
         private readonly AuditWriter $audit,
         private readonly CustomerActivityRecorder $activity,
     ) {
@@ -76,9 +77,6 @@ final class CustomerVerificationController extends CustomerSelfServiceController
         $validated = $request->validate([
             'channel' => ['required', 'string', 'in:phone,email'],
             'value' => ['required', 'string', 'max:190'],
-            // reCAPTCHA v2 token (S48 pass-through) — demanded by
-            // policy only for remote providers.
-            'captcha_token' => ['nullable', 'string', 'max:4096'],
         ]);
 
         $user = $found['user'];
@@ -128,24 +126,17 @@ final class CustomerVerificationController extends CustomerSelfServiceController
                 $value,
                 CarbonImmutable::parse(gmdate('Y-m-d\TH:i:s.v\Z')),
                 ['user_id' => (string) $user->getAuthIdentifier(), 'channel' => $channel, 'value' => $value],
-                attestation: $validated['captcha_token'] ?? null,
             );
-        } catch (OtpRateLimitedException) {
-            return new JsonResponse([
+        } catch (OtpRateLimitedException $e) {
+            $response = new JsonResponse([
                 'error' => ['code' => 'rate_limited', 'message' => 'Too many attempts.', 'request_id' => $this->requestId($request)],
             ], 429);
-        } catch (OtpCaptchaRequiredException) {
-            // S48: policy demands a reCAPTCHA attestation for this
-            // audience and none arrived — a typed 422, never a silent
-            // downgrade to a channel that skips attestation.
-            return new JsonResponse([
-                'error' => [
-                    'code' => 'validation_failed',
-                    'message' => 'Captcha verification is required.',
-                    'details' => ['fields' => ['captcha_token' => ['captcha_required']]],
-                    'request_id' => $this->requestId($request),
-                ],
-            ], 422);
+
+            if ($e->retryAfterSeconds !== null && $e->retryAfterSeconds > 0) {
+                $response->header('Retry-After', (string) $e->retryAfterSeconds);
+            }
+
+            return $response;
         } catch (OtpProviderRateLimitedException $e) {
             // Provider-side back-off on this identifier: retryable 429,
             // same shape as our local caps. Recorded so the provider head
@@ -168,8 +159,8 @@ final class CustomerVerificationController extends CustomerSelfServiceController
         return new JsonResponse([
             'data' => [
                 'object' => 'otp_challenge',
-                'challenge_id' => (string) $challenge->getKey(),
-                'expires_in' => CustomerOtpService::TTL_SECONDS,
+                'challenge_id' => (string) $challenge->id,
+                'expires_in' => OtpDeliveryPolicy::load()->ttlSeconds,
             ],
             'meta' => ['request_id' => $this->requestId($request)],
         ], 202);
@@ -182,21 +173,34 @@ final class CustomerVerificationController extends CustomerSelfServiceController
             return $found;
         }
 
-        $validated = $request->validate(['code' => ['required', 'string']]);
+        $validated = $request->validate(['token' => ['required', 'string', 'max:4096']]);
 
-        $challenge = $this->otp->verifyForPurposes(
-            (string) app(TenantContext::class)->tenantId(),
-            self::VERIFY_PURPOSES,
-            $challengeId,
-            $validated['code'],
-            CarbonImmutable::parse(gmdate('Y-m-d\TH:i:s.v\Z'))
-        );
+        try {
+            $result = $this->otp->verify(
+                (string) app(TenantContext::class)->tenantId(),
+                self::VERIFY_PURPOSES,
+                $challengeId,
+                $validated['token'],
+                CarbonImmutable::parse(gmdate('Y-m-d\TH:i:s.v\Z')),
+            );
+        } catch (OtpProviderUnavailableException $e) {
+            // Outage during judging: the attempt bump rolls back with
+            // the transaction, and the caller sees a typed 503 — never
+            // a 401 that would burn the challenge.
+            report($e);
 
-        if ($challenge === null) {
+            return new JsonResponse([
+                'error' => ['code' => 'dependency_unavailable', 'message' => 'Verification is temporarily unavailable. Try again shortly.', 'request_id' => $this->requestId($request)],
+            ], 503);
+        }
+
+        if ($result->status !== OtpVerifyStatus::Match) {
             return new JsonResponse([
                 'error' => ['code' => 'unauthenticated', 'message' => 'Invalid or expired code.', 'request_id' => $this->requestId($request)],
             ], 401);
         }
+
+        $challenge = $result->challenge;
 
         $user = $found['user'];
         $payload = $challenge->payload ?? [];
