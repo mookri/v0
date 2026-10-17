@@ -13,6 +13,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
           'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
           'role' => 'App\\Platform\\Authz\\Models\\Role',
           'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
@@ -22,6 +23,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
           'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
           'db' => 'Illuminate\\Support\\Facades\\DB',
           'str' => 'Illuminate\\Support\\Str',
@@ -48,6 +50,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
           'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
           'role' => 'App\\Platform\\Authz\\Models\\Role',
           'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
@@ -57,6 +60,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
           'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
           'db' => 'Illuminate\\Support\\Facades\\DB',
           'str' => 'Illuminate\\Support\\Str',
@@ -72,6 +76,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'user' => 'App\\Models\\User',
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
             'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
             'role' => 'App\\Platform\\Authz\\Models\\Role',
             'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
@@ -81,6 +86,153 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
             'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+            'request' => 'Illuminate\\Http\\Request',
+            'db' => 'Illuminate\\Support\\Facades\\DB',
+            'str' => 'Illuminate\\Support\\Str',
+          ),
+           'className' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+           'functionName' => NULL,
+           'templatePhpDocNodes' => 
+          array (
+          ),
+           'parent' => NULL,
+           'typeAliasesMap' => 
+          array (
+          ),
+           'bypassTypeAliases' => false,
+           'constUses' => 
+          array (
+          ),
+           'typeAliasClassName' => NULL,
+           'traitData' => NULL,
+        )),
+         'typeAliasesMap' => 
+        array (
+        ),
+         'bypassTypeAliases' => false,
+         'constUses' => 
+        array (
+        ),
+         'typeAliasClassName' => NULL,
+         'traitData' => NULL,
+      )),
+      '703a41e0d11b5365024b2e7aea5ef86f' => 
+      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+         'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+         'uses' => 
+        array (
+          'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
+          'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
+          'role' => 'App\\Platform\\Authz\\Models\\Role',
+          'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
+          'invite' => 'App\\Platform\\Identity\\Models\\Invite',
+          'connectionresolver' => 'App\\Platform\\Tenancy\\ConnectionResolver',
+          'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
+          'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
+          'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
+          'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+          'request' => 'Illuminate\\Http\\Request',
+          'db' => 'Illuminate\\Support\\Facades\\DB',
+          'str' => 'Illuminate\\Support\\Str',
+        ),
+         'className' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+         'functionName' => 'index',
+         'templatePhpDocNodes' => 
+        array (
+        ),
+         'parent' => 
+        \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+           'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+           'uses' => 
+          array (
+            'user' => 'App\\Models\\User',
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
+            'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
+            'role' => 'App\\Platform\\Authz\\Models\\Role',
+            'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
+            'invite' => 'App\\Platform\\Identity\\Models\\Invite',
+            'connectionresolver' => 'App\\Platform\\Tenancy\\ConnectionResolver',
+            'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
+            'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
+            'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
+            'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+            'request' => 'Illuminate\\Http\\Request',
+            'db' => 'Illuminate\\Support\\Facades\\DB',
+            'str' => 'Illuminate\\Support\\Str',
+          ),
+           'className' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+           'functionName' => NULL,
+           'templatePhpDocNodes' => 
+          array (
+          ),
+           'parent' => NULL,
+           'typeAliasesMap' => 
+          array (
+          ),
+           'bypassTypeAliases' => false,
+           'constUses' => 
+          array (
+          ),
+           'typeAliasClassName' => NULL,
+           'traitData' => NULL,
+        )),
+         'typeAliasesMap' => 
+        array (
+        ),
+         'bypassTypeAliases' => false,
+         'constUses' => 
+        array (
+        ),
+         'typeAliasClassName' => NULL,
+         'traitData' => NULL,
+      )),
+      '9b8df2ec531719f91c03972053711149' => 
+      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+         'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+         'uses' => 
+        array (
+          'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
+          'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
+          'role' => 'App\\Platform\\Authz\\Models\\Role',
+          'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
+          'invite' => 'App\\Platform\\Identity\\Models\\Invite',
+          'connectionresolver' => 'App\\Platform\\Tenancy\\ConnectionResolver',
+          'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
+          'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
+          'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
+          'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+          'request' => 'Illuminate\\Http\\Request',
+          'db' => 'Illuminate\\Support\\Facades\\DB',
+          'str' => 'Illuminate\\Support\\Str',
+        ),
+         'className' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+         'functionName' => 'issuerMembership',
+         'templatePhpDocNodes' => 
+        array (
+        ),
+         'parent' => 
+        \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+           'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+           'uses' => 
+          array (
+            'user' => 'App\\Models\\User',
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
+            'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
+            'role' => 'App\\Platform\\Authz\\Models\\Role',
+            'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
+            'invite' => 'App\\Platform\\Identity\\Models\\Invite',
+            'connectionresolver' => 'App\\Platform\\Tenancy\\ConnectionResolver',
+            'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
+            'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
+            'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
+            'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
             'request' => 'Illuminate\\Http\\Request',
             'db' => 'Illuminate\\Support\\Facades\\DB',
             'str' => 'Illuminate\\Support\\Str',
@@ -117,6 +269,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
           'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
           'role' => 'App\\Platform\\Authz\\Models\\Role',
           'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
@@ -126,6 +279,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
           'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
           'db' => 'Illuminate\\Support\\Facades\\DB',
           'str' => 'Illuminate\\Support\\Str',
@@ -141,6 +295,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'user' => 'App\\Models\\User',
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
             'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
             'role' => 'App\\Platform\\Authz\\Models\\Role',
             'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
@@ -150,6 +305,80 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
             'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+            'request' => 'Illuminate\\Http\\Request',
+            'db' => 'Illuminate\\Support\\Facades\\DB',
+            'str' => 'Illuminate\\Support\\Str',
+          ),
+           'className' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+           'functionName' => NULL,
+           'templatePhpDocNodes' => 
+          array (
+          ),
+           'parent' => NULL,
+           'typeAliasesMap' => 
+          array (
+          ),
+           'bypassTypeAliases' => false,
+           'constUses' => 
+          array (
+          ),
+           'typeAliasClassName' => NULL,
+           'traitData' => NULL,
+        )),
+         'typeAliasesMap' => 
+        array (
+        ),
+         'bypassTypeAliases' => false,
+         'constUses' => 
+        array (
+        ),
+         'typeAliasClassName' => NULL,
+         'traitData' => NULL,
+      )),
+      '7896b800a4740dcd3d29af22dfbd8843' => 
+      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+         'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+         'uses' => 
+        array (
+          'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
+          'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
+          'role' => 'App\\Platform\\Authz\\Models\\Role',
+          'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
+          'invite' => 'App\\Platform\\Identity\\Models\\Invite',
+          'connectionresolver' => 'App\\Platform\\Tenancy\\ConnectionResolver',
+          'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
+          'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
+          'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
+          'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+          'request' => 'Illuminate\\Http\\Request',
+          'db' => 'Illuminate\\Support\\Facades\\DB',
+          'str' => 'Illuminate\\Support\\Str',
+        ),
+         'className' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+         'functionName' => 'issueJson',
+         'templatePhpDocNodes' => 
+        array (
+        ),
+         'parent' => 
+        \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+           'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+           'uses' => 
+          array (
+            'user' => 'App\\Models\\User',
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
+            'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
+            'role' => 'App\\Platform\\Authz\\Models\\Role',
+            'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
+            'invite' => 'App\\Platform\\Identity\\Models\\Invite',
+            'connectionresolver' => 'App\\Platform\\Tenancy\\ConnectionResolver',
+            'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
+            'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
+            'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
+            'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
             'request' => 'Illuminate\\Http\\Request',
             'db' => 'Illuminate\\Support\\Facades\\DB',
             'str' => 'Illuminate\\Support\\Str',
@@ -186,6 +415,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
           'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
           'role' => 'App\\Platform\\Authz\\Models\\Role',
           'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
@@ -195,6 +425,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
           'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
           'db' => 'Illuminate\\Support\\Facades\\DB',
           'str' => 'Illuminate\\Support\\Str',
@@ -210,6 +441,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'user' => 'App\\Models\\User',
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
             'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
             'role' => 'App\\Platform\\Authz\\Models\\Role',
             'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
@@ -219,6 +451,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
             'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
             'request' => 'Illuminate\\Http\\Request',
             'db' => 'Illuminate\\Support\\Facades\\DB',
             'str' => 'Illuminate\\Support\\Str',
@@ -255,6 +488,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
           'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
           'role' => 'App\\Platform\\Authz\\Models\\Role',
           'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
@@ -264,6 +498,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
           'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
           'db' => 'Illuminate\\Support\\Facades\\DB',
           'str' => 'Illuminate\\Support\\Str',
@@ -279,6 +514,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'user' => 'App\\Models\\User',
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
             'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
             'role' => 'App\\Platform\\Authz\\Models\\Role',
             'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
@@ -288,6 +524,80 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
             'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+            'request' => 'Illuminate\\Http\\Request',
+            'db' => 'Illuminate\\Support\\Facades\\DB',
+            'str' => 'Illuminate\\Support\\Str',
+          ),
+           'className' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+           'functionName' => NULL,
+           'templatePhpDocNodes' => 
+          array (
+          ),
+           'parent' => NULL,
+           'typeAliasesMap' => 
+          array (
+          ),
+           'bypassTypeAliases' => false,
+           'constUses' => 
+          array (
+          ),
+           'typeAliasClassName' => NULL,
+           'traitData' => NULL,
+        )),
+         'typeAliasesMap' => 
+        array (
+        ),
+         'bypassTypeAliases' => false,
+         'constUses' => 
+        array (
+        ),
+         'typeAliasClassName' => NULL,
+         'traitData' => NULL,
+      )),
+      'f66e14b741ad7c53a2d4217b216d814c' => 
+      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+         'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+         'uses' => 
+        array (
+          'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
+          'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
+          'role' => 'App\\Platform\\Authz\\Models\\Role',
+          'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
+          'invite' => 'App\\Platform\\Identity\\Models\\Invite',
+          'connectionresolver' => 'App\\Platform\\Tenancy\\ConnectionResolver',
+          'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
+          'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
+          'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
+          'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+          'request' => 'Illuminate\\Http\\Request',
+          'db' => 'Illuminate\\Support\\Facades\\DB',
+          'str' => 'Illuminate\\Support\\Str',
+        ),
+         'className' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+         'functionName' => 'revokeJson',
+         'templatePhpDocNodes' => 
+        array (
+        ),
+         'parent' => 
+        \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+           'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+           'uses' => 
+          array (
+            'user' => 'App\\Models\\User',
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
+            'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
+            'role' => 'App\\Platform\\Authz\\Models\\Role',
+            'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
+            'invite' => 'App\\Platform\\Identity\\Models\\Invite',
+            'connectionresolver' => 'App\\Platform\\Tenancy\\ConnectionResolver',
+            'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
+            'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
+            'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
+            'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
             'request' => 'Illuminate\\Http\\Request',
             'db' => 'Illuminate\\Support\\Facades\\DB',
             'str' => 'Illuminate\\Support\\Str',
@@ -324,6 +634,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
           'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
           'role' => 'App\\Platform\\Authz\\Models\\Role',
           'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
@@ -333,6 +644,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
           'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
           'db' => 'Illuminate\\Support\\Facades\\DB',
           'str' => 'Illuminate\\Support\\Str',
@@ -348,6 +660,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'user' => 'App\\Models\\User',
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
             'membershiproleassignment' => 'App\\Platform\\Authz\\Models\\MembershipRoleAssignment',
             'role' => 'App\\Platform\\Authz\\Models\\Role',
             'trackseeder' => 'App\\Platform\\Identity\\Contracts\\TrackSeeder',
@@ -357,6 +670,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
             'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
             'request' => 'Illuminate\\Http\\Request',
             'db' => 'Illuminate\\Support\\Facades\\DB',
             'str' => 'Illuminate\\Support\\Str',
@@ -390,7 +704,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Identity\\Http\\Controllers\\InviteController.php' => '6ad4a00c99216b36372dd09c61da0e846b8fe0b9b25c6e5a393d3837440fce46',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Identity\\Http\\Controllers\\InviteController.php' => '3a39c4704695c00a4298d5376845bb327bed64a61c1daadf2f20119607366d92',
     ),
   ),
 ));

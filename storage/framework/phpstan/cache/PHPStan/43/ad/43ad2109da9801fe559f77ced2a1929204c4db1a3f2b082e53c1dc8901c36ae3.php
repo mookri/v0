@@ -13,10 +13,13 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-          'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-          'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-          'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
           'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+          'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+          'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+          'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+          'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+          'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
           'carbonimmutable' => 'Carbon\\CarbonImmutable',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -43,10 +46,13 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-          'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-          'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-          'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
           'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+          'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+          'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+          'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+          'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+          'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
           'carbonimmutable' => 'Carbon\\CarbonImmutable',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -62,69 +68,13 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-            'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-            'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-            'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
             'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
-            'carbonimmutable' => 'Carbon\\CarbonImmutable',
-            'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
-            'request' => 'Illuminate\\Http\\Request',
-          ),
-           'className' => 'App\\Modules\\Onboarding\\Http\\Controllers\\SubmitController',
-           'functionName' => NULL,
-           'templatePhpDocNodes' => 
-          array (
-          ),
-           'parent' => NULL,
-           'typeAliasesMap' => 
-          array (
-          ),
-           'bypassTypeAliases' => false,
-           'constUses' => 
-          array (
-          ),
-           'typeAliasClassName' => NULL,
-           'traitData' => NULL,
-        )),
-         'typeAliasesMap' => 
-        array (
-        ),
-         'bypassTypeAliases' => false,
-         'constUses' => 
-        array (
-        ),
-         'typeAliasClassName' => NULL,
-         'traitData' => NULL,
-      )),
-      'c7a95cc75e40eae579e6614fed6aa46e' => 
-      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
-         'namespace' => 'App\\Modules\\Onboarding\\Http\\Controllers',
-         'uses' => 
-        array (
-          'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-          'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-          'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-          'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
-          'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
-          'carbonimmutable' => 'Carbon\\CarbonImmutable',
-          'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
-          'request' => 'Illuminate\\Http\\Request',
-        ),
-         'className' => 'App\\Modules\\Onboarding\\Http\\Controllers\\SubmitController',
-         'functionName' => 'withRandomCodes',
-         'templatePhpDocNodes' => 
-        array (
-        ),
-         'parent' => 
-        \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
-           'namespace' => 'App\\Modules\\Onboarding\\Http\\Controllers',
-           'uses' => 
-          array (
-            'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-            'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-            'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-            'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
-            'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+            'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+            'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+            'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+            'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+            'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
             'carbonimmutable' => 'Carbon\\CarbonImmutable',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
@@ -161,10 +111,13 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-          'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-          'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-          'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
           'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+          'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+          'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+          'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+          'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+          'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
           'carbonimmutable' => 'Carbon\\CarbonImmutable',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -180,10 +133,13 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-            'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-            'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-            'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
             'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+            'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+            'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+            'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+            'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+            'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
             'carbonimmutable' => 'Carbon\\CarbonImmutable',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
@@ -220,10 +176,13 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-          'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-          'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-          'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
           'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+          'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+          'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+          'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+          'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+          'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
           'carbonimmutable' => 'Carbon\\CarbonImmutable',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -239,10 +198,13 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-            'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-            'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-            'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
             'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+            'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+            'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+            'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+            'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+            'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
             'carbonimmutable' => 'Carbon\\CarbonImmutable',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
@@ -279,10 +241,13 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-          'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-          'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-          'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
           'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+          'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+          'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+          'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+          'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+          'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
           'carbonimmutable' => 'Carbon\\CarbonImmutable',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -298,10 +263,78 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-            'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-            'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-            'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
             'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+            'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+            'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+            'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+            'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+            'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
+            'carbonimmutable' => 'Carbon\\CarbonImmutable',
+            'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'request' => 'Illuminate\\Http\\Request',
+          ),
+           'className' => 'App\\Modules\\Onboarding\\Http\\Controllers\\SubmitController',
+           'functionName' => NULL,
+           'templatePhpDocNodes' => 
+          array (
+          ),
+           'parent' => NULL,
+           'typeAliasesMap' => 
+          array (
+          ),
+           'bypassTypeAliases' => false,
+           'constUses' => 
+          array (
+          ),
+           'typeAliasClassName' => NULL,
+           'traitData' => NULL,
+        )),
+         'typeAliasesMap' => 
+        array (
+        ),
+         'bypassTypeAliases' => false,
+         'constUses' => 
+        array (
+        ),
+         'typeAliasClassName' => NULL,
+         'traitData' => NULL,
+      )),
+      'cf483700001c70323dc4d458e2df4e5c' => 
+      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+         'namespace' => 'App\\Modules\\Onboarding\\Http\\Controllers',
+         'uses' => 
+        array (
+          'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
+          'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+          'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+          'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+          'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+          'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+          'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
+          'carbonimmutable' => 'Carbon\\CarbonImmutable',
+          'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'request' => 'Illuminate\\Http\\Request',
+        ),
+         'className' => 'App\\Modules\\Onboarding\\Http\\Controllers\\SubmitController',
+         'functionName' => 'contactPhone',
+         'templatePhpDocNodes' => 
+        array (
+        ),
+         'parent' => 
+        \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+           'namespace' => 'App\\Modules\\Onboarding\\Http\\Controllers',
+           'uses' => 
+          array (
+            'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
+            'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+            'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+            'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+            'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+            'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+            'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
             'carbonimmutable' => 'Carbon\\CarbonImmutable',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
@@ -338,10 +371,13 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-          'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-          'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-          'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
           'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+          'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+          'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+          'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+          'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+          'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
           'carbonimmutable' => 'Carbon\\CarbonImmutable',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -357,10 +393,78 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-            'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-            'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-            'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
             'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+            'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+            'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+            'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+            'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+            'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
+            'carbonimmutable' => 'Carbon\\CarbonImmutable',
+            'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'request' => 'Illuminate\\Http\\Request',
+          ),
+           'className' => 'App\\Modules\\Onboarding\\Http\\Controllers\\SubmitController',
+           'functionName' => NULL,
+           'templatePhpDocNodes' => 
+          array (
+          ),
+           'parent' => NULL,
+           'typeAliasesMap' => 
+          array (
+          ),
+           'bypassTypeAliases' => false,
+           'constUses' => 
+          array (
+          ),
+           'typeAliasClassName' => NULL,
+           'traitData' => NULL,
+        )),
+         'typeAliasesMap' => 
+        array (
+        ),
+         'bypassTypeAliases' => false,
+         'constUses' => 
+        array (
+        ),
+         'typeAliasClassName' => NULL,
+         'traitData' => NULL,
+      )),
+      '1a43dd2e0e76720178d3a0947f7d3024' => 
+      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+         'namespace' => 'App\\Modules\\Onboarding\\Http\\Controllers',
+         'uses' => 
+        array (
+          'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
+          'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+          'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+          'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+          'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+          'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+          'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
+          'carbonimmutable' => 'Carbon\\CarbonImmutable',
+          'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'request' => 'Illuminate\\Http\\Request',
+        ),
+         'className' => 'App\\Modules\\Onboarding\\Http\\Controllers\\SubmitController',
+         'functionName' => 'resend',
+         'templatePhpDocNodes' => 
+        array (
+        ),
+         'parent' => 
+        \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+           'namespace' => 'App\\Modules\\Onboarding\\Http\\Controllers',
+           'uses' => 
+          array (
+            'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
+            'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+            'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+            'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+            'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+            'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+            'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
             'carbonimmutable' => 'Carbon\\CarbonImmutable',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
@@ -397,10 +501,13 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-          'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-          'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-          'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
           'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+          'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+          'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+          'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+          'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+          'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
           'carbonimmutable' => 'Carbon\\CarbonImmutable',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -416,10 +523,13 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-            'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-            'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-            'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
             'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+            'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+            'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+            'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+            'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+            'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
             'carbonimmutable' => 'Carbon\\CarbonImmutable',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
@@ -456,10 +566,13 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-          'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-          'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-          'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
           'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+          'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+          'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+          'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+          'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+          'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
           'carbonimmutable' => 'Carbon\\CarbonImmutable',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -475,10 +588,13 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
-            'otpratelimitedexception' => 'App\\Modules\\Onboarding\\OtpRateLimitedException',
-            'otpservice' => 'App\\Modules\\Onboarding\\OtpService',
-            'randomotpcodes' => 'App\\Modules\\Onboarding\\RandomOtpCodes',
             'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'otpchallengemanager' => 'App\\Platform\\Identity\\Otp\\OtpChallengeManager',
+            'otpdeliverypolicy' => 'App\\Platform\\Identity\\Otp\\OtpDeliveryPolicy',
+            'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
+            'otpratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpRateLimitedException',
+            'otpverifystatus' => 'App\\Platform\\Identity\\Otp\\OtpVerifyStatus',
+            'tenantcontext' => 'App\\Platform\\Tenancy\\TenantContext',
             'carbonimmutable' => 'Carbon\\CarbonImmutable',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
@@ -512,7 +628,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Onboarding\\Http\\Controllers\\SubmitController.php' => 'df2fc08535baf66e9e6be9f823dab6375cef800388229a69568b71865d878ad6',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Onboarding\\Http\\Controllers\\SubmitController.php' => '91e0fc484433a20de33809f03b10bf302dc69f28f21edc01934d1f3bdf02822d',
     ),
   ),
 ));

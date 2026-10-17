@@ -17,6 +17,16 @@ final class RevokeTokenTest extends TenantIntegrationTestCase
 {
     use IssuesUserTokens;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Reuse detection now records to the federation audit chain
+        // (ADR-0020 D5), whose pseudonymization requires the identity
+        // secret — kit convention: each test supplies its own.
+        config(['identity.hmac_secret' => 'revoke-token-test-secret']);
+    }
+
     /**
      * @return array{0: Client, 1: array{access_token: string, refresh_token: string}}
      */

@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Platform\Identity\Http\Controllers\InviteController.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Platform\Identity\Http\Controllers\InviteController
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-6ad4a00c99216b36372dd09c61da0e846b8fe0b9b25c6e5a393d3837440fce46',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-3a39c4704695c00a4298d5376845bb327bed64a61c1daadf2f20119607366d92',
    'data' => 
   array (
     'locatedSource' => 
@@ -33,8 +33,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     'attributes' => 
     array (
     ),
-    'startLine' => 27,
-    'endLine' => 263,
+    'startLine' => 29,
+    'endLine' => 362,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => NULL,
@@ -58,20 +58,20 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'code' => '[\'pandit\', \'partner-vendor\', \'partner-individual\', \'customer\', \'staff\']',
           'attributes' => 
           array (
-            'startLine' => 29,
-            'endLine' => 29,
-            'startTokenPos' => 90,
-            'startFilePos' => 1058,
-            'endTokenPos' => 104,
-            'endFilePos' => 1128,
+            'startLine' => 31,
+            'endLine' => 31,
+            'startTokenPos' => 100,
+            'startFilePos' => 1131,
+            'endTokenPos' => 114,
+            'endFilePos' => 1201,
           ),
         ),
         'docComment' => NULL,
         'attributes' => 
         array (
         ),
-        'startLine' => 29,
-        'endLine' => 29,
+        'startLine' => 31,
+        'endLine' => 31,
         'startColumn' => 5,
         'endColumn' => 99,
       ),
@@ -87,20 +87,20 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'code' => '10',
           'attributes' => 
           array (
-            'startLine' => 31,
-            'endLine' => 31,
-            'startTokenPos' => 115,
-            'startFilePos' => 1172,
-            'endTokenPos' => 115,
-            'endFilePos' => 1173,
+            'startLine' => 33,
+            'endLine' => 33,
+            'startTokenPos' => 125,
+            'startFilePos' => 1245,
+            'endTokenPos' => 125,
+            'endFilePos' => 1246,
           ),
         ),
         'docComment' => NULL,
         'attributes' => 
         array (
         ),
-        'startLine' => 31,
-        'endLine' => 31,
+        'startLine' => 33,
+        'endLine' => 33,
         'startColumn' => 5,
         'endColumn' => 43,
       ),
@@ -134,8 +134,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 33,
-            'endLine' => 33,
+            'startLine' => 35,
+            'endLine' => 35,
             'startColumn' => 32,
             'endColumn' => 47,
             'parameterIndex' => 0,
@@ -156,8 +156,182 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 33,
-        'endLine' => 36,
+        'startLine' => 35,
+        'endLine' => 38,
+        'startColumn' => 5,
+        'endColumn' => 5,
+        'couldThrow' => false,
+        'isClosure' => false,
+        'isGenerator' => false,
+        'isVariadic' => false,
+        'modifiers' => 4,
+        'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+        'declaringClassName' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+        'implementingClassName' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+        'currentClassName' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+        'aliasName' => NULL,
+      ),
+      'index' => 
+      array (
+        'name' => 'index',
+        'parameters' => 
+        array (
+          'request' => 
+          array (
+            'name' => 'request',
+            'default' => NULL,
+            'type' => 
+            array (
+              'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+              'data' => 
+              array (
+                'name' => 'Illuminate\\Http\\Request',
+                'isIdentifier' => false,
+              ),
+            ),
+            'isVariadic' => false,
+            'byRef' => false,
+            'isPromoted' => false,
+            'attributes' => 
+            array (
+            ),
+            'startLine' => 45,
+            'endLine' => 45,
+            'startColumn' => 27,
+            'endColumn' => 42,
+            'parameterIndex' => 0,
+            'isOptional' => false,
+          ),
+        ),
+        'returnsReference' => false,
+        'returnType' => 
+        array (
+          'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+          'data' => 
+          array (
+            'name' => 'Illuminate\\Http\\JsonResponse',
+            'isIdentifier' => false,
+          ),
+        ),
+        'attributes' => 
+        array (
+        ),
+        'docComment' => '/**
+ * Tenant invite inventory for the console — metadata only: the
+ * one-time token and its hash never leave the server after issue.
+ * Scoped like issue (tenant required, issuer active in it).
+ */',
+        'startLine' => 45,
+        'endLine' => 80,
+        'startColumn' => 5,
+        'endColumn' => 5,
+        'couldThrow' => false,
+        'isClosure' => false,
+        'isGenerator' => false,
+        'isVariadic' => false,
+        'modifiers' => 1,
+        'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+        'declaringClassName' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+        'implementingClassName' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+        'currentClassName' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+        'aliasName' => NULL,
+      ),
+      'issuerMembership' => 
+      array (
+        'name' => 'issuerMembership',
+        'parameters' => 
+        array (
+          'request' => 
+          array (
+            'name' => 'request',
+            'default' => NULL,
+            'type' => 
+            array (
+              'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+              'data' => 
+              array (
+                'name' => 'Illuminate\\Http\\Request',
+                'isIdentifier' => false,
+              ),
+            ),
+            'isVariadic' => false,
+            'byRef' => false,
+            'isPromoted' => false,
+            'attributes' => 
+            array (
+            ),
+            'startLine' => 86,
+            'endLine' => 86,
+            'startColumn' => 39,
+            'endColumn' => 54,
+            'parameterIndex' => 0,
+            'isOptional' => false,
+          ),
+          'tenantId' => 
+          array (
+            'name' => 'tenantId',
+            'default' => NULL,
+            'type' => 
+            array (
+              'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+              'data' => 
+              array (
+                'name' => 'string',
+                'isIdentifier' => true,
+              ),
+            ),
+            'isVariadic' => false,
+            'byRef' => false,
+            'isPromoted' => false,
+            'attributes' => 
+            array (
+            ),
+            'startLine' => 86,
+            'endLine' => 86,
+            'startColumn' => 57,
+            'endColumn' => 72,
+            'parameterIndex' => 1,
+            'isOptional' => false,
+          ),
+        ),
+        'returnsReference' => false,
+        'returnType' => 
+        array (
+          'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+          'data' => 
+          array (
+            'types' => 
+            array (
+              0 => 
+              array (
+                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                'data' => 
+                array (
+                  'name' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
+                  'isIdentifier' => false,
+                ),
+              ),
+              1 => 
+              array (
+                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                'data' => 
+                array (
+                  'name' => 'Illuminate\\Http\\JsonResponse',
+                  'isIdentifier' => false,
+                ),
+              ),
+            ),
+          ),
+        ),
+        'attributes' => 
+        array (
+        ),
+        'docComment' => '/**
+ * Issuers need an active membership in the invite\'s tenant (least
+ * privilege) — the shared gate for list/issue/revoke.
+ */',
+        'startLine' => 86,
+        'endLine' => 101,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -195,10 +369,90 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 38,
-            'endLine' => 38,
+            'startLine' => 108,
+            'endLine' => 108,
             'startColumn' => 27,
             'endColumn' => 42,
+            'parameterIndex' => 0,
+            'isOptional' => false,
+          ),
+        ),
+        'returnsReference' => false,
+        'returnType' => 
+        array (
+          'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+          'data' => 
+          array (
+            'types' => 
+            array (
+              0 => 
+              array (
+                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                'data' => 
+                array (
+                  'name' => 'Illuminate\\Http\\JsonResponse',
+                  'isIdentifier' => false,
+                ),
+              ),
+              1 => 
+              array (
+                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                'data' => 
+                array (
+                  'name' => 'Illuminate\\Http\\RedirectResponse',
+                  'isIdentifier' => false,
+                ),
+              ),
+            ),
+          ),
+        ),
+        'attributes' => 
+        array (
+        ),
+        'docComment' => NULL,
+        'startLine' => 108,
+        'endLine' => 116,
+        'startColumn' => 5,
+        'endColumn' => 5,
+        'couldThrow' => false,
+        'isClosure' => false,
+        'isGenerator' => false,
+        'isVariadic' => false,
+        'modifiers' => 1,
+        'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+        'declaringClassName' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+        'implementingClassName' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+        'currentClassName' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+        'aliasName' => NULL,
+      ),
+      'issueJson' => 
+      array (
+        'name' => 'issueJson',
+        'parameters' => 
+        array (
+          'request' => 
+          array (
+            'name' => 'request',
+            'default' => NULL,
+            'type' => 
+            array (
+              'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+              'data' => 
+              array (
+                'name' => 'Illuminate\\Http\\Request',
+                'isIdentifier' => false,
+              ),
+            ),
+            'isVariadic' => false,
+            'byRef' => false,
+            'isPromoted' => false,
+            'attributes' => 
+            array (
+            ),
+            'startLine' => 118,
+            'endLine' => 118,
+            'startColumn' => 32,
+            'endColumn' => 47,
             'parameterIndex' => 0,
             'isOptional' => false,
           ),
@@ -217,15 +471,15 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 38,
-        'endLine' => 130,
+        'startLine' => 118,
+        'endLine' => 204,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
         'isClosure' => false,
         'isGenerator' => false,
         'isVariadic' => false,
-        'modifiers' => 1,
+        'modifiers' => 4,
         'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
         'declaringClassName' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
         'implementingClassName' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
@@ -256,8 +510,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 132,
-            'endLine' => 132,
+            'startLine' => 206,
+            'endLine' => 206,
             'startColumn' => 28,
             'endColumn' => 43,
             'parameterIndex' => 0,
@@ -278,8 +532,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 132,
-        'endLine' => 232,
+        'startLine' => 206,
+        'endLine' => 306,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => true,
@@ -317,8 +571,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 234,
-            'endLine' => 234,
+            'startLine' => 308,
+            'endLine' => 308,
             'startColumn' => 28,
             'endColumn' => 43,
             'parameterIndex' => 0,
@@ -343,10 +597,116 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 234,
-            'endLine' => 234,
+            'startLine' => 308,
+            'endLine' => 308,
             'startColumn' => 46,
             'endColumn' => 55,
+            'parameterIndex' => 1,
+            'isOptional' => false,
+          ),
+        ),
+        'returnsReference' => false,
+        'returnType' => 
+        array (
+          'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+          'data' => 
+          array (
+            'types' => 
+            array (
+              0 => 
+              array (
+                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                'data' => 
+                array (
+                  'name' => 'Illuminate\\Http\\JsonResponse',
+                  'isIdentifier' => false,
+                ),
+              ),
+              1 => 
+              array (
+                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                'data' => 
+                array (
+                  'name' => 'Illuminate\\Http\\RedirectResponse',
+                  'isIdentifier' => false,
+                ),
+              ),
+            ),
+          ),
+        ),
+        'attributes' => 
+        array (
+        ),
+        'docComment' => NULL,
+        'startLine' => 308,
+        'endLine' => 315,
+        'startColumn' => 5,
+        'endColumn' => 5,
+        'couldThrow' => false,
+        'isClosure' => false,
+        'isGenerator' => false,
+        'isVariadic' => false,
+        'modifiers' => 1,
+        'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+        'declaringClassName' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+        'implementingClassName' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+        'currentClassName' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
+        'aliasName' => NULL,
+      ),
+      'revokeJson' => 
+      array (
+        'name' => 'revokeJson',
+        'parameters' => 
+        array (
+          'request' => 
+          array (
+            'name' => 'request',
+            'default' => NULL,
+            'type' => 
+            array (
+              'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+              'data' => 
+              array (
+                'name' => 'Illuminate\\Http\\Request',
+                'isIdentifier' => false,
+              ),
+            ),
+            'isVariadic' => false,
+            'byRef' => false,
+            'isPromoted' => false,
+            'attributes' => 
+            array (
+            ),
+            'startLine' => 317,
+            'endLine' => 317,
+            'startColumn' => 33,
+            'endColumn' => 48,
+            'parameterIndex' => 0,
+            'isOptional' => false,
+          ),
+          'id' => 
+          array (
+            'name' => 'id',
+            'default' => NULL,
+            'type' => 
+            array (
+              'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+              'data' => 
+              array (
+                'name' => 'string',
+                'isIdentifier' => true,
+              ),
+            ),
+            'isVariadic' => false,
+            'byRef' => false,
+            'isPromoted' => false,
+            'attributes' => 
+            array (
+            ),
+            'startLine' => 317,
+            'endLine' => 317,
+            'startColumn' => 51,
+            'endColumn' => 60,
             'parameterIndex' => 1,
             'isOptional' => false,
           ),
@@ -365,15 +725,15 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 234,
-        'endLine' => 250,
+        'startLine' => 317,
+        'endLine' => 349,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
         'isClosure' => false,
         'isGenerator' => false,
         'isVariadic' => false,
-        'modifiers' => 1,
+        'modifiers' => 4,
         'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
         'declaringClassName' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
         'implementingClassName' => 'App\\Platform\\Identity\\Http\\Controllers\\InviteController',
@@ -404,8 +764,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 255,
-            'endLine' => 255,
+            'startLine' => 354,
+            'endLine' => 354,
             'startColumn' => 32,
             'endColumn' => 45,
             'parameterIndex' => 0,
@@ -430,8 +790,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 255,
-            'endLine' => 255,
+            'startLine' => 354,
+            'endLine' => 354,
             'startColumn' => 48,
             'endColumn' => 57,
             'parameterIndex' => 1,
@@ -456,8 +816,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 255,
-            'endLine' => 255,
+            'startLine' => 354,
+            'endLine' => 354,
             'startColumn' => 60,
             'endColumn' => 73,
             'parameterIndex' => 2,
@@ -499,8 +859,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'docComment' => '/**
  * @return array<string, mixed>|null
  */',
-        'startLine' => 255,
-        'endLine' => 262,
+        'startLine' => 354,
+        'endLine' => 361,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,

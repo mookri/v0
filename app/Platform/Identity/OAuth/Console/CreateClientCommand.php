@@ -10,8 +10,8 @@ use Laravel\Passport\Client;
 
 /**
  * Create an OAuth client with its kernel profile: `platform:client:create
- * --name= --type= --tenant= --grants= --redirect=*`. The plaintext secret
- * prints ONCE (hashed at rest) — capture it now; rotation is a delete +
+ * --name= --type= --tenant= --grants= --redirect=* --scope=*`. The plaintext
+ * secret prints ONCE (hashed at rest) — capture it now; rotation is a delete +
  * recreate until the rotation command lands.
  *
  * Types: first_party_web (code + refresh, PKCE), first_party_service
@@ -26,7 +26,11 @@ final class CreateClientCommand extends Command
         {--type=first_party_web : first_party_web|first_party_service|partner|pos_device}
         {--tenant= : Tenant id (required for partner clients)}
         {--grants= : Comma-separated grants (defaults per type)}
-        {--redirect=* : Registered redirect URIs (first_party_web)}';
+        {--redirect=* : Registered redirect URIs (first_party_web)}
+        {--scope=* : Allowed scopes (the A5 ceiling — empty allows NOTHING, fail closed; openid for BFF web clients)}
+        {--post-logout-redirect-uri=* : Registered post-logout redirect URIs (RP-initiated logout landing zones)}
+        {--backchannel-logout-uri= : OIDC back-channel logout receiver endpoint (http(s) URL)}
+        {--require-par : Mandate pushed authorization requests (RFC 9126) for this client}';
 
     protected $description = 'Create an OAuth client with its kernel profile (secret shown once)';
 
@@ -76,7 +80,41 @@ final class CreateClientCommand extends Command
             return self::FAILURE;
         }
 
+        // A5 ceiling: without --scope the profile allows NOTHING
+        // (EnforcesProfileScopes fails closed — parity with the admin
+        // surface's allowed_scopes, which the console previously had
+        // no way to set).
+        $scopeValues = array_map('strval', (array) $this->option('scope'));
+        $scopes = array_values(array_filter(
+            array_map('trim', $scopeValues),
+            static fn (string $scope): bool => $scope !== '',
+        ));
+
         $secret = Str::random(48);
+
+        // A-SEC-004-6 console parity with the client admin surface:
+        // logout endpoints are registered http(s) URLs only — the
+        // dispatcher re-checks the scheme before any outbound request,
+        // and registration (here or over HTTP) never loosens it.
+        $postLogoutUris = array_values(array_filter(array_map('strval', (array) $this->option('post-logout-redirect-uri'))));
+
+        foreach ($postLogoutUris as $uri) {
+            if (! preg_match('#^https?://.+#i', $uri)) {
+                $this->error('Post-logout redirect URIs must be http(s) URLs.');
+
+                return self::FAILURE;
+            }
+        }
+
+        $backchannelUri = $this->option('backchannel-logout-uri') !== null
+            ? (string) $this->option('backchannel-logout-uri')
+            : null;
+
+        if ($backchannelUri !== null && ! preg_match('#^https?://.+#i', $backchannelUri)) {
+            $this->error('The back-channel logout URI must be an http(s) URL.');
+
+            return self::FAILURE;
+        }
 
         $client = new Client();
         $client->forceFill([
@@ -94,8 +132,11 @@ final class CreateClientCommand extends Command
             'client_type' => $type,
             'tenant_id' => $tenantId,
             'allowed_grants' => $grants,
-            'allowed_scopes' => [],
+            'allowed_scopes' => $scopes,
             'require_pkce' => true,
+            'require_par' => (bool) $this->option('require-par'),
+            'post_logout_redirect_uris' => $postLogoutUris,
+            'backchannel_logout_uri' => $backchannelUri,
             'rate_tier' => 'standard',
         ]);
         $profile->save();
@@ -103,6 +144,20 @@ final class CreateClientCommand extends Command
         $this->info('Client created: '.(string) $client->getKey());
         $this->line('Secret (shown once): '.$secret);
         $this->line('Grants: '.implode(', ', $grants));
+
+        if ($scopes !== []) {
+            $this->line('Allowed scopes: '.implode(', ', $scopes));
+        } else {
+            $this->comment('Allowed scopes: NONE (fail closed — pass --scope=... to permit requested scopes)');
+        }
+
+        if ($backchannelUri !== null) {
+            $this->line('Back-channel logout: '.$backchannelUri);
+        }
+
+        if ($postLogoutUris !== []) {
+            $this->line('Post-logout redirects: '.implode(', ', $postLogoutUris));
+        }
 
         return self::SUCCESS;
     }

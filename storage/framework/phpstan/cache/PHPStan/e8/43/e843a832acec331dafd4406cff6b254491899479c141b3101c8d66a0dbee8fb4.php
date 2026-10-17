@@ -614,10 +614,36 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'typeAliasClassName' => NULL,
          'traitData' => NULL,
       )),
+      'df016a0329b8c706c30c2475dd049031' => 
+      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+         'namespace' => 'App\\Models',
+         'uses' => 
+        array (
+          'userfactory' => 'Database\\Factories\\UserFactory',
+          'hasfactory' => 'Illuminate\\Database\\Eloquent\\Factories\\HasFactory',
+          'authenticatable' => 'Illuminate\\Foundation\\Auth\\User',
+          'notifiable' => 'Illuminate\\Notifications\\Notifiable',
+        ),
+         'className' => 'App\\Models\\User',
+         'functionName' => 'isActive',
+         'templatePhpDocNodes' => 
+        array (
+        ),
+         'parent' => NULL,
+         'typeAliasesMap' => 
+        array (
+        ),
+         'bypassTypeAliases' => false,
+         'constUses' => 
+        array (
+        ),
+         'typeAliasClassName' => NULL,
+         'traitData' => NULL,
+      )),
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Models\\User.php' => '8c522c4c1eb07aef3c84e5a41ff9c436488655b1a17956350c9387649d1b9b11',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Models\\User.php' => 'f181e968b592991e09dd10709c401f7ad7e350565afb07f66efdbbeb1739c46a',
       'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\vendor\\composer\\..\\laravel\\framework\\src\\Illuminate\\Database\\Eloquent\\Factories\\HasFactory.php' => 'b6cb2b164e90168e80963a5549541f5f3188a3ec8cfd368bf3611bd94fbd46a7',
       'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\vendor\\composer\\..\\laravel\\framework\\src\\Illuminate\\Notifications\\Notifiable.php' => '573fa9bb96fa392434450c9cd9deb8d4e40a5bb93c140a648267b48dfa0433ac',
       'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\vendor\\composer\\..\\laravel\\framework\\src\\Illuminate\\Notifications\\HasDatabaseNotifications.php' => 'a7a163aa1f98a0ae4cd2135905b6852e29a850beb4296aa72c44c37d22832135',

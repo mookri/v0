@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Modules\Catalog\Models\CatalogPrice.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Modules\Catalog\Models\CatalogPrice
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-1c86f989b3dc0a4d4b01c0a4432b260c2b2d01709f5431889d08eed833bf7277',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-5d48f74baebdfe471f675f098962515d3d4de4cc5dd3cce1d9b13d608f87c832',
    'data' => 
   array (
     'locatedSource' => 
@@ -30,6 +30,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
  * @property string $sku
  * @property string $market
  * @property string $currency
+ * @property int|null $pandit_id
  * @property int $price_minor
  * @property \\Illuminate\\Support\\Carbon $effective_from
  * @property \\Illuminate\\Support\\Carbon|null $effective_to
@@ -37,8 +38,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     'attributes' => 
     array (
     ),
-    'startLine' => 21,
-    'endLine' => 52,
+    'startLine' => 22,
+    'endLine' => 54,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => 'Illuminate\\Database\\Eloquent\\Model',
@@ -67,20 +68,20 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'code' => '\'tenant_shared\'',
           'attributes' => 
           array (
-            'startLine' => 26,
-            'endLine' => 26,
+            'startLine' => 27,
+            'endLine' => 27,
             'startTokenPos' => 52,
-            'startFilePos' => 646,
+            'startFilePos' => 679,
             'endTokenPos' => 52,
-            'endFilePos' => 660,
+            'endFilePos' => 693,
           ),
         ),
         'docComment' => NULL,
         'attributes' => 
         array (
         ),
-        'startLine' => 26,
-        'endLine' => 26,
+        'startLine' => 27,
+        'endLine' => 27,
         'startColumn' => 5,
         'endColumn' => 44,
         'isPromoted' => false,
@@ -99,23 +100,23 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'type' => NULL,
         'default' => 
         array (
-          'code' => '[\'tenant_id\', \'sku\', \'market\', \'currency\', \'price_minor\', \'effective_from\', \'effective_to\']',
+          'code' => '[\'tenant_id\', \'sku\', \'market\', \'currency\', \'pandit_id\', \'price_minor\', \'effective_from\', \'effective_to\']',
           'attributes' => 
           array (
-            'startLine' => 28,
-            'endLine' => 31,
+            'startLine' => 29,
+            'endLine' => 32,
             'startTokenPos' => 61,
-            'startFilePos' => 690,
-            'endTokenPos' => 84,
-            'endFilePos' => 803,
+            'startFilePos' => 723,
+            'endTokenPos' => 87,
+            'endFilePos' => 849,
           ),
         ),
         'docComment' => NULL,
         'attributes' => 
         array (
         ),
-        'startLine' => 28,
-        'endLine' => 31,
+        'startLine' => 29,
+        'endLine' => 32,
         'startColumn' => 5,
         'endColumn' => 6,
         'isPromoted' => false,
@@ -148,8 +149,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 33,
-        'endLine' => 40,
+        'startLine' => 34,
+        'endLine' => 42,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -202,8 +203,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 42,
-        'endLine' => 51,
+        'startLine' => 44,
+        'endLine' => 53,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,

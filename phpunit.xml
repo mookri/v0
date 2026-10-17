@@ -44,5 +44,9 @@
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
+        <!-- Identity bridge + federation audit pseudonymization
+             (ADR-0020 D5) need a baseline secret; tests that exercise
+             HMAC behavior still set their own explicitly. -->
+        <env name="IDENTITY_HMAC_SECRET" value="phpunit-identity-hmac-secret-32-chars!!!"/>
     </php>
 </phpunit>

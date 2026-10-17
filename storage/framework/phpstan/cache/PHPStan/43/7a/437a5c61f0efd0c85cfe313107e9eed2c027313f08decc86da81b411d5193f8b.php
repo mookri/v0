@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Modules\Onboarding\Http\Controllers\ApplicationController.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Modules\Onboarding\Http\Controllers\ApplicationController
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-c8870b300dfd92fdb74920c7ed56a595cf5ce52319c63945cab67fa6b4f3df17',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-8959abbd3936a5b531d67826ebed11d0dc2ae0bd873fa08dd694034bc2db5bf2',
    'data' => 
   array (
     'locatedSource' => 
@@ -30,8 +30,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     'attributes' => 
     array (
     ),
-    'startLine' => 14,
-    'endLine' => 93,
+    'startLine' => 15,
+    'endLine' => 88,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => NULL,
@@ -55,29 +55,113 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'code' => '[\'pandit\' => \'pandit-v1\', \'partner-vendor\' => \'partner-vendor-v1\', \'partner-individual\' => \'partner-individual-v1\']',
           'attributes' => 
           array (
-            'startLine' => 16,
-            'endLine' => 20,
-            'startTokenPos' => 40,
-            'startFilePos' => 460,
-            'endTokenPos' => 63,
-            'endFilePos' => 605,
+            'startLine' => 17,
+            'endLine' => 21,
+            'startTokenPos' => 45,
+            'startFilePos' => 525,
+            'endTokenPos' => 68,
+            'endFilePos' => 670,
           ),
         ),
         'docComment' => NULL,
         'attributes' => 
         array (
         ),
-        'startLine' => 16,
-        'endLine' => 20,
+        'startLine' => 17,
+        'endLine' => 21,
         'startColumn' => 5,
         'endColumn' => 6,
       ),
     ),
     'immediateProperties' => 
     array (
+      'applications' => 
+      array (
+        'declaringClassName' => 'App\\Modules\\Onboarding\\Http\\Controllers\\ApplicationController',
+        'implementingClassName' => 'App\\Modules\\Onboarding\\Http\\Controllers\\ApplicationController',
+        'name' => 'applications',
+        'modifiers' => 132,
+        'type' => 
+        array (
+          'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+          'data' => 
+          array (
+            'name' => 'App\\Modules\\Onboarding\\Contracts\\ManagesPartnerApplications',
+            'isIdentifier' => false,
+          ),
+        ),
+        'default' => NULL,
+        'docComment' => NULL,
+        'attributes' => 
+        array (
+        ),
+        'startLine' => 23,
+        'endLine' => 23,
+        'startColumn' => 33,
+        'endColumn' => 89,
+        'isPromoted' => true,
+        'declaredAtCompileTime' => true,
+        'immediateVirtual' => false,
+        'immediateHooks' => 
+        array (
+        ),
+      ),
     ),
     'immediateMethods' => 
     array (
+      '__construct' => 
+      array (
+        'name' => '__construct',
+        'parameters' => 
+        array (
+          'applications' => 
+          array (
+            'name' => 'applications',
+            'default' => NULL,
+            'type' => 
+            array (
+              'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+              'data' => 
+              array (
+                'name' => 'App\\Modules\\Onboarding\\Contracts\\ManagesPartnerApplications',
+                'isIdentifier' => false,
+              ),
+            ),
+            'isVariadic' => false,
+            'byRef' => false,
+            'isPromoted' => true,
+            'attributes' => 
+            array (
+            ),
+            'startLine' => 23,
+            'endLine' => 23,
+            'startColumn' => 33,
+            'endColumn' => 89,
+            'parameterIndex' => 0,
+            'isOptional' => false,
+          ),
+        ),
+        'returnsReference' => false,
+        'returnType' => NULL,
+        'attributes' => 
+        array (
+        ),
+        'docComment' => NULL,
+        'startLine' => 23,
+        'endLine' => 25,
+        'startColumn' => 5,
+        'endColumn' => 5,
+        'couldThrow' => false,
+        'isClosure' => false,
+        'isGenerator' => false,
+        'isVariadic' => false,
+        'modifiers' => 1,
+        'namespace' => 'App\\Modules\\Onboarding\\Http\\Controllers',
+        'declaringClassName' => 'App\\Modules\\Onboarding\\Http\\Controllers\\ApplicationController',
+        'implementingClassName' => 'App\\Modules\\Onboarding\\Http\\Controllers\\ApplicationController',
+        'currentClassName' => 'App\\Modules\\Onboarding\\Http\\Controllers\\ApplicationController',
+        'aliasName' => NULL,
+      ),
       'start' => 
       array (
         'name' => 'start',
@@ -102,8 +186,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 22,
-            'endLine' => 22,
+            'startLine' => 27,
+            'endLine' => 27,
             'startColumn' => 27,
             'endColumn' => 42,
             'parameterIndex' => 0,
@@ -124,8 +208,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 22,
-        'endLine' => 56,
+        'startLine' => 27,
+        'endLine' => 51,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -163,8 +247,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 58,
-            'endLine' => 58,
+            'startLine' => 53,
+            'endLine' => 53,
             'startColumn' => 26,
             'endColumn' => 41,
             'parameterIndex' => 0,
@@ -189,8 +273,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 58,
-            'endLine' => 58,
+            'startLine' => 53,
+            'endLine' => 53,
             'startColumn' => 44,
             'endColumn' => 53,
             'parameterIndex' => 1,
@@ -211,8 +295,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 58,
-        'endLine' => 92,
+        'startLine' => 53,
+        'endLine' => 87,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,

@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Platform\Tenancy\Http\Middleware\ResolveTenantContext.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Platform\Tenancy\Http\Middleware\ResolveTenantContext
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-fdefa22e1aa7d0c878a50ccab9e8b321507f3def3d88b8666f4c101af538bd01',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-52eb5240afa976a9d6c00a6b0c67b7f11cbd9cf0c126248ccc9d1ab802ccc326',
    'data' => 
   array (
     'locatedSource' => 
@@ -37,7 +37,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     array (
     ),
     'startLine' => 29,
-    'endLine' => 89,
+    'endLine' => 115,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => NULL,
@@ -269,7 +269,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         ),
         'docComment' => NULL,
         'startLine' => 37,
-        'endLine' => 83,
+        'endLine' => 109,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => true,
@@ -307,8 +307,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 85,
-            'endLine' => 85,
+            'startLine' => 111,
+            'endLine' => 111,
             'startColumn' => 31,
             'endColumn' => 46,
             'parameterIndex' => 0,
@@ -333,8 +333,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 85,
-            'endLine' => 85,
+            'startLine' => 111,
+            'endLine' => 111,
             'startColumn' => 49,
             'endColumn' => 66,
             'parameterIndex' => 1,
@@ -355,8 +355,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 85,
-        'endLine' => 88,
+        'startLine' => 111,
+        'endLine' => 114,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,

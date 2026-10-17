@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Modules\Catalog\QuoteCalculator.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Modules\Catalog\QuoteCalculator
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-15704cefacfddc3fb23c9513abb89a042a8bfa8d9da0bd569786e908c1602411',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-d6f470414cd50019964a00761d38b9d0f2b51d45823a1f372941bc3be1e76813',
    'data' => 
   array (
     'locatedSource' => 
@@ -27,12 +27,17 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
  * each line resolves its effective price at the quote instant; unknown
  * SKUs and currency mismatches fail the whole quote (never partial
  * totals). Integer minor-unit arithmetic only — no floats anywhere.
+ *
+ * Full matrix pricing (SKU × pandit × market × currency):
+ * - line.pandit_id optional → exact match first, then fallback to base (pandit_id = null)
+ * - line.market optional → defaults to \'in\'
+ * - currency required
  */',
     'attributes' => 
     array (
     ),
-    'startLine' => 15,
-    'endLine' => 64,
+    'startLine' => 20,
+    'endLine' => 95,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => NULL,
@@ -74,8 +79,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 21,
-            'endLine' => 21,
+            'startLine' => 26,
+            'endLine' => 26,
             'startColumn' => 27,
             'endColumn' => 42,
             'parameterIndex' => 0,
@@ -100,8 +105,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 21,
-            'endLine' => 21,
+            'startLine' => 26,
+            'endLine' => 26,
             'startColumn' => 45,
             'endColumn' => 56,
             'parameterIndex' => 1,
@@ -126,12 +131,50 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 21,
-            'endLine' => 21,
+            'startLine' => 26,
+            'endLine' => 26,
             'startColumn' => 59,
             'endColumn' => 77,
             'parameterIndex' => 2,
             'isOptional' => false,
+          ),
+          'defaultMarket' => 
+          array (
+            'name' => 'defaultMarket',
+            'default' => 
+            array (
+              'code' => '\'in\'',
+              'attributes' => 
+              array (
+                'startLine' => 26,
+                'endLine' => 26,
+                'startTokenPos' => 61,
+                'startFilePos' => 1109,
+                'endTokenPos' => 61,
+                'endFilePos' => 1112,
+              ),
+            ),
+            'type' => 
+            array (
+              'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+              'data' => 
+              array (
+                'name' => 'string',
+                'isIdentifier' => true,
+              ),
+            ),
+            'isVariadic' => false,
+            'byRef' => false,
+            'isPromoted' => false,
+            'attributes' => 
+            array (
+            ),
+            'startLine' => 26,
+            'endLine' => 26,
+            'startColumn' => 80,
+            'endColumn' => 107,
+            'parameterIndex' => 3,
+            'isOptional' => true,
           ),
         ),
         'returnsReference' => false,
@@ -148,11 +191,11 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => '/**
- * @param list<array{sku: string, quantity: int}> $lines
- * @return array{lines: list<array{sku: string, quantity: int, unit_minor: int, line_minor: int}>, total_minor: int, currency: string}
+ * @param list<array{sku: string, quantity: int, pandit_id?: int|null, market?: string|null}> $lines
+ * @return array{lines: list<array{sku: string, quantity: int, pandit_id?: int|null, market: string, unit_minor: int, line_minor: int}>, total_minor: int, currency: string}
  */',
-        'startLine' => 21,
-        'endLine' => 63,
+        'startLine' => 26,
+        'endLine' => 94,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => true,

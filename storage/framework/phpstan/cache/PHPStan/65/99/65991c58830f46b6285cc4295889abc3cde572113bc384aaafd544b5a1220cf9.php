@@ -78,7 +78,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Authz\\Exceptions\\AuthorizationDeniedException.php' => '572aaf220b88f9f9ffbe653957f29320328bcaaf079e48ea3dcc30c4e7441b3c',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Authz\\Exceptions\\AuthorizationDeniedException.php' => 'f6710b087458ef3b833ab1a2ad9bcfb9bed3876b33ba087ff51f0fc299894f2d',
     ),
   ),
 ));

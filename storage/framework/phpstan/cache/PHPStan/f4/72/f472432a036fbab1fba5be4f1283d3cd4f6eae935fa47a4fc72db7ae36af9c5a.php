@@ -32,7 +32,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'typeAliasClassName' => NULL,
          'traitData' => NULL,
       )),
-      'd9d2e78fdece8eed7298aa2ab8958e4d' => 
+      '4209579931457a587090e7ccfc364f12' => 
       \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
          'namespace' => NULL,
          'uses' => 
@@ -41,7 +41,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'blueprint' => 'Illuminate\\Database\\Schema\\Blueprint',
           'schema' => 'Illuminate\\Support\\Facades\\Schema',
         ),
-         'className' => 'AnonymousClass097b2a4f02aee04d51c5e6f7c814edde',
+         'className' => 'AnonymousClassac48f36101c0255e9056d1c84dcc98c1',
          'functionName' => NULL,
          'templatePhpDocNodes' => 
         array (
@@ -57,7 +57,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'typeAliasClassName' => NULL,
          'traitData' => NULL,
       )),
-      'c6ccaff4db81f14fb845553f8dbcf33e' => 
+      'f4030f5aca0fe66180f69d1753e229e3' => 
       \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
          'namespace' => NULL,
          'uses' => 
@@ -66,7 +66,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'blueprint' => 'Illuminate\\Database\\Schema\\Blueprint',
           'schema' => 'Illuminate\\Support\\Facades\\Schema',
         ),
-         'className' => 'AnonymousClass097b2a4f02aee04d51c5e6f7c814edde',
+         'className' => 'AnonymousClassac48f36101c0255e9056d1c84dcc98c1',
          'functionName' => 'up',
          'templatePhpDocNodes' => 
         array (
@@ -82,7 +82,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'typeAliasClassName' => NULL,
          'traitData' => NULL,
       )),
-      '06e58ca1996f19e4515cad925f550c12' => 
+      '605474df82bc17f1ceea34ba09d88b84' => 
       \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
          'namespace' => NULL,
          'uses' => 
@@ -91,7 +91,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'blueprint' => 'Illuminate\\Database\\Schema\\Blueprint',
           'schema' => 'Illuminate\\Support\\Facades\\Schema',
         ),
-         'className' => 'AnonymousClass097b2a4f02aee04d51c5e6f7c814edde',
+         'className' => 'AnonymousClassac48f36101c0255e9056d1c84dcc98c1',
          'functionName' => 'down',
          'templatePhpDocNodes' => 
         array (
@@ -110,7 +110,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Onboarding\\Database\\Migrations\\2026_10_01_000003_onboarding_otp_challenges.php' => 'c4268c93bdd05df17947c11437889082609db542001ed139a7d1f275d70ef13d',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Onboarding\\Database\\Migrations\\2026_10_01_000003_onboarding_otp_challenges.php' => '1c04b287cdd520f86579fc2e7b1db8bb06527d1668d558508c32f1b981575ada',
     ),
   ),
 ));

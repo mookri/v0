@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Platform\Modules\ModuleRegistry.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Platform\Modules\ModuleRegistry
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-54387c8fe845b3e8c2e23ff0a750b8b1bce59e3b597ed52e47fdb037f8edaf2f',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-a4ec0cb9384491644b6f8a64b81ae8083eac83694b8124f4ca68f5aec14bb4e5',
    'data' => 
   array (
     'locatedSource' => 
@@ -41,7 +41,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     array (
     ),
     'startLine' => 22,
-    'endLine' => 379,
+    'endLine' => 381,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => NULL,
@@ -685,8 +685,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 190,
-            'endLine' => 190,
+            'startLine' => 192,
+            'endLine' => 192,
             'startColumn' => 29,
             'endColumn' => 50,
             'parameterIndex' => 0,
@@ -700,12 +700,12 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
               'code' => 'null',
               'attributes' => 
               array (
-                'startLine' => 190,
-                'endLine' => 190,
+                'startLine' => 192,
+                'endLine' => 192,
                 'startTokenPos' => 817,
-                'startFilePos' => 5279,
+                'startFilePos' => 5398,
                 'endTokenPos' => 817,
-                'endFilePos' => 5282,
+                'endFilePos' => 5401,
               ),
             ),
             'type' => 
@@ -723,8 +723,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 190,
-            'endLine' => 190,
+            'startLine' => 192,
+            'endLine' => 192,
             'startColumn' => 53,
             'endColumn' => 72,
             'parameterIndex' => 1,
@@ -745,13 +745,15 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => '/**
- * Feature-flag gate for per-tenant module enablement (doc 01 §2-5).
- * The FeatureFlags kernel service lands in M3; until then a module with
- * no feature_flag is always enabled and a flagged module defaults to
- * enabled (default-safe branch, doc 05 §10.2 rule 1).
+ * Feature-flag gate for per-tenant module enablement (doc 01 §2-5,
+ * doc 07 §10). A module with no feature_flag is always enabled; a
+ * flagged module consults the FeatureFlags kernel service and
+ * defaults to enabled while the flag is undefined (default-safe
+ * branch, doc 05 §10.2 rule 1) — an explicit seeded default or a
+ * tenant override/bundle value turns it off.
  */',
-        'startLine' => 190,
-        'endLine' => 202,
+        'startLine' => 192,
+        'endLine' => 204,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -787,8 +789,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'docComment' => '/**
  * @return list<ModuleManifest>
  */',
-        'startLine' => 207,
-        'endLine' => 251,
+        'startLine' => 209,
+        'endLine' => 253,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => true,
@@ -822,8 +824,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 253,
-        'endLine' => 273,
+        'startLine' => 255,
+        'endLine' => 275,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -861,8 +863,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 278,
-            'endLine' => 278,
+            'startLine' => 280,
+            'endLine' => 280,
             'startColumn' => 45,
             'endColumn' => 66,
             'parameterIndex' => 0,
@@ -887,8 +889,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 278,
-            'endLine' => 278,
+            'startLine' => 280,
+            'endLine' => 280,
             'startColumn' => 69,
             'endColumn' => 85,
             'parameterIndex' => 1,
@@ -911,8 +913,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'docComment' => '/**
  * @param  list<ModuleManifest>  $discovered
  */',
-        'startLine' => 278,
-        'endLine' => 292,
+        'startLine' => 280,
+        'endLine' => 294,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => true,
@@ -946,8 +948,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 294,
-        'endLine' => 313,
+        'startLine' => 296,
+        'endLine' => 315,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => true,
@@ -986,8 +988,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
  *
  * @return list<ModuleManifest>
  */',
-        'startLine' => 321,
-        'endLine' => 378,
+        'startLine' => 323,
+        'endLine' => 380,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => true,

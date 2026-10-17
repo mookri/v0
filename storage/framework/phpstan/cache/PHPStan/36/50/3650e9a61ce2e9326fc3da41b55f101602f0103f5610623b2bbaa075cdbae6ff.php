@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Platform\Authz\PolicyEvaluationEngine.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Platform\Authz\PolicyEvaluationEngine
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-b99b96a5a9e0c5392c890f898c02ba6427ffbad1c315e3e41d2f2f5b73c59c78',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-3544559c027309c7f1b322683eff9a4e98818476b4198039bf0c96d4abc889b0',
    'data' => 
   array (
     'locatedSource' => 
@@ -38,6 +38,10 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
  *                            (policies narrow grants).
  *   4. allow_grant         - an active-role grant carries the capability
  *                            for the membership.
+ *   4.5 sod_conflict        - runtime SoD re-check (SEC-011 §7.3): a
+ *                            blocking conflict rule involving the
+ *                            exercised permission denies despite the
+ *                            grant (rules added after assignment).
  *   5. default_deny        - no explicit allow reached (CON-003).
  *
  * Every decision carries its deciding stage, the evaluated policy ids and
@@ -53,8 +57,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     'attributes' => 
     array (
     ),
-    'startLine' => 52,
-    'endLine' => 460,
+    'startLine' => 57,
+    'endLine' => 503,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => NULL,
@@ -89,8 +93,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'attributes' => 
         array (
         ),
-        'startLine' => 55,
-        'endLine' => 55,
+        'startLine' => 60,
+        'endLine' => 60,
         'startColumn' => 9,
         'endColumn' => 47,
         'isPromoted' => true,
@@ -120,8 +124,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'attributes' => 
         array (
         ),
-        'startLine' => 56,
-        'endLine' => 56,
+        'startLine' => 61,
+        'endLine' => 61,
         'startColumn' => 9,
         'endColumn' => 49,
         'isPromoted' => true,
@@ -151,8 +155,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'attributes' => 
         array (
         ),
-        'startLine' => 57,
-        'endLine' => 57,
+        'startLine' => 62,
+        'endLine' => 62,
         'startColumn' => 9,
         'endColumn' => 55,
         'isPromoted' => true,
@@ -182,8 +186,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'attributes' => 
         array (
         ),
-        'startLine' => 58,
-        'endLine' => 58,
+        'startLine' => 63,
+        'endLine' => 63,
         'startColumn' => 9,
         'endColumn' => 45,
         'isPromoted' => true,
@@ -213,10 +217,41 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'attributes' => 
         array (
         ),
-        'startLine' => 59,
-        'endLine' => 59,
+        'startLine' => 64,
+        'endLine' => 64,
         'startColumn' => 9,
         'endColumn' => 49,
+        'isPromoted' => true,
+        'declaredAtCompileTime' => true,
+        'immediateVirtual' => false,
+        'immediateHooks' => 
+        array (
+        ),
+      ),
+      'sod' => 
+      array (
+        'declaringClassName' => 'App\\Platform\\Authz\\PolicyEvaluationEngine',
+        'implementingClassName' => 'App\\Platform\\Authz\\PolicyEvaluationEngine',
+        'name' => 'sod',
+        'modifiers' => 132,
+        'type' => 
+        array (
+          'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+          'data' => 
+          array (
+            'name' => 'App\\Platform\\Authz\\SodEvaluator',
+            'isIdentifier' => false,
+          ),
+        ),
+        'default' => NULL,
+        'docComment' => NULL,
+        'attributes' => 
+        array (
+        ),
+        'startLine' => 65,
+        'endLine' => 65,
+        'startColumn' => 9,
+        'endColumn' => 42,
         'isPromoted' => true,
         'declaredAtCompileTime' => true,
         'immediateVirtual' => false,
@@ -251,8 +286,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 55,
-            'endLine' => 55,
+            'startLine' => 60,
+            'endLine' => 60,
             'startColumn' => 9,
             'endColumn' => 47,
             'parameterIndex' => 0,
@@ -277,8 +312,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 56,
-            'endLine' => 56,
+            'startLine' => 61,
+            'endLine' => 61,
             'startColumn' => 9,
             'endColumn' => 49,
             'parameterIndex' => 1,
@@ -303,8 +338,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 57,
-            'endLine' => 57,
+            'startLine' => 62,
+            'endLine' => 62,
             'startColumn' => 9,
             'endColumn' => 55,
             'parameterIndex' => 2,
@@ -329,8 +364,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 58,
-            'endLine' => 58,
+            'startLine' => 63,
+            'endLine' => 63,
             'startColumn' => 9,
             'endColumn' => 45,
             'parameterIndex' => 3,
@@ -355,11 +390,37 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 59,
-            'endLine' => 59,
+            'startLine' => 64,
+            'endLine' => 64,
             'startColumn' => 9,
             'endColumn' => 49,
             'parameterIndex' => 4,
+            'isOptional' => false,
+          ),
+          'sod' => 
+          array (
+            'name' => 'sod',
+            'default' => NULL,
+            'type' => 
+            array (
+              'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+              'data' => 
+              array (
+                'name' => 'App\\Platform\\Authz\\SodEvaluator',
+                'isIdentifier' => false,
+              ),
+            ),
+            'isVariadic' => false,
+            'byRef' => false,
+            'isPromoted' => true,
+            'attributes' => 
+            array (
+            ),
+            'startLine' => 65,
+            'endLine' => 65,
+            'startColumn' => 9,
+            'endColumn' => 42,
+            'parameterIndex' => 5,
             'isOptional' => false,
           ),
         ),
@@ -369,8 +430,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 54,
-        'endLine' => 61,
+        'startLine' => 59,
+        'endLine' => 67,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -408,8 +469,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 63,
-            'endLine' => 63,
+            'startLine' => 69,
+            'endLine' => 69,
             'startColumn' => 30,
             'endColumn' => 58,
             'parameterIndex' => 0,
@@ -423,12 +484,12 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
               'code' => 'false',
               'attributes' => 
               array (
-                'startLine' => 63,
-                'endLine' => 63,
-                'startTokenPos' => 182,
-                'startFilePos' => 2795,
-                'endTokenPos' => 182,
-                'endFilePos' => 2799,
+                'startLine' => 69,
+                'endLine' => 69,
+                'startTokenPos' => 196,
+                'startFilePos' => 3171,
+                'endTokenPos' => 196,
+                'endFilePos' => 3175,
               ),
             ),
             'type' => 
@@ -446,8 +507,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 63,
-            'endLine' => 63,
+            'startLine' => 69,
+            'endLine' => 69,
             'startColumn' => 61,
             'endColumn' => 85,
             'parameterIndex' => 1,
@@ -468,8 +529,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 63,
-        'endLine' => 109,
+        'startLine' => 69,
+        'endLine' => 115,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -507,8 +568,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 117,
-            'endLine' => 117,
+            'startLine' => 125,
+            'endLine' => 125,
             'startColumn' => 28,
             'endColumn' => 56,
             'parameterIndex' => 0,
@@ -531,11 +592,13 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'docComment' => '/**
  * Evaluate and deny with an AuthorizationDeniedException carrying the
  * deciding stage as the stable reason (middleware + contract calls).
+ * SoD runtime denials throw SodConflictException so the envelope
+ * renders the stable `sod_conflict` code with the blocking rules.
  *
  * @throws AuthorizationDeniedException
  */',
-        'startLine' => 117,
-        'endLine' => 129,
+        'startLine' => 125,
+        'endLine' => 141,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => true,
@@ -543,6 +606,69 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'isGenerator' => false,
         'isVariadic' => false,
         'modifiers' => 1,
+        'namespace' => 'App\\Platform\\Authz',
+        'declaringClassName' => 'App\\Platform\\Authz\\PolicyEvaluationEngine',
+        'implementingClassName' => 'App\\Platform\\Authz\\PolicyEvaluationEngine',
+        'currentClassName' => 'App\\Platform\\Authz\\PolicyEvaluationEngine',
+        'aliasName' => NULL,
+      ),
+      'sodRulesFrom' => 
+      array (
+        'name' => 'sodRulesFrom',
+        'parameters' => 
+        array (
+          'decision' => 
+          array (
+            'name' => 'decision',
+            'default' => NULL,
+            'type' => 
+            array (
+              'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+              'data' => 
+              array (
+                'name' => 'App\\Platform\\Authz\\AuthorizationDecision',
+                'isIdentifier' => false,
+              ),
+            ),
+            'isVariadic' => false,
+            'byRef' => false,
+            'isPromoted' => false,
+            'attributes' => 
+            array (
+            ),
+            'startLine' => 146,
+            'endLine' => 146,
+            'startColumn' => 35,
+            'endColumn' => 65,
+            'parameterIndex' => 0,
+            'isOptional' => false,
+          ),
+        ),
+        'returnsReference' => false,
+        'returnType' => 
+        array (
+          'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+          'data' => 
+          array (
+            'name' => 'array',
+            'isIdentifier' => true,
+          ),
+        ),
+        'attributes' => 
+        array (
+        ),
+        'docComment' => '/**
+ * @return list<string>
+ */',
+        'startLine' => 146,
+        'endLine' => 156,
+        'startColumn' => 5,
+        'endColumn' => 5,
+        'couldThrow' => false,
+        'isClosure' => false,
+        'isGenerator' => false,
+        'isVariadic' => false,
+        'modifiers' => 4,
         'namespace' => 'App\\Platform\\Authz',
         'declaringClassName' => 'App\\Platform\\Authz\\PolicyEvaluationEngine',
         'implementingClassName' => 'App\\Platform\\Authz\\PolicyEvaluationEngine',
@@ -573,8 +699,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 131,
-            'endLine' => 131,
+            'startLine' => 158,
+            'endLine' => 158,
             'startColumn' => 31,
             'endColumn' => 59,
             'parameterIndex' => 0,
@@ -618,8 +744,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 131,
-            'endLine' => 131,
+            'startLine' => 158,
+            'endLine' => 158,
             'startColumn' => 62,
             'endColumn' => 82,
             'parameterIndex' => 1,
@@ -640,8 +766,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 131,
-        'endLine' => 195,
+        'startLine' => 158,
+        'endLine' => 238,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -679,8 +805,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 205,
-            'endLine' => 205,
+            'startLine' => 248,
+            'endLine' => 248,
             'startColumn' => 45,
             'endColumn' => 66,
             'parameterIndex' => 0,
@@ -708,8 +834,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
  * @return array{0: list<Policy>, 1: bool} matching policies + whether a
  *                                          deny policy carried a malformed selector
  */',
-        'startLine' => 205,
-        'endLine' => 244,
+        'startLine' => 248,
+        'endLine' => 287,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -747,8 +873,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 251,
-            'endLine' => 251,
+            'startLine' => 294,
+            'endLine' => 294,
             'startColumn' => 40,
             'endColumn' => 54,
             'parameterIndex' => 0,
@@ -773,8 +899,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 251,
-            'endLine' => 251,
+            'startLine' => 294,
+            'endLine' => 294,
             'startColumn' => 57,
             'endColumn' => 85,
             'parameterIndex' => 1,
@@ -799,8 +925,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 251,
-            'endLine' => 251,
+            'startLine' => 294,
+            'endLine' => 294,
             'startColumn' => 88,
             'endColumn' => 101,
             'parameterIndex' => 2,
@@ -844,8 +970,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
  * @param  list<array<string, mixed>>  $stages
  * @return string|null the denial reason, or null when no deny triggered
  */',
-        'startLine' => 251,
-        'endLine' => 282,
+        'startLine' => 294,
+        'endLine' => 325,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -883,8 +1009,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 288,
-            'endLine' => 288,
+            'startLine' => 331,
+            'endLine' => 331,
             'startColumn' => 46,
             'endColumn' => 74,
             'parameterIndex' => 0,
@@ -909,8 +1035,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 288,
-            'endLine' => 288,
+            'startLine' => 331,
+            'endLine' => 331,
             'startColumn' => 77,
             'endColumn' => 98,
             'parameterIndex' => 1,
@@ -954,8 +1080,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 288,
-            'endLine' => 288,
+            'startLine' => 331,
+            'endLine' => 331,
             'startColumn' => 101,
             'endColumn' => 121,
             'parameterIndex' => 2,
@@ -980,8 +1106,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 288,
-            'endLine' => 288,
+            'startLine' => 331,
+            'endLine' => 331,
             'startColumn' => 124,
             'endColumn' => 137,
             'parameterIndex' => 3,
@@ -1024,8 +1150,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
  * @param  list<array<string, mixed>>  $stages
  * @return string|null the denial reason, or null when all constraints pass
  */',
-        'startLine' => 288,
-        'endLine' => 336,
+        'startLine' => 331,
+        'endLine' => 379,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -1063,8 +1189,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 343,
-            'endLine' => 343,
+            'startLine' => 386,
+            'endLine' => 386,
             'startColumn' => 44,
             'endColumn' => 58,
             'parameterIndex' => 0,
@@ -1089,8 +1215,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 343,
-            'endLine' => 343,
+            'startLine' => 386,
+            'endLine' => 386,
             'startColumn' => 61,
             'endColumn' => 89,
             'parameterIndex' => 1,
@@ -1115,8 +1241,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 343,
-            'endLine' => 343,
+            'startLine' => 386,
+            'endLine' => 386,
             'startColumn' => 92,
             'endColumn' => 105,
             'parameterIndex' => 2,
@@ -1141,8 +1267,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
  * @param  list<array<string, mixed>>  $stages
  * @return bool true when a matching allow policy constraint denies
  */',
-        'startLine' => 343,
-        'endLine' => 379,
+        'startLine' => 386,
+        'endLine' => 422,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -1180,8 +1306,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 381,
-            'endLine' => 381,
+            'startLine' => 424,
+            'endLine' => 424,
             'startColumn' => 34,
             'endColumn' => 53,
             'parameterIndex' => 0,
@@ -1206,8 +1332,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 381,
-            'endLine' => 381,
+            'startLine' => 424,
+            'endLine' => 424,
             'startColumn' => 56,
             'endColumn' => 77,
             'parameterIndex' => 1,
@@ -1228,8 +1354,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 381,
-        'endLine' => 393,
+        'startLine' => 424,
+        'endLine' => 436,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -1267,8 +1393,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 395,
-            'endLine' => 395,
+            'startLine' => 438,
+            'endLine' => 438,
             'startColumn' => 34,
             'endColumn' => 55,
             'parameterIndex' => 0,
@@ -1289,8 +1415,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 395,
-        'endLine' => 412,
+        'startLine' => 438,
+        'endLine' => 455,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -1347,8 +1473,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 414,
-            'endLine' => 414,
+            'startLine' => 457,
+            'endLine' => 457,
             'startColumn' => 34,
             'endColumn' => 60,
             'parameterIndex' => 0,
@@ -1388,8 +1514,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 414,
-        'endLine' => 423,
+        'startLine' => 457,
+        'endLine' => 466,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -1427,8 +1553,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 429,
-            'endLine' => 429,
+            'startLine' => 472,
+            'endLine' => 472,
             'startColumn' => 28,
             'endColumn' => 47,
             'parameterIndex' => 0,
@@ -1453,8 +1579,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 429,
-            'endLine' => 429,
+            'startLine' => 472,
+            'endLine' => 472,
             'startColumn' => 50,
             'endColumn' => 64,
             'parameterIndex' => 1,
@@ -1498,8 +1624,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 429,
-            'endLine' => 429,
+            'startLine' => 472,
+            'endLine' => 472,
             'startColumn' => 67,
             'endColumn' => 81,
             'parameterIndex' => 2,
@@ -1513,12 +1639,12 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
               'code' => '[]',
               'attributes' => 
               array (
-                'startLine' => 429,
-                'endLine' => 429,
-                'startTokenPos' => 2699,
-                'startFilePos' => 16737,
-                'endTokenPos' => 2700,
-                'endFilePos' => 16738,
+                'startLine' => 472,
+                'endLine' => 472,
+                'startTokenPos' => 2999,
+                'startFilePos' => 18801,
+                'endTokenPos' => 3000,
+                'endFilePos' => 18802,
               ),
             ),
             'type' => 
@@ -1536,8 +1662,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 429,
-            'endLine' => 429,
+            'startLine' => 472,
+            'endLine' => 472,
             'startColumn' => 84,
             'endColumn' => 102,
             'parameterIndex' => 3,
@@ -1561,8 +1687,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
  * @param  array<string, mixed>  $details
  * @return array<string, mixed>
  */',
-        'startLine' => 429,
-        'endLine' => 437,
+        'startLine' => 472,
+        'endLine' => 480,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -1600,8 +1726,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 444,
-            'endLine' => 444,
+            'startLine' => 487,
+            'endLine' => 487,
             'startColumn' => 9,
             'endColumn' => 24,
             'parameterIndex' => 0,
@@ -1626,8 +1752,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 445,
-            'endLine' => 445,
+            'startLine' => 488,
+            'endLine' => 488,
             'startColumn' => 9,
             'endColumn' => 28,
             'parameterIndex' => 1,
@@ -1652,8 +1778,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 446,
-            'endLine' => 446,
+            'startLine' => 489,
+            'endLine' => 489,
             'startColumn' => 9,
             'endColumn' => 26,
             'parameterIndex' => 2,
@@ -1697,8 +1823,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 447,
-            'endLine' => 447,
+            'startLine' => 490,
+            'endLine' => 490,
             'startColumn' => 9,
             'endColumn' => 28,
             'parameterIndex' => 3,
@@ -1723,8 +1849,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 448,
-            'endLine' => 448,
+            'startLine' => 491,
+            'endLine' => 491,
             'startColumn' => 9,
             'endColumn' => 32,
             'parameterIndex' => 4,
@@ -1749,8 +1875,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 449,
-            'endLine' => 449,
+            'startLine' => 492,
+            'endLine' => 492,
             'startColumn' => 9,
             'endColumn' => 21,
             'parameterIndex' => 5,
@@ -1774,8 +1900,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
  * @param  list<string>  $evaluatedPolicies
  * @param  list<array<string, mixed>>  $stages
  */',
-        'startLine' => 443,
-        'endLine' => 459,
+        'startLine' => 486,
+        'endLine' => 502,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,

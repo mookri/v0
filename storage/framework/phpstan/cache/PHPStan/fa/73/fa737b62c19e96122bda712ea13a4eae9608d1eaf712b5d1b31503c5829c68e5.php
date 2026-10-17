@@ -245,7 +245,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Tenancy\\Http\\Middleware\\ResolveTenantContext.php' => 'fdefa22e1aa7d0c878a50ccab9e8b321507f3def3d88b8666f4c101af538bd01',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Tenancy\\Http\\Middleware\\ResolveTenantContext.php' => '52eb5240afa976a9d6c00a6b0c67b7f11cbd9cf0c126248ccc9d1ab802ccc326',
     ),
   ),
 ));

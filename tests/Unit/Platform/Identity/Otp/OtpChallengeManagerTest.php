@@ -124,6 +124,15 @@ final class OtpChallengeManagerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Pure unit scope: the in-memory store means no database, so the
+        // federation audit listeners (ADR-0020 D5 — record behavior
+        // covered in AuthEventChainTest) must not write here.
+        \Illuminate\Support\Facades\Event::fake([
+            \App\Platform\Identity\Otp\OtpChallengeConsumed::class,
+            \App\Platform\Identity\Otp\OtpChallengeRejected::class,
+        ]);
+
         $this->store = new InMemoryOtpChallengeStore();
         $provider = new FakeOtpProvider();
         $registry = new OtpProviderRegistry([Msg91WidgetProvider::NAME => $provider]);

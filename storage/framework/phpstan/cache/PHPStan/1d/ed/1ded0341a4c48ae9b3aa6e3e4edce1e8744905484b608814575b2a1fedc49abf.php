@@ -12,6 +12,9 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'namespace' => 'App\\Modules\\Catalog',
          'uses' => 
         array (
+          'calculatesquotes' => 'App\\Modules\\Catalog\\Contracts\\CalculatesQuotes',
+          'listscatalogitems' => 'App\\Modules\\Catalog\\Contracts\\ListsCatalogItems',
+          'managesvendorcatalogitems' => 'App\\Modules\\Catalog\\Contracts\\ManagesVendorCatalogItems',
           'basemoduleserviceprovider' => 'App\\Platform\\Modules\\ModuleServiceProvider',
         ),
          'className' => 'App\\Modules\\Catalog\\ModuleServiceProvider',
@@ -35,6 +38,9 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'namespace' => 'App\\Modules\\Catalog',
          'uses' => 
         array (
+          'calculatesquotes' => 'App\\Modules\\Catalog\\Contracts\\CalculatesQuotes',
+          'listscatalogitems' => 'App\\Modules\\Catalog\\Contracts\\ListsCatalogItems',
+          'managesvendorcatalogitems' => 'App\\Modules\\Catalog\\Contracts\\ManagesVendorCatalogItems',
           'basemoduleserviceprovider' => 'App\\Platform\\Modules\\ModuleServiceProvider',
         ),
          'className' => 'App\\Modules\\Catalog\\ModuleServiceProvider',
@@ -47,6 +53,9 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'namespace' => 'App\\Modules\\Catalog',
            'uses' => 
           array (
+            'calculatesquotes' => 'App\\Modules\\Catalog\\Contracts\\CalculatesQuotes',
+            'listscatalogitems' => 'App\\Modules\\Catalog\\Contracts\\ListsCatalogItems',
+            'managesvendorcatalogitems' => 'App\\Modules\\Catalog\\Contracts\\ManagesVendorCatalogItems',
             'basemoduleserviceprovider' => 'App\\Platform\\Modules\\ModuleServiceProvider',
           ),
            'className' => 'App\\Modules\\Catalog\\ModuleServiceProvider',
@@ -80,6 +89,9 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'namespace' => 'App\\Modules\\Catalog',
          'uses' => 
         array (
+          'calculatesquotes' => 'App\\Modules\\Catalog\\Contracts\\CalculatesQuotes',
+          'listscatalogitems' => 'App\\Modules\\Catalog\\Contracts\\ListsCatalogItems',
+          'managesvendorcatalogitems' => 'App\\Modules\\Catalog\\Contracts\\ManagesVendorCatalogItems',
           'basemoduleserviceprovider' => 'App\\Platform\\Modules\\ModuleServiceProvider',
         ),
          'className' => 'App\\Modules\\Catalog\\ModuleServiceProvider',
@@ -92,6 +104,9 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'namespace' => 'App\\Modules\\Catalog',
            'uses' => 
           array (
+            'calculatesquotes' => 'App\\Modules\\Catalog\\Contracts\\CalculatesQuotes',
+            'listscatalogitems' => 'App\\Modules\\Catalog\\Contracts\\ListsCatalogItems',
+            'managesvendorcatalogitems' => 'App\\Modules\\Catalog\\Contracts\\ManagesVendorCatalogItems',
             'basemoduleserviceprovider' => 'App\\Platform\\Modules\\ModuleServiceProvider',
           ),
            'className' => 'App\\Modules\\Catalog\\ModuleServiceProvider',
@@ -123,7 +138,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Catalog\\ModuleServiceProvider.php' => 'cf12ddcdd172007e72c320abcdf659001a4ea050d7f25e39e216777063ec9c92',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Catalog\\ModuleServiceProvider.php' => '30692dff4a785b4aa75a8628d9aad3b1a7f113efac885798334dd06c23aab69d',
     ),
   ),
 ));

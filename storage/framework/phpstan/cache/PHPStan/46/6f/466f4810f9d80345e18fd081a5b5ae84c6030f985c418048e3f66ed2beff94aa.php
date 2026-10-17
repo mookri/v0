@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Modules\Catalog\ModuleServiceProvider.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Modules\Catalog\ModuleServiceProvider
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-cf12ddcdd172007e72c320abcdf659001a4ea050d7f25e39e216777063ec9c92',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-30692dff4a785b4aa75a8628d9aad3b1a7f113efac885798334dd06c23aab69d',
    'data' => 
   array (
     'locatedSource' => 
@@ -23,13 +23,16 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     'isBackedEnum' => false,
     'modifiers' => 32,
     'docComment' => '/**
- * Catalog module provider: loads migrations; routes mount file-based.
+ * Catalog module provider: loads migrations, binds the catalog read port
+ * (discover feed consumes it — never catalog models), the vendor
+ * catalog write port (Vendor module consumes it) and the quote port
+ * (checkout re-prices through it — B3); routes mount file-based.
  */',
     'attributes' => 
     array (
     ),
-    'startLine' => 10,
-    'endLine' => 20,
+    'startLine' => 16,
+    'endLine' => 29,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => 'App\\Platform\\Modules\\ModuleServiceProvider',
@@ -67,8 +70,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 12,
-        'endLine' => 14,
+        'startLine' => 18,
+        'endLine' => 23,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -102,8 +105,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 16,
-        'endLine' => 19,
+        'startLine' => 25,
+        'endLine' => 28,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,

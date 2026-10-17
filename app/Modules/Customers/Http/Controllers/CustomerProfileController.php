@@ -267,6 +267,15 @@ final class CustomerProfileController extends CustomerSelfServiceController
         $membership->forceFill(['state' => TenantMembership::STATE_SUSPENDED])->save();
         $profile->forceFill(['status' => BuyerProfile::STATUS_DEACTIVATED])->save();
 
+        // SEC-015 §8.1 (9c): membership revocation kills the member's
+        // refresh lineages for THIS tenant — the live tenant re-check
+        // already denies every call; this stops the lineage minting.
+        $this->revokeTenantLineages(
+            (string) $user->getAuthIdentifier(),
+            (string) app(TenantContext::class)->tenantId(),
+            'membership_revoked'
+        );
+
         $this->audit->record(
             'customers.account.deactivated',
             ['module' => 'customers', 'resource_type' => 'buyer_profile', 'resource_id' => (string) $profile->getKey()],
@@ -366,6 +375,14 @@ final class CustomerProfileController extends CustomerSelfServiceController
         // Suspend membership
         $membership->forceFill(['state' => TenantMembership::STATE_SUSPENDED])->save();
 
+        // SEC-015 §8.1 (9c): deletion suspends the membership too —
+        // same lineage kill as deactivation.
+        $this->revokeTenantLineages(
+            (string) $user->getAuthIdentifier(),
+            (string) app(TenantContext::class)->tenantId(),
+            'membership_revoked'
+        );
+
         $this->audit->record(
             'customers.account.deleted',
             ['module' => 'customers', 'resource_type' => 'buyer_profile', 'resource_id' => (string) $profile->getKey()],
@@ -383,6 +400,54 @@ final class CustomerProfileController extends CustomerSelfServiceController
             ],
             'meta' => ['request_id' => $this->requestId($request)],
         ]);
+    }
+
+    /**
+     * SEC-015 §8.1 bulk trigger (9c): revoke the member's access +
+     * refresh tokens minted by THIS tenant's clients (token → client →
+     * profile.tenant_id is the only tenant signal tokens carry — no
+     * tenant claim exists on them yet), invalidate the status cache,
+     * and chain each kill. Tokens minted for other tenants and
+     * tenant-less platform clients are untouched: their authorization
+     * is a different membership's concern.
+     */
+    private function revokeTenantLineages(string $userId, string $tenantId, string $reason): void
+    {
+        $clientIds = \App\Platform\Identity\OAuth\OAuthClientProfile::query()
+            ->where('tenant_id', $tenantId)
+            ->pluck('client_id');
+
+        if ($clientIds->isEmpty()) {
+            return;
+        }
+
+        $accessIds = \Laravel\Passport\Passport::token()->newQuery()
+            ->where('user_id', $userId)
+            ->whereIn('client_id', $clientIds)
+            ->where('revoked', false)
+            ->pluck('id');
+
+        if ($accessIds->isEmpty()) {
+            return;
+        }
+
+        \Laravel\Passport\Passport::token()->newQuery()->whereIn('id', $accessIds)->update(['revoked' => true]);
+        \Laravel\Passport\Passport::refreshToken()->newQuery()->whereIn('access_token_id', $accessIds)->update(['revoked' => true]);
+
+        app(\App\Platform\Identity\Federation\RevocationStatusCache::class)
+            ->invalidateTokens($accessIds->all());
+
+        $recorder = app(\App\Platform\Identity\Federation\AuthEventRecorder::class);
+        foreach ($accessIds as $jti) {
+            $recorder->record([
+                'event_type' => 'token.revoked',
+                'decision' => 'allow',
+                'subject_id' => $userId,
+                'tenant_ref' => $tenantId,
+                'token_jti' => (string) $jti,
+                'reason_code' => $reason,
+            ]);
+        }
     }
 
     /**

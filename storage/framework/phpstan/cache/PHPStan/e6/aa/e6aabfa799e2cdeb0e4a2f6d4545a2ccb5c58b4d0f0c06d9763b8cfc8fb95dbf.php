@@ -1109,5 +1109,36 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
       array (
       ),
     ),
+    'C:/Users/Victo/Downloads/webproj/v0-navdhya-ritual-services/platform-navdhya/vendor/composer/../phpseclib/phpseclib/phpseclib/bootstrap.php' => 
+    array (
+      0 => '26dc2865802fddca84bf03aa1d72f2dd205b0d44b3a133d7c806af3b706c2364',
+      1 => 
+      array (
+      ),
+      2 => 
+      array (
+      ),
+      3 => 
+      array (
+      ),
+    ),
+    'C:/Users/Victo/Downloads/webproj/v0-navdhya-ritual-services/platform-navdhya/vendor/composer/../symfony/polyfill-php82/bootstrap.php' => 
+    array (
+      0 => 'f4a5641764aaa41b558a156a334c49ad6aaf94b15462323dfe64ff461b89516a',
+      1 => 
+      array (
+      ),
+      2 => 
+      array (
+        0 => 'odbc_connection_string_is_quoted',
+        1 => 'odbc_connection_string_should_quote',
+        2 => 'odbc_connection_string_quote',
+        3 => 'ini_parse_quantity',
+      ),
+      3 => 
+      array (
+        0 => 'CURLOPT_SSH_HOST_PUBLIC_KEY_SHA256',
+      ),
+    ),
   ),
 ));

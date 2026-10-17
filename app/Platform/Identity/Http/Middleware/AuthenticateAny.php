@@ -3,9 +3,12 @@
 namespace App\Platform\Identity\Http\Middleware;
 
 use App\Models\User;
+use App\Platform\Api\CodedHttpException;
 use App\Platform\Identity\ActorTokenVerifier;
 use App\Platform\Identity\MachinePrincipal;
 use App\Platform\Identity\Models\ApiKey;
+use App\Platform\Identity\OAuth\Dpop\DpopProof;
+use App\Platform\Identity\OAuth\Dpop\DpopProofInvalidException;
 use App\Platform\Identity\PassportJwtVerifier;
 use Closure;
 use Illuminate\Auth\AuthenticationException;
@@ -28,7 +31,15 @@ final class AuthenticateAny
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user() !== null) {
+        // Session-shape credential (9c): a resolved session user must
+        // ALSO be lifecycle-active — suspension/deactivation kills
+        // session rows at the source, but the enforcement point never
+        // trusts that alone (a direct status flip, a swept-row race or
+        // a non-database session driver must deny too). Non-User
+        // principals pass through untouched.
+        $sessionUser = $request->user();
+
+        if ($sessionUser !== null && (! $sessionUser instanceof User || $sessionUser->isActive())) {
             return $next($request);
         }
 
@@ -53,10 +64,11 @@ final class AuthenticateAny
     /**
      * Passport access-token acceptance (P3b dual-accept window): RS256
      * signature against our public key, expiry enforced, revocation
-     * checked live against oauth_access_tokens, audience client must
-     * exist unrevoked. Tenant authority stays with live membership
-     * (ResolveTenantContext) — the token carries no tenant claim yet
-     * (custom claims land P4).
+     * checked under the D2 freshness contract (RevocationStatusCache —
+     * ≤30 s stale for ordinary calls, invalidated instantly by local
+     * revocations), audience client must exist unrevoked. Tenant
+     * authority stays with live membership (ResolveTenantContext) — the
+     * token carries no tenant claim yet (custom claims land P4).
      */
     private function authenticatePassport(Request $request, string $token): bool
     {
@@ -66,22 +78,42 @@ final class AuthenticateAny
             return false;
         }
 
-        $stored = \Laravel\Passport\Token::query()
-            ->whereKey($claims['jti'])
-            ->where('revoked', false)
-            ->first();
+        $revocation = app(\App\Platform\Identity\Federation\RevocationStatusCache::class);
 
-        if ($stored === null || (string) $stored->getAttribute('client_id') !== $claims['aud']) {
+        $verdict = $revocation->validToken((string) $claims['jti']);
+
+        if ($verdict === null || $verdict['client_id'] !== $claims['aud']) {
             return false;
         }
 
-        $client = \Laravel\Passport\Client::query()
-            ->whereKey($claims['aud'])
-            ->where('revoked', false)
-            ->first();
-
-        if ($client === null) {
+        if (! $revocation->clientActive($claims['aud'])) {
             return false;
+        }
+
+        // A-SEC-004-9 (RFC 9449 §5): a DPoP-bound access token is only
+        // acceptable beside a live proof from ITS key — htm/htu of
+        // THIS request, ath over the presented token, single-use jti,
+        // and the proof's thumbprint equal to the token's cnf binding.
+        // Unbound tokens keep flowing (gradual adoption): the binding
+        // on the token decides, never the caller's word. The RFC
+        // challenge travels on the denial (WWW-Authenticate, algs).
+        $boundJkt = $claims['cnf']['dpop_jkt'] ?? null;
+
+        if (is_string($boundJkt) && $boundJkt !== '') {
+            try {
+                $presentedJkt = DpopProof::validate(
+                    $request->header('DPoP', ''),
+                    $request->method(),
+                    $request->url(),
+                    $token
+                );
+            } catch (DpopProofInvalidException $e) {
+                throw self::dpopDenial($e->getMessage());
+            }
+
+            if (! hash_equals($boundJkt, $presentedJkt)) {
+                throw self::dpopDenial('The DPoP proof key does not match the access token binding.');
+            }
         }
 
         $user = User::query()->find($claims['sub']);
@@ -163,5 +195,22 @@ final class AuthenticateAny
         }
 
         return true;
+    }
+
+    /**
+     * RFC 9449 §5 resource denial: 401 with the envelope code
+     * `invalid_dpop_proof` and the mandatory WWW-Authenticate DPoP
+     * challenge (error + the algorithms this server accepts). Shaped
+     * here so every guarded surface (userinfo, /api/v1) answers it
+     * identically.
+     */
+    private static function dpopDenial(string $reason): CodedHttpException
+    {
+        return new CodedHttpException(
+            401,
+            'invalid_dpop_proof',
+            $reason,
+            ['WWW-Authenticate' => sprintf('DPoP error="invalid_dpop_proof", algs="%s"', DpopProof::ALGORITHMS)]
+        );
     }
 }

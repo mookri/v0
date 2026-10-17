@@ -14,6 +14,15 @@ use Tests\TenantIntegrationTestCase;
  */
 final class OAuthClientTest extends TenantIntegrationTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // 9c: the revoke/rotate commands now chain token.revoked rows
+        // whose pseudonymization requires the identity secret.
+        config(['identity.hmac_secret' => 'oauth-client-test-hmac-secret-32!']);
+    }
+
     private function partnerClient(string $tenantId): Client
     {
         $client = new Client();

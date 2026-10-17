@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Modules\Onboarding\ModuleServiceProvider.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Modules\Onboarding\ModuleServiceProvider
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-f90c2817e60aba960f73032807fffb8549cde1d54b9882558bdaf54a1fc09d4b',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-b8bac0c5bffb48bb3ed7c67a9b9d664c355a237c5e67564128376c5202f88717',
    'data' => 
   array (
     'locatedSource' => 
@@ -30,8 +30,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     'attributes' => 
     array (
     ),
-    'startLine' => 12,
-    'endLine' => 27,
+    'startLine' => 15,
+    'endLine' => 41,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => 'App\\Platform\\Modules\\ModuleServiceProvider',
@@ -69,8 +69,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 14,
-        'endLine' => 21,
+        'startLine' => 17,
+        'endLine' => 35,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -104,8 +104,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 23,
-        'endLine' => 26,
+        'startLine' => 37,
+        'endLine' => 40,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,

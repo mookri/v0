@@ -16,12 +16,25 @@ final class DiscoveryTest extends TenantIntegrationTestCase
 
         $this->assertSame(['code'], $metadata['response_types_supported']);
         $this->assertEqualsCanonicalizing(
-            ['authorization_code', 'refresh_token', 'client_credentials'],
+            ['authorization_code', 'refresh_token', 'client_credentials', 'urn:ietf:params:oauth:grant-type:token-exchange'],
             $metadata['grant_types_supported']
         );
         $this->assertStringEndsWith('/oauth/token', $metadata['token_endpoint']);
         $this->assertStringEndsWith('/oauth/userinfo', $metadata['userinfo_endpoint']);
         $this->assertStringEndsWith('/.well-known/jwks.json', $metadata['jwks_uri']);
+    }
+
+    public function test_metadata_advertises_the_configured_federation_issuer(): void
+    {
+        config(['federation.issuer' => 'http://auth.localhost:8000']);
+
+        $metadata = $this->getJson('/.well-known/oauth-authorization-server')->assertOk()->json();
+
+        $this->assertSame('http://auth.localhost:8000', $metadata['issuer']);
+        $this->assertSame('http://auth.localhost:8000/oauth/authorize', $metadata['authorization_endpoint']);
+        $this->assertSame('http://auth.localhost:8000/oauth/token', $metadata['token_endpoint']);
+        $this->assertSame('http://auth.localhost:8000/.well-known/jwks.json', $metadata['jwks_uri']);
+        $this->assertSame('http://auth.localhost:8000/api/oauth/revoke', $metadata['revocation_endpoint']);
     }
 
     public function test_jwks_publishes_rsa_key(): void

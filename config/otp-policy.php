@@ -47,6 +47,12 @@ return [
         // Contact swaps — dual-channel quorum when those flows land.
         'change_phone' => ['audience' => 'customer', 'tier' => 'T2'],
         'change_email' => ['audience' => 'customer', 'tier' => 'T2'],
+        // Unified login at the auth subdomain (ADR-0020 D1): possession
+        // proof on the federation surface. platform audience — the auth
+        // host is the identity issuer, not a customer tenant surface —
+        // provider still resolves to msg91_widget. No existence
+        // pre-check: a verified identifier auto-provisions (D1).
+        'federation_login' => ['audience' => 'platform', 'tier' => 'T0'],
     ],
 
     'delivery' => [

@@ -125,40 +125,40 @@ Route::prefix(config('platform.api_version', 'v1'))
         Route::get('platform/api-keys', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'index'])
             ->name('api-keys.index');
         Route::post('platform/api-keys', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'issue'])
-            ->middleware([RequiresAcr::class . ':2'])
+            ->middleware([RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class])
             ->name('api-keys.issue');
         Route::post('platform/api-keys/{id}:revoke', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'revoke'])
-            ->middleware([RequiresAcr::class . ':2'])
+            ->middleware([RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class])
             ->name('api-keys.revoke');
         Route::post('platform/api-keys/{id}:rotate', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'rotate'])
-            ->middleware([RequiresAcr::class . ':2'])
+            ->middleware([RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class])
             ->name('api-keys.rotate');
         Route::post('platform/api-keys/{id}:rotate', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'rotate'])
-            ->middleware([RequiresAcr::class . ':2'])
+            ->middleware([RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class])
             ->name('api-keys.rotate');
         Route::get('platform/oauth/clients', [\App\Platform\Identity\Http\Controllers\OAuthClientController::class, 'index'])
             ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:view'])
             ->name('oauth-clients.index');
         Route::post('platform/oauth/clients', [\App\Platform\Identity\Http\Controllers\OAuthClientController::class, 'store'])
-            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class])
             ->name('oauth-clients.store');
         Route::get('platform/oauth/clients/{id}', [\App\Platform\Identity\Http\Controllers\OAuthClientController::class, 'show'])
             ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:view'])
             ->name('oauth-clients.show');
         Route::post('platform/oauth/clients/{id}:revoke', [\App\Platform\Identity\Http\Controllers\OAuthClientController::class, 'revoke'])
-            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class])
             ->name('oauth-clients.revoke');
         Route::get('platform/users', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'index'])
             ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:view'])
             ->name('users.index');
         Route::post('platform/users/{id}:suspend', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'suspend'])
-            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class])
             ->name('users.suspend');
         Route::post('platform/users/{id}:activate', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'activate'])
-            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class])
             ->name('users.activate');
         Route::post('platform/users/{id}:deactivate', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'deactivate'])
-            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class])
             ->name('users.deactivate');
         Route::get('platform/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'index'])
             ->name('roles.index');
@@ -167,10 +167,10 @@ Route::prefix(config('platform.api_version', 'v1'))
         Route::get('platform/memberships/{membershipId}/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'assignments'])
             ->name('memberships.roles.index');
         Route::post('platform/memberships/{membershipId}/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'grant'])
-            ->middleware([RequiresAcr::class . ':2'])
+            ->middleware([RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class])
             ->name('memberships.roles.grant');
         Route::delete('platform/memberships/{membershipId}/roles/{assignmentId}', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'revoke'])
-            ->middleware([RequiresAcr::class . ':2'])
+            ->middleware([RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class])
             ->name('memberships.roles.revoke');
         Route::get('platform/sod-rules', [\App\Platform\Authz\Http\Controllers\SodRuleController::class, 'index'])
             ->name('sod-rules.index');
@@ -194,6 +194,13 @@ Route::name('oauth.')
         Route::post('oauth/introspect', [\App\Platform\Identity\OAuth\Http\Controllers\IntrospectController::class, '__invoke'])
             ->middleware('throttle:10,1')
             ->name('introspect');
+        // RFC 9126 pushed authorization: client-authenticated back
+        // channel (secret_post or private_key_jwt), league-shape JSON
+        // only, never a redirect — throttled like the token endpoint
+        // (one push per login flow per BFF instance).
+        Route::post('oauth/par', [\App\Platform\Identity\OAuth\Http\Controllers\PushedAuthorizationRequestController::class, '__invoke'])
+            ->middleware('throttle:60,1')
+            ->name('par');
     });
 
 // Invite acceptance carries its own credential (the token) — public route

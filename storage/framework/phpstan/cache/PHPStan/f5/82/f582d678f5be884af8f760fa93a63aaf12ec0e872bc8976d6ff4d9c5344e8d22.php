@@ -578,7 +578,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Catalog\\Models\\CatalogPrice.php' => '1c86f989b3dc0a4d4b01c0a4432b260c2b2d01709f5431889d08eed833bf7277',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Catalog\\Models\\CatalogPrice.php' => '5d48f74baebdfe471f675f098962515d3d4de4cc5dd3cce1d9b13d608f87c832',
       'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Tenancy\\BelongsToTenant.php' => '3684e2b1e65a7815ea69cd54525b3210fdc3d7d8fa33c97b1ef27fcfc03cac09',
       'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\vendor\\composer\\..\\laravel\\framework\\src\\Illuminate\\Database\\Eloquent\\Concerns\\HasUlids.php' => '05a9799d0cc82991d414228dbee5b77772ca18d2e3ca88f50bdafcb42bacde62',
       'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\vendor\\composer\\..\\laravel\\framework\\src\\Illuminate\\Database\\Eloquent\\Concerns\\HasUniqueStringIds.php' => '3d5612d3c0a56c6c9f19e628b02085d4d68a64d9d07656742725cec78d4a79c5',

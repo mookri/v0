@@ -58,6 +58,12 @@ final class PassportDualAcceptTest extends TenantIntegrationTestCase
 
         \Laravel\Passport\Token::query()->update(['revoked' => true]);
 
+        // D2 freshness (ADR-0020): a raw flip with no invalidation hook
+        // is cross-process revocation — served from the warm verdict
+        // until the bound elapses. Flush models the bound passing; the
+        // authoritative read then denies.
+        \Illuminate\Support\Facades\Cache::flush();
+
         $this->getJson('/api/v1/catalog/items', $headers)->assertUnauthorized();
     }
 

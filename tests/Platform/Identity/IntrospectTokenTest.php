@@ -15,6 +15,15 @@ use Tests\TenantIntegrationTestCase;
  */
 final class IntrospectTokenTest extends TenantIntegrationTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // 9c: the revoke leg now chains a token.revoked row whose
+        // pseudonymization requires the identity secret.
+        config(['identity.hmac_secret' => 'introspect-token-test-hmac-32!!!']);
+    }
+
     /**
      * @return array{0: Client, 1: string} service client + secret
      */
@@ -40,7 +49,7 @@ final class IntrospectTokenTest extends TenantIntegrationTestCase
     }
 
     /**
-     * @return array{access_token: string, refresh_token: string}
+     * @return array{0: array{access_token: string, refresh_token: string}, 1: string} tokens + owning client id
      */
     private function userTokens(User $user): array
     {
@@ -77,7 +86,7 @@ final class IntrospectTokenTest extends TenantIntegrationTestCase
         ])->assertStatus(302);
         parse_str((string) parse_url((string) $approve->headers->get('Location'), PHP_URL_QUERY), $query);
 
-        return $this->postJson('/oauth/token', [
+        $tokens = $this->postJson('/oauth/token', [
             'grant_type' => 'authorization_code',
             'client_id' => (string) $client->getKey(),
             'client_secret' => 'introspect-web-secret',
@@ -85,6 +94,8 @@ final class IntrospectTokenTest extends TenantIntegrationTestCase
             'code' => $query['code'],
             'code_verifier' => $verifier,
         ])->assertOk()->json();
+
+        return [$tokens, (string) $client->getKey()];
     }
 
     public function test_active_tokens_introspect_with_claims(): void
@@ -92,7 +103,7 @@ final class IntrospectTokenTest extends TenantIntegrationTestCase
         $tenant = $this->makeTenant();
         [$user] = $this->actingAsMembership($tenant);
         [$service, $secret] = $this->serviceClient();
-        $tokens = $this->userTokens($user);
+        [$tokens] = $this->userTokens($user);
         $auth = ['client_id' => (string) $service->getKey(), 'client_secret' => $secret];
 
         $access = $this->postJson('/api/oauth/introspect', $auth + ['token' => $tokens['access_token']])->assertOk();
@@ -111,15 +122,22 @@ final class IntrospectTokenTest extends TenantIntegrationTestCase
         $tenant = $this->makeTenant();
         [$user] = $this->actingAsMembership($tenant);
         [$service, $secret] = $this->serviceClient();
-        $tokens = $this->userTokens($user);
+        [$tokens, $webClientId] = $this->userTokens($user);
         $auth = ['client_id' => (string) $service->getKey(), 'client_secret' => $secret];
 
         // Garbage: inactive, no oracle.
         $this->postJson('/api/oauth/introspect', $auth + ['token' => 'garbage'])
             ->assertOk()->assertJsonPath('active', false);
 
-        // Revoked access token: inactive.
-        $this->postJson('/api/oauth/revoke', $auth + ['token' => $tokens['access_token']])->assertOk();
+        // Revoked access token: inactive. Revocation presents the
+        // OWNING client's credentials — RFC 7009 §2.1 ownership (9c):
+        // the service client could no longer revoke the web client's
+        // token even if it tried.
+        $this->postJson('/api/oauth/revoke', [
+            'client_id' => $webClientId,
+            'client_secret' => 'introspect-web-secret',
+            'token' => $tokens['access_token'],
+        ])->assertOk();
         $this->postJson('/api/oauth/introspect', $auth + ['token' => $tokens['access_token']])
             ->assertOk()->assertJsonPath('active', false);
 

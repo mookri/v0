@@ -84,7 +84,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Console\\CleanupExpiredCommand.php' => '97916ec4f7466c3a382e6a45afbfceecf80173b2e30ebe52bfbe8b408916ce6c',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Console\\CleanupExpiredCommand.php' => '869e3e19571f84f3c14ba63cfe4f94cd20cf52870c27a9c552bfb05e8d5d75c7',
     ),
   ),
 ));

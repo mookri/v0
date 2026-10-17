@@ -118,7 +118,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Identity\\ActorTokenVerifier.php' => 'a6bf49c86e7ac491f931f3d1fdd2c03aa62bd6885459d67560f784f76a972b78',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Identity\\ActorTokenVerifier.php' => '6eeb931131e5f6bed25cf8774cc10633f755297c84a24652888ce08d010befbf',
     ),
   ),
 ));

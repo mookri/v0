@@ -12,6 +12,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'namespace' => 'App\\Modules\\Onboarding\\Http\\Controllers',
          'uses' => 
         array (
+          'managespartnerapplications' => 'App\\Modules\\Onboarding\\Contracts\\ManagesPartnerApplications',
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -32,11 +33,63 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'typeAliasClassName' => NULL,
          'traitData' => NULL,
       )),
+      'a57ed506e43313baec0c8ee0590dc5e8' => 
+      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+         'namespace' => 'App\\Modules\\Onboarding\\Http\\Controllers',
+         'uses' => 
+        array (
+          'managespartnerapplications' => 'App\\Modules\\Onboarding\\Contracts\\ManagesPartnerApplications',
+          'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
+          'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'request' => 'Illuminate\\Http\\Request',
+        ),
+         'className' => 'App\\Modules\\Onboarding\\Http\\Controllers\\ApplicationController',
+         'functionName' => '__construct',
+         'templatePhpDocNodes' => 
+        array (
+        ),
+         'parent' => 
+        \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+           'namespace' => 'App\\Modules\\Onboarding\\Http\\Controllers',
+           'uses' => 
+          array (
+            'managespartnerapplications' => 'App\\Modules\\Onboarding\\Contracts\\ManagesPartnerApplications',
+            'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
+            'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'request' => 'Illuminate\\Http\\Request',
+          ),
+           'className' => 'App\\Modules\\Onboarding\\Http\\Controllers\\ApplicationController',
+           'functionName' => NULL,
+           'templatePhpDocNodes' => 
+          array (
+          ),
+           'parent' => NULL,
+           'typeAliasesMap' => 
+          array (
+          ),
+           'bypassTypeAliases' => false,
+           'constUses' => 
+          array (
+          ),
+           'typeAliasClassName' => NULL,
+           'traitData' => NULL,
+        )),
+         'typeAliasesMap' => 
+        array (
+        ),
+         'bypassTypeAliases' => false,
+         'constUses' => 
+        array (
+        ),
+         'typeAliasClassName' => NULL,
+         'traitData' => NULL,
+      )),
       '1f70eb2d201bcd260a50c0ff4f467dbc' => 
       \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
          'namespace' => 'App\\Modules\\Onboarding\\Http\\Controllers',
          'uses' => 
         array (
+          'managespartnerapplications' => 'App\\Modules\\Onboarding\\Contracts\\ManagesPartnerApplications',
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -51,6 +104,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'namespace' => 'App\\Modules\\Onboarding\\Http\\Controllers',
            'uses' => 
           array (
+            'managespartnerapplications' => 'App\\Modules\\Onboarding\\Contracts\\ManagesPartnerApplications',
             'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
@@ -86,6 +140,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'namespace' => 'App\\Modules\\Onboarding\\Http\\Controllers',
          'uses' => 
         array (
+          'managespartnerapplications' => 'App\\Modules\\Onboarding\\Contracts\\ManagesPartnerApplications',
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -100,6 +155,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'namespace' => 'App\\Modules\\Onboarding\\Http\\Controllers',
            'uses' => 
           array (
+            'managespartnerapplications' => 'App\\Modules\\Onboarding\\Contracts\\ManagesPartnerApplications',
             'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
@@ -133,7 +189,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Onboarding\\Http\\Controllers\\ApplicationController.php' => 'c8870b300dfd92fdb74920c7ed56a595cf5ce52319c63945cab67fa6b4f3df17',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Onboarding\\Http\\Controllers\\ApplicationController.php' => '8959abbd3936a5b531d67826ebed11d0dc2ae0bd873fa08dd694034bc2db5bf2',
     ),
   ),
 ));

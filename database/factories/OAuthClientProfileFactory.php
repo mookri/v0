@@ -24,6 +24,7 @@ final class OAuthClientProfileFactory extends Factory
             'allowed_grants' => ['client_credentials'],
             'allowed_scopes' => [],
             'require_pkce' => true,
+            'require_par' => false,
             'rate_tier' => 'standard',
         ];
     }

@@ -54,6 +54,10 @@ final class RotatingRefreshTokenRepository extends PassportRefreshTokenRepositor
         Passport::token()->newQuery()->whereIn('id', $accessIds)->update(['revoked' => true]);
         Passport::refreshToken()->newQuery()->whereIn('access_token_id', $accessIds)->update(['revoked' => true]);
 
+        // D2: reuse-detection kills propagate to the status cache at once.
+        app(\App\Platform\Identity\Federation\RevocationStatusCache::class)
+            ->invalidateTokens($accessIds->all());
+
         event(new TokenReuseDetected((string) $userId, (string) $clientId));
     }
 

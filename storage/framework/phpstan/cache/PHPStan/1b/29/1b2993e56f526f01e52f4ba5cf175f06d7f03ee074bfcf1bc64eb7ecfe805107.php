@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Platform\Console\CleanupExpiredCommand.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Platform\Console\CleanupExpiredCommand
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-97916ec4f7466c3a382e6a45afbfceecf80173b2e30ebe52bfbe8b408916ce6c',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-869e3e19571f84f3c14ba63cfe4f94cd20cf52870c27a9c552bfb05e8d5d75c7',
    'data' => 
   array (
     'locatedSource' => 
@@ -28,6 +28,10 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
  * - OTP challenges past expiry → delete (single-use secrets, no history value).
  * - Invites past expiry → mark EXPIRED (rows retained as audit history).
  * - Web sessions past expiry → delete.
+ * - Step-up proofs past 24 h → delete (authority is the first 15 min).
+ * - Customer OTP challenges past expiry → delete (module table, kernel rule).
+ * - Actor sessions revoked or past expiry → delete (M5/TOKEN-001: a
+ *   missing jti already fails closed in ActorTokenVerifier).
  *
  * Kernel-maintenance bypass (TEN-009): global scopes are lifted explicitly
  * here and only here for sweep purposes; every swept row is tenant-scoped
@@ -38,8 +42,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     'attributes' => 
     array (
     ),
-    'startLine' => 22,
-    'endLine' => 99,
+    'startLine' => 26,
+    'endLine' => 143,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => 'Illuminate\\Console\\Command',
@@ -69,20 +73,20 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         {--tenant= : Scope the sweep to one tenant id}\'',
           'attributes' => 
           array (
-            'startLine' => 24,
-            'endLine' => 27,
+            'startLine' => 28,
+            'endLine' => 31,
             'startTokenPos' => 42,
-            'startFilePos' => 904,
+            'startFilePos' => 1192,
             'endTokenPos' => 42,
-            'endFilePos' => 1094,
+            'endFilePos' => 1382,
           ),
         ),
         'docComment' => NULL,
         'attributes' => 
         array (
         ),
-        'startLine' => 24,
-        'endLine' => 27,
+        'startLine' => 28,
+        'endLine' => 31,
         'startColumn' => 5,
         'endColumn' => 56,
         'isPromoted' => false,
@@ -104,20 +108,20 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'code' => '\'Sweep expired OTP challenges, invites and sessions\'',
           'attributes' => 
           array (
-            'startLine' => 29,
-            'endLine' => 29,
+            'startLine' => 33,
+            'endLine' => 33,
             'startTokenPos' => 51,
-            'startFilePos' => 1127,
+            'startFilePos' => 1415,
             'endTokenPos' => 51,
-            'endFilePos' => 1178,
+            'endFilePos' => 1466,
           ),
         ),
         'docComment' => NULL,
         'attributes' => 
         array (
         ),
-        'startLine' => 29,
-        'endLine' => 29,
+        'startLine' => 33,
+        'endLine' => 33,
         'startColumn' => 5,
         'endColumn' => 82,
         'isPromoted' => false,
@@ -150,8 +154,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 31,
-        'endLine' => 98,
+        'startLine' => 35,
+        'endLine' => 142,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,

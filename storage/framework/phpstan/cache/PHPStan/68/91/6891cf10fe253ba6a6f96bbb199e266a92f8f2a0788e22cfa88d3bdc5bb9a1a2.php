@@ -210,7 +210,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Catalog\\Http\\Controllers\\PriceController.php' => '97fb44d6c4b7af0cbd33860548ee95b4754b92886f652ad628c747ab775cfd76',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Catalog\\Http\\Controllers\\PriceController.php' => '3729a26e8affc10218281ce29d176c9124b8124baa2fdd036c95519da20bf465',
     ),
   ),
 ));

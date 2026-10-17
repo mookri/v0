@@ -12,6 +12,7 @@ use App\Modules\Customers\Http\Controllers\CustomerSettingController;
 use App\Modules\Customers\Http\Controllers\CustomerVerificationController;
 use App\Modules\Customers\Http\Controllers\SavedItemController;
 use App\Modules\Customers\Http\Controllers\StaffSupportController;
+use App\Platform\Identity\Http\Middleware\LegacyLoginSurfaceGate;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,31 +24,36 @@ use Illuminate\Support\Facades\Route;
 | challenge itself, like invite acceptance): they opt out of the group
 | middleware explicitly and carry driver-agnostic throttle caps
 | (REDIS-001 interim posture). Logout keeps auth.any + tenant.
+|
+| Runtime separation (ADR-0020 D1/D6): the public credential surface
+| also carries LegacyLoginSurfaceGate — it never exists on the issuer
+| runtime (the issuer is sole) and vanishes on a federated application
+| runtime (cutover committed); the monolith keeps it in both modes.
 */
 
 Route::post('auth/otp', [CustomerAuthController::class, 'requestOtp'])
     ->withoutMiddleware(['auth.any', 'tenant'])
-    ->middleware('throttle:10,1')
+    ->middleware(['throttle:10,1', LegacyLoginSurfaceGate::class])
     ->name('auth.otp');
 Route::get('auth/otp/config', [CustomerAuthController::class, 'otpConfig'])
     ->withoutMiddleware(['auth.any', 'tenant'])
-    ->middleware('throttle:30,1')
+    ->middleware(['throttle:30,1', LegacyLoginSurfaceGate::class])
     ->name('auth.otp.config');
 Route::post('auth/otp/resend', [CustomerAuthController::class, 'otpResend'])
     ->withoutMiddleware(['auth.any', 'tenant'])
-    ->middleware('throttle:10,1')
+    ->middleware(['throttle:10,1', LegacyLoginSurfaceGate::class])
     ->name('auth.otp.resend');
 Route::post('auth/signup', [CustomerAuthController::class, 'signup'])
     ->withoutMiddleware(['auth.any', 'tenant'])
-    ->middleware('throttle:10,1')
+    ->middleware(['throttle:10,1', LegacyLoginSurfaceGate::class])
     ->name('auth.signup');
 Route::post('auth/verify', [CustomerAuthController::class, 'verifySignup'])
     ->withoutMiddleware(['auth.any', 'tenant'])
-    ->middleware('throttle:10,1')
+    ->middleware(['throttle:10,1', LegacyLoginSurfaceGate::class])
     ->name('auth.verify');
 Route::post('auth/login', [CustomerAuthController::class, 'login'])
     ->withoutMiddleware(['auth.any', 'tenant'])
-    ->middleware('throttle:10,1')
+    ->middleware(['throttle:10,1', LegacyLoginSurfaceGate::class])
     ->name('auth.login');
 
 Route::post('auth/logout', [CustomerAuthController::class, 'logout'])
@@ -65,10 +71,11 @@ Route::post('profile:deactivate', [CustomerProfileController::class, 'deactivate
 Route::post('profile:delete', [CustomerProfileController::class, 'delete'])
     ->name('profile.delete');
 // Public like login (a suspended membership cannot pass the tenant gate,
-// so reactivation takes a fresh OTP proof instead of a session).
+// so reactivation takes a fresh OTP proof instead of a session) — same
+// runtime separation as the login surface above.
 Route::post('profile:reactivate', [CustomerProfileController::class, 'reactivate'])
     ->withoutMiddleware(['auth.any', 'tenant'])
-    ->middleware('throttle:10,1')
+    ->middleware(['throttle:10,1', LegacyLoginSurfaceGate::class])
     ->name('profile.reactivate');
 
 Route::get('verifications', [CustomerVerificationController::class, 'status'])

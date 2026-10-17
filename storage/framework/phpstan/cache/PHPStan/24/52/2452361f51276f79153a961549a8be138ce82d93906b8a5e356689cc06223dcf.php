@@ -15,6 +15,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
           'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
           'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
           'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -43,6 +44,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
           'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
           'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
           'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -60,6 +62,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
             'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
             'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
             'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
@@ -98,6 +101,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
           'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
           'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
           'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -115,6 +119,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
             'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
             'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
             'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
@@ -153,6 +158,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
           'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
           'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
           'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -170,6 +176,64 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
             'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
             'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+            'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
+            'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'request' => 'Illuminate\\Http\\Request',
+          ),
+           'className' => 'App\\Modules\\Onboarding\\Http\\Controllers\\ReviewController',
+           'functionName' => NULL,
+           'templatePhpDocNodes' => 
+          array (
+          ),
+           'parent' => NULL,
+           'typeAliasesMap' => 
+          array (
+          ),
+           'bypassTypeAliases' => false,
+           'constUses' => 
+          array (
+          ),
+           'typeAliasClassName' => NULL,
+           'traitData' => NULL,
+        )),
+         'typeAliasesMap' => 
+        array (
+        ),
+         'bypassTypeAliases' => false,
+         'constUses' => 
+        array (
+        ),
+         'typeAliasClassName' => NULL,
+         'traitData' => NULL,
+      )),
+      'f3ed0c269eebc5d9ba2bceb58f89f049' => 
+      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+         'namespace' => 'App\\Modules\\Onboarding\\Http\\Controllers',
+         'uses' => 
+        array (
+          'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
+          'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
+          'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+          'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
+          'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'request' => 'Illuminate\\Http\\Request',
+        ),
+         'className' => 'App\\Modules\\Onboarding\\Http\\Controllers\\ReviewController',
+         'functionName' => 'serializeQueueItem',
+         'templatePhpDocNodes' => 
+        array (
+        ),
+         'parent' => 
+        \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+           'namespace' => 'App\\Modules\\Onboarding\\Http\\Controllers',
+           'uses' => 
+          array (
+            'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
+            'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
+            'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
             'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
@@ -208,6 +272,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
           'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
           'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
           'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -225,6 +290,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
             'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
             'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
             'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
@@ -263,6 +329,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
           'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
           'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
           'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -280,6 +347,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
             'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
             'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
             'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
@@ -318,6 +386,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
           'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
           'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
           'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -335,6 +404,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
             'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
             'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
             'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
@@ -373,6 +443,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
           'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
           'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+          'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
           'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
@@ -390,6 +461,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'partnerapplication' => 'App\\Modules\\Onboarding\\Models\\PartnerApplication',
             'reviewrecord' => 'App\\Modules\\Onboarding\\Models\\ReviewRecord',
             'trackcatalog' => 'App\\Modules\\Onboarding\\TrackCatalog',
+            'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
             'auditwriter' => 'App\\Platform\\Audit\\AuditWriter',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
@@ -423,7 +495,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Onboarding\\Http\\Controllers\\ReviewController.php' => 'fe6b89d5217515c9d0138de9db17f4e26a48199ed0ec463ba2a164a512f8633e',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Onboarding\\Http\\Controllers\\ReviewController.php' => '88bfab79a9f8148a0dc623f269783255d1eb3680a246ee9beefa68565b863dd4',
     ),
   ),
 ));

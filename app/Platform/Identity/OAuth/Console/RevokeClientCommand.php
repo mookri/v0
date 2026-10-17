@@ -53,9 +53,29 @@ final class RevokeClientCommand extends Command
             ->where('revoked', false)
             ->update(['revoked' => true]);
 
+        // D2 (9c): a console revocation is a first-party revocation
+        // site exactly like the HTTP mirror — the shared status store
+        // makes cross-process invalidation immediate, so the bound
+        // degrades to 0 s here too, not the 30 s TTL.
+        $revocationCache = app(\App\Platform\Identity\Federation\RevocationStatusCache::class);
+        $revocationCache->invalidateClient((string) $client->getKey());
+        $revocationCache->invalidateTokens($accessIds->all());
+
         // Passport memoizes client rows per process (once): flush so
         // in-process readers (Octane, queue workers) see the revocation.
         \Illuminate\Support\Once::flush();
+
+        // D5: the kill lands on the federation chain per credential.
+        $recorder = app(\App\Platform\Identity\Federation\AuthEventRecorder::class);
+        foreach ($accessIds as $jti) {
+            $recorder->record([
+                'event_type' => 'token.revoked',
+                'decision' => 'allow',
+                'actor_client_id' => (string) $client->getKey(),
+                'token_jti' => (string) $jti,
+                'reason_code' => 'client_revoked',
+            ]);
+        }
 
         $this->info('Client revoked: '.(string) $client->getKey().' ('.$accessIds->count().' live tokens, '.$devicesKilled.' device codes killed).');
 

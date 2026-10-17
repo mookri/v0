@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Platform\Authz\Contracts\DecidingStage.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Platform\Authz\Contracts\DecidingStage
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-0252859d7f166580c451ff599a8291a343ea595db579d7613424e9528d90dcbb',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-0488c1c95618eacdf0855f279efde88d41eb975fa2fb086a1493cc8273c7edc9',
    'data' => 
   array (
     'locatedSource' => 
@@ -33,7 +33,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     array (
     ),
     'startLine' => 12,
-    'endLine' => 21,
+    'endLine' => 22,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => NULL,
@@ -475,12 +475,12 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'startColumn' => 5,
         'endColumn' => 36,
       ),
-      'DefaultDeny' => 
+      'SodConflict' => 
       array (
-        'name' => 'DefaultDeny',
+        'name' => 'SodConflict',
         'value' => 
         array (
-          'code' => '\'default_deny\'',
+          'code' => '\'sod_conflict\'',
           'attributes' => 
           array (
             'startLine' => 19,
@@ -500,20 +500,20 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'startColumn' => 5,
         'endColumn' => 38,
       ),
-      'ForgedContext' => 
+      'DefaultDeny' => 
       array (
-        'name' => 'ForgedContext',
+        'name' => 'DefaultDeny',
         'value' => 
         array (
-          'code' => '\'forged_context\'',
+          'code' => '\'default_deny\'',
           'attributes' => 
           array (
             'startLine' => 20,
             'endLine' => 20,
             'startTokenPos' => 78,
-            'startFilePos' => 675,
+            'startFilePos' => 673,
             'endTokenPos' => 78,
-            'endFilePos' => 690,
+            'endFilePos' => 686,
           ),
         ),
         'attributes' => 
@@ -522,6 +522,31 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'docComment' => NULL,
         'startLine' => 20,
         'endLine' => 20,
+        'startColumn' => 5,
+        'endColumn' => 38,
+      ),
+      'ForgedContext' => 
+      array (
+        'name' => 'ForgedContext',
+        'value' => 
+        array (
+          'code' => '\'forged_context\'',
+          'attributes' => 
+          array (
+            'startLine' => 21,
+            'endLine' => 21,
+            'startTokenPos' => 87,
+            'startFilePos' => 714,
+            'endTokenPos' => 87,
+            'endFilePos' => 729,
+          ),
+        ),
+        'attributes' => 
+        array (
+        ),
+        'docComment' => NULL,
+        'startLine' => 21,
+        'endLine' => 21,
         'startColumn' => 5,
         'endColumn' => 42,
       ),

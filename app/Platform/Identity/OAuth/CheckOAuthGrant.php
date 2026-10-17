@@ -43,6 +43,24 @@ final class CheckOAuthGrant
             );
         }
 
+        // A-SEC-004-9 (RFC 9449): require_dpop mandates DPoP-bound
+        // tokens. The interactive grants satisfy it in-league (proof
+        // validated and bound at mint via EnforcesDpopProof); machine
+        // grants have no DPoP binding seam yet, so a mandated client
+        // is denied here — fail closed, never silently exempt. The
+        // description says which mandate caused the denial (allowed_
+        // grants above owns the plainer "not allowed" wording).
+        if (! in_array($grant, ['authorization_code', 'refresh_token'], true)
+            && (bool) $profile->require_dpop) {
+            return $this->deny(
+                'unsupported_grant',
+                sprintf(
+                    "Grant '%s' is not allowed for this client: require_dpop mandates DPoP-bound tokens and machine grants cannot carry a DPoP binding.",
+                    $grant
+                )
+            );
+        }
+
         return $next($request);
     }
 

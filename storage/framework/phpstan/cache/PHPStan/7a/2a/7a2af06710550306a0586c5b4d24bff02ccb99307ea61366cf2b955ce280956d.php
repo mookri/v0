@@ -13,7 +13,10 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'authorizationdeniedexception' => 'App\\Platform\\Authz\\Exceptions\\AuthorizationDeniedException',
+          'sodconflictexception' => 'App\\Platform\\Authz\\Exceptions\\SodConflictException',
           'invalidpolicypayloadexception' => 'App\\Platform\\Authz\\Exceptions\\InvalidPolicyPayloadException',
+          'otpproviderratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderRateLimitedException',
+          'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
           'membershipinactiveexception' => 'App\\Platform\\Tenancy\\Exceptions\\MembershipInactiveException',
           'tenantheadermissingexception' => 'App\\Platform\\Tenancy\\Exceptions\\TenantHeaderMissingException',
           'tenantnotintokenexception' => 'App\\Platform\\Tenancy\\Exceptions\\TenantNotInTokenException',
@@ -52,7 +55,10 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'authorizationdeniedexception' => 'App\\Platform\\Authz\\Exceptions\\AuthorizationDeniedException',
+          'sodconflictexception' => 'App\\Platform\\Authz\\Exceptions\\SodConflictException',
           'invalidpolicypayloadexception' => 'App\\Platform\\Authz\\Exceptions\\InvalidPolicyPayloadException',
+          'otpproviderratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderRateLimitedException',
+          'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
           'membershipinactiveexception' => 'App\\Platform\\Tenancy\\Exceptions\\MembershipInactiveException',
           'tenantheadermissingexception' => 'App\\Platform\\Tenancy\\Exceptions\\TenantHeaderMissingException',
           'tenantnotintokenexception' => 'App\\Platform\\Tenancy\\Exceptions\\TenantNotInTokenException',
@@ -80,7 +86,10 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'authorizationdeniedexception' => 'App\\Platform\\Authz\\Exceptions\\AuthorizationDeniedException',
+            'sodconflictexception' => 'App\\Platform\\Authz\\Exceptions\\SodConflictException',
             'invalidpolicypayloadexception' => 'App\\Platform\\Authz\\Exceptions\\InvalidPolicyPayloadException',
+            'otpproviderratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderRateLimitedException',
+            'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
             'membershipinactiveexception' => 'App\\Platform\\Tenancy\\Exceptions\\MembershipInactiveException',
             'tenantheadermissingexception' => 'App\\Platform\\Tenancy\\Exceptions\\TenantHeaderMissingException',
             'tenantnotintokenexception' => 'App\\Platform\\Tenancy\\Exceptions\\TenantNotInTokenException',
@@ -129,7 +138,10 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'authorizationdeniedexception' => 'App\\Platform\\Authz\\Exceptions\\AuthorizationDeniedException',
+          'sodconflictexception' => 'App\\Platform\\Authz\\Exceptions\\SodConflictException',
           'invalidpolicypayloadexception' => 'App\\Platform\\Authz\\Exceptions\\InvalidPolicyPayloadException',
+          'otpproviderratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderRateLimitedException',
+          'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
           'membershipinactiveexception' => 'App\\Platform\\Tenancy\\Exceptions\\MembershipInactiveException',
           'tenantheadermissingexception' => 'App\\Platform\\Tenancy\\Exceptions\\TenantHeaderMissingException',
           'tenantnotintokenexception' => 'App\\Platform\\Tenancy\\Exceptions\\TenantNotInTokenException',
@@ -157,7 +169,10 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'authorizationdeniedexception' => 'App\\Platform\\Authz\\Exceptions\\AuthorizationDeniedException',
+            'sodconflictexception' => 'App\\Platform\\Authz\\Exceptions\\SodConflictException',
             'invalidpolicypayloadexception' => 'App\\Platform\\Authz\\Exceptions\\InvalidPolicyPayloadException',
+            'otpproviderratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderRateLimitedException',
+            'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
             'membershipinactiveexception' => 'App\\Platform\\Tenancy\\Exceptions\\MembershipInactiveException',
             'tenantheadermissingexception' => 'App\\Platform\\Tenancy\\Exceptions\\TenantHeaderMissingException',
             'tenantnotintokenexception' => 'App\\Platform\\Tenancy\\Exceptions\\TenantNotInTokenException',
@@ -206,7 +221,10 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'authorizationdeniedexception' => 'App\\Platform\\Authz\\Exceptions\\AuthorizationDeniedException',
+          'sodconflictexception' => 'App\\Platform\\Authz\\Exceptions\\SodConflictException',
           'invalidpolicypayloadexception' => 'App\\Platform\\Authz\\Exceptions\\InvalidPolicyPayloadException',
+          'otpproviderratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderRateLimitedException',
+          'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
           'membershipinactiveexception' => 'App\\Platform\\Tenancy\\Exceptions\\MembershipInactiveException',
           'tenantheadermissingexception' => 'App\\Platform\\Tenancy\\Exceptions\\TenantHeaderMissingException',
           'tenantnotintokenexception' => 'App\\Platform\\Tenancy\\Exceptions\\TenantNotInTokenException',
@@ -234,7 +252,10 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'authorizationdeniedexception' => 'App\\Platform\\Authz\\Exceptions\\AuthorizationDeniedException',
+            'sodconflictexception' => 'App\\Platform\\Authz\\Exceptions\\SodConflictException',
             'invalidpolicypayloadexception' => 'App\\Platform\\Authz\\Exceptions\\InvalidPolicyPayloadException',
+            'otpproviderratelimitedexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderRateLimitedException',
+            'otpproviderunavailableexception' => 'App\\Platform\\Identity\\Otp\\OtpProviderUnavailableException',
             'membershipinactiveexception' => 'App\\Platform\\Tenancy\\Exceptions\\MembershipInactiveException',
             'tenantheadermissingexception' => 'App\\Platform\\Tenancy\\Exceptions\\TenantHeaderMissingException',
             'tenantnotintokenexception' => 'App\\Platform\\Tenancy\\Exceptions\\TenantNotInTokenException',
@@ -280,7 +301,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Api\\ErrorEnvelope.php' => 'bd9d78123c12287060102e729fd9cde3b216a852bf5463bba9e79291a67116fb',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Api\\ErrorEnvelope.php' => 'caeb6df166a799b9aa35e6f3203132c306e5a806e229f2c3d84f3cc94a887df0',
     ),
   ),
 ));

@@ -168,6 +168,7 @@ Password hashing: Argon2id (Laravel default).
 | `/oauth/device/code` | POST | Device authorization request (RFC 8628) |
 | `/oauth/device` (verification UI) | GET/POST | User enters `user_code` (web, session-auth) |
 | `/oauth/stepup` | GET/POST | Step-up re-authentication (MFA / fresh login) |
+| `/oauth/logout` | GET/POST | RP-initiated end-session + logout fan-out (A-SEC-004-5) |
 | `/api/v1/identity/mfa/*` | POST | TOTP enrollment/verify/recovery |
 | `/api/v1/identity/sessions` | GET/DELETE | List / revoke own web sessions |
 
@@ -360,8 +361,90 @@ Opaque 256-bit string, hashed at rest; fields: `lineage_id`, `client_id`,
 
 - RS256 keypair via `passport:keys`; key rotation runbook: generate new key,
   JWKS publishes **both** keys during a 7-day overlap, old key retired
-  ([security baseline §3](./security-baseline.md)). `kid` header present on all JWTs.
+  ([security baseline §3](./security-baseline.md)). `kid` header on ID
+  tokens (RFC 7638 thumbprint); league's access-token headers stay
+  kid-less (A-SEC-002-1) — consumers fall back to the small JWKS set.
+- Signing-key custody is pluggable and fail-closed — `AUTH_SIGNING_CUSTODY`
+  = `file` (default) or `kms` (KMS/HSM; the private half never exists in
+  process memory); see A-SEC-003-1.
 - JWKS response carries `Cache-Control: public, max-age=3600`.
+
+### Implementation note A-SEC-003-1 — signing-key custody: file + KMS/HSM, live (2026-10-16)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive; extends §4.4)
+
+Custody is a security boundary, not a default. `AUTH_SIGNING_CUSTODY`
+resolves the token-signing key source behind one port
+(`Signing/SigningKeyProvider`: `assertUsable()` fail-closed boot check,
+`publicKeyPem()` the JWKS source, `jwtSigner()` the mint signer — RS256
+in every custody). Unknown values refuse the boot.
+
+- **`file` (default):** inline `PASSPORT_PRIVATE_KEY` or the
+  `oauth-private.key` pair at Passport's key path — exact pre-custody
+  availability semantics, byte-exact signed output (rotation drill +
+  OIDC suites pin it).
+- **`kms`:** external KMS/HSM. Config: `AUTH_SIGNING_KMS_KEY_RESOURCE`,
+  `AUTH_SIGNING_KMS_ENDPOINT`, `AUTH_SIGNING_KMS_PUBLIC_KEY` (+ optional
+  `AUTH_SIGNING_KMS_AUTH_TOKEN`, `AUTH_SIGNING_KMS_TIMEOUT`). The
+  private-half operation rides the `SignsTokenRemotely` port;
+  `KmsHttpSigner` speaks the shim contract — POST
+  `{algorithm: "RS256", signing_input: <base64url>}` →
+  `{signature: <base64url(DER)>}`, exactly cloud KMS `asymmetricSign`
+  output, so the shim is a thin transcoder with no key material. The
+  issuer boots under this custody only when the config validates AND
+  the port is bound — otherwise the boot is refused: a JWKS-published
+  key nothing can sign under is the "publish one key, sign with
+  another" failure.
+- **Mint-path interception (complete by construction):** league emits
+  `$accessToken->toString()`, and `CustodyAccessToken`
+  (`Passport::useAccessTokenEntity`) overrides exactly that one method —
+  no grant (auth code, refresh, client credentials, token exchange) can
+  mint around it. File custody delegates to league's stock path;
+  remote custody mirrors league 9.4.1's claim layout body-for-body and
+  signs through the port. The ID-token grant takes its signer from the
+  same custody. JWKS (`DiscoveryController::publicKey`) and the
+  ID-token `kid` resolve through the same provider — in sync by
+  construction, no per-call file walk to keep aligned.
+- **Sentinel materialization:** under `kms`, Passport's key slots are
+  filled from the custody's public half — the verification side reads
+  it, and the private slot holds the SAME public PEM (league's
+  `CryptKey` validates form only, and a public PEM passes), so any
+  signing path that slips past interception fails LOUDLY
+  (`openssl_sign` rejects a public key) instead of signing under a key
+  consumers don't have. No real private half exists in process memory.
+- **Rotation with overlap:** file custody stays on
+  `auth:rotate-signing-key`. External swaps (KMS key versions,
+  deployment-managed PEMs) run `auth:retire-signing-key` BEFORE the
+  swap: the current public half is archived to
+  `retired_signing_keys_dir/<kid>.pub` (JWKS keeps serving it),
+  `signing_key.retired` records attributably
+  (`external_custody_rotation`), re-runs are idempotent. Then swap the
+  key, restart (keys are read per process), and delete the archive
+  after the overlap window.
+- **Failures are loud and audited:** a shim failure mid-mint throws
+  `RemoteSigningException` — the exchange fails closed with no token
+  material — and records a hash-chained `token.signing_failed` row; a
+  broken audit store never masks the original signing error.
+- **Access TTL honesty:** `Passport::tokensExpireIn` now reads
+  `federation.access_token_ttl_seconds` (it was hardcoded 15 min while
+  the probe advertised the config), and config clamps
+  `AUTH_ACCESS_TOKEN_TTL` to SEC-003's 900 s ceiling — the probe's
+  advertised value is always the minted value; env may only shorten
+  (e.g. 90 s).
+
+Evidence: `SigningCustodyTest` (9), `RemoteSigningMintTest` (10 —
+incl. file-vs-kms claim parity, sentinel validity, no-masking),
+`RetireSigningKeyCommandTest` (4), `KmsCustodyExchangeTest` (2 — full
+PKCE ceremony under kms custody; dead shim → fail-closed 500 +
+audit row), all green beside unchanged `OidcIdTokenTest`,
+`SigningKeyRotationDrillTest`, `DiscoveryMetadataTest`,
+`RuntimeSeparationTest`, `FederationHostGateTest`. phpstan level 6
+clean on every touched path.
+
+Not in this slice (roadmap): HSM/PKCS#11 provider behind the same port,
+mTLS/attestation hardening on the shim client, `kid` on kms access
+tokens (deliberate league-format parity for now), and the BFF
+federation port to `apps/dashboard` + `apps/partner`.
 
 ---
 
@@ -518,16 +601,558 @@ A-SEC-004-3's fail-closed notice destination)
   re-authentication. Active sessions are listed/revocable at
   `/api/v1/identity/sessions`.
 - **SSO session**: the platform session created after federated login carries
-  `sid`; tokens issued from it embed the same `sid` so revocation can fan
-  out.
+  `sid`; ID tokens AND session-bound access tokens embed the same `sid`
+  (row + claim, A-SEC-004-6) so revocation can fan out. The ceremony's
+  proof facts (`auth_time`, `amr`, `acr`, `sid`) are
+  stashed in the session at login, and authorize requests carrying
+  `max_age` are measured against them (A-SEC-004-5).
 - **Single logout direction (v1):**
+  - *RP-initiated (at the platform OP)*: RPs send the browser to the
+    platform's `end_session_endpoint` (`/oauth/logout`); the platform
+    session is terminated unconditionally, its access/refresh token
+    lineage is revoked by `sid` (A-SEC-004-6), and the termination
+    fans out to every bound RP over OIDC back-channel logout
+    (A-SEC-004-5; received and enforced by each BFF's
+    `backchannel-logout` route — A-SEC-004-6).
   - *Platform-initiated*: logging out destroys the platform session and adds
-    the session's token lineage to revocation; if the upstream IdP supports
+    the session's token lineage to revocation (implemented as the
+    `sid`-keyed revoke in `SessionTerminator` — A-SEC-004-6); if the upstream IdP supports
     RP-initiated logout (OIDC `end_session_endpoint` / SAML SLO), the
     platform redirects/posts the logout there (front-channel, best effort).
   - *IdP-initiated*: where the upstream supports front-channel logout, the
     platform exposes `/sso/logout-callback` and destroys the matching
-    session via `sid`/subject lookup. Back-channel SLO is out of scope for v1.
+    session via `sid`/subject lookup. Back-channel SLO toward upstream
+    IdPs remains out of scope for v1.
+
+---
+
+### Implementation note A-SEC-004-5 — SSO session lifecycle: end-session, back-channel logout, max_age (2026-10-17)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive; realizes the
+OP-side half of "Single logout direction (v1)" above and adds
+authorize-time freshness enforcement)
+
+- **End-session endpoint** (`GET|POST /oauth/logout`, throttled
+  30/min, CSRF-exempt for the bare form POST; discovery advertises
+  `end_session_endpoint`): termination is unconditional and flows
+  through the shared `SessionTerminator` — capture `sid`/`sub`,
+  invalidate the session, write a fail-closed `session.logout` audit
+  (reason codes `end_session_request`, `app_logout`), then fan the
+  logout out to bound RPs in a `finally` so the audit survives
+  dispatch failures. The redirect target must be an exact match from
+  the client's registered `post_logout_redirect_uris` (hash_equals,
+  http(s) only): the `id_token_hint` is RS256-verified over current
+  AND retired custody keys with `exp` deliberately ignored — logging
+  out must work with an expired ID token — and no hint falls back to
+  a bare `client_id`. A failed hint never blocks the logout itself —
+  the session still dies, the user lands on the neutral logged-out
+  page, and a deny audit (`session.end_session_request` /
+  `invalid_id_token_hint`) records the attempt.
+- **Client registration**: `oauth_client_profiles` gains
+  `post_logout_redirect_uris` (JSON list) and `backchannel_logout_uri`;
+  both are validated and persisted by the client admin surface and
+  exposed in its serialized client payload.
+- **Bindings & back-channel fan-out**: consent writes an
+  `oidc_session_bindings` row (sid × client × subject; upsert,
+  best-effort — telemetry failures report but never fail issuance).
+  Termination dispatches OIDC Back-Channel Logout 1.0 to every bound
+  client that registered a `backchannel_logout_uri`: each attempt mints
+  a fresh `logout+jwt` through the same `SigningCustody` custody as
+  A-SEC-003-1 (iss/sub/aud/iat/exp+120/jti/sid, `events` claim, `typ`
+  and `kid`; minted per attempt, never stored), sent as
+  `application/x-www-form-urlencoded` `logout_token=` with a 3 s
+  timeout and no redirects. Outbox table `oidc_backchannel_deliveries`
+  records every attempt, backoff [60, 300, 1800, 3600, 7200] s, five
+  attempts, then terminal `failed`;
+  `auth:retry-backchannel-logout` (`--force`, `--limit`) drains it.
+  Delivery-outcome audits are try/catch-wrapped — telemetry, never a
+  decision.
+- **`max_age` freshness** (`EnforcesMaxAge`, innermost on the authorize
+  route — after the PAR bag rewrite, inside the RFC 9207 `iss`
+  binding): requests without `openid` scope or without `max_age`
+  return early (existing behavior unchanged). A session whose
+  ceremony facts (`auth_time`) prove freshness passes; stale or
+  unprovable freshness under `prompt=none` fails closed to a
+  `login_required` error redirect (only when client and redirect_uri
+  validate exactly — otherwise the league-shape 400 JSON), and
+  interactively parks an `oidc.reauth` challenge (5-min TTL) plus
+  `url.intended` before bouncing to the federation login: the
+  signed-in shortcut suspends while challenged, and completing the
+  ceremony discharges the flag.
+- **Deliberate gaps**: (none open — full `prompt` support closed as
+  A-SEC-004-7; RP-side back-channel receivers and OP-side
+  token-lineage revocation on logout both landed as A-SEC-004-6.)
+- Verified by `EndSessionTest` (8), `MaxAgeEnforcementTest` (8) and
+  `BackchannelLogoutTest` (6); full suite green (1084 tests).
+
+---
+
+### Implementation note A-SEC-004-6 — session-bound access tokens + RP-side back-channel receivers (2026-10-17)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive; closes the two
+deliberate gaps A-SEC-004-5 left open — OP-side token revocation on
+logout and the RP-side half of the back-channel fan-out)
+
+- **Session-bound access tokens**: the openid ceremony's `sid` rides
+  the authorization-code payload (stashed at consent, not read from
+  the token-endpoint request — the BFF exchanges server-to-server
+  without the browser session), and `OidcAuthCodeGrant`'s
+  `issueAccessToken` fork stamps it onto the token entity BEFORE
+  persist. `SessionBoundAccessTokenRepository` (container-bound over
+  Passport's bridge repository, the same seam as
+  `RotatingRefreshTokenRepository`) writes it to the new
+  `oauth_access_tokens.sid` column inside the single INSERT, and
+  `CustodyAccessToken` embeds the same value as the `sid` JWT claim —
+  row and claim travel on one entity, so they cannot disagree. The
+  claim appears only on session-stamped mints: unstamped tokens
+  (client credentials, non-openid grants) stay byte-equal to league's
+  claim set on BOTH custodies, and `RemoteSigningMintTest` pins
+  stamped parity too (league layout + `sid` last, file and remote
+  alike). Migration `2026_10_17_000004_add_sid_to_oauth_access_tokens`
+  (central).
+- **Termination kills the lineage**: `SessionTerminator` now revokes
+  every access-token row under the terminated `sid` and their refresh
+  tokens with them (mirrors `RotatingRefreshTokenRepository`'s two
+  updates), fail-closed — the session, the resource-server path and
+  introspection all see the death on the next check, and a kept
+  refresh token cannot resurrect a terminated session. Machine tokens
+  keep a NULL sid and outlive browser sessions by design.
+- **RP-side receivers (all four BFF apps, parallel copies)**:
+  `POST /api/auth/backchannel-logout` (404 outside federation, bare
+  204/400 per spec — never which axis failed). `verifyLogoutToken`
+  fails closed on every axis: RS256 pinned, kid-resolved against the
+  issuer JWKS; `typ` `logout+jwt` (or the spec's earlier `logout`);
+  byte-exact `iss`; `aud` containing our client id; the
+  `events` back-channel-logout claim (an id/access token can never
+  satisfy the shape); `iat` fresh within 300 s and not future-skewed
+  — every delivery attempt re-mints, so a delayed retry never widens
+  the window; `sid`/`sub`/`jti` non-empty. The jti is the receiver's
+  replay key (bounded in-memory), and a verified `sid` is parked in a
+  bounded per-process denylist (24 h TTL, 10k cap; a shared store
+  behind the same two functions covers multi-instance).
+- **Enforcement choke points**: the denylist is consulted wherever
+  the cookie's access token becomes an actor — customer's
+  `resolveCustomerActor` (decode path), partner's
+  `federatedActorFromToken` (locally verified path), dashboard's
+  `verifiedSessionClaims`, and web's `wiredActor` (raw untrusted
+  payload decode — the check can only ever REJECT, so a forged cookie
+  can at most deny itself). The cookie dies at its next use instead of
+  lingering to token expiry; the issuer-side lineage revocation
+  remains the primary kill for proxied calls.
+- **RP-initiated logout start/landing (all four BFFs, parallel
+  copies)**: the browser-facing half of the loop. `GET
+  /api/auth/logout/start` (federated only — `404` in direct mode, the
+  same parity as the receiver) mints a 32-byte base64url `state` and
+  parks it in the flow-family's short-lived HttpOnly `SameSite=Lax`
+  correlation cookie (10-min `Max-Age`; `nv-logout-state` per app,
+  `__Host-` prefixed in production), then `307`s the browser to the
+  issuer's end-session with `client_id` + the profile's registered
+  `/api/auth/logout/landing` + `state` — no `id_token_hint`, so no
+  token material rides the URL (the OP resolves the RP from the bare
+  client id). `GET /api/auth/logout/landing` clears every session
+  cookie and the state cookie idempotently on every arrival, then
+  timing-safely compares the returned `state` against the parked
+  cookie: a match renders the `no-store` signed-out page; a mismatch
+  or cold visit keeps the cleanup but `307`s home without
+  acknowledgment (a forged link can at most force a self-logout).
+  Both are browser-handoff surfaces, so the customer copies join the
+  protocol-route envelope exemption; proven live through the customer
+  BFF (runbook §10 legs 61–67).
+- **Registration**: `platform:client:create` gains
+  `--post-logout-redirect-uri=*`, `--backchannel-logout-uri=` and
+  `--scope=*` (http(s)-validated logout URIs; the scope option is the
+  console's first way to set the A5 `allowed_scopes` ceiling — without
+  it a console-created client allows NOTHING and can never pass
+  `EnforcesProfileScopes` on `scope=openid`). All four e2e clients in
+  `navdhya_e2e_central` (Customer BFF :3001, Web BFF :3000, Scoreboard
+  Dashboard :3003, Partner BFF :3002) carry their receiver URIs and
+  `openid`; partner's client id/secret live in the gitignored
+  `apps/partner/.env.local` (shown once at creation).
+- **Live fan-out drill (2026-10-17)**: the full loop ran against real
+  processes and MySQL — session-stamped AT `sid` verified from the
+  cookie, `GET /oauth/logout` terminated the session (unregistered
+  post-logout URI → local sign-out page, never a redirect), all AT/RT
+  lineage rows went `revoked=1`, the binding was stamped, and the
+  outbox row delivered `204` to the customer receiver after an
+  `auth:retry-backchannel-logout --force` drain; the dead cookie then
+  `307`'d to login (RP denylist), userinfo rejected both revoked ATs,
+  and the refresh grant answered `invalid_grant` "Token has been
+  revoked". Two operational rules pinned in the scoreboard runbook §10:
+  the retry command must run with the serving issuer's `AUTH_*`
+  environment (its re-minted `iss` is byte-compared by the RP — the
+  command now prints the issuer it mints with), and logout tokens
+  travel as `application/x-www-form-urlencoded` (`logout_token`
+  param), which the receivers require. The follow-up multi-RP drill
+  (runbook §10 legs 57–59) bound partner :3002 to the same session:
+  one logout fanned out to both RPs (partner inline `204`, customer via
+  the outbox retry in the same event), and both RPs' cookies died at
+  their next use while the issuer rejected both ATs and the refresh
+  lineage — the loop's N>1 case proven live. Its follow-up (legs
+  61–67) also pinned the D2 staleness bound live: seconds after the
+  logout the revoked AT still fetched userinfo (stale positive
+  verdict — the lineage kill doesn't invalidate
+  `RevocationStatusCache`, convergence = TTL) and was rejected `401`
+  once the documented ≤30 s ceiling passed. The scale test (legs
+  68–72) then booted web :3000 and dashboard :3003 in federated mode
+  for the first time and bound all four BFFs to one session: a single
+  RP-initiated logout through customer's own start route stamped all
+  four bindings under one sid, delivered four `attempts=1` outbox rows
+  inline (all receivers pre-warmed), and killed every RP at once —
+  customer `/api/profile`, partner `/api/temples`, web `/api/sessions`
+  and dashboard `/api/auth/me` all answered `401` to their explicitly
+  presented dead cookies. Three e2e registration fixes surfaced and
+  were applied out-of-band first: both dormant client secrets rotated
+  (`platform:client:rotate-secret`), dashboard's `redirect_uris` was
+  mis-registered to customer's `:3001` callback (fixed to `:3003`),
+  and dashboard alone carried `require_par=true` (the OP's RFC 9126
+  denial was correct; no BFF could *satisfy* the mandate then — every
+  BFF has since gained env-gated PAR push as A-SEC-004-8, and the
+  profile matches its three `first_party_web` siblings).
+- **Deliberate gaps**: the RP denylist is per-process
+  (multi-instance deployments want a shared store). (Full `prompt`
+  support closed as A-SEC-004-7. The RP-side *landing* gap closed
+  the same day — see the start/landing bullet above and runbook §10
+  legs 61–67.)
+- Verified by `AccessTokenSessionBindingTest` (3), the extended
+  `RemoteSigningMintTest` custody parity (13 with the binding tests),
+  the root vitest `tests/identity/backchannel-logout.test.ts` (67:
+  the full logout-token rejection battery, receiver route behavior and
+  choke-point integrations across all four apps) and
+  `tests/identity/rp-logout-landing.test.ts` (32: the start/landing
+  pair across all four apps — state correlation, idempotent cleanup,
+  forged-link defense, direct-mode `404`s); full issuer suite green
+  (1088 tests), phpstan contributes zero errors.
+
+---
+
+### Implementation note A-SEC-004-7 — OIDC prompt enforcement (2026-10-17)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive; closes the
+"full `prompt` support" gap both A-SEC-004-5 and A-SEC-004-6 left
+open — the last implementable deliberate gap of the authorize
+endpoint)
+
+Passport 12's `AuthorizationController` already implements the
+*semantics* of the full `none|login|consent` set natively — silent
+approve when a grant is remembered (`prompt=none`, never a consent
+page), `login_required`/`consent_required` error redirects when it is
+not, a full session destroy plus the `promptedForLogin` resume-flag
+loop-guard for `prompt=login`, and a forced consent screen for
+`prompt=consent` that outranks an active grant. What it does *not* do
+is validate: it collapses `prompt=none <other>` to `none` where OIDC
+Core §3.1.2.1 says `invalid_request` MUST, and silently ignores
+unknown values — turning a typo'd or unsupported interaction request
+into an ordinary flow. That is the exact silent-semantic-loss class
+`max_age` enforcement was built to kill at this endpoint.
+
+`EnforcesPrompt` (attached between the PAR rewrite and
+`EnforcesMaxAge`, inside `AppendsIssuer`) adds the validation half,
+fail closed:
+
+- `none` combined with any other value → `invalid_request`
+  (OIDC Core's MUST) — a rejection, never a silent downgrade to one
+  of the values, and never a re-auth trigger.
+- Unknown value (anything outside `none|login|consent`; notably
+  `select_account`) → `invalid_request`: an interaction type this
+  issuer does not implement is loud-rejected rather than silently
+  downgraded to a plain flow.
+- Non-string / array injection (`prompt[]=…`) → `invalid_request`.
+- Absent or empty (`prompt=`, which the framework's global
+  `ConvertEmptyStringsToNull` normalizes to `null` before route
+  middleware runs) → the absent parameter.
+
+Unlike `max_age` (gated to openid scope, because `auth_time` is an
+OIDC-only concept), validation applies unconditionally: `prompt`'s
+interaction flags need no OIDC claims, Passport applies its native
+handling regardless of scope, and a pinned regression test
+(`AuthorizationResponseIssuerTest`) requires `prompt=none` on a
+non-openid request to answer `login_required` — a no-interaction
+request is never bounced to the login page. Error redirects follow
+the established league shape: validated client + redirect_uri →
+error redirect with `state` and RFC 9207 `iss`; anything less →
+league-shape 400 JSON.
+
+Verified by `PromptEnforcementTest` (11: silent approve over a
+remembered grant, `consent_required`, forced re-auth with the
+loop-guard parked and a full-ceremony resume, forced consent over an
+active grant, every validation rejection with state + iss,
+scope-unconditional validation, empty-as-absent) and the live legs
+73–77 (runbook §11: silent `code` redirect, `consent_required`,
+`/auth/login` bounce on a seconds-fresh session, consent screen over
+an active grant, both `invalid_request` rejections) — full suite
+green (1100 tests), phpstan baseline unchanged (116).
+
+---
+
+### Implementation note A-SEC-004-8 — PAR federation push (BFF side) (2026-10-17)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive; closes the
+capability gap the N=4 fan-out drill surfaced — the issuer has
+enforced RFC 9126 per-client (`require_par`, the N2 cohort) since
+A-SEC-004-5, but no BFF could *satisfy* a mandate, which made the
+mandate unusable in the federation)
+
+Each of the four BFFs (parallel copies) gained a pushed-authorization
+client, env-gated per deployment:
+
+- `{CUSTOMER|DASHBOARD|PARTNER}_AUTH_PAR=required` (web shares the
+  customer env names, as everywhere in the federation contract): the
+  authorize route pushes the full parameter set to the issuer's PAR
+  endpoint over `client_secret_post` — the same client-authentication
+  posture the callback token exchange uses — and the browser is
+  redirected carrying ONLY `client_id` + `request_uri` (RFC 9126 §4:
+  every other parameter rode the authenticated back channel and the
+  issuer replays the stored set verbatim). `off` (default) and unset
+  are the byte-identical front-channel flow; an unknown value throws
+  at first use, exactly like `AUTH_MODE` — a typo must never silently
+  downgrade a mandate deployment to unpushed parameters.
+- Fail closed: a push that errors, or answers without a
+  `request_uri`, THROWS (a 500, never a front-channel fallback — that
+  fallback is precisely what the mandate forbids).
+- The issuer-side mandate stays authoritative: with the customer
+  profile's `require_par=true`, a front-channel authorize attempt is
+  denied with the established shape (error redirect to the registered
+  callback with `state` + RFC 9207 `iss`; unverifiable targets get
+  league-shape 400), and a replayed `request_uri` dies with
+  `invalid_request / already been used` (single-use).
+- The `request_uri` TTL is the issuer's short one (120 s,
+  `PushedAuthorizationRequest::TTL_SECONDS`) with an interactive
+  ceremony in the middle: the login must complete inside it or the
+  resume dies at the OP (400) and the user re-initiates login. No BFF
+  recovery is possible at that point — the browser is already at the
+  OP holding a dead capability.
+- Resume mechanics (the browser contract): the OP's login page PULLS
+  the parked `url.intended` (the bounced authorize URL, single-use)
+  into the ceremony's `next` and the ceremony posts it back at
+  verify — under PAR that resume URL is the `client_id` +
+  `request_uri` one, so carrying `next` is what makes the login
+  bounce survive a push.
+
+Verified by the root vitest `tests/identity/par-push.test.ts` (36:
+the four-app fleet × mode gate, push shape, parameter minimality,
+flow-cookie state binding, fail-closed push, 201-without-`request_uri`,
+unknown-mode denial, partner's direct-mode target) and the live legs
+78–80 (runbook §12: pushed-shape 302, the full OTP ceremony through
+the resume, consent, code exchange, `/api/profile` 200, the mandate
+error-redirect and the replay rejection) — full root suite 641 tests
+with only the known user-WIP failure, partner suite 49/49,
+`tsc --noEmit` clean on web/dashboard/partner (customer's only errors
+are the user's WIP `@/dal/catalog` import). No issuer-side code
+changed; phpstan/phpunit baselines untouched.
+
+---
+
+### Implementation note A-SEC-004-9 — DPoP sender-constrained access tokens (RFC 9449) (2026-10-17)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive; bearer
+tokens on mandated clients become proof-of-possession tokens, and
+every client may bind opportunistically)
+
+- **Opportunistic binding:** a `DPoP` header on the
+  `authorization_code` or `refresh_token` exchange binds the mint —
+  the RFC 7638 thumbprint lands as the JWT `cnf.dpop_jkt` claim AND
+  as `oauth_access_tokens.dpop_jkt` on the row (one source, stamped
+  before persist, exactly like `sid`), so the resource server never
+  decodes anything it cannot verify.
+- **`require_dpop` profile mandate** (default `false`): with it on,
+  an exchange without a proof is denied `400 invalid_dpop_proof`
+  (league shape at the token endpoint) **after** client validation
+  and **before** any code touch — a denied exchange never consumes
+  the authorization code (proven live: the same code succeeds with a
+  proof immediately after the denial). Refresh requires the SAME
+  `jkt` as the binding mint — no silent key rotation; the denial
+  lands before any rotation write, leaving D4 reuse-detection
+  exactly where it was. v1 covers `authorization_code` +
+  `refresh_token`; a mandated client asking `client_credentials`
+  fails closed at `CheckOAuthGrant` with `unsupported_grant` — never
+  silently exempt, never half-covered.
+- **Validator:** one seam, `DpopProof::validate($proof, $method,
+  $requestUri, $accessToken)` → thumbprint or
+  `DpopProofInvalidException`; algs ES256 + RS256; RFC 7638
+  canonicalization includes the braces (`{…}`, §3.2 — a production
+  bug caught by the test battery); `iat` skew ±60 s; `htu` normalized
+  (lowercase scheme/host, default port elided, query/fragment never
+  claimed); `ath` checked when presented. Replay is
+  `Cache::add('dpop:proof:'.$jti, 1, 300)` executed LAST — only a
+  proof that passed every other check spends its `jti`.
+- **Enforcement seam:** `PassportJwtVerifier::verify` now returns
+  the `cnf` binding (`{dpop_jkt}` or null; a malformed `cnf` fails
+  closed — the token is rejected, never downgraded to bearer), and
+  `AuthenticateAny::authenticatePassport` validates the presented
+  proof after the revocation checks and `hash_equals` it against the
+  binding. Covered surfaces: `/oauth/userinfo` and `/api/v1/*` (the
+  BFF's upstream calls). A denial is `401` with the platform error
+  envelope (`error.code=invalid_dpop_proof`, distinct messages for
+  missing / mismatched key / replayed `jti`) plus
+  `WWW-Authenticate: DPoP error="invalid_dpop_proof", algs="ES256, RS256"`.
+- **BFF client (canonical implementation):** `apps/customer/server/dpop.ts`
+  holds one EC P-256 key per instance (ES256, IEEE P1363), attaches a
+  proof to the callback token exchange and to every upstream bearer
+  call (`ath` over the presented token) — mandate-transparent by
+  construction. Key lifetime is the per-instance FILE store
+  (amended by A-SEC-004-11 after Next's proxy/handler module-graph
+  split proved a memory-only cache holds two keys): a restart KEEPS
+  the binding key; only a wiped or unreadable key file drops it —
+  bound sessions then fail upstream with 401 and re-login recovers;
+  multi-instance deployments need a shared or stickily routed key
+  store (documented production extension, same posture as the other
+  per-instance state notes).
+
+Verified by phpunit `DpopBindingTest` (21: bind, mandate, machine
+fail-closed, resource denials, refresh same-jkt) and the root vitest
+`tests/identity/dpop-binding.test.ts` (12: proof shape + signature,
+callback exchange wiring, upstream `ath` wiring), plus live legs
+81–85 and the mandate-recovery probe (runbook §13) against the real
+issuer: bind → `cnf` match, userinfo accept/deny/replay, mandate
+400-without-proof → 200-with-proof on the SAME code, refresh
+same-key-only, and the full customer BFF login under the mandate
+ending in an upstream `200`. Gates: phpstan 116 = baseline, phpunit
+1124 OK, root vitest 652/653 (only the known user-WIP `MobileHome.tsx`
+boundary failure), customer `tsc` clean except the user's WIP
+`@/dal/catalog` imports.
+
+---
+
+### Implementation note A-SEC-004-10 — refresh lineage sid continuity (2026-10-17)
+
+**Status:** ACTIVE · **Supersedes:** nothing (closes an open hole in
+A-SEC-004-6's lineage claim — flagged by every slice since, now
+fixed)
+
+A-SEC-004-6 made session termination revoke a session's whole token
+lineage "by sid", and the terminator revokes the access tokens where
+`sid = X` together with the refresh tokens hanging off them. But
+refresh rotation minted its successor WITHOUT a sid — so a family
+that rotated before the logout produced an access token (and a
+refresh token) sitting OUTSIDE that `where sid =` net: the successor
+survived the kill, and its refresh token could mint further tokens
+AFTER the session ended. RP-side sid denylists had the same blind
+spot: a sid-less refreshed token never matched a terminated session.
+
+- **One lineage source, faithful carry-forward:**
+  `RecoverableRefreshTokenGrant::rotateAtomically` now reads the
+  ORIGINAL token's row once (the same row that has always supplied
+  the family's DPoP `dpop_jkt`) and carries BOTH values onto the
+  successor — the sid lands via the exact entity-stamp pipeline
+  A-SEC-004-6 built (`CustodyAccessToken::withSessionId` →
+  `SessionBoundAccessTokenRepository` → row column + JWT `sid` claim
+  from one source). A family that never had a session (non-openid
+  codes, machine grants) keeps a NULL sid — the carry is faithful,
+  never invented lineage. The fork's `issueAccessToken` mirrors
+  `OidcAuthCodeGrant::issueAccessToken`'s stamp-parameter order
+  (`$sessionSid`, then `$dpopJkt`), so both grants stay in sync by
+  shape.
+- **No terminator change needed:** with the stamp present, the EXISTING
+  kill net covers both escape vectors — the successor access token
+  dies in the `where('sid', …)` fan-out and its refresh token dies in
+  the `whereIn('access_token_id', …)` half of the same statement. A
+  refresh attempted AFTER the kill was already denied (the kill
+  revokes the family's refresh tokens; reuse detection answers
+  `invalid_grant`), and that denied presentation additionally fires
+  the deliberate SEC-003 §3.2 user+client-wide reuse kill.
+- **DPoP coexistence:** rotation of a bound family keeps both stamps
+  (`cnf.dpop_jkt` + `sid`) from the one entity stamp — pinned by test
+  and by live leg 88.
+
+Verified by four new `AccessTokenSessionBindingTest` cases (sid rides
+the successor across rotations; kill-after-rotation revokes the
+successor AT + RT and answers `invalid_grant` on the kept refresh
+token; sid-less families stay sid-less; DPoP + sid coexist across
+rotation) — all four FAILED against the pre-fix grant, exactly on
+the hole. Gates: phpstan 116 = baseline, phpunit 1128 OK. Live legs
+86–88 (runbook §14): sid carried across two rotations, logout killed
+a rotated lineage (successor 401 at userinfo, kept RT
+`invalid_grant`) while a different session's family survived the
+logout itself, and a bound family kept `cnf` + `sid` through
+rotation.
+
+---
+
+### Implementation note A-SEC-004-11 — BFF refresh rotation (D4 browser half) (2026-10-18)
+
+**Status:** ACTIVE · **Supersedes:** nothing (closes runbook §5 gap
+"No BFF-side refresh rotation yet (D4)"; the issuer half of D4 —
+`RecoverableRefreshTokenGrant` + refresh idempotency + reuse kills —
+was already in place)
+
+Until now the customer BFF discarded the refresh token at the
+callback: the access token's 900 s TTL ended the browser session and
+the user re-entered the login ceremony. A-SEC-004-11 completes D4's
+browser half — the BFF holds the refresh token and rotates the family
+server-side, lazily, in the request path.
+
+- **Cookie posture:** the refresh token rides a SECOND HttpOnly
+  cookie, `nv_customer_refresh` (`__Host-` prefixed under
+  `SESSION_COOKIE_SECURE`), SameSite=Lax, 30-day max-age = the
+  issuer's `Passport::refreshTokensExpireIn`. The access cookie is
+  unchanged (900 s). A rotation-pending cookie `nv_customer_rot`
+  (60 s = `federation.refresh_retry_window_seconds`) exists only
+  while an idempotency key awaits replay.
+- **One choke point — Next 16 `proxy.ts`:** `middleware.ts` was
+  renamed (Next 16 deprecates it; the proxy runs the node runtime,
+  which `node:crypto` DPoP needs). Before the anonymous gate decides,
+  `ensureFreshSession` inspects the access cookie: live beyond the
+  60 s skew → untouched; near/over expiry with a refresh cookie →
+  rotate; no access cookie but a refresh cookie → resurrect. A
+  successful outcome REWRITES the incoming request's cookie header
+  (`NextResponse.next({request:{headers}})`) so every downstream
+  handler and upstream call sees the fresh pair and never presents a
+  token the issuer has already consumed — zero route edits.
+- **Rotation engine (`server/session-refresh.ts`):** POST
+  `grant_type=refresh_token` (client_secret_post) with an
+  `Idempotency-Key` per exchange and a DPoP proof from the instance
+  key — bound families REQUIRE it. Signature-free `exp` decode
+  matches the platform's bearer posture. Single-flight (`inflight`
+  map) plus a 30 s recent-replay cache keyed by sha256(RT) makes the
+  double-rotation — the SEC-003 §3.2 user+client lineage kill —
+  unreachable from concurrent requests in one instance. On transport
+  failure the SAME key retries in place once, then parks in the
+  rotation-pending cookie for the next request to replay; the issuer
+  (`RecoverableRefreshTokenGrant`) dedups by fingerprint
+  (client_id + refresh_token + scope, no `scope` parameter sent —
+  fingerprint stability) across the retry window.
+- **Outcomes, fail-closed:** 200 + full pair → rotated (or
+  resurrected when no access cookie was present); any 4xx
+  (`invalid_grant` — lineage dead from an OP logout or a consumed
+  family; `invalid_dpop_proof` — lost key) → fatal: BOTH cookies
+  cleared, browser re-auth; 5xx/transport → retry-later: cookies
+  untouched, parked key replays next request; 200 WITHOUT a refresh
+  token → fatal (never a bearer-only downgrade). Fatal and deferred
+  decisions log the OAuth error code — never token material.
+- **Logout:** the BFF route revokes BOTH credentials at the issuer
+  (refresh hint `refresh_token`, then access) and clears both
+  cookies — a logged-out browser jar holds no session credentials by
+  construction (live leg 92).
+- **DPoP key store (A-SEC-004-9 amendment):** Next splits the proxy
+  and route handlers into SEPARATE module graphs — a module-local
+  key cache holds TWO keys, and the proxy's rotation proof misses
+  the family's `cnf.dpop_jkt` (observed live: every rotation 400
+  `invalid_dpop_proof`). The instance key is now FILE-backed
+  (`$CUSTOMER_DPOP_KEY_FILE`, default `<cwd>/.next/dpop-key.json`,
+  `O_EXCL` claim + reload-on-miss, corrupt file regenerated once):
+  one key per instance across every graph and worker thread. A
+  process restart no longer drops the binding key — sessions survive
+  restarts; only a wiped or unreadable key file forces re-login. An
+  unwritable filesystem falls back to an in-memory key (logged) —
+  single-graph auth works, cross-graph rotation fails closed.
+
+Verified by `tests/identity/refresh-rotation.test.ts` (25: cookie
+family + names both casings, freshness skew, rotation/resurrect/
+fatal/retry-later outcomes, single-flight, replay denial, idempotency
+parking, proxy wiring, logout dual-revoke) and 3 new key-store cases
+in `tests/identity/dpop-binding.test.ts` (a second module instance
+proves with the persisted key; restart-stable; corrupt file
+regenerated). Customer `tsc` clean except the user's WIP
+`@/dal/catalog` imports. Root vitest 680/681 (only the known user-WIP
+`MobileHome.tsx` boundary failure). No PHP changes — phpstan 116 and
+phpunit 1128 hold by inspection of an untouched tree. Live legs
+89–92 (runbook §15): login stores the refresh cookie; a crafted
+near-expired access token rotates server-side (fresh pair with
+900 s + 30 d TTLs, real upstream data); an idle browser resurrects
+from the refresh cookie alone; OP logout kills the rotated lineage —
+sid denylist 401s the next call, a post-expiry rotation answers
+`invalid_grant`, both cookies clear, and the retired refresh token
+is refused at the issuer.
 
 ---
 
@@ -748,6 +1373,39 @@ tokens without shared key access patterns changing (carve-out rule C4,
 - No `tenant_id(s)`/`acr` claims yet (tokens don't carry them — custom
   claims land with P4b); no Redis cache (REDIS-001) — lookups are
   indexed DB reads.
+
+### Implementation note A-SEC-015-3 — fail-closed revocation & introspection (2026-10-16, phase 9c)
+
+**Status:** ACTIVE · **Supersedes:** nothing (additive; tightens the
+behavior described by A-SEC-015-1/2 in place, per ADR-0023)
+
+- RFC 7009 §2.1 ownership is enforced on `/api/oauth/revoke`: a client
+  may revoke only tokens it owns (access through the row's `client_id`,
+  refresh through its access token's client). A foreign client gets
+  league-shaped `400 {error:"invalid_grant"}` and no kill happens;
+  unknown/undecryptable tokens keep the silent `200` (no oracle).
+- User **deactivation** now cascades like suspension (§8.1: all
+  tokens, all sessions), and `AuthenticateAny` gates lifecycle status
+  on the session-shaped branch too — a direct status flip with intact
+  rows fails closed at the enforcement point.
+- Both console revocation commands (`platform:client:revoke`,
+  `platform:client:rotate-secret`) invalidate the revocation-status
+  cache exactly like their HTTP mirrors — first-party invalidation is
+  0 s on **every** site (ADR-0020 D2), not TTL-bounded.
+- Every executed kill lands on the D5 hash chain as a per-jti
+  `token.revoked` row with its reason (`token_revoked`,
+  `client_revoked`, `secret_rotated`, `user_suspended`,
+  `user_deactivated`, `membership_revoked`); refusals record nothing.
+- Membership deactivation revokes that tenant's refresh lineages at
+  rest (client-profile `tenant_id` mapping) instead of relying on the
+  live re-check alone.
+- Introspection (§8.2) fails closed: signature verified first,
+  dead/missing-row JWTs and `expires_at IS NULL` answer `active:false`,
+  and both legs re-check owner liveness — introspection now agrees
+  with dual-accept instead of advertising a credential the audience
+  would refuse.
+- Still future work, unchanged: `jti_revocations` table, Redis
+  revocation cache (REDIS-001), back-channel SLO.
 
 ---
 

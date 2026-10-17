@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Modules\Catalog\Models\CatalogItem.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Modules\Catalog\Models\CatalogItem
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-aa3a076e812a52e8e31298b4c99ca43ad8a2d04375fb70f7e275d3eefa8023b2',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-83f88bf7e4b42f877839953dc4ed9b2109097aaa1d7c4147b71b02ca0ea71fa2',
    'data' => 
   array (
     'locatedSource' => 
@@ -27,6 +27,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
  *
  * @property string $id
  * @property string $tenant_id
+ * @property string|null $vendor_id
  * @property string $sku
  * @property string $name
  * @property string|null $description
@@ -38,8 +39,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     'attributes' => 
     array (
     ),
-    'startLine' => 23,
-    'endLine' => 69,
+    'startLine' => 24,
+    'endLine' => 70,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => 'Illuminate\\Database\\Eloquent\\Model',
@@ -66,20 +67,20 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'code' => '\'DRAFT\'',
           'attributes' => 
           array (
-            'startLine' => 30,
-            'endLine' => 30,
+            'startLine' => 31,
+            'endLine' => 31,
             'startTokenPos' => 66,
-            'startFilePos' => 775,
+            'startFilePos' => 811,
             'endTokenPos' => 66,
-            'endFilePos' => 781,
+            'endFilePos' => 817,
           ),
         ),
         'docComment' => NULL,
         'attributes' => 
         array (
         ),
-        'startLine' => 30,
-        'endLine' => 30,
+        'startLine' => 31,
+        'endLine' => 31,
         'startColumn' => 5,
         'endColumn' => 40,
       ),
@@ -95,20 +96,20 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'code' => '\'ACTIVE\'',
           'attributes' => 
           array (
-            'startLine' => 32,
-            'endLine' => 32,
+            'startLine' => 33,
+            'endLine' => 33,
             'startTokenPos' => 77,
-            'startFilePos' => 818,
+            'startFilePos' => 854,
             'endTokenPos' => 77,
-            'endFilePos' => 825,
+            'endFilePos' => 861,
           ),
         ),
         'docComment' => NULL,
         'attributes' => 
         array (
         ),
-        'startLine' => 32,
-        'endLine' => 32,
+        'startLine' => 33,
+        'endLine' => 33,
         'startColumn' => 5,
         'endColumn' => 42,
       ),
@@ -124,20 +125,20 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'code' => '\'ARCHIVED\'',
           'attributes' => 
           array (
-            'startLine' => 34,
-            'endLine' => 34,
+            'startLine' => 35,
+            'endLine' => 35,
             'startTokenPos' => 88,
-            'startFilePos' => 864,
+            'startFilePos' => 900,
             'endTokenPos' => 88,
-            'endFilePos' => 873,
+            'endFilePos' => 909,
           ),
         ),
         'docComment' => NULL,
         'attributes' => 
         array (
         ),
-        'startLine' => 34,
-        'endLine' => 34,
+        'startLine' => 35,
+        'endLine' => 35,
         'startColumn' => 5,
         'endColumn' => 46,
       ),
@@ -156,20 +157,20 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'code' => '\'tenant_shared\'',
           'attributes' => 
           array (
-            'startLine' => 36,
-            'endLine' => 36,
+            'startLine' => 37,
+            'endLine' => 37,
             'startTokenPos' => 97,
-            'startFilePos' => 905,
+            'startFilePos' => 941,
             'endTokenPos' => 97,
-            'endFilePos' => 919,
+            'endFilePos' => 955,
           ),
         ),
         'docComment' => NULL,
         'attributes' => 
         array (
         ),
-        'startLine' => 36,
-        'endLine' => 36,
+        'startLine' => 37,
+        'endLine' => 37,
         'startColumn' => 5,
         'endColumn' => 44,
         'isPromoted' => false,
@@ -188,23 +189,23 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'type' => NULL,
         'default' => 
         array (
-          'code' => '[\'tenant_id\', \'sku\', \'name\', \'description\', \'status\', \'currency\', \'price_minor\', \'attributes\']',
+          'code' => '[\'tenant_id\', \'vendor_id\', \'sku\', \'name\', \'description\', \'status\', \'currency\', \'price_minor\', \'attributes\']',
           'attributes' => 
           array (
-            'startLine' => 38,
-            'endLine' => 41,
+            'startLine' => 39,
+            'endLine' => 42,
             'startTokenPos' => 106,
-            'startFilePos' => 949,
-            'endTokenPos' => 132,
-            'endFilePos' => 1065,
+            'startFilePos' => 985,
+            'endTokenPos' => 135,
+            'endFilePos' => 1114,
           ),
         ),
         'docComment' => NULL,
         'attributes' => 
         array (
         ),
-        'startLine' => 38,
-        'endLine' => 41,
+        'startLine' => 39,
+        'endLine' => 42,
         'startColumn' => 5,
         'endColumn' => 6,
         'isPromoted' => false,
@@ -237,8 +238,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 43,
-        'endLine' => 49,
+        'startLine' => 44,
+        'endLine' => 50,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -274,8 +275,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'docComment' => '/**
  * @return \\Database\\Factories\\CatalogItemFactory
  */',
-        'startLine' => 54,
-        'endLine' => 57,
+        'startLine' => 55,
+        'endLine' => 58,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -328,8 +329,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 59,
-        'endLine' => 68,
+        'startLine' => 60,
+        'endLine' => 69,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,

@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Providers\PlatformServiceProvider.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Providers\PlatformServiceProvider
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-db012f378d7532155e7309b856057e02712761b89c4308d13f7c62f45ddb157d',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-4c1a08f9c7a0c4b6c24422a56e66a002a6421558f4cc69f06e60bc0744dc3fd0',
    'data' => 
   array (
     'locatedSource' => 
@@ -34,8 +34,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     'attributes' => 
     array (
     ),
-    'startLine' => 47,
-    'endLine' => 126,
+    'startLine' => 54,
+    'endLine' => 151,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => 'Illuminate\\Support\\ServiceProvider',
@@ -73,8 +73,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 49,
-        'endLine' => 67,
+        'startLine' => 56,
+        'endLine' => 86,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -108,8 +108,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 69,
-        'endLine' => 93,
+        'startLine' => 88,
+        'endLine' => 116,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -147,8 +147,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 105,
-            'endLine' => 105,
+            'startLine' => 129,
+            'endLine' => 129,
             'startColumn' => 53,
             'endColumn' => 86,
             'parameterIndex' => 0,
@@ -171,15 +171,16 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'docComment' => '/**
  * Decision-cache invalidation hooks (AC-T-0K01-02-3): any mutation of
  * authorization state — a policy row, a grant row (role, permission,
- * membership assignment) or a capability registry row — bumps the
- * owning tenant\'s decision generation, so cached decisions become
- * unreachable within the same request cycle in which the state
- * changed. Platform-default policy rows (tenant_id NULL) bump the
- * global generation. Bulk query-builder mutations that bypass model
- * events stay bounded by the cache TTL (belt-and-braces).
+ * membership assignment), a capability registry row, or an SoD rule
+ * row — bumps the owning tenant\'s decision generation, so cached
+ * decisions become unreachable within the same request cycle in
+ * which the state changed. Platform-default rows (tenant_id NULL,
+ * policies and SoD rules alike) bump the global generation. Bulk
+ * query-builder mutations that bypass model events stay bounded by
+ * the cache TTL (belt-and-braces).
  */',
-        'startLine' => 105,
-        'endLine' => 125,
+        'startLine' => 129,
+        'endLine' => 150,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,

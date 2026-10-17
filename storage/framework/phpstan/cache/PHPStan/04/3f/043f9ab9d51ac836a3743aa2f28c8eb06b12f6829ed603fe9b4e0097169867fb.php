@@ -14,6 +14,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
           'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
           'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+          'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
         ),
@@ -40,6 +41,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
           'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
           'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+          'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
         ),
@@ -55,6 +57,60 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           array (
             'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
             'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+            'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
+            'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'request' => 'Illuminate\\Http\\Request',
+          ),
+           'className' => 'App\\Modules\\Catalog\\Http\\Controllers\\CatalogItemController',
+           'functionName' => NULL,
+           'templatePhpDocNodes' => 
+          array (
+          ),
+           'parent' => NULL,
+           'typeAliasesMap' => 
+          array (
+          ),
+           'bypassTypeAliases' => false,
+           'constUses' => 
+          array (
+          ),
+           'typeAliasClassName' => NULL,
+           'traitData' => NULL,
+        )),
+         'typeAliasesMap' => 
+        array (
+        ),
+         'bypassTypeAliases' => false,
+         'constUses' => 
+        array (
+        ),
+         'typeAliasClassName' => NULL,
+         'traitData' => NULL,
+      )),
+      '382d8e56b577b0cbe34fdda8cf3b60d3' => 
+      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+         'namespace' => 'App\\Modules\\Catalog\\Http\\Controllers',
+         'uses' => 
+        array (
+          'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
+          'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+          'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
+          'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'request' => 'Illuminate\\Http\\Request',
+        ),
+         'className' => 'App\\Modules\\Catalog\\Http\\Controllers\\CatalogItemController',
+         'functionName' => 'publicIndex',
+         'templatePhpDocNodes' => 
+        array (
+        ),
+         'parent' => 
+        \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+           'namespace' => 'App\\Modules\\Catalog\\Http\\Controllers',
+           'uses' => 
+          array (
+            'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
+            'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+            'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
           ),
@@ -91,6 +147,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
           'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
           'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+          'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
         ),
@@ -106,6 +163,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           array (
             'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
             'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+            'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
           ),
@@ -142,6 +200,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
           'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
           'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+          'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
         ),
@@ -157,6 +216,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           array (
             'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
             'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+            'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
           ),
@@ -193,6 +253,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
           'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
           'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+          'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
         ),
@@ -208,6 +269,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           array (
             'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
             'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+            'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
           ),
@@ -244,6 +306,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
           'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
           'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+          'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
         ),
@@ -259,6 +322,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           array (
             'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
             'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+            'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
           ),
@@ -295,6 +359,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
           'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
           'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+          'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
         ),
@@ -310,6 +375,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           array (
             'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
             'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+            'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
           ),
@@ -346,6 +412,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
           'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
           'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+          'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
         ),
@@ -361,6 +428,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           array (
             'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
             'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+            'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
           ),
@@ -397,6 +465,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
           'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
           'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+          'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
           'request' => 'Illuminate\\Http\\Request',
         ),
@@ -412,6 +481,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           array (
             'catalogitem' => 'App\\Modules\\Catalog\\Models\\CatalogItem',
             'cursorpagination' => 'App\\Platform\\Api\\CursorPagination',
+            'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
             'request' => 'Illuminate\\Http\\Request',
           ),
@@ -444,7 +514,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Catalog\\Http\\Controllers\\CatalogItemController.php' => '6ba8f3234cb8d6e91d8ebbd43e01a3fb35ad240f5e2cc4909529c360d749b69f',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Catalog\\Http\\Controllers\\CatalogItemController.php' => '44ec676fe8eae6b25c6e60d6f6689d726275799a56e6205798cab85837b0cbb2',
     ),
   ),
 ));

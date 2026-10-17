@@ -31,12 +31,31 @@ Route::get('/ready', ReadinessCheck::class)->name('platform.ready');
 Route::get('/.well-known/oauth-authorization-server', [\App\Platform\Identity\OAuth\Http\Controllers\DiscoveryController::class, 'metadata'])
     ->middleware('throttle:60,1')
     ->name('platform.oauth-metadata');
+// 9a (ADR-0021): OIDC discovery — same document plus the OIDC-only
+// fields (RS256, openid scope, subject type, nonce support). Served
+// now that id_token issuance lands; PAR stays a per-client mandate
+// (never advertised as a server-wide requirement).
+Route::get('/.well-known/openid-configuration', [\App\Platform\Identity\OAuth\Http\Controllers\DiscoveryController::class, 'openidConfiguration'])
+    ->middleware('throttle:60,1')
+    ->name('platform.oidc-metadata');
 Route::get('/.well-known/jwks.json', [\App\Platform\Identity\OAuth\Http\Controllers\DiscoveryController::class, 'jwks'])
     ->middleware('throttle:60,1')
     ->name('platform.jwks');
 Route::get('/oauth/userinfo', [\App\Platform\Identity\OAuth\Http\Controllers\DiscoveryController::class, 'userinfo'])
     ->middleware([AuthenticateAny::class, 'throttle:60,1'])
     ->name('platform.userinfo');
+
+// OIDC RP-Initiated Logout 1.0 (SEC-004 / A-SEC-004-5): the
+// end-session endpoint discovery advertises. GET+POST both (the spec
+// requires both; the POST form of a cross-origin RP cannot carry this
+// app's CSRF token, so the route carries the CSRF exception in
+// bootstrap/app.php — the endpoint's own id_token_hint/registration
+// validation is what actually binds any redirect). No auth middleware:
+// an OP logout endpoint must serve an anonymous browser, terminate
+// idempotently, and 404 nothing (the host surface posture).
+Route::match(['get', 'post'], '/oauth/logout', [\App\Platform\Identity\OAuth\Http\Controllers\EndSessionController::class, '__invoke'])
+    ->middleware('throttle:30,1')
+    ->name('oauth.end-session');
 
 // Step-up form (SEC-004 §6, doc 06 §7.5): GET renders the TOTP/recovery
 // form — or, fail-closed, the enrollment-required notice — and answers
@@ -72,27 +91,27 @@ Route::group(['prefix' => '/platform', 'middleware' => 'auth'], function (): voi
         ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:policy:configure']);
     Route::post('/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'store']);
     Route::post('/users/{id}:suspend', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'suspend'])
-        ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2']);
+        ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class]);
     Route::post('/users/{id}:activate', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'activate'])
-        ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2']);
+        ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class]);
     Route::post('/users/{id}:deactivate', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'deactivate'])
-        ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2']);
+        ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class]);
     // Grant/revoke mirror the API exactly (route: stepup:2 only; the
     // action's scopeToTenant does the issuer/tenant work; SoD runs on
     // first-time grants).
     Route::post('/memberships/{membershipId}/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'grant'])
-        ->middleware([RequiresAcr::class . ':2']);
+        ->middleware([RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class]);
     Route::delete('/memberships/{membershipId}/roles/{assignmentId}', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'revoke'])
-        ->middleware([RequiresAcr::class . ':2']);
+        ->middleware([RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class]);
     // Machine key administration mirrors the API exactly (route: stepup:2
     // only; the actions do their own membership checks). The one-time
     // secret rides the success flash on web — nothing else can carry it.
     Route::post('/api-keys', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'issue'])
-        ->middleware([RequiresAcr::class . ':2']);
+        ->middleware([RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class]);
     Route::post('/api-keys/{id}:revoke', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'revoke'])
-        ->middleware([RequiresAcr::class . ':2']);
+        ->middleware([RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class]);
     Route::post('/api-keys/{id}:rotate', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'rotate'])
-        ->middleware([RequiresAcr::class . ':2']);
+        ->middleware([RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class]);
     // Invites mirror the API exactly (no capability or step-up on either
     // side — the actions check tenant + issuer membership, and revoke is
     // tenant-scoped). The one-time acceptance token rides the success

@@ -32,7 +32,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Authz\\Contracts\\DecidingStage.php' => '0252859d7f166580c451ff599a8291a343ea595db579d7613424e9528d90dcbb',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Authz\\Contracts\\DecidingStage.php' => '0488c1c95618eacdf0855f279efde88d41eb975fa2fb086a1493cc8273c7edc9',
     ),
   ),
 ));

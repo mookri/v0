@@ -708,7 +708,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Modules\\ModuleRegistry.php' => '54387c8fe845b3e8c2e23ff0a750b8b1bce59e3b597ed52e47fdb037f8edaf2f',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Modules\\ModuleRegistry.php' => 'a4ec0cb9384491644b6f8a64b81ae8083eac83694b8124f4ca68f5aec14bb4e5',
     ),
   ),
 ));

@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Platform\Authz\Exceptions\AuthorizationDeniedException.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Platform\Authz\Exceptions\AuthorizationDeniedException
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-572aaf220b88f9f9ffbe653957f29320328bcaaf079e48ea3dcc30c4e7441b3c',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-f6710b087458ef3b833ab1a2ad9bcfb9bed3876b33ba087ff51f0fc299894f2d',
    'data' => 
   array (
     'locatedSource' => 
@@ -21,7 +21,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     'isTrait' => false,
     'isEnum' => false,
     'isBackedEnum' => false,
-    'modifiers' => 32,
+    'modifiers' => 0,
     'docComment' => '/**
  * Kernel authorization denial (doc 06 §4.2, SEC-022).
  *
@@ -30,12 +30,14 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
  * `authorization_denied`; clients branch on the code, never the message.
  * Carries the denied capability + deciding reason so the denial audit
  * record and (from T-0K01-03) the decision log can be written.
+ * Subclassable: SodConflictException refines the denial with blocking
+ * rule codes (the envelope renders it as `sod_conflict`).
  */',
     'attributes' => 
     array (
     ),
-    'startLine' => 16,
-    'endLine' => 25,
+    'startLine' => 18,
+    'endLine' => 27,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => 'Illuminate\\Auth\\Access\\AuthorizationException',
@@ -70,8 +72,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'attributes' => 
         array (
         ),
-        'startLine' => 19,
-        'endLine' => 19,
+        'startLine' => 21,
+        'endLine' => 21,
         'startColumn' => 9,
         'endColumn' => 42,
         'isPromoted' => true,
@@ -101,20 +103,20 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'code' => '\'default_deny\'',
           'attributes' => 
           array (
-            'startLine' => 20,
-            'endLine' => 20,
-            'startTokenPos' => 52,
-            'startFilePos' => 704,
-            'endTokenPos' => 52,
-            'endFilePos' => 717,
+            'startLine' => 22,
+            'endLine' => 22,
+            'startTokenPos' => 50,
+            'startFilePos' => 828,
+            'endTokenPos' => 50,
+            'endFilePos' => 841,
           ),
         ),
         'docComment' => NULL,
         'attributes' => 
         array (
         ),
-        'startLine' => 20,
-        'endLine' => 20,
+        'startLine' => 22,
+        'endLine' => 22,
         'startColumn' => 9,
         'endColumn' => 55,
         'isPromoted' => true,
@@ -151,8 +153,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 19,
-            'endLine' => 19,
+            'startLine' => 21,
+            'endLine' => 21,
             'startColumn' => 9,
             'endColumn' => 42,
             'parameterIndex' => 0,
@@ -166,12 +168,12 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
               'code' => '\'default_deny\'',
               'attributes' => 
               array (
-                'startLine' => 20,
-                'endLine' => 20,
-                'startTokenPos' => 52,
-                'startFilePos' => 704,
-                'endTokenPos' => 52,
-                'endFilePos' => 717,
+                'startLine' => 22,
+                'endLine' => 22,
+                'startTokenPos' => 50,
+                'startFilePos' => 828,
+                'endTokenPos' => 50,
+                'endFilePos' => 841,
               ),
             ),
             'type' => 
@@ -189,8 +191,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 20,
-            'endLine' => 20,
+            'startLine' => 22,
+            'endLine' => 22,
             'startColumn' => 9,
             'endColumn' => 55,
             'parameterIndex' => 1,
@@ -204,12 +206,12 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
               'code' => '\'This action is unauthorized.\'',
               'attributes' => 
               array (
-                'startLine' => 21,
-                'endLine' => 21,
-                'startTokenPos' => 61,
-                'startFilePos' => 746,
-                'endTokenPos' => 61,
-                'endFilePos' => 775,
+                'startLine' => 23,
+                'endLine' => 23,
+                'startTokenPos' => 59,
+                'startFilePos' => 870,
+                'endTokenPos' => 59,
+                'endFilePos' => 899,
               ),
             ),
             'type' => 
@@ -227,8 +229,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 21,
-            'endLine' => 21,
+            'startLine' => 23,
+            'endLine' => 23,
             'startColumn' => 9,
             'endColumn' => 56,
             'parameterIndex' => 2,
@@ -241,8 +243,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 18,
-        'endLine' => 24,
+        'startLine' => 20,
+        'endLine' => 26,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,

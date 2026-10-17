@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Platform\Identity\ActorTokenVerifier.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Platform\Identity\ActorTokenVerifier
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-a6bf49c86e7ac491f931f3d1fdd2c03aa62bd6885459d67560f784f76a972b78',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-6eeb931131e5f6bed25cf8774cc10633f755297c84a24652888ce08d010befbf',
    'data' => 
   array (
     'locatedSource' => 
@@ -28,7 +28,9 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
  * Verifies the opaque bearer tokens minted by the Next.js BFFs:
  * base64url(payload).base64url(HMAC-SHA256) over the payload segment,
  * claims {v,u,s,r[,m,o],e}. Timing-safe compare, expiry enforced,
- * field hygiene (no dots/commas) matching the minter.
+ * field hygiene (no dots/commas) matching the minter, and — since
+ * M5/TOKEN-001 — a live jti lookup against actor_sessions: missing or
+ * revoked sessions fail closed before the claims ever surface.
  *
  * Second half (Passport JWT + dual-accept window) lands with the token
  * program; this verifier lets Laravel authoritative-check frontend
@@ -37,8 +39,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     'attributes' => 
     array (
     ),
-    'startLine' => 17,
-    'endLine' => 87,
+    'startLine' => 19,
+    'endLine' => 97,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => NULL,
@@ -80,8 +82,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 22,
-            'endLine' => 22,
+            'startLine' => 24,
+            'endLine' => 24,
             'startColumn' => 35,
             'endColumn' => 48,
             'parameterIndex' => 0,
@@ -106,8 +108,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 22,
-            'endLine' => 22,
+            'startLine' => 24,
+            'endLine' => 24,
             'startColumn' => 51,
             'endColumn' => 63,
             'parameterIndex' => 1,
@@ -132,8 +134,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 22,
-            'endLine' => 22,
+            'startLine' => 24,
+            'endLine' => 24,
             'startColumn' => 66,
             'endColumn' => 79,
             'parameterIndex' => 2,
@@ -175,8 +177,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'docComment' => '/**
  * @return array{user_id: string, session_id: string, roles: list<string>, market: ?string, org_id: ?string}|null
  */',
-        'startLine' => 22,
-        'endLine' => 81,
+        'startLine' => 24,
+        'endLine' => 91,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -214,8 +216,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 83,
-            'endLine' => 83,
+            'startLine' => 93,
+            'endLine' => 93,
             'startColumn' => 44,
             'endColumn' => 56,
             'parameterIndex' => 0,
@@ -236,8 +238,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 83,
-        'endLine' => 86,
+        'startLine' => 93,
+        'endLine' => 96,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,

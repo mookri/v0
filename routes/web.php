@@ -24,6 +24,10 @@ require __DIR__.'/auth.php';
 // can never shadow them.
 require __DIR__.'/platform/web.php';
 
+// Federation route scope (ADR-0020): auth-subdomain surfaces behind the
+// fail-closed FederationHostGate — 404 on every non-federation host.
+require __DIR__.'/platform/federation.php';
+
 // Domain module admin-console routes, registry-driven (doc 01 §1).
 foreach (ModuleRegistry::modules() as $module) {
     $routes = $module->routesPath('web');
@@ -35,7 +39,7 @@ foreach (ModuleRegistry::modules() as $module) {
 
 // Reserved top-level segments owned by the kernel (docs 03 §2.2,
 // 06 §11): the admin shell must never shadow them.
-$kernelSegment = '(?!(?:api|up|ready|oauth|scim|\.well-known)(?=/|$))[^/]+';
+$kernelSegment = '(?!(?:api|up|ready|oauth|scim|auth|\.well-known)(?=/|$))[^/]+';
 
 Route::group(['prefix' => '/', 'middleware' => 'auth'], function () use ($kernelSegment) {
     Route::get('', [RoutingController::class, 'index'])->name('root');

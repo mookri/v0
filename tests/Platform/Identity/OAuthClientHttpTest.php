@@ -11,6 +11,15 @@ use Tests\TenantIntegrationTestCase;
  */
 final class OAuthClientHttpTest extends TenantIntegrationTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // 9c: the HTTP client-revoke mirror chains token.revoked rows
+        // whose pseudonymization requires the identity secret.
+        config(['identity.hmac_secret' => 'oauth-client-http-test-hmac-32!!']);
+    }
+
     public function test_list_requires_auth_and_capability(): void
     {
         $tenant = $this->makeTenant();

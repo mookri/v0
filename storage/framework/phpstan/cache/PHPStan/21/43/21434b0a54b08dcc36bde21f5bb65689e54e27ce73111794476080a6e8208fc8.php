@@ -12,7 +12,10 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
          'uses' => 
         array (
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
+          'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
           'db' => 'Illuminate\\Support\\Facades\\DB',
         ),
@@ -37,7 +40,10 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
          'uses' => 
         array (
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
+          'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
           'db' => 'Illuminate\\Support\\Facades\\DB',
         ),
@@ -51,7 +57,10 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
            'uses' => 
           array (
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
+            'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
             'request' => 'Illuminate\\Http\\Request',
             'db' => 'Illuminate\\Support\\Facades\\DB',
           ),
@@ -86,7 +95,10 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
          'uses' => 
         array (
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
+          'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
           'db' => 'Illuminate\\Support\\Facades\\DB',
         ),
@@ -100,7 +112,65 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
            'uses' => 
           array (
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
+            'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+            'request' => 'Illuminate\\Http\\Request',
+            'db' => 'Illuminate\\Support\\Facades\\DB',
+          ),
+           'className' => 'App\\Platform\\Identity\\Http\\Controllers\\IdentitySelfServiceController',
+           'functionName' => NULL,
+           'templatePhpDocNodes' => 
+          array (
+          ),
+           'parent' => NULL,
+           'typeAliasesMap' => 
+          array (
+          ),
+           'bypassTypeAliases' => false,
+           'constUses' => 
+          array (
+          ),
+           'typeAliasClassName' => NULL,
+           'traitData' => NULL,
+        )),
+         'typeAliasesMap' => 
+        array (
+        ),
+         'bypassTypeAliases' => false,
+         'constUses' => 
+        array (
+        ),
+         'typeAliasClassName' => NULL,
+         'traitData' => NULL,
+      )),
+      '55446252109f1921d33e1f2ec7669202' => 
+      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+         'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+         'uses' => 
+        array (
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
+          'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
+          'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+          'request' => 'Illuminate\\Http\\Request',
+          'db' => 'Illuminate\\Support\\Facades\\DB',
+        ),
+         'className' => 'App\\Platform\\Identity\\Http\\Controllers\\IdentitySelfServiceController',
+         'functionName' => 'updateProfileJson',
+         'templatePhpDocNodes' => 
+        array (
+        ),
+         'parent' => 
+        \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+           'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+           'uses' => 
+          array (
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
+            'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
+            'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
             'request' => 'Illuminate\\Http\\Request',
             'db' => 'Illuminate\\Support\\Facades\\DB',
           ),
@@ -135,7 +205,10 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
          'uses' => 
         array (
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
+          'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
           'db' => 'Illuminate\\Support\\Facades\\DB',
         ),
@@ -149,7 +222,10 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
            'uses' => 
           array (
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
+            'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
             'request' => 'Illuminate\\Http\\Request',
             'db' => 'Illuminate\\Support\\Facades\\DB',
           ),
@@ -184,7 +260,10 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
          'uses' => 
         array (
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
+          'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
           'db' => 'Illuminate\\Support\\Facades\\DB',
         ),
@@ -198,7 +277,175 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
            'uses' => 
           array (
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
+            'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+            'request' => 'Illuminate\\Http\\Request',
+            'db' => 'Illuminate\\Support\\Facades\\DB',
+          ),
+           'className' => 'App\\Platform\\Identity\\Http\\Controllers\\IdentitySelfServiceController',
+           'functionName' => NULL,
+           'templatePhpDocNodes' => 
+          array (
+          ),
+           'parent' => NULL,
+           'typeAliasesMap' => 
+          array (
+          ),
+           'bypassTypeAliases' => false,
+           'constUses' => 
+          array (
+          ),
+           'typeAliasClassName' => NULL,
+           'traitData' => NULL,
+        )),
+         'typeAliasesMap' => 
+        array (
+        ),
+         'bypassTypeAliases' => false,
+         'constUses' => 
+        array (
+        ),
+         'typeAliasClassName' => NULL,
+         'traitData' => NULL,
+      )),
+      '1a5fe5932375b08a93f1b7c7f420cbef' => 
+      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+         'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+         'uses' => 
+        array (
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
+          'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
+          'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+          'request' => 'Illuminate\\Http\\Request',
+          'db' => 'Illuminate\\Support\\Facades\\DB',
+        ),
+         'className' => 'App\\Platform\\Identity\\Http\\Controllers\\IdentitySelfServiceController',
+         'functionName' => 'revokeOtherSessionsJson',
+         'templatePhpDocNodes' => 
+        array (
+        ),
+         'parent' => 
+        \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+           'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+           'uses' => 
+          array (
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
+            'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
+            'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+            'request' => 'Illuminate\\Http\\Request',
+            'db' => 'Illuminate\\Support\\Facades\\DB',
+          ),
+           'className' => 'App\\Platform\\Identity\\Http\\Controllers\\IdentitySelfServiceController',
+           'functionName' => NULL,
+           'templatePhpDocNodes' => 
+          array (
+          ),
+           'parent' => NULL,
+           'typeAliasesMap' => 
+          array (
+          ),
+           'bypassTypeAliases' => false,
+           'constUses' => 
+          array (
+          ),
+           'typeAliasClassName' => NULL,
+           'traitData' => NULL,
+        )),
+         'typeAliasesMap' => 
+        array (
+        ),
+         'bypassTypeAliases' => false,
+         'constUses' => 
+        array (
+        ),
+         'typeAliasClassName' => NULL,
+         'traitData' => NULL,
+      )),
+      'c46577ad7c34c2bb03a8f4f92ee3e23b' => 
+      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+         'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+         'uses' => 
+        array (
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
+          'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
+          'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+          'request' => 'Illuminate\\Http\\Request',
+          'db' => 'Illuminate\\Support\\Facades\\DB',
+        ),
+         'className' => 'App\\Platform\\Identity\\Http\\Controllers\\IdentitySelfServiceController',
+         'functionName' => 'revokeSession',
+         'templatePhpDocNodes' => 
+        array (
+        ),
+         'parent' => 
+        \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+           'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+           'uses' => 
+          array (
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
+            'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
+            'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+            'request' => 'Illuminate\\Http\\Request',
+            'db' => 'Illuminate\\Support\\Facades\\DB',
+          ),
+           'className' => 'App\\Platform\\Identity\\Http\\Controllers\\IdentitySelfServiceController',
+           'functionName' => NULL,
+           'templatePhpDocNodes' => 
+          array (
+          ),
+           'parent' => NULL,
+           'typeAliasesMap' => 
+          array (
+          ),
+           'bypassTypeAliases' => false,
+           'constUses' => 
+          array (
+          ),
+           'typeAliasClassName' => NULL,
+           'traitData' => NULL,
+        )),
+         'typeAliasesMap' => 
+        array (
+        ),
+         'bypassTypeAliases' => false,
+         'constUses' => 
+        array (
+        ),
+         'typeAliasClassName' => NULL,
+         'traitData' => NULL,
+      )),
+      '850729c9c02f480c143f42ee1bb73e91' => 
+      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+         'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+         'uses' => 
+        array (
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
+          'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
+          'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+          'request' => 'Illuminate\\Http\\Request',
+          'db' => 'Illuminate\\Support\\Facades\\DB',
+        ),
+         'className' => 'App\\Platform\\Identity\\Http\\Controllers\\IdentitySelfServiceController',
+         'functionName' => 'revokeSessionJson',
+         'templatePhpDocNodes' => 
+        array (
+        ),
+         'parent' => 
+        \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+           'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+           'uses' => 
+          array (
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
+            'actorsession' => 'App\\Platform\\Identity\\Models\\ActorSession',
+            'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
             'request' => 'Illuminate\\Http\\Request',
             'db' => 'Illuminate\\Support\\Facades\\DB',
           ),
@@ -231,7 +478,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Identity\\Http\\Controllers\\IdentitySelfServiceController.php' => '2a318abaff8c9cd957b6fa99999b6d654c058bb7f8a03330e6e3248aa699d4e7',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Identity\\Http\\Controllers\\IdentitySelfServiceController.php' => '97475aa64a59ad5d3a4ecfd9a09978948194c5fd297bac3e45c41e0b395d32c7',
     ),
   ),
 ));

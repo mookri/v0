@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Models\User.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Models\User
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-8c522c4c1eb07aef3c84e5a41ff9c436488655b1a17956350c9387649d1b9b11',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-f181e968b592991e09dd10709c401f7ad7e350565afb07f66efdbbeb1739c46a',
    'data' => 
   array (
     'locatedSource' => 
@@ -27,7 +27,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     array (
     ),
     'startLine' => 11,
-    'endLine' => 50,
+    'endLine' => 66,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => 'Illuminate\\Foundation\\Auth\\User',
@@ -53,15 +53,15 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'type' => NULL,
         'default' => 
         array (
-          'code' => '[\'name\', \'email\', \'password\']',
+          'code' => '[\'name\', \'email\', \'phone\', \'password\']',
           'attributes' => 
           array (
             'startLine' => 22,
-            'endLine' => 26,
+            'endLine' => 27,
             'startTokenPos' => 63,
             'startFilePos' => 509,
-            'endTokenPos' => 74,
-            'endFilePos' => 568,
+            'endTokenPos' => 77,
+            'endFilePos' => 585,
           ),
         ),
         'docComment' => '/**
@@ -73,7 +73,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'startLine' => 22,
-        'endLine' => 26,
+        'endLine' => 27,
         'startColumn' => 5,
         'endColumn' => 6,
         'isPromoted' => false,
@@ -95,12 +95,12 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
           'code' => '[\'password\', \'remember_token\']',
           'attributes' => 
           array (
-            'startLine' => 33,
-            'endLine' => 36,
-            'startTokenPos' => 85,
-            'startFilePos' => 707,
-            'endTokenPos' => 93,
-            'endFilePos' => 759,
+            'startLine' => 34,
+            'endLine' => 37,
+            'startTokenPos' => 88,
+            'startFilePos' => 724,
+            'endTokenPos' => 96,
+            'endFilePos' => 776,
           ),
         ),
         'docComment' => '/**
@@ -111,8 +111,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'attributes' => 
         array (
         ),
-        'startLine' => 33,
-        'endLine' => 36,
+        'startLine' => 34,
+        'endLine' => 37,
         'startColumn' => 5,
         'endColumn' => 6,
         'isPromoted' => false,
@@ -149,8 +149,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
  *
  * @return array<string, string>
  */',
-        'startLine' => 43,
-        'endLine' => 49,
+        'startLine' => 44,
+        'endLine' => 55,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -158,6 +158,45 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'isGenerator' => false,
         'isVariadic' => false,
         'modifiers' => 2,
+        'namespace' => 'App\\Models',
+        'declaringClassName' => 'App\\Models\\User',
+        'implementingClassName' => 'App\\Models\\User',
+        'currentClassName' => 'App\\Models\\User',
+        'aliasName' => NULL,
+      ),
+      'isActive' => 
+      array (
+        'name' => 'isActive',
+        'parameters' => 
+        array (
+        ),
+        'returnsReference' => false,
+        'returnType' => 
+        array (
+          'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+          'data' => 
+          array (
+            'name' => 'bool',
+            'isIdentifier' => true,
+          ),
+        ),
+        'attributes' => 
+        array (
+        ),
+        'docComment' => '/**
+ * Lifecycle gate (user_lifecycle_status migration): only `active`
+ * users authenticate. Absence historically meant active, so null
+ * reads as active — the migration default covers new rows.
+ */',
+        'startLine' => 62,
+        'endLine' => 65,
+        'startColumn' => 5,
+        'endColumn' => 5,
+        'couldThrow' => false,
+        'isClosure' => false,
+        'isGenerator' => false,
+        'isVariadic' => false,
+        'modifiers' => 1,
         'namespace' => 'App\\Models',
         'declaringClassName' => 'App\\Models\\User',
         'implementingClassName' => 'App\\Models\\User',

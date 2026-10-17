@@ -78,7 +78,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Api\\CodedHttpException.php' => 'd1d5aee6051da87159f4d266873c35df99f45abca267ce0e33be9d8238dcc734',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Api\\CodedHttpException.php' => 'f418cf1b2b8f35d52daeaa375ff5f918047d642b8a2763a4e694430d0ccb3989',
     ),
   ),
 ));

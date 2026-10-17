@@ -72,26 +72,53 @@ final class IntrospectController
      */
     private function introspect(string $token): array
     {
-        $access = $this->findAccessToken($token);
+        // Access leg (9c): signature-verified FIRST — a forged JWT
+        // carrying a real jti must not resurrect a live row's claims
+        // (RFC 7662: an invalid token answers active:false). The row
+        // stays the authority for revocation/expiry; verified claims
+        // are the authority for scope display.
+        $claims = \App\Platform\Identity\PassportJwtVerifier::verify($token, time());
 
-        if ($access !== null && ! (bool) $access->getAttribute('revoked') && ! $this->expired($access->getAttribute('expires_at'))) {
-            return [
-                'active' => true,
-                'scope' => implode(' ', $this->jwtScopes($token)),
-                'client_id' => (string) $access->getAttribute('client_id'),
-                'sub' => (string) $access->getAttribute('user_id'),
-                'exp' => $this->timestamp($access->getAttribute('expires_at')),
-                'iat' => $this->timestamp($access->getAttribute('created_at')),
-                'token_type' => 'Bearer',
-            ];
+        if ($claims !== null) {
+            $access = \Laravel\Passport\Passport::token()->newQuery()
+                ->whereKey((string) $claims['jti'])
+                ->first();
+
+            if ($access !== null
+                && ! (bool) $access->getAttribute('revoked')
+                && ! $this->expired($access->getAttribute('expires_at'))
+                && $this->ownerIsActive($access->getAttribute('user_id'))) {
+                return [
+                    'active' => true,
+                    'scope' => implode(' ', $claims['scopes']),
+                    'client_id' => (string) $access->getAttribute('client_id'),
+                    'sub' => (string) $access->getAttribute('user_id'),
+                    'exp' => $this->timestamp($access->getAttribute('expires_at')),
+                    'iat' => $this->timestamp($access->getAttribute('created_at')),
+                    'token_type' => 'Bearer',
+                ];
+            }
+
+            // A verified-signature JWT is definitively an access
+            // token — no refresh fallback can revive it.
+            return ['active' => false];
         }
 
+        // Refresh leg: league-encrypted (never a JWT), row-authoritative.
         $refresh = $this->findRefreshToken($token);
 
         if ($refresh !== null && ! (bool) $refresh->getAttribute('revoked') && ! $this->expired($refresh->getAttribute('expires_at'))) {
+            $owner = \Laravel\Passport\Passport::token()->newQuery()
+                ->whereKey($refresh->getAttribute('access_token_id'))
+                ->first();
+
+            if ($owner !== null && ! $this->ownerIsActive($owner->getAttribute('user_id'))) {
+                return ['active' => false];
+            }
+
             return [
                 'active' => true,
-                'client_id' => $this->refreshClientId($refresh),
+                'client_id' => $owner !== null ? (string) $owner->getAttribute('client_id') : '',
                 'exp' => $this->timestamp($refresh->getAttribute('expires_at')),
                 'iat' => $this->timestamp($refresh->getAttribute('created_at')),
                 'token_type' => 'Bearer',
@@ -102,42 +129,35 @@ final class IntrospectController
     }
 
     /**
-     * Scopes live in the JWT, not the database: decode descriptively
-     * (the DB row above is the authority for `active`).
-     *
-     * @return list<string>
+     * Lifecycle gate (9c): the resource server denies suspended and
+     * deactivated owners live on every request, so introspection must
+     * not answer active:true for credentials the audience would
+     * refuse. Machine tokens (no user owner) skip this leg.
      */
-    private function jwtScopes(string $token): array
+    private function ownerIsActive(mixed $userId): bool
     {
-        if (substr_count($token, '.') !== 2) {
-            return [];
+        if ($userId === null || $userId === '') {
+            return true;
         }
 
-        $claims = json_decode(base64_decode(strtr(explode('.', $token)[1], '-_', '+/'), true) ?: '[]', true);
+        $user = \App\Models\User::query()->find((string) $userId);
 
-        if (! is_array($claims) || ! isset($claims['scopes']) || ! is_array($claims['scopes'])) {
-            return [];
-        }
-
-        return array_values(array_filter($claims['scopes'], 'is_string'));
+        return $user !== null && $user->isActive();
     }
 
-    private function refreshClientId(mixed $refresh): string
-    {
-        $access = \Laravel\Passport\Passport::token()->newQuery()->whereKey($refresh->getAttribute('access_token_id'))->first();
-
-        return $access !== null ? (string) $access->getAttribute('client_id') : '';
-    }
-
+    /**
+     * Fail closed (9c): a row without an expiry is not "valid
+     * forever" — no expiry means no proof of bounded lifetime.
+     */
     private function expired(mixed $at): bool
     {
         if ($at === null) {
-            return false;
+            return true;
         }
 
         $timestamp = $this->timestamp($at);
 
-        return $timestamp !== null && $timestamp <= time();
+        return $timestamp === null || $timestamp <= time();
     }
 
     private function timestamp(mixed $value): ?int

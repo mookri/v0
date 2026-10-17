@@ -13,9 +13,11 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
           'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
           'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
         ),
          'className' => 'App\\Platform\\Identity\\Http\\Controllers\\UserAdminController',
@@ -40,9 +42,11 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
           'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
           'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
         ),
          'className' => 'App\\Platform\\Identity\\Http\\Controllers\\UserAdminController',
@@ -56,9 +60,11 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'user' => 'App\\Models\\User',
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
             'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
             'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
             'request' => 'Illuminate\\Http\\Request',
           ),
            'className' => 'App\\Platform\\Identity\\Http\\Controllers\\UserAdminController',
@@ -93,9 +99,11 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
           'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
           'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
         ),
          'className' => 'App\\Platform\\Identity\\Http\\Controllers\\UserAdminController',
@@ -109,9 +117,11 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'user' => 'App\\Models\\User',
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
             'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
             'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
             'request' => 'Illuminate\\Http\\Request',
           ),
            'className' => 'App\\Platform\\Identity\\Http\\Controllers\\UserAdminController',
@@ -146,9 +156,11 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
           'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
           'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
         ),
          'className' => 'App\\Platform\\Identity\\Http\\Controllers\\UserAdminController',
@@ -162,9 +174,11 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'user' => 'App\\Models\\User',
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
             'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
             'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
             'request' => 'Illuminate\\Http\\Request',
           ),
            'className' => 'App\\Platform\\Identity\\Http\\Controllers\\UserAdminController',
@@ -199,9 +213,11 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'uses' => 
         array (
           'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
           'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
           'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
         ),
          'className' => 'App\\Platform\\Identity\\Http\\Controllers\\UserAdminController',
@@ -215,9 +231,11 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'user' => 'App\\Models\\User',
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
             'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
             'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
             'request' => 'Illuminate\\Http\\Request',
           ),
            'className' => 'App\\Platform\\Identity\\Http\\Controllers\\UserAdminController',
@@ -246,19 +264,21 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'typeAliasClassName' => NULL,
          'traitData' => NULL,
       )),
-      '7385793e30bc4777d4ae169bd2eac107' => 
+      '65f57fae9b160ee624ba31ea5ba89e95' => 
       \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
          'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
          'uses' => 
         array (
           'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
           'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
           'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
           'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
           'request' => 'Illuminate\\Http\\Request',
         ),
          'className' => 'App\\Platform\\Identity\\Http\\Controllers\\UserAdminController',
-         'functionName' => 'setStatus',
+         'functionName' => 'deactivate',
          'templatePhpDocNodes' => 
         array (
         ),
@@ -268,9 +288,125 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'uses' => 
           array (
             'user' => 'App\\Models\\User',
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
             'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
             'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
             'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+            'request' => 'Illuminate\\Http\\Request',
+          ),
+           'className' => 'App\\Platform\\Identity\\Http\\Controllers\\UserAdminController',
+           'functionName' => NULL,
+           'templatePhpDocNodes' => 
+          array (
+          ),
+           'parent' => NULL,
+           'typeAliasesMap' => 
+          array (
+          ),
+           'bypassTypeAliases' => false,
+           'constUses' => 
+          array (
+          ),
+           'typeAliasClassName' => NULL,
+           'traitData' => NULL,
+        )),
+         'typeAliasesMap' => 
+        array (
+        ),
+         'bypassTypeAliases' => false,
+         'constUses' => 
+        array (
+        ),
+         'typeAliasClassName' => NULL,
+         'traitData' => NULL,
+      )),
+      '598a03e5e84d6180de0f642e7eb47836' => 
+      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+         'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+         'uses' => 
+        array (
+          'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
+          'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
+          'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
+          'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+          'request' => 'Illuminate\\Http\\Request',
+        ),
+         'className' => 'App\\Platform\\Identity\\Http\\Controllers\\UserAdminController',
+         'functionName' => 'setStatusJson',
+         'templatePhpDocNodes' => 
+        array (
+        ),
+         'parent' => 
+        \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+           'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+           'uses' => 
+          array (
+            'user' => 'App\\Models\\User',
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
+            'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
+            'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
+            'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+            'request' => 'Illuminate\\Http\\Request',
+          ),
+           'className' => 'App\\Platform\\Identity\\Http\\Controllers\\UserAdminController',
+           'functionName' => NULL,
+           'templatePhpDocNodes' => 
+          array (
+          ),
+           'parent' => NULL,
+           'typeAliasesMap' => 
+          array (
+          ),
+           'bypassTypeAliases' => false,
+           'constUses' => 
+          array (
+          ),
+           'typeAliasClassName' => NULL,
+           'traitData' => NULL,
+        )),
+         'typeAliasesMap' => 
+        array (
+        ),
+         'bypassTypeAliases' => false,
+         'constUses' => 
+        array (
+        ),
+         'typeAliasClassName' => NULL,
+         'traitData' => NULL,
+      )),
+      '67233e2023a2107203a791457dda47ef' => 
+      \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+         'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+         'uses' => 
+        array (
+          'user' => 'App\\Models\\User',
+          'webmutations' => 'App\\Platform\\Api\\WebMutations',
+          'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
+          'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
+          'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+          'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
+          'request' => 'Illuminate\\Http\\Request',
+        ),
+         'className' => 'App\\Platform\\Identity\\Http\\Controllers\\UserAdminController',
+         'functionName' => 'revokeCredentials',
+         'templatePhpDocNodes' => 
+        array (
+        ),
+         'parent' => 
+        \PHPStan\Analyser\IntermediaryNameScope::__set_state(array(
+           'namespace' => 'App\\Platform\\Identity\\Http\\Controllers',
+           'uses' => 
+          array (
+            'user' => 'App\\Models\\User',
+            'webmutations' => 'App\\Platform\\Api\\WebMutations',
+            'tenant' => 'App\\Platform\\Tenancy\\Models\\Tenant',
+            'tenantmembership' => 'App\\Platform\\Tenancy\\Models\\TenantMembership',
+            'jsonresponse' => 'Illuminate\\Http\\JsonResponse',
+            'redirectresponse' => 'Illuminate\\Http\\RedirectResponse',
             'request' => 'Illuminate\\Http\\Request',
           ),
            'className' => 'App\\Platform\\Identity\\Http\\Controllers\\UserAdminController',
@@ -302,7 +438,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Identity\\Http\\Controllers\\UserAdminController.php' => '618869903802307f8d8ed3cd15470078a17cefeccd72ba3c66904d57d3861020',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Platform\\Identity\\Http\\Controllers\\UserAdminController.php' => 'b8d0dd42e4017f0ae9351df8ed78c38942bf27b205436aca7461eed45fc55e19',
     ),
   ),
 ));

@@ -136,8 +136,14 @@ final class UserAdminController
 
         $user->forceFill(['status' => $status])->save();
 
-        if ($status === self::STATUS_SUSPENDED) {
-            $this->revokeCredentials((string) $user->getAuthIdentifier());
+        // SEC-015 §8.1: suspension AND deactivation are bulk revocation
+        // triggers (all tokens, all sessions) — a lifecycle kill is a
+        // lifecycle kill, not a suspension-only courtesy.
+        if ($status === self::STATUS_SUSPENDED || $status === self::STATUS_DEACTIVATED) {
+            $this->revokeCredentials(
+                (string) $user->getAuthIdentifier(),
+                $status === self::STATUS_SUSPENDED ? 'user_suspended' : 'user_deactivated'
+            );
         }
 
         return new JsonResponse([
@@ -155,7 +161,7 @@ final class UserAdminController
      * user die, every web session row goes with them, and — since
      * M5/TOKEN-001 — the HMAC actor sessions too.
      */
-    private function revokeCredentials(string $userId): void
+    private function revokeCredentials(string $userId, string $reason): void
     {
         $accessIds = \Laravel\Passport\Passport::token()->newQuery()
             ->where('user_id', $userId)
@@ -163,6 +169,11 @@ final class UserAdminController
 
         \Laravel\Passport\Passport::token()->newQuery()->whereIn('id', $accessIds)->update(['revoked' => true]);
         \Laravel\Passport\Passport::refreshToken()->newQuery()->whereIn('access_token_id', $accessIds)->update(['revoked' => true]);
+
+        // D2: bulk revocation invalidates every affected status entry
+        // immediately — suspension bites with zero staleness on-node.
+        app(\App\Platform\Identity\Federation\RevocationStatusCache::class)
+            ->invalidateTokens($accessIds->all());
 
         \Illuminate\Support\Facades\DB::connection(config('database.default'))
             ->table('sessions')
@@ -172,6 +183,20 @@ final class UserAdminController
         $externalId = \App\Models\User::query()->whereKey($userId)->value('external_id');
         if (is_string($externalId) && $externalId !== '') {
             \App\Platform\Identity\Models\ActorSession::revokeForUser($externalId);
+        }
+
+        // D5: the sweep lands on the chain per revoked credential —
+        // the recorder's token_jti_ref exists for exactly this, and
+        // revocation volume is bounded by live tokens per user.
+        $recorder = app(\App\Platform\Identity\Federation\AuthEventRecorder::class);
+        foreach ($accessIds as $jti) {
+            $recorder->record([
+                'event_type' => 'token.revoked',
+                'decision' => 'allow',
+                'subject_id' => $userId,
+                'token_jti' => (string) $jti,
+                'reason_code' => $reason,
+            ]);
         }
     }
 }

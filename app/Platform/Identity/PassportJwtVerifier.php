@@ -9,11 +9,16 @@ namespace App\Platform\Identity;
  * with the caller (DB rows), like ActorTokenVerifier splits crypto
  * from linkage. Hand-rolled openssl on purpose — same house style as
  * the HMAC verifier, zero new dependencies.
+ *
+ * A-SEC-004-9: a present `cnf` confirmation claim must be exactly
+ * `{dpop_jkt: non-empty string}` — a token whose DPoP binding is
+ * malformed is rejected fail-closed rather than silently downgraded
+ * to an unconstrained bearer.
  */
 final class PassportJwtVerifier
 {
     /**
-     * @return array{jti: string, sub: string, aud: string, exp: int, scopes: list<string>}|null
+     * @return array{jti: string, sub: string, aud: string, exp: int, scopes: list<string>, cnf: array{dpop_jkt: string}|null}|null
      */
     public static function verify(string $token, int $now): ?array
     {
@@ -70,12 +75,29 @@ final class PassportJwtVerifier
             return null;
         }
 
+        // A-SEC-004-9: present-but-malformed DPoP binding → reject the
+        // whole token fail-closed (never an unconstrained bearer).
+        $cnf = null;
+
+        if (array_key_exists('cnf', $claims)) {
+            $rawCnf = $claims['cnf'];
+
+            if (! is_array($rawCnf)
+                || ! is_string($rawCnf['dpop_jkt'] ?? null)
+                || $rawCnf['dpop_jkt'] === '') {
+                return null;
+            }
+
+            $cnf = ['dpop_jkt' => $rawCnf['dpop_jkt']];
+        }
+
         return [
             'jti' => $jti,
             'sub' => (string) $sub,
             'aud' => is_array($aud) ? (string) ($aud[0] ?? '') : $aud,
             'exp' => (int) $exp,
             'scopes' => array_values(array_filter($scopes, 'is_string')),
+            'cnf' => $cnf,
         ];
     }
 

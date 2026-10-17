@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Modules\Catalog\Http\Controllers\PriceController.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Modules\Catalog\Http\Controllers\PriceController
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-97fb44d6c4b7af0cbd33860548ee95b4754b92886f652ad628c747ab775cfd76',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-3729a26e8affc10218281ce29d176c9124b8124baa2fdd036c95519da20bf465',
    'data' => 
   array (
     'locatedSource' => 
@@ -24,15 +24,19 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     'modifiers' => 32,
     'docComment' => '/**
  * Catalog pricing: effective-dated minor-unit prices with supersede on
- * write (exactly one open row per sku/market/currency), plus a
+ * write (exactly one open row per sku/market/currency/pandit), plus a
  * deterministic quote endpoint (unknown SKUs and currency mismatches fail
  * the whole quote — never partial totals).
+ *
+ * Full matrix: SKU × pandit × market × currency
+ * - store: creates price row with optional pandit_id (null = base price for all pandits)
+ * - quote: accepts optional pandit_id and market per line; exact match first, then base fallback
  */',
     'attributes' => 
     array (
     ),
-    'startLine' => 19,
-    'endLine' => 103,
+    'startLine' => 23,
+    'endLine' => 131,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => NULL,
@@ -74,8 +78,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 21,
-            'endLine' => 21,
+            'startLine' => 25,
+            'endLine' => 25,
             'startColumn' => 32,
             'endColumn' => 47,
             'parameterIndex' => 0,
@@ -96,8 +100,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 21,
-        'endLine' => 24,
+        'startLine' => 25,
+        'endLine' => 28,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -135,8 +139,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 26,
-            'endLine' => 26,
+            'startLine' => 30,
+            'endLine' => 30,
             'startColumn' => 27,
             'endColumn' => 42,
             'parameterIndex' => 0,
@@ -161,8 +165,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 26,
-            'endLine' => 26,
+            'startLine' => 30,
+            'endLine' => 30,
             'startColumn' => 45,
             'endColumn' => 54,
             'parameterIndex' => 1,
@@ -183,8 +187,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 26,
-        'endLine' => 72,
+        'startLine' => 30,
+        'endLine' => 89,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,
@@ -222,8 +226,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 74,
-            'endLine' => 74,
+            'startLine' => 91,
+            'endLine' => 91,
             'startColumn' => 27,
             'endColumn' => 42,
             'parameterIndex' => 0,
@@ -244,8 +248,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         array (
         ),
         'docComment' => NULL,
-        'startLine' => 74,
-        'endLine' => 102,
+        'startLine' => 91,
+        'endLine' => 130,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,

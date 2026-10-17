@@ -84,7 +84,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Catalog\\QuoteCalculator.php' => '15704cefacfddc3fb23c9513abb89a042a8bfa8d9da0bd569786e908c1602411',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Catalog\\QuoteCalculator.php' => 'd6f470414cd50019964a00761d38b9d0f2b51d45823a1f372941bc3be1e76813',
     ),
   ),
 ));

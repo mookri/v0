@@ -2,7 +2,7 @@
 
 // odsl-C:\Users\Victo\Downloads\webproj\v0-navdhya-ritual-services\platform-navdhya\app\Platform\Api\CodedHttpException.php-PHPStan\BetterReflection\Reflection\ReflectionClass-App\Platform\Api\CodedHttpException
 return \PHPStan\Cache\CacheItem::__set_state(array(
-   'variableKey' => 'v2-6.70.0.3-8.5.6-d1d5aee6051da87159f4d266873c35df99f45abca267ce0e33be9d8238dcc734',
+   'variableKey' => 'v2-6.70.0.3-8.5.6-f418cf1b2b8f35d52daeaa375ff5f918047d642b8a2763a4e694430d0ccb3989',
    'data' => 
   array (
     'locatedSource' => 
@@ -31,7 +31,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     array (
     ),
     'startLine' => 12,
-    'endLine' => 21,
+    'endLine' => 25,
     'startColumn' => 1,
     'endColumn' => 1,
     'parentClassName' => 'Symfony\\Component\\HttpKernel\\Exception\\HttpException',
@@ -66,8 +66,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'attributes' => 
         array (
         ),
-        'startLine' => 16,
-        'endLine' => 16,
+        'startLine' => 19,
+        'endLine' => 19,
         'startColumn' => 9,
         'endColumn' => 44,
         'isPromoted' => true,
@@ -104,8 +104,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 15,
-            'endLine' => 15,
+            'startLine' => 18,
+            'endLine' => 18,
             'startColumn' => 9,
             'endColumn' => 19,
             'parameterIndex' => 0,
@@ -130,8 +130,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 16,
-            'endLine' => 16,
+            'startLine' => 19,
+            'endLine' => 19,
             'startColumn' => 9,
             'endColumn' => 44,
             'parameterIndex' => 1,
@@ -156,12 +156,50 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
             'attributes' => 
             array (
             ),
-            'startLine' => 17,
-            'endLine' => 17,
+            'startLine' => 20,
+            'endLine' => 20,
             'startColumn' => 9,
             'endColumn' => 23,
             'parameterIndex' => 2,
             'isOptional' => false,
+          ),
+          'headers' => 
+          array (
+            'name' => 'headers',
+            'default' => 
+            array (
+              'code' => '[]',
+              'attributes' => 
+              array (
+                'startLine' => 21,
+                'endLine' => 21,
+                'startTokenPos' => 60,
+                'startFilePos' => 656,
+                'endTokenPos' => 61,
+                'endFilePos' => 657,
+              ),
+            ),
+            'type' => 
+            array (
+              'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+              'data' => 
+              array (
+                'name' => 'array',
+                'isIdentifier' => true,
+              ),
+            ),
+            'isVariadic' => false,
+            'byRef' => false,
+            'isPromoted' => false,
+            'attributes' => 
+            array (
+            ),
+            'startLine' => 21,
+            'endLine' => 21,
+            'startColumn' => 9,
+            'endColumn' => 27,
+            'parameterIndex' => 3,
+            'isOptional' => true,
           ),
         ),
         'returnsReference' => false,
@@ -169,9 +207,11 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         'attributes' => 
         array (
         ),
-        'docComment' => NULL,
-        'startLine' => 14,
-        'endLine' => 20,
+        'docComment' => '/**
+ * @param  array<string, string>  $headers  extra response headers (e.g. WWW-Authenticate), merged onto the envelope response
+ */',
+        'startLine' => 17,
+        'endLine' => 24,
         'startColumn' => 5,
         'endColumn' => 5,
         'couldThrow' => false,

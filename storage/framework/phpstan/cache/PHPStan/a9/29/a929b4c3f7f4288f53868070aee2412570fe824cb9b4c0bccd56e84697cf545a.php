@@ -7,7 +7,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
   array (
     'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\routes\\api.php' => 
     array (
-      0 => 'a6c2bbd55071fe421fc09a6c56f009ad1239dfbe5fd0fe47d410b314593305c0',
+      0 => 'b8bab925b742c516ae1d3b262893047f8e0a7edd1eb8df54ac9178748b3207ad',
       1 => 
       array (
       ),
@@ -33,7 +33,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\routes\\console.php' => 
     array (
-      0 => '7bff1ca9501485339d5fddb7777e2a5f4144787b9cb1af9cf61c269f38d1752d',
+      0 => '064ff618063319fcfbf8c432791f742a638e168ec1eb8d2fcb2a1c4deaa567e5',
       1 => 
       array (
       ),
@@ -46,7 +46,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\routes\\platform\\api.php' => 
     array (
-      0 => 'a57161447897c1accfa88e5ce8fa06a0e83cecd74c9f1e8f19deb655731c08d4',
+      0 => '2040d77c12d8b7f02ff8f9ded14d769495791244b25062954992b68618801331',
       1 => 
       array (
       ),
@@ -59,7 +59,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\routes\\platform\\web.php' => 
     array (
-      0 => '7984ef102438714396711c63fec346ea7ae7f1c007791fa1a680daeb3a05ddb7',
+      0 => 'f9f43589a56a2efbe1d1fdcaee206e7cddb637fa582c943a0163c66c482370c7',
       1 => 
       array (
       ),
@@ -72,7 +72,20 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\routes\\web.php' => 
     array (
-      0 => 'f0fe602a067b8d7d13ffe56fc660116a185077ad728db8509fa27f444791112e',
+      0 => '7d5eb9bd08940ed81f278facb213c8509d7cb89a4df27876d8b940fedc10795b',
+      1 => 
+      array (
+      ),
+      2 => 
+      array (
+      ),
+      3 => 
+      array (
+      ),
+    ),
+    'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\routes\\platform\\federation.php' => 
+    array (
+      0 => 'b59f11d868402b8ceb667ec4339cddec5bc3527e3a0181fb2d567872619e7b1e',
       1 => 
       array (
       ),

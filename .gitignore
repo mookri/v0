@@ -28,3 +28,8 @@ storage/framework/testing-*.sqlite
 # this extra rule catches a key downloaded from the console into the repo root,
 # which is where Google's default naming lands it.
 /*-firebase-adminsdk-*.json
+
+# Tooling caches and generated graph artifacts — never source.
+/storage/framework/phpstan/cache
+/tmp
+graphify-out/

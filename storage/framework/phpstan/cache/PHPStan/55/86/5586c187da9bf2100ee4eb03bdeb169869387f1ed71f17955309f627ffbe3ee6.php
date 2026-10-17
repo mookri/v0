@@ -12,6 +12,9 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'namespace' => 'App\\Modules\\Onboarding',
          'uses' => 
         array (
+          'submitcontroller' => 'App\\Modules\\Onboarding\\Http\\Controllers\\SubmitController',
+          'dbotpchallengestore' => 'App\\Platform\\Identity\\Otp\\DbOtpChallengeStore',
+          'otpchallengestore' => 'App\\Platform\\Identity\\Otp\\OtpChallengeStore',
           'basemoduleserviceprovider' => 'App\\Platform\\Modules\\ModuleServiceProvider',
         ),
          'className' => 'App\\Modules\\Onboarding\\ModuleServiceProvider',
@@ -35,6 +38,9 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'namespace' => 'App\\Modules\\Onboarding',
          'uses' => 
         array (
+          'submitcontroller' => 'App\\Modules\\Onboarding\\Http\\Controllers\\SubmitController',
+          'dbotpchallengestore' => 'App\\Platform\\Identity\\Otp\\DbOtpChallengeStore',
+          'otpchallengestore' => 'App\\Platform\\Identity\\Otp\\OtpChallengeStore',
           'basemoduleserviceprovider' => 'App\\Platform\\Modules\\ModuleServiceProvider',
         ),
          'className' => 'App\\Modules\\Onboarding\\ModuleServiceProvider',
@@ -47,6 +53,9 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'namespace' => 'App\\Modules\\Onboarding',
            'uses' => 
           array (
+            'submitcontroller' => 'App\\Modules\\Onboarding\\Http\\Controllers\\SubmitController',
+            'dbotpchallengestore' => 'App\\Platform\\Identity\\Otp\\DbOtpChallengeStore',
+            'otpchallengestore' => 'App\\Platform\\Identity\\Otp\\OtpChallengeStore',
             'basemoduleserviceprovider' => 'App\\Platform\\Modules\\ModuleServiceProvider',
           ),
            'className' => 'App\\Modules\\Onboarding\\ModuleServiceProvider',
@@ -80,6 +89,9 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
          'namespace' => 'App\\Modules\\Onboarding',
          'uses' => 
         array (
+          'submitcontroller' => 'App\\Modules\\Onboarding\\Http\\Controllers\\SubmitController',
+          'dbotpchallengestore' => 'App\\Platform\\Identity\\Otp\\DbOtpChallengeStore',
+          'otpchallengestore' => 'App\\Platform\\Identity\\Otp\\OtpChallengeStore',
           'basemoduleserviceprovider' => 'App\\Platform\\Modules\\ModuleServiceProvider',
         ),
          'className' => 'App\\Modules\\Onboarding\\ModuleServiceProvider',
@@ -92,6 +104,9 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
            'namespace' => 'App\\Modules\\Onboarding',
            'uses' => 
           array (
+            'submitcontroller' => 'App\\Modules\\Onboarding\\Http\\Controllers\\SubmitController',
+            'dbotpchallengestore' => 'App\\Platform\\Identity\\Otp\\DbOtpChallengeStore',
+            'otpchallengestore' => 'App\\Platform\\Identity\\Otp\\OtpChallengeStore',
             'basemoduleserviceprovider' => 'App\\Platform\\Modules\\ModuleServiceProvider',
           ),
            'className' => 'App\\Modules\\Onboarding\\ModuleServiceProvider',
@@ -123,7 +138,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     1 => 
     array (
-      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Onboarding\\ModuleServiceProvider.php' => 'f90c2817e60aba960f73032807fffb8549cde1d54b9882558bdaf54a1fc09d4b',
+      'C:\\Users\\Victo\\Downloads\\webproj\\v0-navdhya-ritual-services\\platform-navdhya\\app\\Modules\\Onboarding\\ModuleServiceProvider.php' => 'b8bac0c5bffb48bb3ed7c67a9b9d664c355a237c5e67564128376c5202f88717',
     ),
   ),
 ));

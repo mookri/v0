@@ -110,6 +110,8 @@ final class OAuthClientController
                     'require_pkce' => $profile->require_pkce,
                     'rate_tier' => $profile->rate_tier,
                     'status' => $profile->status,
+                    'post_logout_redirect_uris' => $profile->post_logout_redirect_uris ?? [],
+                    'backchannel_logout_uri' => $profile->backchannel_logout_uri,
                 ];
             })->values()->all();
 
@@ -153,6 +155,14 @@ final class OAuthClientController
             'refresh_ttl_seconds' => ['nullable', 'integer', 'min:1'],
             'require_pkce' => ['boolean'],
             'rate_tier' => ['sometimes', 'string', 'in:standard,high'],
+            // A-SEC-004-5: logout registrations — exact-match redirect
+            // targets for the end-session endpoint and the RP's
+            // back-channel listener, both http(s) web URLs only (the
+            // dispatcher re-checks the scheme before any outbound
+            // request; registration never gets to loosen it).
+            'post_logout_redirect_uris' => ['nullable', 'array', 'max:5'],
+            'post_logout_redirect_uris.*' => ['string', 'max:2048', 'regex:/^https?:\/\/.+/i'],
+            'backchannel_logout_uri' => ['nullable', 'string', 'max:255', 'regex:/^https?:\/\/.+/i'],
         ]);
 
         $scoped = $this->scopeToTenant($request, $validated['tenant_id']);
@@ -213,6 +223,8 @@ final class OAuthClientController
                 'require_pkce' => $validated['require_pkce'] ?? true,
                 'rate_tier' => $validated['rate_tier'] ?? 'standard',
                 'status' => 'active',
+                'post_logout_redirect_uris' => $validated['post_logout_redirect_uris'] ?? null,
+                'backchannel_logout_uri' => $validated['backchannel_logout_uri'] ?? null,
             ]);
             $profile->save();
 
@@ -232,6 +244,8 @@ final class OAuthClientController
                     'secret' => $plainSecret, // shown once
                     'redirect_uris' => $redirectUris,
                     'grants' => $grants,
+                    'post_logout_redirect_uris' => $validated['post_logout_redirect_uris'] ?? null,
+                    'backchannel_logout_uri' => $validated['backchannel_logout_uri'] ?? null,
                 ],
                 'meta' => ['request_id' => $this->requestId($request)],
             ], 201);
@@ -299,6 +313,27 @@ final class OAuthClientController
 
             \Laravel\Passport\Passport::token()->newQuery()->whereIn('id', $accessIds)->update(['revoked' => true]);
             \Laravel\Passport\Passport::refreshToken()->newQuery()->whereIn('access_token_id', $accessIds)->update(['revoked' => true]);
+
+            // D2: client revocation invalidates the client verdict and
+            // every cached token entry immediately.
+            $revocationCache = app(\App\Platform\Identity\Federation\RevocationStatusCache::class);
+            $revocationCache->invalidateClient((string) $client->getKey());
+            $revocationCache->invalidateTokens($accessIds->all());
+
+            // D5 (9c): the kill lands on the federation hash chain per
+            // credential (the kernel audit row above records the
+            // admin action itself; this records the credentials).
+            $recorder = app(\App\Platform\Identity\Federation\AuthEventRecorder::class);
+            foreach ($accessIds as $jti) {
+                $recorder->record([
+                    'event_type' => 'token.revoked',
+                    'decision' => 'allow',
+                    'actor_client_id' => (string) $id,
+                    'tenant_ref' => $tenantId,
+                    'token_jti' => (string) $jti,
+                    'reason_code' => 'client_revoked',
+                ]);
+            }
 
             // Revoke device codes
             $deviceModel = \Laravel\Passport\Passport::deviceCodeModel();
@@ -384,9 +419,6 @@ final class OAuthClientController
             'redirect_uris' => $client->redirect_uris ?? [],
             'grant_types' => $client->grant_types ?? [],
             'revoked' => $client->revoked ?? false,
-            'redirect_uris' => $client->redirect_uris ?? [],
-            'grant_types' => $client->grant_types ?? [],
-            'revoked' => $client->revoked ?? false,
             'allowed_grants' => $profile->allowed_grants ?? [],
             'allowed_scopes' => $profile->allowed_scopes ?? [],
             'audience' => $profile->audience,
@@ -395,6 +427,8 @@ final class OAuthClientController
             'require_pkce' => $profile->require_pkce,
             'rate_tier' => $profile->rate_tier,
             'status' => $profile->status,
+            'post_logout_redirect_uris' => $profile->post_logout_redirect_uris ?? [],
+            'backchannel_logout_uri' => $profile->backchannel_logout_uri,
         ];
     }
 }

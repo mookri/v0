@@ -11,11 +11,15 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  */
 final class CodedHttpException extends HttpException
 {
+    /**
+     * @param  array<string, string>  $headers  extra response headers (e.g. WWW-Authenticate), merged onto the envelope response
+     */
     public function __construct(
         int $status,
         public readonly string $envelopeCode,
         string $message,
+        array $headers = [],
     ) {
-        parent::__construct($status, $message);
+        parent::__construct($status, $message, null, $headers);
     }
 }
