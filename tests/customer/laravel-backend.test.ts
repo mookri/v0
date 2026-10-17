@@ -6,7 +6,7 @@ import {
   mapBackendCode,
 } from '@apps/customer/adapters/backend/laravel-client';
 import {
-  CUSTOMER_TOKEN_COOKIE,
+  customerTokenCookieName,
   readCustomerToken,
   resolveCustomerActor,
   buildSessionCookie,
@@ -56,7 +56,7 @@ function backendToken() {
 }
 
 function cookieHeader(token: string) {
-  return `${CUSTOMER_TOKEN_COOKIE}=${encodeURIComponent(token)}`;
+  return `${customerTokenCookieName()}=${encodeURIComponent(token)}`;
 }
 
 function stubLaravel(handler: (url: string, init?: RequestInit) => unknown) {
@@ -100,9 +100,9 @@ test('backend code map covers auth-shaped errors', () => {
 
 test('session cookie helpers round-trip', () => {
   const set = buildSessionCookie('tok', 3600);
-  expect(set).toContain(`${CUSTOMER_TOKEN_COOKIE}=tok`);
+  expect(set).toContain(`${customerTokenCookieName()}=tok`);
   expect(set).toContain('HttpOnly');
-  expect(readCustomerToken(`${CUSTOMER_TOKEN_COOKIE}=tok; other=x`)).toBe('tok');
+  expect(readCustomerToken(`${customerTokenCookieName()}=tok; other=x`)).toBe('tok');
   expect(readCustomerToken(null)).toBeNull();
   expect(clearSessionCookie()).toContain('Max-Age=0');
 });
@@ -191,7 +191,7 @@ test('wired login redeems the challenge token in one call and sets the cookie', 
   ]);
   const body = (await res.json()) as { data: { sessionId: string; expiresAt: string } };
   expect(body.data.sessionId).toBe('sess_9');
-  expect(res.headers.get('Set-Cookie')).toContain(CUSTOMER_TOKEN_COOKIE);
+  expect(res.headers.get('Set-Cookie')).toContain(customerTokenCookieName());
 });
 
 test('wired reads pass backend data through with BFF shapes', async () => {
@@ -501,7 +501,7 @@ test('wired signup intent and verify set the session cookie', async () => {
   expect(done.status).toBe(201);
   const doneBody = (await done.json()) as { data: { sessionId: string } };
   expect(doneBody.data.sessionId).toBe('sess_9');
-  expect(done.headers.get('Set-Cookie')).toContain(CUSTOMER_TOKEN_COOKIE);
+  expect(done.headers.get('Set-Cookie')).toContain(customerTokenCookieName());
 
   // Flag off: unauthenticated-only.
   vi.stubEnv('CUSTOMER_BACKEND', '');

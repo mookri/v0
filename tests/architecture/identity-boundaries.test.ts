@@ -42,7 +42,16 @@ test('apps never import credential internals or session secrets', { timeout: 120
         expect(content, `no otp provider in ${file}`).not.toMatch(/otp-provider|CredentialVerifier/);
       }
       expect(content, `no localStorage tokens in ${file}`).not.toMatch(/localStorage\s*\.\s*(getItem|setItem)\s*\(\s*["'].*token/i);
-      expect(content, `no token in url in ${file}`).not.toMatch(/access_token|refresh_token/);
+      // Tokens must never ride URLs (query/fragment parameters leak
+      // through logs, history and Referer). The bare FIELD NAMES are
+      // not URL placement: RFC 6749 §5.1 token responses carry
+      // `access_token`/`refresh_token` JSON fields and the OIDC
+      // back-channel logout spec requires `token_type_hint:
+      // "access_token"` — the protocol surface legitimately spells
+      // them (amended 2026-10-17 when the federation callback landed).
+      expect(content, `no token in url in ${file}`).not.toMatch(
+        /[?&#](access_token|refresh_token)=|searchParams\.(set|append)\(\s*['"](access_token|refresh_token)['"]/,
+      );
     }
   }
 });

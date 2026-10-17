@@ -7,7 +7,6 @@ import { resolveContext } from "@/lib/context-resolver";
 
 // Critical above-the-fold components loaded normally for LCP optimization
 import Hero from "@/components/sections/hero";
-import MobileHome from "@/components/mobile/home/MobileHome";
 
 // Lazy-loaded components for better performance & reduced initial JS payload
 const QuickActions = dynamic(() => import("@/components/sections/quick").then((mod) => mod.QuickActions));
@@ -189,20 +188,15 @@ export default async function HomePage() {
           }}
         />
 
-        <div className="block w-full md:hidden">
-          {/* Mobile Home is critical for mobile LCP, loaded normally */}
-          <MobileHome />
-        </div>
-        
-        <main className="hidden w-full overflow-x-hidden md:block">
+        <main className="w-full overflow-x-hidden">
           {/* Hero is critical for desktop LCP, loaded normally */}
           <Hero />
-          
+
           {/* Below-the-fold components are lazy loaded with Suspense for non-blocking rendering */}
           <Suspense fallback={<div className="h-24 w-full animate-pulse bg-gray-100" />}>
             <QuickActions />
           </Suspense>
-          
+
           <Suspense fallback={<div className="h-96 w-full animate-pulse bg-gray-50" />}>
             <FeaturedPujas />
             <WhyChoose />

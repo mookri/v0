@@ -9,7 +9,7 @@ import { pujaBookStartUrl } from '@apps/customer/application/bookings/puja-book-
 import { resolveBookStart } from '@apps/customer/application/bookings/resolve-book-start';
 import { confirmBookingDraft } from '@apps/customer/application/bookings/confirm-booking-draft';
 import { POST as createBooking } from '@apps/customer/app/api/bookings/route';
-import { CUSTOMER_TOKEN_COOKIE } from '@apps/customer/server/backend-session';
+import { customerTokenCookieName } from '@apps/customer/server/backend-session';
 
 // Book-create vertical (S15): the detail page emits a decodable intent
 // (raw JSON never decoded), the codec is browser-safe (no Buffer), the
@@ -128,7 +128,7 @@ function backendToken() {
 }
 
 function cookieHeader(token: string) {
-  return `${CUSTOMER_TOKEN_COOKIE}=${encodeURIComponent(token)}`;
+  return `${customerTokenCookieName()}=${encodeURIComponent(token)}`;
 }
 
 const json = async (res: Response) => (await res.json()) as Record<string, any>;

@@ -1,15 +1,50 @@
 import { SignedTokenActorResolver, INSECURE_DEV_SECRET } from '@navdhya/identity/src/application/token-actor';
+import type { ActorResolver, RequestActor } from '@navdhya/identity/src/ports/actor-resolver';
 import { SESSION_COOKIE } from '@/server/auth';
+import { isFederated } from '@/server/federation';
+import { federatedActorFromToken } from '@/server/session';
 
 // Actor resolution for partner BFF routes via signed bearer tokens.
 // Secret comes from server env; the insecure fallback is dev-only
 // (production must set SESSION_SIGNING_KEY — see packages/config).
 // Replaces the former staging header seam; no client ids are trusted.
-export function partnerActorResolver(now?: () => string): SignedTokenActorResolver {
-  return new SignedTokenActorResolver({
-    secret: process.env['SESSION_SIGNING_KEY'] ?? INSECURE_DEV_SECRET,
-    now,
-  });
+//
+// AUTH_MODE cutover (ADR-0020): the resolver is MODE-AWARE and reads
+// the mode per resolve() — direct keeps today's HMAC actor tokens;
+// federated verifies the issuer's access token locally against the
+// issuer JWKS (server/oidc), because partner's routes act on the app's
+// own stores with no upstream to re-judge the token (customer/web hand
+// that judgment to Laravel on each proxied call). The two token
+// families never cross: a 2-segment opaque actor token is not an
+// issuer JWT, and an issuer JWT fails the HMAC verification — either
+// way the result is null, never a partial actor.
+class ModeAwareActorResolver implements ActorResolver {
+  private readonly direct: SignedTokenActorResolver;
+
+  constructor(now?: () => string) {
+    this.direct = new SignedTokenActorResolver({
+      secret: process.env['SESSION_SIGNING_KEY'] ?? INSECURE_DEV_SECRET,
+      now,
+    });
+  }
+
+  async resolve(headers: Record<string, string | undefined>): Promise<RequestActor | null> {
+    if (isFederated()) {
+      const header = headers['authorization'];
+      if (!header?.startsWith('Bearer ')) return null;
+      const token = header.slice('Bearer '.length).trim();
+      // JWTs are exactly three dot-separated segments; anything else
+      // cannot be an issuer access token, so it fails closed here
+      // instead of reaching signature verification.
+      if (token.split('.').length !== 3) return null;
+      return federatedActorFromToken(token);
+    }
+    return this.direct.resolve(headers);
+  }
+}
+
+export function partnerActorResolver(now?: () => string): ActorResolver {
+  return new ModeAwareActorResolver(now);
 }
 
 // Pre-configured instance for onboarding routes

@@ -2,7 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CustomerBookingDetails } from '@/application/bookings/get-customer-booking-details';
+import {
+  CustomerBookingDetails,
+  bookingAction,
+  otherBookingActions,
+} from '@/application/bookings/get-customer-booking-details';
 import { rescheduleIsoFromInput } from '@/application/bookings/reschedule-from-input';
 import { generateIdempotencyKey } from '@/application/idempotency';
 import { customerApi } from '@/adapters/backend/customer-api-client';
@@ -21,9 +25,11 @@ export function BookingDetailPage({ details, history, error }: BookingDetailPage
   const [rescheduleValue, setRescheduleValue] = useState('');
   const router = useRouter();
 
-  const canCancel = details?.actions.includes('cancel') ?? false;
-  const canReschedule = details?.actions.includes('reschedule') ?? false;
-  const infoActions = (details?.actions ?? []).filter((a) => a !== 'cancel' && a !== 'reschedule');
+  // Capability reads live in the application layer (customer-features
+  // boundary: presentation derives no business rules of its own).
+  const cancellable = bookingAction(details, 'cancel');
+  const reschedulable = bookingAction(details, 'reschedule');
+  const infoActions = otherBookingActions(details);
 
   async function handleCancel() {
     if (!details || busy) return;
@@ -154,7 +160,7 @@ export function BookingDetailPage({ details, history, error }: BookingDetailPage
             </dl>
           </div>
 
-          {(canCancel || canReschedule || infoActions.length > 0) && (
+          {(cancellable || reschedulable || infoActions.length > 0) && (
             <div className="bg-white border border-gray-200 rounded-xl p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Actions</h2>
 
@@ -169,7 +175,7 @@ export function BookingDetailPage({ details, history, error }: BookingDetailPage
                 </p>
               )}
 
-              {canReschedule && (
+              {reschedulable && (
                 <div className="mb-4">
                   <label htmlFor="reschedule-datetime" className="block text-sm font-medium text-gray-700 mb-1">
                     Reschedule to
@@ -193,7 +199,7 @@ export function BookingDetailPage({ details, history, error }: BookingDetailPage
                 </div>
               )}
 
-              {canCancel && (
+              {cancellable && (
                 <button
                   onClick={handleCancel}
                   disabled={busy !== null}

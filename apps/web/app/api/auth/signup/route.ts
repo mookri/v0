@@ -8,6 +8,7 @@ import {
   THROTTLE,
 } from '@/application/auth-throttle';
 import { signupRequestSchema, bodyWithinCap } from '@/application/auth-schemas';
+import { isFederated } from '@/server/federation';
 
 interface LaravelChallenge {
   challenge_id: string;
@@ -25,6 +26,12 @@ interface LaravelChallenge {
  */
 export async function POST(req: Request) {
   const requestId = newRequestId();
+
+  if (isFederated()) {
+    // ADR-0020: the issuer is sole — the legacy ceremony does not exist
+    // in federated deployments (verified proof auto-provisions there).
+    return Response.json(err('NOT_FOUND', 'This deployment authenticates at the auth subdomain.', requestId), { status: 404 });
+  }
 
   if (!laravelEnabled()) {
     return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });

@@ -54,6 +54,55 @@ export function clearSessionCookie(): string {
   ].join('; ');
 }
 
+// RP-initiated logout correlation cookie (A-SEC-004-6 landing): the
+// logout/start route mints the state, parks it here for the
+// end-session round-trip (10 min covers the OP redirect chain), and
+// the landing route correlates it before acknowledging the return.
+// Non-credential — it gates an acknowledgment page, never an actor.
+const DEV_LOGOUT_STATE_COOKIE = 'nv-web-logout-state';
+const PROD_LOGOUT_STATE_COOKIE = '__Host-nv-web-logout-state';
+const LOGOUT_STATE_MAX_AGE_SECONDS = 600;
+
+export function logoutStateCookieName(): string {
+  return isSecureContext() ? PROD_LOGOUT_STATE_COOKIE : DEV_LOGOUT_STATE_COOKIE;
+}
+
+export function buildLogoutStateCookie(state: string): string {
+  const secure = isSecureContext();
+  return [
+    `${logoutStateCookieName()}=${encodeURIComponent(state)}`,
+    'Path=/',
+    'HttpOnly',
+    'SameSite=Lax',
+    `Max-Age=${LOGOUT_STATE_MAX_AGE_SECONDS}`,
+    ...(secure ? ['Secure'] : []),
+  ].join('; ');
+}
+
+export function clearLogoutStateCookie(): string {
+  const secure = isSecureContext();
+  return [
+    `${logoutStateCookieName()}=`,
+    'Path=/',
+    'HttpOnly',
+    'SameSite=Lax',
+    'Max-Age=0',
+    ...(secure ? ['Secure'] : []),
+  ].join('; ');
+}
+
+export function readLogoutStateCookie(cookieHeader: string | null): string | null {
+  if (!cookieHeader) return null;
+  for (const part of cookieHeader.split(';')) {
+    const eq = part.indexOf('=');
+    if (eq === -1) continue;
+    if (part.slice(0, eq).trim() === logoutStateCookieName()) {
+      return decodeURIComponent(part.slice(eq + 1).trim());
+    }
+  }
+  return null;
+}
+
 /**
  * Extract the session token per the precedence matrix (contract §7):
 

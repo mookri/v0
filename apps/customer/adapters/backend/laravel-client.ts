@@ -1,6 +1,7 @@
 import { TIMEOUT_MS } from '@/application/api-policy';
 import { CustomerApiError } from '@/adapters/backend/customer-api-client';
 import { err, type ApiErrorCode } from '@/application/api-envelope';
+import { dpopProof } from '@/server/dpop';
 
 // Server-side Laravel client (F2): BFF route handlers call
 // api.navdhya.com through here when CUSTOMER_BACKEND=laravel.
@@ -78,11 +79,21 @@ async function callLaravel<T>(
 ): Promise<LaravelResponse<T>> {
   const params = new URLSearchParams(query);
   const qs = params.size > 0 ? `?${params.toString()}` : '';
+  const url = `${laravelBase()}/api/v1${path}${qs}`;
   const headers: Record<string, string> = { 'Content-Type': 'application/json', ...extraHeaders };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+    // A-SEC-004-9 (RFC 9449): every upstream call carrying a bearer
+    // token proves possession of the binding key — `ath` over this
+    // token, htm/htu of this request. Unbound tokens ignore the extra
+    // header; bound tokens are refused without it, and the proof key
+    // is the same one that bound the token at the exchange, so a
+    // session's token and its proofs always match by construction.
+    headers['DPoP'] = dpopProof(method, url, token);
+  }
   const tenant = laravelTenant();
   if (tenant) headers['X-Tenant-Id'] = tenant;
-  const res = await fetch(`${laravelBase()}/api/v1${path}${qs}`, {
+  const res = await fetch(url, {
     method,
     headers,
     body: body === undefined ? undefined : JSON.stringify(body),

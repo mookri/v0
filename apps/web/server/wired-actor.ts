@@ -1,5 +1,6 @@
 import { newRequestId, err } from '@/application/api-envelope';
 import { extractSessionToken, sessionCookieName } from '@/server/session-cookie';
+import { tokenSidTerminated } from '@/server/backchannel-logout';
 
 export interface WiredActor {
   id: string;
@@ -37,6 +38,14 @@ export function wiredActor(req: Request, requestId?: string): WiredActorResult {
   const tenantId = req.headers.get('x-tenant-id') || undefined;
 
   if (extraction.source === 'cookie') {
+    // A-SEC-004-6: a sid the OP ended over the back channel stops
+    // resolving here. The payload is decoded UNTRUSTED (web never
+    // verifies tokens locally — I18 hands that to the upstream), so
+    // the check can only ever REJECT: a forged cookie's sid claim can
+    // at most deny itself, never gain a session.
+    if (tokenSidTerminated(extraction.token!)) {
+      return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', rid), { status: 401 });
+    }
     return {
       id: 'unknown',
       type: 'customer',

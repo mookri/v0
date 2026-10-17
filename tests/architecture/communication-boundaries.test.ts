@@ -67,7 +67,10 @@ test('msg91 widget host appears only in @navdhya/otp loader', () => {
   for (const root of roots) {
     for (const file of getAllFiles(root)) {
       const normalized = path.normalize(file);
-      if (normalized.endsWith(allowedLoader)) continue;
+      // next.config.ts: the CSP header MUST allowlist the widget's
+      // host for it to load at all — a policy declaration is
+      // configuration, not a second loader (amended 2026-10-17).
+      if (normalized.endsWith(allowedLoader) || path.basename(normalized) === 'next.config.ts') continue;
       const content = fs.readFileSync(file, 'utf8');
       expect(content, `no verify.msg91.com in ${file}`).not.toContain('verify.msg91.com');
     }

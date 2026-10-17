@@ -3,6 +3,7 @@ import { laravelEnabled, laravelPost, laravelTenant, laravelErrorResponse } from
 import { authRateLimiter, ipKey, THROTTLE } from '@/application/auth-throttle';
 import { bodyWithinCap } from '@/application/auth-schemas';
 import { setSessionCookie } from '@/server/session-cookie';
+import { isFederated } from '@/server/federation';
 import type { CustomerSession, OtpChallenge } from '@navdhya/otp/schemas';
 
 interface RawLoginBody {
@@ -25,6 +26,12 @@ interface RawLoginBody {
  */
 export async function POST(req: Request) {
   const requestId = newRequestId();
+
+  if (isFederated()) {
+    // ADR-0020: the issuer is sole — the legacy ceremony does not exist
+    // in federated deployments.
+    return Response.json(err('NOT_FOUND', 'This deployment authenticates at the auth subdomain.', requestId), { status: 404 });
+  }
 
   if (!laravelEnabled()) {
     return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });

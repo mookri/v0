@@ -1,6 +1,8 @@
 import { newRequestId, ok } from '@/application/api-envelope';
 import { laravelEnabled, laravelPost } from '@/adapters/backend/laravel-client';
 import { extractSessionToken, clearSessionCookie } from '@/server/session-cookie';
+import { isFederated, federationConfig } from '@/server/federation';
+import { TIMEOUT_MS } from '@/application/api-policy';
 
 /**
  * POST /api/auth/logout — end the session and clear the cookie.
@@ -19,6 +21,10 @@ export async function POST(req: Request) {
   // Always clear, unconditionally, first — the response shape does not
   // depend on backend state (idempotency).
   const clearHeaders = () => ({ 'Set-Cookie': clearSessionCookie() });
+
+  if (isFederated()) {
+    return federatedLogout(req, requestId);
+  }
 
   if (!laravelEnabled()) {
     return Response.json(ok({ loggedOut: true }, requestId), { headers: clearHeaders() });
@@ -46,4 +52,39 @@ export async function POST(req: Request) {
     console.error(`[auth] logout backend call failed (requestId=${requestId}):`, e);
     return Response.json(ok({ loggedOut: true }, requestId), { headers: clearHeaders() });
   }
+}
+
+// Federated logout (ADR-0020 cutover): revoke the presented access token
+// at the issuer (back-channel, client-authenticated, best-effort) and
+// always clear the cookie. Idempotent — the response never depends on
+// the issuer's answer; the browser must never keep a session it asked
+// to end. Nothing token-shaped is logged.
+async function federatedLogout(req: Request, requestId: string) {
+  const clearHeaders = () => ({ 'Set-Cookie': clearSessionCookie() });
+  const extraction = extractSessionToken(req);
+  if (extraction.token) {
+    try {
+      const config = federationConfig();
+      // Client auth travels in the BODY (client_secret_post): the
+      // revoke endpoint validates request input, not the Authorization
+      // header — Basic-only requests are refused before any revocation.
+      await fetch(`${config.issuer}/oauth/revoke`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Accept: 'application/json',
+        },
+        body: new URLSearchParams({
+          token: extraction.token,
+          token_type_hint: 'access_token',
+          client_id: config.clientId,
+          client_secret: config.clientSecret,
+        }).toString(),
+        signal: AbortSignal.timeout(TIMEOUT_MS.fast),
+      });
+    } catch {
+      // Best-effort by design — the local session still ends.
+    }
+  }
+  return Response.json(ok({ loggedOut: true }, requestId), { headers: clearHeaders() });
 }

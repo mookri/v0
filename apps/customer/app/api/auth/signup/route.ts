@@ -1,5 +1,6 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
 import { laravelEnabled, laravelPost, laravelTenant, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { isFederated } from '@/server/federation';
 
 interface LaravelChallenge {
   challenge_id: string;
@@ -11,6 +12,11 @@ interface LaravelChallenge {
 // surface is unauthenticated-only (no mock accounts fabricated).
 export async function POST(req: Request) {
   const requestId = newRequestId();
+  if (isFederated()) {
+    // ADR-0020: the issuer is sole — the legacy ceremony does not exist
+    // in federated deployments (verified proof auto-provisions there).
+    return Response.json(err('NOT_FOUND', 'This deployment authenticates at the auth subdomain.', requestId), { status: 404 });
+  }
   if (!laravelEnabled()) {
     return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
   }

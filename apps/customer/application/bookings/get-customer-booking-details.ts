@@ -38,6 +38,22 @@ export function toCustomerBookingDetails(input: {
   };
 }
 
+/**
+ * Presentation-facing capability reads (customer-features boundary:
+ * presentation holds no business rules — it asks THESE, never derives
+ * them). The legality decision itself lives in getBookingActions
+ * (booking domain) and is already narrowed into the DTO's action list
+ * at build time.
+ */
+export function bookingAction(details: CustomerBookingDetails | null, action: BookingAction): boolean {
+  return details?.actions.includes(action) ?? false;
+}
+
+/** Actions that render their own row (cancel/reschedule have dedicated UI). */
+export function otherBookingActions(details: CustomerBookingDetails | null): BookingAction[] {
+  return (details?.actions ?? []).filter((a) => a !== 'cancel' && a !== 'reschedule');
+}
+
 export type BookingAccess = { ok: true; booking: Booking } | { ok: false; reason: 'NOT_FOUND' | 'FORBIDDEN' };
 
 export function authorizeBooking(booking: Booking | null, actorUserId: string): BookingAccess {

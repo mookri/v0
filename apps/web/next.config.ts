@@ -16,10 +16,14 @@ const contentSecurityPolicy = [
   "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://www.navdhya.com https://navdhya.com https://cdn.navdhya.com https://navdhya-assets.s3.ap-south-1.amazonaws.com",
   "font-src 'self' data: https://fonts.gstatic.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com",
-  "connect-src 'self' data: blob: https://res.cloudinary.com https://www.navdhya.com https://navdhya.com https://navdhya-assets.s3.ap-south-1.amazonaws.com https://graph.facebook.com https://www.google-analytics.com https://*.google-analytics.com",
-  // GTM no-JS fallback frame (plan B4).
-  "frame-src 'self' https://www.googletagmanager.com",
+  // MSG91 OTP widget (ADR-002): the provider script loads from
+  // verify.msg91.com; the widget itself then injects a trace script
+  // (pass.hostnsoft.com) and the hCaptcha API (js.hcaptcha.com) whose
+  // challenge frames/API live on new.hcaptcha.com.
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://verify.msg91.com https://pass.hostnsoft.com https://js.hcaptcha.com",
+  "connect-src 'self' data: blob: https://res.cloudinary.com https://www.navdhya.com https://navdhya.com https://navdhya-assets.s3.ap-south-1.amazonaws.com https://graph.facebook.com https://www.google-analytics.com https://*.google-analytics.com https://verify.msg91.com https://control.msg91.com https://new.hcaptcha.com",
+  // GTM no-JS fallback frame (plan B4) + MSG91 widget captcha frames.
+  "frame-src 'self' https://www.googletagmanager.com https://verify.msg91.com https://new.hcaptcha.com",
 ].join("; ");
 
 const nextConfig: NextConfig = {

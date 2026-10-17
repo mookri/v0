@@ -1,9 +1,17 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
 import { login } from '@navdhya/identity/src/application/token-session';
 import { partnerIdentities, partnerSessions, partnerVerifier, partnerTokenSecret, SESSION_COOKIE } from '@/server/auth';
+import { isFederated } from '@/server/federation';
 
 export async function POST(req: Request) {
   const requestId = newRequestId();
+
+  if (isFederated()) {
+    // ADR-0020: the issuer is sole — the legacy ceremony does not exist
+    // in federated deployments.
+    return Response.json(err('NOT_FOUND', 'This deployment authenticates at the auth subdomain.', requestId), { status: 404 });
+  }
+
   let body: { identityId?: string; proof?: string } = {};
   try {
     body = (await req.json()) as typeof body;

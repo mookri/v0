@@ -4,6 +4,23 @@ import * as path from 'path';
 
 const apiDir = path.join(process.cwd(), 'apps', 'customer', 'app', 'api');
 
+// OAuth/OIDC protocol endpoints (ADR-0020/0021 federation): RFC 6749 /
+// OIDC fix their shapes — a 302 handoff has no body to envelope and
+// the back-channel logout receiver answers a bare 204/400 per spec.
+// The RP-initiated logout start (307 browser hand-off) and landing
+// (HTML acknowledgment page) join the same doctrine: neither can carry
+// a JSON envelope. They cannot speak the app envelope; everything else
+// must (amended 2026-10-17). The numeric-status check still applies to
+// all routes.
+const PROTOCOL_ROUTES = [
+  path.join('apps', 'customer', 'app', 'api', 'auth', 'authorize', 'route.ts'),
+  path.join('apps', 'customer', 'app', 'api', 'auth', 'backchannel-logout', 'route.ts'),
+  path.join('apps', 'customer', 'app', 'api', 'auth', 'logout', 'start', 'route.ts'),
+  path.join('apps', 'customer', 'app', 'api', 'auth', 'logout', 'landing', 'route.ts'),
+];
+const isProtocolRoute = (file: string): boolean =>
+  PROTOCOL_ROUTES.some((p) => path.normalize(file).endsWith(p));
+
 function getAllFiles(dir: string): string[] {
   let results: string[] = [];
   if (!fs.existsSync(dir)) return results;
@@ -18,7 +35,9 @@ function getAllFiles(dir: string): string[] {
 test('BFF handlers share one error/status contract', () => {
   for (const file of getAllFiles(apiDir)) {
     const content = fs.readFileSync(file, 'utf8');
-    expect(content, `envelope in ${file}`).toMatch(/api-envelope/);
+    if (!isProtocolRoute(file)) {
+      expect(content, `envelope in ${file}`).toMatch(/api-envelope/);
+    }
     expect(content, `no numeric status without code in ${file}`).not.toMatch(/status:\s*500/);
   }
 });

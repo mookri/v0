@@ -3,6 +3,7 @@ import { login } from '@navdhya/identity/src/application/token-session';
 import { authIdentities, authSessions, authVerifier, authTokenSecret, seedDevIdentity } from '@/server/auth';
 import { laravelEnabled, laravelPost, laravelTenant, laravelErrorResponse } from '@/adapters/backend/laravel-client';
 import { buildSessionCookie } from '@/server/backend-session';
+import { isFederated } from '@/server/federation';
 import type { CustomerSession, OtpChallenge } from '@navdhya/otp/schemas';
 
 interface LoginBody {
@@ -18,6 +19,13 @@ interface LoginBody {
 
 export async function POST(req: Request) {
   const requestId = newRequestId();
+
+  if (isFederated()) {
+    // ADR-0020: the issuer is sole — the legacy ceremony does not exist
+    // in federated deployments.
+    return Response.json(err('NOT_FOUND', 'This deployment authenticates at the auth subdomain.', requestId), { status: 404 });
+  }
+
   seedDevIdentity();
 
   let body: LoginBody = {};
