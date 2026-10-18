@@ -99,9 +99,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const limit = Number.isFinite(limitRaw) && limitRaw > 0 ? Math.min(Math.floor(limitRaw), 20) : 10;
 
   const hasQuery = q.length >= 2;
-  const { results } = hasQuery
+  const { results, didYouMean } = hasQuery
     ? await federateSearch({ q, type, city, limit })
-    : { results: [] as SearchResult[] };
+    : { results: [] as SearchResult[], didYouMean: null };
 
   // Same analytics contract as /api/search: sanitised query + counts, no
   // identity, fire-and-forget after the response flushes.
@@ -143,6 +143,19 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             );
           })}
         </nav>
+
+        {didYouMean && (
+          <p className="mt-4 text-sm text-muted-foreground">
+            Did you mean{" "}
+            <Link
+              href={buildSearchHref({ q: didYouMean, type, city })}
+              className="font-semibold text-[#FF4500] hover:underline"
+            >
+              {didYouMean}
+            </Link>
+            ?
+          </p>
+        )}
 
         {!hasQuery ? (
           <p className="mt-10 text-muted-foreground">

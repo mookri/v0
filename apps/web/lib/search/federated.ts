@@ -71,6 +71,7 @@ export interface SearchParams {
 export interface SearchOutcome {
   results: SearchResult[];
   sources: { bm25: number; fulltext: number };
+  didYouMean?: string | null;
 }
 
 const MAX_RESULTS_LIMIT = 20;
@@ -123,13 +124,26 @@ interface BackendSuggestionGroup {
 // Corpus
 // ---------------------------------------------------------------------------
 
-const CORPUS_TTL_MS = 10 * 60_000;
+// S63: freshness via version, not a long TTL. The platform bumps
+// search_version on every document/term write; the BFF rebuilds the
+// in-process corpus whenever it observes a new version (during a normal
+// search, via the /search response's search_version) or when an explicit
+// revalidate ping arrives. The TTL below is only a backstop for idle sites.
+const CORPUS_TTL_MS = 2 * 60_000;
 const CORPUS_MAX_KEYS = 500;
+const MIN_VERSION_POLL_MS = 5_000;
 
-let corpusCache: { index: Bm25Index; builtAt: number } | null = null;
-/** Busts the corpus cache (wired to POST /api/revalidate's content edits). */
+let corpusCache: { index: Bm25Index; builtAt: number; version: number | null } | null = null;
+let lastVersionPollAt = 0;
+let lastSeenVersion: number | null = null;
+
+/** Busts the corpus cache (wired to POST /api/search/revalidate). */
 export function invalidateSearchIndex(): void {
   corpusCache = null;
+}
+
+export function getCorpusVersion(): number | null {
+  return corpusCache?.version ?? null;
 }
 
 const PAGES_DIR = join(process.cwd(), "content", "pages");
@@ -233,20 +247,24 @@ async function loadBackendDocs(): Promise<IndexableDoc[]> {
 }
 
 async function getCorpusIndex(): Promise<Bm25Index> {
-  if (corpusCache && Date.now() - corpusCache.builtAt < CORPUS_TTL_MS) {
-    return corpusCache.index;
+  const now = Date.now();
+  if (corpusCache && now - corpusCache.builtAt < CORPUS_TTL_MS) {
+    // Version-aware invalidation: if we have observed a newer platform
+    // version since the corpus was built, drop the stale cache.
+    if (lastSeenVersion !== null && corpusCache.version !== null && lastSeenVersion !== corpusCache.version) {
+      corpusCache = null;
+    } else {
+      return corpusCache.index;
+    }
   }
 
-  // Backend projection when available; disk corpus otherwise. When the
-  // backend is enabled but its index endpoint fails, disk keeps search
-  // alive (single degraded leg instead of an empty result set).
   let docs = await loadBackendDocs();
   if (docs.length === 0) {
     docs = loadDiskDocs();
   }
 
   const index = new Bm25Index(docs.slice(0, CORPUS_MAX_KEYS * 4));
-  corpusCache = { index, builtAt: Date.now() };
+  corpusCache = { index, builtAt: now, version: lastSeenVersion };
   return index;
 }
 
@@ -365,19 +383,29 @@ export async function federateSearch(params: SearchParams): Promise<SearchOutcom
     });
 
   let fulltextItems: Ranked[] = [];
+  let didYouMean: string | null = null;
   if (laravelEnabled()) {
     try {
       const query: Record<string, string> = { q: params.q, limit: String(limit * 2) };
       if (params.type) query.type = params.type;
       if (params.city) query.city = params.city;
 
-      const { data } = await laravelGet<{ results?: BackendSearchResult[] }>(
+      const { data } = await laravelGet<{ results?: BackendSearchResult[]; search_version?: number; did_you_mean?: string | null }>(
         null,
         "/search",
         query,
         {},
         { timeout: "normal" },
       );
+
+      if (typeof data?.search_version === "number") {
+        if (lastSeenVersion !== null && lastSeenVersion !== data.search_version) {
+          invalidateSearchIndex();
+        }
+        lastSeenVersion = data.search_version;
+      }
+
+      if (data?.did_you_mean) didYouMean = data.did_you_mean;
 
       fulltextItems = (data?.results ?? []).map((r, i) => ({
         item: {
@@ -400,6 +428,7 @@ export async function federateSearch(params: SearchParams): Promise<SearchOutcom
   return {
     results: fuse([bm25Items, fulltextItems], limit),
     sources: { bm25: bm25Items.length, fulltext: fulltextItems.length },
+    didYouMean,
   };
 }
 

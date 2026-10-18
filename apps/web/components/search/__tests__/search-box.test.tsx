@@ -53,25 +53,37 @@ describe("SearchBox", () => {
       jest.advanceTimersByTime(500);
     });
 
-    expect(global.fetch).not.toHaveBeenCalled();
+    // S64: a trending-chips fetch may fire on mount/open, but no suggest call.
+    const suggestCalls = (global.fetch as jest.Mock).mock.calls.filter((c) =>
+      String(c[0]).includes("/api/search/suggest"),
+    );
+    expect(suggestCalls).toHaveLength(0);
     expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
   });
 
   it("fetches (debounced) and renders grouped suggestions", async () => {
     jest.useFakeTimers();
+    mockFetchOnce({ data: { trending: [] } }); // trending chips (S64)
     mockFetchOnce(SUGGESTIONS);
     render(<SearchBox />);
     const input = screen.getByRole("combobox", { name: "Search" });
 
     fireEvent.change(input, { target: { value: "griha" } });
-    // Debounce: one keystroke, one fetch after the window elapses.
-    expect(global.fetch).not.toHaveBeenCalled();
+    // Debounce: no suggest fetch until the window elapses (trending may fetch on mount).
+    const suggestCallsBefore = (global.fetch as jest.Mock).mock.calls.filter((c) =>
+      String(c[0]).includes("/api/search/suggest"),
+    );
+    expect(suggestCallsBefore).toHaveLength(0);
     await act(async () => {
       jest.advanceTimersByTime(300);
     });
 
-    expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(String(global.fetch.mock.calls[0][0])).toContain("/api/search/suggest?q=griha");
+    // S64: trending fetch on mount + suggest fetch after debounce.
+    const suggestCalls = (global.fetch as jest.Mock).mock.calls.filter((c) =>
+      String(c[0]).includes("/api/search/suggest"),
+    );
+    expect(suggestCalls).toHaveLength(1);
+    expect(String(suggestCalls[0][0])).toContain("/api/search/suggest?q=griha");
 
     const listbox = await screen.findByRole("listbox");
     expect(listbox).toBeInTheDocument();
@@ -92,6 +104,7 @@ describe("SearchBox", () => {
 
   it("navigates to a suggestion's URL on click", async () => {
     jest.useFakeTimers();
+    mockFetchOnce({ data: { trending: [] } }); // trending chips (S64)
     mockFetchOnce(SUGGESTIONS);
     render(<SearchBox />);
     const input = screen.getByRole("combobox", { name: "Search" });
@@ -108,6 +121,7 @@ describe("SearchBox", () => {
 
   it("selects the highlighted suggestion with ArrowDown + Enter", async () => {
     jest.useFakeTimers();
+    mockFetchOnce({ data: { trending: [] } }); // trending chips (S64)
     mockFetchOnce(SUGGESTIONS);
     render(<SearchBox />);
     const input = screen.getByRole("combobox", { name: "Search" });
@@ -129,6 +143,7 @@ describe("SearchBox", () => {
 
   it("falls back to the plain search page when suggest fails", async () => {
     jest.useFakeTimers();
+    mockFetchOnce({ data: { trending: [] } }); // trending chips (S64)
     mockFetchOnce({}, false);
     render(<SearchBox />);
     const input = screen.getByRole("combobox", { name: "Search" });
