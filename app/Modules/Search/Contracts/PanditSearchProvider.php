@@ -11,7 +11,8 @@ class PanditSearchProvider implements ProvidesSearchDocuments
     public function getDocuments(): iterable
     {
         return PanditProfile::where('status', PanditProfile::STATUS_ACTIVE)
-            ->cursor();
+            ->cursor()
+            ->map(fn ($pandit) => $this->buildDocument($pandit));
     }
 
     public function getDocument(string $entityId): ?SearchDocument
@@ -27,7 +28,8 @@ class PanditSearchProvider implements ProvidesSearchDocuments
     {
         return PanditProfile::where('status', PanditProfile::STATUS_ACTIVE)
             ->where('updated_at', '>=', $since)
-            ->cursor();
+            ->cursor()
+            ->map(fn ($pandit) => $this->buildDocument($pandit));
     }
 
     public function entityType(): string

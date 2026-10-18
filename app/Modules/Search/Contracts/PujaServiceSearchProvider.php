@@ -11,7 +11,8 @@ class PujaServiceSearchProvider implements ProvidesSearchDocuments
     public function getDocuments(): iterable
     {
         return CatalogItem::where('status', CatalogItem::STATUS_ACTIVE)
-            ->cursor();
+            ->cursor()
+            ->map(fn ($item) => $this->buildDocument($item));
     }
 
     public function getDocument(string $entityId): ?SearchDocument
@@ -27,7 +28,8 @@ class PujaServiceSearchProvider implements ProvidesSearchDocuments
     {
         return CatalogItem::where('status', CatalogItem::STATUS_ACTIVE)
             ->where('updated_at', '>=', $since)
-            ->cursor();
+            ->cursor()
+            ->map(fn ($item) => $this->buildDocument($item));
     }
 
     public function entityType(): string

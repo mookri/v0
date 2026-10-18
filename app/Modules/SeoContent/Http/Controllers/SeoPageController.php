@@ -82,18 +82,18 @@ class SeoPageController
      */
     public function searchDocs(): JsonResponse
     {
-        $pages = SeoPage::public()->get([
+        $pages = SeoPage::public()->select([
             'slug',
             'cluster',
             'title',
             'meta_title',
             'meta_description',
-            'primary_keyword' => DB::raw("JSON_UNQUOTE(JSON_EXTRACT(page_json, '$.primaryKeyword'))"),
-            'keywords' => DB::raw("JSON_EXTRACT(page_json, '$.secondaryKeywords')"),
-            'outline' => DB::raw("JSON_EXTRACT(page_json, '$.outline')"),
-            'faq_questions' => DB::raw("JSON_EXTRACT(page_json, '$.faqs.question')"),
-            'last_updated' => DB::raw("JSON_UNQUOTE(JSON_EXTRACT(page_json, '$.lastUpdated'))"),
-        ]);
+            DB::raw("JSON_UNQUOTE(JSON_EXTRACT(page_json, '$.primaryKeyword')) as primary_keyword"),
+            DB::raw("JSON_EXTRACT(page_json, '$.secondaryKeywords') as keywords"),
+            DB::raw("JSON_EXTRACT(page_json, '$.outline') as outline"),
+            DB::raw("JSON_EXTRACT(page_json, '$.faqs.question') as faq_questions"),
+            DB::raw("JSON_UNQUOTE(JSON_EXTRACT(page_json, '$.lastUpdated')) as last_updated"),
+        ])->get();
 
         return response()->json([
             'data' => $pages->toArray(),

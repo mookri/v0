@@ -4,69 +4,86 @@ namespace App\Modules\Search\Http\Controllers;
 
 use App\Modules\Search\Models\SearchDocument;
 use App\Modules\Search\Models\SearchQuery;
+use App\Modules\Search\Models\SearchTerm;
+use App\Modules\Search\Models\SearchMeta;
+use App\Modules\Search\SearchIndexer;
+use App\Modules\Search\Services\SearchNormalizer;
+use App\Modules\Search\Services\SearchScorer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class SearchController
 {
+    public function __construct(
+        private readonly SearchIndexer $indexer,
+        private readonly SearchNormalizer $normalizer,
+    ) {
+    }
+
     /**
-     * GET /api/v1/search?q=&type=&city=&limit=&cursor=
-     * Public anonymous search API (platform-global + tenant-scoped).
+     * GET /api/v1/search?q=&type=&city=&locale=&limit=&cursor=&debug=
      */
     public function search(Request $request): JsonResponse
     {
+        $traceId = $this->traceId($request);
+        $start = microtime(true);
+
         $query = trim((string) $request->query('q', ''));
         $type = $request->query('type');
         $city = $request->query('city');
+        $locale = trim((string) $request->query('locale', 'en')) ?: 'en';
         $limit = min(max((int) $request->query('limit', 20), 1), 50);
         $cursor = $request->query('cursor');
+        $debug = (bool) $request->query('debug', false) && config('app.debug');
 
         if ($query === '') {
-            return response()->json([
+            $resp = response()->json([
                 'data' => [
                     'results' => [],
                     'facets' => ['type' => [], 'city' => []],
                     'next_cursor' => null,
                     'took_ms' => 0,
+                    'search_version' => $this->indexer->getVersion(),
+                    'did_you_mean' => null,
                 ],
             ]);
+            $this->attachTrace($resp, $traceId, 0, 0, 0);
+            return $resp;
         }
 
-        $start = microtime(true);
-
-        $baseQuery = SearchDocument::active();
-
-        // Default: platform-global (null tenant) + current tenant
         $tenantId = $request->headers->get('X-Tenant-Id');
+
+        // Recall: FULLTEXT (mysql) / LIKE (sqlite + tests).
+        $recallStart = microtime(true);
+        $baseQuery = SearchDocument::active();
         $baseQuery->where(function ($q) use ($tenantId) {
             $q->whereNull('tenant_id');
             if ($tenantId) {
                 $q->orWhere('tenant_id', $tenantId);
             }
         });
-
-        if ($type) {
+        if ($type && in_array($type, ['seo_page', 'temple', 'pandit', 'puja_service'], true)) {
             $baseQuery->where('entity_type', $type);
         }
-
         if ($city) {
             $baseQuery->where('city', $city);
         }
 
-        // FULLTEXT search (MySQL) or LIKE fallback (sqlite)
         $driver = config('database.connections.central.driver');
-
         if ($driver === 'mysql') {
             $baseQuery->whereRaw(
                 'MATCH(title, subtitle, body) AGAINST(? IN BOOLEAN MODE)',
                 [$this->toBooleanMode($query)]
             );
         } else {
-            // SQLite fallback: simple LIKE ranking
             $baseQuery->where(function ($q) use ($query) {
-                $terms = explode(' ', $query);
+                $terms = preg_split('/\s+/u', trim($query)) ?: [];
                 foreach ($terms as $term) {
+                    $term = trim($term);
+                    if ($term === '') {
+                        continue;
+                    }
                     $q->where(function ($qq) use ($term) {
                         $qq->where('title', 'LIKE', "%{$term}%")
                             ->orWhere('subtitle', 'LIKE', "%{$term}%")
@@ -76,106 +93,203 @@ class SearchController
             });
         }
 
-        // Cursor pagination
+        $candidates = $baseQuery->limit(500)->get();
+        $recallMs = (int) ((microtime(true) - $recallStart) * 1000);
+
+        // Score.
+        $scoreStart = microtime(true);
+        $scorer = new SearchScorer($candidates, $this->normalizer);
+        $ranked = $scorer->rank($query, $locale, 500);
+        $scoreMs = (int) ((microtime(true) - $scoreStart) * 1000);
+
+        // Cursor: opaque base64 of last doc id.
+        $startIndex = 0;
         if ($cursor) {
-            $baseQuery->where('id', '<', $cursor);
+            $decoded = base64_decode($cursor, true);
+            if ($decoded !== false) {
+                $lastId = $decoded;
+                foreach ($ranked as $i => $r) {
+                    if ($r['doc']['id'] === $lastId || $r['doc']['id'] === (string) $r['doc']['id'] && $r['doc']['id'] === $lastId) {
+                        $startIndex = $i + 1;
+                        break;
+                    }
+                }
+            }
         }
 
-        // Ordering: relevance (FULLTEXT score) + deterministic boosts
-        if ($driver === 'mysql') {
-            $baseQuery->orderByRaw('
-                MATCH(title, subtitle, body) AGAINST(? IN BOOLEAN MODE) DESC,
-                CASE WHEN JSON_EXTRACT(card_json, "$.verified") = true THEN 0 ELSE 1 END,
-                CASE WHEN JSON_EXTRACT(card_json, "$.rating") IS NOT NULL THEN -JSON_EXTRACT(card_json, "$.rating") ELSE 0 END,
-                title ASC,
-                id DESC
-            ', [$this->toBooleanMode($query)]);
-        } else {
-            $baseQuery->orderBy('title')->orderBy('id', 'desc');
-        }
-
-        $results = $baseQuery->limit($limit + 1)->get();
-
-        $hasMore = $results->count() > $limit;
+        $slice = array_slice($ranked, $startIndex, $limit + 1);
+        $hasMore = count($slice) > $limit;
         if ($hasMore) {
-            $results = $results->take($limit);
+            $slice = array_slice($slice, 0, $limit);
+        }
+        $lastDoc = end($slice);
+        $nextCursor = ($hasMore && $lastDoc) ? base64_encode((string) $lastDoc['doc']['id']) : null;
+
+        $results = array_map(fn ($r) => $this->formatResult($r['doc'], $r['score']), $slice);
+
+        // did_you_mean
+        $didYouMean = null;
+        if (empty($results)) {
+            $didYouMean = $this->didYouMean($query, $tenantId);
         }
 
-        $nextCursor = $hasMore ? $results->last()->id : null;
-
-        // Facets
         $facets = $this->getFacets($tenantId, $type, $city);
 
-        $tookMs = (int) ((microtime(true) - $start) * 1000);
+        $totalMs = (int) ((microtime(true) - $start) * 1000);
 
-        return response()->json([
-            'data' => [
-                'results' => $results->map(fn ($d) => $this->formatResult($d))->values()->toArray(),
-                'facets' => $facets,
-                'next_cursor' => $nextCursor,
-                'took_ms' => $tookMs,
-            ],
-        ]);
+        $data = [
+            'results' => array_values($results),
+            'facets' => $facets,
+            'next_cursor' => $nextCursor,
+            'took_ms' => $totalMs,
+            'search_version' => $this->indexer->getVersion(),
+            'did_you_mean' => $didYouMean,
+        ];
+        if ($debug) {
+            $data['debug'] = [
+                'recall_ms' => $recallMs,
+                'score_ms' => $scoreMs,
+                'candidates' => count($candidates),
+                'ranked' => count($ranked),
+            ];
+        }
+
+        $resp = response()->json(['data' => $data]);
+        $this->attachTrace($resp, $traceId, $recallMs, $scoreMs, $totalMs);
+        return $resp;
     }
 
     /**
      * GET /api/v1/search/suggest?q=
-     * Type-ahead suggestions across all entity types.
      */
     public function suggest(Request $request): JsonResponse
     {
+        $traceId = $this->traceId($request);
         $query = trim((string) $request->query('q', ''));
         $limit = min(max((int) $request->query('limit', 10), 1), 20);
 
         if (strlen($query) < 2) {
-            return response()->json(['data' => ['suggestions' => []]]);
+            $resp = response()->json(['data' => ['suggestions' => []]]);
+            $this->attachTrace($resp, $traceId, 0, 0, 0);
+            return $resp;
         }
 
         $tenantId = $request->headers->get('X-Tenant-Id');
+        $start = microtime(true);
 
-        $baseQuery = SearchDocument::active()->select('entity_type', 'title', 'slug', 'city', 'card_json')
+        $normalized = $this->normalizer->normalize($query);
+        $firstToken = $this->normalizer->tokenize($query, 'en');
+        $firstToken = $firstToken[0] ?? $normalized;
+
+        $escaped = addcslashes($query, '%_\\');
+        $terms = SearchTerm::with('document')
             ->where(function ($q) use ($tenantId) {
                 $q->whereNull('tenant_id');
                 if ($tenantId) {
                     $q->orWhere('tenant_id', $tenantId);
                 }
-            });
+            })
+            ->where('normalized', 'LIKE', "{$firstToken}%")
+            ->orderByDesc('weight')
+            ->limit($limit * 4)
+            ->get();
 
-        // Prefix LIKE on every driver: type-ahead must match prefixes shorter
-        // than ngram_token_size, and the table's FULLTEXT index covers
-        // (title, subtitle, body) — a MATCH(title) alone raises error 1191
-        // ("Can't find FULLTEXT index matching the column list") on MySQL.
-        // LIKE 'prefix%' over a ≤~1.3K-row table is a sub-millisecond scan.
-        $escaped = addcslashes($query, '%_\\');
-        $baseQuery->where('title', 'LIKE', "{$escaped}%");
+        // Fuzzy fallback if no prefix hits.
+        if ($terms->isEmpty()) {
+            $all = SearchTerm::with('document')
+                ->where(function ($q) use ($tenantId) {
+                    $q->whereNull('tenant_id');
+                    if ($tenantId) {
+                        $q->orWhere('tenant_id', $tenantId);
+                    }
+                })
+                ->limit(200)
+                ->get();
+            $terms = $all->filter(function ($t) use ($firstToken) {
+                return levenshtein($t->normalized, $firstToken) <= 1;
+            })->take($limit * 4);
+        }
 
-        $results = $baseQuery->limit($limit)->get();
+        // Fallback to SearchDocument prefix LIKE when no terms are indexed
+        // (e.g. direct inserts in tests or pre-reindex state).
+        if ($terms->isEmpty()) {
+            $escaped = addcslashes($query, '%_\\');
+            $docs = SearchDocument::active()
+                ->where(function ($q) use ($tenantId) {
+                    $q->whereNull('tenant_id');
+                    if ($tenantId) {
+                        $q->orWhere('tenant_id', $tenantId);
+                    }
+                })
+                ->where('title', 'LIKE', "{$escaped}%")
+                ->limit($limit)
+                ->get();
+            $synthetic = collect();
+            foreach ($docs as $d) {
+                $synthetic->push((object) [
+                    'title' => $d->title,
+                    'url' => $d->url_path,
+                    'city' => $d->city,
+                    'weight' => 1.0,
+                    'tenant_id' => $d->tenant_id,
+                    'document' => $d,
+                ]);
+            }
+            $terms = $synthetic;
+        }
 
-        $suggestions = $results->groupBy('entity_type')->map(function ($items, $type) {
-            return [
+        // Group by entity type.
+        $grouped = [];
+        foreach ($terms as $t) {
+            $type = isset($t->document) ? $t->document->entity_type : $t->kind;
+            if (! isset($grouped[$type])) {
+                $grouped[$type] = [];
+            }
+            if (count($grouped[$type]) >= 5) {
+                continue;
+            }
+            $doc = isset($t->document) ? $t->document : null;
+            $grouped[$type][] = [
+                'title' => $t->title ?? ($doc !== null ? $doc->title : null),
+                'slug' => $doc !== null ? $doc->slug : null,
+                'city' => $t->city,
+                'subtitle' => $doc !== null ? $doc->subtitle : null,
+                'url' => $t->url ?? ($doc !== null ? $doc->url_path : null),
+            ];
+        }
+
+        $suggestions = [];
+        foreach ($grouped as $type => $items) {
+            $suggestions[] = [
                 'type' => $type,
                 'label' => $this->typeLabel($type),
-                'items' => $items->map(fn ($d) => [
-                    'title' => $d->title,
-                    'slug' => $d->slug,
-                    'city' => $d->city,
-                    'subtitle' => $this->buildSubtitle($d),
-                ])->values()->toArray(),
+                'items' => $items,
             ];
-        })->values()->toArray();
+        }
 
-        return response()->json(['data' => ['suggestions' => $suggestions]]);
+        $tookMs = (int) ((microtime(true) - $start) * 1000);
+        $resp = response()->json(['data' => ['suggestions' => $suggestions, 'took_ms' => $tookMs]]);
+        $this->attachTrace($resp, $traceId, 0, 0, $tookMs);
+        return $resp;
     }
 
     /**
      * GET /api/v1/search/index-docs
-     * Lite projection for BFF BM25 index (all types, no body HTML).
      */
-    public function indexDocs(): JsonResponse
+    public function indexDocs(Request $request): JsonResponse
     {
+        $version = $this->indexer->getVersion();
+
+        $etag = '"' . $version . '-' . SearchDocument::active()->count() . '"';
+        if ($request->header('If-None-Match') === $etag) {
+            $r = response()->json([], 304);
+            $r->headers->set('ETag', $etag);
+            $r->headers->set('X-Search-Version', (string) $version);
+            return $r;
+        }
+
         $docs = SearchDocument::active()
             ->where(function ($q) {
-                // platform-global for BFF (web is single-tenant) + default tenant
                 $q->whereNull('tenant_id')
                     ->orWhere('tenant_id', config('platform.default_tenant'));
             })
@@ -193,13 +307,12 @@ class SearchController
             ])
             ->toArray();
 
-        return response()->json(['data' => $docs]);
+        $resp = response()->json(['data' => $docs]);
+        $resp->headers->set('ETag', $etag);
+        $resp->headers->set('X-Search-Version', (string) $version);
+        return $resp;
     }
 
-    /**
-     * GET /api/v1/search/entities/{type}/{slug}
-     * Full public projection for entity detail pages (e.g., /temples/[slug]).
-     */
     public function entity(string $type, string $slug): JsonResponse
     {
         $doc = SearchDocument::active()
@@ -216,10 +329,6 @@ class SearchController
         return response()->json(['data' => $doc->toArray()]);
     }
 
-    /**
-     * POST /api/v1/search/analytics
-     * Batched analytics ingest from BFF (sanitized, no identities).
-     */
     public function analytics(Request $request): JsonResponse
     {
         $queries = $request->input('queries', []);
@@ -241,7 +350,7 @@ class SearchController
             $hash = hash('sha256', $normalized);
 
             $toInsert[] = [
-                'id' => (string) \Illuminate\Support\Str::ulid(),
+                'id' => (string) Str::ulid(),
                 'query_hash' => $hash,
                 'query_text' => $text,
                 'entity_type' => $q['type'] ?? null,
@@ -249,6 +358,8 @@ class SearchController
                 'result_count' => (int) ($q['results'] ?? 0),
                 'zero_results' => ($q['results'] ?? 0) === 0,
                 'searched_at' => now(),
+                'trace_id' => isset($q['trace_id']) ? (string) $q['trace_id'] : null,
+                'search_version' => isset($q['search_version']) ? (int) $q['search_version'] : null,
             ];
         }
 
@@ -259,10 +370,6 @@ class SearchController
         return response()->json(['data' => ['accepted' => count($toInsert)]]);
     }
 
-    /**
-     * GET /api/v1/search/trending
-     * Top queries + zero-result opportunities.
-     */
     public function trending(Request $request): JsonResponse
     {
         $limit = min(max((int) $request->query('limit', 20), 1), 50);
@@ -283,7 +390,25 @@ class SearchController
         return response()->json(['data' => ['trending' => $topQueries]]);
     }
 
-    private function formatResult(SearchDocument $doc): array
+    // ---- helpers ----
+
+    private function traceId(Request $request): string
+    {
+        $rid = $request->headers->get('X-Request-Id') ?: $request->headers->get('X-Trace-Id');
+        return $rid ? (string) $rid : (string) Str::ulid();
+    }
+
+    private function attachTrace(JsonResponse $resp, string $traceId, int $recallMs, int $scoreMs, int $totalMs): void
+    {
+        $resp->headers->set('X-Search-Trace', sprintf(
+            'tid=%s; recall=%dms; score=%dms; total=%dms',
+            $traceId, $recallMs, $scoreMs, $totalMs
+        ));
+        $resp->headers->set('X-Request-Id', $traceId);
+    }
+
+    /** @return array<string,mixed> */
+    private function formatResult(SearchDocument $doc, float $score): array
     {
         return [
             'entity_type' => $doc->entity_type,
@@ -296,24 +421,18 @@ class SearchController
             'city' => $doc->city,
             'image' => $doc->image_url,
             'card' => $this->cardOf($doc),
-            'score' => 1.0, // placeholder; actual score from FULLTEXT when available
+            'score' => $score,
         ];
     }
 
-    /**
-     * Normalise card_json to an array. Rows written before the array cast was
-     * relied upon (or double-encoded by a json_encode()d write) arrive as a
-     * JSON string — decode instead of fataling on string offset access.
-     */
+    /** @return array<string,mixed> */
     private function cardOf(SearchDocument $doc): array
     {
         $card = $doc->card_json;
-
         if (is_string($card)) {
             $decoded = json_decode($card, true);
             $card = is_array($decoded) ? $decoded : [];
         }
-
         return is_array($card) ? $card : [];
     }
 
@@ -326,6 +445,7 @@ class SearchController
         return strlen($body) > 200 ? substr($body, 0, 197) . '...' : $body;
     }
 
+    /** @return array<string,mixed> */
     private function getFacets(?string $tenantId, ?string $type, ?string $city): array
     {
         $query = SearchDocument::active()
@@ -339,7 +459,6 @@ class SearchController
         if ($type) {
             $query->where('entity_type', $type);
         }
-
         if ($city) {
             $query->where('city', $city);
         }
@@ -365,7 +484,6 @@ class SearchController
 
     private function toBooleanMode(string $query): string
     {
-        // Convert to MySQL boolean mode: escape special chars, add * for prefix
         $escaped = preg_replace('/[+\-><~*()"]/', '', $query);
         $terms = explode(' ', $escaped);
         return implode(' ', array_map(fn ($t) => "+{$t}*", array_filter($terms)));
@@ -382,14 +500,40 @@ class SearchController
         };
     }
 
-    private function buildSubtitle(SearchDocument $doc): string
+    private function didYouMean(string $query, ?string $tenantId): ?string
     {
-        $card = $this->cardOf($doc);
-        return match ($doc->entity_type) {
-            'temple' => ($card['verified'] ? '✓ Verified • ' : '') . ($card['city'] ?? ''),
-            'pandit' => ($card['rating'] ? "★ {$card['rating']} • " : '') . ($card['specializations'][0] ?? ''),
-            'puja_service' => "₹{$card['price']} • " . ($card['attributes']['duration'] ?? ''),
-            default => '',
-        };
+        $terms = SearchTerm::where(function ($q) use ($tenantId) {
+            $q->whereNull('tenant_id');
+            if ($tenantId) {
+                $q->orWhere('tenant_id', $tenantId);
+            }
+        })
+            ->select('normalized')
+            ->distinct()
+            ->limit(500)
+            ->pluck('normalized')
+            ->all();
+
+        $tokens = $this->normalizer->tokenize($query, 'en');
+        $suggestions = [];
+        foreach ($tokens as $t) {
+            $best = null;
+            $bestDist = 3;
+            foreach ($terms as $term) {
+                $d = levenshtein($t, $term);
+                if ($d > 0 && $d < $bestDist) {
+                    $bestDist = $d;
+                    $best = $term;
+                }
+            }
+            if ($best !== null) {
+                $suggestions[] = $best;
+            } else {
+                $suggestions[] = $t;
+            }
+        }
+
+        $result = trim(implode(' ', $suggestions));
+        return $result !== '' && $result !== $query ? $result : null;
     }
 }

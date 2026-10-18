@@ -2,10 +2,25 @@
 
 namespace App\Modules\SeoContent\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $id
+ * @property string $slug
+ * @property string $cluster
+ * @property bool $noindex
+ * @property string|null $title
+ * @property string|null $meta_title
+ * @property string|null $meta_description
+ * @property mixed $page_json
+ * @property string|null $search_text
+ * @property string|null $content_hash
+ * @property \Carbon\Carbon|null $automation_generated_at
+ * @property string|null $search_text
+ */
 class SeoPage extends Model
 {
     use HasUlids;
@@ -36,6 +51,7 @@ class SeoPage extends Model
         'page_json' => 'json',
     ];
 
+    /** @return BelongsTo<SeoCluster, $this> */
     public function cluster(): BelongsTo
     {
         return $this->belongsTo(SeoCluster::class, 'cluster', 'cluster');
@@ -44,7 +60,11 @@ class SeoPage extends Model
     /**
      * Scope: public (non-noindex) pages.
      */
-    public function scopePublic($query)
+    /**
+     * @param Builder<SeoPage> $query
+     * @return Builder<SeoPage>
+     */
+    public function scopePublic(Builder $query): Builder
     {
         return $query->where('noindex', false);
     }
@@ -52,7 +72,11 @@ class SeoPage extends Model
     /**
      * Scope: by cluster.
      */
-    public function scopeInCluster($query, string $cluster)
+    /**
+     * @param Builder<SeoPage> $query
+     * @return Builder<SeoPage>
+     */
+    public function scopeInCluster(Builder $query, string $cluster): Builder
     {
         return $query->where('cluster', $cluster);
     }

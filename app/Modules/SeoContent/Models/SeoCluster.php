@@ -5,6 +5,11 @@ namespace App\Modules\SeoContent\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property string $cluster
+ * @property string|null $label
+ * @property string|null $base_path
+ */
 class SeoCluster extends Model
 {
     protected $connection = 'central';
@@ -19,6 +24,7 @@ class SeoCluster extends Model
         'base_path',
     ];
 
+    /** @return HasMany<SeoPage, $this> */
     public function pages(): HasMany
     {
         return $this->hasMany(SeoPage::class, 'cluster', 'cluster');

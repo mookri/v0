@@ -32,6 +32,12 @@ class SeoPageSearchProvider implements ProvidesSearchDocuments
         return 'seo_page';
     }
 
+    private function clusterBasePath(\App\Modules\SeoContent\Models\SeoPage $page): ?string
+    {
+        $cluster = $page->cluster()->first();
+        return $cluster instanceof \App\Modules\SeoContent\Models\SeoCluster ? $cluster->base_path : null;
+    }
+
     private function buildDocument(SeoPage $page): SearchDocument
     {
         $pageData = $page->page_json;
@@ -47,7 +53,7 @@ class SeoPageSearchProvider implements ProvidesSearchDocuments
             'entity_id' => $page->slug,
             'tenant_id' => null, // platform-global
             'slug' => $page->slug,
-            'url_path' => '/' . ($page->cluster?->base_path ?? $page->cluster) . '/' . $page->slug,
+            'url_path' => '/' . ($this->clusterBasePath($page) ?? $page->cluster) . '/' . $page->slug,
             'title' => $page->meta_title ?? $page->title,
             'subtitle' => $page->meta_description,
             'body' => $page->search_text,

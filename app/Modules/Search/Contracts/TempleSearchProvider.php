@@ -10,7 +10,8 @@ class TempleSearchProvider implements ProvidesSearchDocuments
     public function getDocuments(): iterable
     {
         return Temple::where('status', Temple::STATUS_ACTIVE)
-            ->cursor();
+            ->cursor()
+            ->map(fn ($temple) => $this->buildDocument($temple));
     }
 
     public function getDocument(string $entityId): ?SearchDocument
@@ -26,7 +27,8 @@ class TempleSearchProvider implements ProvidesSearchDocuments
     {
         return Temple::where('status', Temple::STATUS_ACTIVE)
             ->where('updated_at', '>=', $since)
-            ->cursor();
+            ->cursor()
+            ->map(fn ($temple) => $this->buildDocument($temple));
     }
 
     public function entityType(): string

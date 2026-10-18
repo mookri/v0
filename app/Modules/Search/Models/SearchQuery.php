@@ -5,6 +5,20 @@ namespace App\Modules\Search\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $id
+ * @property string $query_hash
+ * @property string $query_text
+ * @property string|null $entity_type
+ * @property string|null $city
+ * @property int $result_count
+ * @property bool $zero_results
+ * @property \Carbon\Carbon|null $searched_at
+ * @property int $count
+ * @property int $zero_count
+ * @property string|null $trace_id
+ * @property int|null $search_version
+ */
 class SearchQuery extends Model
 {
     use HasUlids;
