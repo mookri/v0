@@ -28,7 +28,7 @@
     "check:architecture": "vitest run tests/architecture && node tooling/scripts/domain-check.js availability booking pandit pricing puja recommendations search user payment"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.10.0",
+    "@hookform/resolvers": "^5.9.2",
     "@radix-ui/react-accordion": "latest",
     "@radix-ui/react-dialog": "latest",
     "@radix-ui/react-dropdown-menu": "latest",
