@@ -8,7 +8,6 @@ use App\Platform\Identity\OAuth\Backchannel\SessionBindingRecorder;
 use App\Platform\Identity\OAuth\Signing\SigningCustody;
 use DateInterval;
 use DateTimeImmutable;
-use League\OAuth2\Server\CodeChallengeVerifiers\PlainVerifier;
 use League\OAuth2\Server\CodeChallengeVerifiers\S256Verifier;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
@@ -92,8 +91,12 @@ final class OidcAuthCodeGrant extends AssertionCapableAuthCodeGrant
             $this->oidcChallengeVerifiers[$s256->getMethod()] = $s256;
         }
 
-        $plain = new PlainVerifier();
-        $this->oidcChallengeVerifiers[$plain->getMethod()] = $plain;
+        // Only S256 is registered. `plain` is deliberately absent: the
+        // challenge would then be the verifier itself, so anyone who
+        // observes the authorization request URL (referrer, proxy log,
+        // browser history) could redeem the code. The discovery document
+        // advertises S256 only, so accepting `plain` was also a spec
+        // violation.
     }
 
     /**
@@ -122,6 +125,15 @@ final class OidcAuthCodeGrant extends AssertionCapableAuthCodeGrant
     public function validateAuthorizationRequest(ServerRequestInterface $request): AuthorizationRequestInterface
     {
         $authRequest = parent::validateAuthorizationRequest($request);
+
+        // The per-client PKCE mandate is enforced HERE, at the authorize
+        // endpoint. It used to be checked only on the PAR push path, so
+        // a confidential client whose profile mandates PKCE could still
+        // complete a full authorization-code flow with no challenge at
+        // all (league only requires a challenge for *public* clients).
+        // The authorization code is a bearer credential: without PKCE,
+        // whoever observes the 302 can redeem it.
+        $this->enforcePkceProfile($authRequest);
 
         $scopeIds = array_map(
             static fn ($scope): string => $scope->getIdentifier(),
@@ -186,6 +198,42 @@ final class OidcAuthCodeGrant extends AssertionCapableAuthCodeGrant
         }
 
         return $authRequest;
+    }
+
+    /**
+     * Enforce the client profile's PKCE mandate and the S256-only rule.
+     *
+     * Runs after league validated the redirect_uri, so the failure rides
+     * league's verified redirect (RFC 6749 §4.1.2.1) instead of an
+     * unverified target.
+     */
+    private function enforcePkceProfile(AuthorizationRequestInterface $authRequest): void
+    {
+        $clientId = $authRequest->getClient()->getIdentifier();
+        $profile = OAuthClientProfile::query()->where('client_id', $clientId)->first();
+
+        if ($profile === null) {
+            // A client without a profile is rejected elsewhere (the
+            // profile is mandatory); nothing to mandate here.
+            return;
+        }
+
+        $challenge = $authRequest->getCodeChallenge();
+        $method = $authRequest->getCodeChallengeMethod();
+
+        if ($challenge !== null && $challenge !== '' && strtolower((string) $method) !== 's256') {
+            throw OAuthServerException::invalidRequest(
+                'code_challenge_method',
+                'Only the S256 code challenge method is supported.'
+            );
+        }
+
+        if ((bool) $profile->require_pkce && ($challenge === null || $challenge === '')) {
+            throw OAuthServerException::invalidRequest(
+                'code_challenge',
+                'code_challenge is required for this client.'
+            );
+        }
     }
 
     /**
@@ -495,9 +543,10 @@ final class OidcAuthCodeGrant extends AssertionCapableAuthCodeGrant
                     throw OAuthServerException::invalidGrant('Failed to verify `code_verifier`.');
                 }
             } else {
-                throw OAuthServerException::serverError(
+                throw OAuthServerException::invalidRequest(
+                    'code_challenge_method',
                     sprintf(
-                        'Unsupported code challenge method `%s`',
+                        'Unsupported code challenge method `%s`.',
                         $authCodePayload->code_challenge_method
                     )
                 );

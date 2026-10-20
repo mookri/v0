@@ -2,6 +2,14 @@
 
 use Illuminate\Support\Str;
 
+// Secure-by-default session cookie. The env var is the explicit override;
+// an unset (or empty) value means "derive from APP_ENV", so copying
+// .env.example can never silently disable the Secure flag in production.
+$sessionSecureCookie = env('SESSION_SECURE_COOKIE');
+$sessionSecure = ($sessionSecureCookie === null || $sessionSecureCookie === '')
+    ? env('APP_ENV') === 'production'
+    : filter_var($sessionSecureCookie, FILTER_VALIDATE_BOOLEAN);
+
 return [
 
     /*
@@ -169,7 +177,10 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    // Secure-by-default: a production session cookie must never travel
+    // over plaintext HTTP. The env var stays as the explicit override
+    // (set it to false only for a local plaintext-only host).
+    'secure' => $sessionSecure,
 
     /*
     |--------------------------------------------------------------------------

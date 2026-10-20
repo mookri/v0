@@ -59,17 +59,39 @@ final class DecisionCache
 
     public function invalidate(string $tenantId): void
     {
-        $key = $this->generationKey($tenantId);
-
-        $this->cache->forever($key, ((int) $this->cache->get($key, 1)) + 1);
+        $this->bump($this->generationKey($tenantId));
     }
 
     public function invalidateAll(): void
     {
-        $this->cache->forever(
-            self::GLOBAL_GENERATION_KEY,
-            ((int) $this->cache->get(self::GLOBAL_GENERATION_KEY, 1)) + 1,
-        );
+        $this->bump(self::GLOBAL_GENERATION_KEY);
+    }
+
+    /**
+     * Bump a generation counter.
+     *
+     * The previous read-modify-write lost a bump whenever two
+     * invalidations raced, which left a stale decision reachable for the
+     * whole TTL. `increment()` is atomic on the stores that support it;
+     * the counter is seeded first because incrementing an absent key is a
+     * no-op (the database store updates in place).
+     */
+    private function bump(string $key): void
+    {
+        if ($this->cache->get($key) === null) {
+            $this->cache->forever($key, 1);
+        }
+
+        try {
+            if ($this->cache->increment($key) !== false) {
+                return;
+            }
+        } catch (Throwable) {
+            // Store without an atomic increment (e.g. the file store) —
+            // fall through to the read-modify-write.
+        }
+
+        $this->cache->forever($key, ((int) $this->cache->get($key, 1)) + 1);
     }
 
     /**

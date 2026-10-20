@@ -24,9 +24,16 @@ final class CheckOAuthGrant
         }
 
         $grant = (string) $request->input('grant_type', '');
-        $clientId = (string) $request->input('client_id', '');
+        $clientId = $this->clientId($request);
 
         if ($grant === '' || $clientId === '') {
+            // No client identifier could be resolved from the request.
+            // League authenticates the client itself and rejects the
+            // exchange when the credentials are missing or wrong, so
+            // there is nothing for the profile gate to protect here.
+            // Resolving the client the same way league does (body
+            // parameter, HTTP Basic username as fallback) is what stops
+            // a `client_secret_basic` caller from skipping the gate.
             return $next($request);
         }
 
@@ -62,6 +69,38 @@ final class CheckOAuthGrant
         }
 
         return $next($request);
+    }
+
+    /**
+     * Resolve the OAuth client identifier the same way league does: the
+     * body parameter wins, the HTTP Basic username is the fallback
+     * (RFC 6749 §2.3.1 forbids repeating client_id in the body when
+     * Basic is used). Without this the whole per-client profile gate
+     * was skipped for `client_secret_basic` callers.
+     */
+    private function clientId(Request $request): string
+    {
+        $clientId = trim((string) $request->input('client_id', ''));
+
+        if ($clientId !== '') {
+            return $clientId;
+        }
+
+        $header = (string) $request->header('Authorization', '');
+
+        if (stripos($header, 'Basic ') !== 0) {
+            return '';
+        }
+
+        $decoded = base64_decode(substr($header, 6), true);
+
+        if ($decoded === false || ! str_contains($decoded, ':')) {
+            return '';
+        }
+
+        [$username] = explode(':', $decoded, 2);
+
+        return trim($username);
     }
 
     private function deny(string $error, string $description): Response

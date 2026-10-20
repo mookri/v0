@@ -68,6 +68,12 @@ Route::prefix(config('platform.api_version', 'v1'))
 // middleware. Dual-accept auth (auth.hmac: session passthrough + frontend
 // bearer verification); StartSession runs group-wide so cookie sessions
 // resolve on every surface here, not just identity.
+//
+// The group-wide StartSession writes the session id it re-issues in
+// plain text, because the api group's SessionContextForReads only
+// re-encrypts the cookie for safe methods. The global
+// EncryptsSessionCookie middleware closes that: any session cookie
+// leaving the process is encrypted, whichever surface issued it.
 Route::prefix(config('platform.api_version', 'v1'))
     ->middleware([AuthenticateAny::class, \Illuminate\Session\Middleware\StartSession::class])
     ->name('platform.')

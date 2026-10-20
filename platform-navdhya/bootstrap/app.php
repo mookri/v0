@@ -26,6 +26,15 @@ return Application::configure(basePath: dirname(__DIR__))
         // AttachRequestId sets one layer in; no-op when the flag is off.
         $middleware->prepend(RequestTiming::class);
 
+        // Session cookies leave the process encrypted, whichever surface
+        // issued them. The web group encrypts through EncryptCookies; the
+        // API surface re-issues through SessionContextForReads, and the
+        // platform API's group-wide StartSession writes a raw id. This is
+        // the outer invariant: a plaintext session id never reaches the
+        // browser. It is prepended so it runs outside every other
+        // middleware and therefore sees the final cookie value.
+        $middleware->prepend(\App\Platform\Http\Middleware\EncryptsSessionCookie::class);
+
         $middleware->appendToGroup('api', LimitJsonBody::class);
 
         // Session context for API reads only (doc 06 §8.4): interactive

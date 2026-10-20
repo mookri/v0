@@ -23,6 +23,7 @@ use App\Platform\Features\Console\FeatureFlagListCommand;
 use App\Platform\Features\Console\FeatureFlagSetCommand;
 use App\Platform\Features\FeatureFlags;
 use App\Platform\Tenancy\Console\TenantAdoptLegacyCommand;
+use App\Platform\Tenancy\Models\TenantMembership;
 use App\Platform\Tenancy\Console\TenantBackfillV2Command;
 use App\Platform\Tenancy\Console\TenantProvisionSchemaCommand;
 use App\Platform\Tenancy\Console\TenantDemoteCommand;
@@ -141,6 +142,10 @@ final class PlatformServiceProvider extends ServiceProvider
             MembershipRoleAssignment::class,
             CapabilityMetadata::class,
             SodRule::class,
+            // A membership state change (suspended, deactivated) is
+            // authorization state too: without this the cached allow
+            // decision survived until the TTL expired.
+            TenantMembership::class,
         ];
 
         foreach ($models as $modelClass) {

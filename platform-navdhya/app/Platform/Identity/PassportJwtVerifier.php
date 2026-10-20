@@ -18,6 +18,21 @@ namespace App\Platform\Identity;
 final class PassportJwtVerifier
 {
     /**
+     * Memoised verification key.
+     *
+     * Re-parsing the PEM through OpenSSL on every token verification was
+     * the single hottest cost on the authenticated request path. The
+     * cache is keyed on the *content* of the key, so a signing-key
+     * rotation invalidates it immediately instead of serving a stale
+     * key (a timestamp/size fingerprint could miss a same-second,
+     * same-size rewrite).
+     */
+    private static ?string $cachedFingerprint = null;
+
+    /** @var \OpenSSLAsymmetricKey|false|null */
+    private static mixed $cachedKeyObject = null;
+
+    /**
      * @return array{jti: string, sub: string, aud: string, exp: int, scopes: list<string>, cnf: array{dpop_jkt: string}|null}|null
      */
     public static function verify(string $token, int $now): ?array
@@ -42,7 +57,13 @@ final class PassportJwtVerifier
         }
 
         $signature = self::base64UrlDecode($encodedSignature);
-        $verified = openssl_verify("{$encodedHeader}.{$encodedClaims}", $signature, $key, OPENSSL_ALGO_SHA256);
+        $verificationKey = self::verificationKey($key);
+        $verified = openssl_verify(
+            "{$encodedHeader}.{$encodedClaims}",
+            $signature,
+            $verificationKey === false ? $key : $verificationKey,
+            OPENSSL_ALGO_SHA256,
+        );
 
         if ($verified !== 1) {
             return null;
@@ -111,13 +132,36 @@ final class PassportJwtVerifier
 
         $path = storage_path('oauth-public.key');
 
-        if (is_file($path)) {
-            $contents = file_get_contents($path);
-
-            return is_string($contents) ? $contents : '';
+        if (! is_file($path)) {
+            return '';
         }
 
-        return '';
+        $contents = file_get_contents($path);
+
+        return is_string($contents) ? $contents : '';
+    }
+
+    /**
+     * Parse the PEM once and keep the OpenSSL key object.
+     *
+     * `openssl_verify()` accepts a parsed key, which skips re-parsing
+     * the PEM on every call. The parsed object is cached against the
+     * content of the key, so a rotation drops it.
+     */
+    private static function verificationKey(string $pem): mixed
+    {
+        $fingerprint = hash('sha256', $pem);
+
+        if (self::$cachedFingerprint === $fingerprint && self::$cachedKeyObject !== null) {
+            return self::$cachedKeyObject;
+        }
+
+        $resource = openssl_pkey_get_public($pem);
+
+        self::$cachedFingerprint = $fingerprint;
+        self::$cachedKeyObject = $resource === false ? false : $resource;
+
+        return self::$cachedKeyObject;
     }
 
     private static function base64UrlDecode(string $segment): string

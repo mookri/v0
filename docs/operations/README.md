@@ -20,6 +20,7 @@ Start with the task, not the tool:
 | Review the admin surface | [`admin-operations.md`](admin-operations.md) |
 | Understand the CI/CD target | [`../CI-CD-PIPELINE-PLAN.md`](../CI-CD-PIPELINE-PLAN.md) |
 | DevOps practices and tooling | [`DEVOPS.md`](DEVOPS.md) |
+| Backend security findings and the auth-speed plan | [`BACKEND-RCA.md`](BACKEND-RCA.md) |
 
 ---
 

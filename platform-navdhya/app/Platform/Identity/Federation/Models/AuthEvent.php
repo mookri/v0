@@ -69,6 +69,77 @@ final class AuthEvent extends Model
     }
 
     /**
+     * The seal a row is written with.
+     *
+     * The chain seal is an HMAC over the canonical row, not a bare
+     * hash: an unkeyed digest only proves that the row was not edited
+     * *without* recomputing the hash, which anyone with write access to
+     * the table can do. The key defaults to the identity HMAC secret
+     * (which already fails closed when missing); a dedicated
+     * `FEDERATION_CHAIN_SIGNING_KEY` may override it.
+     *
+     * @param  array<string, mixed>  $row  model attributes or recorder row
+     */
+    public static function seal(array $row): string
+    {
+        $key = self::chainKey();
+
+        if ($key === '') {
+            return self::digest($row, 1, null);
+        }
+
+        return self::digest($row, 2, $key);
+    }
+
+    /**
+     * Every seal a stored row may legitimately carry.
+     *
+     * Rows written before the keyed chain existed carry the legacy
+     * unkeyed digest, so the verifier accepts both. A row that matches
+     * neither was tampered with.
+     *
+     * @param  array<string, mixed>  $row
+     * @return list<string>
+     */
+    public static function seals(array $row): array
+    {
+        $seals = [self::digest($row, 1, null)];
+        $key = self::chainKey();
+
+        if ($key !== '') {
+            $seals[] = self::digest($row, 2, $key);
+        }
+
+        return array_values(array_unique($seals));
+    }
+
+    /**
+     * The key the chain seal is computed with.
+     */
+    public static function chainKey(): string
+    {
+        $key = (string) config('identity.chain_signing_key', '');
+
+        if ($key !== '') {
+            return $key;
+        }
+
+        return (string) config('identity.hmac_secret', '');
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     */
+    private static function digest(array $row, int $version, ?string $key): string
+    {
+        $json = (string) json_encode(self::canonical($row, $version), JSON_UNESCAPED_SLASHES);
+
+        return $key === null
+            ? hash('sha256', $json)
+            : hash_hmac('sha256', $json, $key);
+    }
+
+    /**
      * Canonical seal input: fixed field order, datetime as ISO-8601,
      * json columns as decoded arrays. Both the recorder (pre-persist)
      * and the verifier (post-read) seal through this function, so
@@ -76,8 +147,9 @@ final class AuthEvent extends Model
      * cannot desynchronize the two sides.
      *
      * @param  array<string, mixed>  $row  model attributes or recorder row
+     * @return array<string, mixed>
      */
-    public static function seal(array $row): string
+    private static function canonical(array $row, int $version): array
     {
         $get = static fn (string $key): mixed => $row[$key] ?? null;
         $iso = static function (mixed $value): ?string {
@@ -123,9 +195,9 @@ final class AuthEvent extends Model
             'signing_key_id' => $get('signing_key_id'),
             'token_jti_ref' => $get('token_jti_ref'),
             'prev_hash' => $get('prev_hash'),
-            'chain_v' => 1,
+            'chain_v' => $version,
         ];
 
-        return hash('sha256', (string) json_encode($canonical, JSON_UNESCAPED_SLASHES));
+        return $canonical;
     }
 }

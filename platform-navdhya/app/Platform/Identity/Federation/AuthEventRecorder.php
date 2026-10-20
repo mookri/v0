@@ -4,6 +4,7 @@ namespace App\Platform\Identity\Federation;
 
 use App\Platform\Identity\Federation\Models\AuthEvent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
@@ -53,40 +54,48 @@ final class AuthEventRecorder
 
         // Chain seal over the previous row (bypass scopes deliberately —
         // the chain is global by ULID order, matching verify-chain).
-        $prevHash = AuthEvent::query()
-            ->withoutGlobalScopes()
-            ->orderByDesc('id')
-            ->value('hash');
+        // The chain head is read and the row written inside one
+        // transaction, with the previous row locked. Reading the head
+        // outside the transaction let two concurrent writers seal
+        // against the same predecessor and fork the chain - which
+        // `auth:verify-chain` then reports as a false tamper signal.
+        return DB::connection('central')->transaction(function () use ($id, $event, $occurredAt): AuthEvent {
+            $prevHash = AuthEvent::query()
+                ->withoutGlobalScopes()
+                ->lockForUpdate()
+                ->orderByDesc('id')
+                ->value('hash');
 
-        $row = [
-            'id' => $id,
-            'event_type' => $event['event_type'],
-            'occurred_at' => $occurredAt->toISOString(),
-            'request_id' => $this->requestId(),
-            'trace_id' => $event['trace_id'] ?? null,
-            'actor_client_id' => $event['actor_client_id'] ?? null,
-            'subject_ref' => self::ref('sub', $event['subject_id'] ?? null),
-            'tenant_ref' => $event['tenant_ref'] ?? null,
-            'session_ref' => self::ref('sess', $event['session_id'] ?? null),
-            'grant_type' => $event['grant_type'] ?? null,
-            'source_audience' => $event['source_audience'] ?? null,
-            'target_audience' => $event['target_audience'] ?? null,
-            'requested_scopes' => $event['requested_scopes'] ?? null,
-            'granted_scopes' => $event['granted_scopes'] ?? null,
-            'authentication_methods' => $event['authentication_methods'] ?? null,
-            'authentication_assurance' => $event['authentication_assurance'] ?? null,
-            'risk_tier' => $event['risk_tier'] ?? null,
-            'policy_version' => $event['policy_version'] ?? null,
-            'decision' => $event['decision'],
-            'reason_code' => $event['reason_code'] ?? null,
-            'signing_key_id' => $event['signing_key_id'] ?? null,
-            'token_jti_ref' => self::ref('jti', $event['token_jti'] ?? null),
-            'prev_hash' => $prevHash,
-        ];
+            $row = [
+                'id' => $id,
+                'event_type' => $event['event_type'],
+                'occurred_at' => $occurredAt->toISOString(),
+                'request_id' => $this->requestId(),
+                'trace_id' => $event['trace_id'] ?? null,
+                'actor_client_id' => $event['actor_client_id'] ?? null,
+                'subject_ref' => self::ref('sub', $event['subject_id'] ?? null),
+                'tenant_ref' => $event['tenant_ref'] ?? null,
+                'session_ref' => self::ref('sess', $event['session_id'] ?? null),
+                'grant_type' => $event['grant_type'] ?? null,
+                'source_audience' => $event['source_audience'] ?? null,
+                'target_audience' => $event['target_audience'] ?? null,
+                'requested_scopes' => $event['requested_scopes'] ?? null,
+                'granted_scopes' => $event['granted_scopes'] ?? null,
+                'authentication_methods' => $event['authentication_methods'] ?? null,
+                'authentication_assurance' => $event['authentication_assurance'] ?? null,
+                'risk_tier' => $event['risk_tier'] ?? null,
+                'policy_version' => $event['policy_version'] ?? null,
+                'decision' => $event['decision'],
+                'reason_code' => $event['reason_code'] ?? null,
+                'signing_key_id' => $event['signing_key_id'] ?? null,
+                'token_jti_ref' => self::ref('jti', $event['token_jti'] ?? null),
+                'prev_hash' => $prevHash,
+            ];
 
-        $row['hash'] = AuthEvent::seal($row);
+            $row['hash'] = AuthEvent::seal($row);
 
-        return AuthEvent::query()->create($row);
+            return AuthEvent::query()->create($row);
+        });
     }
 
     /**

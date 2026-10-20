@@ -35,9 +35,19 @@ final class VerifyAuthEventChainCommand extends Command
         foreach ($query->lazyById((int) $this->option('limit'), 'id') as $event) {
             // Recompute the seal through the shared canonical function —
             // the same normalization the recorder used pre-persist.
-            $recomputed = AuthEvent::seal($event->getAttributes());
+            $recomputed = AuthEvent::seals($event->getAttributes());
+            $stored = (string) $event->hash;
+            $matches = false;
 
-            if (! hash_equals($recomputed, (string) $event->hash)) {
+            foreach ($recomputed as $candidate) {
+                if (hash_equals($candidate, $stored)) {
+                    $matches = true;
+
+                    break;
+                }
+            }
+
+            if (! $matches) {
                 $this->error("Chain broken at {$event->id} ({$event->event_type}): seal mismatch — row was modified after write.");
 
                 return self::FAILURE;
@@ -49,7 +59,7 @@ final class VerifyAuthEventChainCommand extends Command
                 return self::FAILURE;
             }
 
-            $prevHash = $recomputed;
+            $prevHash = $stored;
             $checked++;
         }
 

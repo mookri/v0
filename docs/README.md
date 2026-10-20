@@ -139,6 +139,7 @@ Do not open a public issue containing exploit details. Use the private channel i
 | [`operations/search/index-rebuild.md`](operations/search/index-rebuild.md) | **Current** | Search index rebuild |
 | [`operations/README.md`](operations/README.md) | **Current** | Operations index and on-call path |
 | [`operations/DEVOPS.md`](operations/DEVOPS.md) | **Current** | DevOps practices, tooling, and standards |
+| [`operations/BACKEND-RCA.md`](operations/BACKEND-RCA.md) | **Current** | Backend RCA: SSO, security, and auth performance (2026-10-21) |
 | [`deployment/README.md`](deployment/README.md) | **Current** | Per-application deployment guides |
 | [`deployment/web.md`](deployment/web.md) | **Target** | Web app deployment |
 | [`deployment/customer.md`](deployment/customer.md) | **Target** | Customer app deployment |

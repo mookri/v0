@@ -270,33 +270,33 @@ final class CustomerAuthController
         }
         $tenantId = (string) $tenant->getKey();
 
-        // No oracle: unknown login identities get an identical 202 with a
-        // challenge id that can never verify (redeem finds no row → 401,
-        // the same code a wrong token produces).
-        if ($purpose === CustomerOtpChallenge::PURPOSE_LOGIN
-            && $this->findUser($identity) === null) {
-            return new JsonResponse([
-                'data' => [
-                    'object' => 'otp_challenge',
-                    'challenge_id' => (string) Str::ulid(),
-                    'expires_in' => OtpDeliveryPolicy::load()->ttlSeconds,
-                ],
-                'meta' => ['request_id' => $this->requestId($request)],
-            ], 202);
-        }
+        // No oracle: an unknown login identity is issued a challenge
+        // against a DECOY identifier, so the delivery policy's
+        // live-challenge gate and its hourly cap apply identically to
+        // known and unknown identities. The response shape is the same
+        // 202 either way, and the decoy can never verify: the row
+        // carries a hash of the identity, not the identity, so a token
+        // attested by MSG91 for the real number never matches it.
+        //
+        // Without this, an unknown identity always answered 202 while a
+        // known one answered 429 on its second request - a working
+        // account-enumeration oracle.
+        $known = $purpose === CustomerOtpChallenge::PURPOSE_LOGIN
+            && $this->findUser($identity) !== null;
+        $issueIdentifier = $known ? $identity : 'decoy:'.hash('sha256', $identity);
 
         try {
             $challenge = $this->otp->issue(
                 $tenantId,
                 $purpose,
-                $identity,
+                $issueIdentifier,
                 $this->now(),
             );
         } catch (OtpRateLimitedException $e) {
             return $this->rateLimited($request, $e);
         } catch (OtpProviderRateLimitedException $e) {
             // Provider-side back-off on this identifier: retryable, so
-            // the same 429 shape our local caps use — not a 503
+            // the same 429 shape our local caps use - not a 503
             // implying the whole channel is down. The envelope hides
             // the provider head, the log keeps it.
             report($e);
@@ -305,11 +305,27 @@ final class CustomerAuthController
         } catch (OtpProviderUnavailableException $e) {
             // The typed 503 hides the provider's symbolic error from
             // the client, so record it server-side. Provider exception
-            // messages carry only symbolic codes — never identifiers —
+            // messages carry only symbolic codes - never identifiers -
             // so report() is PII-safe.
             report($e);
 
             return $this->dependencyUnavailable($request);
+        }
+
+        if (! $known) {
+            // The decoy row exists (so the rate-limit state is real and
+            // identical to a known identity), but the id handed back is
+            // a throwaway: the challenge it names can never verify, and
+            // the redeem path answers the same 401 it answers for a
+            // wrong token.
+            return new JsonResponse([
+                'data' => [
+                    'object' => 'otp_challenge',
+                    'challenge_id' => (string) Str::ulid(),
+                    'expires_in' => OtpDeliveryPolicy::load()->ttlSeconds,
+                ],
+                'meta' => ['request_id' => $this->requestId($request)],
+            ], 202);
         }
 
         return new JsonResponse([

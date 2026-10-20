@@ -39,7 +39,10 @@ final class RequestTiming
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! filter_var(env('PERF_TIMING'), FILTER_VALIDATE_BOOL)) {
+        // Read from config, never from env(): under `config:cache` a
+        // runtime env() lookup returns null and the instrumentation
+        // would silently switch off in production.
+        if (! (bool) config('observability.perf_timing', false)) {
             return $next($request);
         }
 

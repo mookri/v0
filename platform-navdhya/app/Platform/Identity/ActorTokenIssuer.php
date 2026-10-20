@@ -33,6 +33,14 @@ final class ActorTokenIssuer
         ?string $userAgent = null,
         ?string $ipAddress = null,
     ): array {
+        if ($secret === '') {
+            // Fail closed: an empty HMAC secret makes every minted token
+            // forgeable by anyone. The verifier already refuses an empty
+            // secret, so minting one would produce a token that is
+            // simultaneously issued and unverifiable.
+            throw new \RuntimeException('identity.hmac_secret is required to mint actor tokens.');
+        }
+
         $now = strtotime($nowIso) ?: time();
         $expiresAt = gmdate('Y-m-d\TH:i:s.v\Z', $now + $ttlSeconds);
         $sessionId = 'sess_'.strtolower((string) \Illuminate\Support\Str::ulid());
