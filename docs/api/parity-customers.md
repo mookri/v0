@@ -1,0 +1,233 @@
+# Customer Contract Parity — BFF view
+
+BFF-side mirror of the contract. The authoritative table lives in the
+backend at `platform-navdhya/docs/api/parity-customers.md` (COMPLETE
+B1–B8); either side changing a row updates that doc, this mirror, and
+both test suites in the same change (`tests/api/customer-contract.test.ts`
+encodes the mapping as a reviewed const).
+
+## Status alignment (F1)
+
+`VALIDATION_ERROR` is **422** on both surfaces (was 400 on the BFF).
+`packages/api-contracts` `statusFor()` is the single status map; the BFF
+`ApiErrorCode` union (`apps/customer/application/api-envelope.ts`) is a
+subset of the contract union with identical statuses. New codes:
+`REVIEW_NOT_ALLOWED`, `REVIEW_EXISTS` (both 409).
+
+## BFF endpoint → backend source
+
+| BFF endpoint | Backend source |
+|---|---|
+| `GET /api/home` | composes `GET /api/v1/booking/reservations` + `GET /api/v1/customers/profile` — **wired behind flag** (profile + upcoming + discover + activity, fail-closed) |
+| `GET /api/bookings` | `GET /api/v1/booking/reservations` — **wired behind flag, drilled live** |
+| `GET /api/bookings/:bookingId` | `GET /api/v1/booking/reservations/{id}` — **wired behind flag, drilled live** |
+| `POST /api/bookings` | `POST /api/v1/booking/reservations` — **wired behind flag** (DRAFT, idempotent on Idempotency-Key; 409 `conflict` → `BOOKING_SLOT_CONFLICT`, 422 → `VALIDATION_ERROR`; S15: `service_sku` is the catalog SKU, never the item id — the review step resolves item id → SKU via `GET /api/pujas/:id` before POST, and the slot is chosen on the review step) |
+| `POST /api/bookings/:bookingId/cancel` | `POST /api/v1/booking/reservations/{id}:cancel` — **wired behind flag** (idempotent; 409 → `BOOKING_CANNOT_CANCEL`) |
+| `POST /api/bookings/:bookingId/reschedule` | `POST …/{id}:reschedule` — **wired behind flag** (reads live version first; stale → `STALE_RESOURCE`, overlap → `BOOKING_SLOT_CONFLICT`) |
+| `GET /api/profile` | `GET /api/v1/customers/profile` (masked contacts) — **wired behind flag** |
+| `PATCH /api/profile` | `PATCH /api/v1/customers/profile` — **wired behind flag** (strict field allowlist) |
+| `POST /api/profile:deactivate` | `POST /api/v1/customers/profile:deactivate` (fresh OTP) — **wired behind flag** |
+| `POST /api/profile:delete` | `POST /api/v1/customers/profile:delete` (fresh OTP) — **wired behind flag** (soft delete: sets deleted_at, suspends membership, audit) |
+| `POST /api/profile:reactivate` | `POST /api/v1/customers/profile:reactivate` (public OTP) — **wired behind flag** |
+| `GET /api/verifications` | `GET /api/v1/customers/verifications` — **wired behind flag** |
+| `POST /api/verifications` | `POST /api/v1/customers/verifications` — **wired behind flag** |
+| `POST /api/verifications/confirm` | `POST /api/v1/customers/verifications/{id}:confirm` — **wired behind flag** |
+| `GET /api/saved` | `GET /api/v1/customers/saved` — **wired behind flag** (interim title=ref mapping; catalog enrichment later) |
+| `POST /api/saved` | `POST /api/v1/customers/saved` — **wired behind flag** (cap 20) |
+| `DELETE /api/saved/:id` | `DELETE /api/v1/customers/saved/{id}` — **wired behind flag** |
+| `GET /api/notifications` | `GET /api/v1/customers/notifications` — **wired behind flag** |
+| `GET /api/discover` | `GET /api/v1/customers/discover` — **wired behind flag** (envelope unwrapped here) |
+| `GET /api/settings` | `GET /api/v1/customers/settings` — **wired behind flag** (values merged into sections response) |
+| `PATCH /api/settings` | `PATCH /api/v1/customers/settings` — **wired behind flag** (closed key set, validated) |
+| `GET /api/bookings/:bookingId/history` | `GET /api/v1/booking/reservations/{id}/history` — **wired behind flag** |
+| `POST /api/auth/login` | `POST /api/v1/customers/auth/otp` then `POST …/auth/login` (with optional `totpCode` → `totp_code`) - **wired behind flag, drilled (401 path live)**; `{sessionId, expiresAt}`, bearer in HttpOnly cookie, `token` omitted by design |
+| `POST /api/auth/signup` | `POST /api/v1/customers/auth/signup` - **wired behind flag** (intent, 202 challenge) |
+| `POST /api/auth/verify` | `POST /api/v1/customers/auth/verify` - **wired behind flag** (201 + session cookie, no token to client) |
+| `POST /api/auth/logout` | `POST /api/v1/customers/auth/logout` — **wired behind flag, drilled live** |
+| `GET /api/addresses` | `GET /api/v1/customers/addresses` - **wired behind flag** |
+| `POST /api/addresses` | `POST /api/v1/customers/addresses` - **wired behind flag** |
+| `PATCH /api/addresses/:id` | `PATCH /api/v1/customers/addresses/{id}` - **wired behind flag** |
+| `DELETE /api/addresses/:id` | `DELETE /api/v1/customers/addresses/{id}` - **wired behind flag** |
+| `POST /api/addresses/:id/default` | `POST /api/v1/customers/addresses/{id}:default` - **wired behind flag** |
+| `GET /api/activity` | `GET /api/v1/customers/activity` (`?kind=`) - **wired behind flag** |
+| `GET /api/support/tickets` | `GET /api/v1/customers/support/tickets` - **wired behind flag** |
+| `POST /api/support/tickets` | `POST /api/v1/customers/support/tickets` - **wired behind flag** |
+| `POST /api/notifications/:id/read` | `POST /api/v1/customers/notifications/{id}:read` — **wired behind flag** |
+| `POST /api/notifications/read-all` | `POST /api/v1/customers/notifications:read-all` — **wired behind flag** |
+| `GET /api/support/tickets/:id` | `GET /api/v1/customers/support/tickets/{id}` - **wired behind flag** |
+| `POST /api/support/tickets/:id/messages` | reply (re-opens) - **wired behind flag** |
+| `POST /api/support/tickets/:id/close` | close - **wired behind flag** |
+| `GET /api/referrals` | `GET /api/v1/customers/referrals` - **wired behind flag** |
+| `GET /api/reviews` | `GET /api/v1/booking/reviews` - **wired behind flag** |
+| `POST /api/bookings/:bookingId/reviews` | `POST /api/v1/booking/reservations/{id}/reviews` - **wired behind flag** |
+| `DELETE /api/reviews/:id` | `DELETE /api/v1/booking/reviews/{id}` - **wired behind flag** |
+| `GET /api/mfa/status` | `GET /api/v1/identity/mfa` - **wired behind flag** |
+| `POST /api/mfa/enroll` | `POST /api/v1/identity/mfa/enroll` - **wired behind flag** |
+| `POST /api/mfa/confirm` | `POST /api/v1/identity/mfa/confirm` - **wired behind flag** |
+| `POST /api/mfa/verify` | `POST /api/v1/identity/mfa/verify` - **wired behind flag** (step-up primitive) |
+| `POST /api/mfa/revoke` | `POST /api/v1/identity/mfa/revoke` - **wired behind flag** (requires live TOTP) |
+| `POST /api/mfa/recovery-codes` | `POST /api/v1/identity/mfa/recovery-codes` - **wired behind flag** (requires live TOTP) |
+| `GET /api/sessions` | `GET /api/v1/identity/sessions` - **wired behind flag** |
+| `POST /api/sessions/revoke-others` | `POST /api/v1/identity/sessions:revoke-others` - **wired behind flag** |
+
+## Pandit directory (P9)
+
+| BFF endpoint | Backend source |
+|---|---|
+| `GET /api/pandits` | `GET /api/v1/pandit/profiles` — **wired behind flag** (kernel envelope unwrapped to `{items, pagination: {hasMore, nextCursor}}`; `?cursor=`/`?limit=` forwarded untouched, items mapped to `{id, name, bio, specializations[], market, languages[], experience_years, rating_avg, review_count}`) |
+| `GET /api/pandits/:panditId` | `GET /api/v1/pandit/profiles/{id}` — **wired behind flag** (404 `PANDIT_NOT_FOUND` → `NOT_FOUND`) |
+| `GET /api/pandits/:panditId/availability` | `GET /api/v1/pandit/profiles/{id}/availability` — **wired behind flag** (kernel envelope unwrapped to a bare `AvailabilitySlot[]` payload; 404 `PANDIT_NOT_FOUND` → `NOT_FOUND`) |
+
+## Temple directory + dashboard (P11)
+
+| BFF endpoint | Backend source |
+|---|---|
+| `GET /api/temples` (customer + partner) | `GET /api/v1/temple/profiles` — **wired behind flag** (kernel envelope unwrapped to the `{data, meta: {page}}` payload; VERIFIED + ACTIVE only) |
+| `GET /api/temples/:templeId` (customer + partner) | `GET /api/v1/temple/profiles/{id}` — **wired behind flag** (VERIFIED + ACTIVE only; 404 `TEMPLE_NOT_FOUND` → `NOT_FOUND`) |
+| `GET /api/temples/:templeId/pujas` (customer) | `GET /api/v1/temple/profiles/{id}/pujas` — **wired behind flag** (`?limit=`/`?cursor=` forwarded untouched, payload `{data, meta: {page}}`; 404 `TEMPLE_NOT_FOUND` → `NOT_FOUND`, 422 → `VALIDATION_ERROR`) |
+| `GET /api/temples/:templeId/availability` (customer) | `GET /api/v1/temple/profiles/{id}/availability` — **wired behind flag** (`?start_date=`/`?end_date=` forwarded, payload bare `AvailabilitySlot[]`; 404 `TEMPLE_NOT_FOUND` → `NOT_FOUND`, 422 → `VALIDATION_ERROR`) |
+| `GET /api/temples/:templeId/pujas/:pujaId` (partner) | `GET /api/v1/temple/partner/temples/{id}/pujas/{pujaId}` — **wired behind flag** (`PARTNER_BACKEND=laravel`, kernel envelope unwrapped to the assignment; 404 `TEMPLE_PUJA_NOT_FOUND` → `NOT_FOUND`, `permission_missing` → `FORBIDDEN`) |
+| `GET /api/temples/:templeId/dashboard/:section` (partner) | `GET /api/v1/temple/partner/temples/{id}/dashboard/{section}` — **wired behind flag** (`not_found` → `NOT_FOUND`, `permission_missing` → `FORBIDDEN`, `validation_failed` → `VALIDATION_ERROR`) |
+
+## Puja / Catalog (P7)
+
+| BFF endpoint | Backend source |
+|---|---|
+| `GET /api/pujas` | `GET /api/v1/catalog/items?status=ACTIVE` — **wired behind flag** (kernel envelope unwrapped, items mapped to `{id, title, kind:'puja', sku, currency, price_minor, description}`) |
+| `GET /api/pujas/:pujaId` | `GET /api/v1/catalog/items/{id}` — **wired behind flag** (404 → `NOT_FOUND`) |
+| `POST /api/pujas/:pujaId/quote` | `POST /api/v1/catalog/quote` — **wired behind flag** (422 `validation_failed` → `VALIDATION_ERROR`) |
+
+## Instant-book search (B2)
+
+| BFF endpoint | Backend source |
+|---|---|
+| `GET /api/instant-search?date&start&end&puja_id&limit` | `GET /api/v1/booking/instant-search` — **wired behind flag** (payload `{object:'instant_search', date, start, end, puja_id, pandits[], temple_slots[]}`; the window is forwarded untouched, 422 `validation_failed` → `VALIDATION_ERROR`; mock backend degrades to an empty result set — never an invented pandit or slot) |
+
+Assignability is backend-authoritative: VERIFIED + ACTIVE pandits whose
+availability windows cover the **whole** slot (containment) with no
+PENDING/CONFIRMED assignment conflict, plus weekday schedule windows of
+VERIFIED + ACTIVE temples covering the slot (`puja_id` filters those).
+A selection hands `book/start` a versioned intent (`source:
+instant-search`) carrying puja + pandit + slot — the reservation itself
+still books puja + schedule (assignment wiring lands with checkout).
+
+## Checkout (B3)
+
+Backend authority only — no BFF endpoints and no customer UI are wired
+this cycle (the roadmap's backend-first order). The Laravel surface the
+frontend track will forward to:
+
+| Backend endpoint | Contract |
+|---|---|
+| `POST /api/v1/booking/reservations/{id}:confirm` | 201 `{data: {object:'payment_intent', id, booking_id, status, amount_minor, currency, provider, provider_order_id, test_mode}}` — flag-gated on `payments.enabled` (404 while off — the surface does not exist), idempotent per booking (replay returns the same intent, one provider order ever), re-quotes server-side at confirm time (client never supplies a total); 409 `state_forbidden`, 422 `validation_failed`, 503 `dependency_unavailable` |
+| `POST /api/v1/payment/webhook` | Signature-verified provider callback (HMAC-SHA256 over the raw body vs `RAZORPAY_WEBHOOK_SECRET`; forged → 401) → 200 receipt `{status: processed\|ignored, intent_id, reason}`. `payment.captured` → booking CONFIRMED, `payment.failed` → FAILED, `refund.processed` → REFUNDED; replays/unknown orders/money mismatches answer ignored and write nothing |
+
+Booking rows carry `total_minor`/`currency` (null until `:confirm`
+snapshots them); the authoritative quote snapshot lives on
+`payment_intents` (unique per tenant+booking). Every applied money leg
+is audited and appends its `payment.*` outbox event in the same
+transaction.
+
+## Fulfillment (B4)
+
+Pandit self-serve verbs drive the booking lifecycle through a
+Booking-module port (the assignment is the fact, the lifecycle matrix
+the authority — the payment port's posture). The customer-facing half
+this cycle is the cancel/reschedule UI on the booking detail page.
+
+| Surface | Contract |
+|---|---|
+| `POST /api/v1/pandit/assignments/{id}:confirm` | 200 assignment CONFIRMED and booking CONFIRMED → ASSIGNED in ONE ambient-connection transaction (transition row actor = the pandit's user id); 409 `PANDIT_BOOKING_WRONG_STATE` when the booking refuses (cancelled / already ASSIGNED by another pandit) — assignment rolled back, nothing written; 409 `PANDIT_ASSIGNMENT_WRONG_STATE` (not PENDING); 404 foreign/unknown |
+| `POST /api/v1/pandit/assignments/{id}:complete` | 200 assignment COMPLETED and booking ASSIGNED → IN_PROGRESS → COMPLETED (both matrix hops recorded, one fact); same 404/409 matrix (assignment must be CONFIRMED); COMPLETED rows count into pandit earnings |
+| booking detail UI | cancel + reschedule render as real controls when the lifecycle-derived `actions` allow them: cancel = confirm + POST (Idempotency-Key), reschedule = datetime-local → ISO (empty/malformed/past fail closed client-side) + POST; flash + refresh, errors inline — the BFF/backend gates (state, version, slot) stay the authority |
+
+## Notification dispatch (N1)
+
+`NotifiesCustomers::notify()` is now a queue-backed dispatcher entry
+(HTTP enqueues; database queue deployed, sync in tests). The worker
+resolves its own tenant context and delivers the in-app inbox under
+the packages/communication semantics: in_app always; email gated by
+the `notify.email` flag + the notifications_email preference; sms by
+notifications_sms (routed, undelivered until the SMS provider track);
+quiet hours suppress service/marketing outbound legs only
+(transactional/security bypass); dedup on the spec identity
+`rule:event:recipient:channel` under a unique (tenant, dedup_key)
+index. Settings gain `timezone` (default Asia/Kolkata) + `quiet_hours`
+({start, end} HH:MM, nullable) inside the closed-key 422 posture.
+
+## Booking lifecycle events (N2)
+
+The booking verbs and both outcome ports no longer notify directly:
+each appends a `booking.reservation.*` fact to the transactional outbox
+inside the same tenant transaction as the state change, and
+`outbox:drain` replays it into the inbox through the customers port
+with the outbox event id as dedup identity (handler replays collapse).
+Producers: `created` (store), `cancelled`, `rescheduled`, and
+`transitioned` from the payment webhook legs + pandit fulfillment legs
+(reason + actor carried — system vs pandit user id). Inbox copy maps
+per `to` (CONFIRMED/ASSIGNED/COMPLETED/FAILED/REFUNDED); other hops are
+facts without an inbox row, malformed payloads fail the claim loudly.
+
+`GET /api/events` gains its first producer: a per-channel notification
+tail (one poll per channel, seeded on connect — history stays the REST
+list's job) publishing `notification.created` live events, with 25s
+stream heartbeats. Wired streams accept the session cookie as auth
+(EventSource cannot set headers — F2b pattern), and that token is the
+tail's backend bearer. Bus stays single-instance behind the EventBus
+port (documented broker swap for multi-instance).
+
+## Email channel (N3)
+
+The dispatch job's email leg executes what the N1 matrix routes:
+provider-agnostic Laravel mailer config (`MAIL_*`, stock `log`
+default), per-kind subjects (`NotificationEmailTemplates`), escaping
+Blade body (producer copy can never inject markup). Idempotency is the
+`notification_deliveries` claim row (unique `(tenant_id, dedup_key)` =
+`kind:eventId:userId:email`): pending before the hand-off, sent after —
+retries resume, sent rows collapse replays. Blank or synthetic
+`{phone}@phone.local` addresses suppress with a reason (never guessed);
+null event ids send without a claim row (unkeyed legs cannot dedup);
+send exceptions ride the job's backoff, exhausted attempts leave
+`pending` for ops.
+
+## Code correspondence (BFF codes)
+
+| Situation | BFF code | Backend code |
+|---|---|---|
+| unknown identity / bad OTP | `UNAUTHENTICATED` (401) | 202 decoy, then `unauthenticated` (401) |
+| flood | `RATE_LIMITED` (429) | `rate_limited` (429) |
+| deactivated login | `UNAUTHENTICATED` (401, collapsed) | `membership_inactive` (403) |
+| foreign/unknown resource | `BOOKING_NOT_FOUND` / `NOT_FOUND` (404) | `not_found` (404) |
+| bad fields | `VALIDATION_ERROR` (**422**) | `validation_failed` (422 + `details.fields`) |
+| illegal cancel/reschedule | `BOOKING_CANNOT_CANCEL` / `BOOKING_RESCHEDULE_UNAVAILABLE` (409) | `state_forbidden` (409) |
+| slot overlap | `BOOKING_SLOT_CONFLICT` (409) | `conflict` (409) |
+| stale version | `STALE_RESOURCE` (409) | `version_conflict` (409) |
+| review on non-completed | `REVIEW_NOT_ALLOWED` (409) | `state_forbidden` (409) |
+| duplicate review | `REVIEW_EXISTS` (409) | `conflict` (409) |
+| missing idempotency key (create) | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
+| account deletion (soft delete) | `VALIDATION_ERROR` (422, bad OTP) / `FORBIDDEN` (403, no membership) | `validation_failed` (422) / `membership_inactive` (403) |
+| unknown/unverified/suspended pandit | `NOT_FOUND` (404) | `PANDIT_NOT_FOUND` (404) |
+| invalid query params (date format, rating range) | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
+| guest / unauthenticated caller | `UNAUTHENTICATED` (401) | `unauthenticated` / `tenant_not_in_token` (401) |
+| unknown/unverified/suspended temple (detail, pujas, availability) | `NOT_FOUND` (404) | `TEMPLE_NOT_FOUND` (404) |
+| unknown/foreign puja assignment (partner show) | `NOT_FOUND` (404) | `TEMPLE_PUJA_NOT_FOUND` (404) |
+| unknown temple on dashboard (overview, settings) | `NOT_FOUND` (404) | `not_found` (404) |
+| invalid query params (limit, start_date/end_date) | `VALIDATION_ERROR` (422) | `validation_failed` (422 + `details.fields`) |
+
+HTTP statuses are identical everywhere: that is the cross-surface contract.
+
+## Support staff console (S4)
+
+Backend-authoritative staff surface — no BFF endpoint exists for it (the
+Blade console consumes the API directly, doc 06 §7). Codes/statuses below
+are the backend's; the customer-side support flows above are unchanged.
+
+| Backend endpoint | Behavior |
+|---|---|
+| `GET /api/v1/customers/support/staff/tickets?status=OPEN/CLOSED` | 200 cursor queue with masked customer identity; 403 `authorization_denied` without `customers:support:view`; 422 `validation_failed` on a bad filter |
+| `GET /api/v1/customers/support/staff/tickets/{id}` | 200 thread with `by: customer/staff` authorship + author names; foreign id → 404 `not_found` |
+| `POST /api/v1/customers/support/staff/tickets/{id}/messages` | 201 (re-opens CLOSED, audited `via: staff`); 403 without `customers:support:manage` |
+| `POST /api/v1/customers/support/staff/tickets/{id}:close` | 200; repeat 409 `state_forbidden` (same code as the customer side); 404 `not_found` when foreign |
+
+The console's web forms post to `/customers/support/tickets/…` (session +
+CSRF → redirect back with a coded flash) over the same shared actions.

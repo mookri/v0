@@ -1,0 +1,36 @@
+/.phpunit.cache
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+.env
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.vscode
+/.docsgen
+/storage/codex-tmp
+*.sqlite
+storage/framework/testing-*.sqlite
+
+# Firebase admin service-account keys are secrets. storage/app/.gitignore keeps
+# storage/app/private/* out of git while still shipping the directory itself;
+# this extra rule catches a key downloaded from the console into the repo root,
+# which is where Google's default naming lands it.
+/*-firebase-adminsdk-*.json
+
+# Tooling caches and generated graph artifacts — never source.
+/storage/framework/phpstan
+/tmp
+graphify-out/
+/.deptrac.cache

@@ -1,0 +1,958 @@
+# OpenAPI 3.1 fragment — pandit module (public directory + application
+# intake + self-serve + admin ops).
+# Public reads are fail-closed: only VERIFIED + ACTIVE pandits surface, and
+# absent, unverified, suspended or foreign ids collapse to the same
+# 404 PANDIT_NOT_FOUND (no vetting oracle). Self-serve routes resolve the
+# caller's own pandit profile in code (404 PANDIT_NOT_FOUND when the caller
+# has none). Admin routes are capability-gated; verify/suspend/reactivate
+# additionally step-up (level 2). Application intake (start / read) lives
+# here — the track lifecycle (steps, OTP submit, review queue) lives on
+# /api/v1/onboarding and is never re-decided in this module.
+openapi: 3.1.0
+info:
+  title: Navdhya Pandit — Directory, Applications, Self-Serve, Admin
+  version: 1.0.0
+paths:
+  /api/v1/pandit/profiles:
+    get:
+      operationId: listPanditProfiles
+      summary: Cursor-paginated public directory (VERIFIED + ACTIVE only).
+      x-gate: ownership
+      x-scope: pandit:read
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: specialization
+          in: query
+          schema: { type: string, maxLength: 64 }
+        - name: market
+          in: query
+          schema: { type: string, maxLength: 16 }
+        - name: min_rating
+          in: query
+          schema: { type: number, minimum: 0, maximum: 5 }
+      responses:
+        '200':
+          description: Verified + active pandits in the tenant.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/pandit/profiles/{id}:
+    get:
+      operationId: getPanditProfile
+      summary: Public pandit profile — fail-closed (VERIFIED + ACTIVE only).
+      x-gate: ownership
+      x-scope: pandit:read
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Pandit profile.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, display_name, bio, languages, specializations, experience_years, certification_refs, base_rate_minor, currency, market, rating_avg, rating_count, total_bookings, verification_status, status]
+                    properties:
+                      id: { $ref: '#/components/schemas/Ulid' }
+                      display_name: { type: string }
+                      bio: { type: string, nullable: true }
+                      languages: { type: array, items: { type: string }, nullable: true }
+                      specializations: { type: array, items: { type: string }, nullable: true }
+                      experience_years: { type: integer, nullable: true }
+                      certification_refs: { type: array, items: { type: string }, nullable: true }
+                      base_rate_minor: { type: integer, nullable: true }
+                      currency: { type: string }
+                      market: { type: string, nullable: true }
+                      rating_avg: { type: number }
+                      rating_count: { type: integer }
+                      total_bookings: { type: integer }
+                      verification_status: { type: string, enum: [PENDING, DOCS_SUBMITTED, INTERVIEW_SCHEDULED, VERIFIED, REJECTED] }
+                      status: { type: string, enum: [ACTIVE, SUSPENDED, DEACTIVATED] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: >-
+            PANDIT_NOT_FOUND — absent, unverified, non-active or foreign
+            pandit (identical 404 — no existence oracle before vetting).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/pandit/profiles/{id}/availability:
+    get:
+      operationId: getPublicPanditAvailability
+      summary: Weekly availability slots of a publicly visible pandit.
+      x-gate: ownership
+      x-scope: pandit:read
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: start_date
+          in: query
+          schema: { type: string, format: date }
+        - name: end_date
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: >-
+            Flat slot rows (a visible pandit with no rows answers 200 with
+            an empty list).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: >-
+            PANDIT_NOT_FOUND — absent, unverified, suspended or foreign
+            pandit (identical 404 — no existence oracle before vetting).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/pandit/apply:
+    post:
+      operationId: startPanditApplication
+      summary: Start (or re-open) the caller's pandit-track application.
+      x-gate: ownership
+      x-scope: pandit:self
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [track]
+              properties:
+                track: { type: string, enum: [pandit] }
+                market: { type: string, maxLength: 16 }
+      responses:
+        '201':
+          description: >-
+            Application started; a PENDING pandit profile is provisioned on
+            first apply (only an admin verification makes it public).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [application, pandit_profile]
+                    properties:
+                      application:
+                        type: object
+                        required: [id, object, track, track_version, status]
+                        properties:
+                          id: { $ref: '#/components/schemas/Ulid' }
+                          object: { type: string }
+                          track: { type: string, enum: [pandit] }
+                          track_version: { type: string }
+                          status: { type: string }
+                      pandit_profile:
+                        type: object
+                        required: [id, verification_status, status, created]
+                        properties:
+                          id: { $ref: '#/components/schemas/Ulid' }
+                          verification_status: { type: string, enum: [PENDING] }
+                          status: { type: string, enum: [ACTIVE, SUSPENDED, DEACTIVATED] }
+                          created: { type: boolean }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '409':
+          description: >-
+            PANDIT_APPLICATION_EXISTS — a live application (DRAFT,
+            SUBMITTED, UNDER_REVIEW or APPROVED) already exists for this
+            identity.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422':
+          description: validation_failed — track missing or not `pandit`.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/pandit/application:
+    get:
+      operationId: getPanditApplication
+      summary: Latest pandit-track application of the caller (any state).
+      x-gate: ownership
+      x-scope: pandit:self
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Application row.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, track, track_version, status]
+                    properties:
+                      id: { $ref: '#/components/schemas/Ulid' }
+                      object: { type: string }
+                      track: { type: string, enum: [pandit] }
+                      track_version: { type: string }
+                      status: { type: string }
+                      submitted_at: { type: string, format: date-time, nullable: true }
+                      reviewed_at: { type: string, format: date-time, nullable: true }
+                      rejection_code: { type: string, nullable: true }
+                      evidence: { type: object, nullable: true }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_APPLICATION_NOT_FOUND — the identity never applied to the pandit track.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/pandit/profile:
+    get:
+      operationId: getOwnPanditProfile
+      summary: The caller's own pandit profile (full shape).
+      x-gate: ownership
+      x-scope: pandit:self
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Own pandit profile.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, display_name, verification_documents, verification_status, status, deleted_at]
+                    properties:
+                      id: { $ref: '#/components/schemas/Ulid' }
+                      display_name: { type: string }
+                      bio: { type: string, nullable: true }
+                      languages: { type: array, items: { type: string }, nullable: true }
+                      specializations: { type: array, items: { type: string }, nullable: true }
+                      experience_years: { type: integer, nullable: true }
+                      certification_refs: { type: array, items: { type: string }, nullable: true }
+                      verification_documents: { type: array, nullable: true }
+                      base_rate_minor: { type: integer, nullable: true }
+                      currency: { type: string }
+                      market: { type: string, nullable: true }
+                      rating_avg: { type: number }
+                      rating_count: { type: integer }
+                      total_bookings: { type: integer }
+                      verification_status: { type: string, enum: [PENDING, DOCS_SUBMITTED, INTERVIEW_SCHEDULED, VERIFIED, REJECTED] }
+                      status: { type: string, enum: [ACTIVE, SUSPENDED, DEACTIVATED] }
+                      deleted_at: { type: string, format: date-time, nullable: true }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_NOT_FOUND — the caller has no pandit profile in this tenant.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+    patch:
+      operationId: updateOwnPanditProfile
+      summary: Update own profile (strict field allowlist — unknown fields are 422).
+      x-gate: ownership
+      x-scope: pandit:self
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                display_name: { type: string, maxLength: 190 }
+                bio: { type: string, nullable: true }
+                languages: { type: array, items: { type: string, maxLength: 10 } }
+                specializations: { type: array, items: { type: string, maxLength: 64 } }
+                experience_years: { type: integer, minimum: 0, nullable: true }
+                certification_refs: { type: array, items: { type: string, maxLength: 64 } }
+                base_rate_minor: { type: integer, minimum: 0, nullable: true }
+                currency: { type: string, minLength: 3, maxLength: 3 }
+                market: { type: string, maxLength: 16, nullable: true }
+      responses:
+        '200':
+          description: Updated own profile (full shape as GET).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: object }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_NOT_FOUND — the caller has no pandit profile in this tenant.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422':
+          description: >-
+            validation_failed — unknown fields (details.fields marks each
+            unknown_field) or rule violations.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/pandit/availability:
+    get:
+      operationId: listOwnPanditAvailability
+      summary: The caller's own availability slots.
+      x-gate: ownership
+      x-scope: pandit:self
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: start_date
+          in: query
+          schema: { type: string, format: date }
+        - name: end_date
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Flat slot rows (id, day_of_week, start/end time, duration, recurrence).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_NOT_FOUND — the caller has no pandit profile in this tenant.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+    put:
+      operationId: replaceOwnPanditAvailability
+      summary: Replace the whole availability schedule (delete + insert).
+      x-gate: ownership
+      x-scope: pandit:self
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [slots]
+              properties:
+                slots:
+                  type: array
+                  minItems: 0
+                  maxItems: 50
+                  items:
+                    type: object
+                    required: [day_of_week, start_time, end_time]
+                    properties:
+                      day_of_week: { type: integer, minimum: 0, maximum: 6 }
+                      start_time: { type: string, example: '09:00:00' }
+                      end_time: { type: string, example: '11:00:00' }
+                      slot_duration_minutes: { type: integer, minimum: 15, maximum: 480 }
+                      is_recurring: { type: boolean }
+                      specific_date: { type: string, format: date, nullable: true }
+      responses:
+        '200':
+          description: Stored slot rows after the replacement.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_NOT_FOUND — the caller has no pandit profile in this tenant.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '409':
+          description: PANDIT_AVAILABILITY_CONFLICT — two submitted slots overlap on the same day or override date.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/pandit/assignments:
+    get:
+      operationId: listOwnPanditAssignments
+      summary: Cursor-paginated assignments of the caller's pandit profile.
+      x-gate: ownership
+      x-scope: pandit:self
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          schema: { type: string, enum: [PENDING, CONFIRMED, DECLINED, COMPLETED, CANCELLED] }
+      responses:
+        '200':
+          description: Assignment rows (each embeds its booking summary).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_NOT_FOUND — the caller has no pandit profile in this tenant.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/pandit/assignments/{id}:confirm:
+    post:
+      operationId: confirmPanditAssignment
+      summary: Confirm a PENDING assignment owned by the caller.
+      x-gate: ownership
+      x-scope: pandit:self
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Confirmed assignment.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status]
+                    properties:
+                      id: { $ref: '#/components/schemas/Ulid' }
+                      status: { type: string, enum: [CONFIRMED] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_ASSIGNMENT_NOT_FOUND — unknown or foreign assignment (or no own profile).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '409':
+          description: PANDIT_ASSIGNMENT_WRONG_STATE — the assignment is no longer PENDING. PANDIT_BOOKING_WRONG_STATE — the booking's lifecycle state refuses the acceptance (nothing written).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/pandit/assignments/{id}:complete:
+    post:
+      operationId: completePanditAssignment
+      summary: 'Complete a CONFIRMED assignment owned by the caller (completes the booking: ASSIGNED → IN_PROGRESS → COMPLETED).'
+      x-gate: ownership
+      x-scope: pandit:self
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Completed assignment.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status]
+                    properties:
+                      id: { $ref: '#/components/schemas/Ulid' }
+                      status: { type: string, enum: [COMPLETED] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_ASSIGNMENT_NOT_FOUND — unknown or foreign assignment (or no own profile).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '409':
+          description: PANDIT_ASSIGNMENT_WRONG_STATE — the assignment is no longer CONFIRMED. PANDIT_BOOKING_WRONG_STATE — the booking's lifecycle state refuses the completion (nothing written).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/pandit/assignments/{id}:decline:
+    post:
+      operationId: declinePanditAssignment
+      summary: Decline a PENDING assignment owned by the caller (reason required).
+      x-gate: ownership
+      x-scope: pandit:self
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string, maxLength: 500 }
+      responses:
+        '200':
+          description: Declined assignment.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status]
+                    properties:
+                      id: { $ref: '#/components/schemas/Ulid' }
+                      status: { type: string, enum: [DECLINED] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_ASSIGNMENT_NOT_FOUND — unknown or foreign assignment (or no own profile).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '409':
+          description: PANDIT_ASSIGNMENT_WRONG_STATE — the assignment is no longer PENDING.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/pandit/earnings:
+    get:
+      operationId: getOwnPanditEarnings
+      summary: Earnings summary of the caller's pandit profile (read-only v1).
+      x-gate: ownership
+      x-scope: pandit:self
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Completed vs pending compensation totals.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [pandit_profile_id, total_earnings_minor, total_earnings_formatted, completed_assignments_count, pending_earnings_minor, pending_earnings_formatted, pending_assignments_count]
+                    properties:
+                      pandit_profile_id: { $ref: '#/components/schemas/Ulid' }
+                      total_earnings_minor: { type: integer, minimum: 0 }
+                      total_earnings_formatted: { type: string }
+                      completed_assignments_count: { type: integer, minimum: 0 }
+                      pending_earnings_minor: { type: integer, minimum: 0 }
+                      pending_earnings_formatted: { type: string }
+                      pending_assignments_count: { type: integer, minimum: 0 }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_NOT_FOUND — the caller has no pandit profile in this tenant.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/pandit/reviews:
+    get:
+      operationId: listOwnPanditReviews
+      summary: Reviews from bookings assigned to the caller (read via the Booking port).
+      x-gate: ownership
+      x-scope: pandit:self
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Review rows (flat list — meta carries request_id only).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_NOT_FOUND — the caller has no pandit profile in this tenant.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/pandit/admin/profiles:
+    get:
+      operationId: adminListPanditProfiles
+      summary: Admin directory (status / verification_status / search filters; lists rows the public directory hides).
+      x-permission: pandit:profile:view
+      x-scope: pandit:admin
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          schema: { type: string, enum: [ACTIVE, SUSPENDED, DEACTIVATED] }
+        - name: verification_status
+          in: query
+          schema: { type: string, enum: [PENDING, DOCS_SUBMITTED, INTERVIEW_SCHEDULED, VERIFIED, REJECTED] }
+        - name: search
+          in: query
+          schema: { type: string, maxLength: 190 }
+      responses:
+        '200':
+          description: All pandits in the tenant (any verification status).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/pandit/admin/profiles/{id}:verify:
+    post:
+      operationId: verifyPandit
+      summary: Mark a pandit VERIFIED (capability pandit:profile:manage + step-up level 2).
+      x-permission: pandit:profile:manage
+      x-scope: pandit:admin
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Verified profile (verification axis — suspension survives it).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, verification_status]
+                    properties:
+                      id: { $ref: '#/components/schemas/Ulid' }
+                      verification_status: { type: string, enum: [VERIFIED] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_NOT_FOUND — unknown pandit.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '409':
+          description: state_forbidden — the pandit is already verified.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/pandit/admin/profiles/{id}:suspend:
+    post:
+      operationId: suspendPandit
+      summary: Suspend a pandit (status SUSPENDED; capability pandit:profile:manage + step-up level 2).
+      x-permission: pandit:profile:manage
+      x-scope: pandit:admin
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Suspended profile (drops out of the public directory immediately).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status]
+                    properties:
+                      id: { $ref: '#/components/schemas/Ulid' }
+                      status: { type: string, enum: [SUSPENDED] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_NOT_FOUND — unknown pandit.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '409':
+          description: state_forbidden — the pandit is already suspended.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/pandit/admin/profiles/{id}:reactivate:
+    post:
+      operationId: reactivatePandit
+      summary: Reactivate a suspended pandit (capability pandit:profile:manage + step-up level 2).
+      x-permission: pandit:profile:manage
+      x-scope: pandit:admin
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Reactivated profile.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status]
+                    properties:
+                      id: { $ref: '#/components/schemas/Ulid' }
+                      status: { type: string, enum: [ACTIVE] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_NOT_FOUND — unknown pandit.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '409':
+          description: state_forbidden — only a suspended pandit can reactivate (already active is 409).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/pandit/admin/assignments:
+    post:
+      operationId: adminAssignPandit
+      summary: Assign a pandit to a booking (capability pandit:assignment:manage).
+      x-permission: pandit:assignment:manage
+      x-scope: pandit:admin
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [pandit_id, booking_id, compensation_minor]
+              properties:
+                pandit_id: { type: string, maxLength: 26 }
+                booking_id: { type: string, maxLength: 26 }
+                compensation_minor: { type: integer, minimum: 0 }
+      responses:
+        '201':
+          description: New assignment (idempotent per pandit + booking).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status]
+                    properties:
+                      id: { $ref: '#/components/schemas/Ulid' }
+                      status: { type: string, enum: [PENDING, CONFIRMED, DECLINED, COMPLETED, CANCELLED] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '409':
+          description: PANDIT_ASSIGNMENT_BOOKING_CONFLICT — the windows overlap an existing assignment of that pandit.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '422':
+          description: >-
+            validation_failed — unknown ids resolve through ports, not an
+            exists rule: details.fields carries booking_id unknown_booking
+            or pandit_id unknown_pandit.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/pandit/admin/assignments/{id}:
+    delete:
+      operationId: adminUnassignPandit
+      summary: Unassign a pandit from a booking (capability pandit:assignment:manage).
+      x-permission: pandit:assignment:manage
+      x-scope: pandit:admin
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Assignment removed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [deleted]
+                    properties:
+                      deleted: { type: boolean }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_ASSIGNMENT_NOT_FOUND — unknown assignment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }

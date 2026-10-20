@@ -1,0 +1,4402 @@
+[
+  {
+    "slug": "us-new-york-online-puja",
+    "title": "Online puja guidance for New York Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja New York",
+    "secondaryKeywords": [
+      "online puja",
+      "United States Hindu families",
+      "New York ritual guidance"
+    ],
+    "keywordVariants": [
+      "us new-york online-puja",
+      "online puja United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "New York",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-new-york",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-new-york",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-new-york",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-new-york-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for New York Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha New York",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "United States Hindu families",
+      "New York ritual guidance"
+    ],
+    "keywordVariants": [
+      "us new-york online-satyanarayan-katha",
+      "online satyanarayan katha United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "New York",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-new-york",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-new-york",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-new-york",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-new-york-online-astrology-consultation",
+    "title": "Online astrology consultation for New York Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation New York",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "United States Hindu families",
+      "New York ritual guidance"
+    ],
+    "keywordVariants": [
+      "us new-york online-astrology-consultation",
+      "online astrology consultation United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "New York",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-new-york",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-new-york",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-new-york",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-new-york-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for New York Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning New York",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "United States Hindu families",
+      "New York ritual guidance"
+    ],
+    "keywordVariants": [
+      "us new-york nri-griha-pravesh-planning",
+      "NRI griha pravesh planning United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "New York",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-new-york",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-new-york",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-new-york",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-new-york-india-family-pandit-coordination",
+    "title": "India family pandit coordination for New York Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination New York",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "United States Hindu families",
+      "New York ritual guidance"
+    ],
+    "keywordVariants": [
+      "us new-york india-family-pandit-coordination",
+      "India family pandit coordination United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "New York",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-new-york",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-new-york",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-new-york",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-chicago-online-puja",
+    "title": "Online puja guidance for Chicago Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Chicago",
+    "secondaryKeywords": [
+      "online puja",
+      "United States Hindu families",
+      "Chicago ritual guidance"
+    ],
+    "keywordVariants": [
+      "us chicago online-puja",
+      "online puja United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Chicago",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-chicago",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-chicago",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-chicago",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-chicago-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Chicago Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Chicago",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "United States Hindu families",
+      "Chicago ritual guidance"
+    ],
+    "keywordVariants": [
+      "us chicago online-satyanarayan-katha",
+      "online satyanarayan katha United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Chicago",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-chicago",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-chicago",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-chicago",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-chicago-online-astrology-consultation",
+    "title": "Online astrology consultation for Chicago Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Chicago",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "United States Hindu families",
+      "Chicago ritual guidance"
+    ],
+    "keywordVariants": [
+      "us chicago online-astrology-consultation",
+      "online astrology consultation United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Chicago",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-chicago",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-chicago",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-chicago",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-chicago-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Chicago Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Chicago",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "United States Hindu families",
+      "Chicago ritual guidance"
+    ],
+    "keywordVariants": [
+      "us chicago nri-griha-pravesh-planning",
+      "NRI griha pravesh planning United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Chicago",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-chicago",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-chicago",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-chicago",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-chicago-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Chicago Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Chicago",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "United States Hindu families",
+      "Chicago ritual guidance"
+    ],
+    "keywordVariants": [
+      "us chicago india-family-pandit-coordination",
+      "India family pandit coordination United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Chicago",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-chicago",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-chicago",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-chicago",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-dallas-online-puja",
+    "title": "Online puja guidance for Dallas Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Dallas",
+    "secondaryKeywords": [
+      "online puja",
+      "United States Hindu families",
+      "Dallas ritual guidance"
+    ],
+    "keywordVariants": [
+      "us dallas online-puja",
+      "online puja United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Dallas",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-dallas",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-dallas",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-dallas",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-dallas-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Dallas Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Dallas",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "United States Hindu families",
+      "Dallas ritual guidance"
+    ],
+    "keywordVariants": [
+      "us dallas online-satyanarayan-katha",
+      "online satyanarayan katha United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Dallas",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-dallas",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-dallas",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-dallas",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-dallas-online-astrology-consultation",
+    "title": "Online astrology consultation for Dallas Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Dallas",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "United States Hindu families",
+      "Dallas ritual guidance"
+    ],
+    "keywordVariants": [
+      "us dallas online-astrology-consultation",
+      "online astrology consultation United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Dallas",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-dallas",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-dallas",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-dallas",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-dallas-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Dallas Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Dallas",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "United States Hindu families",
+      "Dallas ritual guidance"
+    ],
+    "keywordVariants": [
+      "us dallas nri-griha-pravesh-planning",
+      "NRI griha pravesh planning United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Dallas",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-dallas",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-dallas",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-dallas",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-dallas-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Dallas Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Dallas",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "United States Hindu families",
+      "Dallas ritual guidance"
+    ],
+    "keywordVariants": [
+      "us dallas india-family-pandit-coordination",
+      "India family pandit coordination United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Dallas",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-dallas",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-dallas",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-dallas",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-san-jose-online-puja",
+    "title": "Online puja guidance for San Jose Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja San Jose",
+    "secondaryKeywords": [
+      "online puja",
+      "United States Hindu families",
+      "San Jose ritual guidance"
+    ],
+    "keywordVariants": [
+      "us san-jose online-puja",
+      "online puja United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "San Jose",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-san-jose",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-san-jose",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-san-jose",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-san-jose-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for San Jose Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha San Jose",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "United States Hindu families",
+      "San Jose ritual guidance"
+    ],
+    "keywordVariants": [
+      "us san-jose online-satyanarayan-katha",
+      "online satyanarayan katha United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "San Jose",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-san-jose",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-san-jose",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-san-jose",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-san-jose-online-astrology-consultation",
+    "title": "Online astrology consultation for San Jose Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation San Jose",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "United States Hindu families",
+      "San Jose ritual guidance"
+    ],
+    "keywordVariants": [
+      "us san-jose online-astrology-consultation",
+      "online astrology consultation United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "San Jose",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-san-jose",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-san-jose",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-san-jose",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-san-jose-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for San Jose Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning San Jose",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "United States Hindu families",
+      "San Jose ritual guidance"
+    ],
+    "keywordVariants": [
+      "us san-jose nri-griha-pravesh-planning",
+      "NRI griha pravesh planning United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "San Jose",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-san-jose",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-san-jose",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-san-jose",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-san-jose-india-family-pandit-coordination",
+    "title": "India family pandit coordination for San Jose Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination San Jose",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "United States Hindu families",
+      "San Jose ritual guidance"
+    ],
+    "keywordVariants": [
+      "us san-jose india-family-pandit-coordination",
+      "India family pandit coordination United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "San Jose",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-san-jose",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-san-jose",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-san-jose",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-seattle-online-puja",
+    "title": "Online puja guidance for Seattle Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Seattle",
+    "secondaryKeywords": [
+      "online puja",
+      "United States Hindu families",
+      "Seattle ritual guidance"
+    ],
+    "keywordVariants": [
+      "us seattle online-puja",
+      "online puja United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Seattle",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-seattle",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-seattle",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-seattle",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-seattle-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Seattle Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Seattle",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "United States Hindu families",
+      "Seattle ritual guidance"
+    ],
+    "keywordVariants": [
+      "us seattle online-satyanarayan-katha",
+      "online satyanarayan katha United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Seattle",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-seattle",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-seattle",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-seattle",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-seattle-online-astrology-consultation",
+    "title": "Online astrology consultation for Seattle Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Seattle",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "United States Hindu families",
+      "Seattle ritual guidance"
+    ],
+    "keywordVariants": [
+      "us seattle online-astrology-consultation",
+      "online astrology consultation United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Seattle",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-seattle",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-seattle",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-seattle",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-seattle-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Seattle Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Seattle",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "United States Hindu families",
+      "Seattle ritual guidance"
+    ],
+    "keywordVariants": [
+      "us seattle nri-griha-pravesh-planning",
+      "NRI griha pravesh planning United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Seattle",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-seattle",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-seattle",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-seattle",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "us-seattle-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Seattle Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Seattle",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "United States Hindu families",
+      "Seattle ritual guidance"
+    ],
+    "keywordVariants": [
+      "us seattle india-family-pandit-coordination",
+      "India family pandit coordination United States"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Seattle",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-us",
+      "us-seattle",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/us-seattle",
+      "/explore/navdhya-us",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/us-seattle",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-london-online-puja",
+    "title": "Online puja guidance for London Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja London",
+    "secondaryKeywords": [
+      "online puja",
+      "United Kingdom Hindu families",
+      "London ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk london online-puja",
+      "online puja United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "London",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-london",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-london",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-london",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-london-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for London Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha London",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "United Kingdom Hindu families",
+      "London ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk london online-satyanarayan-katha",
+      "online satyanarayan katha United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "London",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-london",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-london",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-london",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-london-online-astrology-consultation",
+    "title": "Online astrology consultation for London Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation London",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "United Kingdom Hindu families",
+      "London ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk london online-astrology-consultation",
+      "online astrology consultation United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "London",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-london",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-london",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-london",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-london-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for London Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning London",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "United Kingdom Hindu families",
+      "London ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk london nri-griha-pravesh-planning",
+      "NRI griha pravesh planning United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "London",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-london",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-london",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-london",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-london-india-family-pandit-coordination",
+    "title": "India family pandit coordination for London Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination London",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "United Kingdom Hindu families",
+      "London ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk london india-family-pandit-coordination",
+      "India family pandit coordination United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "London",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-london",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-london",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-london",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-birmingham-online-puja",
+    "title": "Online puja guidance for Birmingham Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Birmingham",
+    "secondaryKeywords": [
+      "online puja",
+      "United Kingdom Hindu families",
+      "Birmingham ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk birmingham online-puja",
+      "online puja United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Birmingham",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-birmingham",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-birmingham",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-birmingham",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-birmingham-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Birmingham Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Birmingham",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "United Kingdom Hindu families",
+      "Birmingham ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk birmingham online-satyanarayan-katha",
+      "online satyanarayan katha United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Birmingham",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-birmingham",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-birmingham",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-birmingham",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-birmingham-online-astrology-consultation",
+    "title": "Online astrology consultation for Birmingham Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Birmingham",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "United Kingdom Hindu families",
+      "Birmingham ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk birmingham online-astrology-consultation",
+      "online astrology consultation United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Birmingham",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-birmingham",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-birmingham",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-birmingham",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-birmingham-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Birmingham Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Birmingham",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "United Kingdom Hindu families",
+      "Birmingham ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk birmingham nri-griha-pravesh-planning",
+      "NRI griha pravesh planning United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Birmingham",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-birmingham",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-birmingham",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-birmingham",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-birmingham-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Birmingham Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Birmingham",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "United Kingdom Hindu families",
+      "Birmingham ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk birmingham india-family-pandit-coordination",
+      "India family pandit coordination United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Birmingham",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-birmingham",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-birmingham",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-birmingham",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-leicester-online-puja",
+    "title": "Online puja guidance for Leicester Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Leicester",
+    "secondaryKeywords": [
+      "online puja",
+      "United Kingdom Hindu families",
+      "Leicester ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk leicester online-puja",
+      "online puja United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Leicester",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-leicester",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-leicester",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-leicester",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-leicester-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Leicester Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Leicester",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "United Kingdom Hindu families",
+      "Leicester ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk leicester online-satyanarayan-katha",
+      "online satyanarayan katha United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Leicester",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-leicester",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-leicester",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-leicester",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-leicester-online-astrology-consultation",
+    "title": "Online astrology consultation for Leicester Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Leicester",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "United Kingdom Hindu families",
+      "Leicester ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk leicester online-astrology-consultation",
+      "online astrology consultation United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Leicester",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-leicester",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-leicester",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-leicester",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-leicester-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Leicester Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Leicester",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "United Kingdom Hindu families",
+      "Leicester ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk leicester nri-griha-pravesh-planning",
+      "NRI griha pravesh planning United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Leicester",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-leicester",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-leicester",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-leicester",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-leicester-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Leicester Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Leicester",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "United Kingdom Hindu families",
+      "Leicester ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk leicester india-family-pandit-coordination",
+      "India family pandit coordination United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Leicester",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-leicester",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-leicester",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-leicester",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-manchester-online-puja",
+    "title": "Online puja guidance for Manchester Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Manchester",
+    "secondaryKeywords": [
+      "online puja",
+      "United Kingdom Hindu families",
+      "Manchester ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk manchester online-puja",
+      "online puja United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Manchester",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-manchester",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-manchester",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-manchester",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-manchester-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Manchester Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Manchester",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "United Kingdom Hindu families",
+      "Manchester ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk manchester online-satyanarayan-katha",
+      "online satyanarayan katha United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Manchester",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-manchester",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-manchester",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-manchester",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-manchester-online-astrology-consultation",
+    "title": "Online astrology consultation for Manchester Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Manchester",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "United Kingdom Hindu families",
+      "Manchester ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk manchester online-astrology-consultation",
+      "online astrology consultation United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Manchester",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-manchester",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-manchester",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-manchester",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-manchester-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Manchester Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Manchester",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "United Kingdom Hindu families",
+      "Manchester ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk manchester nri-griha-pravesh-planning",
+      "NRI griha pravesh planning United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Manchester",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-manchester",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-manchester",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-manchester",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "uk-manchester-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Manchester Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Manchester",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "United Kingdom Hindu families",
+      "Manchester ritual guidance"
+    ],
+    "keywordVariants": [
+      "uk manchester india-family-pandit-coordination",
+      "India family pandit coordination United Kingdom"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Manchester",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "uk-manchester",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/uk-manchester",
+      "/explore/navdhya-uk",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/uk-manchester",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-sydney-online-puja",
+    "title": "Online puja guidance for Sydney Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Sydney",
+    "secondaryKeywords": [
+      "online puja",
+      "Australia Hindu families",
+      "Sydney ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia sydney online-puja",
+      "online puja Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Sydney",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-sydney",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-sydney",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-sydney",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-sydney-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Sydney Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Sydney",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "Australia Hindu families",
+      "Sydney ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia sydney online-satyanarayan-katha",
+      "online satyanarayan katha Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Sydney",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-sydney",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-sydney",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-sydney",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-sydney-online-astrology-consultation",
+    "title": "Online astrology consultation for Sydney Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Sydney",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "Australia Hindu families",
+      "Sydney ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia sydney online-astrology-consultation",
+      "online astrology consultation Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Sydney",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-sydney",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-sydney",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-sydney",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-sydney-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Sydney Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Sydney",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "Australia Hindu families",
+      "Sydney ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia sydney nri-griha-pravesh-planning",
+      "NRI griha pravesh planning Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Sydney",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-sydney",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-sydney",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-sydney",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-sydney-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Sydney Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Sydney",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "Australia Hindu families",
+      "Sydney ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia sydney india-family-pandit-coordination",
+      "India family pandit coordination Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Sydney",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-sydney",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-sydney",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-sydney",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-melbourne-online-puja",
+    "title": "Online puja guidance for Melbourne Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Melbourne",
+    "secondaryKeywords": [
+      "online puja",
+      "Australia Hindu families",
+      "Melbourne ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia melbourne online-puja",
+      "online puja Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Melbourne",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-melbourne",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-melbourne",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-melbourne",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-melbourne-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Melbourne Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Melbourne",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "Australia Hindu families",
+      "Melbourne ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia melbourne online-satyanarayan-katha",
+      "online satyanarayan katha Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Melbourne",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-melbourne",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-melbourne",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-melbourne",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-melbourne-online-astrology-consultation",
+    "title": "Online astrology consultation for Melbourne Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Melbourne",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "Australia Hindu families",
+      "Melbourne ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia melbourne online-astrology-consultation",
+      "online astrology consultation Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Melbourne",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-melbourne",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-melbourne",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-melbourne",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-melbourne-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Melbourne Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Melbourne",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "Australia Hindu families",
+      "Melbourne ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia melbourne nri-griha-pravesh-planning",
+      "NRI griha pravesh planning Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Melbourne",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-melbourne",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-melbourne",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-melbourne",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-melbourne-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Melbourne Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Melbourne",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "Australia Hindu families",
+      "Melbourne ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia melbourne india-family-pandit-coordination",
+      "India family pandit coordination Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Melbourne",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-melbourne",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-melbourne",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-melbourne",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-brisbane-online-puja",
+    "title": "Online puja guidance for Brisbane Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Brisbane",
+    "secondaryKeywords": [
+      "online puja",
+      "Australia Hindu families",
+      "Brisbane ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia brisbane online-puja",
+      "online puja Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Brisbane",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-brisbane",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-brisbane",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-brisbane",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-brisbane-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Brisbane Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Brisbane",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "Australia Hindu families",
+      "Brisbane ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia brisbane online-satyanarayan-katha",
+      "online satyanarayan katha Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Brisbane",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-brisbane",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-brisbane",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-brisbane",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-brisbane-online-astrology-consultation",
+    "title": "Online astrology consultation for Brisbane Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Brisbane",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "Australia Hindu families",
+      "Brisbane ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia brisbane online-astrology-consultation",
+      "online astrology consultation Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Brisbane",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-brisbane",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-brisbane",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-brisbane",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-brisbane-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Brisbane Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Brisbane",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "Australia Hindu families",
+      "Brisbane ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia brisbane nri-griha-pravesh-planning",
+      "NRI griha pravesh planning Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Brisbane",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-brisbane",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-brisbane",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-brisbane",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-brisbane-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Brisbane Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Brisbane",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "Australia Hindu families",
+      "Brisbane ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia brisbane india-family-pandit-coordination",
+      "India family pandit coordination Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Brisbane",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-brisbane",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-brisbane",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-brisbane",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-perth-online-puja",
+    "title": "Online puja guidance for Perth Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Perth",
+    "secondaryKeywords": [
+      "online puja",
+      "Australia Hindu families",
+      "Perth ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia perth online-puja",
+      "online puja Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Perth",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-perth",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-perth",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-perth",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-perth-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Perth Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Perth",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "Australia Hindu families",
+      "Perth ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia perth online-satyanarayan-katha",
+      "online satyanarayan katha Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Perth",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-perth",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-perth",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-perth",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-perth-online-astrology-consultation",
+    "title": "Online astrology consultation for Perth Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Perth",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "Australia Hindu families",
+      "Perth ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia perth online-astrology-consultation",
+      "online astrology consultation Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Perth",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-perth",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-perth",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-perth",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-perth-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Perth Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Perth",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "Australia Hindu families",
+      "Perth ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia perth nri-griha-pravesh-planning",
+      "NRI griha pravesh planning Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Perth",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-perth",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-perth",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-perth",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "australia-perth-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Perth Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Perth",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "Australia Hindu families",
+      "Perth ritual guidance"
+    ],
+    "keywordVariants": [
+      "australia perth india-family-pandit-coordination",
+      "India family pandit coordination Australia"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Perth",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "australia-perth",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/australia-perth",
+      "/explore/navdhya-australia",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/australia-perth",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "ireland-dublin-online-puja",
+    "title": "Online puja guidance for Dublin Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Dublin",
+    "secondaryKeywords": [
+      "online puja",
+      "Ireland Hindu families",
+      "Dublin ritual guidance"
+    ],
+    "keywordVariants": [
+      "ireland dublin online-puja",
+      "online puja Ireland"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Dublin",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "ireland-dublin",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/ireland-dublin",
+      "/explore/navdhya-ireland",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/ireland-dublin",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "ireland-dublin-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Dublin Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Dublin",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "Ireland Hindu families",
+      "Dublin ritual guidance"
+    ],
+    "keywordVariants": [
+      "ireland dublin online-satyanarayan-katha",
+      "online satyanarayan katha Ireland"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Dublin",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "ireland-dublin",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/ireland-dublin",
+      "/explore/navdhya-ireland",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/ireland-dublin",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "ireland-dublin-online-astrology-consultation",
+    "title": "Online astrology consultation for Dublin Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Dublin",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "Ireland Hindu families",
+      "Dublin ritual guidance"
+    ],
+    "keywordVariants": [
+      "ireland dublin online-astrology-consultation",
+      "online astrology consultation Ireland"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Dublin",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "ireland-dublin",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/ireland-dublin",
+      "/explore/navdhya-ireland",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/ireland-dublin",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "ireland-dublin-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Dublin Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Dublin",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "Ireland Hindu families",
+      "Dublin ritual guidance"
+    ],
+    "keywordVariants": [
+      "ireland dublin nri-griha-pravesh-planning",
+      "NRI griha pravesh planning Ireland"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Dublin",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "ireland-dublin",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/ireland-dublin",
+      "/explore/navdhya-ireland",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/ireland-dublin",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "ireland-dublin-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Dublin Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Dublin",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "Ireland Hindu families",
+      "Dublin ritual guidance"
+    ],
+    "keywordVariants": [
+      "ireland dublin india-family-pandit-coordination",
+      "India family pandit coordination Ireland"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Dublin",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "ireland-dublin",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/ireland-dublin",
+      "/explore/navdhya-ireland",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/ireland-dublin",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "ireland-cork-online-puja",
+    "title": "Online puja guidance for Cork Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Cork",
+    "secondaryKeywords": [
+      "online puja",
+      "Ireland Hindu families",
+      "Cork ritual guidance"
+    ],
+    "keywordVariants": [
+      "ireland cork online-puja",
+      "online puja Ireland"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Cork",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "ireland-cork",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/ireland-cork",
+      "/explore/navdhya-ireland",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/ireland-cork",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "ireland-cork-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Cork Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Cork",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "Ireland Hindu families",
+      "Cork ritual guidance"
+    ],
+    "keywordVariants": [
+      "ireland cork online-satyanarayan-katha",
+      "online satyanarayan katha Ireland"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Cork",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "ireland-cork",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/ireland-cork",
+      "/explore/navdhya-ireland",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/ireland-cork",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "ireland-cork-online-astrology-consultation",
+    "title": "Online astrology consultation for Cork Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Cork",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "Ireland Hindu families",
+      "Cork ritual guidance"
+    ],
+    "keywordVariants": [
+      "ireland cork online-astrology-consultation",
+      "online astrology consultation Ireland"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Cork",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "ireland-cork",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/ireland-cork",
+      "/explore/navdhya-ireland",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/ireland-cork",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "ireland-cork-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Cork Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Cork",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "Ireland Hindu families",
+      "Cork ritual guidance"
+    ],
+    "keywordVariants": [
+      "ireland cork nri-griha-pravesh-planning",
+      "NRI griha pravesh planning Ireland"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Cork",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "ireland-cork",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/ireland-cork",
+      "/explore/navdhya-ireland",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/ireland-cork",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "ireland-cork-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Cork Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Cork",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "Ireland Hindu families",
+      "Cork ritual guidance"
+    ],
+    "keywordVariants": [
+      "ireland cork india-family-pandit-coordination",
+      "India family pandit coordination Ireland"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Cork",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "ireland-cork",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/ireland-cork",
+      "/explore/navdhya-ireland",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/ireland-cork",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "ireland-galway-online-puja",
+    "title": "Online puja guidance for Galway Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Galway",
+    "secondaryKeywords": [
+      "online puja",
+      "Ireland Hindu families",
+      "Galway ritual guidance"
+    ],
+    "keywordVariants": [
+      "ireland galway online-puja",
+      "online puja Ireland"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Galway",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "ireland-galway",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/ireland-galway",
+      "/explore/navdhya-ireland",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/ireland-galway",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "ireland-galway-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Galway Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Galway",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "Ireland Hindu families",
+      "Galway ritual guidance"
+    ],
+    "keywordVariants": [
+      "ireland galway online-satyanarayan-katha",
+      "online satyanarayan katha Ireland"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Galway",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "ireland-galway",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/ireland-galway",
+      "/explore/navdhya-ireland",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/ireland-galway",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "ireland-galway-online-astrology-consultation",
+    "title": "Online astrology consultation for Galway Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Galway",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "Ireland Hindu families",
+      "Galway ritual guidance"
+    ],
+    "keywordVariants": [
+      "ireland galway online-astrology-consultation",
+      "online astrology consultation Ireland"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Galway",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "ireland-galway",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/ireland-galway",
+      "/explore/navdhya-ireland",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/ireland-galway",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "ireland-galway-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Galway Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Galway",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "Ireland Hindu families",
+      "Galway ritual guidance"
+    ],
+    "keywordVariants": [
+      "ireland galway nri-griha-pravesh-planning",
+      "NRI griha pravesh planning Ireland"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Galway",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "ireland-galway",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/ireland-galway",
+      "/explore/navdhya-ireland",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/ireland-galway",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "ireland-galway-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Galway Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Galway",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "Ireland Hindu families",
+      "Galway ritual guidance"
+    ],
+    "keywordVariants": [
+      "ireland galway india-family-pandit-coordination",
+      "India family pandit coordination Ireland"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Galway",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "ireland-galway",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/ireland-galway",
+      "/explore/navdhya-ireland",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/ireland-galway",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-berlin-online-puja",
+    "title": "Online puja guidance for Berlin Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Berlin",
+    "secondaryKeywords": [
+      "online puja",
+      "Germany Hindu families",
+      "Berlin ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany berlin online-puja",
+      "online puja Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Berlin",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-berlin",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-berlin",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-berlin",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-berlin-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Berlin Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Berlin",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "Germany Hindu families",
+      "Berlin ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany berlin online-satyanarayan-katha",
+      "online satyanarayan katha Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Berlin",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-berlin",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-berlin",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-berlin",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-berlin-online-astrology-consultation",
+    "title": "Online astrology consultation for Berlin Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Berlin",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "Germany Hindu families",
+      "Berlin ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany berlin online-astrology-consultation",
+      "online astrology consultation Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Berlin",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-berlin",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-berlin",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-berlin",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-berlin-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Berlin Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Berlin",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "Germany Hindu families",
+      "Berlin ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany berlin nri-griha-pravesh-planning",
+      "NRI griha pravesh planning Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Berlin",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-berlin",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-berlin",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-berlin",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-berlin-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Berlin Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Berlin",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "Germany Hindu families",
+      "Berlin ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany berlin india-family-pandit-coordination",
+      "India family pandit coordination Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Berlin",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-berlin",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-berlin",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-berlin",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-frankfurt-online-puja",
+    "title": "Online puja guidance for Frankfurt Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Frankfurt",
+    "secondaryKeywords": [
+      "online puja",
+      "Germany Hindu families",
+      "Frankfurt ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany frankfurt online-puja",
+      "online puja Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Frankfurt",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-frankfurt",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-frankfurt",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-frankfurt",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-frankfurt-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Frankfurt Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Frankfurt",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "Germany Hindu families",
+      "Frankfurt ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany frankfurt online-satyanarayan-katha",
+      "online satyanarayan katha Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Frankfurt",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-frankfurt",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-frankfurt",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-frankfurt",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-frankfurt-online-astrology-consultation",
+    "title": "Online astrology consultation for Frankfurt Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Frankfurt",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "Germany Hindu families",
+      "Frankfurt ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany frankfurt online-astrology-consultation",
+      "online astrology consultation Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Frankfurt",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-frankfurt",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-frankfurt",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-frankfurt",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-frankfurt-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Frankfurt Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Frankfurt",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "Germany Hindu families",
+      "Frankfurt ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany frankfurt nri-griha-pravesh-planning",
+      "NRI griha pravesh planning Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Frankfurt",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-frankfurt",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-frankfurt",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-frankfurt",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-frankfurt-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Frankfurt Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Frankfurt",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "Germany Hindu families",
+      "Frankfurt ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany frankfurt india-family-pandit-coordination",
+      "India family pandit coordination Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Frankfurt",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-frankfurt",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-frankfurt",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-frankfurt",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-munich-online-puja",
+    "title": "Online puja guidance for Munich Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Munich",
+    "secondaryKeywords": [
+      "online puja",
+      "Germany Hindu families",
+      "Munich ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany munich online-puja",
+      "online puja Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Munich",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-munich",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-munich",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-munich",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-munich-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Munich Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Munich",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "Germany Hindu families",
+      "Munich ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany munich online-satyanarayan-katha",
+      "online satyanarayan katha Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Munich",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-munich",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-munich",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-munich",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-munich-online-astrology-consultation",
+    "title": "Online astrology consultation for Munich Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Munich",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "Germany Hindu families",
+      "Munich ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany munich online-astrology-consultation",
+      "online astrology consultation Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Munich",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-munich",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-munich",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-munich",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-munich-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Munich Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Munich",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "Germany Hindu families",
+      "Munich ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany munich nri-griha-pravesh-planning",
+      "NRI griha pravesh planning Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Munich",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-munich",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-munich",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-munich",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-munich-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Munich Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Munich",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "Germany Hindu families",
+      "Munich ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany munich india-family-pandit-coordination",
+      "India family pandit coordination Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Munich",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-munich",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-munich",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-munich",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-hamburg-online-puja",
+    "title": "Online puja guidance for Hamburg Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online puja Hamburg",
+    "secondaryKeywords": [
+      "online puja",
+      "Germany Hindu families",
+      "Hamburg ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany hamburg online-puja",
+      "online puja Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Hamburg",
+    "deliveryMode": "online",
+    "summary": "Remote-led puja coordination for households abroad that want a structured, respectful ceremony flow without claiming on-ground local priest coverage.",
+    "serviceName": "Online puja guidance",
+    "angle": "online-puja",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-hamburg",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-hamburg",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-hamburg",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-hamburg-online-satyanarayan-katha",
+    "title": "Online Satyanarayan Katha for Hamburg Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online satyanarayan katha Hamburg",
+    "secondaryKeywords": [
+      "online satyanarayan katha",
+      "Germany Hindu families",
+      "Hamburg ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany hamburg online-satyanarayan-katha",
+      "online satyanarayan katha Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Hamburg",
+    "deliveryMode": "online",
+    "summary": "A devotional remote-guided katha format for diaspora households coordinating across time zones and family members.",
+    "serviceName": "Online Satyanarayan Katha",
+    "angle": "online-satyanarayan-katha",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-hamburg",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-hamburg",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-hamburg",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-hamburg-online-astrology-consultation",
+    "title": "Online astrology consultation for Hamburg Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "online astrology consultation Hamburg",
+    "secondaryKeywords": [
+      "online astrology consultation",
+      "Germany Hindu families",
+      "Hamburg ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany hamburg online-astrology-consultation",
+      "online astrology consultation Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Hamburg",
+    "deliveryMode": "online",
+    "summary": "A remote consultation path for timing, ritual planning, and scriptural context before a household commits to a ceremony.",
+    "serviceName": "Online astrology consultation",
+    "angle": "online-astrology-consultation",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-hamburg",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-hamburg",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-hamburg",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-hamburg-nri-griha-pravesh-planning",
+    "title": "NRI Griha Pravesh planning for Hamburg Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "NRI griha pravesh planning Hamburg",
+    "secondaryKeywords": [
+      "NRI griha pravesh planning",
+      "Germany Hindu families",
+      "Hamburg ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany hamburg nri-griha-pravesh-planning",
+      "NRI griha pravesh planning Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Hamburg",
+    "deliveryMode": "india-coordination",
+    "summary": "India-side coordination guidance for families abroad preparing a home-entry ritual tied to property, relocation, or caretaker support back home.",
+    "serviceName": "NRI Griha Pravesh planning",
+    "angle": "nri-griha-pravesh-planning",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-hamburg",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-hamburg",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-hamburg",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  },
+  {
+    "slug": "germany-hamburg-india-family-pandit-coordination",
+    "title": "India family pandit coordination for Hamburg Hindu households",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "India family pandit coordination Hamburg",
+    "secondaryKeywords": [
+      "India family pandit coordination",
+      "Germany Hindu families",
+      "Hamburg ritual guidance"
+    ],
+    "keywordVariants": [
+      "germany hamburg india-family-pandit-coordination",
+      "India family pandit coordination Germany"
+    ],
+    "pageFamily": "intl-service",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Hamburg",
+    "deliveryMode": "india-coordination",
+    "summary": "A coordination path for overseas households arranging rituals for parents, relatives, or property in India while staying claim-safe about local execution abroad.",
+    "serviceName": "India family pandit coordination",
+    "angle": "india-family-pandit-coordination",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "germany-hamburg",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/centers/germany-hamburg",
+      "/explore/navdhya-germany",
+      "/book"
+    ],
+    "conversionPath": [
+      "/centers/germany-hamburg",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International service page limited to supported online or India-coordination delivery models."
+    ]
+  }
+]

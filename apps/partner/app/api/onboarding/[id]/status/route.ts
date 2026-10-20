@@ -1,0 +1,77 @@
+import { newRequestId, ok, err } from '@/application/api-envelope';
+import { onboardingActors, headersToRecord } from '@/application/actor';
+import { laravelEnabled, laravelGet, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import type { ApplicationTrack } from '@navdhya/partner/src/domain/partner-application';
+
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const requestId = newRequestId();
+  const { id } = await params;
+
+  if (!laravelEnabled()) {
+    // Dev/mock fallback
+    const { onboardingDocs, getEvidence, loadOwnApplication } = await import('@/server/onboarding');
+    const { getTrackDefinition } = await import('@navdhya/partner/src/onboarding/tracks');
+    const { missingSteps } = await import('@navdhya/partner/src/onboarding/steps');
+
+    const loaded = await loadOwnApplication(req, requestId, id);
+    if ('response' in loaded) return loaded.response;
+    const app = loaded.application;
+    const def = getTrackDefinition(app.track, app.trackVersion);
+    const documents = await onboardingDocs.findByApplication(id);
+    return Response.json(
+      ok(
+        {
+          id: app.id,
+          status: app.status,
+          rejectionCode: app.rejectionCode ?? null,
+          needs: missingSteps(def, getEvidence(id)),
+          documents: documents.map((d) => ({ id: d.id, kind: d.kind, status: d.status, reasonCode: d.reasonCode ?? null })),
+        },
+        requestId,
+      ),
+    );
+  }
+
+  const actor = await onboardingActors.resolve(headersToRecord(req.headers));
+  if (!actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
+
+  try {
+    const token = req.headers.get('authorization')?.startsWith('Bearer ')
+      ? req.headers.get('authorization')!.slice('Bearer '.length).trim()
+      : req.headers.get('cookie')
+        ? (await import('@/application/actor')).readSessionCookie(req.headers.get('cookie'))
+        : null;
+
+    const { data } = await laravelGet<Record<string, unknown>>(
+      token,
+      `/onboarding/applications/${encodeURIComponent(id)}/status`,
+      {},
+      {
+        not_found: 'NOT_FOUND',
+        permission_missing: 'FORBIDDEN',
+      },
+    );
+
+    // Transform backend response to partner app shape
+    const app = data.data as Record<string, unknown>;
+    const { getTrackDefinition } = await import('@navdhya/partner/src/onboarding/tracks');
+    const { missingSteps } = await import('@navdhya/partner/src/onboarding/steps');
+    const def = getTrackDefinition(app.track as ApplicationTrack, (app.track_version ?? app.trackVersion) as string);
+    const needs = missingSteps(def, (app.evidence ?? {}) as Record<string, unknown>);
+
+    return Response.json(
+      ok(
+        {
+          id: app.id,
+          status: app.status,
+          rejectionCode: app.rejection_code,
+          needs,
+          documents: app.documents,
+        },
+        requestId,
+      ),
+    );
+  } catch (e) {
+    return laravelErrorResponse(e, 'Application status is unavailable.', requestId);
+  }
+}

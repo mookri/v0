@@ -1,0 +1,86 @@
+title = "Navdhya gitleaks config"
+
+# Built-in rules cover most cloud-provider keys, JWTs, generic API keys.
+# Custom rules below catch India-specific patterns and our own internal markers.
+
+[extend]
+# Inherit gitleaks defaults; override on a per-rule basis if false positives.
+useDefault = true
+
+[[rules]]
+id = "navdhya-razorpay-key"
+description = "Razorpay live key (rzp_live_*)"
+regex = '''rzp_live_[A-Za-z0-9]{14,24}'''
+keywords = ["razorpay", "rzp_live"]
+tags = ["secret", "payment", "razorpay"]
+
+[[rules]]
+id = "navdhya-razorpay-secret"
+description = "Razorpay live secret"
+# `path` is a filename filter in gitleaks, not a content check. The
+# assignment context must live in `regex`; a bare 24-char token regex
+# would flag every hash in the repo.
+regex = '''(?i)(?:razorpay[_-]?(?:key[_-]?)?secret|RAZORPAY_KEY_SECRET)\s*[:=]\s*['"]?[A-Za-z0-9]{24}['"]?'''
+keywords = ["razorpay", "secret"]
+tags = ["secret", "payment", "razorpay"]
+
+[[rules]]
+id = "navdhya-aws-access-key"
+description = "AWS access key id (AKIA / ASIA prefix)"
+regex = '''(?:AKIA|ASIA)[0-9A-Z]{16}'''
+keywords = ["akia", "asia"]
+tags = ["secret", "aws"]
+
+[[rules]]
+id = "navdhya-indian-pan"
+description = "Indian PAN card number (10 chars, ABCDE1234F pattern)"
+# Require the PAN label in content; the old `path` filter was a filename
+# check and could never match a source file's contents.
+regex = '''(?i)(?:pan[_-]?(?:no|number)|pan\s+(?:no|number))\s*[:=]\s*['"]?[A-Z]{5}[0-9]{4}[A-Z]'''
+keywords = ["pan"]
+tags = ["pii", "india", "kyc"]
+
+[[rules]]
+id = "navdhya-indian-aadhaar"
+description = "Indian Aadhaar number (12 digits, possibly space/dash grouped)"
+regex = '''\b[2-9]\d{3}[\s-]?\d{4}[\s-]?\d{4}\b'''
+keywords = ["aadhaar", "aadhar", "uidai"]
+tags = ["pii", "india", "kyc"]
+
+[[rules]]
+id = "navdhya-uidp-jwt"
+description = "UIDP-issued JWT (custom prefix)"
+# Context must be part of the content match: a bare JWT regex duplicates
+# gitleaks' built-in rule, while `path` only filtered filenames.
+regex = '''(?i)uidp[^\n]{0,40}eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}'''
+keywords = ["uidp", "eyj"]
+tags = ["secret", "uidp"]
+
+# Whitelist: mocks, fixtures, and the audit file itself must not be flagged.
+[allowlist]
+paths = [
+  '''(^|/)lib/auth/mock-session\.ts$''',
+  '''(^|/)content/fixtures/''',
+  '''(^|/)audit-04june\.md$''',
+  '''(^|/)planning-04june\.md$''',
+  '''(^|/)\.gitleaks\.toml$''',
+  # PHPStan's analysis cache was committed in the backend's history and is
+  # still reachable there. It is serialised class metadata full of
+  # high-entropy strings; it is build output, not credentials. (It is no
+  # longer tracked, but history cannot be un-scanned.)
+  '''(^|/)storage/framework/phpstan/''',
+  # Test fixtures contain obviously-fake credentials by design: they exist to
+  # prove that a surface rejects a bad key. They must never contain a real
+  # one — this allowlist is why that rule matters.
+  '''(^|/)tests/''',
+  '''(^|/)__tests__/''',
+  '''(^|/)e2e/''',
+  # Design docs quote sample keys as examples.
+  '''(^|/)docs/specs/''',
+  # API contract examples: truncated placeholder JWTs, not credentials.
+  '''(^|/)docs/API-CONTRACT\.md$''',
+  # Historical spike document (deleted from the tree, still in history) that
+  # quoted a sample reCAPTCHA site key. Site keys are public by design.
+  '''(^|/)docs/04-security/firebase-phone-otp-spike\.md$''',
+]
+description = "Mocks, fixtures, build caches, spec examples, and planning docs intentionally contain sample data"

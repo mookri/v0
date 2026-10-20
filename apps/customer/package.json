@@ -1,0 +1,40 @@
+{
+  "name": "@navdhya/customer",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "next dev --port 3001",
+    "build": "next build",
+    "start": "next start --port 3001",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@navdhya/booking": "workspace:*",
+    "@navdhya/config": "workspace:*",
+    "@navdhya/contracts": "workspace:*",
+    "@navdhya/design-system": "workspace:*",
+    "@navdhya/layout-engine": "workspace:*",
+    "@navdhya/observability": "workspace:*",
+    "@navdhya/pricing": "workspace:*",
+    "@navdhya/puja": "workspace:*",
+    "@navdhya/routing": "workspace:*",
+    "@navdhya/security": "workspace:*",
+    "@navdhya/user": "workspace:*",
+    "@navdhya/otp": "workspace:*",
+    "lucide-react": "^0.454.0",
+    "next": "16.4.2",
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.9",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "postcss": "^8.5",
+    "tailwindcss": "^4.1.9",
+    "typescript": "^5"
+  }
+}

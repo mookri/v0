@@ -1,0 +1,224 @@
+# Navdhya nightly — the slow ring.
+#
+# Nothing here blocks a merge. A red nightly opens (or updates) a tracking issue
+# labelled `ci/nightly` so failures have an owner instead of rotting in the
+# Actions tab.
+#
+# Jobs that need tooling the repo does not have yet are gated behind repository
+# variables and fail loudly when enabled without their prerequisite. A skipped
+# job is honest; a green job that silently did nothing is not.
+
+name: nightly
+
+on:
+  schedule:
+    # 21:00 UTC = 02:30 IST.
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  CI: 'true'
+  NEXT_TELEMETRY_DISABLED: '1'
+  TURBO_TELEMETRY_DISABLED: '1'
+  FORCE_COLOR: '0'
+
+jobs:
+  # ── Coverage (jest has built-in coverage; vitest needs an extra dep) ──────
+  coverage:
+    name: coverage (web)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9.15.4
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Jest coverage
+        run: pnpm --filter @navdhya/web exec jest --ci --coverage --silent
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-web-${{ github.sha }}
+          path: apps/web/coverage
+          if-no-files-found: warn
+          retention-days: 14
+
+  # ── Full-stack E2E (requires the Linux port of e2e/run.ps1) ───────────────
+  e2e:
+    name: e2e (full stack)
+    if: vars.E2E_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: navdhya_ci_central
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -proot"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+      - name: Preflight — the Linux runner script must exist
+        run: |
+          set -euo pipefail
+          if [ ! -f e2e/run.sh ]; then
+            echo "::error title=E2E prerequisite missing::e2e/run.sh is required before E2E_ENABLED can be true (CI plan P4)."
+            exit 1
+          fi
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9.15.4
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo_mysql, sodium, intl
+          coverage: none
+          tools: composer:v2
+      - name: Install JS
+        run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Install PHP
+        working-directory: platform-navdhya
+        run: composer install --no-progress --prefer-dist --no-interaction
+      - name: Install browsers
+        working-directory: e2e
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm exec playwright install --with-deps chromium
+      - name: Run stack
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: '3306'
+          DB_USER: root
+          DB_PASSWORD: root
+          MSG91_VERIFY_BASE_URL: http://127.0.0.1:9101
+        run: bash e2e/run.sh
+      - name: Upload traces
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-traces-${{ github.sha }}
+          path: e2e/test-results
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # ── API performance budgets ───────────────────────────────────────────────
+  perf:
+    name: perf (API budgets)
+    if: vars.PERF_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - name: Preflight
+        run: |
+          set -euo pipefail
+          test -f e2e/api-perf.mjs || { echo "::error::e2e/api-perf.mjs missing"; exit 1; }
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9.15.4
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Run budgets
+        run: node e2e/api-perf.mjs
+
+  # ── Mutation testing (opt-in: Stryker is not a dependency yet) ────────────
+  mutation:
+    name: mutation (opt-in)
+    if: vars.MUTATION_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - name: Preflight
+        run: |
+          set -euo pipefail
+          if [ ! -f stryker.conf.json ] && [ ! -f stryker.conf.mjs ]; then
+            echo "::error title=Mutation prerequisite missing::add a Stryker config before enabling MUTATION_ENABLED (CI plan P4)."
+            exit 1
+          fi
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9.15.4
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --prefer-offline
+      - run: pnpm exec stryker run
+
+  # ── Failure reporting ─────────────────────────────────────────────────────
+  report:
+    name: report
+    if: always() && contains(needs.*.result, 'failure')
+    needs: [coverage, e2e, perf, mutation]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            // `needs` is a workflow context, not a github-script global: pass it
+            // in explicitly, or the first nightly failure throws ReferenceError
+            // before it can open the issue.
+            const needs = ${{ toJSON(needs) }};
+            const label = 'ci/nightly';
+            const failed = Object.entries(needs)
+              .filter(([, v]) => v.result === 'failure')
+              .map(([k]) => k)
+              .join(', ');
+            const title = 'Nightly CI is red';
+            const body = [
+              `Failed jobs: ${failed}`,
+              '',
+              `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              '',
+              'This issue is maintained automatically by .github/workflows/nightly.yml.',
+            ].join('\n');
+            const open = await github.rest.issues.listForRepo({
+              ...context.repo,
+              state: 'open',
+              labels: label,
+              per_page: 1,
+            });
+            if (open.data.length > 0) {
+              await github.rest.issues.createComment({ ...context.repo, issue_number: open.data[0].number, body });
+            } else {
+              await github.rest.issues.create({ ...context.repo, title, body, labels: [label] });
+            }

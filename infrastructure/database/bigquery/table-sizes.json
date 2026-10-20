@@ -1,0 +1,9 @@
+{
+  "_comment": "Recorded table-size estimates for the static cost gate (plan B5). Refresh driver-gated from a BigQuery dry-run: bq query --dry_run --use_legacy_sql=false 'SELECT * FROM `PROJECT.signals_raw.events`' — then update sizeBytes here. partitionDays = partition span the table is expected to hold.",
+  "signals_raw.events": { "sizeBytes": 8589934592, "partitionDays": 400 },
+  "signals_raw.quarantined": { "sizeBytes": 107374182, "partitionDays": 400 },
+  "signals_stg.events": { "sizeBytes": 6442450944, "partitionDays": 400 },
+  "analytics_000000000.events_": { "sizeBytes": 53687091200, "partitionDays": 400 },
+  "signals_crash.errors": { "sizeBytes": 2147483648, "partitionDays": 180 },
+  "signals_crash.sessions": { "sizeBytes": 1073741824, "partitionDays": 180 }
+}

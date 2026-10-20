@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+/* Mobile-shell utilities used by components/mobile/*. Tailwind v4 does
+   not ship these names; define them here instead of silently dropping
+   the class names. */
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

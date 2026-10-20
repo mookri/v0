@@ -1,0 +1,2802 @@
+[
+  {
+    "slug": "pandit-verification-discover",
+    "title": "Verification during the discovery stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "pandit verification discovery stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "pandit verification",
+      "discovery stage"
+    ],
+    "keywordVariants": [
+      "pandit verification discover",
+      "how to manage pandit verification"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for pandit verification so households use the right checklist at the right time.",
+    "topic": "verification",
+    "supportLabel": "discovery stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-verification-shortlist",
+    "title": "Verification during the shortlist stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "pandit verification shortlist stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "pandit verification",
+      "shortlist stage"
+    ],
+    "keywordVariants": [
+      "pandit verification shortlist",
+      "how to manage pandit verification"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for pandit verification so households use the right checklist at the right time.",
+    "topic": "verification",
+    "supportLabel": "shortlist stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-verification-evaluate",
+    "title": "Verification during the evaluation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "pandit verification evaluation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "pandit verification",
+      "evaluation stage"
+    ],
+    "keywordVariants": [
+      "pandit verification evaluate",
+      "how to manage pandit verification"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for pandit verification so households use the right checklist at the right time.",
+    "topic": "verification",
+    "supportLabel": "evaluation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-verification-confirm",
+    "title": "Verification during the confirmation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "pandit verification confirmation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "pandit verification",
+      "confirmation stage"
+    ],
+    "keywordVariants": [
+      "pandit verification confirm",
+      "how to manage pandit verification"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for pandit verification so households use the right checklist at the right time.",
+    "topic": "verification",
+    "supportLabel": "confirmation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-verification-prepare",
+    "title": "Verification during the preparation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "pandit verification preparation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "pandit verification",
+      "preparation stage"
+    ],
+    "keywordVariants": [
+      "pandit verification prepare",
+      "how to manage pandit verification"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for pandit verification so households use the right checklist at the right time.",
+    "topic": "verification",
+    "supportLabel": "preparation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-verification-ceremony-day",
+    "title": "Verification during the ceremony day",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "pandit verification ceremony day",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "pandit verification",
+      "ceremony day"
+    ],
+    "keywordVariants": [
+      "pandit verification ceremony-day",
+      "how to manage pandit verification"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for pandit verification so households use the right checklist at the right time.",
+    "topic": "verification",
+    "supportLabel": "ceremony day",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-verification-follow-up",
+    "title": "Verification during the follow-up stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "pandit verification follow-up stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "pandit verification",
+      "follow-up stage"
+    ],
+    "keywordVariants": [
+      "pandit verification follow-up",
+      "how to manage pandit verification"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for pandit verification so households use the right checklist at the right time.",
+    "topic": "verification",
+    "supportLabel": "follow-up stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-regional-fit-discover",
+    "title": "Regional Fit during the discovery stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "regional ritual fit discovery stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "regional ritual fit",
+      "discovery stage"
+    ],
+    "keywordVariants": [
+      "pandit regional-fit discover",
+      "how to manage regional ritual fit"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for regional ritual fit so households use the right checklist at the right time.",
+    "topic": "regional-fit",
+    "supportLabel": "discovery stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-regional-fit-shortlist",
+    "title": "Regional Fit during the shortlist stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "regional ritual fit shortlist stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "regional ritual fit",
+      "shortlist stage"
+    ],
+    "keywordVariants": [
+      "pandit regional-fit shortlist",
+      "how to manage regional ritual fit"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for regional ritual fit so households use the right checklist at the right time.",
+    "topic": "regional-fit",
+    "supportLabel": "shortlist stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-regional-fit-evaluate",
+    "title": "Regional Fit during the evaluation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "regional ritual fit evaluation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "regional ritual fit",
+      "evaluation stage"
+    ],
+    "keywordVariants": [
+      "pandit regional-fit evaluate",
+      "how to manage regional ritual fit"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for regional ritual fit so households use the right checklist at the right time.",
+    "topic": "regional-fit",
+    "supportLabel": "evaluation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-regional-fit-confirm",
+    "title": "Regional Fit during the confirmation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "regional ritual fit confirmation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "regional ritual fit",
+      "confirmation stage"
+    ],
+    "keywordVariants": [
+      "pandit regional-fit confirm",
+      "how to manage regional ritual fit"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for regional ritual fit so households use the right checklist at the right time.",
+    "topic": "regional-fit",
+    "supportLabel": "confirmation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-regional-fit-prepare",
+    "title": "Regional Fit during the preparation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "regional ritual fit preparation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "regional ritual fit",
+      "preparation stage"
+    ],
+    "keywordVariants": [
+      "pandit regional-fit prepare",
+      "how to manage regional ritual fit"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for regional ritual fit so households use the right checklist at the right time.",
+    "topic": "regional-fit",
+    "supportLabel": "preparation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-regional-fit-ceremony-day",
+    "title": "Regional Fit during the ceremony day",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "regional ritual fit ceremony day",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "regional ritual fit",
+      "ceremony day"
+    ],
+    "keywordVariants": [
+      "pandit regional-fit ceremony-day",
+      "how to manage regional ritual fit"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for regional ritual fit so households use the right checklist at the right time.",
+    "topic": "regional-fit",
+    "supportLabel": "ceremony day",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-regional-fit-follow-up",
+    "title": "Regional Fit during the follow-up stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "regional ritual fit follow-up stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "regional ritual fit",
+      "follow-up stage"
+    ],
+    "keywordVariants": [
+      "pandit regional-fit follow-up",
+      "how to manage regional ritual fit"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for regional ritual fit so households use the right checklist at the right time.",
+    "topic": "regional-fit",
+    "supportLabel": "follow-up stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-language-comfort-discover",
+    "title": "Language Comfort during the discovery stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "language comfort discovery stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "language comfort",
+      "discovery stage"
+    ],
+    "keywordVariants": [
+      "pandit language-comfort discover",
+      "how to manage language comfort"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for language comfort so households use the right checklist at the right time.",
+    "topic": "language-comfort",
+    "supportLabel": "discovery stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-language-comfort-shortlist",
+    "title": "Language Comfort during the shortlist stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "language comfort shortlist stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "language comfort",
+      "shortlist stage"
+    ],
+    "keywordVariants": [
+      "pandit language-comfort shortlist",
+      "how to manage language comfort"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for language comfort so households use the right checklist at the right time.",
+    "topic": "language-comfort",
+    "supportLabel": "shortlist stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-language-comfort-evaluate",
+    "title": "Language Comfort during the evaluation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "language comfort evaluation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "language comfort",
+      "evaluation stage"
+    ],
+    "keywordVariants": [
+      "pandit language-comfort evaluate",
+      "how to manage language comfort"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for language comfort so households use the right checklist at the right time.",
+    "topic": "language-comfort",
+    "supportLabel": "evaluation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-language-comfort-confirm",
+    "title": "Language Comfort during the confirmation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "language comfort confirmation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "language comfort",
+      "confirmation stage"
+    ],
+    "keywordVariants": [
+      "pandit language-comfort confirm",
+      "how to manage language comfort"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for language comfort so households use the right checklist at the right time.",
+    "topic": "language-comfort",
+    "supportLabel": "confirmation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-language-comfort-prepare",
+    "title": "Language Comfort during the preparation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "language comfort preparation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "language comfort",
+      "preparation stage"
+    ],
+    "keywordVariants": [
+      "pandit language-comfort prepare",
+      "how to manage language comfort"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for language comfort so households use the right checklist at the right time.",
+    "topic": "language-comfort",
+    "supportLabel": "preparation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-language-comfort-ceremony-day",
+    "title": "Language Comfort during the ceremony day",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "language comfort ceremony day",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "language comfort",
+      "ceremony day"
+    ],
+    "keywordVariants": [
+      "pandit language-comfort ceremony-day",
+      "how to manage language comfort"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for language comfort so households use the right checklist at the right time.",
+    "topic": "language-comfort",
+    "supportLabel": "ceremony day",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-language-comfort-follow-up",
+    "title": "Language Comfort during the follow-up stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "language comfort follow-up stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "language comfort",
+      "follow-up stage"
+    ],
+    "keywordVariants": [
+      "pandit language-comfort follow-up",
+      "how to manage language comfort"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for language comfort so households use the right checklist at the right time.",
+    "topic": "language-comfort",
+    "supportLabel": "follow-up stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-availability-discover",
+    "title": "Availability during the discovery stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "availability planning discovery stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "availability planning",
+      "discovery stage"
+    ],
+    "keywordVariants": [
+      "pandit availability discover",
+      "how to manage availability planning"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for availability planning so households use the right checklist at the right time.",
+    "topic": "availability",
+    "supportLabel": "discovery stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-availability-shortlist",
+    "title": "Availability during the shortlist stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "availability planning shortlist stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "availability planning",
+      "shortlist stage"
+    ],
+    "keywordVariants": [
+      "pandit availability shortlist",
+      "how to manage availability planning"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for availability planning so households use the right checklist at the right time.",
+    "topic": "availability",
+    "supportLabel": "shortlist stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-availability-evaluate",
+    "title": "Availability during the evaluation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "availability planning evaluation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "availability planning",
+      "evaluation stage"
+    ],
+    "keywordVariants": [
+      "pandit availability evaluate",
+      "how to manage availability planning"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for availability planning so households use the right checklist at the right time.",
+    "topic": "availability",
+    "supportLabel": "evaluation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-availability-confirm",
+    "title": "Availability during the confirmation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "availability planning confirmation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "availability planning",
+      "confirmation stage"
+    ],
+    "keywordVariants": [
+      "pandit availability confirm",
+      "how to manage availability planning"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for availability planning so households use the right checklist at the right time.",
+    "topic": "availability",
+    "supportLabel": "confirmation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-availability-prepare",
+    "title": "Availability during the preparation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "availability planning preparation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "availability planning",
+      "preparation stage"
+    ],
+    "keywordVariants": [
+      "pandit availability prepare",
+      "how to manage availability planning"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for availability planning so households use the right checklist at the right time.",
+    "topic": "availability",
+    "supportLabel": "preparation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-availability-ceremony-day",
+    "title": "Availability during the ceremony day",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "availability planning ceremony day",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "availability planning",
+      "ceremony day"
+    ],
+    "keywordVariants": [
+      "pandit availability ceremony-day",
+      "how to manage availability planning"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for availability planning so households use the right checklist at the right time.",
+    "topic": "availability",
+    "supportLabel": "ceremony day",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-availability-follow-up",
+    "title": "Availability during the follow-up stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "availability planning follow-up stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "availability planning",
+      "follow-up stage"
+    ],
+    "keywordVariants": [
+      "pandit availability follow-up",
+      "how to manage availability planning"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for availability planning so households use the right checklist at the right time.",
+    "topic": "availability",
+    "supportLabel": "follow-up stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-ceremony-brief-discover",
+    "title": "Ceremony Brief during the discovery stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "ceremony briefing discovery stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "ceremony briefing",
+      "discovery stage"
+    ],
+    "keywordVariants": [
+      "pandit ceremony-brief discover",
+      "how to manage ceremony briefing"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for ceremony briefing so households use the right checklist at the right time.",
+    "topic": "ceremony-brief",
+    "supportLabel": "discovery stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-ceremony-brief-shortlist",
+    "title": "Ceremony Brief during the shortlist stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "ceremony briefing shortlist stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "ceremony briefing",
+      "shortlist stage"
+    ],
+    "keywordVariants": [
+      "pandit ceremony-brief shortlist",
+      "how to manage ceremony briefing"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for ceremony briefing so households use the right checklist at the right time.",
+    "topic": "ceremony-brief",
+    "supportLabel": "shortlist stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-ceremony-brief-evaluate",
+    "title": "Ceremony Brief during the evaluation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "ceremony briefing evaluation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "ceremony briefing",
+      "evaluation stage"
+    ],
+    "keywordVariants": [
+      "pandit ceremony-brief evaluate",
+      "how to manage ceremony briefing"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for ceremony briefing so households use the right checklist at the right time.",
+    "topic": "ceremony-brief",
+    "supportLabel": "evaluation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-ceremony-brief-confirm",
+    "title": "Ceremony Brief during the confirmation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "ceremony briefing confirmation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "ceremony briefing",
+      "confirmation stage"
+    ],
+    "keywordVariants": [
+      "pandit ceremony-brief confirm",
+      "how to manage ceremony briefing"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for ceremony briefing so households use the right checklist at the right time.",
+    "topic": "ceremony-brief",
+    "supportLabel": "confirmation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-ceremony-brief-prepare",
+    "title": "Ceremony Brief during the preparation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "ceremony briefing preparation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "ceremony briefing",
+      "preparation stage"
+    ],
+    "keywordVariants": [
+      "pandit ceremony-brief prepare",
+      "how to manage ceremony briefing"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for ceremony briefing so households use the right checklist at the right time.",
+    "topic": "ceremony-brief",
+    "supportLabel": "preparation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-ceremony-brief-ceremony-day",
+    "title": "Ceremony Brief during the ceremony day",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "ceremony briefing ceremony day",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "ceremony briefing",
+      "ceremony day"
+    ],
+    "keywordVariants": [
+      "pandit ceremony-brief ceremony-day",
+      "how to manage ceremony briefing"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for ceremony briefing so households use the right checklist at the right time.",
+    "topic": "ceremony-brief",
+    "supportLabel": "ceremony day",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-ceremony-brief-follow-up",
+    "title": "Ceremony Brief during the follow-up stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "ceremony briefing follow-up stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "ceremony briefing",
+      "follow-up stage"
+    ],
+    "keywordVariants": [
+      "pandit ceremony-brief follow-up",
+      "how to manage ceremony briefing"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for ceremony briefing so households use the right checklist at the right time.",
+    "topic": "ceremony-brief",
+    "supportLabel": "follow-up stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-pricing-clarity-discover",
+    "title": "Pricing Clarity during the discovery stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "pricing clarity discovery stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "pricing clarity",
+      "discovery stage"
+    ],
+    "keywordVariants": [
+      "pandit pricing-clarity discover",
+      "how to manage pricing clarity"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for pricing clarity so households use the right checklist at the right time.",
+    "topic": "pricing-clarity",
+    "supportLabel": "discovery stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-pricing-clarity-shortlist",
+    "title": "Pricing Clarity during the shortlist stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "pricing clarity shortlist stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "pricing clarity",
+      "shortlist stage"
+    ],
+    "keywordVariants": [
+      "pandit pricing-clarity shortlist",
+      "how to manage pricing clarity"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for pricing clarity so households use the right checklist at the right time.",
+    "topic": "pricing-clarity",
+    "supportLabel": "shortlist stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-pricing-clarity-evaluate",
+    "title": "Pricing Clarity during the evaluation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "pricing clarity evaluation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "pricing clarity",
+      "evaluation stage"
+    ],
+    "keywordVariants": [
+      "pandit pricing-clarity evaluate",
+      "how to manage pricing clarity"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for pricing clarity so households use the right checklist at the right time.",
+    "topic": "pricing-clarity",
+    "supportLabel": "evaluation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-pricing-clarity-confirm",
+    "title": "Pricing Clarity during the confirmation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "pricing clarity confirmation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "pricing clarity",
+      "confirmation stage"
+    ],
+    "keywordVariants": [
+      "pandit pricing-clarity confirm",
+      "how to manage pricing clarity"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for pricing clarity so households use the right checklist at the right time.",
+    "topic": "pricing-clarity",
+    "supportLabel": "confirmation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-pricing-clarity-prepare",
+    "title": "Pricing Clarity during the preparation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "pricing clarity preparation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "pricing clarity",
+      "preparation stage"
+    ],
+    "keywordVariants": [
+      "pandit pricing-clarity prepare",
+      "how to manage pricing clarity"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for pricing clarity so households use the right checklist at the right time.",
+    "topic": "pricing-clarity",
+    "supportLabel": "preparation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-pricing-clarity-ceremony-day",
+    "title": "Pricing Clarity during the ceremony day",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "pricing clarity ceremony day",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "pricing clarity",
+      "ceremony day"
+    ],
+    "keywordVariants": [
+      "pandit pricing-clarity ceremony-day",
+      "how to manage pricing clarity"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for pricing clarity so households use the right checklist at the right time.",
+    "topic": "pricing-clarity",
+    "supportLabel": "ceremony day",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-pricing-clarity-follow-up",
+    "title": "Pricing Clarity during the follow-up stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "pricing clarity follow-up stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "pricing clarity",
+      "follow-up stage"
+    ],
+    "keywordVariants": [
+      "pandit pricing-clarity follow-up",
+      "how to manage pricing clarity"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for pricing clarity so households use the right checklist at the right time.",
+    "topic": "pricing-clarity",
+    "supportLabel": "follow-up stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-review-followup-discover",
+    "title": "Review Followup during the discovery stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "review follow-up discovery stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "review follow-up",
+      "discovery stage"
+    ],
+    "keywordVariants": [
+      "pandit review-followup discover",
+      "how to manage review follow-up"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for review follow-up so households use the right checklist at the right time.",
+    "topic": "review-followup",
+    "supportLabel": "discovery stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-review-followup-shortlist",
+    "title": "Review Followup during the shortlist stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "review follow-up shortlist stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "review follow-up",
+      "shortlist stage"
+    ],
+    "keywordVariants": [
+      "pandit review-followup shortlist",
+      "how to manage review follow-up"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for review follow-up so households use the right checklist at the right time.",
+    "topic": "review-followup",
+    "supportLabel": "shortlist stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-review-followup-evaluate",
+    "title": "Review Followup during the evaluation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "review follow-up evaluation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "review follow-up",
+      "evaluation stage"
+    ],
+    "keywordVariants": [
+      "pandit review-followup evaluate",
+      "how to manage review follow-up"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for review follow-up so households use the right checklist at the right time.",
+    "topic": "review-followup",
+    "supportLabel": "evaluation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-review-followup-confirm",
+    "title": "Review Followup during the confirmation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "review follow-up confirmation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "review follow-up",
+      "confirmation stage"
+    ],
+    "keywordVariants": [
+      "pandit review-followup confirm",
+      "how to manage review follow-up"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for review follow-up so households use the right checklist at the right time.",
+    "topic": "review-followup",
+    "supportLabel": "confirmation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-review-followup-prepare",
+    "title": "Review Followup during the preparation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "review follow-up preparation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "review follow-up",
+      "preparation stage"
+    ],
+    "keywordVariants": [
+      "pandit review-followup prepare",
+      "how to manage review follow-up"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for review follow-up so households use the right checklist at the right time.",
+    "topic": "review-followup",
+    "supportLabel": "preparation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-review-followup-ceremony-day",
+    "title": "Review Followup during the ceremony day",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "review follow-up ceremony day",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "review follow-up",
+      "ceremony day"
+    ],
+    "keywordVariants": [
+      "pandit review-followup ceremony-day",
+      "how to manage review follow-up"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for review follow-up so households use the right checklist at the right time.",
+    "topic": "review-followup",
+    "supportLabel": "ceremony day",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-review-followup-follow-up",
+    "title": "Review Followup during the follow-up stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "review follow-up follow-up stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "review follow-up",
+      "follow-up stage"
+    ],
+    "keywordVariants": [
+      "pandit review-followup follow-up",
+      "how to manage review follow-up"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for review follow-up so households use the right checklist at the right time.",
+    "topic": "review-followup",
+    "supportLabel": "follow-up stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-urgent-support-discover",
+    "title": "Urgent Support during the discovery stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "urgent support discovery stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "urgent support",
+      "discovery stage"
+    ],
+    "keywordVariants": [
+      "pandit urgent-support discover",
+      "how to manage urgent support"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for urgent support so households use the right checklist at the right time.",
+    "topic": "urgent-support",
+    "supportLabel": "discovery stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-urgent-support-shortlist",
+    "title": "Urgent Support during the shortlist stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "urgent support shortlist stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "urgent support",
+      "shortlist stage"
+    ],
+    "keywordVariants": [
+      "pandit urgent-support shortlist",
+      "how to manage urgent support"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for urgent support so households use the right checklist at the right time.",
+    "topic": "urgent-support",
+    "supportLabel": "shortlist stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-urgent-support-evaluate",
+    "title": "Urgent Support during the evaluation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "urgent support evaluation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "urgent support",
+      "evaluation stage"
+    ],
+    "keywordVariants": [
+      "pandit urgent-support evaluate",
+      "how to manage urgent support"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for urgent support so households use the right checklist at the right time.",
+    "topic": "urgent-support",
+    "supportLabel": "evaluation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-urgent-support-confirm",
+    "title": "Urgent Support during the confirmation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "urgent support confirmation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "urgent support",
+      "confirmation stage"
+    ],
+    "keywordVariants": [
+      "pandit urgent-support confirm",
+      "how to manage urgent support"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for urgent support so households use the right checklist at the right time.",
+    "topic": "urgent-support",
+    "supportLabel": "confirmation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-urgent-support-prepare",
+    "title": "Urgent Support during the preparation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "urgent support preparation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "urgent support",
+      "preparation stage"
+    ],
+    "keywordVariants": [
+      "pandit urgent-support prepare",
+      "how to manage urgent support"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for urgent support so households use the right checklist at the right time.",
+    "topic": "urgent-support",
+    "supportLabel": "preparation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-urgent-support-ceremony-day",
+    "title": "Urgent Support during the ceremony day",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "urgent support ceremony day",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "urgent support",
+      "ceremony day"
+    ],
+    "keywordVariants": [
+      "pandit urgent-support ceremony-day",
+      "how to manage urgent support"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for urgent support so households use the right checklist at the right time.",
+    "topic": "urgent-support",
+    "supportLabel": "ceremony day",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-urgent-support-follow-up",
+    "title": "Urgent Support during the follow-up stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "urgent support follow-up stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "urgent support",
+      "follow-up stage"
+    ],
+    "keywordVariants": [
+      "pandit urgent-support follow-up",
+      "how to manage urgent support"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for urgent support so households use the right checklist at the right time.",
+    "topic": "urgent-support",
+    "supportLabel": "follow-up stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-household-conduct-discover",
+    "title": "Household Conduct during the discovery stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "household conduct discovery stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "household conduct",
+      "discovery stage"
+    ],
+    "keywordVariants": [
+      "pandit household-conduct discover",
+      "how to manage household conduct"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for household conduct so households use the right checklist at the right time.",
+    "topic": "household-conduct",
+    "supportLabel": "discovery stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-household-conduct-shortlist",
+    "title": "Household Conduct during the shortlist stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "household conduct shortlist stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "household conduct",
+      "shortlist stage"
+    ],
+    "keywordVariants": [
+      "pandit household-conduct shortlist",
+      "how to manage household conduct"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for household conduct so households use the right checklist at the right time.",
+    "topic": "household-conduct",
+    "supportLabel": "shortlist stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-household-conduct-evaluate",
+    "title": "Household Conduct during the evaluation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "household conduct evaluation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "household conduct",
+      "evaluation stage"
+    ],
+    "keywordVariants": [
+      "pandit household-conduct evaluate",
+      "how to manage household conduct"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for household conduct so households use the right checklist at the right time.",
+    "topic": "household-conduct",
+    "supportLabel": "evaluation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-household-conduct-confirm",
+    "title": "Household Conduct during the confirmation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "household conduct confirmation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "household conduct",
+      "confirmation stage"
+    ],
+    "keywordVariants": [
+      "pandit household-conduct confirm",
+      "how to manage household conduct"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for household conduct so households use the right checklist at the right time.",
+    "topic": "household-conduct",
+    "supportLabel": "confirmation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-household-conduct-prepare",
+    "title": "Household Conduct during the preparation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "household conduct preparation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "household conduct",
+      "preparation stage"
+    ],
+    "keywordVariants": [
+      "pandit household-conduct prepare",
+      "how to manage household conduct"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for household conduct so households use the right checklist at the right time.",
+    "topic": "household-conduct",
+    "supportLabel": "preparation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-household-conduct-ceremony-day",
+    "title": "Household Conduct during the ceremony day",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "household conduct ceremony day",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "household conduct",
+      "ceremony day"
+    ],
+    "keywordVariants": [
+      "pandit household-conduct ceremony-day",
+      "how to manage household conduct"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for household conduct so households use the right checklist at the right time.",
+    "topic": "household-conduct",
+    "supportLabel": "ceremony day",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-household-conduct-follow-up",
+    "title": "Household Conduct during the follow-up stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "household conduct follow-up stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "household conduct",
+      "follow-up stage"
+    ],
+    "keywordVariants": [
+      "pandit household-conduct follow-up",
+      "how to manage household conduct"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for household conduct so households use the right checklist at the right time.",
+    "topic": "household-conduct",
+    "supportLabel": "follow-up stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-online-guidance-discover",
+    "title": "Online Guidance during the discovery stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "online guidance discovery stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "online guidance",
+      "discovery stage"
+    ],
+    "keywordVariants": [
+      "pandit online-guidance discover",
+      "how to manage online guidance"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for online guidance so households use the right checklist at the right time.",
+    "topic": "online-guidance",
+    "supportLabel": "discovery stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-online-guidance-shortlist",
+    "title": "Online Guidance during the shortlist stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "online guidance shortlist stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "online guidance",
+      "shortlist stage"
+    ],
+    "keywordVariants": [
+      "pandit online-guidance shortlist",
+      "how to manage online guidance"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for online guidance so households use the right checklist at the right time.",
+    "topic": "online-guidance",
+    "supportLabel": "shortlist stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-online-guidance-evaluate",
+    "title": "Online Guidance during the evaluation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "online guidance evaluation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "online guidance",
+      "evaluation stage"
+    ],
+    "keywordVariants": [
+      "pandit online-guidance evaluate",
+      "how to manage online guidance"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for online guidance so households use the right checklist at the right time.",
+    "topic": "online-guidance",
+    "supportLabel": "evaluation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-online-guidance-confirm",
+    "title": "Online Guidance during the confirmation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "online guidance confirmation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "online guidance",
+      "confirmation stage"
+    ],
+    "keywordVariants": [
+      "pandit online-guidance confirm",
+      "how to manage online guidance"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for online guidance so households use the right checklist at the right time.",
+    "topic": "online-guidance",
+    "supportLabel": "confirmation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-online-guidance-prepare",
+    "title": "Online Guidance during the preparation stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "online guidance preparation stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "online guidance",
+      "preparation stage"
+    ],
+    "keywordVariants": [
+      "pandit online-guidance prepare",
+      "how to manage online guidance"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for online guidance so households use the right checklist at the right time.",
+    "topic": "online-guidance",
+    "supportLabel": "preparation stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-online-guidance-ceremony-day",
+    "title": "Online Guidance during the ceremony day",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "online guidance ceremony day",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "online guidance",
+      "ceremony day"
+    ],
+    "keywordVariants": [
+      "pandit online-guidance ceremony-day",
+      "how to manage online guidance"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for online guidance so households use the right checklist at the right time.",
+    "topic": "online-guidance",
+    "supportLabel": "ceremony day",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  },
+  {
+    "slug": "pandit-online-guidance-follow-up",
+    "title": "Online Guidance during the follow-up stage",
+    "cluster": "pandit-services",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "online guidance follow-up stage",
+    "secondaryKeywords": [
+      "pandit booking workflow",
+      "online guidance",
+      "follow-up stage"
+    ],
+    "keywordVariants": [
+      "pandit online-guidance follow-up",
+      "how to manage online guidance"
+    ],
+    "pageFamily": "pandit-journey",
+    "audienceRegion": "india",
+    "summary": "Stage-based guidance for online guidance so households use the right checklist at the right time.",
+    "topic": "online-guidance",
+    "supportLabel": "follow-up stage",
+    "relatedSlugs": [
+      "book-pandit-home-puja",
+      "navdhya-pandit-verification-process",
+      "questions-ask-pandit"
+    ],
+    "requiredInternalLinks": [
+      "/pandit-services/book-pandit-home-puja",
+      "/pandit-services/navdhya-pandit-verification-process",
+      "/book"
+    ],
+    "conversionPath": [
+      "/pandit-services/book-pandit-home-puja",
+      "/book",
+      "/pandits"
+    ],
+    "sourceNotes": [
+      "Pandit-journey source record generated for typed stage coverage."
+    ]
+  }
+]

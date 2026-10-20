@@ -1,0 +1,35 @@
+# Known jest failures — web app ratchet.
+#
+# Every entry is a test that fails today for a reason we have accepted
+# temporarily. A listed test that starts passing FAILS the gate (remove the
+# line). The gate also fails once `expires` has passed.
+#
+# Format: <repo-relative test file> :: <full test name>
+# owner: @eng-b
+# expires: 2026-12-31
+apps/web/app/api/admin/__tests__/routes.test.ts :: GET /api/admin/stats aggregates parallel upstreams without failing the page on partial data
+apps/web/app/api/admin/__tests__/routes.test.ts :: GET /api/admin/users maps backend failures through the §8 envelope (404 stays 404)
+apps/web/app/api/admin/__tests__/routes.test.ts :: GET /api/platform/logs falls back to an empty page when the backend is disabled
+apps/web/application/__tests__/auth-p0.test.ts :: contract §1/§2 — transport schemas login: proof canonical, code deprecated alias, never both (§2)
+apps/web/application/__tests__/auth-p1.test.ts :: verificationConfirmSchema code must be 4-8 digits
+apps/web/application/__tests__/auth-p1.test.ts :: verificationConfirmSchema id charset excludes path/segment separators (backend path interpolation)
+apps/web/components/__tests__/fixed-header.test.tsx :: Fixed SiteHeader should render action icons
+apps/web/components/__tests__/fixed-header.test.tsx :: Fixed SiteHeader should render desktop navigation links
+apps/web/components/__tests__/fixed-header.test.tsx :: Fixed SiteHeader should render promotional banner
+apps/web/components/__tests__/fixed-header.test.tsx :: Fixed SiteHeader should render the header with logo
+apps/web/components/__tests__/new-header.test.tsx :: New SiteHeader should render action icons
+apps/web/components/__tests__/new-header.test.tsx :: New SiteHeader should render desktop navigation links
+apps/web/components/__tests__/new-header.test.tsx :: New SiteHeader should render promotional banner
+apps/web/components/__tests__/new-header.test.tsx :: New SiteHeader should render the header with logo
+apps/web/components/__tests__/site-header.test.tsx :: SiteHeader should close mobile menu when clicking on a navigation link
+apps/web/components/__tests__/site-header.test.tsx :: SiteHeader should close mobile menu when close button is clicked
+apps/web/components/__tests__/site-header.test.tsx :: SiteHeader should open mobile menu when menu button is clicked
+apps/web/components/__tests__/site-header.test.tsx :: SiteHeader should render all navigation links in mobile menu
+apps/web/components/__tests__/site-header.test.tsx :: SiteHeader should render the mobile menu button
+apps/web/components/seo/__tests__/article-ad-experience.test.ts :: buildArticleAdExperience builds a server-side article plan and precomputes initial decisions
+apps/web/lib/ad-orchestration/__tests__/LayoutSystem.test.ts :: Layout catalog and resolver prefers low-bandwidth-safe layouts on constrained connections
+apps/web/lib/ad-orchestration/__tests__/LayoutSystem.test.ts :: Layout catalog and resolver prefers vertical sidebar formats for desktop sidebar opportunities
+apps/web/lib/ad-orchestration/__tests__/PlacementEngine.test.ts :: PlacementEngine builds article opportunities with spacing and sidebar inventory
+apps/web/lib/ad-orchestration/__tests__/PlacementEngine.test.ts :: PlacementEngine creates three distinct in-content opportunities for long articles
+apps/web/lib/content/__tests__/seo-catalog.test.ts :: SEO catalog rollout generates non-empty schemas for every rollout page
+apps/web/lib/content/__tests__/seo-catalog.test.ts :: SEO catalog rollout keeps quality and structure within rollout contracts

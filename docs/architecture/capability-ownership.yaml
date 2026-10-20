@@ -1,0 +1,63 @@
+capabilities:
+  user:
+    owner: user-domain
+    description: Identity, profile, preferences, and account state
+    tables:
+      - users
+      - profiles
+      - preferences
+
+  puja:
+    owner: puja-domain
+    description: Puja catalog, categories, rituals, and descriptions
+    tables:
+      - pujas
+      - categories
+      - rituals
+
+  pandit:
+    owner: pandit-domain
+    description: Pandit profiles, verification, expertise, and partner data
+    tables:
+      - pandits
+      - verification
+      - expertise
+
+  availability:
+    owner: availability-domain
+    description: Time slots, schedules, capacity planning
+    tables:
+      - slots
+      - schedules
+      - capacity
+
+  pricing:
+    owner: pricing-domain
+    description: Dynamic pricing, rules, discounts, and quotes
+    tables:
+      - prices
+      - rules
+      - discounts
+
+  booking:
+    owner: booking-domain
+    description: Transactional booking, status lifecycle, state machine
+    tables:
+      - bookings
+      - booking_items
+      - booking_status_history
+
+  payment:
+    owner: payment-domain
+    description: Payment intents, capture, refunds, idempotent webhooks (provider-agnostic port)
+    tables:
+      - payments
+      - payment_events
+
+  search:
+    owner: search-domain
+    description: Discovery and search orchestration across capabilities
+
+  recommendations:
+    owner: recommendations-domain
+    description: Personalized suggestions based on rules and tracking

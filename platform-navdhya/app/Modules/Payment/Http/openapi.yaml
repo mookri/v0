@@ -1,0 +1,43 @@
+# OpenAPI 3.1 fragment — payment module checkout webhook (B3).
+openapi: 3.1.0
+info:
+  title: Navdhya Payment — Checkout
+  version: 0.1.0
+paths:
+  /api/v1/payment/webhook:
+    post:
+      operationId: paymentWebhook
+      summary: Signature-verified provider webhook — payment.captured confirms (PENDING_PAYMENT → PAYMENT_CONFIRMED → CONFIRMED), payment.failed fails, refund.processed refunds. Replay-safe by status guard; ignored receipts answer 200 so the provider stops retrying.
+      x-gate: public
+      parameters:
+        - name: X-Razorpay-Signature
+          in: header
+          required: true
+          description: HMAC-SHA256 of the raw request body, hex-encoded, keyed by RAZORPAY_WEBHOOK_SECRET.
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: Receipt — processed or ignored (replays, unknown orders, money mismatches, out-of-order legs).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, status]
+                    properties:
+                      object: { type: string, enum: [webhook_receipt] }
+                      status: { type: string, enum: [processed, ignored] }
+                      intent_id: { type: string, nullable: true }
+                      reason: { type: string, nullable: true }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+        '503': { $ref: '#/components/responses/DependencyUnavailable' }

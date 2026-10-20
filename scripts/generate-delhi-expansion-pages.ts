@@ -7,10 +7,10 @@ import type {
   SEOPage,
   SchemaType,
   SearchIntent,
-} from "../lib/content/types";
-import { COMPETITORS, COMPETITOR_VERIFIED_AT } from "../lib/seo/competitors";
+} from "../apps/web/lib/content/types";
+import { COMPETITORS, COMPETITOR_VERIFIED_AT } from "../apps/web/lib/seo/competitors";
 
-const ROOT = process.cwd();
+const ROOT = path.join(process.cwd(), 'apps/web');
 const PAGES_DIR = path.join(ROOT, "content", "pages");
 const LAST_UPDATED = "2026-05-25";
 const AUTHOR = "Navdhya Editorial Team";

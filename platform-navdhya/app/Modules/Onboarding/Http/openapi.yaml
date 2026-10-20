@@ -1,0 +1,367 @@
+# OpenAPI 3.1 fragment — onboarding module (partner applications intake).
+openapi: 3.1.0
+info:
+  title: Navdhya Onboarding — Applications
+  version: 1.0.0
+paths:
+  /api/v1/onboarding/applications:
+    post:
+      operationId: startApplication
+      summary: Start a partner application on a version-pinned track.
+      x-permission: onboarding:application:create
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [track]
+              properties:
+                track: { type: string, enum: [pandit, partner-vendor, partner-individual] }
+      responses:
+        '201':
+          description: Draft application.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, track, track_version, status]
+                    properties:
+                      id: { $ref: '#/components/schemas/Ulid' }
+                      object: { type: string, enum: [partner_application] }
+                      track: { type: string }
+                      track_version: { type: string }
+                      status: { type: string }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/onboarding/applications/{id}:
+    get:
+      operationId: getApplication
+      summary: Read own application (ownership enforced).
+      x-permission: onboarding:application:view
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Application.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, track, track_version, status]
+                    properties:
+                      id: { $ref: '#/components/schemas/Ulid' }
+                      object: { type: string, enum: [partner_application] }
+                      track: { type: string }
+                      track_version: { type: string }
+                      status: { type: string }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/onboarding/applications/{id}/step/{step}:
+    put:
+      operationId: saveApplicationStep
+      summary: Save draft evidence for one step (idempotent).
+      x-permission: onboarding:application:create
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: step
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [value]
+      responses:
+        '200':
+          description: Saved step.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, step, saved]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/onboarding/applications/{id}/submit:
+    post:
+      operationId: beginApplicationSubmit
+      summary: Validate draft and issue an OTP challenge.
+      x-permission: onboarding:application:submit
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Challenge issued.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, challenge_id]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/onboarding/applications/{id}/submit/confirm:
+    post:
+      operationId: confirmApplicationSubmit
+      summary: Verify the OTP challenge and transition to SUBMITTED.
+      x-permission: onboarding:application:submit
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challenge_id, code]
+      responses:
+        '200':
+          description: Submitted.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+  /api/v1/onboarding/applications/{id}/documents:
+    post:
+      operationId: uploadApplicationDocument
+      summary: Upload a document (multipart, 10MB cap).
+      x-permission: onboarding:application:create
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [kind, file]
+      responses:
+        '201':
+          description: Stored document metadata.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, kind, status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+  /api/v1/onboarding/applications/{id}/status:
+    get:
+      operationId: getApplicationStatus
+      summary: Application state, needs and documents.
+      x-permission: onboarding:application:view
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Status view.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/onboarding/review/queue:
+    get:
+      operationId: listReviewQueue
+      summary: Cursor-paginated SLA-flagged review queue (optional status filter).
+      x-permission: onboarding:review:view
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [SUBMITTED, UNDER_REVIEW, APPEALED]
+      responses:
+        '200':
+          description: Queue items.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+  /api/v1/onboarding/review/{id}:approve:
+    post:
+      operationId: approveApplication
+      summary: Approve an application (audited).
+      x-permission: onboarding:review:approve
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Approved.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status, review_id]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+  /api/v1/onboarding/review/{id}:reject:
+    post:
+      operationId: rejectApplication
+      summary: Reject with reason + countersignature (audited).
+      x-permission: onboarding:review:reject
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason_code, second_reviewer]
+      responses:
+        '200':
+          description: Rejected.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status, review_id]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+  /api/v1/onboarding/review/{id}:request-info:
+    post:
+      operationId: requestApplicationInfo
+      summary: Return to draft with needs preserved.
+      x-permission: onboarding:review:view
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Returned to draft.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status, review_id]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }

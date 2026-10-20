@@ -1,0 +1,842 @@
+[
+  {
+    "slug": "us-new-york",
+    "title": "Ritual planning support for New York Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "New York Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja New York",
+      "United States Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "us new-york puja",
+      "New York online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "New York",
+    "deliveryMode": "online",
+    "summary": "City hub for New York households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-us",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-us",
+      "/services/us-new-york-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/us-new-york-online-puja",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "us-chicago",
+    "title": "Ritual planning support for Chicago Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Chicago Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Chicago",
+      "United States Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "us chicago puja",
+      "Chicago online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Chicago",
+    "deliveryMode": "online",
+    "summary": "City hub for Chicago households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-us",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-us",
+      "/services/us-chicago-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/us-chicago-online-puja",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "us-dallas",
+    "title": "Ritual planning support for Dallas Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Dallas Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Dallas",
+      "United States Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "us dallas puja",
+      "Dallas online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Dallas",
+    "deliveryMode": "online",
+    "summary": "City hub for Dallas households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-us",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-us",
+      "/services/us-dallas-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/us-dallas-online-puja",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "us-san-jose",
+    "title": "Ritual planning support for San Jose Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "San Jose Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja San Jose",
+      "United States Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "us san-jose puja",
+      "San Jose online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "San Jose",
+    "deliveryMode": "online",
+    "summary": "City hub for San Jose households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-us",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-us",
+      "/services/us-san-jose-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/us-san-jose-online-puja",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "us-seattle",
+    "title": "Ritual planning support for Seattle Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Seattle Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Seattle",
+      "United States Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "us seattle puja",
+      "Seattle online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "US",
+    "countryCode": "US",
+    "countryName": "United States",
+    "cityName": "Seattle",
+    "deliveryMode": "online",
+    "summary": "City hub for Seattle households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-us",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-us",
+      "/services/us-seattle-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/us-seattle-online-puja",
+      "/book",
+      "/explore/navdhya-us"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "uk-london",
+    "title": "Ritual planning support for London Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "London Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja London",
+      "United Kingdom Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "uk london puja",
+      "London online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "London",
+    "deliveryMode": "online",
+    "summary": "City hub for London households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-uk",
+      "/services/uk-london-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/uk-london-online-puja",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "uk-birmingham",
+    "title": "Ritual planning support for Birmingham Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Birmingham Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Birmingham",
+      "United Kingdom Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "uk birmingham puja",
+      "Birmingham online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Birmingham",
+    "deliveryMode": "online",
+    "summary": "City hub for Birmingham households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-uk",
+      "/services/uk-birmingham-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/uk-birmingham-online-puja",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "uk-leicester",
+    "title": "Ritual planning support for Leicester Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Leicester Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Leicester",
+      "United Kingdom Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "uk leicester puja",
+      "Leicester online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Leicester",
+    "deliveryMode": "online",
+    "summary": "City hub for Leicester households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-uk",
+      "/services/uk-leicester-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/uk-leicester-online-puja",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "uk-manchester",
+    "title": "Ritual planning support for Manchester Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Manchester Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Manchester",
+      "United Kingdom Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "uk manchester puja",
+      "Manchester online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "UK",
+    "countryCode": "UK",
+    "countryName": "United Kingdom",
+    "cityName": "Manchester",
+    "deliveryMode": "online",
+    "summary": "City hub for Manchester households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-uk",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-uk",
+      "/services/uk-manchester-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/uk-manchester-online-puja",
+      "/book",
+      "/explore/navdhya-uk"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "australia-sydney",
+    "title": "Ritual planning support for Sydney Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Sydney Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Sydney",
+      "Australia Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "australia sydney puja",
+      "Sydney online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Sydney",
+    "deliveryMode": "online",
+    "summary": "City hub for Sydney households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-australia",
+      "/services/australia-sydney-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/australia-sydney-online-puja",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "australia-melbourne",
+    "title": "Ritual planning support for Melbourne Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Melbourne Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Melbourne",
+      "Australia Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "australia melbourne puja",
+      "Melbourne online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Melbourne",
+    "deliveryMode": "online",
+    "summary": "City hub for Melbourne households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-australia",
+      "/services/australia-melbourne-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/australia-melbourne-online-puja",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "australia-brisbane",
+    "title": "Ritual planning support for Brisbane Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Brisbane Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Brisbane",
+      "Australia Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "australia brisbane puja",
+      "Brisbane online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Brisbane",
+    "deliveryMode": "online",
+    "summary": "City hub for Brisbane households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-australia",
+      "/services/australia-brisbane-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/australia-brisbane-online-puja",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "australia-perth",
+    "title": "Ritual planning support for Perth Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Perth Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Perth",
+      "Australia Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "australia perth puja",
+      "Perth online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "Australia",
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "cityName": "Perth",
+    "deliveryMode": "online",
+    "summary": "City hub for Perth households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-australia",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-australia",
+      "/services/australia-perth-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/australia-perth-online-puja",
+      "/book",
+      "/explore/navdhya-australia"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "ireland-dublin",
+    "title": "Ritual planning support for Dublin Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Dublin Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Dublin",
+      "Ireland Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "ireland dublin puja",
+      "Dublin online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Dublin",
+    "deliveryMode": "online",
+    "summary": "City hub for Dublin households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-ireland",
+      "/services/ireland-dublin-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/ireland-dublin-online-puja",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "ireland-cork",
+    "title": "Ritual planning support for Cork Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Cork Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Cork",
+      "Ireland Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "ireland cork puja",
+      "Cork online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Cork",
+    "deliveryMode": "online",
+    "summary": "City hub for Cork households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-ireland",
+      "/services/ireland-cork-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/ireland-cork-online-puja",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "ireland-galway",
+    "title": "Ritual planning support for Galway Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Galway Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Galway",
+      "Ireland Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "ireland galway puja",
+      "Galway online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "Ireland",
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "cityName": "Galway",
+    "deliveryMode": "online",
+    "summary": "City hub for Galway households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-ireland",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-ireland",
+      "/services/ireland-galway-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/ireland-galway-online-puja",
+      "/book",
+      "/explore/navdhya-ireland"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "germany-berlin",
+    "title": "Ritual planning support for Berlin Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Berlin Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Berlin",
+      "Germany Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "germany berlin puja",
+      "Berlin online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Berlin",
+    "deliveryMode": "online",
+    "summary": "City hub for Berlin households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-germany",
+      "/services/germany-berlin-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/germany-berlin-online-puja",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "germany-frankfurt",
+    "title": "Ritual planning support for Frankfurt Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Frankfurt Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Frankfurt",
+      "Germany Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "germany frankfurt puja",
+      "Frankfurt online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Frankfurt",
+    "deliveryMode": "online",
+    "summary": "City hub for Frankfurt households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-germany",
+      "/services/germany-frankfurt-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/germany-frankfurt-online-puja",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "germany-munich",
+    "title": "Ritual planning support for Munich Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Munich Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Munich",
+      "Germany Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "germany munich puja",
+      "Munich online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Munich",
+    "deliveryMode": "online",
+    "summary": "City hub for Munich households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-germany",
+      "/services/germany-munich-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/germany-munich-online-puja",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  },
+  {
+    "slug": "germany-hamburg",
+    "title": "Ritual planning support for Hamburg Hindu families",
+    "cluster": "centers",
+    "schemaType": "LocalBusiness",
+    "searchIntent": "transactional",
+    "primaryKeyword": "Hamburg Hindu ritual planning",
+    "secondaryKeywords": [
+      "online puja Hamburg",
+      "Germany Hindu families",
+      "diaspora ritual support"
+    ],
+    "keywordVariants": [
+      "germany hamburg puja",
+      "Hamburg online ritual guidance"
+    ],
+    "pageFamily": "intl-city-hub",
+    "audienceRegion": "Germany",
+    "countryCode": "DE",
+    "countryName": "Germany",
+    "cityName": "Hamburg",
+    "deliveryMode": "online",
+    "summary": "City hub for Hamburg households looking for claim-safe online ritual guidance or India-side coordination through Navdhya.",
+    "relatedSlugs": [
+      "navdhya-germany",
+      "navdhya-hindu-diaspora",
+      "navdhya-nri-global"
+    ],
+    "requiredInternalLinks": [
+      "/explore/navdhya-germany",
+      "/services/germany-hamburg-online-puja",
+      "/book"
+    ],
+    "conversionPath": [
+      "/services/germany-hamburg-online-puja",
+      "/book",
+      "/explore/navdhya-germany"
+    ],
+    "sourceNotes": [
+      "International city hub does not imply on-ground foreign priest coverage."
+    ]
+  }
+]

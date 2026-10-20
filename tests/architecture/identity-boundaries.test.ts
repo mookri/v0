@@ -1,0 +1,64 @@
+import { test, expect } from 'vitest';
+import * as fs from 'fs';
+import * as path from 'path';
+
+function getAllFiles(dir: string, ext: string[] = ['.ts', '.tsx']): string[] {
+  let results: string[] = [];
+  if (!fs.existsSync(dir)) return results;
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, e.name);
+    if (e.isDirectory()) {
+      if (e.name === 'node_modules' || e.name === '.next') continue;
+      results = results.concat(getAllFiles(full, ext));
+    } else if (ext.some((x) => e.name.endsWith(x))) results.push(full);
+  }
+  return results;
+}
+
+test('identity never imports business capabilities', () => {
+  const dir = path.join(process.cwd(), 'packages', 'identity', 'src');
+  // Word-boundary + path forms (plain substring matching false-positives
+  // on identifiers like padStart containing 'ads').
+  const banned: RegExp[] = [
+    /@navdhya\/(booking|payment|pricing|puja|pandit|ads|content)\b/,
+    /\b(booking|payment|pricing|puja|pandit|ads|content)\//,
+    /\b(pricing|puja|pandit|content)\b/,
+  ];
+  for (const file of getAllFiles(dir)) {
+    const content = fs.readFileSync(file, 'utf8');
+    for (const b of banned) expect(content, `no ${b} in ${file}`).not.toMatch(b);
+  }
+});
+
+test('apps never import credential internals or session secrets', { timeout: 120000 }, () => {
+  for (const app of ['apps/customer', 'apps/web']) {
+    for (const file of getAllFiles(path.join(process.cwd(), app))) {
+      const content = fs.readFileSync(file, 'utf8');
+      // Exception: server-side composition roots (apps/*/server/**) may wire
+      // identity ports (verifier/stores) — that is the documented seam, never
+      // a client/component import.
+      const isServerComposition = file.includes(`${path.sep}server${path.sep}`);
+      if (!isServerComposition) {
+        expect(content, `no otp provider in ${file}`).not.toMatch(/otp-provider|CredentialVerifier/);
+      }
+      expect(content, `no localStorage tokens in ${file}`).not.toMatch(/localStorage\s*\.\s*(getItem|setItem)\s*\(\s*["'].*token/i);
+      // Tokens must never ride URLs (query/fragment parameters leak
+      // through logs, history and Referer). The bare FIELD NAMES are
+      // not URL placement: RFC 6749 §5.1 token responses carry
+      // `access_token`/`refresh_token` JSON fields and the OIDC
+      // back-channel logout spec requires `token_type_hint:
+      // "access_token"` — the protocol surface legitimately spells
+      // them (amended 2026-10-17 when the federation callback landed).
+      expect(content, `no token in url in ${file}`).not.toMatch(
+        /[?&#](access_token|refresh_token)=|searchParams\.(set|append)\(\s*['"](access_token|refresh_token)['"]/,
+      );
+    }
+  }
+});
+
+test('no cross-app imports', () => {
+  for (const file of getAllFiles(path.join(process.cwd(), 'apps', 'customer'))) {
+    const content = fs.readFileSync(file, 'utf8');
+    expect(content, `no apps/web in ${file}`).not.toMatch(/apps\/web/);
+  }
+});

@@ -1,0 +1,12 @@
+{
+  "openapi": "3.0.0",
+  "info": { "title": "Navdhya Customer BFF", "version": "1.0.0" },
+  "paths": {
+    "/api/home": { "get": { "operationId": "getHome", "responses": { "200": { "description": "Customer home" } } } },
+    "/api/bookings": { "get": { "operationId": "listBookings", "responses": { "200": { "description": "Booking list" } } } },
+    "/api/bookings/{bookingId}": { "get": { "operationId": "getBooking", "responses": { "200": { "description": "Booking detail" } } } },
+    "/api/bookings/{bookingId}/cancel": { "post": { "operationId": "cancelBooking", "responses": { "200": { "description": "Cancel result" } } } },
+    "/api/bookings/{bookingId}/reschedule": { "post": { "operationId": "rescheduleBooking", "responses": { "200": { "description": "Reschedule result" } } } },
+    "/api/profile": { "get": { "operationId": "getProfile", "responses": { "200": { "description": "Profile" } } } }
+  }
+}
