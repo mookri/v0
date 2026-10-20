@@ -1,14 +1,19 @@
 # Production Cutover Runbook (phase 25)
 
+> **Status: Target.** This is the flag-gated cutover plan; it is not evidence
+> that live traffic has been flipped. Deploy and recovery context:
+> [`DEPLOYMENT.md`](DEPLOYMENT.md) and [`ROLLBACK.md`](ROLLBACK.md).
+
 Scope: flipping live traffic from web-served customer/partner routes to the
 customer/partner apps via the strangler (flag-gated 307 redirects).
 Web routes stay deployed throughout — rollback is flag-off, instant.
 
 ## Preconditions (all must be green)
 
-1. Staging gate per app passes on the release candidate
-   (`docs/operations/staging-deploy.md`): build ✓, health ✓, envelope
-   errors ✓, fallback routes live ✓.
+1. Staging gate per app passes on the release candidate: build ✓, health ✓,
+   envelope errors ✓, fallback routes live ✓. The 2026-10-01 drill in
+   [`staging-deploy.md`](staging-deploy.md) is historical; re-run the gate
+   before a live flip.
 2. Full suite green: arch gates + unit suites (see `migration-status.yaml`
    baselines).
 3. `turbo run typecheck` 40/40.
