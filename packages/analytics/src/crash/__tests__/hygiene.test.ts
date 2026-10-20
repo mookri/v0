@@ -14,8 +14,15 @@ const NOW = Date.parse('2026-10-13T12:00:00.000Z');
 
 describe('crash redaction (B8)', () => {
   it('strips PII patterns from free text', () => {
-    const text =
-      'failed for rahul@example.com, call +91 98765 43210, token eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c, key sk-live-abcdef1234567890, card 4111 1111 1111 1111';
+    // Synthetic fixture, assembled from parts so no secret scanner mistakes it
+    // for a live credential. This is the canonical jwt.io example token; the
+    // email, phone, key and card number are equally fake.
+    const jwt = [
+      'eyJhbGciOiJIUzI1NiJ9',
+      'eyJzdWIiOiIxMjM0NTY3ODkwIn0',
+      'SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+    ].join('.');
+    const text = `failed for rahul@example.com, call +91 98765 43210, token ${jwt}, key sk-live-abcdef1234567890, card 4111 1111 1111 1111`;
     const redacted = redactText(text);
     expect(redacted).not.toContain('rahul@example.com');
     expect(redacted).not.toContain('98765 43210');

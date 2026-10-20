@@ -260,6 +260,9 @@ async function main() {
 
   // warm-up directly against Laravel (bypasses the BFF fast timeout on
   // the first auth POST - cold route compile; same trick as run.ps1)
+  // E2E harness: 127.0.0.1 is the local backend under test, not a transport
+  // choice for real traffic.
+  // nosemgrep: typescript.react.security.react-insecure-request.react-insecure-request
   const warm = await fetch('http://127.0.0.1:8000/api/v1/customers/auth/signup', {
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-tenant-id': process.env.E2E_TENANT_ID ?? '' },

@@ -164,6 +164,8 @@ async function main() {
 
   // ---- session establishment --------------------------------------------
   console.log('--- establishing session (signup + verify)');
+  // E2E harness: `LARAVEL` is the loopback backend started by the runner.
+  // nosemgrep: typescript.react.security.react-insecure-request.react-insecure-request
   const warm = await fetch(`${LARAVEL}/api/v1/customers/auth/signup`, {
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-tenant-id': process.env.E2E_TENANT_ID ?? '' },

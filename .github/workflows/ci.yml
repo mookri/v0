@@ -40,6 +40,13 @@ jobs:
     name: meta
     runs-on: ubuntu-latest
     timeout-minutes: 6
+    permissions:
+      # Job-level permissions replace the workflow-level ones entirely, so
+      # `contents` must be repeated. `pull-requests: read` is required by
+      # dorny/paths-filter, which lists the PR's changed files through the API;
+      # without it the action dies with "Resource not accessible by integration".
+      contents: read
+      pull-requests: read
     outputs:
       apps_changed: ${{ steps.filter.outputs.apps }}
       packages_changed: ${{ steps.filter.outputs.packages }}

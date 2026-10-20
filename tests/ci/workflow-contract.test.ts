@@ -99,6 +99,29 @@ describe('workflow contract', () => {
     expect(violations).toEqual([]);
   });
 
+  it('grants pull-requests: read to jobs that call the PR API', () => {
+    // dorny/paths-filter and gitleaks both enumerate a pull request's commits
+    // through the API. With only `contents: read` they die with "Resource not
+    // accessible by integration" before doing any work — the job fails, and in
+    // gitleaks' case nothing is ever scanned. Job-level permissions replace the
+    // workflow-level ones, so the effective block is what counts.
+    const prApiActions = ['dorny/paths-filter@', 'gitleaks/gitleaks-action@'];
+    const missing: string[] = [];
+
+    for (const { file, text } of workflows) {
+      const workflowPermissions = /^permissions:\s*\n((?: {2}[^\n]*\n)+)/m.exec(text)?.[1] ?? '';
+      for (const id of jobIds(text)) {
+        const block = jobBlock(text, id);
+        if (!prApiActions.some((action) => block.includes(action))) continue;
+        const jobPermissions = /^ {4}permissions:\s*\n((?: {6}[^\n]*\n)+)/m.exec(block)?.[1] ?? '';
+        const effective = jobPermissions || workflowPermissions;
+        if (!/pull-requests:\s*read/.test(effective)) missing.push(`${file}#${id}`);
+      }
+    }
+
+    expect(missing).toEqual([]);
+  });
+
   it('declares workflow-level permissions (least privilege by default)', () => {
     for (const { file, text } of workflows) {
       expect(text, `${file} must declare permissions:`).toMatch(/^permissions:/m);

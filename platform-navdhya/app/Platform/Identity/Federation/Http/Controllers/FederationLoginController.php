@@ -345,6 +345,9 @@ final class FederationLoginController
         // cost the same — no account-existence oracle via response time.
         $valid = Hash::check(
             (string) $validated['password'],
+            // Laravel's well-known bcrypt of "password" — a public constant used
+            // only to equalise timing, never a credential.
+            // nosemgrep: generic.secrets.security.detected-bcrypt-hash.detected-bcrypt-hash
             (string) ($user->password ?? '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
         ) && $user !== null && $user->isActive();
 

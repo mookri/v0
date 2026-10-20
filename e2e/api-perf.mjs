@@ -115,6 +115,8 @@ function resetWindow() {
 // findUser queries, no challenge row) that is never recorded as a sample.
 async function warmup() {
   backendHits = 1;
+  // E2E harness: these scripts talk to a loopback HTTP backend on purpose.
+  // nosemgrep: typescript.react.security.react-insecure-request.react-insecure-request
   await fetch(`${BFF}/api/auth/otp`, {
     method: 'POST',
     headers: {

@@ -38,6 +38,12 @@ jobs:
     name: secrets
     runs-on: ubuntu-latest
     timeout-minutes: 8
+    permissions:
+      # gitleaks enumerates the PR's commits through the API; with only
+      # `contents: read` it fails with "Resource not accessible by integration"
+      # and never actually scans anything.
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@v4
         with:
@@ -125,7 +131,7 @@ jobs:
           artifact-name: sbom-${{ github.sha }}.spdx.json
           upload-artifact: true
       - name: Scan filesystem
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
           scan-ref: .
