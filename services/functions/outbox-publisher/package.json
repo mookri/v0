@@ -1,0 +1,17 @@
+{
+  "name": "@navdhya/fn-outbox-publisher",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/publisher.ts",
+  "exports": { ".": "./src/publisher.ts" },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@navdhya/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}

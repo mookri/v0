@@ -1,0 +1,6 @@
+{
+    "code": "ghost",
+    "name": "Ghost",
+    "version": "1.0.0",
+    "dependencies": ["missing_module"]
+}

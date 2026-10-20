@@ -1,0 +1,295 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - img [ref=e8]
+          - generic [ref=e10]: We are Currently in Development Mode, Further Information You can call us
+        - generic [ref=e11]:
+          - link "About Us" [ref=e12] [cursor=pointer]:
+            - /url: /about
+          - link "Blog" [ref=e13] [cursor=pointer]:
+            - /url: /resources/blog
+          - link "Contact" [ref=e14] [cursor=pointer]:
+            - /url: /contact
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - link "Navdhya Home" [ref=e19] [cursor=pointer]:
+            - /url: /
+            - img "Navdhya Ritual Services Logo" [ref=e20]
+          - navigation [ref=e21]:
+            - link "Home" [ref=e22] [cursor=pointer]:
+              - /url: /
+            - button "Pujas" [ref=e23]
+            - button "Pandits" [ref=e26]
+            - button "Learning" [ref=e29]
+            - button "Community" [ref=e32]
+            - button "Resources" [ref=e35]
+            - link "Contact" [ref=e38] [cursor=pointer]:
+              - /url: /contact
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - img [ref=e41]
+            - generic [ref=e43]
+          - button [ref=e46]:
+            - img [ref=e47]
+          - button "0" [ref=e50]:
+            - img [ref=e51]
+            - generic [ref=e53]: "0"
+          - button "0" [ref=e54]:
+            - img [ref=e55]
+            - generic [ref=e59]: "0"
+    - main [ref=e60]:
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - img [ref=e66]
+            - text: Trust-first spiritual operating system
+          - generic [ref=e69]:
+            - paragraph [ref=e70]
+            - paragraph [ref=e71]: Navdhya is evolving from a service site into a trusted marketplace for temples, priests, astrologers, rituals, donations, and long-term spiritual journeys. The structure is inspired by lightweight mobile discovery, but rebuilt for a premium sacred-tech experience.
+          - generic [ref=e72]:
+            - generic [ref=e73]
+            - generic [ref=e78]
+          - generic [ref=e81]:
+            - generic [ref=e82]
+            - generic [ref=e86]
+            - generic [ref=e90]
+        - generic [ref=e96]:
+          - generic [ref=e97]:
+            - generic [ref=e98]
+            - img [ref=e101]
+          - generic [ref=e105]:
+            - img [ref=e106]
+            - generic [ref=e109]: Search for puja, temple, pandit, or muhurta
+            - img [ref=e110]
+          - generic [ref=e113]:
+            - generic [ref=e114]
+            - generic [ref=e118]
+            - generic [ref=e123]
+            - generic [ref=e127]
+          - generic [ref=e132]:
+            - generic [ref=e133]
+            - generic [ref=e140]
+      - generic [ref=e147]:
+        - generic [ref=e148]:
+          - generic [ref=e149]:
+            - paragraph [ref=e150]: Information Architecture
+            - heading "Search first, then guide every next step." [level=2] [ref=e151]
+            - paragraph [ref=e152]: "The layout turns the homepage into a command center: sacred search, category discovery, urgency cues, and trust explanations before any hard sell."
+          - generic [ref=e153]: "Personalized cues: festival calendar, location, past bookings, and spiritual preferences."
+        - generic [ref=e154]:
+          - generic [ref=e155]:
+            - img [ref=e157]
+            - heading "Temple Directory" [level=3] [ref=e159]
+            - paragraph [ref=e160]: Verified temples with darshan slots, live queue estimates, and donation access.
+          - generic [ref=e161]:
+            - img [ref=e163]
+            - heading "Book a Priest" [level=3] [ref=e166]
+            - paragraph [ref=e167]: Match rituals with screened pandits by language, sampradaya, and response speed.
+          - generic [ref=e168]:
+            - img [ref=e170]
+            - heading "Astrology" [level=3] [ref=e172]
+            - paragraph [ref=e173]: Get muhurta, kundli, and remedy guidance through chat, audio, or video.
+          - generic [ref=e174]:
+            - img [ref=e176]
+            - heading "Online Puja" [level=3] [ref=e179]
+            - paragraph [ref=e180]: Coordinate remote ceremonies for families in different cities and time zones.
+          - generic [ref=e181]:
+            - img [ref=e183]
+            - heading "Donations" [level=3] [ref=e188]
+            - paragraph [ref=e189]: Support temple causes with transparent funds, receipts, and recurring giving.
+          - generic [ref=e190]:
+            - img [ref=e192]
+            - heading "Festivals" [level=3] [ref=e194]
+            - paragraph [ref=e195]: Discover timely rituals, local events, and limited festival booking windows.
+          - generic [ref=e196]:
+            - img [ref=e198]
+            - heading "Live Darshan" [level=3] [ref=e200]
+            - paragraph [ref=e201]: Join live temple streams and track special aarti or abhishek sessions.
+          - generic [ref=e202]:
+            - img [ref=e204]
+            - heading "Community" [level=3] [ref=e209]
+            - paragraph [ref=e210]: Share family milestones, ask ritual questions, and follow temple updates.
+      - generic [ref=e212]:
+        - generic [ref=e213]:
+          - generic [ref=e214]:
+            - paragraph [ref=e215]: What's New
+            - heading "Discovery modules inspired by mobile, rebuilt for Navdhya." [level=2] [ref=e216]
+          - paragraph [ref=e217]: The reference app gave us softness, rounded card rhythm, and lightweight navigation. The content, trust logic, and sacred tone are now unmistakably Navdhya.
+        - generic [ref=e218]:
+          - article [ref=e219]:
+            - generic [ref=e220]
+            - generic [ref=e224]
+          - article [ref=e230]:
+            - generic [ref=e231]
+            - generic [ref=e235]
+      - generic [ref=e242]:
+        - generic [ref=e243]:
+          - paragraph [ref=e244]: Marketplace Liquidity
+          - heading "Priests, temples, and astrologers should feel alive, not listed." [level=2] [ref=e245]
+          - generic [ref=e246]:
+            - article [ref=e247]
+            - article [ref=e262]
+            - article [ref=e277]
+        - generic [ref=e292]:
+          - generic [ref=e293]:
+            - generic [ref=e294]
+            - img [ref=e297]
+          - generic [ref=e299]:
+            - generic [ref=e300]
+            - generic [ref=e303]
+            - generic [ref=e306]
+      - generic [ref=e310]:
+        - generic [ref=e311]:
+          - paragraph [ref=e312]: Booking Engine
+          - heading "Ritual booking without ritual confusion." [level=2] [ref=e313]
+          - paragraph [ref=e314]: Instead of one big form, Navdhya should guide the family across a clear eight-step flow and inject support when uncertainty is highest.
+          - generic [ref=e315]:
+            - generic [ref=e316]
+            - generic [ref=e319]
+            - generic [ref=e322]
+            - generic [ref=e325]
+            - generic [ref=e328]
+            - generic [ref=e331]
+            - generic [ref=e334]
+            - generic [ref=e337]
+        - generic [ref=e340]:
+          - generic [ref=e341]:
+            - paragraph [ref=e342]: Booking Tracker
+            - heading "From confirmed to blessings delivered" [level=3] [ref=e343]
+            - generic [ref=e344]
+          - generic [ref=e363]:
+            - paragraph [ref=e364]: Smart Assistance
+            - generic [ref=e365]
+      - generic [ref=e376]:
+        - generic [ref=e377]:
+          - paragraph [ref=e378]: Trust Systems
+          - heading "Trust before conversion, on every screen." [level=2] [ref=e379]
+          - generic [ref=e380]:
+            - generic [ref=e381]
+            - generic [ref=e386]
+            - generic [ref=e391]
+            - generic [ref=e396]
+        - generic [ref=e401]:
+          - generic [ref=e402]:
+            - paragraph [ref=e403]: Devotees
+            - paragraph [ref=e404]: Quick ritual booking, transparent pricing, repeat spiritual routines, family-safe coordination.
+          - generic [ref=e405]:
+            - paragraph [ref=e406]: Priests
+            - paragraph [ref=e407]: Availability calendar, trust dashboard, package clarity, verified lead pipeline.
+          - generic [ref=e408]:
+            - paragraph [ref=e409]: Astrologers
+            - paragraph [ref=e410]: Session modes, consultation queue, profile credibility, digital follow-up tools.
+          - generic [ref=e411]:
+            - paragraph [ref=e412]: Temple Admins
+            - paragraph [ref=e413]: Event operations, donations analytics, priest roster, darshan capacity control.
+          - generic [ref=e414]:
+            - paragraph [ref=e415]: Temple Admin Control Center
+            - paragraph [ref=e416]: Event calendar, donation analytics, priest roster, darshan slots, crowd flow, festival orchestration, and live-stream management belong in one operational dashboard, not scattered tools.
+      - generic [ref=e418]:
+        - generic [ref=e419]:
+          - paragraph [ref=e420]: Desktop Architecture
+          - heading "Desktop is not stretched mobile." [level=2] [ref=e421]
+          - paragraph [ref=e422]: For temple admins and high-intent planners, the desktop experience should behave like a calm productivity workspace with simultaneous filters, cards, and operational context.
+        - generic [ref=e424]:
+          - generic [ref=e425]:
+            - paragraph [ref=e426]: Left Nav
+            - generic [ref=e427]
+          - generic [ref=e433]:
+            - generic [ref=e434]
+            - generic [ref=e439]
+          - generic [ref=e452]:
+            - generic [ref=e453]
+            - generic [ref=e456]
+            - generic [ref=e459]
+      - generic [ref=e463]:
+        - generic [ref=e464]:
+          - generic [ref=e465]:
+            - paragraph [ref=e466]: Implementation Direction
+            - heading "Navdhya should feel like trust infrastructure, not a prettier directory." [level=2] [ref=e467]
+            - paragraph [ref=e468]: "This homepage now points the product in that direction: sacred minimalism, clearer behavioral UX, marketplace depth, and stronger trust explanations. The next layer is wiring these patterns into service listings, vendor panels, and booking flows."
+          - generic [ref=e469]:
+            - link "Explore service IA" [ref=e470] [cursor=pointer]:
+              - /url: /services
+            - link "Start the next refactor" [ref=e471] [cursor=pointer]:
+              - /url: /contact
+        - generic [ref=e472]:
+          - generic [ref=e473]:
+            - paragraph [ref=e474]: Journey Maps
+            - paragraph [ref=e475]: Devotee, priest, astrologer, and temple-admin flows need dedicated screens next.
+          - generic [ref=e476]:
+            - paragraph [ref=e477]: Component System
+            - paragraph [ref=e478]: Search, trust badges, steppers, timelines, analytics widgets, and status chips are now clearly defined.
+          - generic [ref=e479]:
+            - paragraph [ref=e480]: Technical Boundaries
+            - paragraph [ref=e481]: Next.js, TypeScript, Tailwind, and motion-ready structures remain aligned with the existing stack.
+    - contentinfo [ref=e482]:
+      - generic [ref=e484]:
+        - generic [ref=e485]:
+          - img "Navdhya Ritual Services Logo" [ref=e486]
+          - paragraph [ref=e487]: Verified pandit booking, home pujas, online rituals, and astrology support for families across Delhi NCR.
+          - generic [ref=e488]:
+            - generic [ref=e489]
+            - generic [ref=e494]
+            - generic [ref=e498]
+          - generic [ref=e503]:
+            - link "Facebook" [ref=e504] [cursor=pointer]:
+              - /url: https://www.facebook.com/thenavdhya
+            - link "Instagram" [ref=e507] [cursor=pointer]:
+              - /url: https://www.instagram.com/thenavdhya
+            - link "YouTube" [ref=e511] [cursor=pointer]:
+              - /url: https://www.youtube.com/@thenavdhya
+        - generic [ref=e515]:
+          - heading "Quick Links" [level=3] [ref=e516]
+          - list [ref=e517]:
+            - listitem [ref=e518]
+            - listitem [ref=e520]
+            - listitem [ref=e522]
+            - listitem [ref=e524]
+            - listitem [ref=e526]
+            - listitem [ref=e528]
+        - generic [ref=e530]:
+          - heading "Our Services" [level=3] [ref=e531]
+          - list [ref=e532]:
+            - listitem [ref=e533]
+            - listitem [ref=e535]
+            - listitem [ref=e537]
+            - listitem [ref=e539]
+            - listitem [ref=e541]
+            - listitem [ref=e543]
+        - generic [ref=e545]:
+          - heading "Astrology" [level=3] [ref=e546]
+          - list [ref=e547]:
+            - listitem [ref=e548]
+            - listitem [ref=e550]
+            - listitem [ref=e552]
+            - listitem [ref=e554]
+            - listitem [ref=e556]
+            - listitem [ref=e558]
+        - generic [ref=e560]:
+          - heading "Our Centers" [level=3] [ref=e561]
+          - list [ref=e562]:
+            - listitem [ref=e563]
+            - listitem [ref=e565]
+            - listitem [ref=e567]
+            - listitem [ref=e569]
+      - generic [ref=e572]:
+        - generic [ref=e574]:
+          - img "Accepted payment method 1" [ref=e575]
+          - img "Accepted payment method 2" [ref=e576]
+          - img "Accepted payment method 3" [ref=e577]
+          - img "Accepted payment method 4" [ref=e578]
+        - generic [ref=e579]:
+          - link "Privacy Policy" [ref=e580] [cursor=pointer]:
+            - /url: /privacy-policy
+          - link "Terms of Service" [ref=e581] [cursor=pointer]:
+            - /url: /terms-of-service
+          - link "Refund Policy" [ref=e582] [cursor=pointer]:
+            - /url: /refund-policy
+          - link "Cookie Policy" [ref=e583] [cursor=pointer]:
+            - /url: /cookie-policy
+        - paragraph [ref=e584]: © 2026 Navdhya. All rights reserved.
+  - button "Open Next.js Dev Tools" [ref=e590] [cursor=pointer]:
+    - img [ref=e591]
+  - alert [ref=e594]

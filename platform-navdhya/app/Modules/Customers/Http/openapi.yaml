@@ -1,0 +1,950 @@
+# OpenAPI 3.1 fragment — customers module auth (B2: OTP + signup + HMAC login).
+openapi: 3.1.0
+info:
+  title: Navdhya Customers — Self-Service
+  version: 0.2.0
+paths:
+  /api/v1/customers/auth/otp:
+    post:
+      operationId: requestCustomerOtp
+      summary: Issue an OTP challenge (public, throttled, no oracle).
+      x-gate: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenant_id, purpose, identity]
+      responses:
+        '202':
+          description: Challenge issued (identical for unknown identities).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, challenge_id, expires_in]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+  /api/v1/customers/auth/signup:
+    post:
+      operationId: signupCustomer
+      summary: Start signup (account is created at verify, not here).
+      x-gate: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenant_id, phone, name]
+      responses:
+        '202':
+          description: Signup challenge issued.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, challenge_id, expires_in]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+  /api/v1/customers/auth/verify:
+    post:
+      operationId: verifyCustomerSignup
+      summary: Verify signup code (creates user, membership, profile; 201 + token).
+      x-gate: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenant_id, challenge_id, code]
+      responses:
+        '201':
+          description: Account created; HMAC actor token issued.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, token, expires_at, tenant_id, actor]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+  /api/v1/customers/auth/login:
+    post:
+      operationId: loginCustomer
+      summary: Verify login code (200 + token; deactivated is 403).
+      x-gate: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenant_id, challenge_id, code]
+      responses:
+        '200':
+          description: Authenticated; HMAC actor token issued.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, token, expires_at, tenant_id, actor]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+  /api/v1/customers/auth/logout:
+    post:
+      operationId: logoutCustomer
+      summary: Best-effort logout (client discards the bearer).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Signed out.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, signed_out]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+  /api/v1/customers/profile:
+    get:
+      operationId: getCustomerProfile
+      summary: Read the caller's profile (masked contacts).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Profile.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, status]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      operationId: updateCustomerProfile
+      summary: Strict profile update (unknown fields are 422).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                display_name: { type: string, nullable: true }
+                locale: { type: string }
+      responses:
+        '200':
+          description: Updated profile.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, status]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/profile:deactivate:
+    post:
+      operationId: deactivateCustomer
+      summary: Deactivate own account (fresh OTP proof required).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challenge_id, code]
+      responses:
+        '200':
+          description: Deactivated.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, id, status]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/profile:reactivate:
+    post:
+      operationId: reactivateCustomer
+      summary: Reactivate own account (public, fresh OTP proof required).
+      x-gate: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenant_id, challenge_id, code]
+      responses:
+        '200':
+          description: Reactivated.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, id, status]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/verifications:
+    get:
+      operationId: getVerificationStatus
+      summary: Masked contact verification status.
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Status.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+    post:
+      operationId: requestVerification
+      summary: Issue a verification challenge for a new contact value.
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [channel, value]
+      responses:
+        '202':
+          description: Challenge issued.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, challenge_id, expires_in]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/verifications/{challengeId}:confirm:
+    post:
+      operationId: confirmVerification
+      summary: Confirm a verification code (applies the contact change).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: challengeId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+      responses:
+        '200':
+          description: Verified.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, channel]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/addresses:
+    get:
+      operationId: listCustomerAddresses
+      summary: Cursor-paginated caller address book.
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Addresses.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+    post:
+      operationId: createCustomerAddress
+      summary: Add an address (cap 20 per customer).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [label, line1, city, state, postal_code]
+      responses:
+        '201':
+          description: Created address.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/addresses/{id}:
+    patch:
+      operationId: updateCustomerAddress
+      summary: Update own address.
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Updated address.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      operationId: deleteCustomerAddress
+      summary: Delete own address (default promotes a successor).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, deleted]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/customers/addresses/{id}:default:
+    post:
+      operationId: defaultCustomerAddress
+      summary: Swap the default address.
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: New default.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/customers/saved:
+    get:
+      operationId: listSavedItems
+      summary: Cursor-paginated saved bookmarks.
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Saved items.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+    post:
+      operationId: saveItem
+      summary: Bookmark a reference (opaque ref, enriched by readers).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ref_type, ref_id]
+      responses:
+        '201':
+          description: Saved.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, ref_type, ref_id]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/saved/{id}:
+    delete:
+      operationId: unsaveItem
+      summary: Remove a bookmark.
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Removed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, deleted]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/customers/notifications:
+    get:
+      operationId: listCustomerNotifications
+      summary: Cursor-paginated notifications, newest first.
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Notifications.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+  /api/v1/customers/notifications/{id}:read:
+    post:
+      operationId: readCustomerNotification
+      summary: Mark one notification read.
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Marked read.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/customers/notifications:read-all:
+    post:
+      operationId: readAllCustomerNotifications
+      summary: Mark all notifications read (reports count flipped).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Marked read.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, read]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/settings:
+    get:
+      operationId: getCustomerSettings
+      summary: Settings merged over v1 defaults.
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Settings.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, settings]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+    patch:
+      operationId: updateCustomerSettings
+      summary: Update known keys (unknown keys and mistyped values are 422).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Updated settings.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, settings]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/discover:
+    get:
+      operationId: getDiscoverFeed
+      summary: Deterministic recommended/popular/recent feed.
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Feed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [recommended, popular, recent]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/activity:
+    get:
+      operationId: listCustomerActivity
+      summary: Cursor-paginated account history (optional kind filter).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: kind
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Activity items.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+  /api/v1/customers/referrals:
+    get:
+      operationId: getReferralSummary
+      summary: Caller referral code, count, and masked referred list.
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Referral summary.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, code, referred_count, referrals]
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+  /api/v1/customers/support/tickets:
+    get:
+      operationId: listSupportTickets
+      summary: Cursor-paginated caller tickets (list excludes threads).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Tickets.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+    post:
+      operationId: openSupportTicket
+      summary: Open a ticket with an initial message (cap 10 open).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [subject, body, category]
+      responses:
+        '201':
+          description: Opened ticket with thread.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, status]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/customers/support/tickets/{id}:
+    get:
+      operationId: getSupportTicket
+      summary: Ticket detail with thread.
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Ticket.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, status]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/customers/support/tickets/{id}/messages:
+    post:
+      operationId: replySupportTicket
+      summary: Reply (re-opens CLOSED tickets).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+      responses:
+        '201':
+          description: Reply recorded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, status]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/customers/support/tickets/{id}:close:
+    post:
+      operationId: closeSupportTicket
+      summary: Close a ticket (already-closed is 409).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Closed ticket.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, status]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/customers/support/staff/tickets:
+    get:
+      operationId: listStaffSupportTickets
+      summary: Tenant-wide ticket queue (staff console, capability-gated).
+      x-permission: customers:support:view
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          schema: { type: string, enum: [OPEN, CLOSED] }
+      responses:
+        '200':
+          description: Queue page (newest first) with masked customer identities.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/customers/support/staff/tickets/{id}:
+    get:
+      operationId: getStaffSupportTicket
+      summary: Ticket detail with the full thread and authorship.
+      x-permission: customers:support:view
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Ticket with messages (customer/staff authorship on each row).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, status]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/customers/support/staff/tickets/{id}/messages:
+    post:
+      operationId: staffReplySupportTicket
+      summary: Staff reply (re-opens CLOSED tickets; shared console action).
+      x-permission: customers:support:manage
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+      responses:
+        '201':
+          description: Reply recorded (ticket status included).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, status]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+  /api/v1/customers/support/staff/tickets/{id}:close:
+    post:
+      operationId: staffCloseSupportTicket
+      summary: Close a ticket (already-closed is 409; shared console action).
+      x-permission: customers:support:manage
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Closed ticket.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, status]
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: state_forbidden - ticket already closed.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }

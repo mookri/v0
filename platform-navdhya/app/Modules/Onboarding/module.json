@@ -1,0 +1,25 @@
+{
+  "code": "onboarding",
+  "name": "Partner Onboarding",
+  "version": "1.0.0",
+  "phase": 1,
+  "priority": 100,
+  "dependencies": [],
+  "actions": ["submit", "review"],
+  "permissions": [
+    { "code": "onboarding:application:create", "name": "Start applications" },
+    { "code": "onboarding:application:view", "name": "View applications" },
+    { "code": "onboarding:application:submit", "name": "Submit applications" },
+    { "code": "onboarding:review:view", "name": "View review queue" },
+    { "code": "onboarding:review:approve", "name": "Approve applications", "sensitive": true },
+    { "code": "onboarding:review:reject", "name": "Reject applications", "sensitive": true }
+  ],
+  "scopes": ["onboarding:applicant", "onboarding:reviewer"],
+  "events": [
+    { "name": "onboarding.application.submitted", "schema": "v1" },
+    { "name": "onboarding.application.approved", "schema": "v1" },
+    { "name": "onboarding.application.rejected", "schema": "v1" }
+  ],
+  "navigation": [],
+  "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/onboarding" }
+}

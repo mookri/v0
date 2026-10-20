@@ -1,0 +1,149 @@
+# OpenAPI 3.1 fragment — identity invites (track-scoped, all personas).
+openapi: 3.1.0
+info:
+  title: Navdhya Identity — Invites
+  version: 1.0.0
+paths:
+  /api/v1/identity/invites:
+    get:
+      operationId: listInvites
+      x-gate: ownership
+      summary: List tenant invites (metadata only; tokens never listed).
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Invite metadata for the tenant (no token material).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required: [id, object, track, identifier, state, expires_at]
+                      properties:
+                        id: { $ref: '#/components/schemas/Ulid' }
+                        object: { type: string }
+                        track: { type: string }
+                        identifier: { type: string }
+                        roles: { type: array, items: { type: string } }
+                        state: { type: string, enum: [ISSUED, ACCEPTED, EXPIRED, REVOKED] }
+                        expires_at: { type: string }
+                        created_at: { type: [string, 'null'] }
+                        accepted_by: { type: [string, 'null'] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+    post:
+      operationId: issueInvite
+      x-gate: ownership
+      summary: Issue a track-scoped invite (token shown once).
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenant_id, track, identifier]
+              properties:
+                tenant_id: { $ref: '#/components/schemas/Ulid' }
+                track: { type: string, enum: [pandit, partner-vendor, partner-individual, customer, staff] }
+                identifier: { type: string }
+                roles: { type: array, items: { type: string } }
+                ttl_hours: { type: integer, minimum: 1, maximum: 168 }
+      responses:
+        '201':
+          description: Issued invite with one-time token.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, token, expires_at]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
+        '429':
+          description: Too many invites.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/identity/invites:accept:
+    post:
+      operationId: acceptInvite
+      x-gate: public
+      summary: Accept an invite (public; token is the credential).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token: { type: string }
+      responses:
+        '200':
+          description: Acceptance with user, membership and seed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, user_id, membership_id]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+  /api/v1/identity/invites/{id}:revoke:
+    post:
+      operationId: revokeInvite
+      x-gate: ownership
+      summary: Revoke an invite before acceptance.
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Revoked.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, state]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }

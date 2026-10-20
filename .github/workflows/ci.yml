@@ -1,0 +1,356 @@
+# Navdhya CI — bugs first, then quality, then build.
+#
+# Design rules (full rationale: docs/CI-CD-PIPELINE-PLAN.md):
+#   1. Exactly one required check per workflow: `ci-gate`.
+#   2. A gate is either blocking or explicitly soft (`(soft)` suffix + GATE_SOFT).
+#      There is no third state and no truthy fallback anywhere in this file.
+#   3. The workflow itself is never path-filtered — a required check that is
+#      skipped blocks merges forever. Heavy jobs are skipped inside the graph
+#      and `skipped` counts as a pass.
+#   4. Fork PRs never receive secrets and run with read-only permissions.
+
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  merge_group:
+  workflow_call:
+
+# Merge-queue builds must never be cancelled by a later push.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  CI: 'true'
+  NEXT_TELEMETRY_DISABLED: '1'
+  TURBO_TELEMETRY_DISABLED: '1'
+  DO_NOT_TRACK: '1'
+  FORCE_COLOR: '0'
+
+jobs:
+  # ── R0 · metadata, workflow lint, invariants ───────────────────────────────
+  meta:
+    name: meta
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    permissions:
+      # Job-level permissions replace the workflow-level ones entirely, so
+      # `contents` must be repeated. `pull-requests: read` is required by
+      # dorny/paths-filter, which lists the PR's changed files through the API;
+      # without it the action dies with "Resource not accessible by integration".
+      contents: read
+      pull-requests: read
+    outputs:
+      apps_changed: ${{ steps.filter.outputs.apps }}
+      packages_changed: ${{ steps.filter.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Turbo --affected and gitleaks both need real history.
+          fetch-depth: 0
+
+      - name: Detect changed areas
+        id: filter
+        if: github.event_name == 'pull_request'
+        uses: dorny/paths-filter@v4
+        with:
+          filters: |
+            apps:
+              - 'apps/**'
+              - 'packages/**'
+              - 'infrastructure/**'
+              - 'tooling/**'
+              - 'pnpm-lock.yaml'
+              - 'turbo.json'
+            packages:
+              - 'packages/**'
+              - 'pnpm-lock.yaml'
+
+      - name: Lint the workflow files
+        # Workflows are code: a typo here silently disables a gate.
+        run: docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.7
+
+      - name: Preflight invariants
+        run: |
+          set -euo pipefail
+          test -f pnpm-lock.yaml || { echo "::error::pnpm-lock.yaml is missing"; exit 1; }
+          node -e "
+            const p = require('./package.json');
+            if (!p.packageManager || !p.packageManager.startsWith('pnpm@9.')) {
+              console.error('::error::packageManager must pin pnpm 9.x');
+              process.exit(1);
+            }
+          "
+          if [ -z "$(git ls-files platform-navdhya | head -n 1)" ]; then
+            echo "::error::platform-navdhya must be tracked in this repo (D1: merged, not a submodule)"
+            exit 1
+          fi
+          if [ -e platform-navdhya/.git ]; then
+            echo "::error::platform-navdhya must not carry its own .git — it is part of this monorepo"
+            exit 1
+          fi
+
+  # ── R1 · typecheck (per app, affected only) ────────────────────────────────
+  typecheck:
+    name: typecheck (${{ matrix.app }})
+    needs: [meta]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [web, customer, dashboard, partner]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9.15.4
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Typecheck
+        run: pnpm exec turbo run typecheck --filter=./apps/${{ matrix.app }} --output-logs=errors-only
+
+  # ── R1 · unit suites (apps with a verified-green baseline) ────────────────
+  unit-apps:
+    name: unit (${{ matrix.name }})
+    needs: [meta]
+    if: needs.meta.result == 'success' && needs.meta.outputs.apps_changed != 'false'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: customer
+            run: pnpm --filter @navdhya/customer run test
+          - name: dashboard
+            run: pnpm --filter @navdhya/dashboard run test
+          - name: partner
+            run: pnpm --filter @navdhya/partner-app run test
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9.15.4
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Run suite
+        run: ${{ matrix.run }}
+
+  # ── R1 · apps/web jest (blocking, via known-failure ratchet) ───────────────
+  unit-web:
+    name: unit (web)
+    needs: [meta]
+    if: needs.meta.result == 'success' && needs.meta.outputs.apps_changed != 'false'
+    runs-on: ubuntu-24.04
+    # The suite takes ~13 min locally; the ratchet adds a jest start-up.
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9.15.4
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Jest (known-failure ratchet)
+        # 26 pre-existing failures are listed in ci/known-failures/web-jest.txt
+        # with an owner and an expiry date. Any NEW failure fails the gate, any
+        # listed test that starts passing fails the gate (stale entry), and the
+        # gate fails once the manifest expires. That is why this job can be
+        # blocking instead of permanently soft.
+        run: node tooling/scripts/ci/jest-known-failures.mjs
+
+  # ── R1 · package suites ────────────────────────────────────────────────────
+  packages:
+    name: packages
+    needs: [meta]
+    if: needs.meta.result == 'success' && (needs.meta.outputs.packages_changed == 'true' || github.event_name != 'pull_request')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9.15.4
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Package suites
+        # --continue=always: one red package must not hide the other 44.
+        run: pnpm exec turbo run test --filter='./packages/*' --continue=always --output-logs=errors-only
+
+  # ── R1 · architecture, drift, contract ─────────────────────────────────────
+  gates:
+    name: gates (architecture + drift + contract)
+    needs: [meta]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9.15.4
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Architecture + CI-gate self-tests
+        # --maxWorkers=2: this suite is I/O-heavy and was observed failing once
+        # only while a 65-suite jest run saturated the machine. Bounding the
+        # workers keeps a 2-vCPU runner from starving its own test timeouts.
+        run: pnpm exec vitest run tests/architecture tests/ci --maxWorkers=2
+      - name: Declared-manifest drift
+        run: pnpm exec node tooling/scripts/domain-check.js availability booking pandit pricing puja recommendations search user payment
+
+  # ── R2 · lint ──────────────────────────────────────────────────────────────
+  lint:
+    name: lint
+    needs: [meta]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9.15.4
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Lint
+        run: pnpm exec turbo run lint --continue=always --output-logs=errors-only
+
+  # ── R2 · i18n bundle parity (soft until the baseline is committed) ─────────
+  i18n:
+    name: i18n (soft)
+    needs: [meta]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9.15.4
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Bundle parity
+        run: pnpm run i18n:check
+
+  # ── R4 · production build (4 apps, honest artefacts) ──────────────────────
+  build:
+    name: build (${{ matrix.app }})
+    needs: [meta, typecheck]
+    if: needs.meta.result == 'success' && needs.meta.outputs.apps_changed != 'false'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [web, customer, dashboard, partner]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9.15.4
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - uses: actions/cache@v6
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ matrix.app }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-${{ matrix.app }}-${{ hashFiles('pnpm-lock.yaml') }}-
+      - run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Build
+        env:
+          # Standalone output is the deployable artefact; NEXT_STANDALONE=0 is a
+          # Windows-only local escape hatch and must never leak into CI.
+          NEXT_STANDALONE: '1'
+        run: pnpm --filter ./apps/${{ matrix.app }} run build
+      - name: Record artefact size
+        run: |
+          set -euo pipefail
+          size_kb=$(du -sk "apps/${{ matrix.app }}/.next" | cut -f1)
+          echo "### build/${{ matrix.app }} — ${size_kb} KB (.next)" >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload standalone artefact
+        uses: actions/upload-artifact@v7
+        with:
+          name: next-${{ matrix.app }}-${{ github.sha }}
+          path: |
+            apps/${{ matrix.app }}/.next/standalone
+            apps/${{ matrix.app }}/.next/BUILD_ID
+          if-no-files-found: warn
+          retention-days: 3
+          compression-level: 1
+
+  # ── Aggregator: the only check branch protection needs ────────────────────
+  ci-gate:
+    name: ci-gate
+    if: always()
+    needs: [meta, typecheck, unit-apps, unit-web, packages, gates, lint, i18n, build]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - name: Evaluate gate
+        env:
+          GATE_NEEDS: ${{ toJSON(needs) }}
+          GATE_SOFT: i18n
+          # Flip one gate at a time by adding its job name, or `all` when the
+          # whole soft register is empty. See plan §10.2.
+          GATE_STRICT: ${{ vars.CI_STRICT }}
+        run: node tooling/scripts/ci/gate.mjs

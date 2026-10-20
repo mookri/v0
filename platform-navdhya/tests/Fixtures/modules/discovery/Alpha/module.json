@@ -1,0 +1,17 @@
+{
+    "code": "alpha",
+    "name": "Alpha",
+    "version": "1.0.0",
+    "phase": 1,
+    "priority": 200,
+    "feature_flag": "module.alpha",
+    "permissions": [
+        { "code": "alpha:widget:view", "name": "View widgets" },
+        { "code": "alpha:widget:create", "name": "Create widgets" },
+        { "code": "alpha:widget:approve", "name": "Approve widgets", "sensitive": true }
+    ],
+    "scopes": ["alpha:widget:approve"],
+    "events": [
+        { "name": "alpha.widget.created", "schema": "Events/schemas/widget_created.v1.json" }
+    ]
+}

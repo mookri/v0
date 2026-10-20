@@ -1,0 +1,154 @@
+# OpenAPI 3.1 fragment — platform roles and membership assignments.
+openapi: 3.1.0
+info:
+  title: Navdhya Platform — Roles
+  version: 1.0.0
+paths:
+  /api/v1/platform/roles:
+    get:
+      operationId: listRoles
+      x-gate: ownership
+      summary: List tenant roles (tenant_id query required).
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Roles.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+    post:
+      operationId: createRole
+      x-gate: ownership
+      summary: Create a tenant role.
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenant_id, code, name]
+      responses:
+        '201':
+          description: Created role.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, code, name, state]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+  /api/v1/platform/memberships/{membershipId}/roles:
+    get:
+      operationId: listMembershipRoleAssignments
+      x-gate: ownership
+      summary: List a membership's role assignments (tenant_id query required).
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: membershipId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: "Assignments — role_assignment items (id, membership_id, role_code)."
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      operationId: grantMembershipRole
+      x-gate: ownership
+      summary: Grant a role to a membership (idempotent, SoD-checked).
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: membershipId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenant_id, role_code]
+      responses:
+        '201':
+          description: Granted assignment.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, membership_id, role_code]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+  /api/v1/platform/memberships/{membershipId}/roles/{assignmentId}:
+    delete:
+      operationId: revokeMembershipRole
+      x-gate: ownership
+      summary: Revoke a role assignment (link-checked).
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: membershipId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: assignmentId
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Revoked.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, revoked]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }

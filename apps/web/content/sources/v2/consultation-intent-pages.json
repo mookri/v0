@@ -1,0 +1,2522 @@
+[
+  {
+    "slug": "muhurat-selection-before-booking-a-priest-consultation",
+    "title": "Muhurat Selection consultation before booking a priest",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "muhurat selection consultation before booking a priest",
+    "secondaryKeywords": [
+      "muhurat selection",
+      "ritual planning consultation",
+      "before booking a priest"
+    ],
+    "keywordVariants": [
+      "muhurat-selection consultation",
+      "muhurat selection advice",
+      "muhurat selection consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for muhurat selection before booking a priest, built to narrow a real planning decision before booking begins.",
+    "topic": "muhurat selection",
+    "angle": "before booking a priest",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "muhurat-selection-when-the-family-wants-a-second-opinion-consultation",
+    "title": "Muhurat Selection consultation when the family wants a second opinion",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "muhurat selection consultation when the family wants a second opinion",
+    "secondaryKeywords": [
+      "muhurat selection",
+      "ritual planning consultation",
+      "when the family wants a second opinion"
+    ],
+    "keywordVariants": [
+      "muhurat-selection consultation",
+      "muhurat selection advice",
+      "muhurat selection consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for muhurat selection when the family wants a second opinion, built to narrow a real planning decision before booking begins.",
+    "topic": "muhurat selection",
+    "angle": "when the family wants a second opinion",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "muhurat-selection-for-diaspora-time-zone-coordination-consultation",
+    "title": "Muhurat Selection consultation for diaspora time-zone coordination",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "muhurat selection consultation for diaspora time-zone coordination",
+    "secondaryKeywords": [
+      "muhurat selection",
+      "ritual planning consultation",
+      "for diaspora time-zone coordination"
+    ],
+    "keywordVariants": [
+      "muhurat-selection consultation",
+      "muhurat selection advice",
+      "muhurat selection consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for muhurat selection for diaspora time-zone coordination, built to narrow a real planning decision before booking begins.",
+    "topic": "muhurat selection",
+    "angle": "for diaspora time-zone coordination",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "muhurat-selection-before-a-move-or-property-change-consultation",
+    "title": "Muhurat Selection consultation before a move or property change",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "muhurat selection consultation before a move or property change",
+    "secondaryKeywords": [
+      "muhurat selection",
+      "ritual planning consultation",
+      "before a move or property change"
+    ],
+    "keywordVariants": [
+      "muhurat-selection consultation",
+      "muhurat selection advice",
+      "muhurat selection consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for muhurat selection before a move or property change, built to narrow a real planning decision before booking begins.",
+    "topic": "muhurat selection",
+    "angle": "before a move or property change",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "muhurat-selection-when-elders-want-scriptural-context-first-consultation",
+    "title": "Muhurat Selection consultation when elders want scriptural context first",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "muhurat selection consultation when elders want scriptural context first",
+    "secondaryKeywords": [
+      "muhurat selection",
+      "ritual planning consultation",
+      "when elders want scriptural context first"
+    ],
+    "keywordVariants": [
+      "muhurat-selection consultation",
+      "muhurat selection advice",
+      "muhurat selection consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for muhurat selection when elders want scriptural context first, built to narrow a real planning decision before booking begins.",
+    "topic": "muhurat selection",
+    "angle": "when elders want scriptural context first",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "kundli-reading-before-booking-a-priest-consultation",
+    "title": "Kundli Reading consultation before booking a priest",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "kundli reading consultation before booking a priest",
+    "secondaryKeywords": [
+      "kundli reading",
+      "ritual planning consultation",
+      "before booking a priest"
+    ],
+    "keywordVariants": [
+      "kundli-reading consultation",
+      "kundli reading advice",
+      "kundli reading consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for kundli reading before booking a priest, built to narrow a real planning decision before booking begins.",
+    "topic": "kundli reading",
+    "angle": "before booking a priest",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "kundli-reading-when-the-family-wants-a-second-opinion-consultation",
+    "title": "Kundli Reading consultation when the family wants a second opinion",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "kundli reading consultation when the family wants a second opinion",
+    "secondaryKeywords": [
+      "kundli reading",
+      "ritual planning consultation",
+      "when the family wants a second opinion"
+    ],
+    "keywordVariants": [
+      "kundli-reading consultation",
+      "kundli reading advice",
+      "kundli reading consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for kundli reading when the family wants a second opinion, built to narrow a real planning decision before booking begins.",
+    "topic": "kundli reading",
+    "angle": "when the family wants a second opinion",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "kundli-reading-for-diaspora-time-zone-coordination-consultation",
+    "title": "Kundli Reading consultation for diaspora time-zone coordination",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "kundli reading consultation for diaspora time-zone coordination",
+    "secondaryKeywords": [
+      "kundli reading",
+      "ritual planning consultation",
+      "for diaspora time-zone coordination"
+    ],
+    "keywordVariants": [
+      "kundli-reading consultation",
+      "kundli reading advice",
+      "kundli reading consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for kundli reading for diaspora time-zone coordination, built to narrow a real planning decision before booking begins.",
+    "topic": "kundli reading",
+    "angle": "for diaspora time-zone coordination",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "kundli-reading-before-a-move-or-property-change-consultation",
+    "title": "Kundli Reading consultation before a move or property change",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "kundli reading consultation before a move or property change",
+    "secondaryKeywords": [
+      "kundli reading",
+      "ritual planning consultation",
+      "before a move or property change"
+    ],
+    "keywordVariants": [
+      "kundli-reading consultation",
+      "kundli reading advice",
+      "kundli reading consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for kundli reading before a move or property change, built to narrow a real planning decision before booking begins.",
+    "topic": "kundli reading",
+    "angle": "before a move or property change",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "kundli-reading-when-elders-want-scriptural-context-first-consultation",
+    "title": "Kundli Reading consultation when elders want scriptural context first",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "kundli reading consultation when elders want scriptural context first",
+    "secondaryKeywords": [
+      "kundli reading",
+      "ritual planning consultation",
+      "when elders want scriptural context first"
+    ],
+    "keywordVariants": [
+      "kundli-reading consultation",
+      "kundli reading advice",
+      "kundli reading consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for kundli reading when elders want scriptural context first, built to narrow a real planning decision before booking begins.",
+    "topic": "kundli reading",
+    "angle": "when elders want scriptural context first",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "vastu-consultation-before-booking-a-priest-consultation",
+    "title": "Vastu Consultation consultation before booking a priest",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "vastu consultation consultation before booking a priest",
+    "secondaryKeywords": [
+      "vastu consultation",
+      "ritual planning consultation",
+      "before booking a priest"
+    ],
+    "keywordVariants": [
+      "vastu-consultation consultation",
+      "vastu consultation advice",
+      "vastu consultation consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for vastu consultation before booking a priest, built to narrow a real planning decision before booking begins.",
+    "topic": "vastu consultation",
+    "angle": "before booking a priest",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "vastu-consultation-when-the-family-wants-a-second-opinion-consultation",
+    "title": "Vastu Consultation consultation when the family wants a second opinion",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "vastu consultation consultation when the family wants a second opinion",
+    "secondaryKeywords": [
+      "vastu consultation",
+      "ritual planning consultation",
+      "when the family wants a second opinion"
+    ],
+    "keywordVariants": [
+      "vastu-consultation consultation",
+      "vastu consultation advice",
+      "vastu consultation consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for vastu consultation when the family wants a second opinion, built to narrow a real planning decision before booking begins.",
+    "topic": "vastu consultation",
+    "angle": "when the family wants a second opinion",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "vastu-consultation-for-diaspora-time-zone-coordination-consultation",
+    "title": "Vastu Consultation consultation for diaspora time-zone coordination",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "vastu consultation consultation for diaspora time-zone coordination",
+    "secondaryKeywords": [
+      "vastu consultation",
+      "ritual planning consultation",
+      "for diaspora time-zone coordination"
+    ],
+    "keywordVariants": [
+      "vastu-consultation consultation",
+      "vastu consultation advice",
+      "vastu consultation consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for vastu consultation for diaspora time-zone coordination, built to narrow a real planning decision before booking begins.",
+    "topic": "vastu consultation",
+    "angle": "for diaspora time-zone coordination",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "vastu-consultation-before-a-move-or-property-change-consultation",
+    "title": "Vastu Consultation consultation before a move or property change",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "vastu consultation consultation before a move or property change",
+    "secondaryKeywords": [
+      "vastu consultation",
+      "ritual planning consultation",
+      "before a move or property change"
+    ],
+    "keywordVariants": [
+      "vastu-consultation consultation",
+      "vastu consultation advice",
+      "vastu consultation consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for vastu consultation before a move or property change, built to narrow a real planning decision before booking begins.",
+    "topic": "vastu consultation",
+    "angle": "before a move or property change",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "vastu-consultation-when-elders-want-scriptural-context-first-consultation",
+    "title": "Vastu Consultation consultation when elders want scriptural context first",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "vastu consultation consultation when elders want scriptural context first",
+    "secondaryKeywords": [
+      "vastu consultation",
+      "ritual planning consultation",
+      "when elders want scriptural context first"
+    ],
+    "keywordVariants": [
+      "vastu-consultation consultation",
+      "vastu consultation advice",
+      "vastu consultation consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for vastu consultation when elders want scriptural context first, built to narrow a real planning decision before booking begins.",
+    "topic": "vastu consultation",
+    "angle": "when elders want scriptural context first",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "marriage-matching-before-booking-a-priest-consultation",
+    "title": "Marriage Matching consultation before booking a priest",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "marriage matching consultation before booking a priest",
+    "secondaryKeywords": [
+      "marriage matching",
+      "ritual planning consultation",
+      "before booking a priest"
+    ],
+    "keywordVariants": [
+      "marriage-matching consultation",
+      "marriage matching advice",
+      "marriage matching consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for marriage matching before booking a priest, built to narrow a real planning decision before booking begins.",
+    "topic": "marriage matching",
+    "angle": "before booking a priest",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "marriage-matching-when-the-family-wants-a-second-opinion-consultation",
+    "title": "Marriage Matching consultation when the family wants a second opinion",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "marriage matching consultation when the family wants a second opinion",
+    "secondaryKeywords": [
+      "marriage matching",
+      "ritual planning consultation",
+      "when the family wants a second opinion"
+    ],
+    "keywordVariants": [
+      "marriage-matching consultation",
+      "marriage matching advice",
+      "marriage matching consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for marriage matching when the family wants a second opinion, built to narrow a real planning decision before booking begins.",
+    "topic": "marriage matching",
+    "angle": "when the family wants a second opinion",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "marriage-matching-for-diaspora-time-zone-coordination-consultation",
+    "title": "Marriage Matching consultation for diaspora time-zone coordination",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "marriage matching consultation for diaspora time-zone coordination",
+    "secondaryKeywords": [
+      "marriage matching",
+      "ritual planning consultation",
+      "for diaspora time-zone coordination"
+    ],
+    "keywordVariants": [
+      "marriage-matching consultation",
+      "marriage matching advice",
+      "marriage matching consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for marriage matching for diaspora time-zone coordination, built to narrow a real planning decision before booking begins.",
+    "topic": "marriage matching",
+    "angle": "for diaspora time-zone coordination",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "marriage-matching-before-a-move-or-property-change-consultation",
+    "title": "Marriage Matching consultation before a move or property change",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "marriage matching consultation before a move or property change",
+    "secondaryKeywords": [
+      "marriage matching",
+      "ritual planning consultation",
+      "before a move or property change"
+    ],
+    "keywordVariants": [
+      "marriage-matching consultation",
+      "marriage matching advice",
+      "marriage matching consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for marriage matching before a move or property change, built to narrow a real planning decision before booking begins.",
+    "topic": "marriage matching",
+    "angle": "before a move or property change",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "marriage-matching-when-elders-want-scriptural-context-first-consultation",
+    "title": "Marriage Matching consultation when elders want scriptural context first",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "marriage matching consultation when elders want scriptural context first",
+    "secondaryKeywords": [
+      "marriage matching",
+      "ritual planning consultation",
+      "when elders want scriptural context first"
+    ],
+    "keywordVariants": [
+      "marriage-matching consultation",
+      "marriage matching advice",
+      "marriage matching consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for marriage matching when elders want scriptural context first, built to narrow a real planning decision before booking begins.",
+    "topic": "marriage matching",
+    "angle": "when elders want scriptural context first",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "naming-guidance-before-booking-a-priest-consultation",
+    "title": "Naming Guidance consultation before booking a priest",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "naming guidance consultation before booking a priest",
+    "secondaryKeywords": [
+      "naming guidance",
+      "ritual planning consultation",
+      "before booking a priest"
+    ],
+    "keywordVariants": [
+      "naming-guidance consultation",
+      "naming guidance advice",
+      "naming guidance consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for naming guidance before booking a priest, built to narrow a real planning decision before booking begins.",
+    "topic": "naming guidance",
+    "angle": "before booking a priest",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "naming-guidance-when-the-family-wants-a-second-opinion-consultation",
+    "title": "Naming Guidance consultation when the family wants a second opinion",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "naming guidance consultation when the family wants a second opinion",
+    "secondaryKeywords": [
+      "naming guidance",
+      "ritual planning consultation",
+      "when the family wants a second opinion"
+    ],
+    "keywordVariants": [
+      "naming-guidance consultation",
+      "naming guidance advice",
+      "naming guidance consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for naming guidance when the family wants a second opinion, built to narrow a real planning decision before booking begins.",
+    "topic": "naming guidance",
+    "angle": "when the family wants a second opinion",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "naming-guidance-for-diaspora-time-zone-coordination-consultation",
+    "title": "Naming Guidance consultation for diaspora time-zone coordination",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "naming guidance consultation for diaspora time-zone coordination",
+    "secondaryKeywords": [
+      "naming guidance",
+      "ritual planning consultation",
+      "for diaspora time-zone coordination"
+    ],
+    "keywordVariants": [
+      "naming-guidance consultation",
+      "naming guidance advice",
+      "naming guidance consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for naming guidance for diaspora time-zone coordination, built to narrow a real planning decision before booking begins.",
+    "topic": "naming guidance",
+    "angle": "for diaspora time-zone coordination",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "naming-guidance-before-a-move-or-property-change-consultation",
+    "title": "Naming Guidance consultation before a move or property change",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "naming guidance consultation before a move or property change",
+    "secondaryKeywords": [
+      "naming guidance",
+      "ritual planning consultation",
+      "before a move or property change"
+    ],
+    "keywordVariants": [
+      "naming-guidance consultation",
+      "naming guidance advice",
+      "naming guidance consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for naming guidance before a move or property change, built to narrow a real planning decision before booking begins.",
+    "topic": "naming guidance",
+    "angle": "before a move or property change",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "naming-guidance-when-elders-want-scriptural-context-first-consultation",
+    "title": "Naming Guidance consultation when elders want scriptural context first",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "naming guidance consultation when elders want scriptural context first",
+    "secondaryKeywords": [
+      "naming guidance",
+      "ritual planning consultation",
+      "when elders want scriptural context first"
+    ],
+    "keywordVariants": [
+      "naming-guidance consultation",
+      "naming guidance advice",
+      "naming guidance consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for naming guidance when elders want scriptural context first, built to narrow a real planning decision before booking begins.",
+    "topic": "naming guidance",
+    "angle": "when elders want scriptural context first",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "career-reading-before-booking-a-priest-consultation",
+    "title": "Career Reading consultation before booking a priest",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "career reading consultation before booking a priest",
+    "secondaryKeywords": [
+      "career reading",
+      "ritual planning consultation",
+      "before booking a priest"
+    ],
+    "keywordVariants": [
+      "career-reading consultation",
+      "career reading advice",
+      "career reading consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for career reading before booking a priest, built to narrow a real planning decision before booking begins.",
+    "topic": "career reading",
+    "angle": "before booking a priest",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "career-reading-when-the-family-wants-a-second-opinion-consultation",
+    "title": "Career Reading consultation when the family wants a second opinion",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "career reading consultation when the family wants a second opinion",
+    "secondaryKeywords": [
+      "career reading",
+      "ritual planning consultation",
+      "when the family wants a second opinion"
+    ],
+    "keywordVariants": [
+      "career-reading consultation",
+      "career reading advice",
+      "career reading consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for career reading when the family wants a second opinion, built to narrow a real planning decision before booking begins.",
+    "topic": "career reading",
+    "angle": "when the family wants a second opinion",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "career-reading-for-diaspora-time-zone-coordination-consultation",
+    "title": "Career Reading consultation for diaspora time-zone coordination",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "career reading consultation for diaspora time-zone coordination",
+    "secondaryKeywords": [
+      "career reading",
+      "ritual planning consultation",
+      "for diaspora time-zone coordination"
+    ],
+    "keywordVariants": [
+      "career-reading consultation",
+      "career reading advice",
+      "career reading consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for career reading for diaspora time-zone coordination, built to narrow a real planning decision before booking begins.",
+    "topic": "career reading",
+    "angle": "for diaspora time-zone coordination",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "career-reading-before-a-move-or-property-change-consultation",
+    "title": "Career Reading consultation before a move or property change",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "career reading consultation before a move or property change",
+    "secondaryKeywords": [
+      "career reading",
+      "ritual planning consultation",
+      "before a move or property change"
+    ],
+    "keywordVariants": [
+      "career-reading consultation",
+      "career reading advice",
+      "career reading consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for career reading before a move or property change, built to narrow a real planning decision before booking begins.",
+    "topic": "career reading",
+    "angle": "before a move or property change",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "career-reading-when-elders-want-scriptural-context-first-consultation",
+    "title": "Career Reading consultation when elders want scriptural context first",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "career reading consultation when elders want scriptural context first",
+    "secondaryKeywords": [
+      "career reading",
+      "ritual planning consultation",
+      "when elders want scriptural context first"
+    ],
+    "keywordVariants": [
+      "career-reading consultation",
+      "career reading advice",
+      "career reading consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for career reading when elders want scriptural context first, built to narrow a real planning decision before booking begins.",
+    "topic": "career reading",
+    "angle": "when elders want scriptural context first",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "health-focused-astrology-before-booking-a-priest-consultation",
+    "title": "Health Focused Astrology consultation before booking a priest",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "health-focused astrology consultation before booking a priest",
+    "secondaryKeywords": [
+      "health-focused astrology",
+      "ritual planning consultation",
+      "before booking a priest"
+    ],
+    "keywordVariants": [
+      "health-focused-astrology consultation",
+      "health-focused astrology advice",
+      "health-focused astrology consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for health-focused astrology before booking a priest, built to narrow a real planning decision before booking begins.",
+    "topic": "health-focused astrology",
+    "angle": "before booking a priest",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "health-focused-astrology-when-the-family-wants-a-second-opinion-consultation",
+    "title": "Health Focused Astrology consultation when the family wants a second opinion",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "health-focused astrology consultation when the family wants a second opinion",
+    "secondaryKeywords": [
+      "health-focused astrology",
+      "ritual planning consultation",
+      "when the family wants a second opinion"
+    ],
+    "keywordVariants": [
+      "health-focused-astrology consultation",
+      "health-focused astrology advice",
+      "health-focused astrology consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for health-focused astrology when the family wants a second opinion, built to narrow a real planning decision before booking begins.",
+    "topic": "health-focused astrology",
+    "angle": "when the family wants a second opinion",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "health-focused-astrology-for-diaspora-time-zone-coordination-consultation",
+    "title": "Health Focused Astrology consultation for diaspora time-zone coordination",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "health-focused astrology consultation for diaspora time-zone coordination",
+    "secondaryKeywords": [
+      "health-focused astrology",
+      "ritual planning consultation",
+      "for diaspora time-zone coordination"
+    ],
+    "keywordVariants": [
+      "health-focused-astrology consultation",
+      "health-focused astrology advice",
+      "health-focused astrology consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for health-focused astrology for diaspora time-zone coordination, built to narrow a real planning decision before booking begins.",
+    "topic": "health-focused astrology",
+    "angle": "for diaspora time-zone coordination",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "health-focused-astrology-before-a-move-or-property-change-consultation",
+    "title": "Health Focused Astrology consultation before a move or property change",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "health-focused astrology consultation before a move or property change",
+    "secondaryKeywords": [
+      "health-focused astrology",
+      "ritual planning consultation",
+      "before a move or property change"
+    ],
+    "keywordVariants": [
+      "health-focused-astrology consultation",
+      "health-focused astrology advice",
+      "health-focused astrology consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for health-focused astrology before a move or property change, built to narrow a real planning decision before booking begins.",
+    "topic": "health-focused astrology",
+    "angle": "before a move or property change",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "health-focused-astrology-when-elders-want-scriptural-context-first-consultation",
+    "title": "Health Focused Astrology consultation when elders want scriptural context first",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "health-focused astrology consultation when elders want scriptural context first",
+    "secondaryKeywords": [
+      "health-focused astrology",
+      "ritual planning consultation",
+      "when elders want scriptural context first"
+    ],
+    "keywordVariants": [
+      "health-focused-astrology consultation",
+      "health-focused astrology advice",
+      "health-focused astrology consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for health-focused astrology when elders want scriptural context first, built to narrow a real planning decision before booking begins.",
+    "topic": "health-focused astrology",
+    "angle": "when elders want scriptural context first",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "property-timing-before-booking-a-priest-consultation",
+    "title": "Property Timing consultation before booking a priest",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "property timing consultation before booking a priest",
+    "secondaryKeywords": [
+      "property timing",
+      "ritual planning consultation",
+      "before booking a priest"
+    ],
+    "keywordVariants": [
+      "property-timing consultation",
+      "property timing advice",
+      "property timing consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for property timing before booking a priest, built to narrow a real planning decision before booking begins.",
+    "topic": "property timing",
+    "angle": "before booking a priest",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "property-timing-when-the-family-wants-a-second-opinion-consultation",
+    "title": "Property Timing consultation when the family wants a second opinion",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "property timing consultation when the family wants a second opinion",
+    "secondaryKeywords": [
+      "property timing",
+      "ritual planning consultation",
+      "when the family wants a second opinion"
+    ],
+    "keywordVariants": [
+      "property-timing consultation",
+      "property timing advice",
+      "property timing consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for property timing when the family wants a second opinion, built to narrow a real planning decision before booking begins.",
+    "topic": "property timing",
+    "angle": "when the family wants a second opinion",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "property-timing-for-diaspora-time-zone-coordination-consultation",
+    "title": "Property Timing consultation for diaspora time-zone coordination",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "property timing consultation for diaspora time-zone coordination",
+    "secondaryKeywords": [
+      "property timing",
+      "ritual planning consultation",
+      "for diaspora time-zone coordination"
+    ],
+    "keywordVariants": [
+      "property-timing consultation",
+      "property timing advice",
+      "property timing consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for property timing for diaspora time-zone coordination, built to narrow a real planning decision before booking begins.",
+    "topic": "property timing",
+    "angle": "for diaspora time-zone coordination",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "property-timing-before-a-move-or-property-change-consultation",
+    "title": "Property Timing consultation before a move or property change",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "property timing consultation before a move or property change",
+    "secondaryKeywords": [
+      "property timing",
+      "ritual planning consultation",
+      "before a move or property change"
+    ],
+    "keywordVariants": [
+      "property-timing consultation",
+      "property timing advice",
+      "property timing consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for property timing before a move or property change, built to narrow a real planning decision before booking begins.",
+    "topic": "property timing",
+    "angle": "before a move or property change",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "property-timing-when-elders-want-scriptural-context-first-consultation",
+    "title": "Property Timing consultation when elders want scriptural context first",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "property timing consultation when elders want scriptural context first",
+    "secondaryKeywords": [
+      "property timing",
+      "ritual planning consultation",
+      "when elders want scriptural context first"
+    ],
+    "keywordVariants": [
+      "property-timing consultation",
+      "property timing advice",
+      "property timing consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for property timing when elders want scriptural context first, built to narrow a real planning decision before booking begins.",
+    "topic": "property timing",
+    "angle": "when elders want scriptural context first",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "pregnancy-ritual-planning-before-booking-a-priest-consultation",
+    "title": "Pregnancy Ritual Planning consultation before booking a priest",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "pregnancy ritual planning consultation before booking a priest",
+    "secondaryKeywords": [
+      "pregnancy ritual planning",
+      "ritual planning consultation",
+      "before booking a priest"
+    ],
+    "keywordVariants": [
+      "pregnancy-ritual-planning consultation",
+      "pregnancy ritual planning advice",
+      "pregnancy ritual planning consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for pregnancy ritual planning before booking a priest, built to narrow a real planning decision before booking begins.",
+    "topic": "pregnancy ritual planning",
+    "angle": "before booking a priest",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "pregnancy-ritual-planning-when-the-family-wants-a-second-opinion-consultation",
+    "title": "Pregnancy Ritual Planning consultation when the family wants a second opinion",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "pregnancy ritual planning consultation when the family wants a second opinion",
+    "secondaryKeywords": [
+      "pregnancy ritual planning",
+      "ritual planning consultation",
+      "when the family wants a second opinion"
+    ],
+    "keywordVariants": [
+      "pregnancy-ritual-planning consultation",
+      "pregnancy ritual planning advice",
+      "pregnancy ritual planning consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for pregnancy ritual planning when the family wants a second opinion, built to narrow a real planning decision before booking begins.",
+    "topic": "pregnancy ritual planning",
+    "angle": "when the family wants a second opinion",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "pregnancy-ritual-planning-for-diaspora-time-zone-coordination-consultation",
+    "title": "Pregnancy Ritual Planning consultation for diaspora time-zone coordination",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "pregnancy ritual planning consultation for diaspora time-zone coordination",
+    "secondaryKeywords": [
+      "pregnancy ritual planning",
+      "ritual planning consultation",
+      "for diaspora time-zone coordination"
+    ],
+    "keywordVariants": [
+      "pregnancy-ritual-planning consultation",
+      "pregnancy ritual planning advice",
+      "pregnancy ritual planning consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for pregnancy ritual planning for diaspora time-zone coordination, built to narrow a real planning decision before booking begins.",
+    "topic": "pregnancy ritual planning",
+    "angle": "for diaspora time-zone coordination",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "pregnancy-ritual-planning-before-a-move-or-property-change-consultation",
+    "title": "Pregnancy Ritual Planning consultation before a move or property change",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "pregnancy ritual planning consultation before a move or property change",
+    "secondaryKeywords": [
+      "pregnancy ritual planning",
+      "ritual planning consultation",
+      "before a move or property change"
+    ],
+    "keywordVariants": [
+      "pregnancy-ritual-planning consultation",
+      "pregnancy ritual planning advice",
+      "pregnancy ritual planning consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for pregnancy ritual planning before a move or property change, built to narrow a real planning decision before booking begins.",
+    "topic": "pregnancy ritual planning",
+    "angle": "before a move or property change",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "pregnancy-ritual-planning-when-elders-want-scriptural-context-first-consultation",
+    "title": "Pregnancy Ritual Planning consultation when elders want scriptural context first",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "pregnancy ritual planning consultation when elders want scriptural context first",
+    "secondaryKeywords": [
+      "pregnancy ritual planning",
+      "ritual planning consultation",
+      "when elders want scriptural context first"
+    ],
+    "keywordVariants": [
+      "pregnancy-ritual-planning consultation",
+      "pregnancy ritual planning advice",
+      "pregnancy ritual planning consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for pregnancy ritual planning when elders want scriptural context first, built to narrow a real planning decision before booking begins.",
+    "topic": "pregnancy ritual planning",
+    "angle": "when elders want scriptural context first",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "festival-observance-planning-before-booking-a-priest-consultation",
+    "title": "Festival Observance Planning consultation before booking a priest",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "festival observance planning consultation before booking a priest",
+    "secondaryKeywords": [
+      "festival observance planning",
+      "ritual planning consultation",
+      "before booking a priest"
+    ],
+    "keywordVariants": [
+      "festival-observance-planning consultation",
+      "festival observance planning advice",
+      "festival observance planning consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for festival observance planning before booking a priest, built to narrow a real planning decision before booking begins.",
+    "topic": "festival observance planning",
+    "angle": "before booking a priest",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "festival-observance-planning-when-the-family-wants-a-second-opinion-consultation",
+    "title": "Festival Observance Planning consultation when the family wants a second opinion",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "festival observance planning consultation when the family wants a second opinion",
+    "secondaryKeywords": [
+      "festival observance planning",
+      "ritual planning consultation",
+      "when the family wants a second opinion"
+    ],
+    "keywordVariants": [
+      "festival-observance-planning consultation",
+      "festival observance planning advice",
+      "festival observance planning consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for festival observance planning when the family wants a second opinion, built to narrow a real planning decision before booking begins.",
+    "topic": "festival observance planning",
+    "angle": "when the family wants a second opinion",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "festival-observance-planning-for-diaspora-time-zone-coordination-consultation",
+    "title": "Festival Observance Planning consultation for diaspora time-zone coordination",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "festival observance planning consultation for diaspora time-zone coordination",
+    "secondaryKeywords": [
+      "festival observance planning",
+      "ritual planning consultation",
+      "for diaspora time-zone coordination"
+    ],
+    "keywordVariants": [
+      "festival-observance-planning consultation",
+      "festival observance planning advice",
+      "festival observance planning consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for festival observance planning for diaspora time-zone coordination, built to narrow a real planning decision before booking begins.",
+    "topic": "festival observance planning",
+    "angle": "for diaspora time-zone coordination",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "festival-observance-planning-before-a-move-or-property-change-consultation",
+    "title": "Festival Observance Planning consultation before a move or property change",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "festival observance planning consultation before a move or property change",
+    "secondaryKeywords": [
+      "festival observance planning",
+      "ritual planning consultation",
+      "before a move or property change"
+    ],
+    "keywordVariants": [
+      "festival-observance-planning consultation",
+      "festival observance planning advice",
+      "festival observance planning consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for festival observance planning before a move or property change, built to narrow a real planning decision before booking begins.",
+    "topic": "festival observance planning",
+    "angle": "before a move or property change",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "festival-observance-planning-when-elders-want-scriptural-context-first-consultation",
+    "title": "Festival Observance Planning consultation when elders want scriptural context first",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "festival observance planning consultation when elders want scriptural context first",
+    "secondaryKeywords": [
+      "festival observance planning",
+      "ritual planning consultation",
+      "when elders want scriptural context first"
+    ],
+    "keywordVariants": [
+      "festival-observance-planning consultation",
+      "festival observance planning advice",
+      "festival observance planning consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for festival observance planning when elders want scriptural context first, built to narrow a real planning decision before booking begins.",
+    "topic": "festival observance planning",
+    "angle": "when elders want scriptural context first",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "ancestor-rite-timing-before-booking-a-priest-consultation",
+    "title": "Ancestor Rite Timing consultation before booking a priest",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "ancestor-rite timing consultation before booking a priest",
+    "secondaryKeywords": [
+      "ancestor-rite timing",
+      "ritual planning consultation",
+      "before booking a priest"
+    ],
+    "keywordVariants": [
+      "ancestor-rite-timing consultation",
+      "ancestor-rite timing advice",
+      "ancestor-rite timing consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for ancestor-rite timing before booking a priest, built to narrow a real planning decision before booking begins.",
+    "topic": "ancestor-rite timing",
+    "angle": "before booking a priest",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "ancestor-rite-timing-when-the-family-wants-a-second-opinion-consultation",
+    "title": "Ancestor Rite Timing consultation when the family wants a second opinion",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "ancestor-rite timing consultation when the family wants a second opinion",
+    "secondaryKeywords": [
+      "ancestor-rite timing",
+      "ritual planning consultation",
+      "when the family wants a second opinion"
+    ],
+    "keywordVariants": [
+      "ancestor-rite-timing consultation",
+      "ancestor-rite timing advice",
+      "ancestor-rite timing consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for ancestor-rite timing when the family wants a second opinion, built to narrow a real planning decision before booking begins.",
+    "topic": "ancestor-rite timing",
+    "angle": "when the family wants a second opinion",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "ancestor-rite-timing-for-diaspora-time-zone-coordination-consultation",
+    "title": "Ancestor Rite Timing consultation for diaspora time-zone coordination",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "ancestor-rite timing consultation for diaspora time-zone coordination",
+    "secondaryKeywords": [
+      "ancestor-rite timing",
+      "ritual planning consultation",
+      "for diaspora time-zone coordination"
+    ],
+    "keywordVariants": [
+      "ancestor-rite-timing consultation",
+      "ancestor-rite timing advice",
+      "ancestor-rite timing consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for ancestor-rite timing for diaspora time-zone coordination, built to narrow a real planning decision before booking begins.",
+    "topic": "ancestor-rite timing",
+    "angle": "for diaspora time-zone coordination",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "ancestor-rite-timing-before-a-move-or-property-change-consultation",
+    "title": "Ancestor Rite Timing consultation before a move or property change",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "ancestor-rite timing consultation before a move or property change",
+    "secondaryKeywords": [
+      "ancestor-rite timing",
+      "ritual planning consultation",
+      "before a move or property change"
+    ],
+    "keywordVariants": [
+      "ancestor-rite-timing consultation",
+      "ancestor-rite timing advice",
+      "ancestor-rite timing consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for ancestor-rite timing before a move or property change, built to narrow a real planning decision before booking begins.",
+    "topic": "ancestor-rite timing",
+    "angle": "before a move or property change",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "ancestor-rite-timing-when-elders-want-scriptural-context-first-consultation",
+    "title": "Ancestor Rite Timing consultation when elders want scriptural context first",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "ancestor-rite timing consultation when elders want scriptural context first",
+    "secondaryKeywords": [
+      "ancestor-rite timing",
+      "ritual planning consultation",
+      "when elders want scriptural context first"
+    ],
+    "keywordVariants": [
+      "ancestor-rite-timing consultation",
+      "ancestor-rite timing advice",
+      "ancestor-rite timing consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "india",
+    "deliveryMode": "remote-guided",
+    "summary": "Consultation guidance for ancestor-rite timing when elders want scriptural context first, built to narrow a real planning decision before booking begins.",
+    "topic": "ancestor-rite timing",
+    "angle": "when elders want scriptural context first",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "overseas-family-coordination-before-booking-a-priest-consultation",
+    "title": "Overseas Family Coordination consultation before booking a priest",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "overseas family coordination consultation before booking a priest",
+    "secondaryKeywords": [
+      "overseas family coordination",
+      "ritual planning consultation",
+      "before booking a priest"
+    ],
+    "keywordVariants": [
+      "overseas-family-coordination consultation",
+      "overseas family coordination advice",
+      "overseas family coordination consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "global-diaspora",
+    "deliveryMode": "online",
+    "summary": "Consultation guidance for overseas family coordination before booking a priest, built to narrow a real planning decision before booking begins.",
+    "topic": "overseas family coordination",
+    "angle": "before booking a priest",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "overseas-family-coordination-when-the-family-wants-a-second-opinion-consultation",
+    "title": "Overseas Family Coordination consultation when the family wants a second opinion",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "overseas family coordination consultation when the family wants a second opinion",
+    "secondaryKeywords": [
+      "overseas family coordination",
+      "ritual planning consultation",
+      "when the family wants a second opinion"
+    ],
+    "keywordVariants": [
+      "overseas-family-coordination consultation",
+      "overseas family coordination advice",
+      "overseas family coordination consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "global-diaspora",
+    "deliveryMode": "online",
+    "summary": "Consultation guidance for overseas family coordination when the family wants a second opinion, built to narrow a real planning decision before booking begins.",
+    "topic": "overseas family coordination",
+    "angle": "when the family wants a second opinion",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "overseas-family-coordination-for-diaspora-time-zone-coordination-consultation",
+    "title": "Overseas Family Coordination consultation for diaspora time-zone coordination",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "overseas family coordination consultation for diaspora time-zone coordination",
+    "secondaryKeywords": [
+      "overseas family coordination",
+      "ritual planning consultation",
+      "for diaspora time-zone coordination"
+    ],
+    "keywordVariants": [
+      "overseas-family-coordination consultation",
+      "overseas family coordination advice",
+      "overseas family coordination consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "global-diaspora",
+    "deliveryMode": "online",
+    "summary": "Consultation guidance for overseas family coordination for diaspora time-zone coordination, built to narrow a real planning decision before booking begins.",
+    "topic": "overseas family coordination",
+    "angle": "for diaspora time-zone coordination",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "overseas-family-coordination-before-a-move-or-property-change-consultation",
+    "title": "Overseas Family Coordination consultation before a move or property change",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "overseas family coordination consultation before a move or property change",
+    "secondaryKeywords": [
+      "overseas family coordination",
+      "ritual planning consultation",
+      "before a move or property change"
+    ],
+    "keywordVariants": [
+      "overseas-family-coordination consultation",
+      "overseas family coordination advice",
+      "overseas family coordination consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "global-diaspora",
+    "deliveryMode": "online",
+    "summary": "Consultation guidance for overseas family coordination before a move or property change, built to narrow a real planning decision before booking begins.",
+    "topic": "overseas family coordination",
+    "angle": "before a move or property change",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  },
+  {
+    "slug": "overseas-family-coordination-when-elders-want-scriptural-context-first-consultation",
+    "title": "Overseas Family Coordination consultation when elders want scriptural context first",
+    "cluster": "services",
+    "schemaType": "Service",
+    "searchIntent": "transactional",
+    "primaryKeyword": "overseas family coordination consultation when elders want scriptural context first",
+    "secondaryKeywords": [
+      "overseas family coordination",
+      "ritual planning consultation",
+      "when elders want scriptural context first"
+    ],
+    "keywordVariants": [
+      "overseas-family-coordination consultation",
+      "overseas family coordination advice",
+      "overseas family coordination consultation guide"
+    ],
+    "pageFamily": "consultation-intent",
+    "audienceRegion": "global-diaspora",
+    "deliveryMode": "online",
+    "summary": "Consultation guidance for overseas family coordination when elders want scriptural context first, built to narrow a real planning decision before booking begins.",
+    "topic": "overseas family coordination",
+    "angle": "when elders want scriptural context first",
+    "relatedSlugs": [
+      "book-astrology-consultation-online",
+      "what-is-panchang",
+      "what-is-kundali"
+    ],
+    "requiredInternalLinks": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/services/book-astrology-consultation-online",
+      "/consultation",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Consultation-intent source record with an explicit supported delivery mode."
+    ]
+  }
+]

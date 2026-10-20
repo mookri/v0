@@ -1,0 +1,10 @@
+{
+  "name": "@navdhya/support",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": { "typecheck": "tsc --noEmit", "test": "vitest run --passWithNoTests" },
+  "dependencies": {},
+  "devDependencies": { "typescript": "^5.7.3" }
+}

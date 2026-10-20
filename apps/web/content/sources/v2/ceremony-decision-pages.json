@@ -1,0 +1,3362 @@
+[
+  {
+    "slug": "griha-pravesh-when-to-book",
+    "title": "Griha Pravesh: When To Book",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "griha pravesh when to book",
+    "secondaryKeywords": [
+      "griha pravesh planning",
+      "timing the ceremony request",
+      "griha pravesh planning"
+    ],
+    "keywordVariants": [
+      "griha-pravesh when-to-book",
+      "griha pravesh decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing timing the ceremony request inside griha pravesh planning.",
+    "serviceSlug": "griha-pravesh",
+    "serviceName": "Griha Pravesh Puja",
+    "angle": "timing the ceremony request",
+    "supportLabel": "when to book",
+    "relatedSlugs": [
+      "griha-pravesh",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/griha-pravesh",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/griha-pravesh",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "griha-pravesh-pandit-fit",
+    "title": "Griha Pravesh: Pandit Fit",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "griha pravesh pandit fit",
+    "secondaryKeywords": [
+      "griha pravesh planning",
+      "matching ceremony scope to priest expertise",
+      "griha pravesh planning"
+    ],
+    "keywordVariants": [
+      "griha-pravesh pandit-fit",
+      "griha pravesh decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing matching ceremony scope to priest expertise inside griha pravesh planning.",
+    "serviceSlug": "griha-pravesh",
+    "serviceName": "Griha Pravesh Puja",
+    "angle": "matching ceremony scope to priest expertise",
+    "supportLabel": "pandit fit",
+    "relatedSlugs": [
+      "griha-pravesh",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/griha-pravesh",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/griha-pravesh",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "griha-pravesh-home-vs-venue",
+    "title": "Griha Pravesh: Home vs Venue",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "griha pravesh home vs venue",
+    "secondaryKeywords": [
+      "griha pravesh planning",
+      "choosing the right ceremony setting",
+      "griha pravesh planning"
+    ],
+    "keywordVariants": [
+      "griha-pravesh home-vs-venue",
+      "griha pravesh decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing choosing the right ceremony setting inside griha pravesh planning.",
+    "serviceSlug": "griha-pravesh",
+    "serviceName": "Griha Pravesh Puja",
+    "angle": "choosing the right ceremony setting",
+    "supportLabel": "home vs venue",
+    "relatedSlugs": [
+      "griha-pravesh",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/griha-pravesh",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/griha-pravesh",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "griha-pravesh-samagri-responsibility",
+    "title": "Griha Pravesh: Samagri Responsibility",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "griha pravesh samagri responsibility",
+    "secondaryKeywords": [
+      "griha pravesh planning",
+      "deciding who handles materials",
+      "griha pravesh planning"
+    ],
+    "keywordVariants": [
+      "griha-pravesh samagri-responsibility",
+      "griha pravesh decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing deciding who handles materials inside griha pravesh planning.",
+    "serviceSlug": "griha-pravesh",
+    "serviceName": "Griha Pravesh Puja",
+    "angle": "deciding who handles materials",
+    "supportLabel": "samagri responsibility",
+    "relatedSlugs": [
+      "griha-pravesh",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/griha-pravesh",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/griha-pravesh",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "griha-pravesh-language-preference",
+    "title": "Griha Pravesh: Language Preference",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "griha pravesh language preference",
+    "secondaryKeywords": [
+      "griha pravesh planning",
+      "keeping the family comfortable during the vidhi",
+      "griha pravesh planning"
+    ],
+    "keywordVariants": [
+      "griha-pravesh language-preference",
+      "griha pravesh decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing keeping the family comfortable during the vidhi inside griha pravesh planning.",
+    "serviceSlug": "griha-pravesh",
+    "serviceName": "Griha Pravesh Puja",
+    "angle": "keeping the family comfortable during the vidhi",
+    "supportLabel": "language preference",
+    "relatedSlugs": [
+      "griha-pravesh",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/griha-pravesh",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/griha-pravesh",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "griha-pravesh-same-day-risk",
+    "title": "Griha Pravesh: Same Day Risk",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "griha pravesh same day risk",
+    "secondaryKeywords": [
+      "griha pravesh planning",
+      "understanding urgency tradeoffs",
+      "griha pravesh planning"
+    ],
+    "keywordVariants": [
+      "griha-pravesh same-day-risk",
+      "griha pravesh decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing understanding urgency tradeoffs inside griha pravesh planning.",
+    "serviceSlug": "griha-pravesh",
+    "serviceName": "Griha Pravesh Puja",
+    "angle": "understanding urgency tradeoffs",
+    "supportLabel": "same day risk",
+    "relatedSlugs": [
+      "griha-pravesh",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/griha-pravesh",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/griha-pravesh",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "griha-pravesh-combined-rituals",
+    "title": "Griha Pravesh: Combined Rituals",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "griha pravesh combined rituals",
+    "secondaryKeywords": [
+      "griha pravesh planning",
+      "pairing one ceremony with another without clutter",
+      "griha pravesh planning"
+    ],
+    "keywordVariants": [
+      "griha-pravesh combined-rituals",
+      "griha pravesh decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing pairing one ceremony with another without clutter inside griha pravesh planning.",
+    "serviceSlug": "griha-pravesh",
+    "serviceName": "Griha Pravesh Puja",
+    "angle": "pairing one ceremony with another without clutter",
+    "supportLabel": "combined rituals",
+    "relatedSlugs": [
+      "griha-pravesh",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/griha-pravesh",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/griha-pravesh",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "griha-pravesh-briefing-the-family",
+    "title": "Griha Pravesh: Briefing The Family",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "griha pravesh briefing the family",
+    "secondaryKeywords": [
+      "griha pravesh planning",
+      "getting everyone ready before the day starts",
+      "griha pravesh planning"
+    ],
+    "keywordVariants": [
+      "griha-pravesh briefing-the-family",
+      "griha pravesh decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing getting everyone ready before the day starts inside griha pravesh planning.",
+    "serviceSlug": "griha-pravesh",
+    "serviceName": "Griha Pravesh Puja",
+    "angle": "getting everyone ready before the day starts",
+    "supportLabel": "briefing the family",
+    "relatedSlugs": [
+      "griha-pravesh",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/griha-pravesh",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/griha-pravesh",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "havan-when-to-book",
+    "title": "Havan: When To Book",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "havan when to book",
+    "secondaryKeywords": [
+      "havan planning",
+      "timing the ceremony request",
+      "havan planning"
+    ],
+    "keywordVariants": [
+      "havan when-to-book",
+      "havan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing timing the ceremony request inside havan planning.",
+    "serviceSlug": "havan",
+    "serviceName": "Havan at Home",
+    "angle": "timing the ceremony request",
+    "supportLabel": "when to book",
+    "relatedSlugs": [
+      "havan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/havan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/havan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "havan-pandit-fit",
+    "title": "Havan: Pandit Fit",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "havan pandit fit",
+    "secondaryKeywords": [
+      "havan planning",
+      "matching ceremony scope to priest expertise",
+      "havan planning"
+    ],
+    "keywordVariants": [
+      "havan pandit-fit",
+      "havan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing matching ceremony scope to priest expertise inside havan planning.",
+    "serviceSlug": "havan",
+    "serviceName": "Havan at Home",
+    "angle": "matching ceremony scope to priest expertise",
+    "supportLabel": "pandit fit",
+    "relatedSlugs": [
+      "havan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/havan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/havan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "havan-home-vs-venue",
+    "title": "Havan: Home vs Venue",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "havan home vs venue",
+    "secondaryKeywords": [
+      "havan planning",
+      "choosing the right ceremony setting",
+      "havan planning"
+    ],
+    "keywordVariants": [
+      "havan home-vs-venue",
+      "havan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing choosing the right ceremony setting inside havan planning.",
+    "serviceSlug": "havan",
+    "serviceName": "Havan at Home",
+    "angle": "choosing the right ceremony setting",
+    "supportLabel": "home vs venue",
+    "relatedSlugs": [
+      "havan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/havan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/havan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "havan-samagri-responsibility",
+    "title": "Havan: Samagri Responsibility",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "havan samagri responsibility",
+    "secondaryKeywords": [
+      "havan planning",
+      "deciding who handles materials",
+      "havan planning"
+    ],
+    "keywordVariants": [
+      "havan samagri-responsibility",
+      "havan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing deciding who handles materials inside havan planning.",
+    "serviceSlug": "havan",
+    "serviceName": "Havan at Home",
+    "angle": "deciding who handles materials",
+    "supportLabel": "samagri responsibility",
+    "relatedSlugs": [
+      "havan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/havan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/havan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "havan-language-preference",
+    "title": "Havan: Language Preference",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "havan language preference",
+    "secondaryKeywords": [
+      "havan planning",
+      "keeping the family comfortable during the vidhi",
+      "havan planning"
+    ],
+    "keywordVariants": [
+      "havan language-preference",
+      "havan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing keeping the family comfortable during the vidhi inside havan planning.",
+    "serviceSlug": "havan",
+    "serviceName": "Havan at Home",
+    "angle": "keeping the family comfortable during the vidhi",
+    "supportLabel": "language preference",
+    "relatedSlugs": [
+      "havan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/havan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/havan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "havan-same-day-risk",
+    "title": "Havan: Same Day Risk",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "havan same day risk",
+    "secondaryKeywords": [
+      "havan planning",
+      "understanding urgency tradeoffs",
+      "havan planning"
+    ],
+    "keywordVariants": [
+      "havan same-day-risk",
+      "havan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing understanding urgency tradeoffs inside havan planning.",
+    "serviceSlug": "havan",
+    "serviceName": "Havan at Home",
+    "angle": "understanding urgency tradeoffs",
+    "supportLabel": "same day risk",
+    "relatedSlugs": [
+      "havan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/havan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/havan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "havan-combined-rituals",
+    "title": "Havan: Combined Rituals",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "havan combined rituals",
+    "secondaryKeywords": [
+      "havan planning",
+      "pairing one ceremony with another without clutter",
+      "havan planning"
+    ],
+    "keywordVariants": [
+      "havan combined-rituals",
+      "havan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing pairing one ceremony with another without clutter inside havan planning.",
+    "serviceSlug": "havan",
+    "serviceName": "Havan at Home",
+    "angle": "pairing one ceremony with another without clutter",
+    "supportLabel": "combined rituals",
+    "relatedSlugs": [
+      "havan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/havan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/havan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "havan-briefing-the-family",
+    "title": "Havan: Briefing The Family",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "havan briefing the family",
+    "secondaryKeywords": [
+      "havan planning",
+      "getting everyone ready before the day starts",
+      "havan planning"
+    ],
+    "keywordVariants": [
+      "havan briefing-the-family",
+      "havan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing getting everyone ready before the day starts inside havan planning.",
+    "serviceSlug": "havan",
+    "serviceName": "Havan at Home",
+    "angle": "getting everyone ready before the day starts",
+    "supportLabel": "briefing the family",
+    "relatedSlugs": [
+      "havan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/havan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/havan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "satyanarayan-katha-when-to-book",
+    "title": "Satyanarayan Katha: When To Book",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "satyanarayan katha when to book",
+    "secondaryKeywords": [
+      "satyanarayan katha planning",
+      "timing the ceremony request",
+      "satyanarayan katha planning"
+    ],
+    "keywordVariants": [
+      "satyanarayan-katha when-to-book",
+      "satyanarayan katha decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing timing the ceremony request inside satyanarayan katha planning.",
+    "serviceSlug": "satyanarayan-katha",
+    "serviceName": "Satyanarayan Katha",
+    "angle": "timing the ceremony request",
+    "supportLabel": "when to book",
+    "relatedSlugs": [
+      "satyanarayan-katha",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/satyanarayan-katha",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/satyanarayan-katha",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "satyanarayan-katha-pandit-fit",
+    "title": "Satyanarayan Katha: Pandit Fit",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "satyanarayan katha pandit fit",
+    "secondaryKeywords": [
+      "satyanarayan katha planning",
+      "matching ceremony scope to priest expertise",
+      "satyanarayan katha planning"
+    ],
+    "keywordVariants": [
+      "satyanarayan-katha pandit-fit",
+      "satyanarayan katha decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing matching ceremony scope to priest expertise inside satyanarayan katha planning.",
+    "serviceSlug": "satyanarayan-katha",
+    "serviceName": "Satyanarayan Katha",
+    "angle": "matching ceremony scope to priest expertise",
+    "supportLabel": "pandit fit",
+    "relatedSlugs": [
+      "satyanarayan-katha",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/satyanarayan-katha",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/satyanarayan-katha",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "satyanarayan-katha-home-vs-venue",
+    "title": "Satyanarayan Katha: Home vs Venue",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "satyanarayan katha home vs venue",
+    "secondaryKeywords": [
+      "satyanarayan katha planning",
+      "choosing the right ceremony setting",
+      "satyanarayan katha planning"
+    ],
+    "keywordVariants": [
+      "satyanarayan-katha home-vs-venue",
+      "satyanarayan katha decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing choosing the right ceremony setting inside satyanarayan katha planning.",
+    "serviceSlug": "satyanarayan-katha",
+    "serviceName": "Satyanarayan Katha",
+    "angle": "choosing the right ceremony setting",
+    "supportLabel": "home vs venue",
+    "relatedSlugs": [
+      "satyanarayan-katha",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/satyanarayan-katha",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/satyanarayan-katha",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "satyanarayan-katha-samagri-responsibility",
+    "title": "Satyanarayan Katha: Samagri Responsibility",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "satyanarayan katha samagri responsibility",
+    "secondaryKeywords": [
+      "satyanarayan katha planning",
+      "deciding who handles materials",
+      "satyanarayan katha planning"
+    ],
+    "keywordVariants": [
+      "satyanarayan-katha samagri-responsibility",
+      "satyanarayan katha decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing deciding who handles materials inside satyanarayan katha planning.",
+    "serviceSlug": "satyanarayan-katha",
+    "serviceName": "Satyanarayan Katha",
+    "angle": "deciding who handles materials",
+    "supportLabel": "samagri responsibility",
+    "relatedSlugs": [
+      "satyanarayan-katha",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/satyanarayan-katha",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/satyanarayan-katha",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "satyanarayan-katha-language-preference",
+    "title": "Satyanarayan Katha: Language Preference",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "satyanarayan katha language preference",
+    "secondaryKeywords": [
+      "satyanarayan katha planning",
+      "keeping the family comfortable during the vidhi",
+      "satyanarayan katha planning"
+    ],
+    "keywordVariants": [
+      "satyanarayan-katha language-preference",
+      "satyanarayan katha decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing keeping the family comfortable during the vidhi inside satyanarayan katha planning.",
+    "serviceSlug": "satyanarayan-katha",
+    "serviceName": "Satyanarayan Katha",
+    "angle": "keeping the family comfortable during the vidhi",
+    "supportLabel": "language preference",
+    "relatedSlugs": [
+      "satyanarayan-katha",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/satyanarayan-katha",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/satyanarayan-katha",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "satyanarayan-katha-same-day-risk",
+    "title": "Satyanarayan Katha: Same Day Risk",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "satyanarayan katha same day risk",
+    "secondaryKeywords": [
+      "satyanarayan katha planning",
+      "understanding urgency tradeoffs",
+      "satyanarayan katha planning"
+    ],
+    "keywordVariants": [
+      "satyanarayan-katha same-day-risk",
+      "satyanarayan katha decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing understanding urgency tradeoffs inside satyanarayan katha planning.",
+    "serviceSlug": "satyanarayan-katha",
+    "serviceName": "Satyanarayan Katha",
+    "angle": "understanding urgency tradeoffs",
+    "supportLabel": "same day risk",
+    "relatedSlugs": [
+      "satyanarayan-katha",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/satyanarayan-katha",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/satyanarayan-katha",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "satyanarayan-katha-combined-rituals",
+    "title": "Satyanarayan Katha: Combined Rituals",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "satyanarayan katha combined rituals",
+    "secondaryKeywords": [
+      "satyanarayan katha planning",
+      "pairing one ceremony with another without clutter",
+      "satyanarayan katha planning"
+    ],
+    "keywordVariants": [
+      "satyanarayan-katha combined-rituals",
+      "satyanarayan katha decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing pairing one ceremony with another without clutter inside satyanarayan katha planning.",
+    "serviceSlug": "satyanarayan-katha",
+    "serviceName": "Satyanarayan Katha",
+    "angle": "pairing one ceremony with another without clutter",
+    "supportLabel": "combined rituals",
+    "relatedSlugs": [
+      "satyanarayan-katha",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/satyanarayan-katha",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/satyanarayan-katha",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "satyanarayan-katha-briefing-the-family",
+    "title": "Satyanarayan Katha: Briefing The Family",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "satyanarayan katha briefing the family",
+    "secondaryKeywords": [
+      "satyanarayan katha planning",
+      "getting everyone ready before the day starts",
+      "satyanarayan katha planning"
+    ],
+    "keywordVariants": [
+      "satyanarayan-katha briefing-the-family",
+      "satyanarayan katha decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing getting everyone ready before the day starts inside satyanarayan katha planning.",
+    "serviceSlug": "satyanarayan-katha",
+    "serviceName": "Satyanarayan Katha",
+    "angle": "getting everyone ready before the day starts",
+    "supportLabel": "briefing the family",
+    "relatedSlugs": [
+      "satyanarayan-katha",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/satyanarayan-katha",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/satyanarayan-katha",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "vastu-shanti-when-to-book",
+    "title": "Vastu Shanti: When To Book",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "vastu shanti when to book",
+    "secondaryKeywords": [
+      "vastu shanti planning",
+      "timing the ceremony request",
+      "vastu shanti planning"
+    ],
+    "keywordVariants": [
+      "vastu-shanti when-to-book",
+      "vastu shanti decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing timing the ceremony request inside vastu shanti planning.",
+    "serviceSlug": "vastu-shanti",
+    "serviceName": "Vastu Shanti Puja",
+    "angle": "timing the ceremony request",
+    "supportLabel": "when to book",
+    "relatedSlugs": [
+      "vastu-shanti",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/vastu-shanti",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/vastu-shanti",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "vastu-shanti-pandit-fit",
+    "title": "Vastu Shanti: Pandit Fit",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "vastu shanti pandit fit",
+    "secondaryKeywords": [
+      "vastu shanti planning",
+      "matching ceremony scope to priest expertise",
+      "vastu shanti planning"
+    ],
+    "keywordVariants": [
+      "vastu-shanti pandit-fit",
+      "vastu shanti decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing matching ceremony scope to priest expertise inside vastu shanti planning.",
+    "serviceSlug": "vastu-shanti",
+    "serviceName": "Vastu Shanti Puja",
+    "angle": "matching ceremony scope to priest expertise",
+    "supportLabel": "pandit fit",
+    "relatedSlugs": [
+      "vastu-shanti",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/vastu-shanti",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/vastu-shanti",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "vastu-shanti-home-vs-venue",
+    "title": "Vastu Shanti: Home vs Venue",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "vastu shanti home vs venue",
+    "secondaryKeywords": [
+      "vastu shanti planning",
+      "choosing the right ceremony setting",
+      "vastu shanti planning"
+    ],
+    "keywordVariants": [
+      "vastu-shanti home-vs-venue",
+      "vastu shanti decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing choosing the right ceremony setting inside vastu shanti planning.",
+    "serviceSlug": "vastu-shanti",
+    "serviceName": "Vastu Shanti Puja",
+    "angle": "choosing the right ceremony setting",
+    "supportLabel": "home vs venue",
+    "relatedSlugs": [
+      "vastu-shanti",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/vastu-shanti",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/vastu-shanti",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "vastu-shanti-samagri-responsibility",
+    "title": "Vastu Shanti: Samagri Responsibility",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "vastu shanti samagri responsibility",
+    "secondaryKeywords": [
+      "vastu shanti planning",
+      "deciding who handles materials",
+      "vastu shanti planning"
+    ],
+    "keywordVariants": [
+      "vastu-shanti samagri-responsibility",
+      "vastu shanti decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing deciding who handles materials inside vastu shanti planning.",
+    "serviceSlug": "vastu-shanti",
+    "serviceName": "Vastu Shanti Puja",
+    "angle": "deciding who handles materials",
+    "supportLabel": "samagri responsibility",
+    "relatedSlugs": [
+      "vastu-shanti",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/vastu-shanti",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/vastu-shanti",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "vastu-shanti-language-preference",
+    "title": "Vastu Shanti: Language Preference",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "vastu shanti language preference",
+    "secondaryKeywords": [
+      "vastu shanti planning",
+      "keeping the family comfortable during the vidhi",
+      "vastu shanti planning"
+    ],
+    "keywordVariants": [
+      "vastu-shanti language-preference",
+      "vastu shanti decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing keeping the family comfortable during the vidhi inside vastu shanti planning.",
+    "serviceSlug": "vastu-shanti",
+    "serviceName": "Vastu Shanti Puja",
+    "angle": "keeping the family comfortable during the vidhi",
+    "supportLabel": "language preference",
+    "relatedSlugs": [
+      "vastu-shanti",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/vastu-shanti",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/vastu-shanti",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "vastu-shanti-same-day-risk",
+    "title": "Vastu Shanti: Same Day Risk",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "vastu shanti same day risk",
+    "secondaryKeywords": [
+      "vastu shanti planning",
+      "understanding urgency tradeoffs",
+      "vastu shanti planning"
+    ],
+    "keywordVariants": [
+      "vastu-shanti same-day-risk",
+      "vastu shanti decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing understanding urgency tradeoffs inside vastu shanti planning.",
+    "serviceSlug": "vastu-shanti",
+    "serviceName": "Vastu Shanti Puja",
+    "angle": "understanding urgency tradeoffs",
+    "supportLabel": "same day risk",
+    "relatedSlugs": [
+      "vastu-shanti",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/vastu-shanti",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/vastu-shanti",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "vastu-shanti-combined-rituals",
+    "title": "Vastu Shanti: Combined Rituals",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "vastu shanti combined rituals",
+    "secondaryKeywords": [
+      "vastu shanti planning",
+      "pairing one ceremony with another without clutter",
+      "vastu shanti planning"
+    ],
+    "keywordVariants": [
+      "vastu-shanti combined-rituals",
+      "vastu shanti decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing pairing one ceremony with another without clutter inside vastu shanti planning.",
+    "serviceSlug": "vastu-shanti",
+    "serviceName": "Vastu Shanti Puja",
+    "angle": "pairing one ceremony with another without clutter",
+    "supportLabel": "combined rituals",
+    "relatedSlugs": [
+      "vastu-shanti",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/vastu-shanti",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/vastu-shanti",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "vastu-shanti-briefing-the-family",
+    "title": "Vastu Shanti: Briefing The Family",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "vastu shanti briefing the family",
+    "secondaryKeywords": [
+      "vastu shanti planning",
+      "getting everyone ready before the day starts",
+      "vastu shanti planning"
+    ],
+    "keywordVariants": [
+      "vastu-shanti briefing-the-family",
+      "vastu shanti decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing getting everyone ready before the day starts inside vastu shanti planning.",
+    "serviceSlug": "vastu-shanti",
+    "serviceName": "Vastu Shanti Puja",
+    "angle": "getting everyone ready before the day starts",
+    "supportLabel": "briefing the family",
+    "relatedSlugs": [
+      "vastu-shanti",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/vastu-shanti",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/vastu-shanti",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "office-opening-when-to-book",
+    "title": "Office Opening: When To Book",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "office opening when to book",
+    "secondaryKeywords": [
+      "office opening puja planning",
+      "timing the ceremony request",
+      "office opening planning"
+    ],
+    "keywordVariants": [
+      "office-opening when-to-book",
+      "office opening decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing timing the ceremony request inside office opening planning.",
+    "serviceSlug": "office-opening",
+    "serviceName": "Office Opening Puja",
+    "angle": "timing the ceremony request",
+    "supportLabel": "when to book",
+    "relatedSlugs": [
+      "office-opening",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/office-opening",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/office-opening",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "office-opening-pandit-fit",
+    "title": "Office Opening: Pandit Fit",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "office opening pandit fit",
+    "secondaryKeywords": [
+      "office opening puja planning",
+      "matching ceremony scope to priest expertise",
+      "office opening planning"
+    ],
+    "keywordVariants": [
+      "office-opening pandit-fit",
+      "office opening decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing matching ceremony scope to priest expertise inside office opening planning.",
+    "serviceSlug": "office-opening",
+    "serviceName": "Office Opening Puja",
+    "angle": "matching ceremony scope to priest expertise",
+    "supportLabel": "pandit fit",
+    "relatedSlugs": [
+      "office-opening",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/office-opening",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/office-opening",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "office-opening-home-vs-venue",
+    "title": "Office Opening: Home vs Venue",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "office opening home vs venue",
+    "secondaryKeywords": [
+      "office opening puja planning",
+      "choosing the right ceremony setting",
+      "office opening planning"
+    ],
+    "keywordVariants": [
+      "office-opening home-vs-venue",
+      "office opening decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing choosing the right ceremony setting inside office opening planning.",
+    "serviceSlug": "office-opening",
+    "serviceName": "Office Opening Puja",
+    "angle": "choosing the right ceremony setting",
+    "supportLabel": "home vs venue",
+    "relatedSlugs": [
+      "office-opening",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/office-opening",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/office-opening",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "office-opening-samagri-responsibility",
+    "title": "Office Opening: Samagri Responsibility",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "office opening samagri responsibility",
+    "secondaryKeywords": [
+      "office opening puja planning",
+      "deciding who handles materials",
+      "office opening planning"
+    ],
+    "keywordVariants": [
+      "office-opening samagri-responsibility",
+      "office opening decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing deciding who handles materials inside office opening planning.",
+    "serviceSlug": "office-opening",
+    "serviceName": "Office Opening Puja",
+    "angle": "deciding who handles materials",
+    "supportLabel": "samagri responsibility",
+    "relatedSlugs": [
+      "office-opening",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/office-opening",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/office-opening",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "office-opening-language-preference",
+    "title": "Office Opening: Language Preference",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "office opening language preference",
+    "secondaryKeywords": [
+      "office opening puja planning",
+      "keeping the family comfortable during the vidhi",
+      "office opening planning"
+    ],
+    "keywordVariants": [
+      "office-opening language-preference",
+      "office opening decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing keeping the family comfortable during the vidhi inside office opening planning.",
+    "serviceSlug": "office-opening",
+    "serviceName": "Office Opening Puja",
+    "angle": "keeping the family comfortable during the vidhi",
+    "supportLabel": "language preference",
+    "relatedSlugs": [
+      "office-opening",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/office-opening",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/office-opening",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "office-opening-same-day-risk",
+    "title": "Office Opening: Same Day Risk",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "office opening same day risk",
+    "secondaryKeywords": [
+      "office opening puja planning",
+      "understanding urgency tradeoffs",
+      "office opening planning"
+    ],
+    "keywordVariants": [
+      "office-opening same-day-risk",
+      "office opening decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing understanding urgency tradeoffs inside office opening planning.",
+    "serviceSlug": "office-opening",
+    "serviceName": "Office Opening Puja",
+    "angle": "understanding urgency tradeoffs",
+    "supportLabel": "same day risk",
+    "relatedSlugs": [
+      "office-opening",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/office-opening",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/office-opening",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "office-opening-combined-rituals",
+    "title": "Office Opening: Combined Rituals",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "office opening combined rituals",
+    "secondaryKeywords": [
+      "office opening puja planning",
+      "pairing one ceremony with another without clutter",
+      "office opening planning"
+    ],
+    "keywordVariants": [
+      "office-opening combined-rituals",
+      "office opening decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing pairing one ceremony with another without clutter inside office opening planning.",
+    "serviceSlug": "office-opening",
+    "serviceName": "Office Opening Puja",
+    "angle": "pairing one ceremony with another without clutter",
+    "supportLabel": "combined rituals",
+    "relatedSlugs": [
+      "office-opening",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/office-opening",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/office-opening",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "office-opening-briefing-the-family",
+    "title": "Office Opening: Briefing The Family",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "office opening briefing the family",
+    "secondaryKeywords": [
+      "office opening puja planning",
+      "getting everyone ready before the day starts",
+      "office opening planning"
+    ],
+    "keywordVariants": [
+      "office-opening briefing-the-family",
+      "office opening decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing getting everyone ready before the day starts inside office opening planning.",
+    "serviceSlug": "office-opening",
+    "serviceName": "Office Opening Puja",
+    "angle": "getting everyone ready before the day starts",
+    "supportLabel": "briefing the family",
+    "relatedSlugs": [
+      "office-opening",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/office-opening",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/office-opening",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "bhoomi-pujan-when-to-book",
+    "title": "Bhoomi Pujan: When To Book",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "bhoomi pujan when to book",
+    "secondaryKeywords": [
+      "bhoomi pujan planning",
+      "timing the ceremony request",
+      "bhoomi pujan planning"
+    ],
+    "keywordVariants": [
+      "bhoomi-pujan when-to-book",
+      "bhoomi pujan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing timing the ceremony request inside bhoomi pujan planning.",
+    "serviceSlug": "bhoomi-pujan",
+    "serviceName": "Bhoomi Pujan",
+    "angle": "timing the ceremony request",
+    "supportLabel": "when to book",
+    "relatedSlugs": [
+      "bhoomi-pujan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/bhoomi-pujan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/bhoomi-pujan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "bhoomi-pujan-pandit-fit",
+    "title": "Bhoomi Pujan: Pandit Fit",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "bhoomi pujan pandit fit",
+    "secondaryKeywords": [
+      "bhoomi pujan planning",
+      "matching ceremony scope to priest expertise",
+      "bhoomi pujan planning"
+    ],
+    "keywordVariants": [
+      "bhoomi-pujan pandit-fit",
+      "bhoomi pujan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing matching ceremony scope to priest expertise inside bhoomi pujan planning.",
+    "serviceSlug": "bhoomi-pujan",
+    "serviceName": "Bhoomi Pujan",
+    "angle": "matching ceremony scope to priest expertise",
+    "supportLabel": "pandit fit",
+    "relatedSlugs": [
+      "bhoomi-pujan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/bhoomi-pujan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/bhoomi-pujan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "bhoomi-pujan-home-vs-venue",
+    "title": "Bhoomi Pujan: Home vs Venue",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "bhoomi pujan home vs venue",
+    "secondaryKeywords": [
+      "bhoomi pujan planning",
+      "choosing the right ceremony setting",
+      "bhoomi pujan planning"
+    ],
+    "keywordVariants": [
+      "bhoomi-pujan home-vs-venue",
+      "bhoomi pujan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing choosing the right ceremony setting inside bhoomi pujan planning.",
+    "serviceSlug": "bhoomi-pujan",
+    "serviceName": "Bhoomi Pujan",
+    "angle": "choosing the right ceremony setting",
+    "supportLabel": "home vs venue",
+    "relatedSlugs": [
+      "bhoomi-pujan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/bhoomi-pujan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/bhoomi-pujan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "bhoomi-pujan-samagri-responsibility",
+    "title": "Bhoomi Pujan: Samagri Responsibility",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "bhoomi pujan samagri responsibility",
+    "secondaryKeywords": [
+      "bhoomi pujan planning",
+      "deciding who handles materials",
+      "bhoomi pujan planning"
+    ],
+    "keywordVariants": [
+      "bhoomi-pujan samagri-responsibility",
+      "bhoomi pujan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing deciding who handles materials inside bhoomi pujan planning.",
+    "serviceSlug": "bhoomi-pujan",
+    "serviceName": "Bhoomi Pujan",
+    "angle": "deciding who handles materials",
+    "supportLabel": "samagri responsibility",
+    "relatedSlugs": [
+      "bhoomi-pujan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/bhoomi-pujan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/bhoomi-pujan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "bhoomi-pujan-language-preference",
+    "title": "Bhoomi Pujan: Language Preference",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "bhoomi pujan language preference",
+    "secondaryKeywords": [
+      "bhoomi pujan planning",
+      "keeping the family comfortable during the vidhi",
+      "bhoomi pujan planning"
+    ],
+    "keywordVariants": [
+      "bhoomi-pujan language-preference",
+      "bhoomi pujan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing keeping the family comfortable during the vidhi inside bhoomi pujan planning.",
+    "serviceSlug": "bhoomi-pujan",
+    "serviceName": "Bhoomi Pujan",
+    "angle": "keeping the family comfortable during the vidhi",
+    "supportLabel": "language preference",
+    "relatedSlugs": [
+      "bhoomi-pujan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/bhoomi-pujan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/bhoomi-pujan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "bhoomi-pujan-same-day-risk",
+    "title": "Bhoomi Pujan: Same Day Risk",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "bhoomi pujan same day risk",
+    "secondaryKeywords": [
+      "bhoomi pujan planning",
+      "understanding urgency tradeoffs",
+      "bhoomi pujan planning"
+    ],
+    "keywordVariants": [
+      "bhoomi-pujan same-day-risk",
+      "bhoomi pujan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing understanding urgency tradeoffs inside bhoomi pujan planning.",
+    "serviceSlug": "bhoomi-pujan",
+    "serviceName": "Bhoomi Pujan",
+    "angle": "understanding urgency tradeoffs",
+    "supportLabel": "same day risk",
+    "relatedSlugs": [
+      "bhoomi-pujan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/bhoomi-pujan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/bhoomi-pujan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "bhoomi-pujan-combined-rituals",
+    "title": "Bhoomi Pujan: Combined Rituals",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "bhoomi pujan combined rituals",
+    "secondaryKeywords": [
+      "bhoomi pujan planning",
+      "pairing one ceremony with another without clutter",
+      "bhoomi pujan planning"
+    ],
+    "keywordVariants": [
+      "bhoomi-pujan combined-rituals",
+      "bhoomi pujan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing pairing one ceremony with another without clutter inside bhoomi pujan planning.",
+    "serviceSlug": "bhoomi-pujan",
+    "serviceName": "Bhoomi Pujan",
+    "angle": "pairing one ceremony with another without clutter",
+    "supportLabel": "combined rituals",
+    "relatedSlugs": [
+      "bhoomi-pujan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/bhoomi-pujan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/bhoomi-pujan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "bhoomi-pujan-briefing-the-family",
+    "title": "Bhoomi Pujan: Briefing The Family",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "bhoomi pujan briefing the family",
+    "secondaryKeywords": [
+      "bhoomi pujan planning",
+      "getting everyone ready before the day starts",
+      "bhoomi pujan planning"
+    ],
+    "keywordVariants": [
+      "bhoomi-pujan briefing-the-family",
+      "bhoomi pujan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing getting everyone ready before the day starts inside bhoomi pujan planning.",
+    "serviceSlug": "bhoomi-pujan",
+    "serviceName": "Bhoomi Pujan",
+    "angle": "getting everyone ready before the day starts",
+    "supportLabel": "briefing the family",
+    "relatedSlugs": [
+      "bhoomi-pujan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/bhoomi-pujan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/bhoomi-pujan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "namkaran-when-to-book",
+    "title": "Namkaran: When To Book",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "namkaran when to book",
+    "secondaryKeywords": [
+      "namkaran planning",
+      "timing the ceremony request",
+      "namkaran planning"
+    ],
+    "keywordVariants": [
+      "namkaran when-to-book",
+      "namkaran decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing timing the ceremony request inside namkaran planning.",
+    "serviceSlug": "namkaran",
+    "serviceName": "Namkaran Ceremony",
+    "angle": "timing the ceremony request",
+    "supportLabel": "when to book",
+    "relatedSlugs": [
+      "namkaran",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/namkaran",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/namkaran",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "namkaran-pandit-fit",
+    "title": "Namkaran: Pandit Fit",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "namkaran pandit fit",
+    "secondaryKeywords": [
+      "namkaran planning",
+      "matching ceremony scope to priest expertise",
+      "namkaran planning"
+    ],
+    "keywordVariants": [
+      "namkaran pandit-fit",
+      "namkaran decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing matching ceremony scope to priest expertise inside namkaran planning.",
+    "serviceSlug": "namkaran",
+    "serviceName": "Namkaran Ceremony",
+    "angle": "matching ceremony scope to priest expertise",
+    "supportLabel": "pandit fit",
+    "relatedSlugs": [
+      "namkaran",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/namkaran",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/namkaran",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "namkaran-home-vs-venue",
+    "title": "Namkaran: Home vs Venue",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "namkaran home vs venue",
+    "secondaryKeywords": [
+      "namkaran planning",
+      "choosing the right ceremony setting",
+      "namkaran planning"
+    ],
+    "keywordVariants": [
+      "namkaran home-vs-venue",
+      "namkaran decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing choosing the right ceremony setting inside namkaran planning.",
+    "serviceSlug": "namkaran",
+    "serviceName": "Namkaran Ceremony",
+    "angle": "choosing the right ceremony setting",
+    "supportLabel": "home vs venue",
+    "relatedSlugs": [
+      "namkaran",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/namkaran",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/namkaran",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "namkaran-samagri-responsibility",
+    "title": "Namkaran: Samagri Responsibility",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "namkaran samagri responsibility",
+    "secondaryKeywords": [
+      "namkaran planning",
+      "deciding who handles materials",
+      "namkaran planning"
+    ],
+    "keywordVariants": [
+      "namkaran samagri-responsibility",
+      "namkaran decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing deciding who handles materials inside namkaran planning.",
+    "serviceSlug": "namkaran",
+    "serviceName": "Namkaran Ceremony",
+    "angle": "deciding who handles materials",
+    "supportLabel": "samagri responsibility",
+    "relatedSlugs": [
+      "namkaran",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/namkaran",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/namkaran",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "namkaran-language-preference",
+    "title": "Namkaran: Language Preference",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "namkaran language preference",
+    "secondaryKeywords": [
+      "namkaran planning",
+      "keeping the family comfortable during the vidhi",
+      "namkaran planning"
+    ],
+    "keywordVariants": [
+      "namkaran language-preference",
+      "namkaran decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing keeping the family comfortable during the vidhi inside namkaran planning.",
+    "serviceSlug": "namkaran",
+    "serviceName": "Namkaran Ceremony",
+    "angle": "keeping the family comfortable during the vidhi",
+    "supportLabel": "language preference",
+    "relatedSlugs": [
+      "namkaran",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/namkaran",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/namkaran",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "namkaran-same-day-risk",
+    "title": "Namkaran: Same Day Risk",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "namkaran same day risk",
+    "secondaryKeywords": [
+      "namkaran planning",
+      "understanding urgency tradeoffs",
+      "namkaran planning"
+    ],
+    "keywordVariants": [
+      "namkaran same-day-risk",
+      "namkaran decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing understanding urgency tradeoffs inside namkaran planning.",
+    "serviceSlug": "namkaran",
+    "serviceName": "Namkaran Ceremony",
+    "angle": "understanding urgency tradeoffs",
+    "supportLabel": "same day risk",
+    "relatedSlugs": [
+      "namkaran",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/namkaran",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/namkaran",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "namkaran-combined-rituals",
+    "title": "Namkaran: Combined Rituals",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "namkaran combined rituals",
+    "secondaryKeywords": [
+      "namkaran planning",
+      "pairing one ceremony with another without clutter",
+      "namkaran planning"
+    ],
+    "keywordVariants": [
+      "namkaran combined-rituals",
+      "namkaran decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing pairing one ceremony with another without clutter inside namkaran planning.",
+    "serviceSlug": "namkaran",
+    "serviceName": "Namkaran Ceremony",
+    "angle": "pairing one ceremony with another without clutter",
+    "supportLabel": "combined rituals",
+    "relatedSlugs": [
+      "namkaran",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/namkaran",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/namkaran",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "namkaran-briefing-the-family",
+    "title": "Namkaran: Briefing The Family",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "namkaran briefing the family",
+    "secondaryKeywords": [
+      "namkaran planning",
+      "getting everyone ready before the day starts",
+      "namkaran planning"
+    ],
+    "keywordVariants": [
+      "namkaran briefing-the-family",
+      "namkaran decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing getting everyone ready before the day starts inside namkaran planning.",
+    "serviceSlug": "namkaran",
+    "serviceName": "Namkaran Ceremony",
+    "angle": "getting everyone ready before the day starts",
+    "supportLabel": "briefing the family",
+    "relatedSlugs": [
+      "namkaran",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/namkaran",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/namkaran",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "mundan-when-to-book",
+    "title": "Mundan: When To Book",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "mundan when to book",
+    "secondaryKeywords": [
+      "mundan planning",
+      "timing the ceremony request",
+      "mundan planning"
+    ],
+    "keywordVariants": [
+      "mundan when-to-book",
+      "mundan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing timing the ceremony request inside mundan planning.",
+    "serviceSlug": "mundan",
+    "serviceName": "Mundan Ceremony",
+    "angle": "timing the ceremony request",
+    "supportLabel": "when to book",
+    "relatedSlugs": [
+      "mundan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/mundan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/mundan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "mundan-pandit-fit",
+    "title": "Mundan: Pandit Fit",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "mundan pandit fit",
+    "secondaryKeywords": [
+      "mundan planning",
+      "matching ceremony scope to priest expertise",
+      "mundan planning"
+    ],
+    "keywordVariants": [
+      "mundan pandit-fit",
+      "mundan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing matching ceremony scope to priest expertise inside mundan planning.",
+    "serviceSlug": "mundan",
+    "serviceName": "Mundan Ceremony",
+    "angle": "matching ceremony scope to priest expertise",
+    "supportLabel": "pandit fit",
+    "relatedSlugs": [
+      "mundan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/mundan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/mundan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "mundan-home-vs-venue",
+    "title": "Mundan: Home vs Venue",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "mundan home vs venue",
+    "secondaryKeywords": [
+      "mundan planning",
+      "choosing the right ceremony setting",
+      "mundan planning"
+    ],
+    "keywordVariants": [
+      "mundan home-vs-venue",
+      "mundan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing choosing the right ceremony setting inside mundan planning.",
+    "serviceSlug": "mundan",
+    "serviceName": "Mundan Ceremony",
+    "angle": "choosing the right ceremony setting",
+    "supportLabel": "home vs venue",
+    "relatedSlugs": [
+      "mundan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/mundan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/mundan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "mundan-samagri-responsibility",
+    "title": "Mundan: Samagri Responsibility",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "mundan samagri responsibility",
+    "secondaryKeywords": [
+      "mundan planning",
+      "deciding who handles materials",
+      "mundan planning"
+    ],
+    "keywordVariants": [
+      "mundan samagri-responsibility",
+      "mundan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing deciding who handles materials inside mundan planning.",
+    "serviceSlug": "mundan",
+    "serviceName": "Mundan Ceremony",
+    "angle": "deciding who handles materials",
+    "supportLabel": "samagri responsibility",
+    "relatedSlugs": [
+      "mundan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/mundan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/mundan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "mundan-language-preference",
+    "title": "Mundan: Language Preference",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "mundan language preference",
+    "secondaryKeywords": [
+      "mundan planning",
+      "keeping the family comfortable during the vidhi",
+      "mundan planning"
+    ],
+    "keywordVariants": [
+      "mundan language-preference",
+      "mundan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing keeping the family comfortable during the vidhi inside mundan planning.",
+    "serviceSlug": "mundan",
+    "serviceName": "Mundan Ceremony",
+    "angle": "keeping the family comfortable during the vidhi",
+    "supportLabel": "language preference",
+    "relatedSlugs": [
+      "mundan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/mundan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/mundan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "mundan-same-day-risk",
+    "title": "Mundan: Same Day Risk",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "mundan same day risk",
+    "secondaryKeywords": [
+      "mundan planning",
+      "understanding urgency tradeoffs",
+      "mundan planning"
+    ],
+    "keywordVariants": [
+      "mundan same-day-risk",
+      "mundan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing understanding urgency tradeoffs inside mundan planning.",
+    "serviceSlug": "mundan",
+    "serviceName": "Mundan Ceremony",
+    "angle": "understanding urgency tradeoffs",
+    "supportLabel": "same day risk",
+    "relatedSlugs": [
+      "mundan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/mundan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/mundan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "mundan-combined-rituals",
+    "title": "Mundan: Combined Rituals",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "mundan combined rituals",
+    "secondaryKeywords": [
+      "mundan planning",
+      "pairing one ceremony with another without clutter",
+      "mundan planning"
+    ],
+    "keywordVariants": [
+      "mundan combined-rituals",
+      "mundan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing pairing one ceremony with another without clutter inside mundan planning.",
+    "serviceSlug": "mundan",
+    "serviceName": "Mundan Ceremony",
+    "angle": "pairing one ceremony with another without clutter",
+    "supportLabel": "combined rituals",
+    "relatedSlugs": [
+      "mundan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/mundan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/mundan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "mundan-briefing-the-family",
+    "title": "Mundan: Briefing The Family",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "mundan briefing the family",
+    "secondaryKeywords": [
+      "mundan planning",
+      "getting everyone ready before the day starts",
+      "mundan planning"
+    ],
+    "keywordVariants": [
+      "mundan briefing-the-family",
+      "mundan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing getting everyone ready before the day starts inside mundan planning.",
+    "serviceSlug": "mundan",
+    "serviceName": "Mundan Ceremony",
+    "angle": "getting everyone ready before the day starts",
+    "supportLabel": "briefing the family",
+    "relatedSlugs": [
+      "mundan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/mundan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/mundan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "annaprashan-when-to-book",
+    "title": "Annaprashan: When To Book",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "annaprashan when to book",
+    "secondaryKeywords": [
+      "annaprashan planning",
+      "timing the ceremony request",
+      "annaprashan planning"
+    ],
+    "keywordVariants": [
+      "annaprashan when-to-book",
+      "annaprashan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing timing the ceremony request inside annaprashan planning.",
+    "serviceSlug": "annaprashan",
+    "serviceName": "Annaprashan Ceremony",
+    "angle": "timing the ceremony request",
+    "supportLabel": "when to book",
+    "relatedSlugs": [
+      "annaprashan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/annaprashan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/annaprashan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "annaprashan-pandit-fit",
+    "title": "Annaprashan: Pandit Fit",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "annaprashan pandit fit",
+    "secondaryKeywords": [
+      "annaprashan planning",
+      "matching ceremony scope to priest expertise",
+      "annaprashan planning"
+    ],
+    "keywordVariants": [
+      "annaprashan pandit-fit",
+      "annaprashan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing matching ceremony scope to priest expertise inside annaprashan planning.",
+    "serviceSlug": "annaprashan",
+    "serviceName": "Annaprashan Ceremony",
+    "angle": "matching ceremony scope to priest expertise",
+    "supportLabel": "pandit fit",
+    "relatedSlugs": [
+      "annaprashan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/annaprashan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/annaprashan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "annaprashan-home-vs-venue",
+    "title": "Annaprashan: Home vs Venue",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "annaprashan home vs venue",
+    "secondaryKeywords": [
+      "annaprashan planning",
+      "choosing the right ceremony setting",
+      "annaprashan planning"
+    ],
+    "keywordVariants": [
+      "annaprashan home-vs-venue",
+      "annaprashan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing choosing the right ceremony setting inside annaprashan planning.",
+    "serviceSlug": "annaprashan",
+    "serviceName": "Annaprashan Ceremony",
+    "angle": "choosing the right ceremony setting",
+    "supportLabel": "home vs venue",
+    "relatedSlugs": [
+      "annaprashan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/annaprashan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/annaprashan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "annaprashan-samagri-responsibility",
+    "title": "Annaprashan: Samagri Responsibility",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "annaprashan samagri responsibility",
+    "secondaryKeywords": [
+      "annaprashan planning",
+      "deciding who handles materials",
+      "annaprashan planning"
+    ],
+    "keywordVariants": [
+      "annaprashan samagri-responsibility",
+      "annaprashan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing deciding who handles materials inside annaprashan planning.",
+    "serviceSlug": "annaprashan",
+    "serviceName": "Annaprashan Ceremony",
+    "angle": "deciding who handles materials",
+    "supportLabel": "samagri responsibility",
+    "relatedSlugs": [
+      "annaprashan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/annaprashan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/annaprashan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "annaprashan-language-preference",
+    "title": "Annaprashan: Language Preference",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "annaprashan language preference",
+    "secondaryKeywords": [
+      "annaprashan planning",
+      "keeping the family comfortable during the vidhi",
+      "annaprashan planning"
+    ],
+    "keywordVariants": [
+      "annaprashan language-preference",
+      "annaprashan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing keeping the family comfortable during the vidhi inside annaprashan planning.",
+    "serviceSlug": "annaprashan",
+    "serviceName": "Annaprashan Ceremony",
+    "angle": "keeping the family comfortable during the vidhi",
+    "supportLabel": "language preference",
+    "relatedSlugs": [
+      "annaprashan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/annaprashan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/annaprashan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "annaprashan-same-day-risk",
+    "title": "Annaprashan: Same Day Risk",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "annaprashan same day risk",
+    "secondaryKeywords": [
+      "annaprashan planning",
+      "understanding urgency tradeoffs",
+      "annaprashan planning"
+    ],
+    "keywordVariants": [
+      "annaprashan same-day-risk",
+      "annaprashan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing understanding urgency tradeoffs inside annaprashan planning.",
+    "serviceSlug": "annaprashan",
+    "serviceName": "Annaprashan Ceremony",
+    "angle": "understanding urgency tradeoffs",
+    "supportLabel": "same day risk",
+    "relatedSlugs": [
+      "annaprashan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/annaprashan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/annaprashan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "annaprashan-combined-rituals",
+    "title": "Annaprashan: Combined Rituals",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "annaprashan combined rituals",
+    "secondaryKeywords": [
+      "annaprashan planning",
+      "pairing one ceremony with another without clutter",
+      "annaprashan planning"
+    ],
+    "keywordVariants": [
+      "annaprashan combined-rituals",
+      "annaprashan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing pairing one ceremony with another without clutter inside annaprashan planning.",
+    "serviceSlug": "annaprashan",
+    "serviceName": "Annaprashan Ceremony",
+    "angle": "pairing one ceremony with another without clutter",
+    "supportLabel": "combined rituals",
+    "relatedSlugs": [
+      "annaprashan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/annaprashan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/annaprashan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "annaprashan-briefing-the-family",
+    "title": "Annaprashan: Briefing The Family",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "annaprashan briefing the family",
+    "secondaryKeywords": [
+      "annaprashan planning",
+      "getting everyone ready before the day starts",
+      "annaprashan planning"
+    ],
+    "keywordVariants": [
+      "annaprashan briefing-the-family",
+      "annaprashan decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing getting everyone ready before the day starts inside annaprashan planning.",
+    "serviceSlug": "annaprashan",
+    "serviceName": "Annaprashan Ceremony",
+    "angle": "getting everyone ready before the day starts",
+    "supportLabel": "briefing the family",
+    "relatedSlugs": [
+      "annaprashan",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/annaprashan",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/annaprashan",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "navagraha-puja-when-to-book",
+    "title": "Navagraha Puja: When To Book",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "navagraha puja when to book",
+    "secondaryKeywords": [
+      "navagraha puja planning",
+      "timing the ceremony request",
+      "navagraha puja planning"
+    ],
+    "keywordVariants": [
+      "navagraha-puja when-to-book",
+      "navagraha puja decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing timing the ceremony request inside navagraha puja planning.",
+    "serviceSlug": "navagraha-puja",
+    "serviceName": "Navagraha Puja",
+    "angle": "timing the ceremony request",
+    "supportLabel": "when to book",
+    "relatedSlugs": [
+      "navagraha-puja",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/navagraha-puja",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/navagraha-puja",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "navagraha-puja-pandit-fit",
+    "title": "Navagraha Puja: Pandit Fit",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "navagraha puja pandit fit",
+    "secondaryKeywords": [
+      "navagraha puja planning",
+      "matching ceremony scope to priest expertise",
+      "navagraha puja planning"
+    ],
+    "keywordVariants": [
+      "navagraha-puja pandit-fit",
+      "navagraha puja decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing matching ceremony scope to priest expertise inside navagraha puja planning.",
+    "serviceSlug": "navagraha-puja",
+    "serviceName": "Navagraha Puja",
+    "angle": "matching ceremony scope to priest expertise",
+    "supportLabel": "pandit fit",
+    "relatedSlugs": [
+      "navagraha-puja",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/navagraha-puja",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/navagraha-puja",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "navagraha-puja-home-vs-venue",
+    "title": "Navagraha Puja: Home vs Venue",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "navagraha puja home vs venue",
+    "secondaryKeywords": [
+      "navagraha puja planning",
+      "choosing the right ceremony setting",
+      "navagraha puja planning"
+    ],
+    "keywordVariants": [
+      "navagraha-puja home-vs-venue",
+      "navagraha puja decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing choosing the right ceremony setting inside navagraha puja planning.",
+    "serviceSlug": "navagraha-puja",
+    "serviceName": "Navagraha Puja",
+    "angle": "choosing the right ceremony setting",
+    "supportLabel": "home vs venue",
+    "relatedSlugs": [
+      "navagraha-puja",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/navagraha-puja",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/navagraha-puja",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "navagraha-puja-samagri-responsibility",
+    "title": "Navagraha Puja: Samagri Responsibility",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "navagraha puja samagri responsibility",
+    "secondaryKeywords": [
+      "navagraha puja planning",
+      "deciding who handles materials",
+      "navagraha puja planning"
+    ],
+    "keywordVariants": [
+      "navagraha-puja samagri-responsibility",
+      "navagraha puja decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing deciding who handles materials inside navagraha puja planning.",
+    "serviceSlug": "navagraha-puja",
+    "serviceName": "Navagraha Puja",
+    "angle": "deciding who handles materials",
+    "supportLabel": "samagri responsibility",
+    "relatedSlugs": [
+      "navagraha-puja",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/navagraha-puja",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/navagraha-puja",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "navagraha-puja-language-preference",
+    "title": "Navagraha Puja: Language Preference",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "navagraha puja language preference",
+    "secondaryKeywords": [
+      "navagraha puja planning",
+      "keeping the family comfortable during the vidhi",
+      "navagraha puja planning"
+    ],
+    "keywordVariants": [
+      "navagraha-puja language-preference",
+      "navagraha puja decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing keeping the family comfortable during the vidhi inside navagraha puja planning.",
+    "serviceSlug": "navagraha-puja",
+    "serviceName": "Navagraha Puja",
+    "angle": "keeping the family comfortable during the vidhi",
+    "supportLabel": "language preference",
+    "relatedSlugs": [
+      "navagraha-puja",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/navagraha-puja",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/navagraha-puja",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "navagraha-puja-same-day-risk",
+    "title": "Navagraha Puja: Same Day Risk",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "navagraha puja same day risk",
+    "secondaryKeywords": [
+      "navagraha puja planning",
+      "understanding urgency tradeoffs",
+      "navagraha puja planning"
+    ],
+    "keywordVariants": [
+      "navagraha-puja same-day-risk",
+      "navagraha puja decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing understanding urgency tradeoffs inside navagraha puja planning.",
+    "serviceSlug": "navagraha-puja",
+    "serviceName": "Navagraha Puja",
+    "angle": "understanding urgency tradeoffs",
+    "supportLabel": "same day risk",
+    "relatedSlugs": [
+      "navagraha-puja",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/navagraha-puja",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/navagraha-puja",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "navagraha-puja-combined-rituals",
+    "title": "Navagraha Puja: Combined Rituals",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "navagraha puja combined rituals",
+    "secondaryKeywords": [
+      "navagraha puja planning",
+      "pairing one ceremony with another without clutter",
+      "navagraha puja planning"
+    ],
+    "keywordVariants": [
+      "navagraha-puja combined-rituals",
+      "navagraha puja decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing pairing one ceremony with another without clutter inside navagraha puja planning.",
+    "serviceSlug": "navagraha-puja",
+    "serviceName": "Navagraha Puja",
+    "angle": "pairing one ceremony with another without clutter",
+    "supportLabel": "combined rituals",
+    "relatedSlugs": [
+      "navagraha-puja",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/navagraha-puja",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/navagraha-puja",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  },
+  {
+    "slug": "navagraha-puja-briefing-the-family",
+    "title": "Navagraha Puja: Briefing The Family",
+    "cluster": "ceremonies",
+    "schemaType": "Article",
+    "searchIntent": "informational",
+    "primaryKeyword": "navagraha puja briefing the family",
+    "secondaryKeywords": [
+      "navagraha puja planning",
+      "getting everyone ready before the day starts",
+      "navagraha puja planning"
+    ],
+    "keywordVariants": [
+      "navagraha-puja briefing-the-family",
+      "navagraha puja decision guide"
+    ],
+    "pageFamily": "ceremony-decision",
+    "audienceRegion": "india",
+    "summary": "Decision-focused guidance for households comparing getting everyone ready before the day starts inside navagraha puja planning.",
+    "serviceSlug": "navagraha-puja",
+    "serviceName": "Navagraha Puja",
+    "angle": "getting everyone ready before the day starts",
+    "supportLabel": "briefing the family",
+    "relatedSlugs": [
+      "navagraha-puja",
+      "questions-ask-pandit",
+      "communicate-ritual-requirements"
+    ],
+    "requiredInternalLinks": [
+      "/pujas/navagraha-puja",
+      "/pandits",
+      "/contact"
+    ],
+    "conversionPath": [
+      "/pujas/navagraha-puja",
+      "/pandits",
+      "/contact"
+    ],
+    "sourceNotes": [
+      "Ceremony-decision source record from the v2 editorial layer."
+    ]
+  }
+]

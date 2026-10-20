@@ -7,9 +7,9 @@ import type {
   ServicePackage,
   ServiceProcessStep,
   ContentCluster,
-} from "../lib/content/types";
+} from "../apps/web/lib/content/types";
 
-const ROOT = process.cwd();
+const ROOT = path.join(process.cwd(), 'apps/web');
 const PAGES_DIR = path.join(ROOT, "content", "pages");
 const SOURCES_DIR = path.join(ROOT, "content", "sources");
 const LAST_UPDATED = "2026-05-25";

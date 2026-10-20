@@ -1,8 +1,8 @@
-import { getAllPages } from "../lib/content/loader";
-import { getClusterMeta, getRegistryEntry } from "../lib/content/registry";
-import { generatePageMetadata } from "../lib/seo/metadata";
-import { buildSitemapEntries } from "../lib/seo/sitemap";
-import { generateSchemas } from "../lib/schema/generator";
+import { getAllPages } from "../apps/web/lib/content/loader";
+import { getClusterMeta, getRegistryEntry } from "../apps/web/lib/content/registry";
+import { generatePageMetadata } from "../apps/web/lib/seo/metadata";
+import { buildSitemapEntries } from "../apps/web/lib/seo/sitemap";
+import { generateSchemas } from "../apps/web/lib/schema/generator";
 
 const MOJIBAKE_PATTERNS = [/â‚¹/i, /Ã¢â€šÂ¹/i, /â€“/i, /Ã¢â‚¬â€œ/i, /â€”/i];
 const BASE_SLUGS = new Set(["what-is-navdhya", "about-navdhya", "navdhya-services"]);

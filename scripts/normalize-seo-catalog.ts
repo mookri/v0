@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
-import type { ContentCluster, FAQEntry, SEOPage } from "../lib/content/types";
-import { validateEntitySEO } from "../lib/seo/entity";
+import type { ContentCluster, FAQEntry, SEOPage } from "../apps/web/lib/content/types";
+import { validateEntitySEO } from "../apps/web/lib/seo/entity";
 
 type PageFile = SEOPage & {
   automation?: unknown;
@@ -9,7 +9,7 @@ type PageFile = SEOPage & {
   [key: string]: unknown;
 };
 
-const ROOT = process.cwd();
+const ROOT = path.join(process.cwd(), 'apps/web');
 const PAGES_DIR = path.join(ROOT, "content", "pages");
 const LAST_UPDATED = "2026-05-25";
 const BASE_SLUGS = new Set(["what-is-navdhya", "about-navdhya", "navdhya-services"]);

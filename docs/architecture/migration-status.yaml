@@ -1,0 +1,37 @@
+status: in-progress
+phase: 14
+current_step: Extraction readiness + cleanup
+completed:
+  - 0-freeze-baseline
+  - 1-governance
+  - 2-monorepo
+  - 3-web-extraction
+  - 4-foundations
+  - 5-capabilities-partial
+  - 5F-payment-package
+  - 6-infrastructure
+  - 7-dlo-x
+  - 8-ads
+  - 9-content-seo
+  - 10-customer-app
+  - 11-customer-shell
+  - 12-customer-routes
+  - 13-bff
+  - 14-api-platform
+  - 17-edge-session-decision
+  - 19-staging-deploy
+  - 20-perf-baseline
+  - 21-book-split
+  - 22-payment-hardening
+  - 24-realtime
+  - 26-strangler
+  - 27-partner-migration
+  - 28-admin-operations
+  - 29-readiness-scoring
+partial: []
+not-started:
+  - 25-production-cutover
+baselines:
+  architecture-tests: 31 files / 85 passing
+  unit-suites: 82 files / 297 passing
+  branch: architecture/phase-3-web-extraction

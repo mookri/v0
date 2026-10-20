@@ -1,0 +1,10 @@
+{
+  "greeting": "Hello",
+  "bookings": "Bookings",
+  "profile": "Profile",
+  "settings": "Settings",
+  "support": "Support",
+  "emptyBookings": "No bookings yet. Explore rituals to get started.",
+  "emptySaved": "Nothing saved yet.",
+  "emptyNotifications": "You're all caught up."
+}

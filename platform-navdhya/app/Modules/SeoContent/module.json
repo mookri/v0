@@ -1,0 +1,16 @@
+{
+    "code": "seo_content",
+    "name": "SEO Content",
+    "version": "1.0.0",
+    "phase": 100,
+    "priority": 500,
+    "dependencies": [],
+    "permissions": [],
+    "scopes": [],
+    "events": [],
+    "navigation": [],
+    "actions": [],
+    "api": {
+        "basePath": "seo"
+    }
+}

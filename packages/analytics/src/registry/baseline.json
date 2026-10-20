@@ -1,0 +1,119 @@
+{
+  "events": {
+    "ad_click": {
+      "version": 1,
+      "params": {
+        "placement": "string",
+        "ad_ref": "string"
+      }
+    },
+    "ad_impression": {
+      "version": 1,
+      "params": {
+        "placement": "string",
+        "ad_ref": "string"
+      }
+    },
+    "app_error": {
+      "version": 1,
+      "params": {
+        "error_class": "string",
+        "stack_top": "string",
+        "release": "string"
+      }
+    },
+    "begin_checkout": {
+      "version": 1,
+      "params": {
+        "value_basket": "number",
+        "payment_method": "string"
+      }
+    },
+    "booking_confirmed": {
+      "version": 1,
+      "params": {
+        "value": "number",
+        "currency": "string",
+        "service_category": "string",
+        "city": "string"
+      }
+    },
+    "checkout_started": {
+      "version": 1,
+      "params": {
+        "value_basket": "number",
+        "item_count": "number"
+      }
+    },
+    "kyc_submitted": {
+      "version": 1,
+      "params": {
+        "doc_type": "string"
+      }
+    },
+    "login": {
+      "version": 1,
+      "params": {
+        "method": "string"
+      }
+    },
+    "page_view": {
+      "version": 1,
+      "params": {
+        "page_type": "string"
+      }
+    },
+    "payment_failed": {
+      "version": 1,
+      "params": {
+        "value": "number",
+        "currency": "string",
+        "failure_code": "string",
+        "transaction_ref": "string"
+      }
+    },
+    "payment_succeeded": {
+      "version": 1,
+      "params": {
+        "value": "number",
+        "currency": "string",
+        "method": "string",
+        "transaction_ref": "string"
+      }
+    },
+    "purchase_viewed": {
+      "version": 1,
+      "params": {
+        "value": "number",
+        "item_count": "number"
+      }
+    },
+    "search": {
+      "version": 1,
+      "params": {
+        "search_term": "string",
+        "result_count": "number"
+      }
+    },
+    "sign_up": {
+      "version": 1,
+      "params": {
+        "method": "string"
+      }
+    },
+    "view_item": {
+      "version": 1,
+      "params": {
+        "item_type": "string",
+        "item_category": "string",
+        "value": "number"
+      }
+    },
+    "zero_results_search": {
+      "version": 1,
+      "params": {
+        "search_term": "string"
+      }
+    }
+  }
+}

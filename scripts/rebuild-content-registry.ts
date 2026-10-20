@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const root = process.cwd();
+const root = path.join(process.cwd(), 'apps/web');
 const pagesDir = path.join(root, 'content/pages');
 const registryPath = path.join(root, 'content/registry.json');
 

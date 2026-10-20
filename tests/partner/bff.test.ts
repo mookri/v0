@@ -1,0 +1,54 @@
+import { test, expect } from 'vitest';
+import { POST, __assignmentGatewayForTests } from '@apps/partner/app/api/assignments/[assignmentId]/accept/route';
+import { GET as health } from '@apps/partner/app/api/health/route';
+import { mintActorToken, INSECURE_DEV_SECRET } from '@navdhya/identity/src/application/token-actor';
+
+const bearer = (userId: string) =>
+  `Bearer ${mintActorToken(INSECURE_DEV_SECRET, { userId, sessionId: `staging_${userId}`, roles: ['partner'] }, new Date().toISOString(), 3600)}`;
+
+const post = (headers: Record<string, string> = {}) =>
+  POST(new Request('https://partner.navdhya.com/api/assignments/a1/accept', { method: 'POST', headers }), {
+    params: { assignmentId: 'a1' },
+  });
+
+test('accept without actor is unauthenticated', async () => {
+  const res = await post();
+  expect(res.status).toBe(401);
+  const body = (await res.json()) as { error: { code: string } };
+  expect(body.error.code).toBe('UNAUTHENTICATED');
+});
+
+test('accept maps unknown offers to stable not-found envelope', async () => {
+  const res = await post({ authorization: bearer('p1'), 'Idempotency-Key': 'ik-1' });
+  expect(res.status).toBe(404);
+  const body = (await res.json()) as { error: { code: string; message: string; requestId: string } };
+  expect(body.error.code).toBe('ASSIGNMENT_NOT_FOUND');
+  expect(typeof body.error.requestId).toBe('string');
+});
+
+test('accept completes against a live offer, then conflicts on replay', async () => {
+  const gateway = __assignmentGatewayForTests();
+  const { offerId } = await gateway.offer({
+    fulfillmentId: 'f1',
+    partnerId: 'p1',
+    expiresAt: new Date(Date.now() + 3600_000).toISOString(),
+  });
+  const accept = (headers: Record<string, string> = {}) =>
+    POST(new Request(`https://partner.navdhya.com/api/assignments/${offerId}/accept`, { method: 'POST', headers }), {
+      params: Promise.resolve({ assignmentId: offerId }),
+    });
+  const first = await accept({ authorization: bearer('p1'), 'Idempotency-Key': 'ik-live' });
+  expect(first.status).toBe(200);
+  const body = (await first.json()) as { data: { assignmentId: string; status: string } };
+  expect(body.data).toEqual({ assignmentId: offerId, status: 'ACCEPTED' });
+  const replay = await accept({ authorization: bearer('p1'), 'Idempotency-Key': 'ik-live-2' });
+  expect(replay.status).toBe(409);
+});
+
+test('partner health returns ok envelope with no-store', async () => {
+  const res = await health();
+  expect(res.status).toBe(200);
+  expect(res.headers.get('Cache-Control')).toBe('no-store');
+  const body = (await res.json()) as { data: { status: string; product: string } };
+  expect(body.data).toEqual({ status: 'ok', product: 'partner' });
+});

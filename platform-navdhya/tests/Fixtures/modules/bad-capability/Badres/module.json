@@ -1,0 +1,10 @@
+{
+    "code": "badres",
+    "name": "Badres",
+    "version": "1.0.0",
+    "phase": 1,
+    "priority": 100,
+    "permissions": [
+        { "code": "badres:_weird:view", "name": "View weird things" }
+    ]
+}

@@ -1,0 +1,99 @@
+# OpenAPI 3.1 fragment — platform user lifecycle administration.
+openapi: 3.1.0
+info:
+  title: Navdhya Platform — Users
+  version: 1.0.0
+paths:
+  /api/v1/platform/users:
+    get:
+      operationId: listTenantUsers
+      summary: List tenant users via memberships (tenant_id query required).
+      x-permission: platform:user:view
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Users with membership states.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+  /api/v1/platform/users/{id}:suspend:
+    post:
+      operationId: suspendUser
+      summary: Suspend a user (deactivated is terminal and excluded).
+      x-permission: platform:user:manage
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenant_id]
+      responses:
+        '200':
+          description: Suspended user.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/platform/users/{id}:activate:
+    post:
+      operationId: activateUser
+      summary: Restore a suspended user to active.
+      x-permission: platform:user:manage
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenant_id]
+      responses:
+        '200':
+          description: Activated user.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }

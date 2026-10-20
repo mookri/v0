@@ -1,0 +1,5122 @@
+{
+  "clusters": {
+    "brand": {
+      "label": "Inside the Brand",
+      "basePath": "explore"
+    },
+    "pujas": {
+      "label": "Delhi NCR Puja Services",
+      "basePath": "pujas"
+    },
+    "services": {
+      "label": "Puja Services",
+      "basePath": "services"
+    },
+    "ceremonies": {
+      "label": "Hindu Ceremonies",
+      "basePath": "ceremonies"
+    },
+    "ritual-guides": {
+      "label": "Ritual Guides",
+      "basePath": "ritual-guides"
+    },
+    "pandit-services": {
+      "label": "Pandit Services",
+      "basePath": "pandit-services"
+    },
+    "festival-rituals": {
+      "label": "Festival Rituals",
+      "basePath": "festival-rituals"
+    },
+    "spiritual-guides": {
+      "label": "Spiritual Guides",
+      "basePath": "spiritual-guides"
+    },
+    "faq": {
+      "label": "Frequently Asked Questions",
+      "basePath": "faq"
+    },
+    "blog": {
+      "label": "Navdhya Journal",
+      "basePath": "blog"
+    },
+    "compare": {
+      "label": "Delhi NCR Comparisons",
+      "basePath": "compare"
+    },
+    "centers": {
+      "label": "Service Centers",
+      "basePath": "centers"
+    },
+    "astrology": {
+      "label": "Astrology Guides",
+      "basePath": "astrology"
+    },
+    "vastu": {
+      "label": "Vastu Guides",
+      "basePath": "vastu"
+    }
+  },
+  "pages": {
+    "16-sanskars": {
+      "file": "16-sanskars.json",
+      "cluster": "ceremonies"
+    },
+    "99pandit-alternatives-delhi": {
+      "file": "99pandit-alternatives-delhi.json",
+      "cluster": "compare"
+    },
+    "abhishek-ritual-home": {
+      "file": "abhishek-ritual-home.json",
+      "cluster": "ritual-guides"
+    },
+    "agni-sacred-fire-vedic": {
+      "file": "agni-sacred-fire-vedic.json",
+      "cluster": "ritual-guides"
+    },
+    "ahimsa-daily-life": {
+      "file": "ahimsa-daily-life.json",
+      "cluster": "spiritual-guides"
+    },
+    "ahimsa-vedic-rituals": {
+      "file": "ahimsa-vedic-rituals.json",
+      "cluster": "spiritual-guides"
+    },
+    "ai-vedic-ritual-scheduling": {
+      "file": "ai-vedic-ritual-scheduling.json",
+      "cluster": "brand"
+    },
+    "akshaya-tritiya-ritual": {
+      "file": "akshaya-tritiya-ritual.json",
+      "cluster": "festival-rituals"
+    },
+    "amavasya-puja-home": {
+      "file": "amavasya-puja-home.json",
+      "cluster": "ritual-guides"
+    },
+    "anant-chaturdashi-ritual": {
+      "file": "anant-chaturdashi-ritual.json",
+      "cluster": "festival-rituals"
+    },
+    "ancestor-rite-timing-before-a-move-or-property-change-consultation": {
+      "file": "ancestor-rite-timing-before-a-move-or-property-change-consultation.json",
+      "cluster": "services"
+    },
+    "ancestor-rite-timing-before-booking-a-priest-consultation": {
+      "file": "ancestor-rite-timing-before-booking-a-priest-consultation.json",
+      "cluster": "services"
+    },
+    "ancestor-rite-timing-for-diaspora-time-zone-coordination-consultation": {
+      "file": "ancestor-rite-timing-for-diaspora-time-zone-coordination-consultation.json",
+      "cluster": "services"
+    },
+    "ancestor-rite-timing-when-elders-want-scriptural-context-first-consultation": {
+      "file": "ancestor-rite-timing-when-elders-want-scriptural-context-first-consultation.json",
+      "cluster": "services"
+    },
+    "ancestor-rite-timing-when-the-family-wants-a-second-opinion-consultation": {
+      "file": "ancestor-rite-timing-when-the-family-wants-a-second-opinion-consultation.json",
+      "cluster": "services"
+    },
+    "annaprashan-apartment-format-guide": {
+      "file": "annaprashan-apartment-format-guide.json",
+      "cluster": "services"
+    },
+    "annaprashan-briefing-the-family": {
+      "file": "annaprashan-briefing-the-family.json",
+      "cluster": "ceremonies"
+    },
+    "annaprashan-ceremony-guide": {
+      "file": "annaprashan-ceremony-guide.json",
+      "cluster": "ceremonies"
+    },
+    "annaprashan-combined-ritual-day-guide": {
+      "file": "annaprashan-combined-ritual-day-guide.json",
+      "cluster": "services"
+    },
+    "annaprashan-combined-rituals": {
+      "file": "annaprashan-combined-rituals.json",
+      "cluster": "ceremonies"
+    },
+    "annaprashan-delhi": {
+      "file": "annaprashan-delhi.json",
+      "cluster": "services"
+    },
+    "annaprashan-dwarka": {
+      "file": "annaprashan-dwarka.json",
+      "cluster": "services"
+    },
+    "annaprashan-east-delhi": {
+      "file": "annaprashan-east-delhi.json",
+      "cluster": "services"
+    },
+    "annaprashan-elder-led-family-guide": {
+      "file": "annaprashan-elder-led-family-guide.json",
+      "cluster": "services"
+    },
+    "annaprashan-family-consensus-guide": {
+      "file": "annaprashan-family-consensus-guide.json",
+      "cluster": "services"
+    },
+    "annaprashan-first-time-bookers-guide": {
+      "file": "annaprashan-first-time-bookers-guide.json",
+      "cluster": "services"
+    },
+    "annaprashan-ghaziabad": {
+      "file": "annaprashan-ghaziabad.json",
+      "cluster": "services"
+    },
+    "annaprashan-gurgaon": {
+      "file": "annaprashan-gurgaon.json",
+      "cluster": "services"
+    },
+    "annaprashan-home-vs-venue": {
+      "file": "annaprashan-home-vs-venue.json",
+      "cluster": "ceremonies"
+    },
+    "annaprashan-language-fit-guide": {
+      "file": "annaprashan-language-fit-guide.json",
+      "cluster": "services"
+    },
+    "annaprashan-language-preference": {
+      "file": "annaprashan-language-preference.json",
+      "cluster": "ceremonies"
+    },
+    "annaprashan-last-minute-clarity-guide": {
+      "file": "annaprashan-last-minute-clarity-guide.json",
+      "cluster": "services"
+    },
+    "annaprashan-noida": {
+      "file": "annaprashan-noida.json",
+      "cluster": "services"
+    },
+    "annaprashan-north-delhi": {
+      "file": "annaprashan-north-delhi.json",
+      "cluster": "services"
+    },
+    "annaprashan-pandit-fit": {
+      "file": "annaprashan-pandit-fit.json",
+      "cluster": "ceremonies"
+    },
+    "annaprashan-price-delhi-ncr": {
+      "file": "annaprashan-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "annaprashan-rohini": {
+      "file": "annaprashan-rohini.json",
+      "cluster": "services"
+    },
+    "annaprashan-samagri-responsibility": {
+      "file": "annaprashan-samagri-responsibility.json",
+      "cluster": "ceremonies"
+    },
+    "annaprashan-same-day-risk": {
+      "file": "annaprashan-same-day-risk.json",
+      "cluster": "ceremonies"
+    },
+    "annaprashan-small-home-setup-guide": {
+      "file": "annaprashan-small-home-setup-guide.json",
+      "cluster": "services"
+    },
+    "annaprashan-south-delhi": {
+      "file": "annaprashan-south-delhi.json",
+      "cluster": "services"
+    },
+    "annaprashan-travel-sensitive-guide": {
+      "file": "annaprashan-travel-sensitive-guide.json",
+      "cluster": "services"
+    },
+    "annaprashan-weekend-booking-guide": {
+      "file": "annaprashan-weekend-booking-guide.json",
+      "cluster": "services"
+    },
+    "annaprashan-west-delhi": {
+      "file": "annaprashan-west-delhi.json",
+      "cluster": "services"
+    },
+    "annaprashan-when-to-book": {
+      "file": "annaprashan-when-to-book.json",
+      "cluster": "ceremonies"
+    },
+    "annaprashan": {
+      "file": "annaprashan.json",
+      "cluster": "pujas"
+    },
+    "annual-ritual-calendar": {
+      "file": "annual-ritual-calendar.json",
+      "cluster": "ritual-guides"
+    },
+    "anusthan-at-home": {
+      "file": "anusthan-at-home.json",
+      "cluster": "ritual-guides"
+    },
+    "apartment-annaprashan-delhi-ncr": {
+      "file": "apartment-annaprashan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-bhoomi-pujan-delhi-ncr": {
+      "file": "apartment-bhoomi-pujan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-griha-pravesh-delhi-ncr": {
+      "file": "apartment-griha-pravesh-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-havan-delhi-ncr": {
+      "file": "apartment-havan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-hindu-wedding-delhi-ncr": {
+      "file": "apartment-hindu-wedding-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-lakshmi-ganesh-puja-delhi-ncr": {
+      "file": "apartment-lakshmi-ganesh-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-mundan-delhi-ncr": {
+      "file": "apartment-mundan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-namkaran-delhi-ncr": {
+      "file": "apartment-namkaran-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-navagraha-puja-delhi-ncr": {
+      "file": "apartment-navagraha-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-office-opening-delhi-ncr": {
+      "file": "apartment-office-opening-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-satyanarayan-katha-delhi-ncr": {
+      "file": "apartment-satyanarayan-katha-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "apartment-vastu-shanti-delhi-ncr": {
+      "file": "apartment-vastu-shanti-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "assamese-bihu-rituals": {
+      "file": "assamese-bihu-rituals.json",
+      "cluster": "spiritual-guides"
+    },
+    "asthi-visarjan-ritual": {
+      "file": "asthi-visarjan-ritual.json",
+      "cluster": "ceremonies"
+    },
+    "astrology-career-guidance": {
+      "file": "astrology-career-guidance.json",
+      "cluster": "services"
+    },
+    "astrology-health-predictions": {
+      "file": "astrology-health-predictions.json",
+      "cluster": "spiritual-guides"
+    },
+    "astrology-hindu-marriage": {
+      "file": "astrology-hindu-marriage.json",
+      "cluster": "spiritual-guides"
+    },
+    "astrology-naming-ceremony": {
+      "file": "astrology-naming-ceremony.json",
+      "cluster": "spiritual-guides"
+    },
+    "astrology-remedies-mantras": {
+      "file": "astrology-remedies-mantras.json",
+      "cluster": "spiritual-guides"
+    },
+    "astrology-ritual-relationship": {
+      "file": "astrology-ritual-relationship.json",
+      "cluster": "spiritual-guides"
+    },
+    "at-home-annaprashan-delhi-ncr": {
+      "file": "at-home-annaprashan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-bhoomi-pujan-delhi-ncr": {
+      "file": "at-home-bhoomi-pujan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-griha-pravesh-delhi-ncr": {
+      "file": "at-home-griha-pravesh-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-havan-delhi-ncr": {
+      "file": "at-home-havan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-hindu-wedding-delhi-ncr": {
+      "file": "at-home-hindu-wedding-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-lakshmi-ganesh-puja-delhi-ncr": {
+      "file": "at-home-lakshmi-ganesh-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-mundan-delhi-ncr": {
+      "file": "at-home-mundan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-namkaran-delhi-ncr": {
+      "file": "at-home-namkaran-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-navagraha-puja-delhi-ncr": {
+      "file": "at-home-navagraha-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-office-opening-delhi-ncr": {
+      "file": "at-home-office-opening-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-satyanarayan-katha-delhi-ncr": {
+      "file": "at-home-satyanarayan-katha-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "at-home-vastu-shanti-delhi-ncr": {
+      "file": "at-home-vastu-shanti-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "australia-brisbane-india-family-pandit-coordination": {
+      "file": "australia-brisbane-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "australia-brisbane-nri-griha-pravesh-planning": {
+      "file": "australia-brisbane-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "australia-brisbane-online-astrology-consultation": {
+      "file": "australia-brisbane-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "australia-brisbane-online-puja": {
+      "file": "australia-brisbane-online-puja.json",
+      "cluster": "services"
+    },
+    "australia-brisbane-online-satyanarayan-katha": {
+      "file": "australia-brisbane-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "australia-brisbane": {
+      "file": "australia-brisbane.json",
+      "cluster": "centers"
+    },
+    "australia-melbourne-india-family-pandit-coordination": {
+      "file": "australia-melbourne-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "australia-melbourne-nri-griha-pravesh-planning": {
+      "file": "australia-melbourne-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "australia-melbourne-online-astrology-consultation": {
+      "file": "australia-melbourne-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "australia-melbourne-online-puja": {
+      "file": "australia-melbourne-online-puja.json",
+      "cluster": "services"
+    },
+    "australia-melbourne-online-satyanarayan-katha": {
+      "file": "australia-melbourne-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "australia-melbourne": {
+      "file": "australia-melbourne.json",
+      "cluster": "centers"
+    },
+    "australia-perth-india-family-pandit-coordination": {
+      "file": "australia-perth-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "australia-perth-nri-griha-pravesh-planning": {
+      "file": "australia-perth-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "australia-perth-online-astrology-consultation": {
+      "file": "australia-perth-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "australia-perth-online-puja": {
+      "file": "australia-perth-online-puja.json",
+      "cluster": "services"
+    },
+    "australia-perth-online-satyanarayan-katha": {
+      "file": "australia-perth-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "australia-perth": {
+      "file": "australia-perth.json",
+      "cluster": "centers"
+    },
+    "australia-sydney-india-family-pandit-coordination": {
+      "file": "australia-sydney-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "australia-sydney-nri-griha-pravesh-planning": {
+      "file": "australia-sydney-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "australia-sydney-online-astrology-consultation": {
+      "file": "australia-sydney-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "australia-sydney-online-puja": {
+      "file": "australia-sydney-online-puja.json",
+      "cluster": "services"
+    },
+    "australia-sydney-online-satyanarayan-katha": {
+      "file": "australia-sydney-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "australia-sydney": {
+      "file": "australia-sydney.json",
+      "cluster": "centers"
+    },
+    "ayodhya-ritual-traditions": {
+      "file": "ayodhya-ritual-traditions.json",
+      "cluster": "spiritual-guides"
+    },
+    "baby-naming": {
+      "file": "baby-naming.json",
+      "cluster": "pujas"
+    },
+    "baisakhi-ritual-guide": {
+      "file": "baisakhi-ritual-guide.json",
+      "cluster": "festival-rituals"
+    },
+    "banana-leaf-ritual": {
+      "file": "banana-leaf-ritual.json",
+      "cluster": "ritual-guides"
+    },
+    "barsi-ritual-guide": {
+      "file": "barsi-ritual-guide.json",
+      "cluster": "ceremonies"
+    },
+    "bell-conch-puja": {
+      "file": "bell-conch-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "benefits-chanting-om": {
+      "file": "benefits-chanting-om.json",
+      "cluster": "spiritual-guides"
+    },
+    "benefits-fasting-hindu": {
+      "file": "benefits-fasting-hindu.json",
+      "cluster": "spiritual-guides"
+    },
+    "benefits-regular-astrology": {
+      "file": "benefits-regular-astrology.json",
+      "cluster": "spiritual-guides"
+    },
+    "benefits-regular-puja": {
+      "file": "benefits-regular-puja.json",
+      "cluster": "spiritual-guides"
+    },
+    "benefits-temple-visits": {
+      "file": "benefits-temple-visits.json",
+      "cluster": "spiritual-guides"
+    },
+    "benefits-vedic-chants": {
+      "file": "benefits-vedic-chants.json",
+      "cluster": "spiritual-guides"
+    },
+    "bengali-hindu-ritual-traditions": {
+      "file": "bengali-hindu-ritual-traditions.json",
+      "cluster": "spiritual-guides"
+    },
+    "best-pandit-booking-delhi": {
+      "file": "best-pandit-booking-delhi.json",
+      "cluster": "compare"
+    },
+    "bhai-dooj-ritual": {
+      "file": "bhai-dooj-ritual.json",
+      "cluster": "festival-rituals"
+    },
+    "bhajans-kirtans-spiritual": {
+      "file": "bhajans-kirtans-spiritual.json",
+      "cluster": "spiritual-guides"
+    },
+    "bhoomi-pujan-apartment-format-guide": {
+      "file": "bhoomi-pujan-apartment-format-guide.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-briefing-the-family": {
+      "file": "bhoomi-pujan-briefing-the-family.json",
+      "cluster": "ceremonies"
+    },
+    "bhoomi-pujan-ceremony": {
+      "file": "bhoomi-pujan-ceremony.json",
+      "cluster": "ceremonies"
+    },
+    "bhoomi-pujan-combined-ritual-day-guide": {
+      "file": "bhoomi-pujan-combined-ritual-day-guide.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-combined-rituals": {
+      "file": "bhoomi-pujan-combined-rituals.json",
+      "cluster": "ceremonies"
+    },
+    "bhoomi-pujan-delhi": {
+      "file": "bhoomi-pujan-delhi.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-dwarka": {
+      "file": "bhoomi-pujan-dwarka.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-east-delhi": {
+      "file": "bhoomi-pujan-east-delhi.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-elder-led-family-guide": {
+      "file": "bhoomi-pujan-elder-led-family-guide.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-family-consensus-guide": {
+      "file": "bhoomi-pujan-family-consensus-guide.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-first-time-bookers-guide": {
+      "file": "bhoomi-pujan-first-time-bookers-guide.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-ghaziabad": {
+      "file": "bhoomi-pujan-ghaziabad.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-gurgaon": {
+      "file": "bhoomi-pujan-gurgaon.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-home-vs-venue": {
+      "file": "bhoomi-pujan-home-vs-venue.json",
+      "cluster": "ceremonies"
+    },
+    "bhoomi-pujan-language-fit-guide": {
+      "file": "bhoomi-pujan-language-fit-guide.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-language-preference": {
+      "file": "bhoomi-pujan-language-preference.json",
+      "cluster": "ceremonies"
+    },
+    "bhoomi-pujan-last-minute-clarity-guide": {
+      "file": "bhoomi-pujan-last-minute-clarity-guide.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-noida": {
+      "file": "bhoomi-pujan-noida.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-north-delhi": {
+      "file": "bhoomi-pujan-north-delhi.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-pandit-fit": {
+      "file": "bhoomi-pujan-pandit-fit.json",
+      "cluster": "ceremonies"
+    },
+    "bhoomi-pujan-price-delhi-ncr": {
+      "file": "bhoomi-pujan-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "bhoomi-pujan-rohini": {
+      "file": "bhoomi-pujan-rohini.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-samagri-responsibility": {
+      "file": "bhoomi-pujan-samagri-responsibility.json",
+      "cluster": "ceremonies"
+    },
+    "bhoomi-pujan-same-day-risk": {
+      "file": "bhoomi-pujan-same-day-risk.json",
+      "cluster": "ceremonies"
+    },
+    "bhoomi-pujan-small-home-setup-guide": {
+      "file": "bhoomi-pujan-small-home-setup-guide.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-south-delhi": {
+      "file": "bhoomi-pujan-south-delhi.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-travel-sensitive-guide": {
+      "file": "bhoomi-pujan-travel-sensitive-guide.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-weekend-booking-guide": {
+      "file": "bhoomi-pujan-weekend-booking-guide.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-west-delhi": {
+      "file": "bhoomi-pujan-west-delhi.json",
+      "cluster": "services"
+    },
+    "bhoomi-pujan-when-to-book": {
+      "file": "bhoomi-pujan-when-to-book.json",
+      "cluster": "ceremonies"
+    },
+    "bhoomi-pujan": {
+      "file": "bhoomi-pujan.json",
+      "cluster": "pujas"
+    },
+    "bhumi-puja-renovation": {
+      "file": "bhumi-puja-renovation.json",
+      "cluster": "ceremonies"
+    },
+    "bihari-hindu-ritual-customs": {
+      "file": "bihari-hindu-ritual-customs.json",
+      "cluster": "spiritual-guides"
+    },
+    "bindi-spiritual-significance": {
+      "file": "bindi-spiritual-significance.json",
+      "cluster": "spiritual-guides"
+    },
+    "birth-time-kundali": {
+      "file": "birth-time-kundali.json",
+      "cluster": "spiritual-guides"
+    },
+    "book-astrology-consultation-online": {
+      "file": "book-astrology-consultation-online.json",
+      "cluster": "services"
+    },
+    "book-pandit-home-puja": {
+      "file": "book-pandit-home-puja.json",
+      "cluster": "pandit-services"
+    },
+    "brahmin-feast-vidhi": {
+      "file": "brahmin-feast-vidhi.json",
+      "cluster": "ceremonies"
+    },
+    "braj-mathura-rituals": {
+      "file": "braj-mathura-rituals.json",
+      "cluster": "spiritual-guides"
+    },
+    "broomstick-hindu-ritual": {
+      "file": "broomstick-hindu-ritual.json",
+      "cluster": "ritual-guides"
+    },
+    "camphor-hindu-worship": {
+      "file": "camphor-hindu-worship.json",
+      "cluster": "ritual-guides"
+    },
+    "camphor-home-rituals": {
+      "file": "camphor-home-rituals.json",
+      "cluster": "ritual-guides"
+    },
+    "career-reading-before-a-move-or-property-change-consultation": {
+      "file": "career-reading-before-a-move-or-property-change-consultation.json",
+      "cluster": "services"
+    },
+    "career-reading-before-booking-a-priest-consultation": {
+      "file": "career-reading-before-booking-a-priest-consultation.json",
+      "cluster": "services"
+    },
+    "career-reading-for-diaspora-time-zone-coordination-consultation": {
+      "file": "career-reading-for-diaspora-time-zone-coordination-consultation.json",
+      "cluster": "services"
+    },
+    "career-reading-when-elders-want-scriptural-context-first-consultation": {
+      "file": "career-reading-when-elders-want-scriptural-context-first-consultation.json",
+      "cluster": "services"
+    },
+    "career-reading-when-the-family-wants-a-second-opinion-consultation": {
+      "file": "career-reading-when-the-family-wants-a-second-opinion-consultation.json",
+      "cluster": "services"
+    },
+    "ceremony-readiness-before-first-booking": {
+      "file": "ceremony-readiness-before-first-booking.json",
+      "cluster": "compare"
+    },
+    "ceremony-readiness-for-repeat-households": {
+      "file": "ceremony-readiness-for-repeat-households.json",
+      "cluster": "compare"
+    },
+    "ceremony-readiness-vs-generic-listings": {
+      "file": "ceremony-readiness-vs-generic-listings.json",
+      "cluster": "compare"
+    },
+    "ceremony-readiness-vs-phone-only-booking": {
+      "file": "ceremony-readiness-vs-phone-only-booking.json",
+      "cluster": "compare"
+    },
+    "ceremony-readiness-vs-unmanaged-referrals": {
+      "file": "ceremony-readiness-vs-unmanaged-referrals.json",
+      "cluster": "compare"
+    },
+    "chakra-system-hindu": {
+      "file": "chakra-system-hindu.json",
+      "cluster": "spiritual-guides"
+    },
+    "chandan-paste-puja": {
+      "file": "chandan-paste-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "char-dham-yatra": {
+      "file": "char-dham-yatra.json",
+      "cluster": "spiritual-guides"
+    },
+    "chhat-puja-ceremony": {
+      "file": "chhat-puja-ceremony.json",
+      "cluster": "festival-rituals"
+    },
+    "chhath-puja-ritual-guide": {
+      "file": "chhath-puja-ritual-guide.json",
+      "cluster": "festival-rituals"
+    },
+    "choose-incense-puja": {
+      "file": "choose-incense-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "choose-personal-deity": {
+      "file": "choose-personal-deity.json",
+      "cluster": "spiritual-guides"
+    },
+    "clean-puja-idols": {
+      "file": "clean-puja-idols.json",
+      "cluster": "ritual-guides"
+    },
+    "clear-booking-briefs-before-first-booking": {
+      "file": "clear-booking-briefs-before-first-booking.json",
+      "cluster": "compare"
+    },
+    "clear-booking-briefs-for-repeat-households": {
+      "file": "clear-booking-briefs-for-repeat-households.json",
+      "cluster": "compare"
+    },
+    "clear-booking-briefs-vs-generic-listings": {
+      "file": "clear-booking-briefs-vs-generic-listings.json",
+      "cluster": "compare"
+    },
+    "clear-booking-briefs-vs-phone-only-booking": {
+      "file": "clear-booking-briefs-vs-phone-only-booking.json",
+      "cluster": "compare"
+    },
+    "clear-booking-briefs-vs-unmanaged-referrals": {
+      "file": "clear-booking-briefs-vs-unmanaged-referrals.json",
+      "cluster": "compare"
+    },
+    "coconut-hindu-rituals": {
+      "file": "coconut-hindu-rituals.json",
+      "cluster": "ritual-guides"
+    },
+    "communicate-ritual-requirements": {
+      "file": "communicate-ritual-requirements.json",
+      "cluster": "pandit-services"
+    },
+    "complete-diwali-puja-guide": {
+      "file": "complete-diwali-puja-guide.json",
+      "cluster": "festival-rituals"
+    },
+    "coorg-kodava-rituals": {
+      "file": "coorg-kodava-rituals.json",
+      "cluster": "spiritual-guides"
+    },
+    "cow-hindu-ritual-significance": {
+      "file": "cow-hindu-ritual-significance.json",
+      "cluster": "ritual-guides"
+    },
+    "cow-worship-home": {
+      "file": "cow-worship-home.json",
+      "cluster": "ritual-guides"
+    },
+    "daily-lamp-lighting": {
+      "file": "daily-lamp-lighting.json",
+      "cluster": "ritual-guides"
+    },
+    "daily-puja-routine": {
+      "file": "daily-puja-routine.json",
+      "cluster": "ritual-guides"
+    },
+    "dasha-mahadasha-vedic": {
+      "file": "dasha-mahadasha-vedic.json",
+      "cluster": "spiritual-guides"
+    },
+    "deepawali-traditions-india": {
+      "file": "deepawali-traditions-india.json",
+      "cluster": "festival-rituals"
+    },
+    "delhi-hindu-temple-rituals": {
+      "file": "delhi-hindu-temple-rituals.json",
+      "cluster": "services"
+    },
+    "delhi": {
+      "file": "delhi.json",
+      "cluster": "centers"
+    },
+    "devi-puja-guide": {
+      "file": "devi-puja-guide.json",
+      "cluster": "ritual-guides"
+    },
+    "dhanteras-ritual-lakshmi": {
+      "file": "dhanteras-ritual-lakshmi.json",
+      "cluster": "festival-rituals"
+    },
+    "dharma-hindu-rituals": {
+      "file": "dharma-hindu-rituals.json",
+      "cluster": "spiritual-guides"
+    },
+    "dhoop-agarbatti-puja": {
+      "file": "dhoop-agarbatti-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "diaspora-regional-traditions": {
+      "file": "diaspora-regional-traditions.json",
+      "cluster": "spiritual-guides"
+    },
+    "draw-swastika-puja": {
+      "file": "draw-swastika-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "dream-symbolism-hindu": {
+      "file": "dream-symbolism-hindu.json",
+      "cluster": "spiritual-guides"
+    },
+    "durga-puja-ceremony-guide": {
+      "file": "durga-puja-ceremony-guide.json",
+      "cluster": "festival-rituals"
+    },
+    "durga-puja-vidhi-mantras": {
+      "file": "durga-puja-vidhi-mantras.json",
+      "cluster": "ritual-guides"
+    },
+    "dussehra-vijayadashami-guide": {
+      "file": "dussehra-vijayadashami-guide.json",
+      "cluster": "festival-rituals"
+    },
+    "dwarka-ritual-traditions": {
+      "file": "dwarka-ritual-traditions.json",
+      "cluster": "spiritual-guides"
+    },
+    "eclipse-ritual-significance": {
+      "file": "eclipse-ritual-significance.json",
+      "cluster": "spiritual-guides"
+    },
+    "elder-women-family-rituals": {
+      "file": "elder-women-family-rituals.json",
+      "cluster": "ritual-guides"
+    },
+    "evaluate-pandit-ceremony": {
+      "file": "evaluate-pandit-ceremony.json",
+      "cluster": "pandit-services"
+    },
+    "explain-puja-children": {
+      "file": "explain-puja-children.json",
+      "cluster": "spiritual-guides"
+    },
+    "family-ceremony-annaprashan-delhi-ncr": {
+      "file": "family-ceremony-annaprashan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-bhoomi-pujan-delhi-ncr": {
+      "file": "family-ceremony-bhoomi-pujan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-griha-pravesh-delhi-ncr": {
+      "file": "family-ceremony-griha-pravesh-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-havan-delhi-ncr": {
+      "file": "family-ceremony-havan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-hindu-wedding-delhi-ncr": {
+      "file": "family-ceremony-hindu-wedding-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-lakshmi-ganesh-puja-delhi-ncr": {
+      "file": "family-ceremony-lakshmi-ganesh-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-mundan-delhi-ncr": {
+      "file": "family-ceremony-mundan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-namkaran-delhi-ncr": {
+      "file": "family-ceremony-namkaran-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-navagraha-puja-delhi-ncr": {
+      "file": "family-ceremony-navagraha-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-office-opening-delhi-ncr": {
+      "file": "family-ceremony-office-opening-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-satyanarayan-katha-delhi-ncr": {
+      "file": "family-ceremony-satyanarayan-katha-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-ceremony-vastu-shanti-delhi-ncr": {
+      "file": "family-ceremony-vastu-shanti-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "family-havan-preparation": {
+      "file": "family-havan-preparation.json",
+      "cluster": "ritual-guides"
+    },
+    "fasting-rules-hindu-families": {
+      "file": "fasting-rules-hindu-families.json",
+      "cluster": "ritual-guides"
+    },
+    "feng-shui-vs-vastu": {
+      "file": "feng-shui-vs-vastu.json",
+      "cluster": "spiritual-guides"
+    },
+    "festival-decoration-rituals": {
+      "file": "festival-decoration-rituals.json",
+      "cluster": "ritual-guides"
+    },
+    "festival-observance-planning-before-a-move-or-property-change-consultation": {
+      "file": "festival-observance-planning-before-a-move-or-property-change-consultation.json",
+      "cluster": "services"
+    },
+    "festival-observance-planning-before-booking-a-priest-consultation": {
+      "file": "festival-observance-planning-before-booking-a-priest-consultation.json",
+      "cluster": "services"
+    },
+    "festival-observance-planning-for-diaspora-time-zone-coordination-consultation": {
+      "file": "festival-observance-planning-for-diaspora-time-zone-coordination-consultation.json",
+      "cluster": "services"
+    },
+    "festival-observance-planning-when-elders-want-scriptural-context-first-consultation": {
+      "file": "festival-observance-planning-when-elders-want-scriptural-context-first-consultation.json",
+      "cluster": "services"
+    },
+    "festival-observance-planning-when-the-family-wants-a-second-opinion-consultation": {
+      "file": "festival-observance-planning-when-the-family-wants-a-second-opinion-consultation.json",
+      "cluster": "services"
+    },
+    "flowers-hindu-worship": {
+      "file": "flowers-hindu-worship.json",
+      "cluster": "ritual-guides"
+    },
+    "fold-offer-vastra": {
+      "file": "fold-offer-vastra.json",
+      "cluster": "ritual-guides"
+    },
+    "follow-up-quality-before-first-booking": {
+      "file": "follow-up-quality-before-first-booking.json",
+      "cluster": "compare"
+    },
+    "follow-up-quality-for-repeat-households": {
+      "file": "follow-up-quality-for-repeat-households.json",
+      "cluster": "compare"
+    },
+    "follow-up-quality-vs-generic-listings": {
+      "file": "follow-up-quality-vs-generic-listings.json",
+      "cluster": "compare"
+    },
+    "follow-up-quality-vs-phone-only-booking": {
+      "file": "follow-up-quality-vs-phone-only-booking.json",
+      "cluster": "compare"
+    },
+    "follow-up-quality-vs-unmanaged-referrals": {
+      "file": "follow-up-quality-vs-unmanaged-referrals.json",
+      "cluster": "compare"
+    },
+    "food-rules-puja-days": {
+      "file": "food-rules-puja-days.json",
+      "cluster": "ritual-guides"
+    },
+    "four-vedas-ritual-significance": {
+      "file": "four-vedas-ritual-significance.json",
+      "cluster": "ritual-guides"
+    },
+    "friday-lakshmi-puja": {
+      "file": "friday-lakshmi-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "ganesh-chaturthi-festival-guide": {
+      "file": "ganesh-chaturthi-festival-guide.json",
+      "cluster": "festival-rituals"
+    },
+    "ganesh-puja-ceremony": {
+      "file": "ganesh-puja-ceremony.json",
+      "cluster": "ritual-guides"
+    },
+    "ganesh-puja-vidhi": {
+      "file": "ganesh-puja-vidhi.json",
+      "cluster": "ritual-guides"
+    },
+    "garbhadhan-pumsavana": {
+      "file": "garbhadhan-pumsavana.json",
+      "cluster": "ceremonies"
+    },
+    "gauna-ceremony-hindu-marriage": {
+      "file": "gauna-ceremony-hindu-marriage.json",
+      "cluster": "ceremonies"
+    },
+    "gayatri-mantra-explained": {
+      "file": "gayatri-mantra-explained.json",
+      "cluster": "ritual-guides"
+    },
+    "gemstone-therapy-astrology": {
+      "file": "gemstone-therapy-astrology.json",
+      "cluster": "spiritual-guides"
+    },
+    "germany-berlin-india-family-pandit-coordination": {
+      "file": "germany-berlin-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "germany-berlin-nri-griha-pravesh-planning": {
+      "file": "germany-berlin-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "germany-berlin-online-astrology-consultation": {
+      "file": "germany-berlin-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "germany-berlin-online-puja": {
+      "file": "germany-berlin-online-puja.json",
+      "cluster": "services"
+    },
+    "germany-berlin-online-satyanarayan-katha": {
+      "file": "germany-berlin-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "germany-berlin": {
+      "file": "germany-berlin.json",
+      "cluster": "centers"
+    },
+    "germany-frankfurt-india-family-pandit-coordination": {
+      "file": "germany-frankfurt-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "germany-frankfurt-nri-griha-pravesh-planning": {
+      "file": "germany-frankfurt-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "germany-frankfurt-online-astrology-consultation": {
+      "file": "germany-frankfurt-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "germany-frankfurt-online-puja": {
+      "file": "germany-frankfurt-online-puja.json",
+      "cluster": "services"
+    },
+    "germany-frankfurt-online-satyanarayan-katha": {
+      "file": "germany-frankfurt-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "germany-frankfurt": {
+      "file": "germany-frankfurt.json",
+      "cluster": "centers"
+    },
+    "germany-hamburg-india-family-pandit-coordination": {
+      "file": "germany-hamburg-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "germany-hamburg-nri-griha-pravesh-planning": {
+      "file": "germany-hamburg-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "germany-hamburg-online-astrology-consultation": {
+      "file": "germany-hamburg-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "germany-hamburg-online-puja": {
+      "file": "germany-hamburg-online-puja.json",
+      "cluster": "services"
+    },
+    "germany-hamburg-online-satyanarayan-katha": {
+      "file": "germany-hamburg-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "germany-hamburg": {
+      "file": "germany-hamburg.json",
+      "cluster": "centers"
+    },
+    "germany-munich-india-family-pandit-coordination": {
+      "file": "germany-munich-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "germany-munich-nri-griha-pravesh-planning": {
+      "file": "germany-munich-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "germany-munich-online-astrology-consultation": {
+      "file": "germany-munich-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "germany-munich-online-puja": {
+      "file": "germany-munich-online-puja.json",
+      "cluster": "services"
+    },
+    "germany-munich-online-satyanarayan-katha": {
+      "file": "germany-munich-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "germany-munich": {
+      "file": "germany-munich.json",
+      "cluster": "centers"
+    },
+    "ghaziabad": {
+      "file": "ghaziabad.json",
+      "cluster": "centers"
+    },
+    "gochara-vedic-astrology": {
+      "file": "gochara-vedic-astrology.json",
+      "cluster": "spiritual-guides"
+    },
+    "gotra-hindu-ceremonies": {
+      "file": "gotra-hindu-ceremonies.json",
+      "cluster": "ceremonies"
+    },
+    "govardhan-puja-guide": {
+      "file": "govardhan-puja-guide.json",
+      "cluster": "festival-rituals"
+    },
+    "gratitude-vedic-practice": {
+      "file": "gratitude-vedic-practice.json",
+      "cluster": "spiritual-guides"
+    },
+    "griha-pravesh-apartment-format-guide": {
+      "file": "griha-pravesh-apartment-format-guide.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-briefing-the-family": {
+      "file": "griha-pravesh-briefing-the-family.json",
+      "cluster": "ceremonies"
+    },
+    "griha-pravesh-ceremony-explained": {
+      "file": "griha-pravesh-ceremony-explained.json",
+      "cluster": "ceremonies"
+    },
+    "griha-pravesh-combined-ritual-day-guide": {
+      "file": "griha-pravesh-combined-ritual-day-guide.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-combined-rituals": {
+      "file": "griha-pravesh-combined-rituals.json",
+      "cluster": "ceremonies"
+    },
+    "griha-pravesh-delhi": {
+      "file": "griha-pravesh-delhi.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-dwarka": {
+      "file": "griha-pravesh-dwarka.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-east-delhi": {
+      "file": "griha-pravesh-east-delhi.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-elder-led-family-guide": {
+      "file": "griha-pravesh-elder-led-family-guide.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-family-consensus-guide": {
+      "file": "griha-pravesh-family-consensus-guide.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-first-time-bookers-guide": {
+      "file": "griha-pravesh-first-time-bookers-guide.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-ghaziabad": {
+      "file": "griha-pravesh-ghaziabad.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-gurgaon": {
+      "file": "griha-pravesh-gurgaon.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-home-vs-venue": {
+      "file": "griha-pravesh-home-vs-venue.json",
+      "cluster": "ceremonies"
+    },
+    "griha-pravesh-language-fit-guide": {
+      "file": "griha-pravesh-language-fit-guide.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-language-preference": {
+      "file": "griha-pravesh-language-preference.json",
+      "cluster": "ceremonies"
+    },
+    "griha-pravesh-last-minute-clarity-guide": {
+      "file": "griha-pravesh-last-minute-clarity-guide.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-noida": {
+      "file": "griha-pravesh-noida.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-north-delhi": {
+      "file": "griha-pravesh-north-delhi.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-pandit-fit": {
+      "file": "griha-pravesh-pandit-fit.json",
+      "cluster": "ceremonies"
+    },
+    "griha-pravesh-price-delhi-ncr": {
+      "file": "griha-pravesh-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "griha-pravesh-price-delhi": {
+      "file": "griha-pravesh-price-delhi.json",
+      "cluster": "blog"
+    },
+    "griha-pravesh-puja-vidhi": {
+      "file": "griha-pravesh-puja-vidhi.json",
+      "cluster": "ritual-guides"
+    },
+    "griha-pravesh-rohini": {
+      "file": "griha-pravesh-rohini.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-samagri-responsibility": {
+      "file": "griha-pravesh-samagri-responsibility.json",
+      "cluster": "ceremonies"
+    },
+    "griha-pravesh-same-day-risk": {
+      "file": "griha-pravesh-same-day-risk.json",
+      "cluster": "ceremonies"
+    },
+    "griha-pravesh-small-home-setup-guide": {
+      "file": "griha-pravesh-small-home-setup-guide.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-south-delhi": {
+      "file": "griha-pravesh-south-delhi.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-travel-sensitive-guide": {
+      "file": "griha-pravesh-travel-sensitive-guide.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-weekend-booking-guide": {
+      "file": "griha-pravesh-weekend-booking-guide.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-west-delhi": {
+      "file": "griha-pravesh-west-delhi.json",
+      "cluster": "services"
+    },
+    "griha-pravesh-when-to-book": {
+      "file": "griha-pravesh-when-to-book.json",
+      "cluster": "ceremonies"
+    },
+    "griha-pravesh": {
+      "file": "griha-pravesh.json",
+      "cluster": "pujas"
+    },
+    "grihastha-dharma-rituals": {
+      "file": "grihastha-dharma-rituals.json",
+      "cluster": "spiritual-guides"
+    },
+    "guide-puja-at-home": {
+      "file": "guide-puja-at-home.json",
+      "cluster": "ritual-guides"
+    },
+    "gujarati-ritual-traditions": {
+      "file": "gujarati-ritual-traditions.json",
+      "cluster": "spiritual-guides"
+    },
+    "gurgaon": {
+      "file": "gurgaon.json",
+      "cluster": "centers"
+    },
+    "guru-purnima-guide": {
+      "file": "guru-purnima-guide.json",
+      "cluster": "festival-rituals"
+    },
+    "hanuman-jayanti-festival": {
+      "file": "hanuman-jayanti-festival.json",
+      "cluster": "festival-rituals"
+    },
+    "hanuman-puja-guide": {
+      "file": "hanuman-puja-guide.json",
+      "cluster": "ritual-guides"
+    },
+    "havan-apartment-format-guide": {
+      "file": "havan-apartment-format-guide.json",
+      "cluster": "services"
+    },
+    "havan-briefing-the-family": {
+      "file": "havan-briefing-the-family.json",
+      "cluster": "ceremonies"
+    },
+    "havan-combined-ritual-day-guide": {
+      "file": "havan-combined-ritual-day-guide.json",
+      "cluster": "services"
+    },
+    "havan-combined-rituals": {
+      "file": "havan-combined-rituals.json",
+      "cluster": "ceremonies"
+    },
+    "havan-delhi": {
+      "file": "havan-delhi.json",
+      "cluster": "services"
+    },
+    "havan-dwarka": {
+      "file": "havan-dwarka.json",
+      "cluster": "services"
+    },
+    "havan-east-delhi": {
+      "file": "havan-east-delhi.json",
+      "cluster": "services"
+    },
+    "havan-elder-led-family-guide": {
+      "file": "havan-elder-led-family-guide.json",
+      "cluster": "services"
+    },
+    "havan-family-consensus-guide": {
+      "file": "havan-family-consensus-guide.json",
+      "cluster": "services"
+    },
+    "havan-first-time-bookers-guide": {
+      "file": "havan-first-time-bookers-guide.json",
+      "cluster": "services"
+    },
+    "havan-ghaziabad": {
+      "file": "havan-ghaziabad.json",
+      "cluster": "services"
+    },
+    "havan-gurgaon": {
+      "file": "havan-gurgaon.json",
+      "cluster": "services"
+    },
+    "havan-home-vs-venue": {
+      "file": "havan-home-vs-venue.json",
+      "cluster": "ceremonies"
+    },
+    "havan-language-fit-guide": {
+      "file": "havan-language-fit-guide.json",
+      "cluster": "services"
+    },
+    "havan-language-preference": {
+      "file": "havan-language-preference.json",
+      "cluster": "ceremonies"
+    },
+    "havan-last-minute-clarity-guide": {
+      "file": "havan-last-minute-clarity-guide.json",
+      "cluster": "services"
+    },
+    "havan-noida": {
+      "file": "havan-noida.json",
+      "cluster": "services"
+    },
+    "havan-north-delhi": {
+      "file": "havan-north-delhi.json",
+      "cluster": "services"
+    },
+    "havan-pandit-fit": {
+      "file": "havan-pandit-fit.json",
+      "cluster": "ceremonies"
+    },
+    "havan-price-delhi-ncr": {
+      "file": "havan-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "havan-price-delhi": {
+      "file": "havan-price-delhi.json",
+      "cluster": "blog"
+    },
+    "havan-rohini": {
+      "file": "havan-rohini.json",
+      "cluster": "services"
+    },
+    "havan-samagri-responsibility": {
+      "file": "havan-samagri-responsibility.json",
+      "cluster": "ceremonies"
+    },
+    "havan-samagri-types": {
+      "file": "havan-samagri-types.json",
+      "cluster": "ritual-guides"
+    },
+    "havan-same-day-risk": {
+      "file": "havan-same-day-risk.json",
+      "cluster": "ceremonies"
+    },
+    "havan-small-home-setup-guide": {
+      "file": "havan-small-home-setup-guide.json",
+      "cluster": "services"
+    },
+    "havan-south-delhi": {
+      "file": "havan-south-delhi.json",
+      "cluster": "services"
+    },
+    "havan-travel-sensitive-guide": {
+      "file": "havan-travel-sensitive-guide.json",
+      "cluster": "services"
+    },
+    "havan-weekend-booking-guide": {
+      "file": "havan-weekend-booking-guide.json",
+      "cluster": "services"
+    },
+    "havan-west-delhi": {
+      "file": "havan-west-delhi.json",
+      "cluster": "services"
+    },
+    "havan-when-to-book": {
+      "file": "havan-when-to-book.json",
+      "cluster": "ceremonies"
+    },
+    "havan": {
+      "file": "havan.json",
+      "cluster": "pujas"
+    },
+    "health-focused-astrology-before-a-move-or-property-change-consultation": {
+      "file": "health-focused-astrology-before-a-move-or-property-change-consultation.json",
+      "cluster": "services"
+    },
+    "health-focused-astrology-before-booking-a-priest-consultation": {
+      "file": "health-focused-astrology-before-booking-a-priest-consultation.json",
+      "cluster": "services"
+    },
+    "health-focused-astrology-for-diaspora-time-zone-coordination-consultation": {
+      "file": "health-focused-astrology-for-diaspora-time-zone-coordination-consultation.json",
+      "cluster": "services"
+    },
+    "health-focused-astrology-when-elders-want-scriptural-context-first-consultation": {
+      "file": "health-focused-astrology-when-elders-want-scriptural-context-first-consultation.json",
+      "cluster": "services"
+    },
+    "health-focused-astrology-when-the-family-wants-a-second-opinion-consultation": {
+      "file": "health-focused-astrology-when-the-family-wants-a-second-opinion-consultation.json",
+      "cluster": "services"
+    },
+    "hindu-funeral-rites": {
+      "file": "hindu-funeral-rites.json",
+      "cluster": "ceremonies"
+    },
+    "hindu-philosophy-modern": {
+      "file": "hindu-philosophy-modern.json",
+      "cluster": "spiritual-guides"
+    },
+    "hindu-wedding-apartment-format-guide": {
+      "file": "hindu-wedding-apartment-format-guide.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-ceremony-guide": {
+      "file": "hindu-wedding-ceremony-guide.json",
+      "cluster": "ceremonies"
+    },
+    "hindu-wedding-combined-ritual-day-guide": {
+      "file": "hindu-wedding-combined-ritual-day-guide.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-delhi": {
+      "file": "hindu-wedding-delhi.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-dwarka": {
+      "file": "hindu-wedding-dwarka.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-east-delhi": {
+      "file": "hindu-wedding-east-delhi.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-elder-led-family-guide": {
+      "file": "hindu-wedding-elder-led-family-guide.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-family-consensus-guide": {
+      "file": "hindu-wedding-family-consensus-guide.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-first-time-bookers-guide": {
+      "file": "hindu-wedding-first-time-bookers-guide.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-ghaziabad": {
+      "file": "hindu-wedding-ghaziabad.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-gurgaon": {
+      "file": "hindu-wedding-gurgaon.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-language-fit-guide": {
+      "file": "hindu-wedding-language-fit-guide.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-last-minute-clarity-guide": {
+      "file": "hindu-wedding-last-minute-clarity-guide.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-noida": {
+      "file": "hindu-wedding-noida.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-north-delhi": {
+      "file": "hindu-wedding-north-delhi.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-price-delhi-ncr": {
+      "file": "hindu-wedding-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "hindu-wedding-rohini": {
+      "file": "hindu-wedding-rohini.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-small-home-setup-guide": {
+      "file": "hindu-wedding-small-home-setup-guide.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-south-delhi": {
+      "file": "hindu-wedding-south-delhi.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-travel-sensitive-guide": {
+      "file": "hindu-wedding-travel-sensitive-guide.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-weekend-booking-guide": {
+      "file": "hindu-wedding-weekend-booking-guide.json",
+      "cluster": "services"
+    },
+    "hindu-wedding-west-delhi": {
+      "file": "hindu-wedding-west-delhi.json",
+      "cluster": "services"
+    },
+    "hindu-wedding": {
+      "file": "hindu-wedding.json",
+      "cluster": "pujas"
+    },
+    "history-vedic-ritual-india": {
+      "file": "history-vedic-ritual-india.json",
+      "cluster": "ritual-guides"
+    },
+    "holi-holika-dahan-ritual": {
+      "file": "holi-holika-dahan-ritual.json",
+      "cluster": "festival-rituals"
+    },
+    "home-guide": {
+      "file": "home-guide.json",
+      "cluster": "vastu"
+    },
+    "home-mandir-setup": {
+      "file": "home-mandir-setup.json",
+      "cluster": "ritual-guides"
+    },
+    "home-puja-room-setup": {
+      "file": "home-puja-room-setup.json",
+      "cluster": "ritual-guides"
+    },
+    "household-rituals-after-marriage": {
+      "file": "household-rituals-after-marriage.json",
+      "cluster": "ritual-guides"
+    },
+    "how-navdhya-works": {
+      "file": "how-navdhya-works.json",
+      "cluster": "brand"
+    },
+    "how-to-do-aarti": {
+      "file": "how-to-do-aarti.json",
+      "cluster": "ritual-guides"
+    },
+    "how-to-verify-pandit": {
+      "file": "how-to-verify-pandit.json",
+      "cluster": "blog"
+    },
+    "importance-of-sraddha": {
+      "file": "importance-of-sraddha.json",
+      "cluster": "ritual-guides"
+    },
+    "importance-satsang": {
+      "file": "importance-satsang.json",
+      "cluster": "spiritual-guides"
+    },
+    "incense-holder-types": {
+      "file": "incense-holder-types.json",
+      "cluster": "ritual-guides"
+    },
+    "introduction-bhakti-yoga": {
+      "file": "introduction-bhakti-yoga.json",
+      "cluster": "spiritual-guides"
+    },
+    "introduction-vedic-astrology": {
+      "file": "introduction-vedic-astrology.json",
+      "cluster": "spiritual-guides"
+    },
+    "introduction-vedic-deities": {
+      "file": "introduction-vedic-deities.json",
+      "cluster": "ritual-guides"
+    },
+    "ireland-cork-india-family-pandit-coordination": {
+      "file": "ireland-cork-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "ireland-cork-nri-griha-pravesh-planning": {
+      "file": "ireland-cork-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "ireland-cork-online-astrology-consultation": {
+      "file": "ireland-cork-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "ireland-cork-online-puja": {
+      "file": "ireland-cork-online-puja.json",
+      "cluster": "services"
+    },
+    "ireland-cork-online-satyanarayan-katha": {
+      "file": "ireland-cork-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "ireland-cork": {
+      "file": "ireland-cork.json",
+      "cluster": "centers"
+    },
+    "ireland-dublin-india-family-pandit-coordination": {
+      "file": "ireland-dublin-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "ireland-dublin-nri-griha-pravesh-planning": {
+      "file": "ireland-dublin-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "ireland-dublin-online-astrology-consultation": {
+      "file": "ireland-dublin-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "ireland-dublin-online-puja": {
+      "file": "ireland-dublin-online-puja.json",
+      "cluster": "services"
+    },
+    "ireland-dublin-online-satyanarayan-katha": {
+      "file": "ireland-dublin-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "ireland-dublin": {
+      "file": "ireland-dublin.json",
+      "cluster": "centers"
+    },
+    "ireland-galway-india-family-pandit-coordination": {
+      "file": "ireland-galway-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "ireland-galway-nri-griha-pravesh-planning": {
+      "file": "ireland-galway-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "ireland-galway-online-astrology-consultation": {
+      "file": "ireland-galway-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "ireland-galway-online-puja": {
+      "file": "ireland-galway-online-puja.json",
+      "cluster": "services"
+    },
+    "ireland-galway-online-satyanarayan-katha": {
+      "file": "ireland-galway-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "ireland-galway": {
+      "file": "ireland-galway.json",
+      "cluster": "centers"
+    },
+    "journal-spiritual-practice": {
+      "file": "journal-spiritual-practice.json",
+      "cluster": "spiritual-guides"
+    },
+    "jupiter-transit-spiritual": {
+      "file": "jupiter-transit-spiritual.json",
+      "cluster": "spiritual-guides"
+    },
+    "kaal-sarp-dosh-puja": {
+      "file": "kaal-sarp-dosh-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "kalash-setup-puja": {
+      "file": "kalash-setup-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "kalash-sthapana-guide": {
+      "file": "kalash-sthapana-guide.json",
+      "cluster": "ritual-guides"
+    },
+    "kali-puja-vidhi": {
+      "file": "kali-puja-vidhi.json",
+      "cluster": "ritual-guides"
+    },
+    "kanya-puja-ceremony": {
+      "file": "kanya-puja-ceremony.json",
+      "cluster": "festival-rituals"
+    },
+    "karma-kanda-vedic": {
+      "file": "karma-kanda-vedic.json",
+      "cluster": "ritual-guides"
+    },
+    "karma-ritual-practice": {
+      "file": "karma-ritual-practice.json",
+      "cluster": "spiritual-guides"
+    },
+    "kartik-purnima-puja": {
+      "file": "kartik-purnima-puja.json",
+      "cluster": "festival-rituals"
+    },
+    "karva-chauth-puja": {
+      "file": "karva-chauth-puja.json",
+      "cluster": "festival-rituals"
+    },
+    "karvachauth-puja-guide": {
+      "file": "karvachauth-puja-guide.json",
+      "cluster": "festival-rituals"
+    },
+    "kashmiri-pandit-rituals": {
+      "file": "kashmiri-pandit-rituals.json",
+      "cluster": "pandit-services"
+    },
+    "kerala-hindu-ritual-traditions": {
+      "file": "kerala-hindu-ritual-traditions.json",
+      "cluster": "spiritual-guides"
+    },
+    "kitchen-puja-hearth": {
+      "file": "kitchen-puja-hearth.json",
+      "cluster": "ritual-guides"
+    },
+    "krishna-janmashtami-guide": {
+      "file": "krishna-janmashtami-guide.json",
+      "cluster": "festival-rituals"
+    },
+    "kundali-matching-marriage": {
+      "file": "kundali-matching-marriage.json",
+      "cluster": "spiritual-guides"
+    },
+    "kundli-reading-before-a-move-or-property-change-consultation": {
+      "file": "kundli-reading-before-a-move-or-property-change-consultation.json",
+      "cluster": "services"
+    },
+    "kundli-reading-before-booking-a-priest-consultation": {
+      "file": "kundli-reading-before-booking-a-priest-consultation.json",
+      "cluster": "services"
+    },
+    "kundli-reading-for-diaspora-time-zone-coordination-consultation": {
+      "file": "kundli-reading-for-diaspora-time-zone-coordination-consultation.json",
+      "cluster": "services"
+    },
+    "kundli-reading-when-elders-want-scriptural-context-first-consultation": {
+      "file": "kundli-reading-when-elders-want-scriptural-context-first-consultation.json",
+      "cluster": "services"
+    },
+    "kundli-reading-when-the-family-wants-a-second-opinion-consultation": {
+      "file": "kundli-reading-when-the-family-wants-a-second-opinion-consultation.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-apartment-format-guide": {
+      "file": "lakshmi-ganesh-puja-apartment-format-guide.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-combined-ritual-day-guide": {
+      "file": "lakshmi-ganesh-puja-combined-ritual-day-guide.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-delhi": {
+      "file": "lakshmi-ganesh-puja-delhi.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-dwarka": {
+      "file": "lakshmi-ganesh-puja-dwarka.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-east-delhi": {
+      "file": "lakshmi-ganesh-puja-east-delhi.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-elder-led-family-guide": {
+      "file": "lakshmi-ganesh-puja-elder-led-family-guide.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-family-consensus-guide": {
+      "file": "lakshmi-ganesh-puja-family-consensus-guide.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-first-time-bookers-guide": {
+      "file": "lakshmi-ganesh-puja-first-time-bookers-guide.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-ghaziabad": {
+      "file": "lakshmi-ganesh-puja-ghaziabad.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-gurgaon": {
+      "file": "lakshmi-ganesh-puja-gurgaon.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-language-fit-guide": {
+      "file": "lakshmi-ganesh-puja-language-fit-guide.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-last-minute-clarity-guide": {
+      "file": "lakshmi-ganesh-puja-last-minute-clarity-guide.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-noida": {
+      "file": "lakshmi-ganesh-puja-noida.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-north-delhi": {
+      "file": "lakshmi-ganesh-puja-north-delhi.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-price-delhi-ncr": {
+      "file": "lakshmi-ganesh-puja-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "lakshmi-ganesh-puja-rohini": {
+      "file": "lakshmi-ganesh-puja-rohini.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-small-home-setup-guide": {
+      "file": "lakshmi-ganesh-puja-small-home-setup-guide.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-south-delhi": {
+      "file": "lakshmi-ganesh-puja-south-delhi.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-travel-sensitive-guide": {
+      "file": "lakshmi-ganesh-puja-travel-sensitive-guide.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-weekend-booking-guide": {
+      "file": "lakshmi-ganesh-puja-weekend-booking-guide.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja-west-delhi": {
+      "file": "lakshmi-ganesh-puja-west-delhi.json",
+      "cluster": "services"
+    },
+    "lakshmi-ganesh-puja": {
+      "file": "lakshmi-ganesh-puja.json",
+      "cluster": "pujas"
+    },
+    "lakshmi-puja-ceremony-guide": {
+      "file": "lakshmi-puja-ceremony-guide.json",
+      "cluster": "festival-rituals"
+    },
+    "lakshmi-puja-vidhi-diwali": {
+      "file": "lakshmi-puja-vidhi-diwali.json",
+      "cluster": "ritual-guides"
+    },
+    "lingayat-ritual-traditions": {
+      "file": "lingayat-ritual-traditions.json",
+      "cluster": "spiritual-guides"
+    },
+    "lohri-celebration-ritual": {
+      "file": "lohri-celebration-ritual.json",
+      "cluster": "festival-rituals"
+    },
+    "mahalaya-pitru-paksha": {
+      "file": "mahalaya-pitru-paksha.json",
+      "cluster": "festival-rituals"
+    },
+    "maharashtrian-ritual-traditions": {
+      "file": "maharashtrian-ritual-traditions.json",
+      "cluster": "spiritual-guides"
+    },
+    "mahashivratri-ritual-guide": {
+      "file": "mahashivratri-ritual-guide.json",
+      "cluster": "festival-rituals"
+    },
+    "makar-sankranti-ritual-guide": {
+      "file": "makar-sankranti-ritual-guide.json",
+      "cluster": "festival-rituals"
+    },
+    "make-kumkum-puja": {
+      "file": "make-kumkum-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "make-rangoli-puja": {
+      "file": "make-rangoli-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "mala-beads-hindu": {
+      "file": "mala-beads-hindu.json",
+      "cluster": "spiritual-guides"
+    },
+    "mangal-dosh-remedies": {
+      "file": "mangal-dosh-remedies.json",
+      "cluster": "spiritual-guides"
+    },
+    "mangala-gauri-puja": {
+      "file": "mangala-gauri-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "mangalsutra-ceremony": {
+      "file": "mangalsutra-ceremony.json",
+      "cluster": "ceremonies"
+    },
+    "mantras-vedic-rituals": {
+      "file": "mantras-vedic-rituals.json",
+      "cluster": "ritual-guides"
+    },
+    "marriage-matching-before-a-move-or-property-change-consultation": {
+      "file": "marriage-matching-before-a-move-or-property-change-consultation.json",
+      "cluster": "services"
+    },
+    "marriage-matching-before-booking-a-priest-consultation": {
+      "file": "marriage-matching-before-booking-a-priest-consultation.json",
+      "cluster": "services"
+    },
+    "marriage-matching-for-diaspora-time-zone-coordination-consultation": {
+      "file": "marriage-matching-for-diaspora-time-zone-coordination-consultation.json",
+      "cluster": "services"
+    },
+    "marriage-matching-when-elders-want-scriptural-context-first-consultation": {
+      "file": "marriage-matching-when-elders-want-scriptural-context-first-consultation.json",
+      "cluster": "services"
+    },
+    "marriage-matching-when-the-family-wants-a-second-opinion-consultation": {
+      "file": "marriage-matching-when-the-family-wants-a-second-opinion-consultation.json",
+      "cluster": "services"
+    },
+    "mauna-spiritual-significance": {
+      "file": "mauna-spiritual-significance.json",
+      "cluster": "spiritual-guides"
+    },
+    "meditation-hindu-spiritual": {
+      "file": "meditation-hindu-spiritual.json",
+      "cluster": "spiritual-guides"
+    },
+    "mehendi-ceremony-ritual": {
+      "file": "mehendi-ceremony-ritual.json",
+      "cluster": "ceremonies"
+    },
+    "monthly-planetary-transits-puja": {
+      "file": "monthly-planetary-transits-puja.json",
+      "cluster": "spiritual-guides"
+    },
+    "monthly-ritual-obligations": {
+      "file": "monthly-ritual-obligations.json",
+      "cluster": "ritual-guides"
+    },
+    "morning-sandhyavandanam": {
+      "file": "morning-sandhyavandanam.json",
+      "cluster": "ritual-guides"
+    },
+    "muhurat-2026": {
+      "file": "muhurat-2026.json",
+      "cluster": "astrology"
+    },
+    "muhurat-selection-before-a-move-or-property-change-consultation": {
+      "file": "muhurat-selection-before-a-move-or-property-change-consultation.json",
+      "cluster": "services"
+    },
+    "muhurat-selection-before-booking-a-priest-consultation": {
+      "file": "muhurat-selection-before-booking-a-priest-consultation.json",
+      "cluster": "services"
+    },
+    "muhurat-selection-for-diaspora-time-zone-coordination-consultation": {
+      "file": "muhurat-selection-for-diaspora-time-zone-coordination-consultation.json",
+      "cluster": "services"
+    },
+    "muhurat-selection-when-elders-want-scriptural-context-first-consultation": {
+      "file": "muhurat-selection-when-elders-want-scriptural-context-first-consultation.json",
+      "cluster": "services"
+    },
+    "muhurat-selection-when-the-family-wants-a-second-opinion-consultation": {
+      "file": "muhurat-selection-when-the-family-wants-a-second-opinion-consultation.json",
+      "cluster": "services"
+    },
+    "muhurta-selection-events": {
+      "file": "muhurta-selection-events.json",
+      "cluster": "services"
+    },
+    "multilingual-guidance-before-first-booking": {
+      "file": "multilingual-guidance-before-first-booking.json",
+      "cluster": "compare"
+    },
+    "multilingual-guidance-for-repeat-households": {
+      "file": "multilingual-guidance-for-repeat-households.json",
+      "cluster": "compare"
+    },
+    "multilingual-guidance-vs-generic-listings": {
+      "file": "multilingual-guidance-vs-generic-listings.json",
+      "cluster": "compare"
+    },
+    "multilingual-guidance-vs-phone-only-booking": {
+      "file": "multilingual-guidance-vs-phone-only-booking.json",
+      "cluster": "compare"
+    },
+    "multilingual-guidance-vs-unmanaged-referrals": {
+      "file": "multilingual-guidance-vs-unmanaged-referrals.json",
+      "cluster": "compare"
+    },
+    "mundan-apartment-format-guide": {
+      "file": "mundan-apartment-format-guide.json",
+      "cluster": "services"
+    },
+    "mundan-briefing-the-family": {
+      "file": "mundan-briefing-the-family.json",
+      "cluster": "ceremonies"
+    },
+    "mundan-ceremony-guide": {
+      "file": "mundan-ceremony-guide.json",
+      "cluster": "ceremonies"
+    },
+    "mundan-combined-ritual-day-guide": {
+      "file": "mundan-combined-ritual-day-guide.json",
+      "cluster": "services"
+    },
+    "mundan-combined-rituals": {
+      "file": "mundan-combined-rituals.json",
+      "cluster": "ceremonies"
+    },
+    "mundan-delhi": {
+      "file": "mundan-delhi.json",
+      "cluster": "services"
+    },
+    "mundan-dwarka": {
+      "file": "mundan-dwarka.json",
+      "cluster": "services"
+    },
+    "mundan-east-delhi": {
+      "file": "mundan-east-delhi.json",
+      "cluster": "services"
+    },
+    "mundan-elder-led-family-guide": {
+      "file": "mundan-elder-led-family-guide.json",
+      "cluster": "services"
+    },
+    "mundan-family-consensus-guide": {
+      "file": "mundan-family-consensus-guide.json",
+      "cluster": "services"
+    },
+    "mundan-first-time-bookers-guide": {
+      "file": "mundan-first-time-bookers-guide.json",
+      "cluster": "services"
+    },
+    "mundan-ghaziabad": {
+      "file": "mundan-ghaziabad.json",
+      "cluster": "services"
+    },
+    "mundan-gurgaon": {
+      "file": "mundan-gurgaon.json",
+      "cluster": "services"
+    },
+    "mundan-home-vs-venue": {
+      "file": "mundan-home-vs-venue.json",
+      "cluster": "ceremonies"
+    },
+    "mundan-language-fit-guide": {
+      "file": "mundan-language-fit-guide.json",
+      "cluster": "services"
+    },
+    "mundan-language-preference": {
+      "file": "mundan-language-preference.json",
+      "cluster": "ceremonies"
+    },
+    "mundan-last-minute-clarity-guide": {
+      "file": "mundan-last-minute-clarity-guide.json",
+      "cluster": "services"
+    },
+    "mundan-noida": {
+      "file": "mundan-noida.json",
+      "cluster": "services"
+    },
+    "mundan-north-delhi": {
+      "file": "mundan-north-delhi.json",
+      "cluster": "services"
+    },
+    "mundan-pandit-fit": {
+      "file": "mundan-pandit-fit.json",
+      "cluster": "ceremonies"
+    },
+    "mundan-price-delhi-ncr": {
+      "file": "mundan-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "mundan-rohini": {
+      "file": "mundan-rohini.json",
+      "cluster": "services"
+    },
+    "mundan-samagri-responsibility": {
+      "file": "mundan-samagri-responsibility.json",
+      "cluster": "ceremonies"
+    },
+    "mundan-same-day-risk": {
+      "file": "mundan-same-day-risk.json",
+      "cluster": "ceremonies"
+    },
+    "mundan-small-home-setup-guide": {
+      "file": "mundan-small-home-setup-guide.json",
+      "cluster": "services"
+    },
+    "mundan-south-delhi": {
+      "file": "mundan-south-delhi.json",
+      "cluster": "services"
+    },
+    "mundan-tirupati": {
+      "file": "mundan-tirupati.json",
+      "cluster": "ceremonies"
+    },
+    "mundan-travel-sensitive-guide": {
+      "file": "mundan-travel-sensitive-guide.json",
+      "cluster": "services"
+    },
+    "mundan-weekend-booking-guide": {
+      "file": "mundan-weekend-booking-guide.json",
+      "cluster": "services"
+    },
+    "mundan-west-delhi": {
+      "file": "mundan-west-delhi.json",
+      "cluster": "services"
+    },
+    "mundan-when-to-book": {
+      "file": "mundan-when-to-book.json",
+      "cluster": "ceremonies"
+    },
+    "mundan": {
+      "file": "mundan.json",
+      "cluster": "pujas"
+    },
+    "music-hindu-ritual": {
+      "file": "music-hindu-ritual.json",
+      "cluster": "spiritual-guides"
+    },
+    "naamkaran-jaatakarm": {
+      "file": "naamkaran-jaatakarm.json",
+      "cluster": "ceremonies"
+    },
+    "nag-panchami-ritual": {
+      "file": "nag-panchami-ritual.json",
+      "cluster": "festival-rituals"
+    },
+    "naga-tribal-hindu-rituals": {
+      "file": "naga-tribal-hindu-rituals.json",
+      "cluster": "spiritual-guides"
+    },
+    "nakshatra-vedic-life": {
+      "file": "nakshatra-vedic-life.json",
+      "cluster": "spiritual-guides"
+    },
+    "namaskar-pranayam-puja": {
+      "file": "namaskar-pranayam-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "naming-guidance-before-a-move-or-property-change-consultation": {
+      "file": "naming-guidance-before-a-move-or-property-change-consultation.json",
+      "cluster": "services"
+    },
+    "naming-guidance-before-booking-a-priest-consultation": {
+      "file": "naming-guidance-before-booking-a-priest-consultation.json",
+      "cluster": "services"
+    },
+    "naming-guidance-for-diaspora-time-zone-coordination-consultation": {
+      "file": "naming-guidance-for-diaspora-time-zone-coordination-consultation.json",
+      "cluster": "services"
+    },
+    "naming-guidance-when-elders-want-scriptural-context-first-consultation": {
+      "file": "naming-guidance-when-elders-want-scriptural-context-first-consultation.json",
+      "cluster": "services"
+    },
+    "naming-guidance-when-the-family-wants-a-second-opinion-consultation": {
+      "file": "naming-guidance-when-the-family-wants-a-second-opinion-consultation.json",
+      "cluster": "services"
+    },
+    "namkaran-apartment-format-guide": {
+      "file": "namkaran-apartment-format-guide.json",
+      "cluster": "services"
+    },
+    "namkaran-briefing-the-family": {
+      "file": "namkaran-briefing-the-family.json",
+      "cluster": "ceremonies"
+    },
+    "namkaran-ceremony-guide": {
+      "file": "namkaran-ceremony-guide.json",
+      "cluster": "ceremonies"
+    },
+    "namkaran-combined-ritual-day-guide": {
+      "file": "namkaran-combined-ritual-day-guide.json",
+      "cluster": "services"
+    },
+    "namkaran-combined-rituals": {
+      "file": "namkaran-combined-rituals.json",
+      "cluster": "ceremonies"
+    },
+    "namkaran-delhi": {
+      "file": "namkaran-delhi.json",
+      "cluster": "services"
+    },
+    "namkaran-dwarka": {
+      "file": "namkaran-dwarka.json",
+      "cluster": "services"
+    },
+    "namkaran-east-delhi": {
+      "file": "namkaran-east-delhi.json",
+      "cluster": "services"
+    },
+    "namkaran-elder-led-family-guide": {
+      "file": "namkaran-elder-led-family-guide.json",
+      "cluster": "services"
+    },
+    "namkaran-family-consensus-guide": {
+      "file": "namkaran-family-consensus-guide.json",
+      "cluster": "services"
+    },
+    "namkaran-first-time-bookers-guide": {
+      "file": "namkaran-first-time-bookers-guide.json",
+      "cluster": "services"
+    },
+    "namkaran-ghaziabad": {
+      "file": "namkaran-ghaziabad.json",
+      "cluster": "services"
+    },
+    "namkaran-gurgaon": {
+      "file": "namkaran-gurgaon.json",
+      "cluster": "services"
+    },
+    "namkaran-home-vs-venue": {
+      "file": "namkaran-home-vs-venue.json",
+      "cluster": "ceremonies"
+    },
+    "namkaran-language-fit-guide": {
+      "file": "namkaran-language-fit-guide.json",
+      "cluster": "services"
+    },
+    "namkaran-language-preference": {
+      "file": "namkaran-language-preference.json",
+      "cluster": "ceremonies"
+    },
+    "namkaran-last-minute-clarity-guide": {
+      "file": "namkaran-last-minute-clarity-guide.json",
+      "cluster": "services"
+    },
+    "namkaran-noida": {
+      "file": "namkaran-noida.json",
+      "cluster": "services"
+    },
+    "namkaran-north-delhi": {
+      "file": "namkaran-north-delhi.json",
+      "cluster": "services"
+    },
+    "namkaran-pandit-fit": {
+      "file": "namkaran-pandit-fit.json",
+      "cluster": "ceremonies"
+    },
+    "namkaran-price-delhi-ncr": {
+      "file": "namkaran-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "namkaran-rohini": {
+      "file": "namkaran-rohini.json",
+      "cluster": "services"
+    },
+    "namkaran-samagri-responsibility": {
+      "file": "namkaran-samagri-responsibility.json",
+      "cluster": "ceremonies"
+    },
+    "namkaran-same-day-risk": {
+      "file": "namkaran-same-day-risk.json",
+      "cluster": "ceremonies"
+    },
+    "namkaran-small-home-setup-guide": {
+      "file": "namkaran-small-home-setup-guide.json",
+      "cluster": "services"
+    },
+    "namkaran-south-delhi": {
+      "file": "namkaran-south-delhi.json",
+      "cluster": "services"
+    },
+    "namkaran-travel-sensitive-guide": {
+      "file": "namkaran-travel-sensitive-guide.json",
+      "cluster": "services"
+    },
+    "namkaran-weekend-booking-guide": {
+      "file": "namkaran-weekend-booking-guide.json",
+      "cluster": "services"
+    },
+    "namkaran-west-delhi": {
+      "file": "namkaran-west-delhi.json",
+      "cluster": "services"
+    },
+    "namkaran-when-to-book": {
+      "file": "namkaran-when-to-book.json",
+      "cluster": "ceremonies"
+    },
+    "namkaran": {
+      "file": "namkaran.json",
+      "cluster": "pujas"
+    },
+    "nashik-kumbh-mela-ritual": {
+      "file": "nashik-kumbh-mela-ritual.json",
+      "cluster": "spiritual-guides"
+    },
+    "what-is-navdhya": {
+      "file": "nav-brand-001.json",
+      "cluster": "brand"
+    },
+    "about-navdhya": {
+      "file": "nav-brand-002.json",
+      "cluster": "brand"
+    },
+    "navdhya-services": {
+      "file": "nav-brand-003.json",
+      "cluster": "brand"
+    },
+    "navdhya-priest-verification": {
+      "file": "nav-brand-004.json",
+      "cluster": "brand"
+    },
+    "navdhya-online-puja": {
+      "file": "nav-brand-005.json",
+      "cluster": "brand"
+    },
+    "navagraha-puja-apartment-format-guide": {
+      "file": "navagraha-puja-apartment-format-guide.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-briefing-the-family": {
+      "file": "navagraha-puja-briefing-the-family.json",
+      "cluster": "ceremonies"
+    },
+    "navagraha-puja-combined-ritual-day-guide": {
+      "file": "navagraha-puja-combined-ritual-day-guide.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-combined-rituals": {
+      "file": "navagraha-puja-combined-rituals.json",
+      "cluster": "ceremonies"
+    },
+    "navagraha-puja-delhi": {
+      "file": "navagraha-puja-delhi.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-dwarka": {
+      "file": "navagraha-puja-dwarka.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-east-delhi": {
+      "file": "navagraha-puja-east-delhi.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-elder-led-family-guide": {
+      "file": "navagraha-puja-elder-led-family-guide.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-family-consensus-guide": {
+      "file": "navagraha-puja-family-consensus-guide.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-first-time-bookers-guide": {
+      "file": "navagraha-puja-first-time-bookers-guide.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-ghaziabad": {
+      "file": "navagraha-puja-ghaziabad.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-gurgaon": {
+      "file": "navagraha-puja-gurgaon.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-home-vs-venue": {
+      "file": "navagraha-puja-home-vs-venue.json",
+      "cluster": "ceremonies"
+    },
+    "navagraha-puja-language-fit-guide": {
+      "file": "navagraha-puja-language-fit-guide.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-language-preference": {
+      "file": "navagraha-puja-language-preference.json",
+      "cluster": "ceremonies"
+    },
+    "navagraha-puja-last-minute-clarity-guide": {
+      "file": "navagraha-puja-last-minute-clarity-guide.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-noida": {
+      "file": "navagraha-puja-noida.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-north-delhi": {
+      "file": "navagraha-puja-north-delhi.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-pandit-fit": {
+      "file": "navagraha-puja-pandit-fit.json",
+      "cluster": "ceremonies"
+    },
+    "navagraha-puja-price-delhi-ncr": {
+      "file": "navagraha-puja-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "navagraha-puja-rohini": {
+      "file": "navagraha-puja-rohini.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-samagri-responsibility": {
+      "file": "navagraha-puja-samagri-responsibility.json",
+      "cluster": "ceremonies"
+    },
+    "navagraha-puja-same-day-risk": {
+      "file": "navagraha-puja-same-day-risk.json",
+      "cluster": "ceremonies"
+    },
+    "navagraha-puja-small-home-setup-guide": {
+      "file": "navagraha-puja-small-home-setup-guide.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-south-delhi": {
+      "file": "navagraha-puja-south-delhi.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-travel-sensitive-guide": {
+      "file": "navagraha-puja-travel-sensitive-guide.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-weekend-booking-guide": {
+      "file": "navagraha-puja-weekend-booking-guide.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-west-delhi": {
+      "file": "navagraha-puja-west-delhi.json",
+      "cluster": "services"
+    },
+    "navagraha-puja-when-to-book": {
+      "file": "navagraha-puja-when-to-book.json",
+      "cluster": "ceremonies"
+    },
+    "navagraha-puja": {
+      "file": "navagraha-puja.json",
+      "cluster": "pujas"
+    },
+    "navagraha-ritual-worship": {
+      "file": "navagraha-ritual-worship.json",
+      "cluster": "ritual-guides"
+    },
+    "navdhya-2023-launch": {
+      "file": "navdhya-2023-launch.json",
+      "cluster": "brand"
+    },
+    "navdhya-api-integration": {
+      "file": "navdhya-api-integration.json",
+      "cluster": "brand"
+    },
+    "navdhya-app-booking": {
+      "file": "navdhya-app-booking.json",
+      "cluster": "brand"
+    },
+    "navdhya-app-pandit-booking": {
+      "file": "navdhya-app-pandit-booking.json",
+      "cluster": "pandit-services"
+    },
+    "navdhya-astrology-consultation": {
+      "file": "navdhya-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "navdhya-astrology-report": {
+      "file": "navdhya-astrology-report.json",
+      "cluster": "services"
+    },
+    "navdhya-astrology-service": {
+      "file": "navdhya-astrology-service.json",
+      "cluster": "services"
+    },
+    "navdhya-australia": {
+      "file": "navdhya-australia.json",
+      "cluster": "brand"
+    },
+    "navdhya-b2b-partnerships": {
+      "file": "navdhya-b2b-partnerships.json",
+      "cluster": "brand"
+    },
+    "navdhya-brand-identity": {
+      "file": "navdhya-brand-identity.json",
+      "cluster": "brand"
+    },
+    "navdhya-ceremony-booking": {
+      "file": "navdhya-ceremony-booking.json",
+      "cluster": "services"
+    },
+    "navdhya-chatbot-support": {
+      "file": "navdhya-chatbot-support.json",
+      "cluster": "brand"
+    },
+    "navdhya-core-offerings": {
+      "file": "navdhya-core-offerings.json",
+      "cluster": "services"
+    },
+    "navdhya-corporate-puja": {
+      "file": "navdhya-corporate-puja.json",
+      "cluster": "services"
+    },
+    "navdhya-customer-communication": {
+      "file": "navdhya-customer-communication.json",
+      "cluster": "brand"
+    },
+    "navdhya-customer-dashboard": {
+      "file": "navdhya-customer-dashboard.json",
+      "cluster": "brand"
+    },
+    "navdhya-customer-success": {
+      "file": "navdhya-customer-success.json",
+      "cluster": "brand"
+    },
+    "navdhya-customer-support": {
+      "file": "navdhya-customer-support.json",
+      "cluster": "brand"
+    },
+    "navdhya-data-privacy": {
+      "file": "navdhya-data-privacy.json",
+      "cluster": "brand"
+    },
+    "navdhya-delhi-spiritual-services": {
+      "file": "navdhya-delhi-spiritual-services.json",
+      "cluster": "services"
+    },
+    "navdhya-digital-booking": {
+      "file": "navdhya-digital-booking.json",
+      "cluster": "brand"
+    },
+    "navdhya-emergency-pandit": {
+      "file": "navdhya-emergency-pandit.json",
+      "cluster": "pandit-services"
+    },
+    "navdhya-entity-knowledge-graph": {
+      "file": "navdhya-entity-knowledge-graph.json",
+      "cluster": "brand"
+    },
+    "navdhya-expansion-roadmap": {
+      "file": "navdhya-expansion-roadmap.json",
+      "cluster": "brand"
+    },
+    "navdhya-faq": {
+      "file": "navdhya-faq.json",
+      "cluster": "faq"
+    },
+    "navdhya-feedback-improvement": {
+      "file": "navdhya-feedback-improvement.json",
+      "cluster": "brand"
+    },
+    "navdhya-for-modern-families": {
+      "file": "navdhya-for-modern-families.json",
+      "cluster": "brand"
+    },
+    "navdhya-future-spiritual-services": {
+      "file": "navdhya-future-spiritual-services.json",
+      "cluster": "brand"
+    },
+    "navdhya-germany": {
+      "file": "navdhya-germany.json",
+      "cluster": "brand"
+    },
+    "navdhya-griha-pravesh": {
+      "file": "navdhya-griha-pravesh.json",
+      "cluster": "services"
+    },
+    "navdhya-growth-plans": {
+      "file": "navdhya-growth-plans.json",
+      "cluster": "brand"
+    },
+    "navdhya-hindu-diaspora": {
+      "file": "navdhya-hindu-diaspora.json",
+      "cluster": "brand"
+    },
+    "navdhya-hindu-religious-ceremonies": {
+      "file": "navdhya-hindu-religious-ceremonies.json",
+      "cluster": "services"
+    },
+    "navdhya-hyperlocal-delhi": {
+      "file": "navdhya-hyperlocal-delhi.json",
+      "cluster": "services"
+    },
+    "navdhya-ireland": {
+      "file": "navdhya-ireland.json",
+      "cluster": "brand"
+    },
+    "navdhya-language-support": {
+      "file": "navdhya-language-support.json",
+      "cluster": "brand"
+    },
+    "navdhya-last-minute-bookings": {
+      "file": "navdhya-last-minute-bookings.json",
+      "cluster": "services"
+    },
+    "navdhya-live-streaming-puja": {
+      "file": "navdhya-live-streaming-puja.json",
+      "cluster": "brand"
+    },
+    "navdhya-loyalty-programme": {
+      "file": "navdhya-loyalty-programme.json",
+      "cluster": "brand"
+    },
+    "navdhya-mobile-ux": {
+      "file": "navdhya-mobile-ux.json",
+      "cluster": "brand"
+    },
+    "navdhya-modern-spiritual-seekers": {
+      "file": "navdhya-modern-spiritual-seekers.json",
+      "cluster": "spiritual-guides"
+    },
+    "navdhya-navratri": {
+      "file": "navdhya-navratri.json",
+      "cluster": "festival-rituals"
+    },
+    "navdhya-nri-global": {
+      "file": "navdhya-nri-global.json",
+      "cluster": "brand"
+    },
+    "navdhya-panchang-integration": {
+      "file": "navdhya-panchang-integration.json",
+      "cluster": "brand"
+    },
+    "navdhya-pandit-booking-guide": {
+      "file": "navdhya-pandit-booking-guide.json",
+      "cluster": "pandit-services"
+    },
+    "navdhya-pandit-languages": {
+      "file": "navdhya-pandit-languages.json",
+      "cluster": "pandit-services"
+    },
+    "navdhya-pandit-livelihood": {
+      "file": "navdhya-pandit-livelihood.json",
+      "cluster": "pandit-services"
+    },
+    "navdhya-pandit-matching": {
+      "file": "navdhya-pandit-matching.json",
+      "cluster": "pandit-services"
+    },
+    "navdhya-pandit-onboarding": {
+      "file": "navdhya-pandit-onboarding.json",
+      "cluster": "pandit-services"
+    },
+    "navdhya-pandit-training": {
+      "file": "navdhya-pandit-training.json",
+      "cluster": "pandit-services"
+    },
+    "navdhya-pandit-verification-process": {
+      "file": "navdhya-pandit-verification-process.json",
+      "cluster": "pandit-services"
+    },
+    "navdhya-partner-priest": {
+      "file": "navdhya-partner-priest.json",
+      "cluster": "pandit-services"
+    },
+    "navdhya-payment-security": {
+      "file": "navdhya-payment-security.json",
+      "cluster": "brand"
+    },
+    "navdhya-platform-architecture": {
+      "file": "navdhya-platform-architecture.json",
+      "cluster": "brand"
+    },
+    "navdhya-pricing-packages": {
+      "file": "navdhya-pricing-packages.json",
+      "cluster": "services"
+    },
+    "navdhya-priest-app": {
+      "file": "navdhya-priest-app.json",
+      "cluster": "pandit-services"
+    },
+    "navdhya-priest-supply-scaling": {
+      "file": "navdhya-priest-supply-scaling.json",
+      "cluster": "pandit-services"
+    },
+    "navdhya-puja-material-delivery": {
+      "file": "navdhya-puja-material-delivery.json",
+      "cluster": "services"
+    },
+    "navdhya-quality-assurance": {
+      "file": "navdhya-quality-assurance.json",
+      "cluster": "brand"
+    },
+    "navdhya-quality-control-tech": {
+      "file": "navdhya-quality-control-tech.json",
+      "cluster": "brand"
+    },
+    "navdhya-ratings-reviews": {
+      "file": "navdhya-ratings-reviews.json",
+      "cluster": "brand"
+    },
+    "navdhya-regional-customisation": {
+      "file": "navdhya-regional-customisation.json",
+      "cluster": "brand"
+    },
+    "navdhya-ritual-data": {
+      "file": "navdhya-ritual-data.json",
+      "cluster": "brand"
+    },
+    "navdhya-ritual-materials": {
+      "file": "navdhya-ritual-materials.json",
+      "cluster": "services"
+    },
+    "navdhya-ritual-outcome-verification": {
+      "file": "navdhya-ritual-outcome-verification.json",
+      "cluster": "brand"
+    },
+    "navdhya-samagri-logistics": {
+      "file": "navdhya-samagri-logistics.json",
+      "cluster": "brand"
+    },
+    "navdhya-satyanarayan-puja": {
+      "file": "navdhya-satyanarayan-puja.json",
+      "cluster": "services"
+    },
+    "navdhya-schema-structured-data": {
+      "file": "navdhya-schema-structured-data.json",
+      "cluster": "brand"
+    },
+    "navdhya-senior-citizens": {
+      "file": "navdhya-senior-citizens.json",
+      "cluster": "brand"
+    },
+    "navdhya-service-area": {
+      "file": "navdhya-service-area.json",
+      "cluster": "services"
+    },
+    "navdhya-social-impact": {
+      "file": "navdhya-social-impact.json",
+      "cluster": "brand"
+    },
+    "navdhya-social-media-ritual": {
+      "file": "navdhya-social-media-ritual.json",
+      "cluster": "brand"
+    },
+    "navdhya-spiritual-communities": {
+      "file": "navdhya-spiritual-communities.json",
+      "cluster": "spiritual-guides"
+    },
+    "navdhya-spiritual-guidance": {
+      "file": "navdhya-spiritual-guidance.json",
+      "cluster": "services"
+    },
+    "navdhya-spiritual-technology": {
+      "file": "navdhya-spiritual-technology.json",
+      "cluster": "brand"
+    },
+    "navdhya-subscription-puja": {
+      "file": "navdhya-subscription-puja.json",
+      "cluster": "services"
+    },
+    "navdhya-sustainability": {
+      "file": "navdhya-sustainability.json",
+      "cluster": "brand"
+    },
+    "navdhya-technology-ritual": {
+      "file": "navdhya-technology-ritual.json",
+      "cluster": "brand"
+    },
+    "navdhya-trust-safety": {
+      "file": "navdhya-trust-safety.json",
+      "cluster": "brand"
+    },
+    "navdhya-uk": {
+      "file": "navdhya-uk.json",
+      "cluster": "brand"
+    },
+    "navdhya-upflame-llp": {
+      "file": "navdhya-upflame-llp.json",
+      "cluster": "brand"
+    },
+    "navdhya-us": {
+      "file": "navdhya-us.json",
+      "cluster": "brand"
+    },
+    "navdhya-vedic-authenticity": {
+      "file": "navdhya-vedic-authenticity.json",
+      "cluster": "brand"
+    },
+    "navdhya-vedic-tradition": {
+      "file": "navdhya-vedic-tradition.json",
+      "cluster": "brand"
+    },
+    "navdhya-verified-pandits": {
+      "file": "navdhya-verified-pandits.json",
+      "cluster": "pandit-services"
+    },
+    "navdhya-voice-search": {
+      "file": "navdhya-voice-search.json",
+      "cluster": "brand"
+    },
+    "navdhya-vs-99pandit": {
+      "file": "navdhya-vs-99pandit.json",
+      "cluster": "compare"
+    },
+    "navdhya-vs-bookmypooja": {
+      "file": "navdhya-vs-bookmypooja.json",
+      "cluster": "compare"
+    },
+    "navdhya-vs-harivara": {
+      "file": "navdhya-vs-harivara.json",
+      "cluster": "compare"
+    },
+    "navdhya-vs-smartpuja": {
+      "file": "navdhya-vs-smartpuja.json",
+      "cluster": "compare"
+    },
+    "navdhya-vs-traditional-pandit-booking": {
+      "file": "navdhya-vs-traditional-pandit-booking.json",
+      "cluster": "pandit-services"
+    },
+    "navdhya-vs-vidhipujan": {
+      "file": "navdhya-vs-vidhipujan.json",
+      "cluster": "compare"
+    },
+    "navgrah-puja-guide": {
+      "file": "navgrah-puja-guide.json",
+      "cluster": "ritual-guides"
+    },
+    "navratri-fasting-guide": {
+      "file": "navratri-fasting-guide.json",
+      "cluster": "ritual-guides"
+    },
+    "navratri-festival-ritual-guide": {
+      "file": "navratri-festival-ritual-guide.json",
+      "cluster": "festival-rituals"
+    },
+    "navratri-garba-dandiya": {
+      "file": "navratri-garba-dandiya.json",
+      "cluster": "festival-rituals"
+    },
+    "navratri-ghatasthapana": {
+      "file": "navratri-ghatasthapana.json",
+      "cluster": "festival-rituals"
+    },
+    "navratri-nine-day-puja-plan": {
+      "file": "navratri-nine-day-puja-plan.json",
+      "cluster": "ritual-guides"
+    },
+    "neem-hindu-ritual": {
+      "file": "neem-hindu-ritual.json",
+      "cluster": "ritual-guides"
+    },
+    "noida": {
+      "file": "noida.json",
+      "cluster": "centers"
+    },
+    "north-vs-south-indian-puja": {
+      "file": "north-vs-south-indian-puja.json",
+      "cluster": "spiritual-guides"
+    },
+    "numerology-hindu-tradition": {
+      "file": "numerology-hindu-tradition.json",
+      "cluster": "spiritual-guides"
+    },
+    "odia-ritual-traditions": {
+      "file": "odia-ritual-traditions.json",
+      "cluster": "spiritual-guides"
+    },
+    "office-opening-apartment-format-guide": {
+      "file": "office-opening-apartment-format-guide.json",
+      "cluster": "services"
+    },
+    "office-opening-briefing-the-family": {
+      "file": "office-opening-briefing-the-family.json",
+      "cluster": "ceremonies"
+    },
+    "office-opening-combined-ritual-day-guide": {
+      "file": "office-opening-combined-ritual-day-guide.json",
+      "cluster": "services"
+    },
+    "office-opening-combined-rituals": {
+      "file": "office-opening-combined-rituals.json",
+      "cluster": "ceremonies"
+    },
+    "office-opening-delhi": {
+      "file": "office-opening-delhi.json",
+      "cluster": "services"
+    },
+    "office-opening-dwarka": {
+      "file": "office-opening-dwarka.json",
+      "cluster": "services"
+    },
+    "office-opening-east-delhi": {
+      "file": "office-opening-east-delhi.json",
+      "cluster": "services"
+    },
+    "office-opening-elder-led-family-guide": {
+      "file": "office-opening-elder-led-family-guide.json",
+      "cluster": "services"
+    },
+    "office-opening-family-consensus-guide": {
+      "file": "office-opening-family-consensus-guide.json",
+      "cluster": "services"
+    },
+    "office-opening-first-time-bookers-guide": {
+      "file": "office-opening-first-time-bookers-guide.json",
+      "cluster": "services"
+    },
+    "office-opening-ghaziabad": {
+      "file": "office-opening-ghaziabad.json",
+      "cluster": "services"
+    },
+    "office-opening-gurgaon": {
+      "file": "office-opening-gurgaon.json",
+      "cluster": "services"
+    },
+    "office-opening-home-vs-venue": {
+      "file": "office-opening-home-vs-venue.json",
+      "cluster": "ceremonies"
+    },
+    "office-opening-language-fit-guide": {
+      "file": "office-opening-language-fit-guide.json",
+      "cluster": "services"
+    },
+    "office-opening-language-preference": {
+      "file": "office-opening-language-preference.json",
+      "cluster": "ceremonies"
+    },
+    "office-opening-last-minute-clarity-guide": {
+      "file": "office-opening-last-minute-clarity-guide.json",
+      "cluster": "services"
+    },
+    "office-opening-noida": {
+      "file": "office-opening-noida.json",
+      "cluster": "services"
+    },
+    "office-opening-north-delhi": {
+      "file": "office-opening-north-delhi.json",
+      "cluster": "services"
+    },
+    "office-opening-pandit-fit": {
+      "file": "office-opening-pandit-fit.json",
+      "cluster": "ceremonies"
+    },
+    "office-opening-price-delhi-ncr": {
+      "file": "office-opening-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "office-opening-price-delhi": {
+      "file": "office-opening-price-delhi.json",
+      "cluster": "blog"
+    },
+    "office-opening-rohini": {
+      "file": "office-opening-rohini.json",
+      "cluster": "services"
+    },
+    "office-opening-samagri-responsibility": {
+      "file": "office-opening-samagri-responsibility.json",
+      "cluster": "ceremonies"
+    },
+    "office-opening-same-day-risk": {
+      "file": "office-opening-same-day-risk.json",
+      "cluster": "ceremonies"
+    },
+    "office-opening-small-home-setup-guide": {
+      "file": "office-opening-small-home-setup-guide.json",
+      "cluster": "services"
+    },
+    "office-opening-south-delhi": {
+      "file": "office-opening-south-delhi.json",
+      "cluster": "services"
+    },
+    "office-opening-travel-sensitive-guide": {
+      "file": "office-opening-travel-sensitive-guide.json",
+      "cluster": "services"
+    },
+    "office-opening-weekend-booking-guide": {
+      "file": "office-opening-weekend-booking-guide.json",
+      "cluster": "services"
+    },
+    "office-opening-west-delhi": {
+      "file": "office-opening-west-delhi.json",
+      "cluster": "services"
+    },
+    "office-opening-when-to-book": {
+      "file": "office-opening-when-to-book.json",
+      "cluster": "ceremonies"
+    },
+    "office-opening": {
+      "file": "office-opening.json",
+      "cluster": "pujas"
+    },
+    "office-puja-guide": {
+      "file": "office-puja-guide.json",
+      "cluster": "ritual-guides"
+    },
+    "oil-types-diyas": {
+      "file": "oil-types-diyas.json",
+      "cluster": "ritual-guides"
+    },
+    "onam-festival-ritual": {
+      "file": "onam-festival-ritual.json",
+      "cluster": "festival-rituals"
+    },
+    "online-kundali-analysis-navdhya": {
+      "file": "online-kundali-analysis-navdhya.json",
+      "cluster": "services"
+    },
+    "online-participation-clarity-before-first-booking": {
+      "file": "online-participation-clarity-before-first-booking.json",
+      "cluster": "compare"
+    },
+    "online-participation-clarity-for-repeat-households": {
+      "file": "online-participation-clarity-for-repeat-households.json",
+      "cluster": "compare"
+    },
+    "online-participation-clarity-vs-generic-listings": {
+      "file": "online-participation-clarity-vs-generic-listings.json",
+      "cluster": "compare"
+    },
+    "online-participation-clarity-vs-phone-only-booking": {
+      "file": "online-participation-clarity-vs-phone-only-booking.json",
+      "cluster": "compare"
+    },
+    "online-participation-clarity-vs-unmanaged-referrals": {
+      "file": "online-participation-clarity-vs-unmanaged-referrals.json",
+      "cluster": "compare"
+    },
+    "online-puja-technology": {
+      "file": "online-puja-technology.json",
+      "cluster": "brand"
+    },
+    "online-puja-vs-home-puja": {
+      "file": "online-puja-vs-home-puja.json",
+      "cluster": "blog"
+    },
+    "overseas-family-coordination-before-a-move-or-property-change-consultation": {
+      "file": "overseas-family-coordination-before-a-move-or-property-change-consultation.json",
+      "cluster": "services"
+    },
+    "overseas-family-coordination-before-booking-a-priest-consultation": {
+      "file": "overseas-family-coordination-before-booking-a-priest-consultation.json",
+      "cluster": "services"
+    },
+    "overseas-family-coordination-for-diaspora-time-zone-coordination-consultation": {
+      "file": "overseas-family-coordination-for-diaspora-time-zone-coordination-consultation.json",
+      "cluster": "services"
+    },
+    "overseas-family-coordination-when-elders-want-scriptural-context-first-consultation": {
+      "file": "overseas-family-coordination-when-elders-want-scriptural-context-first-consultation.json",
+      "cluster": "services"
+    },
+    "overseas-family-coordination-when-the-family-wants-a-second-opinion-consultation": {
+      "file": "overseas-family-coordination-when-the-family-wants-a-second-opinion-consultation.json",
+      "cluster": "services"
+    },
+    "pandit-amavasya": {
+      "file": "pandit-amavasya.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-availability-booking": {
+      "file": "pandit-availability-booking.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-availability-ceremony-day": {
+      "file": "pandit-availability-ceremony-day.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-availability-confirm": {
+      "file": "pandit-availability-confirm.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-availability-discover": {
+      "file": "pandit-availability-discover.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-availability-evaluate": {
+      "file": "pandit-availability-evaluate.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-availability-follow-up": {
+      "file": "pandit-availability-follow-up.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-availability-prepare": {
+      "file": "pandit-availability-prepare.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-availability-shortlist": {
+      "file": "pandit-availability-shortlist.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-bhoomi-pujan": {
+      "file": "pandit-bhoomi-pujan.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-booking-pricing-delhi-ncr": {
+      "file": "pandit-booking-pricing-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "pandit-booking-pricing-delhi": {
+      "file": "pandit-booking-pricing-delhi.json",
+      "cluster": "compare"
+    },
+    "pandit-ceremony-brief-ceremony-day": {
+      "file": "pandit-ceremony-brief-ceremony-day.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-ceremony-brief-confirm": {
+      "file": "pandit-ceremony-brief-confirm.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-ceremony-brief-discover": {
+      "file": "pandit-ceremony-brief-discover.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-ceremony-brief-evaluate": {
+      "file": "pandit-ceremony-brief-evaluate.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-ceremony-brief-follow-up": {
+      "file": "pandit-ceremony-brief-follow-up.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-ceremony-brief-prepare": {
+      "file": "pandit-ceremony-brief-prepare.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-ceremony-brief-shortlist": {
+      "file": "pandit-ceremony-brief-shortlist.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-corporate-events": {
+      "file": "pandit-corporate-events.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-diwali-delhi": {
+      "file": "pandit-diwali-delhi.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-funeral-last-rites": {
+      "file": "pandit-funeral-last-rites.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-ganesh-chaturthi": {
+      "file": "pandit-ganesh-chaturthi.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-griha-pravesh-delhi": {
+      "file": "pandit-griha-pravesh-delhi.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-havan-ceremony": {
+      "file": "pandit-havan-ceremony.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-household-conduct-ceremony-day": {
+      "file": "pandit-household-conduct-ceremony-day.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-household-conduct-confirm": {
+      "file": "pandit-household-conduct-confirm.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-household-conduct-discover": {
+      "file": "pandit-household-conduct-discover.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-household-conduct-evaluate": {
+      "file": "pandit-household-conduct-evaluate.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-household-conduct-follow-up": {
+      "file": "pandit-household-conduct-follow-up.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-household-conduct-prepare": {
+      "file": "pandit-household-conduct-prepare.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-household-conduct-shortlist": {
+      "file": "pandit-household-conduct-shortlist.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-kali-puja": {
+      "file": "pandit-kali-puja.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-language-comfort-ceremony-day": {
+      "file": "pandit-language-comfort-ceremony-day.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-language-comfort-confirm": {
+      "file": "pandit-language-comfort-confirm.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-language-comfort-discover": {
+      "file": "pandit-language-comfort-discover.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-language-comfort-evaluate": {
+      "file": "pandit-language-comfort-evaluate.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-language-comfort-follow-up": {
+      "file": "pandit-language-comfort-follow-up.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-language-comfort-prepare": {
+      "file": "pandit-language-comfort-prepare.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-language-comfort-shortlist": {
+      "file": "pandit-language-comfort-shortlist.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-mundan-ceremony": {
+      "file": "pandit-mundan-ceremony.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-namkaran": {
+      "file": "pandit-namkaran.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-navratri-puja": {
+      "file": "pandit-navratri-puja.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-online-guidance-ceremony-day": {
+      "file": "pandit-online-guidance-ceremony-day.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-online-guidance-confirm": {
+      "file": "pandit-online-guidance-confirm.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-online-guidance-discover": {
+      "file": "pandit-online-guidance-discover.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-online-guidance-evaluate": {
+      "file": "pandit-online-guidance-evaluate.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-online-guidance-follow-up": {
+      "file": "pandit-online-guidance-follow-up.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-online-guidance-prepare": {
+      "file": "pandit-online-guidance-prepare.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-online-guidance-shortlist": {
+      "file": "pandit-online-guidance-shortlist.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-online-puja": {
+      "file": "pandit-online-puja.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-pitru-paksha": {
+      "file": "pandit-pitru-paksha.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-pricing-clarity-ceremony-day": {
+      "file": "pandit-pricing-clarity-ceremony-day.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-pricing-clarity-confirm": {
+      "file": "pandit-pricing-clarity-confirm.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-pricing-clarity-discover": {
+      "file": "pandit-pricing-clarity-discover.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-pricing-clarity-evaluate": {
+      "file": "pandit-pricing-clarity-evaluate.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-pricing-clarity-follow-up": {
+      "file": "pandit-pricing-clarity-follow-up.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-pricing-clarity-prepare": {
+      "file": "pandit-pricing-clarity-prepare.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-pricing-clarity-shortlist": {
+      "file": "pandit-pricing-clarity-shortlist.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-puja-delhi": {
+      "file": "pandit-puja-delhi.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-qualifications": {
+      "file": "pandit-qualifications.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-regional-fit-ceremony-day": {
+      "file": "pandit-regional-fit-ceremony-day.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-regional-fit-confirm": {
+      "file": "pandit-regional-fit-confirm.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-regional-fit-discover": {
+      "file": "pandit-regional-fit-discover.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-regional-fit-evaluate": {
+      "file": "pandit-regional-fit-evaluate.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-regional-fit-follow-up": {
+      "file": "pandit-regional-fit-follow-up.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-regional-fit-prepare": {
+      "file": "pandit-regional-fit-prepare.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-regional-fit-shortlist": {
+      "file": "pandit-regional-fit-shortlist.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-review-followup-ceremony-day": {
+      "file": "pandit-review-followup-ceremony-day.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-review-followup-confirm": {
+      "file": "pandit-review-followup-confirm.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-review-followup-discover": {
+      "file": "pandit-review-followup-discover.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-review-followup-evaluate": {
+      "file": "pandit-review-followup-evaluate.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-review-followup-follow-up": {
+      "file": "pandit-review-followup-follow-up.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-review-followup-prepare": {
+      "file": "pandit-review-followup-prepare.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-review-followup-shortlist": {
+      "file": "pandit-review-followup-shortlist.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-rudrabhishek": {
+      "file": "pandit-rudrabhishek.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-satyanarayan-katha": {
+      "file": "pandit-satyanarayan-katha.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-seemantonnayana": {
+      "file": "pandit-seemantonnayana.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-shravan-month": {
+      "file": "pandit-shravan-month.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-upanayana": {
+      "file": "pandit-upanayana.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-urgent-support-ceremony-day": {
+      "file": "pandit-urgent-support-ceremony-day.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-urgent-support-confirm": {
+      "file": "pandit-urgent-support-confirm.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-urgent-support-discover": {
+      "file": "pandit-urgent-support-discover.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-urgent-support-evaluate": {
+      "file": "pandit-urgent-support-evaluate.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-urgent-support-follow-up": {
+      "file": "pandit-urgent-support-follow-up.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-urgent-support-prepare": {
+      "file": "pandit-urgent-support-prepare.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-urgent-support-shortlist": {
+      "file": "pandit-urgent-support-shortlist.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-verification-ceremony-day": {
+      "file": "pandit-verification-ceremony-day.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-verification-confirm": {
+      "file": "pandit-verification-confirm.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-verification-discover": {
+      "file": "pandit-verification-discover.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-verification-evaluate": {
+      "file": "pandit-verification-evaluate.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-verification-follow-up": {
+      "file": "pandit-verification-follow-up.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-verification-prepare": {
+      "file": "pandit-verification-prepare.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-verification-shortlist": {
+      "file": "pandit-verification-shortlist.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-vivah-sanskar": {
+      "file": "pandit-vivah-sanskar.json",
+      "cluster": "pandit-services"
+    },
+    "pandit-wedding-delhi": {
+      "file": "pandit-wedding-delhi.json",
+      "cluster": "pandit-services"
+    },
+    "panigrahana-ritual": {
+      "file": "panigrahana-ritual.json",
+      "cluster": "ceremonies"
+    },
+    "partner-accountability-before-first-booking": {
+      "file": "partner-accountability-before-first-booking.json",
+      "cluster": "compare"
+    },
+    "partner-accountability-for-repeat-households": {
+      "file": "partner-accountability-for-repeat-households.json",
+      "cluster": "compare"
+    },
+    "partner-accountability-vs-generic-listings": {
+      "file": "partner-accountability-vs-generic-listings.json",
+      "cluster": "compare"
+    },
+    "partner-accountability-vs-phone-only-booking": {
+      "file": "partner-accountability-vs-phone-only-booking.json",
+      "cluster": "compare"
+    },
+    "partner-accountability-vs-unmanaged-referrals": {
+      "file": "partner-accountability-vs-unmanaged-referrals.json",
+      "cluster": "compare"
+    },
+    "perform-havan-at-home": {
+      "file": "perform-havan-at-home.json",
+      "cluster": "ritual-guides"
+    },
+    "pilgrimage-yatra-guide": {
+      "file": "pilgrimage-yatra-guide.json",
+      "cluster": "spiritual-guides"
+    },
+    "pithi-ceremony-wedding": {
+      "file": "pithi-ceremony-wedding.json",
+      "cluster": "ceremonies"
+    },
+    "pitra-dosh-remedies": {
+      "file": "pitra-dosh-remedies.json",
+      "cluster": "spiritual-guides"
+    },
+    "pitru-paksha-ancestor-rites": {
+      "file": "pitru-paksha-ancestor-rites.json",
+      "cluster": "festival-rituals"
+    },
+    "pitru-tarpan-guide": {
+      "file": "pitru-tarpan-guide.json",
+      "cluster": "ritual-guides"
+    },
+    "pitru-visarjan-mahalaya": {
+      "file": "pitru-visarjan-mahalaya.json",
+      "cluster": "festival-rituals"
+    },
+    "planetary-offerings-days": {
+      "file": "planetary-offerings-days.json",
+      "cluster": "spiritual-guides"
+    },
+    "pongal-festival-ritual": {
+      "file": "pongal-festival-ritual.json",
+      "cluster": "festival-rituals"
+    },
+    "post-illness-purification": {
+      "file": "post-illness-purification.json",
+      "cluster": "ritual-guides"
+    },
+    "post-puja-clean-up-after-home-puja": {
+      "file": "post-puja-clean-up-after-home-puja.json",
+      "cluster": "blog"
+    },
+    "pran-pratishtha-home": {
+      "file": "pran-pratishtha-home.json",
+      "cluster": "ritual-guides"
+    },
+    "pranayam-before-puja": {
+      "file": "pranayam-before-puja.json",
+      "cluster": "spiritual-guides"
+    },
+    "prayagraj-kumbh-mela-ritual": {
+      "file": "prayagraj-kumbh-mela-ritual.json",
+      "cluster": "spiritual-guides"
+    },
+    "pregnancy-ritual-planning-before-a-move-or-property-change-consultation": {
+      "file": "pregnancy-ritual-planning-before-a-move-or-property-change-consultation.json",
+      "cluster": "services"
+    },
+    "pregnancy-ritual-planning-before-booking-a-priest-consultation": {
+      "file": "pregnancy-ritual-planning-before-booking-a-priest-consultation.json",
+      "cluster": "services"
+    },
+    "pregnancy-ritual-planning-for-diaspora-time-zone-coordination-consultation": {
+      "file": "pregnancy-ritual-planning-for-diaspora-time-zone-coordination-consultation.json",
+      "cluster": "services"
+    },
+    "pregnancy-ritual-planning-when-elders-want-scriptural-context-first-consultation": {
+      "file": "pregnancy-ritual-planning-when-elders-want-scriptural-context-first-consultation.json",
+      "cluster": "services"
+    },
+    "pregnancy-ritual-planning-when-the-family-wants-a-second-opinion-consultation": {
+      "file": "pregnancy-ritual-planning-when-the-family-wants-a-second-opinion-consultation.json",
+      "cluster": "services"
+    },
+    "prepare-gangajal-rituals": {
+      "file": "prepare-gangajal-rituals.json",
+      "cluster": "ritual-guides"
+    },
+    "prepare-kund-havan": {
+      "file": "prepare-kund-havan.json",
+      "cluster": "ritual-guides"
+    },
+    "prepare-multi-day-ceremony": {
+      "file": "prepare-multi-day-ceremony.json",
+      "cluster": "ritual-guides"
+    },
+    "prepare-panchamrit-puja": {
+      "file": "prepare-panchamrit-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "prepare-prasad-deities": {
+      "file": "prepare-prasad-deities.json",
+      "cluster": "ritual-guides"
+    },
+    "prepare-wedding-ceremony": {
+      "file": "prepare-wedding-ceremony.json",
+      "cluster": "ritual-guides"
+    },
+    "priests-regional-traditions": {
+      "file": "priests-regional-traditions.json",
+      "cluster": "pandit-services"
+    },
+    "property-timing-before-a-move-or-property-change-consultation": {
+      "file": "property-timing-before-a-move-or-property-change-consultation.json",
+      "cluster": "services"
+    },
+    "property-timing-before-booking-a-priest-consultation": {
+      "file": "property-timing-before-booking-a-priest-consultation.json",
+      "cluster": "services"
+    },
+    "property-timing-for-diaspora-time-zone-coordination-consultation": {
+      "file": "property-timing-for-diaspora-time-zone-coordination-consultation.json",
+      "cluster": "services"
+    },
+    "property-timing-when-elders-want-scriptural-context-first-consultation": {
+      "file": "property-timing-when-elders-want-scriptural-context-first-consultation.json",
+      "cluster": "services"
+    },
+    "property-timing-when-the-family-wants-a-second-opinion-consultation": {
+      "file": "property-timing-when-the-family-wants-a-second-opinion-consultation.json",
+      "cluster": "services"
+    },
+    "puja-after-birth": {
+      "file": "puja-after-birth.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-before-buying-property": {
+      "file": "puja-before-buying-property.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-child-health": {
+      "file": "puja-child-health.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-cost-guide-delhi": {
+      "file": "puja-cost-guide-delhi.json",
+      "cluster": "blog"
+    },
+    "puja-ekadashi": {
+      "file": "puja-ekadashi.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-exam-success": {
+      "file": "puja-exam-success.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-home-protection": {
+      "file": "puja-home-protection.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-maha-shivratri": {
+      "file": "puja-maha-shivratri.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-marriage-blessings": {
+      "file": "puja-marriage-blessings.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-menstruation-rules": {
+      "file": "puja-menstruation-rules.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-new-business": {
+      "file": "puja-new-business.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-new-rented-home": {
+      "file": "puja-new-rented-home.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-new-vehicle": {
+      "file": "puja-new-vehicle.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-prosperity-wealth": {
+      "file": "puja-prosperity-wealth.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-reduces-stress": {
+      "file": "puja-reduces-stress.json",
+      "cluster": "spiritual-guides"
+    },
+    "puja-remove-negative-energy": {
+      "file": "puja-remove-negative-energy.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-safe-travel": {
+      "file": "puja-safe-travel.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-samagri-checklist": {
+      "file": "puja-samagri-checklist.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-samagri-shopping-list": {
+      "file": "puja-samagri-shopping-list.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-surya-grahan": {
+      "file": "puja-surya-grahan.json",
+      "cluster": "festival-rituals"
+    },
+    "puja-thali-preparation": {
+      "file": "puja-thali-preparation.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-timing-panchang": {
+      "file": "puja-timing-panchang.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-vidhi-guide": {
+      "file": "puja-vidhi-guide.json",
+      "cluster": "ritual-guides"
+    },
+    "puja-vs-prayer": {
+      "file": "puja-vs-prayer.json",
+      "cluster": "faq"
+    },
+    "puja-without-pandit": {
+      "file": "puja-without-pandit.json",
+      "cluster": "ritual-guides"
+    },
+    "punjabi-hindu-ritual-traditions": {
+      "file": "punjabi-hindu-ritual-traditions.json",
+      "cluster": "spiritual-guides"
+    },
+    "punyaha-vachanam-baby-shower": {
+      "file": "punyaha-vachanam-baby-shower.json",
+      "cluster": "ceremonies"
+    },
+    "puri-jagannath-rituals": {
+      "file": "puri-jagannath-rituals.json",
+      "cluster": "spiritual-guides"
+    },
+    "purify-puja-space": {
+      "file": "purify-puja-space.json",
+      "cluster": "ritual-guides"
+    },
+    "purnima-fasting-puja": {
+      "file": "purnima-fasting-puja.json",
+      "cluster": "festival-rituals"
+    },
+    "purohit-vs-jyotishi": {
+      "file": "purohit-vs-jyotishi.json",
+      "cluster": "pandit-services"
+    },
+    "questions-ask-pandit": {
+      "file": "questions-ask-pandit.json",
+      "cluster": "pandit-services"
+    },
+    "rahu-ketu-shanti-puja": {
+      "file": "rahu-ketu-shanti-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "rahu-ketu-vedic-astrology": {
+      "file": "rahu-ketu-vedic-astrology.json",
+      "cluster": "spiritual-guides"
+    },
+    "rajasthani-ritual-customs": {
+      "file": "rajasthani-ritual-customs.json",
+      "cluster": "spiritual-guides"
+    },
+    "raksha-bandhan-ritual": {
+      "file": "raksha-bandhan-ritual.json",
+      "cluster": "festival-rituals"
+    },
+    "ram-navami-ritual-guide": {
+      "file": "ram-navami-ritual-guide.json",
+      "cluster": "festival-rituals"
+    },
+    "rath-yatra-festival-guide": {
+      "file": "rath-yatra-festival-guide.json",
+      "cluster": "festival-rituals"
+    },
+    "read-vedic-birth-chart": {
+      "file": "read-vedic-birth-chart.json",
+      "cluster": "spiritual-guides"
+    },
+    "red-cloth-ritual": {
+      "file": "red-cloth-ritual.json",
+      "cluster": "ritual-guides"
+    },
+    "regional-pandit-traditions": {
+      "file": "regional-pandit-traditions.json",
+      "cluster": "pandit-services"
+    },
+    "regional-traditions-ceremony-choice": {
+      "file": "regional-traditions-ceremony-choice.json",
+      "cluster": "pandit-services"
+    },
+    "ritual-bathing-snan": {
+      "file": "ritual-bathing-snan.json",
+      "cluster": "ritual-guides"
+    },
+    "ritual-data-privacy-before-first-booking": {
+      "file": "ritual-data-privacy-before-first-booking.json",
+      "cluster": "compare"
+    },
+    "ritual-data-privacy-for-repeat-households": {
+      "file": "ritual-data-privacy-for-repeat-households.json",
+      "cluster": "compare"
+    },
+    "ritual-data-privacy-vs-generic-listings": {
+      "file": "ritual-data-privacy-vs-generic-listings.json",
+      "cluster": "compare"
+    },
+    "ritual-data-privacy-vs-phone-only-booking": {
+      "file": "ritual-data-privacy-vs-phone-only-booking.json",
+      "cluster": "compare"
+    },
+    "ritual-data-privacy-vs-unmanaged-referrals": {
+      "file": "ritual-data-privacy-vs-unmanaged-referrals.json",
+      "cluster": "compare"
+    },
+    "ritual-first-entry-home": {
+      "file": "ritual-first-entry-home.json",
+      "cluster": "ritual-guides"
+    },
+    "rituals-create-community": {
+      "file": "rituals-create-community.json",
+      "cluster": "spiritual-guides"
+    },
+    "rituals-ganga-river": {
+      "file": "rituals-ganga-river.json",
+      "cluster": "spiritual-guides"
+    },
+    "rituals-new-school-year": {
+      "file": "rituals-new-school-year.json",
+      "cluster": "ritual-guides"
+    },
+    "rituals-pregnancy-hindu": {
+      "file": "rituals-pregnancy-hindu.json",
+      "cluster": "ritual-guides"
+    },
+    "role-of-flowers-hindu-puja": {
+      "file": "role-of-flowers-hindu-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "role-of-pandit-vedic-ceremonies": {
+      "file": "role-of-pandit-vedic-ceremonies.json",
+      "cluster": "pandit-services"
+    },
+    "rudrabhishek-at-home": {
+      "file": "rudrabhishek-at-home.json",
+      "cluster": "ceremonies"
+    },
+    "rudraksha-spiritual-significance": {
+      "file": "rudraksha-spiritual-significance.json",
+      "cluster": "spiritual-guides"
+    },
+    "sacred-colours-hindu-ritual": {
+      "file": "sacred-colours-hindu-ritual.json",
+      "cluster": "ritual-guides"
+    },
+    "sacred-geometry-hindu-rituals": {
+      "file": "sacred-geometry-hindu-rituals.json",
+      "cluster": "ritual-guides"
+    },
+    "sacred-grains-ritual": {
+      "file": "sacred-grains-ritual.json",
+      "cluster": "ritual-guides"
+    },
+    "sacred-metals-ritual": {
+      "file": "sacred-metals-ritual.json",
+      "cluster": "ritual-guides"
+    },
+    "sacred-plants-hindu": {
+      "file": "sacred-plants-hindu.json",
+      "cluster": "spiritual-guides"
+    },
+    "sacred-thread-janeu": {
+      "file": "sacred-thread-janeu.json",
+      "cluster": "ritual-guides"
+    },
+    "sagai-engagement-ceremony": {
+      "file": "sagai-engagement-ceremony.json",
+      "cluster": "ceremonies"
+    },
+    "same-day-annaprashan-delhi-ncr": {
+      "file": "same-day-annaprashan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-bhoomi-pujan-delhi-ncr": {
+      "file": "same-day-bhoomi-pujan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-griha-pravesh-delhi-ncr": {
+      "file": "same-day-griha-pravesh-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-havan-delhi-ncr": {
+      "file": "same-day-havan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-hindu-wedding-delhi-ncr": {
+      "file": "same-day-hindu-wedding-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-lakshmi-ganesh-puja-delhi-ncr": {
+      "file": "same-day-lakshmi-ganesh-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-mundan-delhi-ncr": {
+      "file": "same-day-mundan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-namkaran-delhi-ncr": {
+      "file": "same-day-namkaran-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-navagraha-puja-delhi-ncr": {
+      "file": "same-day-navagraha-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-office-opening-delhi-ncr": {
+      "file": "same-day-office-opening-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-pandit-booking-delhi": {
+      "file": "same-day-pandit-booking-delhi.json",
+      "cluster": "blog"
+    },
+    "same-day-satyanarayan-katha-delhi-ncr": {
+      "file": "same-day-satyanarayan-katha-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "same-day-vastu-shanti-delhi-ncr": {
+      "file": "same-day-vastu-shanti-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "sanskrit-pandit-requirements": {
+      "file": "sanskrit-pandit-requirements.json",
+      "cluster": "pandit-services"
+    },
+    "saptapadi-seven-steps": {
+      "file": "saptapadi-seven-steps.json",
+      "cluster": "ceremonies"
+    },
+    "saraswati-puja-ceremony": {
+      "file": "saraswati-puja-ceremony.json",
+      "cluster": "festival-rituals"
+    },
+    "saraswati-puja-vidhi": {
+      "file": "saraswati-puja-vidhi.json",
+      "cluster": "ritual-guides"
+    },
+    "sattvic-diet-spiritual": {
+      "file": "sattvic-diet-spiritual.json",
+      "cluster": "spiritual-guides"
+    },
+    "saturn-shani-sade-sati": {
+      "file": "saturn-shani-sade-sati.json",
+      "cluster": "spiritual-guides"
+    },
+    "satyanarayan-katha-apartment-format-guide": {
+      "file": "satyanarayan-katha-apartment-format-guide.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-briefing-the-family": {
+      "file": "satyanarayan-katha-briefing-the-family.json",
+      "cluster": "ceremonies"
+    },
+    "satyanarayan-katha-combined-ritual-day-guide": {
+      "file": "satyanarayan-katha-combined-ritual-day-guide.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-combined-rituals": {
+      "file": "satyanarayan-katha-combined-rituals.json",
+      "cluster": "ceremonies"
+    },
+    "satyanarayan-katha-delhi": {
+      "file": "satyanarayan-katha-delhi.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-dwarka": {
+      "file": "satyanarayan-katha-dwarka.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-east-delhi": {
+      "file": "satyanarayan-katha-east-delhi.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-elder-led-family-guide": {
+      "file": "satyanarayan-katha-elder-led-family-guide.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-family-consensus-guide": {
+      "file": "satyanarayan-katha-family-consensus-guide.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-first-time-bookers-guide": {
+      "file": "satyanarayan-katha-first-time-bookers-guide.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-ghaziabad": {
+      "file": "satyanarayan-katha-ghaziabad.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-gurgaon": {
+      "file": "satyanarayan-katha-gurgaon.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-home-vs-venue": {
+      "file": "satyanarayan-katha-home-vs-venue.json",
+      "cluster": "ceremonies"
+    },
+    "satyanarayan-katha-language-fit-guide": {
+      "file": "satyanarayan-katha-language-fit-guide.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-language-preference": {
+      "file": "satyanarayan-katha-language-preference.json",
+      "cluster": "ceremonies"
+    },
+    "satyanarayan-katha-last-minute-clarity-guide": {
+      "file": "satyanarayan-katha-last-minute-clarity-guide.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-noida": {
+      "file": "satyanarayan-katha-noida.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-north-delhi": {
+      "file": "satyanarayan-katha-north-delhi.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-pandit-fit": {
+      "file": "satyanarayan-katha-pandit-fit.json",
+      "cluster": "ceremonies"
+    },
+    "satyanarayan-katha-price-delhi-ncr": {
+      "file": "satyanarayan-katha-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "satyanarayan-katha-rohini": {
+      "file": "satyanarayan-katha-rohini.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-samagri-responsibility": {
+      "file": "satyanarayan-katha-samagri-responsibility.json",
+      "cluster": "ceremonies"
+    },
+    "satyanarayan-katha-same-day-risk": {
+      "file": "satyanarayan-katha-same-day-risk.json",
+      "cluster": "ceremonies"
+    },
+    "satyanarayan-katha-small-home-setup-guide": {
+      "file": "satyanarayan-katha-small-home-setup-guide.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-south-delhi": {
+      "file": "satyanarayan-katha-south-delhi.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-travel-sensitive-guide": {
+      "file": "satyanarayan-katha-travel-sensitive-guide.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-weekend-booking-guide": {
+      "file": "satyanarayan-katha-weekend-booking-guide.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-west-delhi": {
+      "file": "satyanarayan-katha-west-delhi.json",
+      "cluster": "services"
+    },
+    "satyanarayan-katha-when-to-book": {
+      "file": "satyanarayan-katha-when-to-book.json",
+      "cluster": "ceremonies"
+    },
+    "satyanarayan-katha": {
+      "file": "satyanarayan-katha.json",
+      "cluster": "pujas"
+    },
+    "satyanarayan-puja-at-home": {
+      "file": "satyanarayan-puja-at-home.json",
+      "cluster": "ritual-guides"
+    },
+    "satyanarayan-puja-complete-guide": {
+      "file": "satyanarayan-puja-complete-guide.json",
+      "cluster": "ceremonies"
+    },
+    "science-vedic-ritual-timing": {
+      "file": "science-vedic-ritual-timing.json",
+      "cluster": "spiritual-guides"
+    },
+    "seemantonnayana-pregnancy-ritual": {
+      "file": "seemantonnayana-pregnancy-ritual.json",
+      "cluster": "ceremonies"
+    },
+    "shaiva-vaishnava-ritual-differences": {
+      "file": "shaiva-vaishnava-ritual-differences.json",
+      "cluster": "spiritual-guides"
+    },
+    "shakta-ritual-traditions": {
+      "file": "shakta-ritual-traditions.json",
+      "cluster": "spiritual-guides"
+    },
+    "shani-graha-shanti-puja": {
+      "file": "shani-graha-shanti-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "sharad-purnima-ritual": {
+      "file": "sharad-purnima-ritual.json",
+      "cluster": "festival-rituals"
+    },
+    "shirdi-sai-baba-rituals": {
+      "file": "shirdi-sai-baba-rituals.json",
+      "cluster": "spiritual-guides"
+    },
+    "shiva-puja-monday": {
+      "file": "shiva-puja-monday.json",
+      "cluster": "ritual-guides"
+    },
+    "shivling-abhishek-ritual": {
+      "file": "shivling-abhishek-ritual.json",
+      "cluster": "ritual-guides"
+    },
+    "shodashopachara-puja-method": {
+      "file": "shodashopachara-puja-method.json",
+      "cluster": "ritual-guides"
+    },
+    "shradh-ceremony-guide": {
+      "file": "shradh-ceremony-guide.json",
+      "cluster": "ceremonies"
+    },
+    "significance-108": {
+      "file": "significance-108.json",
+      "cluster": "spiritual-guides"
+    },
+    "sindhi-hindu-ritual-traditions": {
+      "file": "sindhi-hindu-ritual-traditions.json",
+      "cluster": "spiritual-guides"
+    },
+    "sindoor-ceremony": {
+      "file": "sindoor-ceremony.json",
+      "cluster": "ceremonies"
+    },
+    "sindoor-preparation-rituals": {
+      "file": "sindoor-preparation-rituals.json",
+      "cluster": "ritual-guides"
+    },
+    "skanda-sashti-ritual": {
+      "file": "skanda-sashti-ritual.json",
+      "cluster": "festival-rituals"
+    },
+    "smarta-tradition-hindu": {
+      "file": "smarta-tradition-hindu.json",
+      "cluster": "spiritual-guides"
+    },
+    "sohagini-puja": {
+      "file": "sohagini-puja.json",
+      "cluster": "ceremonies"
+    },
+    "solah-somvar-vrat-puja": {
+      "file": "solah-somvar-vrat-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "somvar-fast-at-home": {
+      "file": "somvar-fast-at-home.json",
+      "cluster": "ritual-guides"
+    },
+    "source-authentic-puja-materials": {
+      "file": "source-authentic-puja-materials.json",
+      "cluster": "ritual-guides"
+    },
+    "south-indian-brahmin-rituals": {
+      "file": "south-indian-brahmin-rituals.json",
+      "cluster": "pandit-services"
+    },
+    "spiritual-consultation-vs-therapy": {
+      "file": "spiritual-consultation-vs-therapy.json",
+      "cluster": "spiritual-guides"
+    },
+    "spiritual-morning-routine": {
+      "file": "spiritual-morning-routine.json",
+      "cluster": "spiritual-guides"
+    },
+    "spiritual-practices-modern-life": {
+      "file": "spiritual-practices-modern-life.json",
+      "cluster": "spiritual-guides"
+    },
+    "spiritual-remedies-career-finance": {
+      "file": "spiritual-remedies-career-finance.json",
+      "cluster": "spiritual-guides"
+    },
+    "spiritual-retreat-meditation": {
+      "file": "spiritual-retreat-meditation.json",
+      "cluster": "spiritual-guides"
+    },
+    "spirituality-financial-wellbeing": {
+      "file": "spirituality-financial-wellbeing.json",
+      "cluster": "spiritual-guides"
+    },
+    "start-japa-practice": {
+      "file": "start-japa-practice.json",
+      "cluster": "spiritual-guides"
+    },
+    "store-organize-puja-items": {
+      "file": "store-organize-puja-items.json",
+      "cluster": "ritual-guides"
+    },
+    "sudarshana-puja-guide": {
+      "file": "sudarshana-puja-guide.json",
+      "cluster": "ritual-guides"
+    },
+    "sunsign-moonsign-vedic": {
+      "file": "sunsign-moonsign-vedic.json",
+      "cluster": "spiritual-guides"
+    },
+    "support-responsiveness-before-first-booking": {
+      "file": "support-responsiveness-before-first-booking.json",
+      "cluster": "compare"
+    },
+    "support-responsiveness-for-repeat-households": {
+      "file": "support-responsiveness-for-repeat-households.json",
+      "cluster": "compare"
+    },
+    "support-responsiveness-vs-generic-listings": {
+      "file": "support-responsiveness-vs-generic-listings.json",
+      "cluster": "compare"
+    },
+    "support-responsiveness-vs-phone-only-booking": {
+      "file": "support-responsiveness-vs-phone-only-booking.json",
+      "cluster": "compare"
+    },
+    "support-responsiveness-vs-unmanaged-referrals": {
+      "file": "support-responsiveness-vs-unmanaged-referrals.json",
+      "cluster": "compare"
+    },
+    "surya-namaskar-puja": {
+      "file": "surya-namaskar-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "sutak-after-death": {
+      "file": "sutak-after-death.json",
+      "cluster": "ritual-guides"
+    },
+    "sutak-post-birth-rituals": {
+      "file": "sutak-post-birth-rituals.json",
+      "cluster": "ceremonies"
+    },
+    "symbolism-diyas-hindu": {
+      "file": "symbolism-diyas-hindu.json",
+      "cluster": "ritual-guides"
+    },
+    "tamil-hindu-ritual-traditions": {
+      "file": "tamil-hindu-ritual-traditions.json",
+      "cluster": "pandit-services"
+    },
+    "teej-festival-ritual": {
+      "file": "teej-festival-ritual.json",
+      "cluster": "festival-rituals"
+    },
+    "temple-vs-home-puja": {
+      "file": "temple-vs-home-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "threshold-rituals-home": {
+      "file": "threshold-rituals-home.json",
+      "cluster": "ritual-guides"
+    },
+    "thursday-vishnu-puja": {
+      "file": "thursday-vishnu-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "tilak-ceremony-marriage": {
+      "file": "tilak-ceremony-marriage.json",
+      "cluster": "ceremonies"
+    },
+    "tirthas-sacred-water": {
+      "file": "tirthas-sacred-water.json",
+      "cluster": "ritual-guides"
+    },
+    "tirupati-balaji-rituals": {
+      "file": "tirupati-balaji-rituals.json",
+      "cluster": "spiritual-guides"
+    },
+    "tribal-folk-deity-worship": {
+      "file": "tribal-folk-deity-worship.json",
+      "cluster": "spiritual-guides"
+    },
+    "tulsi-hindu-worship": {
+      "file": "tulsi-hindu-worship.json",
+      "cluster": "ritual-guides"
+    },
+    "tulsi-puja-daily": {
+      "file": "tulsi-puja-daily.json",
+      "cluster": "ritual-guides"
+    },
+    "tulsi-vivah-puja": {
+      "file": "tulsi-vivah-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "types-of-diyas": {
+      "file": "types-of-diyas.json",
+      "cluster": "ritual-guides"
+    },
+    "types-of-pandits": {
+      "file": "types-of-pandits.json",
+      "cluster": "pandit-services"
+    },
+    "ugadi-new-year-ritual": {
+      "file": "ugadi-new-year-ritual.json",
+      "cluster": "festival-rituals"
+    },
+    "uk-birmingham-india-family-pandit-coordination": {
+      "file": "uk-birmingham-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "uk-birmingham-nri-griha-pravesh-planning": {
+      "file": "uk-birmingham-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "uk-birmingham-online-astrology-consultation": {
+      "file": "uk-birmingham-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "uk-birmingham-online-puja": {
+      "file": "uk-birmingham-online-puja.json",
+      "cluster": "services"
+    },
+    "uk-birmingham-online-satyanarayan-katha": {
+      "file": "uk-birmingham-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "uk-birmingham": {
+      "file": "uk-birmingham.json",
+      "cluster": "centers"
+    },
+    "uk-leicester-india-family-pandit-coordination": {
+      "file": "uk-leicester-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "uk-leicester-nri-griha-pravesh-planning": {
+      "file": "uk-leicester-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "uk-leicester-online-astrology-consultation": {
+      "file": "uk-leicester-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "uk-leicester-online-puja": {
+      "file": "uk-leicester-online-puja.json",
+      "cluster": "services"
+    },
+    "uk-leicester-online-satyanarayan-katha": {
+      "file": "uk-leicester-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "uk-leicester": {
+      "file": "uk-leicester.json",
+      "cluster": "centers"
+    },
+    "uk-london-india-family-pandit-coordination": {
+      "file": "uk-london-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "uk-london-nri-griha-pravesh-planning": {
+      "file": "uk-london-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "uk-london-online-astrology-consultation": {
+      "file": "uk-london-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "uk-london-online-puja": {
+      "file": "uk-london-online-puja.json",
+      "cluster": "services"
+    },
+    "uk-london-online-satyanarayan-katha": {
+      "file": "uk-london-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "uk-london": {
+      "file": "uk-london.json",
+      "cluster": "centers"
+    },
+    "uk-manchester-india-family-pandit-coordination": {
+      "file": "uk-manchester-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "uk-manchester-nri-griha-pravesh-planning": {
+      "file": "uk-manchester-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "uk-manchester-online-astrology-consultation": {
+      "file": "uk-manchester-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "uk-manchester-online-puja": {
+      "file": "uk-manchester-online-puja.json",
+      "cluster": "services"
+    },
+    "uk-manchester-online-satyanarayan-katha": {
+      "file": "uk-manchester-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "uk-manchester": {
+      "file": "uk-manchester.json",
+      "cluster": "centers"
+    },
+    "understanding-puja-hindu-tradition": {
+      "file": "understanding-puja-hindu-tradition.json",
+      "cluster": "ritual-guides"
+    },
+    "upanayana-thread-ceremony": {
+      "file": "upanayana-thread-ceremony.json",
+      "cluster": "ceremonies"
+    },
+    "urgent-annaprashan-delhi-ncr": {
+      "file": "urgent-annaprashan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-bhoomi-pujan-delhi-ncr": {
+      "file": "urgent-bhoomi-pujan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-griha-pravesh-delhi-ncr": {
+      "file": "urgent-griha-pravesh-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-havan-delhi-ncr": {
+      "file": "urgent-havan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-hindu-wedding-delhi-ncr": {
+      "file": "urgent-hindu-wedding-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-lakshmi-ganesh-puja-delhi-ncr": {
+      "file": "urgent-lakshmi-ganesh-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-mundan-delhi-ncr": {
+      "file": "urgent-mundan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-namkaran-delhi-ncr": {
+      "file": "urgent-namkaran-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-navagraha-puja-delhi-ncr": {
+      "file": "urgent-navagraha-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-office-opening-delhi-ncr": {
+      "file": "urgent-office-opening-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-satyanarayan-katha-delhi-ncr": {
+      "file": "urgent-satyanarayan-katha-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "urgent-vastu-shanti-delhi-ncr": {
+      "file": "urgent-vastu-shanti-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "us-chicago-india-family-pandit-coordination": {
+      "file": "us-chicago-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "us-chicago-nri-griha-pravesh-planning": {
+      "file": "us-chicago-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "us-chicago-online-astrology-consultation": {
+      "file": "us-chicago-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "us-chicago-online-puja": {
+      "file": "us-chicago-online-puja.json",
+      "cluster": "services"
+    },
+    "us-chicago-online-satyanarayan-katha": {
+      "file": "us-chicago-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "us-chicago": {
+      "file": "us-chicago.json",
+      "cluster": "centers"
+    },
+    "us-dallas-india-family-pandit-coordination": {
+      "file": "us-dallas-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "us-dallas-nri-griha-pravesh-planning": {
+      "file": "us-dallas-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "us-dallas-online-astrology-consultation": {
+      "file": "us-dallas-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "us-dallas-online-puja": {
+      "file": "us-dallas-online-puja.json",
+      "cluster": "services"
+    },
+    "us-dallas-online-satyanarayan-katha": {
+      "file": "us-dallas-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "us-dallas": {
+      "file": "us-dallas.json",
+      "cluster": "centers"
+    },
+    "us-new-york-india-family-pandit-coordination": {
+      "file": "us-new-york-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "us-new-york-nri-griha-pravesh-planning": {
+      "file": "us-new-york-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "us-new-york-online-astrology-consultation": {
+      "file": "us-new-york-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "us-new-york-online-puja": {
+      "file": "us-new-york-online-puja.json",
+      "cluster": "services"
+    },
+    "us-new-york-online-satyanarayan-katha": {
+      "file": "us-new-york-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "us-new-york": {
+      "file": "us-new-york.json",
+      "cluster": "centers"
+    },
+    "us-san-jose-india-family-pandit-coordination": {
+      "file": "us-san-jose-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "us-san-jose-nri-griha-pravesh-planning": {
+      "file": "us-san-jose-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "us-san-jose-online-astrology-consultation": {
+      "file": "us-san-jose-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "us-san-jose-online-puja": {
+      "file": "us-san-jose-online-puja.json",
+      "cluster": "services"
+    },
+    "us-san-jose-online-satyanarayan-katha": {
+      "file": "us-san-jose-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "us-san-jose": {
+      "file": "us-san-jose.json",
+      "cluster": "centers"
+    },
+    "us-seattle-india-family-pandit-coordination": {
+      "file": "us-seattle-india-family-pandit-coordination.json",
+      "cluster": "services"
+    },
+    "us-seattle-nri-griha-pravesh-planning": {
+      "file": "us-seattle-nri-griha-pravesh-planning.json",
+      "cluster": "services"
+    },
+    "us-seattle-online-astrology-consultation": {
+      "file": "us-seattle-online-astrology-consultation.json",
+      "cluster": "services"
+    },
+    "us-seattle-online-puja": {
+      "file": "us-seattle-online-puja.json",
+      "cluster": "services"
+    },
+    "us-seattle-online-satyanarayan-katha": {
+      "file": "us-seattle-online-satyanarayan-katha.json",
+      "cluster": "services"
+    },
+    "us-seattle": {
+      "file": "us-seattle.json",
+      "cluster": "centers"
+    },
+    "uttarakhandi-devbhoomi-rituals": {
+      "file": "uttarakhandi-devbhoomi-rituals.json",
+      "cluster": "spiritual-guides"
+    },
+    "varanasi-kashi-rituals": {
+      "file": "varanasi-kashi-rituals.json",
+      "cluster": "spiritual-guides"
+    },
+    "vasant-panchami-ritual": {
+      "file": "vasant-panchami-ritual.json",
+      "cluster": "festival-rituals"
+    },
+    "vastu-astrology-connection": {
+      "file": "vastu-astrology-connection.json",
+      "cluster": "spiritual-guides"
+    },
+    "vastu-consultation-before-a-move-or-property-change-consultation": {
+      "file": "vastu-consultation-before-a-move-or-property-change-consultation.json",
+      "cluster": "services"
+    },
+    "vastu-consultation-before-booking-a-priest-consultation": {
+      "file": "vastu-consultation-before-booking-a-priest-consultation.json",
+      "cluster": "services"
+    },
+    "vastu-consultation-for-diaspora-time-zone-coordination-consultation": {
+      "file": "vastu-consultation-for-diaspora-time-zone-coordination-consultation.json",
+      "cluster": "services"
+    },
+    "vastu-consultation-when-elders-want-scriptural-context-first-consultation": {
+      "file": "vastu-consultation-when-elders-want-scriptural-context-first-consultation.json",
+      "cluster": "services"
+    },
+    "vastu-consultation-when-the-family-wants-a-second-opinion-consultation": {
+      "file": "vastu-consultation-when-the-family-wants-a-second-opinion-consultation.json",
+      "cluster": "services"
+    },
+    "vastu-dosh-nivaran-puja": {
+      "file": "vastu-dosh-nivaran-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "vastu-puja-room-placement": {
+      "file": "vastu-puja-room-placement.json",
+      "cluster": "ritual-guides"
+    },
+    "vastu-shanti-apartment-format-guide": {
+      "file": "vastu-shanti-apartment-format-guide.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-briefing-the-family": {
+      "file": "vastu-shanti-briefing-the-family.json",
+      "cluster": "ceremonies"
+    },
+    "vastu-shanti-combined-ritual-day-guide": {
+      "file": "vastu-shanti-combined-ritual-day-guide.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-combined-rituals": {
+      "file": "vastu-shanti-combined-rituals.json",
+      "cluster": "ceremonies"
+    },
+    "vastu-shanti-delhi": {
+      "file": "vastu-shanti-delhi.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-dwarka": {
+      "file": "vastu-shanti-dwarka.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-east-delhi": {
+      "file": "vastu-shanti-east-delhi.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-elder-led-family-guide": {
+      "file": "vastu-shanti-elder-led-family-guide.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-family-consensus-guide": {
+      "file": "vastu-shanti-family-consensus-guide.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-first-time-bookers-guide": {
+      "file": "vastu-shanti-first-time-bookers-guide.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-ghaziabad": {
+      "file": "vastu-shanti-ghaziabad.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-gurgaon": {
+      "file": "vastu-shanti-gurgaon.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-home-vs-venue": {
+      "file": "vastu-shanti-home-vs-venue.json",
+      "cluster": "ceremonies"
+    },
+    "vastu-shanti-language-fit-guide": {
+      "file": "vastu-shanti-language-fit-guide.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-language-preference": {
+      "file": "vastu-shanti-language-preference.json",
+      "cluster": "ceremonies"
+    },
+    "vastu-shanti-last-minute-clarity-guide": {
+      "file": "vastu-shanti-last-minute-clarity-guide.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-noida": {
+      "file": "vastu-shanti-noida.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-north-delhi": {
+      "file": "vastu-shanti-north-delhi.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-pandit-fit": {
+      "file": "vastu-shanti-pandit-fit.json",
+      "cluster": "ceremonies"
+    },
+    "vastu-shanti-price-delhi-ncr": {
+      "file": "vastu-shanti-price-delhi-ncr.json",
+      "cluster": "blog"
+    },
+    "vastu-shanti-puja-guide": {
+      "file": "vastu-shanti-puja-guide.json",
+      "cluster": "ceremonies"
+    },
+    "vastu-shanti-rohini": {
+      "file": "vastu-shanti-rohini.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-samagri-responsibility": {
+      "file": "vastu-shanti-samagri-responsibility.json",
+      "cluster": "ceremonies"
+    },
+    "vastu-shanti-same-day-risk": {
+      "file": "vastu-shanti-same-day-risk.json",
+      "cluster": "ceremonies"
+    },
+    "vastu-shanti-small-home-setup-guide": {
+      "file": "vastu-shanti-small-home-setup-guide.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-south-delhi": {
+      "file": "vastu-shanti-south-delhi.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-travel-sensitive-guide": {
+      "file": "vastu-shanti-travel-sensitive-guide.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-weekend-booking-guide": {
+      "file": "vastu-shanti-weekend-booking-guide.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-west-delhi": {
+      "file": "vastu-shanti-west-delhi.json",
+      "cluster": "services"
+    },
+    "vastu-shanti-when-to-book": {
+      "file": "vastu-shanti-when-to-book.json",
+      "cluster": "ceremonies"
+    },
+    "vastu-shanti": {
+      "file": "vastu-shanti.json",
+      "cluster": "pujas"
+    },
+    "vedic-calendar-auspicious-timing": {
+      "file": "vedic-calendar-auspicious-timing.json",
+      "cluster": "ritual-guides"
+    },
+    "vedic-ritual-faq-beginners": {
+      "file": "vedic-ritual-faq-beginners.json",
+      "cluster": "faq"
+    },
+    "vedic-ritual-mental-wellbeing": {
+      "file": "vedic-ritual-mental-wellbeing.json",
+      "cluster": "spiritual-guides"
+    },
+    "vedic-rituals-north-india": {
+      "file": "vedic-rituals-north-india.json",
+      "cluster": "spiritual-guides"
+    },
+    "verified-pandit-network-before-first-booking": {
+      "file": "verified-pandit-network-before-first-booking.json",
+      "cluster": "compare"
+    },
+    "verified-pandit-network-for-repeat-households": {
+      "file": "verified-pandit-network-for-repeat-households.json",
+      "cluster": "compare"
+    },
+    "verified-pandit-network-vs-generic-listings": {
+      "file": "verified-pandit-network-vs-generic-listings.json",
+      "cluster": "compare"
+    },
+    "verified-pandit-network-vs-phone-only-booking": {
+      "file": "verified-pandit-network-vs-phone-only-booking.json",
+      "cluster": "compare"
+    },
+    "verified-pandit-network-vs-unmanaged-referrals": {
+      "file": "verified-pandit-network-vs-unmanaged-referrals.json",
+      "cluster": "compare"
+    },
+    "vijaya-dashami-shastra-puja": {
+      "file": "vijaya-dashami-shastra-puja.json",
+      "cluster": "festival-rituals"
+    },
+    "vishnu-puja-home": {
+      "file": "vishnu-puja-home.json",
+      "cluster": "ritual-guides"
+    },
+    "vivah-panchami-celebration": {
+      "file": "vivah-panchami-celebration.json",
+      "cluster": "festival-rituals"
+    },
+    "vivah-puja-ritual": {
+      "file": "vivah-puja-ritual.json",
+      "cluster": "ceremonies"
+    },
+    "voice-faq-book-online-puja-for-parents-before-you-book": {
+      "file": "voice-faq-book-online-puja-for-parents-before-you-book.json",
+      "cluster": "faq"
+    },
+    "voice-faq-book-online-puja-for-parents-quick-answer": {
+      "file": "voice-faq-book-online-puja-for-parents-quick-answer.json",
+      "cluster": "faq"
+    },
+    "voice-faq-book-online-puja-for-parents-what-you-need-to-know": {
+      "file": "voice-faq-book-online-puja-for-parents-what-you-need-to-know.json",
+      "cluster": "faq"
+    },
+    "voice-faq-can-astrology-help-with-muhurta-before-you-book": {
+      "file": "voice-faq-can-astrology-help-with-muhurta-before-you-book.json",
+      "cluster": "faq"
+    },
+    "voice-faq-can-astrology-help-with-muhurta-quick-answer": {
+      "file": "voice-faq-can-astrology-help-with-muhurta-quick-answer.json",
+      "cluster": "faq"
+    },
+    "voice-faq-can-astrology-help-with-muhurta-what-you-need-to-know": {
+      "file": "voice-faq-can-astrology-help-with-muhurta-what-you-need-to-know.json",
+      "cluster": "faq"
+    },
+    "voice-faq-can-family-join-remotely-before-you-book": {
+      "file": "voice-faq-can-family-join-remotely-before-you-book.json",
+      "cluster": "faq"
+    },
+    "voice-faq-can-family-join-remotely-quick-answer": {
+      "file": "voice-faq-can-family-join-remotely-quick-answer.json",
+      "cluster": "faq"
+    },
+    "voice-faq-can-family-join-remotely-what-you-need-to-know": {
+      "file": "voice-faq-can-family-join-remotely-what-you-need-to-know.json",
+      "cluster": "faq"
+    },
+    "voice-faq-choose-pandit-for-housewarming-before-you-book": {
+      "file": "voice-faq-choose-pandit-for-housewarming-before-you-book.json",
+      "cluster": "faq"
+    },
+    "voice-faq-choose-pandit-for-housewarming-quick-answer": {
+      "file": "voice-faq-choose-pandit-for-housewarming-quick-answer.json",
+      "cluster": "faq"
+    },
+    "voice-faq-choose-pandit-for-housewarming-what-you-need-to-know": {
+      "file": "voice-faq-choose-pandit-for-housewarming-what-you-need-to-know.json",
+      "cluster": "faq"
+    },
+    "voice-faq-explain-namkaran-to-relatives-before-you-book": {
+      "file": "voice-faq-explain-namkaran-to-relatives-before-you-book.json",
+      "cluster": "faq"
+    },
+    "voice-faq-explain-namkaran-to-relatives-quick-answer": {
+      "file": "voice-faq-explain-namkaran-to-relatives-quick-answer.json",
+      "cluster": "faq"
+    },
+    "voice-faq-explain-namkaran-to-relatives-what-you-need-to-know": {
+      "file": "voice-faq-explain-namkaran-to-relatives-what-you-need-to-know.json",
+      "cluster": "faq"
+    },
+    "voice-faq-how-to-compare-pandit-options-before-you-book": {
+      "file": "voice-faq-how-to-compare-pandit-options-before-you-book.json",
+      "cluster": "faq"
+    },
+    "voice-faq-how-to-compare-pandit-options-quick-answer": {
+      "file": "voice-faq-how-to-compare-pandit-options-quick-answer.json",
+      "cluster": "faq"
+    },
+    "voice-faq-how-to-compare-pandit-options-what-you-need-to-know": {
+      "file": "voice-faq-how-to-compare-pandit-options-what-you-need-to-know.json",
+      "cluster": "faq"
+    },
+    "voice-faq-how-to-coordinate-with-elders-abroad-before-you-book": {
+      "file": "voice-faq-how-to-coordinate-with-elders-abroad-before-you-book.json",
+      "cluster": "faq"
+    },
+    "voice-faq-how-to-coordinate-with-elders-abroad-quick-answer": {
+      "file": "voice-faq-how-to-coordinate-with-elders-abroad-quick-answer.json",
+      "cluster": "faq"
+    },
+    "voice-faq-how-to-coordinate-with-elders-abroad-what-you-need-to-know": {
+      "file": "voice-faq-how-to-coordinate-with-elders-abroad-what-you-need-to-know.json",
+      "cluster": "faq"
+    },
+    "voice-faq-is-vastu-shanti-needed-before-moving-before-you-book": {
+      "file": "voice-faq-is-vastu-shanti-needed-before-moving-before-you-book.json",
+      "cluster": "faq"
+    },
+    "voice-faq-is-vastu-shanti-needed-before-moving-quick-answer": {
+      "file": "voice-faq-is-vastu-shanti-needed-before-moving-quick-answer.json",
+      "cluster": "faq"
+    },
+    "voice-faq-is-vastu-shanti-needed-before-moving-what-you-need-to-know": {
+      "file": "voice-faq-is-vastu-shanti-needed-before-moving-what-you-need-to-know.json",
+      "cluster": "faq"
+    },
+    "voice-faq-prepare-havan-space-before-you-book": {
+      "file": "voice-faq-prepare-havan-space-before-you-book.json",
+      "cluster": "faq"
+    },
+    "voice-faq-prepare-havan-space-quick-answer": {
+      "file": "voice-faq-prepare-havan-space-quick-answer.json",
+      "cluster": "faq"
+    },
+    "voice-faq-prepare-havan-space-what-you-need-to-know": {
+      "file": "voice-faq-prepare-havan-space-what-you-need-to-know.json",
+      "cluster": "faq"
+    },
+    "voice-faq-what-comes-after-submitting-a-brief-before-you-book": {
+      "file": "voice-faq-what-comes-after-submitting-a-brief-before-you-book.json",
+      "cluster": "faq"
+    },
+    "voice-faq-what-comes-after-submitting-a-brief-quick-answer": {
+      "file": "voice-faq-what-comes-after-submitting-a-brief-quick-answer.json",
+      "cluster": "faq"
+    },
+    "voice-faq-what-comes-after-submitting-a-brief-what-you-need-to-know": {
+      "file": "voice-faq-what-comes-after-submitting-a-brief-what-you-need-to-know.json",
+      "cluster": "faq"
+    },
+    "voice-faq-what-happens-in-satyanarayan-katha-before-you-book": {
+      "file": "voice-faq-what-happens-in-satyanarayan-katha-before-you-book.json",
+      "cluster": "faq"
+    },
+    "voice-faq-what-happens-in-satyanarayan-katha-quick-answer": {
+      "file": "voice-faq-what-happens-in-satyanarayan-katha-quick-answer.json",
+      "cluster": "faq"
+    },
+    "voice-faq-what-happens-in-satyanarayan-katha-what-you-need-to-know": {
+      "file": "voice-faq-what-happens-in-satyanarayan-katha-what-you-need-to-know.json",
+      "cluster": "faq"
+    },
+    "voice-faq-what-makes-a-booking-trustworthy-before-you-book": {
+      "file": "voice-faq-what-makes-a-booking-trustworthy-before-you-book.json",
+      "cluster": "faq"
+    },
+    "voice-faq-what-makes-a-booking-trustworthy-quick-answer": {
+      "file": "voice-faq-what-makes-a-booking-trustworthy-quick-answer.json",
+      "cluster": "faq"
+    },
+    "voice-faq-what-makes-a-booking-trustworthy-what-you-need-to-know": {
+      "file": "voice-faq-what-makes-a-booking-trustworthy-what-you-need-to-know.json",
+      "cluster": "faq"
+    },
+    "voice-faq-what-materials-are-usually-needed-before-you-book": {
+      "file": "voice-faq-what-materials-are-usually-needed-before-you-book.json",
+      "cluster": "faq"
+    },
+    "voice-faq-what-materials-are-usually-needed-quick-answer": {
+      "file": "voice-faq-what-materials-are-usually-needed-quick-answer.json",
+      "cluster": "faq"
+    },
+    "voice-faq-what-materials-are-usually-needed-what-you-need-to-know": {
+      "file": "voice-faq-what-materials-are-usually-needed-what-you-need-to-know.json",
+      "cluster": "faq"
+    },
+    "voice-faq-what-to-ask-before-griha-pravesh-before-you-book": {
+      "file": "voice-faq-what-to-ask-before-griha-pravesh-before-you-book.json",
+      "cluster": "faq"
+    },
+    "voice-faq-what-to-ask-before-griha-pravesh-quick-answer": {
+      "file": "voice-faq-what-to-ask-before-griha-pravesh-quick-answer.json",
+      "cluster": "faq"
+    },
+    "voice-faq-what-to-ask-before-griha-pravesh-what-you-need-to-know": {
+      "file": "voice-faq-what-to-ask-before-griha-pravesh-what-you-need-to-know.json",
+      "cluster": "faq"
+    },
+    "voice-faq-when-to-plan-mundan-before-you-book": {
+      "file": "voice-faq-when-to-plan-mundan-before-you-book.json",
+      "cluster": "faq"
+    },
+    "voice-faq-when-to-plan-mundan-quick-answer": {
+      "file": "voice-faq-when-to-plan-mundan-quick-answer.json",
+      "cluster": "faq"
+    },
+    "voice-faq-when-to-plan-mundan-what-you-need-to-know": {
+      "file": "voice-faq-when-to-plan-mundan-what-you-need-to-know.json",
+      "cluster": "faq"
+    },
+    "water-rituals-home": {
+      "file": "water-rituals-home.json",
+      "cluster": "ritual-guides"
+    },
+    "wear-tilak-properly": {
+      "file": "wear-tilak-properly.json",
+      "cluster": "ritual-guides"
+    },
+    "wedding-rituals-indian-regions": {
+      "file": "wedding-rituals-indian-regions.json",
+      "cluster": "ceremonies"
+    },
+    "weekend-annaprashan-delhi-ncr": {
+      "file": "weekend-annaprashan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-bhoomi-pujan-delhi-ncr": {
+      "file": "weekend-bhoomi-pujan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-griha-pravesh-delhi-ncr": {
+      "file": "weekend-griha-pravesh-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-havan-delhi-ncr": {
+      "file": "weekend-havan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-hindu-wedding-delhi-ncr": {
+      "file": "weekend-hindu-wedding-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-lakshmi-ganesh-puja-delhi-ncr": {
+      "file": "weekend-lakshmi-ganesh-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-mundan-delhi-ncr": {
+      "file": "weekend-mundan-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-namkaran-delhi-ncr": {
+      "file": "weekend-namkaran-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-navagraha-puja-delhi-ncr": {
+      "file": "weekend-navagraha-puja-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-office-opening-delhi-ncr": {
+      "file": "weekend-office-opening-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-satyanarayan-katha-delhi-ncr": {
+      "file": "weekend-satyanarayan-katha-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekend-vastu-shanti-delhi-ncr": {
+      "file": "weekend-vastu-shanti-delhi-ncr.json",
+      "cluster": "services"
+    },
+    "weekly-ritual-calendar": {
+      "file": "weekly-ritual-calendar.json",
+      "cluster": "ritual-guides"
+    },
+    "what-are-doshas-astrology": {
+      "file": "what-are-doshas-astrology.json",
+      "cluster": "spiritual-guides"
+    },
+    "what-are-samskaras": {
+      "file": "what-are-samskaras.json",
+      "cluster": "ritual-guides"
+    },
+    "what-are-upacharas": {
+      "file": "what-are-upacharas.json",
+      "cluster": "ritual-guides"
+    },
+    "what-are-vedic-rituals": {
+      "file": "what-are-vedic-rituals.json",
+      "cluster": "ritual-guides"
+    },
+    "what-is-a-havan": {
+      "file": "what-is-a-havan.json",
+      "cluster": "ritual-guides"
+    },
+    "what-is-a-yajna": {
+      "file": "what-is-a-yajna.json",
+      "cluster": "ritual-guides"
+    },
+    "what-is-diksha": {
+      "file": "what-is-diksha.json",
+      "cluster": "spiritual-guides"
+    },
+    "what-is-jyotishi": {
+      "file": "what-is-jyotishi.json",
+      "cluster": "pandit-services"
+    },
+    "what-is-kundali": {
+      "file": "what-is-kundali.json",
+      "cluster": "spiritual-guides"
+    },
+    "what-is-panchang": {
+      "file": "what-is-panchang.json",
+      "cluster": "spiritual-guides"
+    },
+    "what-is-prasad": {
+      "file": "what-is-prasad.json",
+      "cluster": "ritual-guides"
+    },
+    "what-is-rudrabhishek": {
+      "file": "what-is-rudrabhishek.json",
+      "cluster": "ritual-guides"
+    },
+    "what-is-sankalpa": {
+      "file": "what-is-sankalpa.json",
+      "cluster": "ritual-guides"
+    },
+    "what-is-vedic-astrology-jyotish": {
+      "file": "what-is-vedic-astrology-jyotish.json",
+      "cluster": "spiritual-guides"
+    },
+    "what-is-vedic-purohit": {
+      "file": "what-is-vedic-purohit.json",
+      "cluster": "pandit-services"
+    },
+    "what-to-wear-puja": {
+      "file": "what-to-wear-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "wooden-items-puja": {
+      "file": "wooden-items-puja.json",
+      "cluster": "ritual-guides"
+    },
+    "write-ritual-brief-navdhya": {
+      "file": "write-ritual-brief-navdhya.json",
+      "cluster": "services"
+    },
+    "yearly-horoscope-hindu-new-year": {
+      "file": "yearly-horoscope-hindu-new-year.json",
+      "cluster": "spiritual-guides"
+    },
+    "yoga-vedic-ritual": {
+      "file": "yoga-vedic-ritual.json",
+      "cluster": "spiritual-guides"
+    }
+  }
+}

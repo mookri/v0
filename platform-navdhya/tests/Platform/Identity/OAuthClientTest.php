@@ -1,0 +1,221 @@
+<?php
+
+namespace Tests\Platform\Identity;
+
+use App\Platform\Identity\OAuth\OAuthClientProfile;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Passport\Client;
+use Tests\TenantIntegrationTestCase;
+
+/**
+ * Passport P3a (TOKEN-001, SEC-002 §2.3): client profiles with tenant
+ * binding, the client:create command (secret shown once, hashed at
+ * rest), and per-client grant enforcement on the token route.
+ */
+final class OAuthClientTest extends TenantIntegrationTestCase
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // 9c: the revoke/rotate commands now chain token.revoked rows
+        // whose pseudonymization requires the identity secret.
+        config(['identity.hmac_secret' => 'oauth-client-test-hmac-secret-32!']);
+    }
+
+    private function partnerClient(string $tenantId): Client
+    {
+        $client = new Client();
+        $client->forceFill([
+            'name' => 'Partner integration',
+            'secret' => 'partner-secret-12345',
+            'redirect_uris' => [],
+            'grant_types' => ['client_credentials'],
+            'revoked' => false,
+        ]);
+        $client->save();
+
+        OAuthClientProfile::factory()->create([
+            'client_id' => (string) $client->getKey(),
+            'client_type' => OAuthClientProfile::TYPE_PARTNER,
+            'tenant_id' => $tenantId,
+            'allowed_grants' => ['client_credentials'],
+        ]);
+
+        return $client;
+    }
+
+    public function test_command_creates_client_and_profile(): void
+    {
+        $tenant = $this->makeTenant();
+        $tid = (string) $tenant->getKey();
+
+        $exit = \Artisan::call('platform:client:create', [
+            '--name' => 'Drill partner',
+            '--type' => 'partner',
+            '--tenant' => $tid,
+        ]);
+        $this->assertSame(0, $exit);
+
+        $client = Client::query()->where('name', 'Drill partner')->firstOrFail();
+        $this->assertDatabaseHas('oauth_client_profiles', [
+            'client_id' => (string) $client->getKey(),
+            'client_type' => 'partner',
+            'tenant_id' => $tid,
+        ], 'central');
+
+        // Secret hashed at rest: the shown-once plaintext verifies, the
+        // stored value is never the plaintext.
+        $output = \Artisan::output();
+        $this->assertStringContainsString('Secret (shown once): ', $output);
+        preg_match('/Secret \(shown once\): (\S+)/', $output, $shown);
+        $this->assertTrue(Hash::check($shown[1], $client->secret));
+        $this->assertNotSame($shown[1], $client->secret);
+    }
+
+    public function test_command_rejects_partner_without_tenant(): void
+    {
+        \Artisan::call('platform:client:create', [
+            '--name' => 'Orphan', '--type' => 'partner',
+        ]);
+
+        $this->assertDatabaseMissing('oauth_clients', ['name' => 'Orphan'], 'central');
+    }
+
+    public function test_revoke_kills_client_profile_and_tokens(): void
+    {
+        $tenant = $this->makeTenant();
+        [$user] = $this->actingAsMembership($tenant);
+
+        $client = new Client();
+        $client->forceFill([
+            'name' => 'Doomed', 'secret' => 'doomed-secret-12345', 'redirect_uris' => [],
+            'grant_types' => ['client_credentials'], 'revoked' => false,
+        ]);
+        $client->save();
+
+        OAuthClientProfile::factory()->create([
+            'client_id' => (string) $client->getKey(),
+            'client_type' => OAuthClientProfile::TYPE_PARTNER,
+            'tenant_id' => (string) $tenant->getKey(),
+            'allowed_grants' => ['client_credentials'],
+        ]);
+
+        // A live token first (proves the kill below is real).
+        $live = $this->postJson('/oauth/token', [
+            'grant_type' => 'client_credentials',
+            'client_id' => (string) $client->getKey(),
+            'client_secret' => 'doomed-secret-12345',
+            'scope' => '',
+        ])->assertOk()->json('access_token');
+        $this->assertNotEmpty($live);
+
+        \Artisan::call('platform:client:revoke', ['id' => (string) $client->getKey()]);
+
+        $this->assertDatabaseHas('oauth_clients', [
+            'id' => (string) $client->getKey(), 'revoked' => true,
+        ], 'central');
+        $this->assertDatabaseHas('oauth_client_profiles', [
+            'client_id' => (string) $client->getKey(), 'status' => 'disabled',
+        ], 'central');
+        $this->assertDatabaseMissing('oauth_access_tokens', [
+            'client_id' => (string) $client->getKey(), 'revoked' => false,
+        ], 'central');
+
+        // Dead client, dead tokens.
+        $this->postJson('/oauth/token', [
+            'grant_type' => 'client_credentials',
+            'client_id' => (string) $client->getKey(),
+            'client_secret' => 'doomed-secret-12345',
+            'scope' => '',
+        ])->assertStatus(401);
+    }
+
+    public function test_rotate_secret_breaks_old_and_keeps_new(): void
+    {
+        $tenant = $this->makeTenant();
+        $this->actingAsMembership($tenant);
+
+        $client = new Client();
+        $client->forceFill([
+            'name' => 'Rotator', 'secret' => 'rotator-old-secret-1', 'redirect_uris' => [],
+            'grant_types' => ['client_credentials'], 'revoked' => false,
+        ]);
+        $client->save();
+
+        OAuthClientProfile::factory()->create([
+            'client_id' => (string) $client->getKey(),
+            'allowed_grants' => ['client_credentials'],
+        ]);
+
+        $cid = (string) $client->getKey();
+        $this->postJson('/oauth/token', [
+            'grant_type' => 'client_credentials', 'client_id' => $cid,
+            'client_secret' => 'rotator-old-secret-1', 'scope' => '',
+        ])->assertOk();
+
+        \Artisan::call('platform:client:rotate-secret', ['id' => $cid]);
+        preg_match('/New secret \(shown once\): (\S+)/', \Artisan::output(), $shown);
+        $new = $shown[1];
+
+        // Old secret dead, old tokens dead, new secret works.
+        $this->postJson('/oauth/token', [
+            'grant_type' => 'client_credentials', 'client_id' => $cid,
+            'client_secret' => 'rotator-old-secret-1', 'scope' => '',
+        ])->assertStatus(401);
+        $this->postJson('/oauth/token', [
+            'grant_type' => 'client_credentials', 'client_id' => $cid,
+            'client_secret' => $new, 'scope' => '',
+        ])->assertOk();
+    }
+
+    public function test_disallowed_grant_denied_before_league(): void
+    {
+        $tenant = $this->makeTenant();
+        $client = $this->partnerClient((string) $tenant->getKey());
+
+        // Partner clients hold client_credentials only: an auth-code
+        // redemption attempt fails on the grant, never reaching codes.
+        $this->postJson('/oauth/token', [
+            'grant_type' => 'authorization_code',
+            'client_id' => (string) $client->getKey(),
+            'client_secret' => 'partner-secret-12345',
+            'redirect_uri' => 'https://example.test/callback',
+            'code' => 'junk',
+            'code_verifier' => 'junkjunkjunkjunkjunkjunkjunkjunk01',
+        ])->assertStatus(400)->assertJsonPath('error', 'unsupported_grant');
+    }
+
+    public function test_allowed_grant_passes_middleware(): void
+    {
+        $tenant = $this->makeTenant();
+        $client = $this->partnerClient((string) $tenant->getKey());
+
+        $this->postJson('/oauth/token', [
+            'grant_type' => 'client_credentials',
+            'client_id' => (string) $client->getKey(),
+            'client_secret' => 'partner-secret-12345',
+            'scope' => '',
+        ])->assertOk()->assertJsonStructure(['access_token', 'token_type', 'expires_in']);
+    }
+
+    public function test_profileless_client_rejected(): void
+    {
+        $client = new Client();
+        $client->forceFill([
+            'name' => 'No profile',
+            'secret' => 'profileless-secret-1',
+            'redirect_uris' => [],
+            'grant_types' => ['client_credentials'],
+            'revoked' => false,
+        ]);
+        $client->save();
+
+        $this->postJson('/oauth/token', [
+            'grant_type' => 'client_credentials',
+            'client_id' => (string) $client->getKey(),
+            'client_secret' => 'profileless-secret-1',
+            'scope' => '',
+        ])->assertStatus(401)->assertJsonPath('error', 'invalid_client');
+    }
+}

@@ -1,0 +1,92 @@
+{
+  "id": "nav-seo-navdhya-nri-global",
+  "slug": "navdhya-nri-global",
+  "cluster": "brand",
+  "title": "Navdhya for NRI and Global Users",
+  "metaTitle": "Navdhya for NRI and Global Users | Navdhya",
+  "metaDescription": "Learn about Navdhya NRI with Navdhya. How Navdhya's online platform serves the global Hindu community including time zone management and payment. Refreshed with clearer structure, stronger answer-engine support, and better next-step routing.",
+  "primaryKeyword": "Navdhya NRI",
+  "secondaryKeywords": [
+    "online puja NRI",
+    "global Hindu platform India"
+  ],
+  "searchIntent": "informational",
+  "schemaType": "Article",
+  "content": "<p>Navdhya for NRI and Global Users remains important, but the surrounding content model needed a reset. The v2 refresh keeps the underlying topic and route while making the page more useful for readers and less repetitive for search surfaces.</p><p>The update also aligns the page to stronger schema, clearer support boundaries, and the typed conversion paths introduced across the platform.</p><h2>What the refreshed editorial model improves</h2><p>The refreshed version of navdhya for nri and global users focuses on clarity first. It trims vague repetition and replaces it with a tighter decision path that matches how real readers move through the site.</p><p>That gives the page better answer-engine behavior and a cleaner handoff into the next supported route.</p><h2>How the reader should use this page now</h2><p>This page works best as a planning and routing surface. It should help the reader decide what to do next rather than keeping them stuck in a broad overview.</p><p>The links and structure therefore do more work than before. They are part of the product path, not decoration.</p><h2>Where the refreshed path leads</h2><p>Useful next steps usually include <a href=\"/book\">Book</a>, <a href=\"/pandits\">Pandits</a>, <a href=\"/contact\">Contact</a> so the reader can move from general interest into the exact booking or planning path that fits the household.</p><p>That routing logic is one of the main reasons this page was moved onto the v2 editorial system.</p><h2>Common questions</h2><h3>Why has navdhya for nri and global users been refreshed?</h3><p>Because the v2 editorial pipeline replaces repetitive copy with tighter structure, clearer answer-engine framing, and stronger conversion paths.</p><h3>What is different in the refreshed version?</h3><p>The content now uses unique sections, clearer internal routing, and stronger claim boundaries where they matter.</p><h3>How should the reader use the refreshed page?</h3><p>They should treat it as a working decision page and then continue into the linked services or support pages.</p><h3>Does the refresh change the product promise?</h3><p>No. It makes the promise easier to understand and keeps unsupported claims out of the page.</p>",
+  "outline": [
+    "What the refreshed editorial model improves",
+    "How the reader should use this page now",
+    "Where the refreshed path leads",
+    "Common questions"
+  ],
+  "relatedSlugs": [
+    "what-is-navdhya",
+    "about-navdhya",
+    "navdhya-services",
+    "navdhya-spiritual-technology",
+    "how-navdhya-works"
+  ],
+  "lastUpdated": "2026-05-27",
+  "author": "Navdhya Platform Team",
+  "readingTime": 7,
+  "faqs": [
+    {
+      "question": "Why has navdhya for nri and global users been refreshed?",
+      "answer": "Because the v2 editorial pipeline replaces repetitive copy with tighter structure, clearer answer-engine framing, and stronger conversion paths."
+    },
+    {
+      "question": "What is different in the refreshed version?",
+      "answer": "The content now uses unique sections, clearer internal routing, and stronger claim boundaries where they matter."
+    },
+    {
+      "question": "How should the reader use the refreshed page?",
+      "answer": "They should treat it as a working decision page and then continue into the linked services or support pages."
+    },
+    {
+      "question": "Does the refresh change the product promise?",
+      "answer": "No. It makes the promise easier to understand and keeps unsupported claims out of the page."
+    }
+  ],
+  "howToSteps": [],
+  "lastReviewed": "2026-05-27",
+  "pageFamily": "refreshed-global-brand",
+  "audienceRegion": "global-diaspora",
+  "claimReviewStatus": "approved",
+  "sourceNotes": [
+    "Existing diaspora or brand page refreshed by the v2 editorial pipeline.",
+    "Positioned around claim-safe global support framing and answer-engine clarity."
+  ],
+  "speakableFaqs": [
+    {
+      "question": "Why has navdhya for nri and global users been refreshed?",
+      "answer": "Because the v2 editorial pipeline replaces repetitive copy with tighter structure, clearer answer-engine framing, and stronger conversion paths.",
+      "summary": "Because the v2 editorial pipeline replaces repetitive copy with tighter structure, clearer answer-engine framing, and stronger conversion paths"
+    },
+    {
+      "question": "What is different in the refreshed version?",
+      "answer": "The content now uses unique sections, clearer internal routing, and stronger claim boundaries where they matter.",
+      "summary": "The content now uses unique sections, clearer internal routing, and stronger claim boundaries where they matter"
+    },
+    {
+      "question": "How should the reader use the refreshed page?",
+      "answer": "They should treat it as a working decision page and then continue into the linked services or support pages.",
+      "summary": "They should treat it as a working decision page and then continue into the linked services or support pages"
+    }
+  ],
+  "conversionPath": [
+    "/book",
+    "/pandits",
+    "/contact"
+  ],
+  "automation": {
+    "contentHash": "8e3707b2e109be2ce800dca1c8472097465980bcfec7ba1b3c4471069a156652",
+    "generatedAt": "2026-05-27T00:00:00.000Z",
+    "pipelineVersion": "seo-v2-editorial-pipeline",
+    "revalidateAfter": 86400
+  },
+  "requiredInternalLinks": [
+    "/book",
+    "/pandits",
+    "/contact"
+  ]
+}

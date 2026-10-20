@@ -1,0 +1,21 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "./dist",
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ],
+            "@navdhya/*": [
+                "../../packages/*"
+            ],
+            "@infra/*": [
+                "../../infrastructure/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*"
+    ]
+}
