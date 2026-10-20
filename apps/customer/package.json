@@ -23,7 +23,7 @@
     "@navdhya/security": "workspace:*",
     "@navdhya/user": "workspace:*",
     "@navdhya/otp": "workspace:*",
-    "lucide-react": "^0.454.0",
+    "lucide-react": "^1.59.0",
     "next": "16.4.2",
     "react": "^19",
     "react-dom": "^19"
