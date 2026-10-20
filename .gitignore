@@ -30,6 +30,7 @@ storage/framework/testing-*.sqlite
 /*-firebase-adminsdk-*.json
 
 # Tooling caches and generated graph artifacts — never source.
-/storage/framework/phpstan/cache
+/storage/framework/phpstan
 /tmp
 graphify-out/
+/.deptrac.cache
