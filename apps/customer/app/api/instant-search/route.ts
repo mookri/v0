@@ -1,4 +1,4 @@
-import { newRequestId, ok, err } from '@/application/api-envelope';
+import { newRequestId, ok } from '@/application/api-envelope';
 import type { InstantSearchResult } from '@/application/instant-search';
 import { laravelEnabled, laravelGet, laravelErrorResponse } from '@/adapters/backend/laravel-client';
 import { wiredActor } from '@/server/wired-actor';
@@ -26,10 +26,6 @@ export async function GET(req: Request) {
   const requestId = newRequestId();
 
   if (!laravelEnabled()) {
-    const ctx = (await import('@/application/request-context')).anonymousContext('customer.instant_search', requestId);
-    if (!ctx.actor) {
-      return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-    }
     return Response.json(ok(emptyResult(), requestId), {
       headers: { 'Cache-Control': 'private, max-age=0' },
     });

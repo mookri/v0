@@ -1,11 +1,12 @@
 import { TemplesPageView } from '@/presentation/temples/TemplesPage';
-import { customerApi } from '@/adapters/backend/customer-api-client';
+import { getServerCustomerApi } from '@/adapters/backend/customer-api-server';
 
 export const dynamic = 'force-dynamic';
 
 export default async function TemplesPage() {
   try {
-    const data = await customerApi.getTemples({ limit: 20 });
+    const api = await getServerCustomerApi();
+    const data = await api.getTemples({ limit: 20 });
     const temples = (data as { data: Array<{
       id: string;
       slug: string;

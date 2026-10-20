@@ -1,6 +1,4 @@
 import { newRequestId, err, ok } from '@/application/api-envelope';
-import { anonymousContext } from '@/application/request-context';
-import { rescheduleCustomerBooking } from '@/application/bookings/reschedule-customer-booking';
 import { laravelEnabled, laravelGet, laravelPost, laravelErrorResponse } from '@/adapters/backend/laravel-client';
 import { wiredActor } from '@/server/wired-actor';
 import { toBookingDetails, type LaravelReservation } from '@/application/bookings/laravel-booking-mappers';
@@ -11,8 +9,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ booking
   if (laravelEnabled()) {
     return laravelReschedule(req, bookingId, requestId);
   }
-  const ctx = anonymousContext('customer.booking.detail', requestId);
-  if (!ctx.actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
   let body: { newStartTime?: string } = {};
   try {
     body = await req.json();
@@ -23,14 +19,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ booking
   if (!start || Number.isNaN(start.getTime())) {
     return Response.json(err('VALIDATION_ERROR', 'newStartTime must be an ISO timestamp.', requestId), { status: 422 });
   }
-  const idempotencyKey = req.headers.get('Idempotency-Key') ?? `ik_${requestId}`;
-  const result = rescheduleCustomerBooking(null, ctx.actor.userId, start, true, idempotencyKey);
-  if (result.reason === 'NOT_FOUND') {
-    return Response.json(err('BOOKING_NOT_FOUND', 'Booking could not be found.', requestId), { status: 404 });
-  }
-  return Response.json(err('BOOKING_RESCHEDULE_UNAVAILABLE', 'Reschedule is not available for this booking.', requestId), {
-    status: 409,
-  });
+  // Mock mode has no reservation store, so the move cannot exist. Keep the
+  // request validation (malformed bodies stay 422) and return the honest
+  // not-found instead of the old always-401 gate.
+  return Response.json(err('BOOKING_NOT_FOUND', 'Booking could not be found.', requestId), { status: 404 });
 }
 
 // Wired reschedule: the BFF reads the live version first (optimistic

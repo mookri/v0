@@ -1,14 +1,14 @@
 import { DiscoverPageView } from '@/presentation/discover/DiscoverPage';
-import { customerApi } from '@/adapters/backend/customer-api-client';
+import { getServerCustomerApi } from '@/adapters/backend/customer-api-server';
 import type { DiscoverFeed } from '@/application/discover/discover-feed';
 
 export const dynamic = 'force-dynamic';
 
 export default async function DiscoverPage() {
   try {
-    const data = await customerApi.getHome(); // getHome includes discover feed
-    const feed = (data as { discover: DiscoverFeed }).discover ?? { recommended: [], popular: [], recent: [] };
-    return <DiscoverPageView feed={feed} />;
+    const api = await getServerCustomerApi();
+    const feed = (await api.getDiscover()) as DiscoverFeed;
+    return <DiscoverPageView feed={feed ?? { recommended: [], popular: [], recent: [] }} />;
   } catch {
     return <DiscoverPageView feed={{ recommended: [], popular: [], recent: [] }} />;
   }

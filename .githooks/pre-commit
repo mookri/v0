@@ -1,11 +1,16 @@
+#!/bin/sh
 # Navdhya pre-commit secret scanning
+#
+# Invoked by git because the repository sets:
+#     git config core.hooksPath .githooks
+# (the root `prepare` script does this on `pnpm install`).
 #
 # Two layers:
 #   1. gitleaks (https://github.com/gitleaks/gitleaks) — fast regex-based scan
 #   2. detect-secrets (https://github.com/Yelp/detect-secrets) — entropy-based scan
 #
-# Both are whitelisted against the baseline in .secrets.baseline so historical
-# false positives don't block. New findings fail the commit.
+# Both are baseline-aware so historical false positives don't block. New
+# findings fail the commit.
 #
 # Install (one-time, per dev machine):
 #   brew install gitleaks           # macOS
@@ -15,15 +20,12 @@
 # Or via npm scripts:
 #   npm run secrets:scan
 #   npm run secrets:baseline
-#
-# Hook location: .husky/pre-commit (created by `npx husky add`)
-# This file is the canonical hook body; husky just symlinks it into .git/hooks.
 
 set -e
 
 if command -v gitleaks >/dev/null 2>&1; then
   echo "[pre-commit] gitleaks scanning staged changes..."
-  gitleaks protect --staged --redact --config .gitleaks.toml --verbose
+  gitleaks git --staged --redact --config .gitleaks.toml --verbose
 else
   echo "[pre-commit] WARNING: gitleaks not installed. Install with:"
   echo "  brew install gitleaks  (macOS)"
@@ -31,12 +33,11 @@ else
   echo "Bypassing secret scan — DO NOT push to remote without scanning."
 fi
 
-if command -v detect-secrets >/dev/null 2>&1; then
+if command -v detect-secrets-hook >/dev/null 2>&1; then
   if [ -f .secrets.baseline ]; then
-    echo "[pre-commit] detect-secrets scanning against baseline..."
-    detect-secrets-scan --baseline .secrets.baseline
+    echo "[pre-commit] detect-secrets scanning staged changes against baseline..."
+    detect-secrets-hook --baseline .secrets.baseline
   else
-    echo "[pre-commit] detect-secrets: no baseline found, creating one."
-    detect-secrets-scan --create-baseline .secrets.baseline
+    echo "[pre-commit] detect-secrets: no .secrets.baseline; create one with 'npm run secrets:baseline'."
   fi
 fi

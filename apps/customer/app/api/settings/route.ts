@@ -1,6 +1,5 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
-import { anonymousContext } from '@/application/request-context';
-import { customerSettingsSections, validateSettingsUpdate } from '@/application/settings/settings';
+import { customerSettingsSections, DEFAULT_SETTINGS, validateSettingsUpdate } from '@/application/settings/settings';
 import { laravelEnabled, laravelGet, laravelPatch, laravelErrorResponse } from '@/adapters/backend/laravel-client';
 import { wiredActor } from '@/server/wired-actor';
 
@@ -20,9 +19,7 @@ export async function GET(req: Request) {
       return laravelErrorResponse(e, 'Settings are unavailable.', requestId);
     }
   }
-  const ctx = anonymousContext('customer.settings', requestId);
-  if (!ctx.actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-  return Response.json(ok({ sections: customerSettingsSections }, requestId), {
+  return Response.json(ok({ sections: customerSettingsSections, values: DEFAULT_SETTINGS }, requestId), {
     headers: { 'Cache-Control': 'private, max-age=60' },
   });
 }
@@ -53,7 +50,7 @@ export async function PATCH(req: Request) {
     const { data } = await laravelPatch<{ settings: Record<string, unknown> }>(
       actor.token,
       '/customers/settings',
-      { settings: validation.values }
+      validation.values
     );
     return Response.json(ok({ sections: customerSettingsSections, values: data.settings ?? {} }, requestId));
   } catch (e) {

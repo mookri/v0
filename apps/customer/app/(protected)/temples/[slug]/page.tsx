@@ -1,5 +1,5 @@
 import { TempleDetailPageView } from '@/presentation/temples/TempleDetailPage';
-import { customerApi } from '@/adapters/backend/customer-api-client';
+import { getServerCustomerApi } from '@/adapters/backend/customer-api-server';
 
 interface TempleDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -11,7 +11,8 @@ export default async function TempleDetailPage({ params }: TempleDetailPageProps
   const { slug } = await params;
 
   try {
-    const data = await customerApi.getTemple(slug);
+    const api = await getServerCustomerApi();
+    const data = await api.getTemple(encodeURIComponent(slug));
     const temple = data as {
       id: string;
       slug: string;

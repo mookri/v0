@@ -91,6 +91,11 @@ export function instantSearchBookStartUrl(selection: InstantSearchSelection): st
   const createdAt = new Date(selection.nowIso).getTime();
   if (Number.isNaN(createdAt)) throw new Error('INTENT_MALFORMED');
 
+  // Instant search can surface today's elapsed slots; the reservation
+  // gate rejects them, so fail closed here instead of handing the customer
+  // a dead draft.
+  if (new Date(slotRef).getTime() <= createdAt) throw new Error('SLOT_IN_PAST');
+
   const raw = encodeBookingIntent({
     v: 1,
     pujaId: selection.pujaId,

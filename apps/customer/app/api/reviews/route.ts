@@ -12,7 +12,11 @@ export async function GET(req: Request) {
   const actor = wiredActor(req, requestId);
   if (actor instanceof Response) return actor;
   try {
-    const page = await laravelGet<unknown[]>(actor.token, '/booking/reviews', { limit: '25' });
+    const url = new URL(req.url);
+    const query: Record<string, string> = { limit: '25' };
+    const cursor = url.searchParams.get('cursor');
+    if (cursor) query['cursor'] = cursor;
+    const page = await laravelGet<unknown[]>(actor.token, '/booking/reviews', query);
     return Response.json(
       ok(
         {

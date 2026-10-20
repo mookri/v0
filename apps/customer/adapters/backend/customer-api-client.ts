@@ -21,25 +21,32 @@ export class CustomerApiError extends Error {
   }
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(path, {
-    ...init,
-    credentials: 'same-origin',
-    headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
-  });
-  const body = await res.json();
-  if (!res.ok) {
-    throw new CustomerApiError({
-      code: body?.error?.code ?? 'INTERNAL_ERROR',
-      status: res.status,
-      requestId: body?.error?.requestId ?? 'unknown',
-    });
-  }
-  return body.data as T;
-}
+export type CustomerApiFetch = (path: string, init?: RequestInit) => Promise<Response>;
 
-export const customerApi = {
+// The client is transport-agnostic: the browser export uses relative
+// fetch URLs, while Server Components inject an absolute URL + the
+// incoming cookie (see customer-api-server.ts). The old single export
+// called fetch('/api/...') from the server, where relative URLs throw.
+export function createCustomerApi(fetchImpl: CustomerApiFetch) {
+  const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
+    const res = await fetchImpl(path, {
+      ...init,
+      headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
+    });
+    const body = await res.json();
+    if (!res.ok) {
+      throw new CustomerApiError({
+        code: body?.error?.code ?? 'INTERNAL_ERROR',
+        status: res.status,
+        requestId: body?.error?.requestId ?? 'unknown',
+      });
+    }
+    return body.data as T;
+  };
+
+  return {
   getHome: () => request('/api/home'),
+  getDiscover: () => request('/api/discover'),
   getBookings: () => request('/api/bookings'),
   getBooking: (id: string) => request(`/api/bookings/${id}`),
   getBookingHistory: (id: string) => request(`/api/bookings/${id}/history`),
@@ -68,10 +75,10 @@ export const customerApi = {
       body: JSON.stringify({ id, code }),
     }),
   getSaved: () => request('/api/saved'),
-  addSaved: (refId: string, title?: string) =>
+  addSaved: (refType: 'puja' | 'content' | 'service', refId: string) =>
     request('/api/saved', {
       method: 'POST',
-      body: JSON.stringify({ ref_id: refId, title }),
+      body: JSON.stringify({ ref_type: refType, ref_id: refId }),
     }),
   deleteSaved: (id: string) =>
     request(`/api/saved/${id}`, { method: 'DELETE' }),
@@ -161,8 +168,18 @@ export const customerApi = {
 
   // Profile
   deleteProfile: (challengeId: string, code: string) =>
-    request('/api/profile:delete', {
+    request('/api/profile/delete', {
       method: 'POST',
       body: JSON.stringify({ challengeId, code }),
     }),
-};
+  deactivateProfile: (challengeId: string, code: string) =>
+    request('/api/profile/deactivate', {
+      method: 'POST',
+      body: JSON.stringify({ challengeId, code }),
+    }),
+  };
+}
+
+export const customerApi = createCustomerApi((path, init) =>
+  fetch(path, { ...init, credentials: 'same-origin' }),
+);

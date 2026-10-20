@@ -15,6 +15,16 @@ export async function GET(req: Request) {
     const query: Record<string, string> = {};
     for (const [k, v] of searchParams.entries()) query[k] = v;
 
+    // The suggest contract caps q at 80 characters; reject before the
+    // backend normalises/truncates it.
+    const q = searchParams.get('q') ?? '';
+    if (q.length > 80) {
+      return Response.json(
+        err('VALIDATION_ERROR', 'Search query must be 80 characters or fewer.', requestId),
+        { status: 422 },
+      );
+    }
+
     const result = await laravelGet<any>(null, '/search/suggest', query, {
       validation_failed: 'VALIDATION_ERROR',
     });

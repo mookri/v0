@@ -1,5 +1,5 @@
-import { newRequestId, ok, err } from '@/application/api-envelope';
-import { anonymousContext } from '@/application/request-context';
+import { newRequestId, ok } from '@/application/api-envelope';
+import { getMockCatalog } from '@/application/pujas-data';
 import { laravelEnabled, laravelGet, laravelErrorResponse } from '@/adapters/backend/laravel-client';
 import { wiredActor } from '@/server/wired-actor';
 
@@ -16,14 +16,9 @@ export async function GET(req: Request) {
   const requestId = newRequestId();
 
   if (!laravelEnabled()) {
-    const ctx = anonymousContext('customer.pujas', requestId);
-    if (!ctx.actor) {
-      return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-    }
-    return Response.json(
-      ok({ items: [] as Array<{ id: string; title: string; kind: 'puja'; sku: string; currency: string; price_minor: number; description?: string }> }, requestId),
-      { headers: { 'Cache-Control': 'private, max-age=60' } }
-    );
+    return Response.json(ok({ items: getMockCatalog() }, requestId), {
+      headers: { 'Cache-Control': 'private, max-age=60' },
+    });
   }
 
   const actor = wiredActor(req, requestId);

@@ -1,5 +1,4 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
-import { anonymousContext } from '@/application/request-context';
 import { laravelEnabled, laravelGet, laravelPost, laravelErrorResponse } from '@/adapters/backend/laravel-client';
 import { wiredActor } from '@/server/wired-actor';
 
@@ -7,10 +6,6 @@ export async function GET(req: Request) {
   const requestId = newRequestId();
 
   if (!laravelEnabled()) {
-    const ctx = anonymousContext('customer.bookings', requestId);
-    if (!ctx.actor) {
-      return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-    }
     return Response.json(ok({ items: [] as Array<Record<string, unknown>> }, requestId));
   }
 
@@ -40,10 +35,6 @@ export async function POST(req: Request) {
   const requestId = newRequestId();
 
   if (!laravelEnabled()) {
-    const ctx = anonymousContext('customer.bookings.create', requestId);
-    if (!ctx.actor) {
-      return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-    }
     return Response.json(
       err('VALIDATION_ERROR', 'Booking creation unavailable in mock mode.', requestId),
       { status: 422 }
@@ -100,7 +91,7 @@ export async function POST(req: Request) {
       );
     }
     if (e.status === 409) {
-      const code = e.code === 'conflict' ? 'BOOKING_SLOT_CONFLICT' : 'CONFLICT';
+      const code = e.code === 'CONFLICT' ? 'BOOKING_SLOT_CONFLICT' : 'CONFLICT';
       return Response.json(err(code, e.message ?? 'Slot conflict.', requestId), { status: 409 });
     }
     if (e.status === 404) {

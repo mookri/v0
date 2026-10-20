@@ -213,6 +213,9 @@ importers:
       '@navdhya/user':
         specifier: workspace:*
         version: link:../../packages/user
+      lucide-react:
+        specifier: ^0.454.0
+        version: 0.454.0(react@19.3.0)
       next:
         specifier: 16.4.2
         version: 16.4.2(@babel/core@7.29.7)(@types/node@22.20.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -223,6 +226,9 @@ importers:
         specifier: ^19
         version: 19.3.0(react@19.3.0)
     devDependencies:
+      '@tailwindcss/postcss':
+        specifier: ^4.1.9
+        version: 4.3.3
       '@types/node':
         specifier: ^22
         version: 22.20.4
@@ -232,6 +238,12 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.3.0(@types/react@19.3.0)
+      postcss:
+        specifier: ^8.5
+        version: 8.5.28
+      tailwindcss:
+        specifier: ^4.1.9
+        version: 4.3.3
       typescript:
         specifier: ^5
         version: 5.9.3

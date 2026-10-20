@@ -1,5 +1,5 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
-import { anonymousContext } from '@/application/request-context';
+import { findMockCatalogItem } from '@/application/pujas-data';
 import { laravelEnabled, laravelGet, laravelErrorResponse } from '@/adapters/backend/laravel-client';
 import { wiredActor } from '@/server/wired-actor';
 
@@ -10,6 +10,7 @@ interface CatalogItem {
   currency: string;
   price_minor: number;
   description?: string;
+  status?: string;
 }
 
 interface RouteParams {
@@ -21,11 +22,13 @@ export async function GET(req: Request, { params }: RouteParams) {
   const { pujaId } = await params;
 
   if (!laravelEnabled()) {
-    const ctx = anonymousContext('customer.puja.detail', requestId);
-    if (!ctx.actor) {
-      return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
+    const item = findMockCatalogItem(pujaId);
+    if (!item) {
+      return Response.json(err('NOT_FOUND', 'Puja not found.', requestId), { status: 404 });
     }
-    return Response.json(err('NOT_FOUND', 'Puja not found.', requestId), { status: 404 });
+    return Response.json(ok(item, requestId), {
+      headers: { 'Cache-Control': 'private, max-age=60' },
+    });
   }
 
   const actor = wiredActor(req, requestId);
@@ -36,6 +39,12 @@ export async function GET(req: Request, { params }: RouteParams) {
       actor.token,
       `/catalog/items/${encodeURIComponent(pujaId)}`
     );
+
+    // Public detail is ACTIVE-only, matching the list endpoint. Drafts and
+    // archived items must not be readable by guessing an id.
+    if (item.status !== undefined && item.status !== 'ACTIVE') {
+      return Response.json(err('NOT_FOUND', 'Puja not found.', requestId), { status: 404 });
+    }
 
     const puja = {
       id: item.id,

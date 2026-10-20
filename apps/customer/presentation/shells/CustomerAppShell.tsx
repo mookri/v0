@@ -1,6 +1,10 @@
 import type React from 'react';
 import { SurfaceRequest } from '@/presentation/shells/shell-contract';
 
+// Surface host placeholder: no caller opens a surface yet (the protected
+// layout passes surfaces={[]}) and SurfaceRequest carries no content
+// payload. Render the real registry with the first modal/sheet feature
+// rather than inventing a second, parallel contract here.
 export function GlobalSurfaceHost({ surfaces }: { surfaces: SurfaceRequest[] }) {
   return (
     <div data-shell="surface-host">

@@ -1,4 +1,4 @@
-import { newRequestId, ok, err } from '@/application/api-envelope';
+import { newRequestId, ok } from '@/application/api-envelope';
 import { laravelEnabled, laravelGet, laravelErrorResponse } from '@/adapters/backend/laravel-client';
 import { wiredActor } from '@/server/wired-actor';
 
@@ -38,10 +38,6 @@ export async function GET(req: Request) {
   const requestId = newRequestId();
 
   if (!laravelEnabled()) {
-    const ctx = (await import('@/application/request-context')).anonymousContext('customer.temples', requestId);
-    if (!ctx.actor) {
-      return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-    }
     return Response.json(ok({ data: [] as TempleProfile[], meta: { page: { limit: 20, has_more: false, next_cursor: null } } }, requestId), {
       headers: { 'Cache-Control': 'private, max-age=60' },
     });

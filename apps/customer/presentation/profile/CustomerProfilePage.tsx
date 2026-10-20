@@ -131,7 +131,7 @@ export function CustomerProfilePage({ profile, error }: CustomerProfilePageProps
     setDeactivateError('');
 
     try {
-      const res = await fetch('/api/profile:deactivate', {
+      const res = await fetch('/api/profile/deactivate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ challengeId: deactivateChallengeId, code: deactivateOtp }),

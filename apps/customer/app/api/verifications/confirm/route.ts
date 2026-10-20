@@ -19,6 +19,12 @@ export async function POST(req: Request) {
   if (!body.id || !body.token) {
     return Response.json(err('VALIDATION_ERROR', 'id and token are required.', requestId), { status: 422 });
   }
+  // The id becomes a URL path segment upstream. Reject traversal
+  // metacharacters as well as encoding them, so a crafted id cannot
+  // escape /customers/verifications/ after any server-side decoding.
+  if (/[/\\?#]|\.\./.test(body.id)) {
+    return Response.json(err('VALIDATION_ERROR', 'Invalid verification id.', requestId), { status: 422 });
+  }
 
   const actor = wiredActor(req, requestId);
   if (actor instanceof Response) return actor;
@@ -26,7 +32,7 @@ export async function POST(req: Request) {
   try {
     const { data } = await laravelPost<unknown>(
       actor.token,
-      `/customers/verifications/${body.id}:confirm`,
+      `/customers/verifications/${encodeURIComponent(body.id)}:confirm`,
       { token: body.token }
     );
     return Response.json(ok(data, requestId));

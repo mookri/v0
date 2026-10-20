@@ -1,5 +1,5 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
-import { laravelEnabled, laravelPost, laravelDelete, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { laravelEnabled, laravelPost, laravelPatch, laravelDelete, laravelErrorResponse } from '@/adapters/backend/laravel-client';
 import { wiredActor } from '@/server/wired-actor';
 
 async function mutate(req: Request, requestId: string, method: 'PATCH' | 'DELETE' | 'DEFAULT', id: string) {
@@ -21,7 +21,9 @@ async function mutate(req: Request, requestId: string, method: 'PATCH' | 'DELETE
         return Response.json(err('VALIDATION_ERROR', 'Invalid request body.', requestId), { status: 422 });
       }
     }
-    const { data } = await laravelPost<unknown>(actor.token, path, body);
+    const { data } = method === 'PATCH'
+      ? await laravelPatch<unknown>(actor.token, path, body)
+      : await laravelPost<unknown>(actor.token, path, body);
     return Response.json(ok(data as Record<string, unknown>, requestId));
   } catch (e) {
     return laravelErrorResponse(e, 'Address is unavailable.', requestId);

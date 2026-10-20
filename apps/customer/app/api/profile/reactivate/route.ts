@@ -1,7 +1,7 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
-import { laravelEnabled, laravelPost, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { laravelEnabled, laravelPost, laravelTenant, laravelErrorResponse } from '@/adapters/backend/laravel-client';
 
-// Wired profile reactivate (CUSTOMER_BACKEND=laravel): POST /api/profile:reactivate
+// Wired profile reactivate (CUSTOMER_BACKEND=laravel): POST /api/profile/reactivate
 // Public endpoint - suspended members cannot pass tenant gate, so no auth required
 export async function POST(req: Request) {
   const requestId = newRequestId();
@@ -24,7 +24,11 @@ export async function POST(req: Request) {
     const { data } = await laravelPost<unknown>(
       null, // No auth - public endpoint
       '/customers/profile:reactivate',
-      { challenge_id: body.challengeId, code: body.code }
+      {
+        tenant_id: laravelTenant(),
+        challenge_id: body.challengeId,
+        token: body.code,
+      }
     );
 
     return Response.json(ok(data, requestId));

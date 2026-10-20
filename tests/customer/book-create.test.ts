@@ -146,8 +146,11 @@ const createRequest = (headers: Record<string, string>) =>
 
 test('mock create stays closed without an actor', async () => {
   const res = await createBooking(createRequest({}));
-  expect(res.status).toBe(401);
-  expect((await json(res)).error.code).toBe('UNAUTHENTICATED');
+  // Mock mode has no booking store; the handler fails closed instead of
+  // minting a reservation. The old 401 came from the unreachable actor
+  // gate, not from a real authentication decision.
+  expect(res.status).toBe(422);
+  expect((await json(res)).error.code).toBe('VALIDATION_ERROR');
 });
 
 test('wired create forwards body + Idempotency-Key and unwraps the 201', async () => {

@@ -2,7 +2,7 @@ import { newRequestId, ok, err } from '@/application/api-envelope';
 import { laravelEnabled, laravelPost, laravelErrorResponse } from '@/adapters/backend/laravel-client';
 import { wiredActor } from '@/server/wired-actor';
 
-// Wired profile deactivate (CUSTOMER_BACKEND=laravel): POST /api/profile:deactivate
+// Wired profile deactivate (CUSTOMER_BACKEND=laravel): POST /api/profile/deactivate
 // Requires authenticated user + fresh OTP proof
 export async function POST(req: Request) {
   const requestId = newRequestId();
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     const { data } = await laravelPost<unknown>(
       actor.token,
       '/customers/profile:deactivate',
-      { challenge_id: body.challengeId, code: body.code }
+      { challenge_id: body.challengeId, token: body.code }
     );
 
     return Response.json(ok(data, requestId));

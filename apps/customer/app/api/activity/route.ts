@@ -16,6 +16,8 @@ export async function GET(req: Request) {
     const query: Record<string, string> = { limit: '25' };
     const kind = url.searchParams.get('kind');
     if (kind) query['kind'] = kind;
+    const cursor = url.searchParams.get('cursor');
+    if (cursor) query['cursor'] = cursor;
     const page = await laravelGet<unknown[]>(actor.token, '/customers/activity', query);
     return Response.json(
       ok(

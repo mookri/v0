@@ -6,7 +6,9 @@ import { wiredActor } from '@/server/wired-actor';
 export async function GET(req: Request) {
   const requestId = newRequestId();
   if (!laravelEnabled()) {
-    return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
+    return Response.json(ok([] as unknown[], requestId), {
+      headers: { 'Cache-Control': 'private, max-age=60' },
+    });
   }
 
   const actor = wiredActor(req, requestId);
@@ -27,15 +29,27 @@ export async function POST(req: Request) {
     return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
   }
 
-  let body: { type?: 'phone' | 'email'; contact?: string } = {};
+  let body: {
+    type?: 'phone' | 'email';
+    contact?: string;
+    channel?: 'phone' | 'email';
+    value?: string;
+  } = {};
   try {
     body = await req.json();
   } catch {
     return Response.json(err('VALIDATION_ERROR', 'Invalid request body.', requestId), { status: 422 });
   }
 
-  if (!body.type || !body.contact) {
-    return Response.json(err('VALIDATION_ERROR', 'type and contact are required.', requestId), { status: 422 });
+  // Callers used `type`/`contact`; the backend contract is
+  // `channel`/`value`. Accept both and normalise at the boundary.
+  const channel = body.channel ?? body.type;
+  const value = body.value ?? body.contact;
+  if (!channel || !value) {
+    return Response.json(err('VALIDATION_ERROR', 'channel and value are required.', requestId), { status: 422 });
+  }
+  if (channel !== 'phone' && channel !== 'email') {
+    return Response.json(err('VALIDATION_ERROR', 'channel must be phone or email.', requestId), { status: 422 });
   }
 
   const actor = wiredActor(req, requestId);
@@ -45,7 +59,7 @@ export async function POST(req: Request) {
     const { data } = await laravelPost<unknown>(
       actor.token,
       '/customers/verifications',
-      { type: body.type, contact: body.contact }
+      { channel, value }
     );
     return Response.json(ok(data, requestId), { status: 202 });
   } catch (e) {

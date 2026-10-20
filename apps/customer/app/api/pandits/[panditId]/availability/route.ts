@@ -19,10 +19,6 @@ export async function GET(req: Request, { params }: { params: Promise<{ panditId
   const { panditId } = await params;
 
   if (!laravelEnabled()) {
-    const ctx = (await import('@/application/request-context')).anonymousContext('customer.pandit.availability', requestId);
-    if (!ctx.actor) {
-      return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-    }
     return Response.json(err('NOT_FOUND', 'Pandit not found.', requestId), { status: 404 });
   }
 

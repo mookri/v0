@@ -27,6 +27,28 @@ export const KNOWN_SETTINGS_KEYS = [
 
 export type KnownSettingsKey = (typeof KNOWN_SETTINGS_KEYS)[number];
 
+export type CustomerSettings = {
+  locale: string;
+  notifications_email: boolean;
+  notifications_sms: boolean;
+  marketing_opt_in: boolean;
+  timezone: string;
+  quiet_hours: { start?: string; end?: string } | null;
+};
+
+// Typed defaults mirror CustomerSetting::DEFAULTS in platform-navdhya.
+// They are the render baseline for partial/empty settings maps: booleans
+// must stay booleans (a blank string would render a text input and then
+// fail PATCH validation), and quiet_hours must stay null or an object.
+export const DEFAULT_SETTINGS: CustomerSettings = {
+  locale: 'en',
+  notifications_email: true,
+  notifications_sms: true,
+  marketing_opt_in: false,
+  timezone: 'Asia/Kolkata',
+  quiet_hours: null,
+};
+
 export type SettingsValidationResult =
   | { ok: true; values: Record<string, unknown> }
   | { ok: false; reason: 'VALIDATION_ERROR'; fieldErrors: Record<string, string> };

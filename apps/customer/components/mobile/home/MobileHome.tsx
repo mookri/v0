@@ -11,6 +11,7 @@ export default function MobileHome() {
   return (
     <main className="relative min-h-screen bg-[#023020] pb-24 text-white">
 
+      <MobileTopBar />
       <MobileHero />
 
       {/* White content */}

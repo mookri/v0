@@ -314,3 +314,42 @@ export const getFeaturedPujas = () => pujasData.filter(p => p.isFeatured);
 export const getForYouPujas = () => pujasData.filter(p => p.isForYou);
 export const getAllPujas = () => pujasData;
 export const getPujaBySlug = (slug: string) => pujasData.find(p => p.slug === slug);
+
+// BFF catalogue shape for mock mode. The mock branch is a real, usable
+// catalogue (not an empty list): it maps the same records the marketing
+// surfaces use, keyed by slug so `/pujas/[pujaId]` links resolve.
+export interface MockCatalogItem {
+  id: string;
+  title: string;
+  kind: 'puja';
+  sku: string;
+  currency: string;
+  price_minor: number;
+  description?: string;
+}
+
+function priceMinor(price: string): number {
+  const match = price.replace(/,/g, '').match(/\d+(?:\.\d+)?/);
+  return match ? Math.round(Number(match[0]) * 100) : 0;
+}
+
+export function toMockCatalogItem(puja: Puja): MockCatalogItem {
+  return {
+    id: puja.slug || puja.id,
+    title: puja.title,
+    kind: 'puja',
+    sku: `puja-${puja.id}`,
+    currency: 'INR',
+    price_minor: priceMinor(puja.price),
+    description: puja.description,
+  };
+}
+
+export function getMockCatalog(): MockCatalogItem[] {
+  return pujasData.map(toMockCatalogItem);
+}
+
+export function findMockCatalogItem(idOrSlug: string): MockCatalogItem | null {
+  const puja = pujasData.find((item) => item.slug === idOrSlug || item.id === idOrSlug);
+  return puja ? toMockCatalogItem(puja) : null;
+}

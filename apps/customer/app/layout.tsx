@@ -1,4 +1,5 @@
 import type React from 'react';
+import './globals.css';
 
 export const metadata = {
   title: 'Navdhya Customer',

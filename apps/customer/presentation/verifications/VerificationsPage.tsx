@@ -66,7 +66,19 @@ export function VerificationsPageView({ verifications, error }: VerificationsPag
 
       setShowAddModal(false);
       setFormData({ type: 'phone', contact: '' });
-      window.location.reload();
+      // The 202 carries the challenge id; open confirmation immediately
+      // instead of reloading and losing it (the status endpoint only
+      // reports already-confirmed contacts).
+      const payload = await res.json().catch(() => null);
+      const challengeId = payload?.data?.challenge_id ?? payload?.challenge_id;
+      if (!challengeId) {
+        setFieldErrors({ general: 'Verification could not be started. Please try again.' });
+        return;
+      }
+      setConfirmData({ id: challengeId, code: '' });
+      setConfirmErrors({});
+      setConfirmError('');
+      setShowConfirmModal(true);
     } catch {
       setFieldErrors({ general: 'Failed to start verification' });
     } finally {
@@ -179,7 +191,7 @@ export function VerificationsPageView({ verifications, error }: VerificationsPag
                 }`}>
                   {v.status}
                 </span>
-                {v.status === 'pending' && (
+                {v.status === 'pending' && v.id.length > 0 && (
                   <button
                     onClick={() => openConfirmModal(v)}
                     className="px-3 py-1.5 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"

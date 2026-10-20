@@ -43,13 +43,16 @@ export type ProfileUpdateResult =
 
 export function validateProfileUpdate(input: ProfileUpdateInput): ProfileUpdateResult {
   const fieldErrors: Record<string, string> = {};
-  if (input.email !== undefined && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(input.email)) {
+  // Optional contact fields start as '' when the profile has no value.
+  // Blank means "not provided", not "invalid" — only validate a value the
+  // customer actually typed.
+  if (input.email !== undefined && input.email.trim() !== '' && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(input.email)) {
     fieldErrors.email = 'Please enter a valid email address';
   }
   if (input.name !== undefined && input.name.trim().length < 2) {
     fieldErrors.name = 'Please enter your name';
   }
-  if (input.phone !== undefined && input.phone.replace(/\D/g, '').length < 10) {
+  if (input.phone !== undefined && input.phone.trim() !== '' && input.phone.replace(/\D/g, '').length < 10) {
     fieldErrors.phone = 'Please enter a valid phone number';
   }
   if (Object.keys(fieldErrors).length > 0) return { ok: false, reason: 'VALIDATION_ERROR', fieldErrors };

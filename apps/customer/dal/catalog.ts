@@ -1,6 +1,9 @@
-// Stopgap data-access layer for the customer app's featured-rituals surface.
-// The full implementation is pending (user WIP); this keeps the build green
-// and returns an empty list until the real catalog wiring lands.
+import { pujasData, type Puja } from '@/application/pujas-data';
+
+// Featured-rituals data-access layer. The catalogue source is the shared
+// mock dataset until the backend catalogue is wired into this surface;
+// returning [] here silently hid every featured record.
+
 export interface FeaturedPuja {
   id: string;
   slug: string;
@@ -15,6 +18,28 @@ export interface FeaturedPuja {
   badgeType?: 'green' | 'blue' | 'mint' | 'orange';
 }
 
+function numeric(value: string | undefined): number {
+  const match = (value ?? '').replace(/,/g, '').match(/\d+(?:\.\d+)?/);
+  return match ? Number(match[0]) : 0;
+}
+
+function toFeaturedPuja(puja: Puja): FeaturedPuja {
+  return {
+    id: puja.slug || puja.id,
+    slug: puja.slug || puja.id,
+    title: puja.title,
+    image: puja.image,
+    rating: numeric(puja.rating),
+    reviews: numeric(puja.reviews),
+    description: puja.description,
+    price: numeric(puja.price),
+    category: puja.category,
+    badge: puja.badge,
+    badgeType: puja.badgeType,
+  };
+}
+
 export async function getFeaturedPujas(): Promise<FeaturedPuja[]> {
-  return [];
+  const featured = pujasData.filter((puja) => puja.isFeatured);
+  return (featured.length > 0 ? featured : pujasData).map(toFeaturedPuja);
 }

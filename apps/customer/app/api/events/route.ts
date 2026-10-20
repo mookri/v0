@@ -17,6 +17,21 @@ export function __eventsBusForTests() {
   return bus;
 }
 
+// SSE captures the bearer when the stream opens. Return the token's
+// `exp` (JWT) so the stream can be recycled before it goes stale; opaque
+// backend tokens return null and fall back to a fixed recycle window.
+function tokenExpiryMs(token: string): number | null {
+  const payload = token.split('.')[1];
+  if (!payload) return null;
+  try {
+    const json = Buffer.from(payload.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8');
+    const exp = (JSON.parse(json) as { exp?: unknown }).exp;
+    return typeof exp === 'number' ? exp * 1000 : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function GET(req: Request) {
   const requestId = newRequestId();
   const headers = headersToRecord(req.headers);
@@ -61,7 +76,21 @@ export async function GET(req: Request) {
     return Response.json(err('FORBIDDEN', 'Not allowed.', requestId), { status: 403 });
   }
 
-  const stream = createEventStream(bus, channel, req.signal);
+  // EventSource reconnects automatically when the server closes the
+  // stream. Recycle before the captured bearer expires (30s safety margin)
+  // so the reconnect re-authenticates with a fresh cookie; if the token is
+  // opaque, recycle every five minutes. Without this, the feed keeps
+  // polling with a dead token while heartbeats hide the failure.
+  const expiry = tokenExpiryMs(backendToken);
+  const recycleAt = expiry ?? Date.now() + 5 * 60_000;
+  const recycleInMs = Math.max(1_000, recycleAt - Date.now() - 30_000);
+  const streamController = new AbortController();
+  const recycleTimer = setTimeout(() => streamController.abort(), recycleInMs);
+  const abortOnRequestClose = () => streamController.abort();
+  req.signal.addEventListener('abort', abortOnRequestClose, { once: true });
+  if (req.signal.aborted) streamController.abort();
+
+  const stream = createEventStream(bus, channel, streamController.signal);
 
   // First producer for the events route (N2): while the stream is open,
   // tail the caller's backend notifications into the bus — one poll per
@@ -78,8 +107,17 @@ export async function GET(req: Request) {
         return page.data ?? [];
       },
     });
-    req.signal.addEventListener('abort', () => releaseFeed?.(), { once: true });
   }
+
+  streamController.signal.addEventListener(
+    'abort',
+    () => {
+      clearTimeout(recycleTimer);
+      req.signal.removeEventListener('abort', abortOnRequestClose);
+      releaseFeed?.();
+    },
+    { once: true },
+  );
 
   return new Response(stream, { headers: sseHeaders() });
 }

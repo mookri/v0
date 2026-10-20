@@ -137,9 +137,11 @@ test('bookings list maps backend reservations when wired', async () => {
   ]);
 });
 
-test('bookings list stays on mocks without the flag', async () => {
+test('bookings list serves the empty mock fixture without the flag', async () => {
   const res = await listBookings(new Request('https://app.navdhya.com/api/bookings'));
-  expect(res.status).toBe(401);
+  expect(res.status).toBe(200);
+  const body = (await res.json()) as { data: { items: unknown[] } };
+  expect(body.data.items).toEqual([]);
 });
 
 test('booking detail maps actions and static entries', async () => {
@@ -732,12 +734,19 @@ test('wired instant search maps backend validation failures to VALIDATION_ERROR'
   expect(((await res.json()) as { error: { code: string } }).error.code).toBe('VALIDATION_ERROR');
 });
 
-test('instant search stays unauthenticated-only on mocks', async () => {
+test('instant search serves an empty mock result without the flag', async () => {
   vi.stubEnv('CUSTOMER_BACKEND', '');
 
   const res = await instantSearch(
     new Request('https://app.navdhya.com/api/instant-search?date=2030-05-01&start=10:00&end=11:00'),
   );
-  expect(res.status).toBe(401);
-  expect(((await res.json()) as { error: { code: string } }).error.code).toBe('UNAUTHENTICATED');
+  // The mock branch is a documented empty result, not an auth failure:
+  // there is no actor gate to satisfy in the default backend mode.
+  expect(res.status).toBe(200);
+  const body = (await res.json()) as {
+    data: { object: string; pandits: unknown[]; temple_slots: unknown[] };
+  };
+  expect(body.data.object).toBe('instant_search');
+  expect(body.data.pandits).toEqual([]);
+  expect(body.data.temple_slots).toEqual([]);
 });

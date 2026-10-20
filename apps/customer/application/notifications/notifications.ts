@@ -11,7 +11,12 @@ export function resolveRouteReference(ref: RouteReference): string | null {
     'customer.home': '/',
     'customer.bookings': '/bookings',
     'customer.profile': '/profile',
+    'customer.settings': '/settings',
+    'customer.notifications': '/notifications',
+    'customer.saved': '/saved',
+    'customer.discover': '/discover',
     'customer.support': '/support',
+    'customer.verifications': '/verifications',
   };
   return staticRoutes[ref.routeId] ?? null;
 }

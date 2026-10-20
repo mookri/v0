@@ -52,6 +52,14 @@ export async function proxy(request: NextRequest) {
     return response;
   }
 
+  // API handlers own their auth decision and return typed JSON 401
+  // envelopes. Redirecting them to the HTML login page makes fetch
+  // clients fail while parsing the response; only page navigations get
+  // the browser-friendly redirect. Session refresh above still applies.
+  if (pathname.startsWith('/api/')) {
+    return response;
+  }
+
   // Check for session cookie (any minted name counts here)
   if (!SESSION_COOKIES.some(name => request.cookies.get(name)?.value)) {
     const loginUrl = new URL('/login', request.url);

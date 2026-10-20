@@ -1,5 +1,5 @@
 import { PujaDetailPageView } from '@/presentation/pujas/PujaDetailPage';
-import { customerApi } from '@/adapters/backend/customer-api-client';
+import { getServerCustomerApi } from '@/adapters/backend/customer-api-server';
 
 interface PujaDetail {
   id: string;
@@ -21,7 +21,8 @@ export default async function PujaDetailPage({ params }: RouteParams) {
   const { pujaId } = await params;
 
   try {
-    const puja = await customerApi.getPuja(pujaId);
+    const api = await getServerCustomerApi();
+    const puja = await api.getPuja(encodeURIComponent(pujaId));
     return <PujaDetailPageView puja={puja as PujaDetail} />;
   } catch (e: any) {
     if (e.status === 404) {

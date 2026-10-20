@@ -13,40 +13,50 @@
 *                                       @eng-a @eng-b @eng-c
 
 # Auth, security, payments (high-risk)
-lib/auth/                               @eng-a
-lib/dlo-x/security.ts                   @eng-a
-lib/infra/                              @eng-a
-/app/api/ads/                           @eng-a
-/app/api/revalidate/                    @eng-a
-/app/\(auth\)/                          @eng-a
-components/auth/                        @eng-a
-components/dev/                         @eng-a
-next.config.ts                          @eng-a
-proxy.ts                                @eng-a
+apps/web/lib/auth/                      @eng-a
+apps/web/lib/dlo-x/security.ts          @eng-a
+apps/web/lib/infra/                     @eng-a
+apps/web/app/api/ads/                   @eng-a
+apps/web/app/api/revalidate/            @eng-a
+apps/web/app/(auth)/                    @eng-a
+apps/web/components/auth/               @eng-a
+apps/web/components/dev/                @eng-a
+apps/web/next.config.ts                 @eng-a
+apps/web/proxy.ts                       @eng-a
+apps/customer/server/                   @eng-a
+apps/customer/adapters/backend/         @eng-a
 
 # Dashboards + UX
-/app/user/                              @eng-b
-/app/pandit/                            @eng-b
-/app/vendor/                            @eng-b
-/app/manager/                           @eng-b
-/app/admin/                             @eng-b
-/app/platform/                          @eng-b
-components/dashboard/                   @eng-b
-components/dlo-x/                       @eng-b
-components/product/                     @eng-b
+apps/customer/                          @eng-b
+apps/dashboard/                         @eng-b
+apps/partner/                           @eng-b
+apps/web/app/user/                      @eng-b
+apps/web/app/pandit/                    @eng-b
+apps/web/app/vendor/                    @eng-b
+apps/web/app/manager/                   @eng-b
+apps/web/app/admin/                     @eng-b
+apps/web/app/platform/                  @eng-b
+apps/web/components/dashboard/          @eng-b
+apps/web/components/dlo-x/              @eng-b
+apps/web/components/product/            @eng-b
 
 # SEO, AI, i18n, content
-/app/\(seo\)/                           @eng-c
-/app/llms.txt/                          @eng-c
-/app/llms-full.txt/                     @eng-c
-content/                                @eng-c
-content/registry.json                   @eng-c
-lib/seo/                                @eng-c
-lib/schema/                             @eng-c
-lib/content/                            @eng-c
+apps/web/app/(seo)/                     @eng-c
+apps/web/app/llms.txt/                  @eng-c
+apps/web/app/llms-full.txt/             @eng-c
+apps/web/content/                       @eng-c
+apps/web/content/registry.json          @eng-c
+apps/web/lib/seo/                       @eng-c
+apps/web/lib/schema/                    @eng-c
+apps/web/lib/content/                   @eng-c
 scripts/backfill-speakable-faqs.ts      @eng-c
 scripts/generate-seo-v2.ts              @eng-c
 scripts/audit-seo.ts                    @eng-c
+
+# Backend (Laravel)
+platform-navdhya/app/Modules/           @eng-a
+platform-navdhya/app/Platform/          @eng-a
+platform-navdhya/tests/                 @eng-a
 
 # Docs + planning
 planning-*.md                           @platform-lead
@@ -61,5 +71,5 @@ CHANGELOG.md                            @platform-lead
 /.gitleaks.toml                         @eng-a
 /.githooks/                             @eng-a
 package.json                            @eng-a
+pnpm-lock.yaml                          @eng-a
 tsconfig.json                           @eng-a
-jest.config.ts                          @eng-a

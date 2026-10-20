@@ -4,17 +4,28 @@ import { DiscoverFeed } from '@/application/discover/discover-feed';
 export function DiscoverPageView({ feed }: { feed: DiscoverFeed }) {
   const renderList = (items: DiscoverFeed['recommended']) => (
     <ul className="space-y-3">
-      {items.map((item) => (
-        <li key={item.id}>
-          <Link
-            href={`/pujas/${item.id}`}
-            className="block p-4 bg-white border border-gray-200 rounded-lg hover:border-indigo-300 hover:shadow-sm transition-all"
-          >
+      {items.map((item) => {
+        const content = (
+          <>
             <h3 className="font-medium text-gray-900">{item.title}</h3>
             <p className="text-sm text-gray-500 mt-1">Kind: {item.kind}</p>
-          </Link>
-        </li>
-      ))}
+          </>
+        );
+        const className =
+          'block p-4 bg-white border border-gray-200 rounded-lg hover:border-indigo-300 hover:shadow-sm transition-all';
+        return (
+          <li key={item.id}>
+            {item.kind === 'puja' ? (
+              <Link href={`/pujas/${encodeURIComponent(item.id)}`} className={className}>
+                {content}
+              </Link>
+            ) : (
+              // Content cards have no puja id; a /pujas link would 404.
+              <div className={className}>{content}</div>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 

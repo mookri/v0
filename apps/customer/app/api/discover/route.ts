@@ -1,5 +1,4 @@
-import { newRequestId, ok, err } from '@/application/api-envelope';
-import { anonymousContext } from '@/application/request-context';
+import { newRequestId, ok } from '@/application/api-envelope';
 import { getDiscoverFeed } from '@/application/discover/discover-feed';
 import { laravelEnabled, laravelGet, laravelErrorResponse } from '@/adapters/backend/laravel-client';
 import { wiredActor } from '@/server/wired-actor';
@@ -20,8 +19,6 @@ export async function GET(req: Request) {
       return laravelErrorResponse(e, 'Discover feed is unavailable.', requestId);
     }
   }
-  const ctx = anonymousContext('customer.discover', requestId);
-  if (!ctx.actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
   const data = getDiscoverFeed({});
   return Response.json(ok(data, requestId), {
     headers: { 'Cache-Control': 'private, max-age=60' },

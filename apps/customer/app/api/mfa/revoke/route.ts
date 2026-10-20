@@ -1,5 +1,6 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
 import { laravelEnabled, laravelPost, laravelTenant, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { wiredActor } from '@/server/wired-actor';
 
 // Wired MFA revoke (CUSTOMER_BACKEND=laravel): POST /api/mfa/revoke (requires live TOTP)
 export async function POST(req: Request) {
@@ -19,10 +20,11 @@ export async function POST(req: Request) {
     return Response.json(err('VALIDATION_ERROR', 'code is required.', requestId), { status: 422 });
   }
 
+  const actor = wiredActor(req, requestId);
+  if (actor instanceof Response) return actor;
+
   try {
-    const token = req.headers.get('Authorization')?.replace('Bearer ', '') ?? null;
-    const tenant = laravelTenant();
-    const { data } = await laravelPost(token, '/identity/mfa/revoke', { ...body, tenant_id: tenant });
+    const { data } = await laravelPost(actor.token, '/identity/mfa/revoke', { ...body, tenant_id: laravelTenant() });
     return Response.json(ok(data, requestId));
   } catch (e) {
     return laravelErrorResponse(e, 'MFA revoke unavailable.', requestId);

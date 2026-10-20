@@ -1,5 +1,4 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
-import { anonymousContext } from '@/application/request-context';
 import { laravelEnabled, laravelGet, laravelPatch, laravelErrorResponse } from '@/adapters/backend/laravel-client';
 import { wiredActor } from '@/server/wired-actor';
 
@@ -17,8 +16,6 @@ export async function GET(req: Request) {
       return laravelErrorResponse(e, 'Profile is unavailable.', requestId);
     }
   }
-  const ctx = anonymousContext('customer.profile', requestId);
-  if (!ctx.actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
   return Response.json(ok({ profile: null }, requestId), {
     headers: { 'Cache-Control': 'private, max-age=30' },
   });
@@ -37,8 +34,10 @@ export async function PATCH(req: Request) {
     return Response.json(err('VALIDATION_ERROR', 'Invalid request body.', requestId), { status: 422 });
   }
 
-  // Validate allowed fields (backend has strict field allowlist)
-  const allowedFields = ['name', 'email', 'phone', 'city', 'country', 'timezone', 'languages'];
+  // CustomerProfileController::update accepts only these keys and 422s
+  // unknown ones. Email/phone changes go through OTP verification, not
+  // this endpoint.
+  const allowedFields = ['name', 'display_name', 'locale'];
   const filteredBody: Record<string, unknown> = {};
   for (const key of allowedFields) {
     if (body[key] !== undefined) {
@@ -47,7 +46,10 @@ export async function PATCH(req: Request) {
   }
 
   if (Object.keys(filteredBody).length === 0) {
-    return Response.json(err('VALIDATION_ERROR', 'No valid fields provided.', requestId), { status: 422 });
+    return Response.json(
+      err('VALIDATION_ERROR', 'No updatable profile fields provided (name, display_name, locale).', requestId),
+      { status: 422 },
+    );
   }
 
   const actor = wiredActor(req, requestId);
