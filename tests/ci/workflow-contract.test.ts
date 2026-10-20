@@ -38,6 +38,15 @@ function jobBlock(text: string, id: string): string {
   return next === -1 ? rest : rest.slice(0, next);
 }
 
+/**
+ * A job that delegates to a reusable workflow declares `uses:` at exactly four
+ * spaces. Step-level `uses:` sits at six or more, so the anchor distinguishes
+ * the two without parsing YAML.
+ */
+function isCallJob(block: string): boolean {
+  return /^ {4}uses:\s*\S/m.test(block);
+}
+
 describe('workflow contract', () => {
   it('has at least the five pipeline workflows', () => {
     const names = workflows.map((w) => w.file.split(/[\\/]/).pop());
@@ -46,14 +55,48 @@ describe('workflow contract', () => {
     );
   });
 
-  it('gives every job a timeout (a hung job must not burn the monthly budget)', () => {
+  it('gives every executing job a timeout (a hung job must not burn the monthly budget)', () => {
     const missing: string[] = [];
     for (const { file, text } of workflows) {
       for (const id of jobIds(text)) {
-        if (!/timeout-minutes:/.test(jobBlock(text, id))) missing.push(`${file}#${id}`);
+        const block = jobBlock(text, id);
+        // A call job has no execution of its own; its timeout belongs to the
+        // jobs inside the called workflow (see the next test).
+        if (isCallJob(block)) continue;
+        if (!/timeout-minutes:/.test(block)) missing.push(`${file}#${id}`);
       }
     }
     expect(missing).toEqual([]);
+  });
+
+  it('keeps reusable-workflow call jobs free of execution-only keys', () => {
+    // GitHub rejects the entire workflow file when a job with `uses:` declares
+    // anything it cannot honour. This shipped once: release.yml carried
+    // `timeout-minutes: 45` on the `verify` call job and the file failed to
+    // load ("Unexpected value 'timeout-minutes'"), because the timeout rule
+    // above did not distinguish call jobs from executing ones.
+    const forbidden = [
+      'timeout-minutes',
+      'runs-on',
+      'steps',
+      'env',
+      'environment',
+      'container',
+      'services',
+      'defaults',
+      'outputs',
+    ];
+    const violations: string[] = [];
+    for (const { file, text } of workflows) {
+      for (const id of jobIds(text)) {
+        const block = jobBlock(text, id);
+        if (!isCallJob(block)) continue;
+        for (const key of forbidden) {
+          if (new RegExp(`^ {4}${key}:`, 'm').test(block)) violations.push(`${file}#${id}: ${key}`);
+        }
+      }
+    }
+    expect(violations).toEqual([]);
   });
 
   it('declares workflow-level permissions (least privilege by default)', () => {

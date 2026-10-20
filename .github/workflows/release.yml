@@ -38,8 +38,10 @@ jobs:
   # ── Same gate as a PR, on the tag's commit ────────────────────────────────
   verify:
     name: verify
+    # A job that calls a reusable workflow cannot declare execution keys
+    # (timeout-minutes, runs-on, steps, env...). GitHub rejects the whole file
+    # if one appears here. The timeouts live on every job inside ci.yml.
     uses: ./.github/workflows/ci.yml
-    timeout-minutes: 45
 
   # ── Reproducible standalone artefacts ─────────────────────────────────────
   artifacts:
