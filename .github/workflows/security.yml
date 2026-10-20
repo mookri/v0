@@ -36,7 +36,7 @@ jobs:
   # ── 1 · secrets (full history on schedule, diff-aware on PRs) ─────────────
   secrets:
     name: secrets
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # Full-history scan of ~380 commits. 8 minutes was not enough once the
     # backend's history joined this repository.
     timeout-minutes: 15
@@ -47,11 +47,11 @@ jobs:
       contents: read
       pull-requests: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: gitleaks
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_CONFIG: .gitleaks.toml
@@ -66,15 +66,15 @@ jobs:
   # ── 2 · dependency vulnerabilities (blocking on critical) ─────────────────
   deps:
     name: deps
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.4
           run_install: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -96,7 +96,7 @@ jobs:
           exit 0
       - name: Upload audit report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pnpm-audit-${{ github.sha }}
           path: pnpm-audit.json
@@ -106,11 +106,11 @@ jobs:
   # ── 3 · SAST (soft until the first triage is complete) ────────────────────
   sast:
     name: sast (soft)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: Scan (Semgrep OSS)
@@ -126,10 +126,10 @@ jobs:
   # ── 4 · supply chain (SBOM + filesystem CVE scan) ─────────────────────────
   supply-chain:
     name: supply-chain
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Generate SBOM (SPDX)
         uses: anchore/sbom-action@v0
         with:
@@ -150,7 +150,7 @@ jobs:
           output: trivy-fs.txt
       - name: Upload scan report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: trivy-fs-${{ github.sha }}
           path: trivy-fs.txt
@@ -161,14 +161,14 @@ jobs:
   codeql:
     name: codeql (requires GHAS)
     if: vars.CI_ADVANCED_SECURITY == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     permissions:
       contents: read
       security-events: write
       actions: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: github/codeql-action/init@v3
         with:
           languages: javascript-typescript
@@ -177,13 +177,13 @@ jobs:
   dependency-review:
     name: dependency-review (requires GHAS)
     if: github.event_name == 'pull_request' && vars.CI_ADVANCED_SECURITY == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/dependency-review-action@v4
         with:
           fail-on-severity: high
@@ -194,13 +194,13 @@ jobs:
     name: security-gate
     if: always()
     needs: [secrets, deps, sast, supply-chain, codeql, dependency-review]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
       - name: Evaluate gate

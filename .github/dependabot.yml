@@ -1,8 +1,8 @@
 # Dependabot — grouped, weekly, India-timezone.
 #
-# Composer updates are intentionally absent: the Laravel app lives in
-# `platform-navdhya/`, which is its own repository (CI plan D1). Its
-# `dependabot.yml` belongs there and lands with the backend remote.
+# Composer is watched too: `platform-navdhya/` is part of this monorepo
+# (CI plan D1 — merged, not a submodule), so Laravel's dependency graph is
+# this repository's responsibility.
 #
 # Security updates are not scheduled here — Dependabot raises them immediately
 # for any advisory that affects a manifest in this file.
@@ -47,6 +47,19 @@ updates:
     groups:
       playwright:
         patterns: ['@playwright/*']
+
+  - package-ecosystem: composer
+    directory: /platform-navdhya
+    schedule:
+      interval: weekly
+      day: monday
+      time: '03:00'
+      timezone: Asia/Kolkata
+    open-pull-requests-limit: 5
+    versioning-strategy: increase
+    groups:
+      composer-minor-patch:
+        update-types: [minor, patch]
 
   - package-ecosystem: github-actions
     directory: /

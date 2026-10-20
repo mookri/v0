@@ -38,7 +38,7 @@ jobs:
   # ── R0 · metadata, workflow lint, invariants ───────────────────────────────
   meta:
     name: meta
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 6
     permissions:
       # Job-level permissions replace the workflow-level ones entirely, so
@@ -51,7 +51,7 @@ jobs:
       apps_changed: ${{ steps.filter.outputs.apps }}
       packages_changed: ${{ steps.filter.outputs.packages }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # Turbo --affected and gitleaks both need real history.
           fetch-depth: 0
@@ -59,7 +59,7 @@ jobs:
       - name: Detect changed areas
         id: filter
         if: github.event_name == 'pull_request'
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         with:
           filters: |
             apps:
@@ -101,21 +101,21 @@ jobs:
   typecheck:
     name: typecheck (${{ matrix.app }})
     needs: [meta]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         app: [web, customer, dashboard, partner]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.4
           run_install: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -128,7 +128,7 @@ jobs:
     name: unit (${{ matrix.name }})
     needs: [meta]
     if: needs.meta.result == 'success' && needs.meta.outputs.apps_changed != 'false'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -141,14 +141,14 @@ jobs:
           - name: partner
             run: pnpm --filter @navdhya/partner-app run test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.4
           run_install: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -161,18 +161,18 @@ jobs:
     name: unit (web)
     needs: [meta]
     if: needs.meta.result == 'success' && needs.meta.outputs.apps_changed != 'false'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # The suite takes ~13 min locally; the ratchet adds a jest start-up.
     timeout-minutes: 35
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.4
           run_install: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -190,17 +190,17 @@ jobs:
     name: packages
     needs: [meta]
     if: needs.meta.result == 'success' && (needs.meta.outputs.packages_changed == 'true' || github.event_name != 'pull_request')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.4
           run_install: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -213,17 +213,17 @@ jobs:
   gates:
     name: gates (architecture + drift + contract)
     needs: [meta]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.4
           run_install: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -240,17 +240,17 @@ jobs:
   lint:
     name: lint
     needs: [meta]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.4
           run_install: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -262,17 +262,17 @@ jobs:
   i18n:
     name: i18n (soft)
     needs: [meta]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.4
           run_install: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -285,25 +285,25 @@ jobs:
     name: build (${{ matrix.app }})
     needs: [meta, typecheck]
     if: needs.meta.result == 'success' && needs.meta.outputs.apps_changed != 'false'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
         app: [web, customer, dashboard, partner]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.4
           run_install: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: .turbo
           key: turbo-${{ runner.os }}-${{ matrix.app }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
@@ -322,7 +322,7 @@ jobs:
           size_kb=$(du -sk "apps/${{ matrix.app }}/.next" | cut -f1)
           echo "### build/${{ matrix.app }} — ${size_kb} KB (.next)" >> "$GITHUB_STEP_SUMMARY"
       - name: Upload standalone artefact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: next-${{ matrix.app }}-${{ github.sha }}
           path: |
@@ -337,13 +337,13 @@ jobs:
     name: ci-gate
     if: always()
     needs: [meta, typecheck, unit-apps, unit-web, packages, gates, lint, i18n, build]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
       - name: Evaluate gate
