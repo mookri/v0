@@ -23,7 +23,7 @@
     "@navdhya/security": "workspace:*",
     "@navdhya/user": "workspace:*",
     "@navdhya/otp": "workspace:*",
-    "next": "16.0.10",
+    "next": "16.4.2",
     "react": "^19",
     "react-dom": "^19"
   },

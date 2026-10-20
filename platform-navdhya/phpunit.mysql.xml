@@ -63,13 +63,14 @@
         <env name="CENTRAL_DB_PORT" value="3306"/>
         <env name="CENTRAL_DB_DATABASE" value="navdhya_test_central"/>
         <env name="CENTRAL_DB_USERNAME" value="navdhya_e2e"/>
-        <env name="CENTRAL_DB_PASSWORD" value="navdhya_e2e_2026"/>
+        <!-- Passwords are never committed: the MySQL lane exports
+             CENTRAL_DB_PASSWORD / TENANT_DB_PASSWORD, and a developer's .env
+             supplies them locally. -->
         <env name="TENANT_DB_DRIVER" value="mysql"/>
         <env name="TENANT_DB_HOST" value="127.0.0.1"/>
         <env name="TENANT_DB_PORT" value="3306"/>
         <env name="TENANT_DB_DATABASE" value="navdhya_test_tenant"/>
         <env name="TENANT_DB_USERNAME" value="navdhya_e2e"/>
-        <env name="TENANT_DB_PASSWORD" value="navdhya_e2e_2026"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
