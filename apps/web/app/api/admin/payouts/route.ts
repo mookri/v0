@@ -1,17 +1,20 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
-import { laravelEnabled, laravelGet, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { laravelEnabled, laravelGet, laravelErrorResponse, laravelTenant } from '@/adapters/backend/laravel-client';
 import { extractSessionToken } from '@/server/session-cookie';
 
 /**
- * GET /api/admin/payouts — platform admin payouts overview.
- * Requires admin session with capability to view payouts.
- * Proxies to Laravel GET /api/v1/platform/payouts.
+ * GET /api/admin/payouts — platform admin payout review (W2).
+ *
+ * Re-pointed from `/platform/payouts` (never existed) to
+ * `GET /api/v1/platform/ops/payouts` (`platform:ops:view`).
  */
 export async function GET(request: Request) {
   const requestId = newRequestId();
+  const { searchParams } = new URL(request.url);
+  const limit = searchParams.get('limit') ?? '50';
 
   if (!laravelEnabled()) {
-    return Response.json(ok({ data: {}, meta: { fallback: true } }, requestId), {
+    return Response.json(ok({ data: [], meta: { fallback: true, limit: Number(limit) } }, requestId), {
       status: 200,
     });
   }
@@ -23,11 +26,19 @@ export async function GET(request: Request) {
     });
   }
 
+  const tenantId = laravelTenant();
+  if (!tenantId) {
+    return Response.json(
+      err('DEPENDENCY_UNAVAILABLE', 'No console tenant configured: set CUSTOMER_TENANT_ID.', requestId),
+      { status: 503 },
+    );
+  }
+
   try {
     const { data, meta } = await laravelGet(
       token,
-      '/platform/payouts',
-      { tenant_id: '' },
+      '/platform/ops/payouts',
+      { tenant_id: tenantId, limit },
       {},
       { timeout: 'normal', requestId },
     );

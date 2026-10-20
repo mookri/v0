@@ -4,6 +4,9 @@ import type { NextRequest } from 'next/server';
 import type { RequestContext, Role, Tenant, DeviceType } from '@/lib/dlo-x/types';
 import { deriveStableSeed } from '@/lib/dlo-x/stable-seed';
 import { stranglerTarget, stranglerFlagsFromEnv } from '@/lib/strangler/route-map';
+import { LEGACY_COOKIE_NAME, sessionCookieName } from '@/server/session-cookie';
+import { DEV_ROLE_COOKIE, isValidDevRole } from '@/lib/auth/cookie-names';
+import { canAccessConsole, consoleLandingForRole, isConsolePath } from '@/lib/product/console-access';
 
 /**
  * MNC-Grade Proxy for Next.js 16 (replacing deprecated middleware).
@@ -16,14 +19,24 @@ export function proxy(request: NextRequest) {
   // customer app — redirect there, production only. Flag-gated like the
   // strangler below (default off) so dev/staging keep serving locally.
   if (process.env.NEXT_PUBLIC_PRODUCTION_REDIRECTS === 'true') {
-    const dashboardPaths = ['/user', '/pandit', '/vendor', '/manager'];
-    for (const path of dashboardPaths) {
-      // Same class shape as ROUTE_RULES "/user/*": bare path + descendants.
+    // /user and /pandit are customer-facing (app.navdhya.com); /vendor and
+    // /manager are partner-facing (partner.navdhya.com) - vendor self-serve
+    // and the onboarding review queue live in apps/partner.
+    const customerPaths = ['/user', '/pandit'];
+    const partnerPaths = ['/vendor', '/manager'];
+    const customerOrigin = process.env.NEXT_PUBLIC_CUSTOMER_ORIGIN ?? 'https://app.navdhya.com';
+    const partnerOrigin = process.env.NEXT_PUBLIC_PARTNER_ORIGIN ?? 'https://partner.navdhya.com';
+
+    for (const path of customerPaths) {
       if (pathname === path || pathname.startsWith(`${path}/`)) {
-        const origin = process.env.NEXT_PUBLIC_CUSTOMER_ORIGIN ?? 'https://app.navdhya.com';
-        const destination = new URL(`${origin}${pathname}`);
-        // Carry the query string — deep links like /user/?tab=bookings
-        // must survive the hop (the strangler redirect below does too).
+        const destination = new URL(`${customerOrigin}${pathname}`);
+        destination.search = request.nextUrl.search;
+        return NextResponse.redirect(destination, 301);
+      }
+    }
+    for (const path of partnerPaths) {
+      if (pathname === path || pathname.startsWith(`${path}/`)) {
+        const destination = new URL(`${partnerOrigin}${pathname}`);
         destination.search = request.nextUrl.search;
         return NextResponse.redirect(destination, 301);
       }
@@ -41,6 +54,48 @@ export function proxy(request: NextRequest) {
     target.search = request.nextUrl.search;
     return NextResponse.redirect(target, 307);
   }
+
+  // W0: console access guard (G1 — docs/PLATFORM-FEATURES-AND-CONSOLE-PLAN.md).
+  // Placed AFTER the production dashboard redirect and the strangler cutover
+  // so a console already handed to another origin hops rather than bouncing
+  // through /login. Fail-closed: no credential → /login?next=<path>.
+  //
+  // The session token is opaque, so the edge proves *presence* only; whether
+  // the token is valid and what the actor may do stay enforced server-side
+  // (the BFF rejects unauthenticated calls; Laravel's capability gates are the
+  // authority). The dev-role cookie is the only role signal visible here, and
+  // it is a local convenience that must never act as a production credential
+  // (mirrors the DevRoleSwitcher's own NODE_ENV gate).
+  if (isConsolePath(pathname)) {
+    const sessionToken =
+      request.cookies.get(sessionCookieName())?.value ??
+      request.cookies.get(LEGACY_COOKIE_NAME)?.value;
+    const devRoleCookie = request.cookies.get(DEV_ROLE_COOKIE)?.value;
+    const devRole =
+      process.env.NODE_ENV !== 'production' && isValidDevRole(devRoleCookie) ? devRoleCookie : null;
+
+    if (!sessionToken && devRole === null) {
+      const login = request.nextUrl.clone();
+      login.pathname = '/login';
+      login.search = '';
+      login.searchParams.set('next', pathname);
+      return NextResponse.redirect(login, 302);
+    }
+
+    // A real session's role is resolved server-side, so the mismatch check
+    // applies only to the dev path. Confine a dev role to its own console
+    // (SuperAdmin may enter any — see canAccessConsole).
+    if (!sessionToken && devRole !== null && !canAccessConsole(devRole, pathname)) {
+      const landing = consoleLandingForRole(devRole);
+      if (landing) {
+        const own = request.nextUrl.clone();
+        own.pathname = landing;
+        own.search = '';
+        return NextResponse.redirect(own, 302);
+      }
+    }
+  }
+
   const userAgent = request.headers.get('user-agent') || '';
 
   // 1. Detect Request Context

@@ -89,7 +89,7 @@
 |---|---|---|---|
 | `MSG91_AUTH_KEY` | Server Environment / Vault | Laravel Only | Private (Full MSG91 Account Authority) |
 | `MSG91_WIDGET_ID` | Server & BFF Config | Laravel, BFF, Public | Public Widget Identifier |
-| `MSG91_TOKEN_AUTH` | Server & BFF Config | Laravel, BFF, Public | Public Client Token Auth |
+| `MSG91_WIDGET_TOKEN_AUTH` | Server & BFF Config | Laravel, BFF, Public | Public Client Token Auth |
 | `MSG91_VERIFY_BASE_URL` | Server Environment | Laravel Only | Internal verification base URL |
 | `IDENTITY_HMAC_SECRET` | Server Environment / Vault | Laravel Only | Private session HMAC signing key |
 

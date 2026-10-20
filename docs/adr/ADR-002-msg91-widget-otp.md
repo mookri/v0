@@ -72,4 +72,4 @@ We have established a unified, decoupled OTP subsystem spanning Laravel (`platfo
 - **Zero Firebase Overhead:** Complete removal of heavy client SDKs and security rule configurations.
 
 ### Operational:
-- Requires `MSG91_AUTH_KEY`, `MSG91_WIDGET_ID`, `MSG91_TOKEN_AUTH`, and `MSG91_VERIFY_BASE_URL` in environment configuration.
+- Requires `MSG91_AUTH_KEY`, `MSG91_WIDGET_ID`, `MSG91_WIDGET_TOKEN_AUTH`, and `MSG91_VERIFY_BASE_URL` in environment configuration.

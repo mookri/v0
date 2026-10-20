@@ -1,12 +1,14 @@
-import { SignedTokenActorResolver, INSECURE_DEV_SECRET } from '@navdhya/identity/src/application/token-actor';
+import { SignedTokenActorResolver, resolveActorTokenSecret } from '@navdhya/identity/src/application/token-actor';
 import type { ActorResolver, RequestActor } from '@navdhya/identity/src/ports/actor-resolver';
 import { SESSION_COOKIE } from '@/server/auth';
 import { isFederated } from '@/server/federation';
 import { federatedActorFromToken } from '@/server/session';
 
 // Actor resolution for partner BFF routes via signed bearer tokens.
-// Secret comes from server env; the insecure fallback is dev-only
-// (production must set SESSION_SIGNING_KEY — see packages/config).
+// Secret comes from server env via a LAZY getter: it is validated at
+// request time (throwing SESSION_SIGNING_KEY_MISSING in production when
+// unset) rather than at module load — several partner modules construct
+// their resolver at module scope, which Next.js evaluates during build.
 // Replaces the former staging header seam; no client ids are trusted.
 //
 // AUTH_MODE cutover (ADR-0020): the resolver is MODE-AWARE and reads
@@ -23,7 +25,7 @@ class ModeAwareActorResolver implements ActorResolver {
 
   constructor(now?: () => string) {
     this.direct = new SignedTokenActorResolver({
-      secret: process.env['SESSION_SIGNING_KEY'] ?? INSECURE_DEV_SECRET,
+      secret: () => resolveActorTokenSecret(),
       now,
     });
   }

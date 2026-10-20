@@ -6,7 +6,6 @@ import MobileCategories from "./MobileCategories";
 import MobileFeaturedRituals from "./MobileFeaturedRituals";
 import MobilePujaForYou from "./MobilePujaForYou";
 import MobileBottomNav from "./MobileBottomNav";
-import { ProcessSteps } from "@/components/sections/process-steps";
 
 export default function MobileHome() {
   return (
@@ -32,8 +31,6 @@ export default function MobileHome() {
           <MobilePujaForYou />
         </div>
       </section>
-
-      <ProcessSteps />
 
       <MobileBottomNav />
     </main>

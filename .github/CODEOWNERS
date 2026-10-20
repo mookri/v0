@@ -56,6 +56,8 @@ CHANGELOG.md                            @platform-lead
 
 # CI/CD + infra
 /.github/                               @eng-a
+/ci/                                    @eng-a
+/tooling/scripts/ci/                    @eng-a
 /.gitleaks.toml                         @eng-a
 /.githooks/                             @eng-a
 package.json                            @eng-a

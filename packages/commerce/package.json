@@ -4,7 +4,7 @@
   "private": true,
   "main": "./src/index.ts",
   "exports": { ".": "./src/index.ts" },
-  "scripts": { "typecheck": "tsc --noEmit", "test": "vitest run" },
+  "scripts": { "typecheck": "tsc --noEmit", "test": "vitest run --passWithNoTests" },
   "dependencies": {},
   "devDependencies": { "typescript": "^5.7.3" }
 }

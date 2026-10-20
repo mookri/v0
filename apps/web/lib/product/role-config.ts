@@ -97,6 +97,7 @@ export const ROLE_WORKSPACES: Record<Role, RoleWorkspaceConfig> = {
       { slug: "managers", title: "Managers", description: "Operational leadership assignments and permissions." },
       { slug: "bookings", title: "Bookings", description: "Platform-wide booking review and issue handling." },
       { slug: "content", title: "Content", description: "Editorial queue, refreshes, and publication status." },
+      { slug: "catalog", title: "Catalog", description: "Catalog items with publish and archive controls." },
       { slug: "seo", title: "SEO", description: "Coverage rollout, QA, structured data, and market expansion status." },
       { slug: "payouts", title: "Payouts", description: "Payout review and finance exceptions." },
       { slug: "support", title: "Support", description: "Escalated customer and partner support issues." },

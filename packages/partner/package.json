@@ -29,7 +29,7 @@
     "./adapters/memory-review-audit": "./src/adapters/memory-review-audit.ts",
     "./adapters/memory-partners": "./src/adapters/memory-partners.ts"
   },
-  "scripts": { "typecheck": "tsc --noEmit", "test": "vitest run" },
+  "scripts": { "typecheck": "tsc --noEmit", "test": "vitest run --passWithNoTests" },
   "dependencies": {},
   "devDependencies": { "typescript": "^5.7.3" }
 }

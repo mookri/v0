@@ -18,6 +18,25 @@ import { otpConfigSchema, type OtpConfig } from '@navdhya/otp/schemas';
 
 export const WIDGET_SCRIPT_SRC = 'https://verify.msg91.com/otp-provider.js';
 
+/**
+ * Deterministic dev shortcut (phone ending 9898989898 + code 123456) is
+ * kept for local drills and the unit tests. It must never be reachable
+ * from a production bundle: the bundler replaces `process.env.NODE_ENV`
+ * statically, so this branch compiles out of production builds, and any
+ * environment that leaves it unset keeps the shortcut OFF (fail closed —
+ * only the literal `development`/`test` values turn it on). Never make
+ * this runtime-configurable: a production toggle would be an OTP bypass.
+ */
+declare const process: { env?: { NODE_ENV?: string } } | undefined;
+
+const DEV_SHORTCUT_ENABLED: boolean =
+  typeof process !== 'undefined' &&
+  (process.env?.NODE_ENV === 'development' || process.env?.NODE_ENV === 'test');
+
+const DEV_SHORTCUT_SUFFIX = '9898989898';
+const DEV_SHORTCUT_CODE = '123456';
+const DEV_SHORTCUT_TOKEN = 'test-token-9898989898';
+
 export type OtpWidgetErrorKind = 'unavailable' | 'send_failed' | 'retry_failed' | 'verify_failed' | 'captcha';
 
 export class OtpWidgetError extends Error {
@@ -238,12 +257,17 @@ export function getWidget({ widgetId, tokenAuth }: WidgetOptions): Promise<void>
 
 let lastIdentifier: string | null = null;
 
+/** True only for the gated dev shortcut phone (see DEV_SHORTCUT_ENABLED). */
+function isDevShortcutTarget(): boolean {
+  return DEV_SHORTCUT_ENABLED && lastIdentifier !== null && lastIdentifier.endsWith(DEV_SHORTCUT_SUFFIX);
+}
+
 /** Send the code to one identifier (phone digits — leading + stripped). */
 export function sendOtp(identifier: string): Promise<void> {
   const target = identifier.startsWith('+') ? identifier.slice(1) : identifier;
   lastIdentifier = target;
 
-  if (target.endsWith('9898989898')) {
+  if (DEV_SHORTCUT_ENABLED && target.endsWith(DEV_SHORTCUT_SUFFIX)) {
     return Promise.resolve();
   }
 
@@ -263,9 +287,9 @@ export function sendOtp(identifier: string): Promise<void> {
 
 /** Verify the entered code: resolves the JWT access token. */
 export function verifyOtp(code: string): Promise<string> {
-  if (lastIdentifier !== null && lastIdentifier.endsWith('9898989898')) {
-    if (code === '123456') {
-      return Promise.resolve('test-token-9898989898');
+  if (isDevShortcutTarget()) {
+    if (code === DEV_SHORTCUT_CODE) {
+      return Promise.resolve(DEV_SHORTCUT_TOKEN);
     }
     return Promise.reject(new OtpWidgetError('verify_failed', 'Invalid verification code.'));
   }
@@ -296,7 +320,7 @@ export function verifyOtp(code: string): Promise<string> {
 
 /** Resend over the given channel (SMS '11', voice '4', email '3', WhatsApp '12'). */
 export function retryOtp(channel: string): Promise<void> {
-  if (lastIdentifier !== null && lastIdentifier.endsWith('9898989898')) {
+  if (isDevShortcutTarget()) {
     return Promise.resolve();
   }
 

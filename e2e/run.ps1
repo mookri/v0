@@ -150,10 +150,12 @@ $env:TENANT_DB_USERNAME = $DbUser
 $env:TENANT_DB_PASSWORD = $DbPass
 $env:MSG91_AUTH_KEY = 'e2e-auth-key'
 $env:MSG91_WIDGET_ID = '36616c6c7465737477696467'
-$env:MSG91_TOKEN_AUTH = '36616c6c74657374746f6b656e'
+$env:MSG91_WIDGET_TOKEN_AUTH = '36616c6c74657374746f6b656e'
 $env:MSG91_VERIFY_BASE_URL = 'http://127.0.0.1:9101'
-$env:NEXT_PUBLIC_MSG91_WIDGET_ID = '36616c6c7465737477696467'
-$env:NEXT_PUBLIC_MSG91_TOKEN_AUTH = '36616c6c74657374746f6b656e'
+# The widget bootstrap (widget_id / token_auth) is served by Laravel at
+# GET /customers/auth/otp/config and proxied by the BFF — the frontends
+# never read NEXT_PUBLIC_MSG91_* (the old names here disagreed with the
+# server's MSG91_WIDGET_* vars and were silently dead).
 $env:IDENTITY_HMAC_SECRET = 'e2e-hmac-secret-0123456789abcdef'
 $env:CUSTOMER_BACKEND = 'laravel'
 $env:NAVDHYA_API_BASE = $LaravelUrl

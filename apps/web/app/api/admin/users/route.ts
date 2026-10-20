@@ -1,11 +1,15 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
-import { laravelEnabled, laravelGet, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { laravelEnabled, laravelGet, laravelErrorResponse, laravelTenant } from '@/adapters/backend/laravel-client';
 import { extractSessionToken } from '@/server/session-cookie';
 
 /**
- * GET /api/admin/users — platform admin user listing.
- * Requires admin session with platform:user:view capability.
- * Proxies to Laravel GET /api/v1/platform/users.
+ * GET /api/admin/users — platform admin user listing (W1b).
+ *
+ * Proxies Laravel GET /api/v1/platform/users. The backend takes `tenant_id`
+ * in the query (UserAdminController::index validates it), so `tenant_id: ''`
+ * (what this route used to send) failed validation on every call. The
+ * tenant now comes from the configured console tenant, and a missing one is
+ * reported as 503 instead of a silent 422.
  */
 export async function GET(request: Request) {
   const requestId = newRequestId();
@@ -26,11 +30,19 @@ export async function GET(request: Request) {
     });
   }
 
+  const tenantId = laravelTenant();
+  if (!tenantId) {
+    return Response.json(
+      err('DEPENDENCY_UNAVAILABLE', 'No console tenant configured: set CUSTOMER_TENANT_ID.', requestId),
+      { status: 503 },
+    );
+  }
+
   try {
     const { data, meta } = await laravelGet(
       token,
       '/platform/users',
-      { tenant_id: '', page, limit },
+      { tenant_id: tenantId, page, limit },
       {},
       { timeout: 'normal', requestId },
     );

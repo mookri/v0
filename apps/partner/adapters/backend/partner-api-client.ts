@@ -112,6 +112,33 @@ export const partnerApi = {
   getTempleDashboardSettings: (templeId: string) =>
     request(`/api/temples/${encodeURIComponent(templeId)}/dashboard/settings`),
 
+  // Temple managers (partner self-serve)
+  getTempleManagers: (templeId: string) =>
+    request(`/api/temples/${encodeURIComponent(templeId)}/managers`),
+
+  // Pandit self-serve (W1f)
+  getPanditProfile: () => request('/api/pandit/profile'),
+  getPanditAssignments: (params?: { status?: string; limit?: number }) => {
+    const qs = new URLSearchParams();
+    if (params?.status) qs.set('status', params.status);
+    if (params?.limit !== undefined) qs.set('limit', String(params.limit));
+    const suffix = qs.toString() ? `?${qs.toString()}` : '';
+    return request(`/api/pandit/assignments${suffix}`);
+  },
+  getPanditEarnings: () => request('/api/pandit/earnings'),
+  getPanditReviews: () => request('/api/pandit/reviews'),
+  updatePanditProfile: (body: Record<string, unknown>) =>
+    request('/api/pandit/profile', { method: 'PATCH', body: JSON.stringify(body) }),
+  getPanditAvailability: () => request('/api/pandit/availability'),
+  replacePanditAvailability: (body: unknown) =>
+    request('/api/pandit/availability', { method: 'PUT', body: JSON.stringify(body) }),
+  confirmPanditAssignment: (id: string) =>
+    request(`/api/pandit/assignments/${encodeURIComponent(id)}/confirm`, { method: 'POST' }),
+  declinePanditAssignment: (id: string, reason?: string) =>
+    request(`/api/pandit/assignments/${encodeURIComponent(id)}/decline`, { method: 'POST', body: JSON.stringify({ reason: reason ?? '' }) }),
+  completePanditAssignment: (id: string) =>
+    request(`/api/pandit/assignments/${encodeURIComponent(id)}/complete`, { method: 'POST' }),
+
   // Vendor surface (P12)
   getVendors: (params?: { limit?: number; cursor?: string }) => {
     const qs = new URLSearchParams();

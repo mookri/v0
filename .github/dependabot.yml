@@ -1,0 +1,61 @@
+# Dependabot — grouped, weekly, India-timezone.
+#
+# Composer updates are intentionally absent: the Laravel app lives in
+# `platform-navdhya/`, which is its own repository (CI plan D1). Its
+# `dependabot.yml` belongs there and lands with the backend remote.
+#
+# Security updates are not scheduled here — Dependabot raises them immediately
+# for any advisory that affects a manifest in this file.
+
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '03:00'
+      timezone: Asia/Kolkata
+    open-pull-requests-limit: 8
+    versioning-strategy: increase
+    groups:
+      dev-minor-patch:
+        dependency-type: development
+        update-types: [minor, patch]
+      prod-patch:
+        dependency-type: production
+        update-types: [patch]
+    ignore:
+      # Framework majors are a planned migration, never a drive-by PR.
+      - dependency-name: next
+        update-types: [version-update:semver-major]
+      - dependency-name: react
+        update-types: [version-update:semver-major]
+      - dependency-name: react-dom
+        update-types: [version-update:semver-major]
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
+
+  - package-ecosystem: npm
+    directory: /e2e
+    schedule:
+      interval: weekly
+      day: monday
+      time: '03:00'
+      timezone: Asia/Kolkata
+    open-pull-requests-limit: 3
+    groups:
+      playwright:
+        patterns: ['@playwright/*']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '03:00'
+      timezone: Asia/Kolkata
+    open-pull-requests-limit: 5
+    groups:
+      actions:
+        patterns: ['*']

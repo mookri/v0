@@ -120,4 +120,34 @@ describe('MSG91 widget loader', () => {
 
     await expect(verifyOtp('000000')).rejects.toThrow(OtpWidgetError);
   });
+
+  it('never honours the dev shortcut in a production environment', async () => {
+    // Re-import the loader with NODE_ENV=production so the compile-time
+    // gate evaluates OFF, then drive the *real* widget path with distinct
+    // mock globals: the shortcut token must not come back.
+    vi.resetModules();
+    vi.stubEnv('NODE_ENV', 'production');
+    const realToken = 'real.jwt.from.provider';
+
+    try {
+      const prod = await import('@navdhya/otp/widget');
+
+      window.sendOtp = vi.fn((_id: string, success: Function) =>
+        success({ type: 'success', message: 'sent' }),
+      );
+      window.retryOtp = vi.fn((_ch: string, success: Function) =>
+        success({ type: 'success', message: 'resent' }),
+      );
+      window.verifyOtp = vi.fn((_code: string, success: Function) =>
+        success({ type: 'success', message: realToken }),
+      );
+
+      await prod.sendOtp('+919898989898');
+      await expect(prod.verifyOtp('123456')).resolves.toBe(realToken);
+    } finally {
+      vi.unstubAllEnvs();
+      vi.resetModules();
+      resetOtpWidgetForTests();
+    }
+  });
 });

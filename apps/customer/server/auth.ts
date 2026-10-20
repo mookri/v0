@@ -1,7 +1,7 @@
 import { MemoryIdentityRepository, MemorySessionStore } from '@navdhya/identity/src/adapters/memory';
 import { MemoryCredentialVerifier } from '@navdhya/identity/src/adapters/memory-credentials';
-import { INSECURE_DEV_SECRET } from '@navdhya/identity/src/application/token-actor';
 import { login } from '@navdhya/identity/src/application/token-session';
+import { resolveActorTokenSecret } from '@navdhya/identity/src/application/token-actor';
 
 // Auth composition for customer BFF routes. Single-instance staging stores
 // (same limitation as the events memory bus); a shared backend replaces
@@ -10,8 +10,10 @@ export const authIdentities = new MemoryIdentityRepository();
 export const authSessions = new MemorySessionStore();
 export const authVerifier = new MemoryCredentialVerifier();
 
+// Throws SESSION_SIGNING_KEY_MISSING in production when the key is unset;
+// the dev fallback is deliberately restricted to non-production.
 export function authTokenSecret(): string {
-  return process.env['SESSION_SIGNING_KEY'] ?? INSECURE_DEV_SECRET;
+  return resolveActorTokenSecret();
 }
 
 // Test-only helper: mints a live session + token for a user.

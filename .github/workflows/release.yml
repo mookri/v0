@@ -1,0 +1,188 @@
+# Navdhya release — tag in, attested artefacts out, deploy behind approval.
+#
+# The release reuses `ci.yml` through `workflow_call`: a tag can never ship
+# something the PR gate would have rejected.
+#
+# There is no Dockerfile in this repo and the deploy runbook
+# (platform-navdhya/docs/22-runbooks/deploy.md) is host-based, so the release
+# artefact is the Next.js standalone bundle + checksums. The deploy job calls
+# `scripts/deploy/<env>.sh` and fails loudly when that script is absent rather
+# than pretending to deploy.
+
+name: release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Build and attest without deploying'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CI: 'true'
+  NEXT_TELEMETRY_DISABLED: '1'
+  TURBO_TELEMETRY_DISABLED: '1'
+  FORCE_COLOR: '0'
+
+jobs:
+  # ── Same gate as a PR, on the tag's commit ────────────────────────────────
+  verify:
+    name: verify
+    uses: ./.github/workflows/ci.yml
+    timeout-minutes: 45
+
+  # ── Reproducible standalone artefacts ─────────────────────────────────────
+  artifacts:
+    name: artifacts (${{ matrix.app }})
+    needs: [verify]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: true
+      matrix:
+        app: [web, customer, dashboard, partner]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Build
+        env:
+          NEXT_STANDALONE: '1'
+        run: pnpm --filter ./apps/${{ matrix.app }} run build
+      - name: Package
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          tar -czf "dist/navdhya-${{ matrix.app }}-${GITHUB_REF_NAME}.tar.gz" \
+            -C "apps/${{ matrix.app }}/.next" standalone
+      - name: Checksums
+        run: |
+          set -euo pipefail
+          cd dist
+          sha256sum ./*.tar.gz > "sha256sums-${{ matrix.app }}.txt"
+          cat "sha256sums-${{ matrix.app }}.txt"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.app }}
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 30
+
+  # ── Supply-chain provenance (SLSA) ────────────────────────────────────────
+  attest:
+    name: attest
+    needs: [artifacts]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: dist
+          merge-multiple: true
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: dist/*.tar.gz
+
+  # ── Publish ───────────────────────────────────────────────────────────────
+  publish:
+    name: publish
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [attest]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: dist
+          merge-multiple: true
+      - name: Build release notes
+        run: |
+          set -euo pipefail
+          if prev=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null); then
+            range="$prev..HEAD"
+          else
+            range="HEAD"
+          fi
+          git log --no-merges --pretty=format:'- %s (%h)' "$range" > NOTES.md
+          {
+            echo ""
+            echo "## Artefacts"
+            echo ""
+            echo "Each archive is the app's \`.next/standalone\` output, with SHA-256 checksums."
+            echo ""
+            echo "| Archive | SHA-256 |"
+            echo "| --- | --- |"
+            for f in dist/*.tar.gz; do
+              echo "| \`$(basename "$f")\` | \`$(sha256sum "$f" | cut -d' ' -f1)\` |"
+            done
+          } >> NOTES.md
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          body_path: NOTES.md
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+
+  # ── Deploy (manual approval, per environment) ─────────────────────────────
+  deploy:
+    name: deploy (${{ matrix.environment }})
+    if: vars.DEPLOY_ENABLED == 'true' && (github.event_name == 'push' || inputs.dry_run == false)
+    needs: [publish]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [staging, production]
+    environment: ${{ matrix.environment }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: dist
+          merge-multiple: true
+      - name: Preflight — deploy script must exist
+        run: |
+          set -euo pipefail
+          if [ ! -x "scripts/deploy/${{ matrix.environment }}.sh" ]; then
+            echo "::error title=Deploy prerequisite missing::scripts/deploy/${{ matrix.environment }}.sh is required before DEPLOY_ENABLED can be true (CI plan P5)."
+            exit 1
+          fi
+      - name: Deploy
+        env:
+          TARGET_ENV: ${{ matrix.environment }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: "scripts/deploy/${{ matrix.environment }}.sh"

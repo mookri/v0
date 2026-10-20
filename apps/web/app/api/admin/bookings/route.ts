@@ -1,20 +1,20 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
-import { laravelEnabled, laravelGet, laravelErrorResponse } from '@/adapters/backend/laravel-client';
+import { laravelEnabled, laravelGet, laravelErrorResponse, laravelTenant } from '@/adapters/backend/laravel-client';
 import { extractSessionToken } from '@/server/session-cookie';
 
 /**
- * GET /api/admin/bookings — platform admin bookings listing.
- * Requires admin session with capability to view bookings.
- * Proxies to Laravel GET /api/v1/platform/bookings.
+ * GET /api/admin/bookings — platform admin booking review (W2).
+ *
+ * Re-pointed from `/platform/bookings` (never existed) to
+ * `GET /api/v1/platform/ops/bookings` (`platform:ops:view`).
  */
 export async function GET(request: Request) {
   const requestId = newRequestId();
   const { searchParams } = new URL(request.url);
-  const page = searchParams.get('page') ?? '1';
-  const limit = searchParams.get('limit') ?? '20';
+  const limit = searchParams.get('limit') ?? '50';
 
   if (!laravelEnabled()) {
-    return Response.json(ok({ data: [], meta: { page: 1, limit: 20, total: 0, fallback: true } }, requestId), {
+    return Response.json(ok({ data: [], meta: { fallback: true, limit: Number(limit) } }, requestId), {
       status: 200,
     });
   }
@@ -26,16 +26,24 @@ export async function GET(request: Request) {
     });
   }
 
+  const tenantId = laravelTenant();
+  if (!tenantId) {
+    return Response.json(
+      err('DEPENDENCY_UNAVAILABLE', 'No console tenant configured: set CUSTOMER_TENANT_ID.', requestId),
+      { status: 503 },
+    );
+  }
+
   try {
     const { data, meta } = await laravelGet(
       token,
-      '/platform/bookings',
-      { tenant_id: '', page, limit },
+      '/platform/ops/bookings',
+      { tenant_id: tenantId, limit },
       {},
       { timeout: 'normal', requestId },
     );
 
-    return Response.json(ok({ data, meta: { ...meta, page: Number(page), limit: Number(limit) } }, requestId));
+    return Response.json(ok({ data, meta }, requestId));
   } catch (e) {
     return laravelErrorResponse(e, 'Failed to fetch bookings', requestId);
   }

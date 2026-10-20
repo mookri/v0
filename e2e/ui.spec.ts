@@ -9,10 +9,14 @@ import { test, expect, Page, BrowserContext } from '@playwright/test';
  *
  * The MSG91 client SDK script (https://verify.msg91.com/otp-provider.js) is
  * intercepted and mocked: code 000000 fails; any other 6-digit code returns
- * a verified JWT access token which Laravel redeems against the MSG91 stub.
+ * an access token which Laravel verifies against the MSG91 stub (:9101, which
+ * attests +91 9877001122). The token deliberately is NOT the Laravel dev
+ * shortcut (`test-token-9898989898`) — that would bypass the stub and attest
+ * a different number than PHONE below.
  */
 
 const PHONE = '9877001122'; // national digits → +919877001122 (dial code IN)
+const WIDGET_TOKEN = 'e2e-widget-jwt-token'; // any non-shortcut string; the stub attests PHONE
 
 async function fillOtp(page: Page, code: string): Promise<void> {
   const boxes = page.locator('input[maxlength="1"]');
@@ -57,7 +61,7 @@ test('signup → login → OTP 3-attempt exhaustion → login again → logout',
             if (code === '000000') {
               failure({ type: 'error', message: 'invalid_code' });
             } else {
-              success({ type: 'success', message: 'msg91-mock-jwt-token' });
+              success({ type: 'success', message: '${WIDGET_TOKEN}' });
             }
           };
           window.getWidgetData = function() { return {}; };

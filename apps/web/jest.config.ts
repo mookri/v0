@@ -7,6 +7,17 @@ const createJestConfig = nextJest({
 
 const config: Config = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  // Jest's default testMatch is `**/__tests__/**/*.[jt]s?(x)`, which treats every
+  // file under a __tests__ directory as a suite. This app keeps dev preview
+  // pages (components/__tests__/preloader/*/page.tsx) next to its tests, so the
+  // default reports "Your test suite must contain at least one test" and fails
+  // the whole run. Match on the name, not the directory.
+  testMatch: [
+    '<rootDir>/**/*.test.ts',
+    '<rootDir>/**/*.test.tsx',
+    '<rootDir>/**/*.spec.ts',
+    '<rootDir>/**/*.spec.tsx',
+  ],
   testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
     '^@/components/(.*)$': '<rootDir>/components/$1',
