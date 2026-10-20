@@ -81,8 +81,12 @@ jobs:
               process.exit(1);
             }
           "
-          if [ -n "$(git ls-files platform-navdhya)" ]; then
-            echo "::error::platform-navdhya must not be tracked by the root repo (see CI plan F1/D1)"
+          if [ -z "$(git ls-files platform-navdhya | head -n 1)" ]; then
+            echo "::error::platform-navdhya must be tracked in this repo (D1: merged, not a submodule)"
+            exit 1
+          fi
+          if [ -e platform-navdhya/.git ]; then
+            echo "::error::platform-navdhya must not carry its own .git — it is part of this monorepo"
             exit 1
           fi
 

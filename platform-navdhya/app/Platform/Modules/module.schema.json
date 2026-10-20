@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "navdhya/module.schema.json",
+  "title": "Navdhya module manifest (doc 01 §3.2)",
+  "type": "object",
+  "required": ["code", "name", "version"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "code": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "Globally unique lowercase module code; must match the directory name (kebab→Studly)."
+    },
+    "name": { "type": "string", "minLength": 1 },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?$"
+    },
+    "phase": { "type": "integer", "minimum": 0, "maximum": 6 },
+    "priority": { "type": "integer" },
+    "feature_flag": { "type": "string" },
+    "dependencies": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+      "description": "Module codes only; 'platform' is implicit and may be omitted."
+    },
+    "actions": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+      "description": "Module-specific permission action verbs beyond the closed vocabulary (doc 01 §3.3)."
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "name"],
+        "additionalProperties": false,
+        "properties": {
+          "code": { "type": "string", "pattern": "^[a-z][a-z0-9_]*:[a-z0-9_]+:[a-z0-9_]+$" },
+          "name": { "type": "string", "minLength": 1 },
+          "sensitive": { "type": "boolean" }
+        }
+      }
+    },
+    "scopes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Non-trivial scopes only; <module>:read/<module>:write are implicit (doc 04 §6)."
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "schema"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$" },
+          "schema": { "type": "string" }
+        }
+      }
+    },
+    "navigation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["group", "label", "route", "permission"],
+        "additionalProperties": false,
+        "properties": {
+          "group": { "type": "string" },
+          "label": { "type": "string" },
+          "route": { "type": "string" },
+          "permission": { "type": "string" },
+          "icon": { "type": "string" },
+          "order": { "type": "integer" }
+        }
+      }
+    },
+    "api": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "openapi": { "type": "string" },
+        "basePath": { "type": "string", "pattern": "^/api/v1/" }
+      }
+    }
+  }
+}

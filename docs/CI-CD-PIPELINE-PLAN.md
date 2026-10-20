@@ -30,7 +30,8 @@ the codebase is clean without ever being silently bypassed (`|| true` / blanket
 Two structural items dominate everything else:
 
 * **F1 — the backend is invisible to CI.** `platform-navdhya/` is gitignored and is a
-  standalone git repo with no remote. Root CI can never test it. **(open — D1)**
+  standalone git repo with no remote. Root CI can never test it. **(resolved 2026-10-20:
+  merged into this repo with history; D1 = option B)**
 * **F2 — lint is dead across all four apps.** `next lint` was removed in the installed
   Next 16.0.10 and `eslint` is not installed anywhere. **(fixed in P0, 2026-10-20:**
   ESLint 9 + `eslint-config-next@16.0.10`, `pnpm run lint` blocking at 0 errors**)**
@@ -65,8 +66,9 @@ Neither is fixed by writing YAML. They are P0/P1 workstreams with exit criteria 
 | E20 | `apps/web` jest is **red**: `components/__tests__/preloader/test-preloader/page.tsx` is matched as a suite and fails with "Your test suite must contain at least one test" | `jest --ci --silent` (64 files) | Jest's default `testMatch` treats fixtures as suites; gate must ship soft until P0 narrows `testMatch` |
 
 **Resolved in P0 (2026-10-20):** E4, E5, E11, E19, E20 — see §14 for the measured
-exit state. E1–E3 (backend topology), E12 (Linux E2E), E13 (no image) and E18
-(private repo) remain open and still constrain the pipeline.
+exit state. **E1–E3 resolved the same day** by merging the backend into this
+repository (§6.1). E12 (Linux E2E), E13 (no image) and E18 (private repo) remain
+open and still constrain the pipeline.
 
 ---
 
@@ -257,10 +259,21 @@ refuses to touch `.gitignore`.
 | B — merge into monorepo | `git filter-repo` / subtree merge under `apps/api` | One pipeline, atomic cross-stack PRs | Rewrites history, large one-off cost |
 | C — polyrepo + reusable workflow | `platform-navdhya` gets its own remote; both repos call `.github/workflows/reusable-laravel.yml@main` | Clean ownership | Cross-repo changes need two PRs and a pinned `@ref` |
 
-**Until D1 is resolved, no backend job may appear in root `ci.yml`** — it would be a
-permanently skipped check and would poison `ci-gate`.
+**Decision (2026-10-20): B — merged.** The backend now lives at `platform-navdhya/`
+inside this repository, imported with its full 118-commit history via a subtree-style
+merge (`git read-tree --prefix`). The nested `.git` was removed and the ignore rule
+was dropped. Consequences:
 
-### 6.2 Backend job graph (runs in the backend repo)
+* the `meta` preflight now enforces the inverse invariant: the path must be tracked
+  and must not contain its own `.git`;
+* backend jobs may now appear in root `ci.yml` (P1) because they can actually run —
+  the "permanently skipped required check" objection is gone;
+* `platform-navdhya/.gitignore` still excludes `vendor/`, `.env` and regenerable
+  caches, and git honours it inside this repo;
+* the backend's own `.github/workflows/ci.yml` is inert (GitHub reads only the root
+  `.github/workflows`); it stays as the specification the root jobs are ported from.
+
+### 6.2 Backend job graph (port target for root `ci.yml`)
 
 | Job | Command | Lane |
 |---|---|---|

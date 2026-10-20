@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Production-grade regression: identical suites to phpunit.xml, but
+     against real MySQL 8 (utf8mb4/unicode_ci, strict mode) instead of
+     :memory: sqlite — proves migrations + queries are MySQL-clean.
+
+     PRECONDITION (operator-run, NOT automated): drop/recreate BOTH
+     navdhya_test_central and navdhya_test_tenant before every run.
+     RefreshDatabase's migrate:fresh only wipes the default connection
+     (central); tenant tables live on tenant_shared via per-migration
+     Schema::connection() and are never dropped by migrate:fresh. A stale
+     tenant_shared used to fail migration 2026_08_28_000003 with
+     "Table 'audit_logs' already exists" and error every DB test; since
+     the test-base fix (TenantIntegrationTestCase::migrateDatabases
+     wipes tenant_shared before delegating to migrate:fresh) a stale
+     tenant_shared self-heals on the first database test - but a clean
+     slate remains the supported, deterministic baseline. e2e/run.ps1
+     resets only the navdhya_e2e_* databases — it does NOT touch these
+     two. Reset as root:
+
+       DROP DATABASE IF EXISTS navdhya_test_central;
+       CREATE DATABASE navdhya_test_central CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+       DROP DATABASE IF EXISTS navdhya_test_tenant;
+       CREATE DATABASE navdhya_test_tenant CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+        </testsuite>
+        <testsuite name="Platform">
+            <directory>tests/Platform</directory>
+        </testsuite>
+        <testsuite name="Architecture">
+            <directory>tests/Architecture</directory>
+        </testsuite>
+        <testsuite name="TenantIsolation">
+            <directory>tests/TenantIsolation</directory>
+        </testsuite>
+        <testsuite name="Modules">
+            <directory>tests/Modules</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>app</directory>
+        </include>
+    </source>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="APP_MAINTENANCE_DRIVER" value="file"/>
+        <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="CACHE_STORE" value="array"/>
+        <!-- Hybrid tenancy on real MySQL (doc 02 §2.3). -->
+        <env name="DB_CONNECTION" value="central"/>
+        <env name="CENTRAL_DB_DRIVER" value="mysql"/>
+        <env name="CENTRAL_DB_HOST" value="127.0.0.1"/>
+        <env name="CENTRAL_DB_PORT" value="3306"/>
+        <env name="CENTRAL_DB_DATABASE" value="navdhya_test_central"/>
+        <env name="CENTRAL_DB_USERNAME" value="navdhya_e2e"/>
+        <env name="CENTRAL_DB_PASSWORD" value="navdhya_e2e_2026"/>
+        <env name="TENANT_DB_DRIVER" value="mysql"/>
+        <env name="TENANT_DB_HOST" value="127.0.0.1"/>
+        <env name="TENANT_DB_PORT" value="3306"/>
+        <env name="TENANT_DB_DATABASE" value="navdhya_test_tenant"/>
+        <env name="TENANT_DB_USERNAME" value="navdhya_e2e"/>
+        <env name="TENANT_DB_PASSWORD" value="navdhya_e2e_2026"/>
+        <env name="MAIL_MAILER" value="array"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="SESSION_DRIVER" value="array"/>
+    </php>
+</phpunit>

@@ -1,0 +1,30 @@
+{
+  "code": "vendor",
+  "name": "Vendor Management",
+  "version": "0.1.0",
+  "phase": 3,
+  "priority": 200,
+  "dependencies": ["onboarding", "catalog"],
+  "actions": ["create", "manage", "verify"],
+  "permissions": [
+    { "code": "vendor:profile:view", "name": "View vendor profiles (admin directory)" },
+    { "code": "vendor:profile:manage", "name": "Verify and suspend vendor profiles", "sensitive": true },
+    { "code": "vendor:product:manage", "name": "Manage vendor products", "sensitive": true },
+    { "code": "vendor:order:manage", "name": "Manage vendor orders", "sensitive": true },
+    { "code": "vendor:payout:view", "name": "View vendor payouts" }
+  ],
+  "scopes": ["vendor:read", "vendor:self", "vendor:partner", "vendor:admin"],
+  "events": [
+    { "name": "vendor.profile.created", "schema": "v1" },
+    { "name": "vendor.profile.updated", "schema": "v1" },
+    { "name": "vendor.profile.verified", "schema": "v1" },
+    { "name": "vendor.profile.suspended", "schema": "v1" },
+    { "name": "vendor.inventory.adjusted", "schema": "v1" },
+    { "name": "vendor.order.placed", "schema": "v1" },
+    { "name": "vendor.order.advanced", "schema": "v1" },
+    { "name": "vendor.order.cancelled", "schema": "v1" },
+    { "name": "vendor.payout.recorded", "schema": "v1" }
+  ],
+  "navigation": [],
+  "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/vendor" }
+}

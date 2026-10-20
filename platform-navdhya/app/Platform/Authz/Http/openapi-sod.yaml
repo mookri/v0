@@ -1,0 +1,119 @@
+# OpenAPI 3.1 fragment — SoD rule administration (tenant rows + overrides).
+openapi: 3.1.0
+info:
+  title: Navdhya Platform — SoD Rules
+  version: 1.0.0
+paths:
+  /api/v1/platform/sod-rules:
+    get:
+      operationId: listSodRules
+      summary: Cursor-paginated platform defaults + tenant rows.
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Rules.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+    post:
+      operationId: createSodRule
+      summary: Create a tenant rule or override (platform blocks cannot be removed).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenant_id, code, name]
+      responses:
+        '201':
+          description: Created rule.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, code, severity, status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+  /api/v1/platform/sod-rules/{id}:
+    patch:
+      operationId: updateSodRule
+      summary: Update a tenant rule (platform rows are immutable).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Updated rule.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, object, code, severity, status]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      operationId: deleteSodRule
+      summary: Delete a tenant rule (platform default resurfaces).
+      x-gate: ownership
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [object, deleted]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }

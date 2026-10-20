@@ -1,0 +1,35 @@
+{
+  "code": "customers",
+  "name": "Customer Self-Service",
+  "version": "0.1.0",
+  "phase": 2,
+  "priority": 150,
+  "dependencies": [],
+  "actions": ["deactivate", "verify", "manage"],
+  "permissions": [
+    { "code": "customers:support:view", "name": "View support tickets (staff console)" },
+    { "code": "customers:support:manage", "name": "Reply to and close support tickets (staff console)", "sensitive": true }
+  ],
+  "scopes": ["customers:self"],
+  "events": [
+    { "name": "customers.account.signed_up", "schema": "v1" },
+    { "name": "customers.auth.logged_in", "schema": "v1" },
+    { "name": "customers.auth.logged_out", "schema": "v1" },
+    { "name": "customers.profile.updated", "schema": "v1" },
+    { "name": "customers.verification.completed", "schema": "v1" },
+    { "name": "customers.account.deactivated", "schema": "v1" },
+    { "name": "customers.account.reactivated", "schema": "v1" },
+    { "name": "customers.address.added", "schema": "v1" },
+    { "name": "customers.address.updated", "schema": "v1" },
+    { "name": "customers.address.removed", "schema": "v1" },
+    { "name": "customers.saved.added", "schema": "v1" },
+    { "name": "customers.saved.removed", "schema": "v1" },
+    { "name": "customers.settings.updated", "schema": "v1" },
+    { "name": "customers.ticket.created", "schema": "v1" },
+    { "name": "customers.ticket.replied", "schema": "v1" },
+    { "name": "customers.ticket.closed", "schema": "v1" },
+    { "name": "customers.referral.attributed", "schema": "v1" }
+  ],
+  "navigation": [],
+  "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/customers" }
+}

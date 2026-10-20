@@ -1,0 +1,31 @@
+{
+  "code": "temple",
+  "name": "Temple Management",
+  "version": "0.1.0",
+  "phase": 3,
+  "priority": 200,
+  "dependencies": ["onboarding", "catalog", "booking"],
+  "actions": ["create", "manage", "assign", "verify"],
+  "permissions": [
+    { "code": "temple:profile:view", "name": "View temple profiles (admin directory)" },
+    { "code": "temple:profile:manage", "name": "Create, update, verify, suspend and reactivate temple profiles", "sensitive": true },
+    { "code": "temple:puja:manage", "name": "Manage temple pujas", "sensitive": true },
+    { "code": "temple:manager:manage", "name": "Manage temple managers", "sensitive": true },
+    { "code": "temple:dashboard:view", "name": "View temple dashboard" },
+    { "code": "temple:dashboard:manage", "name": "Manage temple dashboard settings", "sensitive": true }
+  ],
+  "scopes": ["temple:read", "temple:self", "temple:partner", "temple:admin"],
+  "events": [
+    { "name": "temple.profile.created", "schema": "v1" },
+    { "name": "temple.profile.updated", "schema": "v1" },
+    { "name": "temple.profile.verified", "schema": "v1" },
+    { "name": "temple.profile.suspended", "schema": "v1" },
+    { "name": "temple.profile.reactivated", "schema": "v1" },
+    { "name": "temple.puja.assigned", "schema": "v1" },
+    { "name": "temple.puja.updated", "schema": "v1" },
+    { "name": "temple.puja.removed", "schema": "v1" },
+    { "name": "temple.manager.added", "schema": "v1" },
+    { "name": "temple.manager.removed", "schema": "v1" }
+  ],
+  "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/temple" }
+}

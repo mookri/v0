@@ -1,0 +1,348 @@
+<?php
+
+namespace App\Platform\Identity\Http\Controllers;
+
+use App\Platform\Api\WebMutations;
+use App\Platform\Audit\AuditWriter;
+use App\Platform\Authz\AuthorizationRequest;
+use App\Platform\Authz\Exceptions\AuthorizationDeniedException;
+use App\Platform\Authz\PolicyEvaluationEngine;
+use App\Platform\Identity\Models\ApiKey;
+use App\Platform\Identity\MachinePrincipal;
+use App\Platform\Tenancy\ConnectionResolver;
+use App\Platform\Tenancy\Models\Tenant;
+use App\Platform\Tenancy\Models\TenantMembership;
+use App\Platform\Tenancy\TenantContext;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
+/**
+ * Machine API key administration: issue (plaintext once), list metadata,
+ * revoke (immediate), rotate (24h dual-active overlap). Secrets are
+ * SHA-256 stored; rotation creates a new row and revokes the old after
+ * the overlap — never secret edits.
+ *
+ * A key is a long-lived machine credential whose scopes decide what a
+ * machine principal may do afterwards, so MINTING ONE IS A PRIVILEGE
+ * GRANT in its own right: membership alone must NOT suffice. Every
+ * action therefore demands `platform:apikey:view` / `platform:apikey:manage`
+ * through the full SEC-022 chain — see scopeToTenant().
+ */
+final class ApiKeyController
+{
+    public function __construct(
+        private readonly AuditWriter $audit,
+        private readonly PolicyEvaluationEngine $authz,
+    ) {
+    }
+
+    private function requestId(Request $request): string
+    {
+        return (string) $request->attributes->get('request_id', '');
+    }
+
+    /**
+     * Machine principals administer nothing: key management is a human
+     * action behind an active membership. The membership lookup below
+     * would deny them anyway (`key:*` never matches a user_id); this
+     * early deny skips the query and states the rule explicitly.
+     */
+    private function machineDenial(Request $request): ?JsonResponse
+    {
+        if ($request->user() instanceof MachinePrincipal) {
+            return new JsonResponse([
+                'error' => ['code' => 'membership_inactive', 'message' => 'No active membership in this tenant.', 'request_id' => $this->requestId($request)],
+            ], 403);
+        }
+
+        return null;
+    }
+
+    /**
+     * Capability gate at the tenant-scoping seam (same seam as
+     * RoleController::scopeToTenant / SodRuleController::scopeToTenant —
+     * see RoleController for why these checks live here rather than in
+     * route middleware: these routes carry `tenant_id` in the query/body,
+     * ResolveTenantContext is header-only for `api/*`, and the engine
+     * needs a TenantContext this controller only owns once it has scoped).
+     *
+     * Scope order is unchanged — tenant → membership → capability — so an
+     * outsider still sees `membership_inactive`, never a probe of which
+     * capabilities exist.
+     *
+     * @return array{tenant: Tenant, ownsContext: bool, context: TenantContext}|JsonResponse
+     */
+    private function scopeToTenant(Request $request, string $tenantId, string $capability): array|JsonResponse
+    {
+        $tenant = Tenant::query()->find($tenantId);
+        if ($tenant === null || $tenant->state !== Tenant::STATE_ACTIVE) {
+            return new JsonResponse([
+                'error' => ['code' => 'not_found', 'message' => 'Tenant unavailable.', 'request_id' => $this->requestId($request)],
+            ], 404);
+        }
+
+        $issuer = TenantMembership::query()
+            ->where('tenant_id', (string) $tenant->getKey())
+            ->where('user_id', (string) $request->user()->getAuthIdentifier())
+            ->where('state', TenantMembership::STATE_ACTIVE)
+            ->first();
+        if ($issuer === null) {
+            return new JsonResponse([
+                'error' => ['code' => 'membership_inactive', 'message' => 'No active membership in this tenant.', 'request_id' => $this->requestId($request)],
+            ], 403);
+        }
+
+        $context = app(TenantContext::class);
+        $ownsContext = ! $context->isResolved();
+        if ($ownsContext) {
+            $context->set(
+                (string) $tenant->getKey(),
+                (string) $issuer->getKey(),
+                $issuer->org_node_id,
+                (new ConnectionResolver())->cachedFor($tenant),
+                ['user_id' => (string) $request->user()->getAuthIdentifier()]
+            );
+        }
+
+        // Clear on denial too — every exit path of this method honours the
+        // ownsContext contract, a thrown check included.
+        try {
+            $this->requireCapability($request, $context, $capability);
+        } catch (\Throwable $denied) {
+            if ($ownsContext) {
+                $context->clear();
+            }
+
+            throw $denied;
+        }
+
+        // Downstream code (key queries, issuance) filters by explicit
+        // tenant_id, not the ambient context — clear it now so the singleton
+        // does not leak into the next request's ResolveTenantContext.
+        if ($ownsContext) {
+            $context->clear();
+        }
+
+        return ['tenant' => $tenant, 'ownsContext' => false, 'context' => $context];
+    }
+
+    /**
+     * Full SEC-022 precedence-chain check (deny → constraints → grants →
+     * default deny), mirroring CheckCapability route middleware including
+     * its `authz.denied` audit record.
+     */
+    private function requireCapability(Request $request, TenantContext $context, string $capability): void
+    {
+        try {
+            $this->authz->ensure(new AuthorizationRequest(
+                principal: $request->user(),
+                capability: $capability,
+            ));
+        } catch (AuthorizationDeniedException $exception) {
+            if ($context->isResolved()) {
+                $this->audit->record(
+                    action: 'authz.denied',
+                    resource: ['module' => 'identity', 'resource_type' => 'capability', 'resource_id' => $capability],
+                    after: ['capability' => $capability, 'reason' => $exception->reason],
+                );
+            }
+
+            throw $exception;
+        }
+    }
+
+    public function index(Request $request): JsonResponse
+    {
+        if ($denied = $this->machineDenial($request)) {
+            return $denied;
+        }
+
+        $validated = $request->validate(['tenant_id' => ['required', 'string']]);
+
+        $scoped = $this->scopeToTenant($request, (string) $validated['tenant_id'], 'platform:apikey:view');
+        if ($scoped instanceof JsonResponse) {
+            return $scoped;
+        }
+
+        $keys = ApiKey::query()->where('tenant_id', (string) $scoped['tenant']->getKey())->orderByDesc('created_at')->get();
+
+        return new JsonResponse([
+            'data' => $keys->map(static fn (ApiKey $key): array => [
+                'id' => (string) $key->getKey(),
+                'object' => 'api_key',
+                'name' => $key->name,
+                'prefix' => $key->prefix,
+                'scopes' => $key->scopes ?? [],
+                'rate_tier' => $key->rate_tier,
+                'expires_at' => $key->expires_at,
+                'last_used_at' => $key->last_used_at,
+                'revoked_at' => $key->revoked_at,
+            ])->all(),
+            'meta' => ['request_id' => $this->requestId($request)],
+        ]);
+    }
+
+    // Shared actions (doc 06 §7.1-7.2): the console's forms and /api/v1
+    // point here — one membership-checked path, negotiation only. The
+    // secret exists only inside the envelope, so the web flash derives
+    // from the successful response (shown once, escaped by the view);
+    // API envelopes stay byte-identical.
+    public function issue(Request $request): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->issueJson($request),
+            static fn (JsonResponse $result): string
+                => 'API key issued — copy it now, it is shown only once: '.WebMutations::stringData($result, 'secret'),
+        );
+    }
+
+    private function issueJson(Request $request): JsonResponse
+    {
+        if ($denied = $this->machineDenial($request)) {
+            return $denied;
+        }
+
+        $validated = $request->validate([
+            'tenant_id' => ['required', 'string'],
+            'name' => ['required', 'string', 'max:120'],
+            'scopes' => ['nullable', 'array'],
+            'scopes.*' => ['string', 'regex:/^[a-z][a-z0-9_]*:[a-z][a-z0-9_]+$/'],
+            'rate_tier' => ['nullable', 'string', 'in:standard,professional,enterprise,partner'],
+            'ttl_hours' => ['nullable', 'integer', 'min:1', 'max:8760'],
+        ]);
+
+        $scoped = $this->scopeToTenant($request, (string) $validated['tenant_id'], 'platform:apikey:manage');
+        if ($scoped instanceof JsonResponse) {
+            return $scoped;
+        }
+        $tenant = $scoped['tenant'];
+
+        $secret = 'sk_live_'.Str::random(32);
+        $key = new ApiKey();
+        $key->forceFill([
+            'tenant_id' => (string) $tenant->getKey(),
+            'name' => $validated['name'],
+            'prefix' => substr($secret, 0, 15),
+            'secret_hash' => hash('sha256', $secret),
+            'scopes' => array_values($validated['scopes'] ?? []),
+            'rate_tier' => $validated['rate_tier'] ?? 'standard',
+            'expires_at' => isset($validated['ttl_hours'])
+                ? now()->addHours($validated['ttl_hours'])->toDateTimeString()
+                : null,
+            'created_by' => (string) $request->user()->getAuthIdentifier(),
+        ]);
+        $key->save();
+
+        return new JsonResponse([
+            'data' => [
+                'id' => (string) $key->getKey(),
+                'object' => 'api_key',
+                'prefix' => $key->prefix,
+                'secret' => $secret,
+                'expires_at' => $key->expires_at,
+            ],
+            'meta' => ['request_id' => $this->requestId($request)],
+        ], 201);
+    }
+
+    public function revoke(Request $request, string $id): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->revokeJson($request, $id),
+            'API key revoked.',
+        );
+    }
+
+    private function revokeJson(Request $request, string $id): JsonResponse
+    {
+        if ($denied = $this->machineDenial($request)) {
+            return $denied;
+        }
+
+        $key = ApiKey::query()->find($id);
+
+        if ($key === null) {
+            return new JsonResponse([
+                'error' => ['code' => 'not_found', 'message' => 'Key not found.', 'request_id' => $this->requestId($request)],
+            ], 404);
+        }
+
+        $scoped = $this->scopeToTenant($request, (string) $key->tenant_id, 'platform:apikey:manage');
+        if ($scoped instanceof JsonResponse) {
+            return $scoped;
+        }
+
+        $key->forceFill(['revoked_at' => now()->toDateTimeString()])->save();
+
+        return new JsonResponse([
+            'data' => ['id' => (string) $key->getKey(), 'object' => 'api_key', 'revoked_at' => $key->revoked_at],
+            'meta' => ['request_id' => $this->requestId($request)],
+        ]);
+    }
+
+    public function rotate(Request $request, string $id): JsonResponse|RedirectResponse
+    {
+        return WebMutations::negotiate(
+            $request,
+            fn (): JsonResponse => $this->rotateJson($request, $id),
+            static fn (JsonResponse $result): string
+                => 'API key rotated — copy the new secret now, it is shown only once: '.WebMutations::stringData($result, 'secret'),
+        );
+    }
+
+    private function rotateJson(Request $request, string $id): JsonResponse
+    {
+        if ($denied = $this->machineDenial($request)) {
+            return $denied;
+        }
+
+        $key = ApiKey::query()->find($id);
+
+        if ($key === null || ! $key->isUsable()) {
+            return new JsonResponse([
+                'error' => ['code' => 'not_found', 'message' => 'Key not found.', 'request_id' => $this->requestId($request)],
+            ], 404);
+        }
+
+        $scoped = $this->scopeToTenant($request, (string) $key->tenant_id, 'platform:apikey:manage');
+        if ($scoped instanceof JsonResponse) {
+            return $scoped;
+        }
+
+        $secret = 'sk_live_'.Str::random(32);
+        $replacement = new ApiKey();
+        $replacement->forceFill([
+            'tenant_id' => $key->tenant_id,
+            'name' => $key->name.' (rotated)',
+            'prefix' => substr($secret, 0, 15),
+            'secret_hash' => hash('sha256', $secret),
+            'scopes' => $key->scopes ?? [],
+            'rate_tier' => $key->rate_tier,
+            'expires_at' => $key->expires_at?->toDateTimeString(),
+            'created_by' => (string) $request->user()->getAuthIdentifier(),
+        ]);
+        $replacement->save();
+
+        // Overlap window: old key stays valid 24h, then must be revoked.
+        // The overlap deadline rides the old row's note via expires_at only
+        // when it was previously null — existing expiry always wins.
+        if ($key->expires_at === null) {
+            $key->forceFill(['expires_at' => now()->addHours(24)->toDateTimeString()])->save();
+        }
+
+        return new JsonResponse([
+            'data' => [
+                'id' => (string) $replacement->getKey(),
+                'object' => 'api_key',
+                'prefix' => $replacement->prefix,
+                'secret' => $secret,
+                'supersedes' => (string) $key->getKey(),
+            ],
+            'meta' => ['request_id' => $this->requestId($request)],
+        ], 201);
+    }
+}

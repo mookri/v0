@@ -1,0 +1,204 @@
+# Navdhya Platform API — CI
+#
+# ACTIVATION: this file runs the day platform-navdhya becomes its own repo
+# (workflows execute from the repository root's .github only). Until then it is
+# the executable specification of backend CI: every step below is runnable
+# locally, and `docs/CI-CD-PIPELINE-PLAN.md` tracks the cutover as P1.
+#
+# Local equivalents:
+#   composer pint -- --test && composer phpstan && php artisan test
+#   php artisan api:compose --check && php artisan platform:doctor --json
+#
+# Design rules (same as the web repo):
+#   1. One required check: `backend-gate`.
+#   2. SQLite is the fast lane; MySQL 8 is the parity lane on main/merge queue.
+#   3. No truthy fallbacks, no unchecked `continue-on-error` on a gate.
+
+name: platform-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  merge_group:
+  workflow_call:
+  schedule:
+    # Nightly parity run: 21:30 UTC = 03:00 IST.
+    - cron: '30 21 * * *'
+
+concurrency:
+  group: platform-ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  APP_ENV: testing
+  APP_KEY: base64:ZHVtbXlrZXlmb3JjaW9ubHkwMDAwMDAwMDAwMDAwMDAwMDA=
+  APP_URL: http://127.0.0.1:8000
+  IDENTITY_HMAC_SECRET: ci-identity-hmac-secret-32-chars!!!!
+  CACHE_STORE: array
+  QUEUE_CONNECTION: sync
+  SESSION_DRIVER: array
+  MAIL_MAILER: array
+
+jobs:
+  # ── 1 · static analysis ───────────────────────────────────────────────────
+  static:
+    name: static (pint + phpstan + deptrac)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo_mysql, pdo_sqlite, sqlite3, sodium, intl
+          coverage: none
+          tools: composer:v2
+      - uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+      - run: composer install --no-progress --prefer-dist --no-interaction --no-scripts
+      - name: Pint
+        run: ./vendor/bin/pint --test
+      - name: PHPStan
+        run: ./vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+      - name: Deptrac (layer boundaries)
+        run: ./vendor/bin/deptrac analyse --no-cache
+
+  # ── 2 · API contract composition + routing ────────────────────────────────
+  contracts:
+    name: contracts (composition + caches)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo_mysql, pdo_sqlite, sqlite3, sodium, intl
+          coverage: none
+          tools: composer:v2
+      - run: composer install --no-progress --prefer-dist --no-interaction --no-scripts
+      - name: Lint the workflow files
+        run: docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.7
+      - name: Composed artifact is current
+        run: php artisan api:compose --check
+      - name: Route cache compiles
+        run: php artisan route:cache
+      - name: Config cache compiles
+        run: php artisan config:cache
+      - name: Self-diagnosis (diagnostic only, not a gate)
+        if: always()
+        continue-on-error: true
+        run: php artisan platform:doctor --json
+
+  # ── 3 · tests, fast lane (SQLite :memory:) ────────────────────────────────
+  test-sqlite:
+    name: tests (sqlite)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      DB_CONNECTION: central
+      CENTRAL_DB_DRIVER: sqlite
+      CENTRAL_DB_DATABASE: ':memory:'
+      TENANT_DB_DRIVER: sqlite
+      TENANT_DB_DATABASE: ':memory:'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo_mysql, pdo_sqlite, sqlite3, sodium, intl
+          coverage: none
+          tools: composer:v2
+      - run: composer install --no-progress --prefer-dist --no-interaction --no-scripts
+      - name: Test suites
+        run: php artisan test --no-ansi
+
+  # ── 4 · tests, parity lane (MySQL 8, both tenancy connections) ────────────
+  test-mysql:
+    name: tests (mysql 8)
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci/mysql')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: navdhya_ci_central
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -proot"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+    env:
+      DB_CONNECTION: central
+      CENTRAL_DB_DRIVER: mysql
+      CENTRAL_DB_HOST: 127.0.0.1
+      CENTRAL_DB_PORT: '3306'
+      CENTRAL_DB_DATABASE: navdhya_ci_central
+      CENTRAL_DB_USERNAME: root
+      CENTRAL_DB_PASSWORD: root
+      TENANT_DB_DRIVER: mysql
+      TENANT_DB_HOST: 127.0.0.1
+      TENANT_DB_PORT: '3306'
+      TENANT_DB_DATABASE: navdhya_ci_tenant
+      TENANT_DB_USERNAME: root
+      TENANT_DB_PASSWORD: root
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo_mysql, pdo_sqlite, sqlite3, sodium, intl
+          coverage: none
+          tools: composer:v2
+      - run: composer install --no-progress --prefer-dist --no-interaction --no-scripts
+      - name: Create the tenant database
+        run: mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS navdhya_ci_tenant;"
+      - name: Test suites
+        run: php artisan test --no-ansi
+
+  # ── 5 · dependency audit (blocking on critical) ───────────────────────────
+  audit:
+    name: composer audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer:v2
+      - run: composer install --no-progress --prefer-dist --no-interaction --no-scripts
+      - name: Composer audit (blocks on any published advisory)
+        # Composer has no severity filter; the plan (P2) narrows this with
+        # `--ignore-severity` once the current advisory set is triaged.
+        run: composer audit --no-dev --format=plain
+
+  # ── 6 · aggregator ────────────────────────────────────────────────────────
+  backend-gate:
+    name: backend-gate
+    if: always()
+    needs: [static, contracts, test-sqlite, test-mysql, audit]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Evaluate gate
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          set -euo pipefail
+          echo "$NEEDS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+          echo "$NEEDS" | jq -e 'to_entries | all(.value.result == "success" or .value.result == "skipped")' > /dev/null \
+            || { echo "::error title=Backend gate failed::one or more jobs did not succeed"; exit 1; }

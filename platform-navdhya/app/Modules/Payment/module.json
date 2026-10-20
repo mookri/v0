@@ -1,0 +1,19 @@
+{
+  "code": "payment",
+  "name": "Payments",
+  "version": "0.1.0",
+  "phase": 3,
+  "priority": 240,
+  "dependencies": ["booking"],
+  "actions": [],
+  "permissions": [],
+  "scopes": [],
+  "events": [
+    { "name": "payment.intent.created", "schema": "v1" },
+    { "name": "payment.intent.confirmed", "schema": "v1" },
+    { "name": "payment.intent.failed", "schema": "v1" },
+    { "name": "payment.intent.refunded", "schema": "v1" }
+  ],
+  "navigation": [],
+  "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/payment" }
+}

@@ -1,0 +1,23 @@
+{
+    "code": "search",
+    "name": "Search",
+    "version": "1.0.0",
+    "phase": 110,
+    "priority": 500,
+    "dependencies": ["seo_content"],
+    "permissions": [
+        {"code": "search:index:reindex", "name": "Reindex search documents", "sensitive": true},
+        {"code": "search:analytics:view", "name": "View search analytics", "sensitive": false},
+        {"code": "search:privileged:view", "name": "Privileged search access", "sensitive": true},
+        {"code": "search:pii:view", "name": "View full PII in privileged search", "sensitive": true}
+    ],
+    "scopes": ["search:read"],
+    "events": [
+        {"name": "search.index.updated", "schema": "Search/Events/schemas/index_updated.v1.json"}
+    ],
+    "navigation": [],
+    "actions": ["reindex"],
+    "api": {
+        "basePath": "search"
+    }
+}

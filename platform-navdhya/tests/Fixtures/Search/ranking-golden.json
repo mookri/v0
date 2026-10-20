@@ -1,0 +1,15 @@
+{
+  "corpus": [
+    { "id": "puja_service:g1", "type": "puja_service", "title": "Ganesh Puja", "subtitle": "Home ritual", "body": "A short ganesh puja for new beginnings.", "url": "/services/ganesh-puja", "city": "Pune", "locale": "en", "bookings_30d": 12, "views_7d": 40, "indexed_at": "2026-09-15T00:00:00+00:00" },
+    { "id": "puja_service:g2", "type": "puja_service", "title": "Ganesh Puja Vidhi and Procedure", "subtitle": "Detailed guide", "body": "Step by step ganesh puja vidhi.", "url": "/services/ganesh-puja-vidhi", "city": "Mumbai", "locale": "en", "bookings_30d": 3, "views_7d": 10, "indexed_at": "2026-09-01T00:00:00+00:00" },
+    { "id": "temple:t1", "type": "temple", "title": "Shree Ganesh Temple", "subtitle": "Pune", "body": "Famous temple for ganesh chaturthi.", "url": "/temples/shree-ganesh", "city": "Pune", "locale": "en", "bookings_30d": 0, "views_7d": 100, "indexed_at": "2026-08-01T00:00:00+00:00" },
+    { "id": "seo_page:s1", "type": "seo_page", "title": "How to perform Ganesh Puja at home", "subtitle": "Guide", "body": "Everything about ganesh puja at home.", "url": "/guides/ganesh-puja-home", "city": null, "locale": "en", "bookings_30d": 0, "views_7d": 5, "indexed_at": "2026-09-20T00:00:00+00:00" },
+    { "id": "pandit:p1", "type": "pandit", "title": "Pandit Ramesh Sharma", "subtitle": "Vedic specialist", "body": "Performs ganesh puja and havan.", "url": "/pandits/ramesh", "city": null, "locale": "en", "bookings_30d": 50, "views_7d": 20, "indexed_at": "2026-07-01T00:00:00+00:00" },
+    { "id": "puja_service:h1", "type": "puja_service", "title": "Puja Seva", "subtitle": "Hindi", "body": "Ganesh puja hindi mein", "url": "/services/puja-hi", "city": "Delhi", "locale": "hi", "bookings_30d": 8, "views_7d": 15, "indexed_at": "2026-09-10T00:00:00+00:00" }
+  ],
+  "queries": [
+    { "q": "ganesh puja", "locale": "en", "expected_first": "puja_service:g1" },
+    { "q": "ganesh temple", "locale": "en", "expected_first": "temple:t1" },
+    { "q": "pandit ramesh", "locale": "en", "expected_first": "pandit:p1" }
+  ]
+}
