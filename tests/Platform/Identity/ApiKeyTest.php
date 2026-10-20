@@ -20,7 +20,7 @@ final class ApiKeyTest extends TenantIntegrationTestCase
         $this->postJson('/api/v1/platform/api-keys', ['tenant_id' => $tid, 'name' => 'x'])
             ->assertUnauthorized();
 
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:apikey:view', 'platform:apikey:manage']);
         $this->stepUp($issuer);
         $authed = fn () => $this->actingAs($issuer);
 
@@ -49,7 +49,7 @@ final class ApiKeyTest extends TenantIntegrationTestCase
     public function test_key_authenticates_tenant_routes_and_revoke_bites(): void
     {
         $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:apikey:view', 'platform:apikey:manage']);
         $tid = (string) $tenant->getKey();
         $this->stepUp($issuer);
 

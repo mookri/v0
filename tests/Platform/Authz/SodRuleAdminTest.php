@@ -20,12 +20,36 @@ final class SodRuleAdminTest extends TenantIntegrationTestCase
         $this->getJson('/api/v1/platform/sod-rules?tenant_id=x')->assertUnauthorized();
     }
 
+    public function test_membership_alone_cannot_weaken_separation_of_duties(): void
+    {
+        // SoD rules are the runtime guard on every role grant, so letting
+        // any tenant member rewrite them is a self-service bypass of the
+        // whole control: with membership but no platform:sod:* capability
+        // the issuer must not be able to downgrade a blocking rule.
+        $tenant = $this->makeTenant();
+        [$issuer] = $this->actingAsMembership($tenant);
+        $tid = (string) $tenant->getKey();
+        $authed = fn () => $this->actingAs($issuer);
+
+        $authed()->getJson("/api/v1/platform/sod-rules?tenant_id={$tid}")
+            ->assertForbidden()
+            ->assertJsonPath('error.code', 'authorization_denied')
+            ->assertJsonPath('error.details.capability', 'platform:sod:view');
+
+        $authed()->postJson('/api/v1/platform/sod-rules', [
+            'tenant_id' => $tid, 'code' => 'sod.custom_duo', 'name' => 'Custom duo',
+            'permission_set' => ['catalog:item:manage', 'catalog:item:view'],
+        ])->assertForbidden()->assertJsonPath('error.code', 'authorization_denied');
+
+        $this->assertAuditRecorded($tenant, 'authz.denied');
+    }
+
     public function test_crud_lifecycle_with_events_and_audit(): void
     {
         Event::fake([SodRuleCreated::class, SodRuleUpdated::class]);
 
         $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:sod:view', 'platform:sod:configure']);
         $tid = (string) $tenant->getKey();
         $authed = fn () => $this->actingAs($issuer);
 
@@ -69,7 +93,7 @@ final class SodRuleAdminTest extends TenantIntegrationTestCase
     public function test_platform_rows_immutable_but_overridable(): void
     {
         $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:sod:view', 'platform:sod:configure']);
         $tid = (string) $tenant->getKey();
         $authed = fn () => $this->actingAs($issuer);
 

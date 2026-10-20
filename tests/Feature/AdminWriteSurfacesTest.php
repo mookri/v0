@@ -86,7 +86,7 @@ final class AdminWriteSurfacesTest extends TenantIntegrationTestCase
     public function test_role_create_via_web(): void
     {
         $tenant = $this->makeTenant();
-        $this->actingAsMembership($tenant);
+        $this->actingAsMembership($tenant, ['platform:role:manage']);
 
         $this->withHeader('Referer', 'http://localhost/platform/roles')
             ->post('/platform/roles', [
@@ -104,10 +104,28 @@ final class AdminWriteSurfacesTest extends TenantIntegrationTestCase
         ], 'central');
     }
 
+    public function test_role_create_on_web_is_denied_without_the_capability(): void
+    {
+        // Membership alone must not let a member mint a role for
+        // themselves — the whole escalation this gate closes.
+        $tenant = $this->makeTenant();
+        $user = User::factory()->create();
+        $this->makeMembership($tenant, $user);
+        $this->actingAs($user);
+
+        $this->post('/platform/roles', [
+            'tenant_id' => $tenant->getKey(),
+            'code' => 'self_promoted',
+            'name' => 'Self Promoted',
+        ])->assertForbidden();
+
+        $this->assertDatabaseMissing('roles', ['code' => 'self_promoted'], 'central');
+    }
+
     public function test_role_create_validation_failure_redirects_back_with_errors(): void
     {
         $tenant = $this->makeTenant();
-        $this->actingAsMembership($tenant);
+        $this->actingAsMembership($tenant, ['platform:role:manage']);
 
         $this->withHeader('Referer', 'http://localhost/platform/roles')
             ->post('/platform/roles', [
@@ -121,7 +139,7 @@ final class AdminWriteSurfacesTest extends TenantIntegrationTestCase
     public function test_sod_rule_create_toggle_and_delete_via_web(): void
     {
         $tenant = $this->makeTenant();
-        $this->actingAsMembership($tenant);
+        $this->actingAsMembership($tenant, ['platform:sod:configure']);
 
         $this->withHeader('Referer', 'http://localhost/platform/sod-rules')
             ->post('/platform/sod-rules', [

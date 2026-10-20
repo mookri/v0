@@ -5,9 +5,12 @@ namespace App\Platform\Authz\Http\Controllers;
 use App\Platform\Api\CursorPagination;
 use App\Platform\Api\WebMutations;
 use App\Platform\Audit\AuditWriter;
+use App\Platform\Authz\AuthorizationRequest;
 use App\Platform\Authz\Events\SodRuleCreated;
 use App\Platform\Authz\Events\SodRuleUpdated;
+use App\Platform\Authz\Exceptions\AuthorizationDeniedException;
 use App\Platform\Authz\Models\SodRule;
+use App\Platform\Authz\PolicyEvaluationEngine;
 use App\Platform\Tenancy\ConnectionResolver;
 use App\Platform\Tenancy\Models\Tenant;
 use App\Platform\Tenancy\Models\TenantMembership;
@@ -26,11 +29,19 @@ use Illuminate\Http\Request;
  * request fails closed (422). Every mutation is audit-logged and emits
  * its platform event; rule changes bump decision-cache generations via
  * the SodRule model hooks.
+ *
+ * These rows are the runtime guard on every role grant, so mutating one
+ * is a self-service bypass of separation-of-duties: membership alone
+ * must NOT suffice. Every action therefore demands `platform:sod:view` /
+ * `platform:sod:configure` through the full SEC-022 chain — see
+ * scopeToTenant()/requireCapability().
  */
 final class SodRuleController
 {
-    public function __construct(private readonly AuditWriter $audit)
-    {
+    public function __construct(
+        private readonly AuditWriter $audit,
+        private readonly PolicyEvaluationEngine $authz,
+    ) {
     }
 
     private function requestId(Request $request): string
@@ -39,9 +50,16 @@ final class SodRuleController
     }
 
     /**
+     * Scope to the caller's tenant, THEN enforce the capability (see
+     * RoleController::scopeToTenant for why the gate lives at this seam
+     * instead of in route middleware: these routes carry `tenant_id` in
+     * the query/body, and ResolveTenantContext is header-only for `api/*`).
+     * The scope order — tenant → membership → capability — keeps
+     * `membership_inactive` ahead of any capability probe.
+     *
      * @return array{tenant: Tenant, ownsContext: bool, context: TenantContext}|JsonResponse
      */
-    private function scopeToTenant(Request $request, string $tenantId): array|JsonResponse
+    private function scopeToTenant(Request $request, string $tenantId, string $capability): array|JsonResponse
     {
         if ($request->user() instanceof \App\Platform\Identity\MachinePrincipal) {
             return new JsonResponse([
@@ -79,7 +97,44 @@ final class SodRuleController
             );
         }
 
+        // Clear on denial too — every exit path of this method honours the
+        // ownsContext contract, a thrown check included.
+        try {
+            $this->requireCapability($request, $context, $capability);
+        } catch (\Throwable $denied) {
+            if ($ownsContext) {
+                $context->clear();
+            }
+
+            throw $denied;
+        }
+
         return ['tenant' => $tenant, 'ownsContext' => $ownsContext, 'context' => $context];
+    }
+
+    /**
+     * Full SEC-022 precedence-chain check (deny → constraints → grants →
+     * default deny), mirroring CheckCapability route middleware including
+     * its `authz.denied` audit record.
+     */
+    private function requireCapability(Request $request, TenantContext $context, string $capability): void
+    {
+        try {
+            $this->authz->ensure(new AuthorizationRequest(
+                principal: $request->user(),
+                capability: $capability,
+            ));
+        } catch (AuthorizationDeniedException $exception) {
+            if ($context->isResolved()) {
+                $this->audit->record(
+                    action: 'authz.denied',
+                    resource: ['module' => 'platform', 'resource_type' => 'capability', 'resource_id' => $capability],
+                    after: ['capability' => $capability, 'reason' => $exception->reason],
+                );
+            }
+
+            throw $exception;
+        }
     }
 
     public function index(Request $request): JsonResponse
@@ -91,7 +146,7 @@ final class SodRuleController
             ], 422);
         }
 
-        $scoped = $this->scopeToTenant($request, $tenantId);
+        $scoped = $this->scopeToTenant($request, $tenantId, 'platform:sod:view');
         if ($scoped instanceof JsonResponse) {
             return $scoped;
         }
@@ -137,7 +192,7 @@ final class SodRuleController
             'status' => ['sometimes', 'string', 'in:active,disabled'],
         ]);
 
-        $scoped = $this->scopeToTenant($request, $validated['tenant_id']);
+        $scoped = $this->scopeToTenant($request, $validated['tenant_id'], 'platform:sod:configure');
         if ($scoped instanceof JsonResponse) {
             return $scoped;
         }
@@ -215,7 +270,7 @@ final class SodRuleController
             'status' => ['sometimes', 'string', 'in:active,disabled'],
         ]);
 
-        $scoped = $this->scopeToTenant($request, $validated['tenant_id']);
+        $scoped = $this->scopeToTenant($request, $validated['tenant_id'], 'platform:sod:configure');
         if ($scoped instanceof JsonResponse) {
             return $scoped;
         }
@@ -297,7 +352,7 @@ final class SodRuleController
     {
         $validated = $request->validate(['tenant_id' => ['required', 'string']]);
 
-        $scoped = $this->scopeToTenant($request, $validated['tenant_id']);
+        $scoped = $this->scopeToTenant($request, $validated['tenant_id'], 'platform:sod:configure');
         if ($scoped instanceof JsonResponse) {
             return $scoped;
         }

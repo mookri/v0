@@ -35,7 +35,7 @@ final class ScopeEnforcementTest extends TenantIntegrationTestCase
     public function test_scopeless_key_denied_on_scoped_reads(): void
     {
         $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:apikey:view', 'platform:apikey:manage']);
         [$secret, $tid] = $this->keyWithScopes((string) $tenant->getKey(), (string) $issuer->getAuthIdentifier(), null);
         $headers = ['Authorization' => "Bearer {$secret}", 'X-Tenant-Id' => $tid];
 
@@ -48,7 +48,7 @@ final class ScopeEnforcementTest extends TenantIntegrationTestCase
     public function test_scopes_gate_per_module(): void
     {
         $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:apikey:view', 'platform:apikey:manage']);
         [$secret, $tid] = $this->keyWithScopes(
             (string) $tenant->getKey(),
             (string) $issuer->getAuthIdentifier(),
@@ -73,7 +73,7 @@ final class ScopeEnforcementTest extends TenantIntegrationTestCase
     public function test_capability_writes_still_deny_machines(): void
     {
         $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:apikey:view', 'platform:apikey:manage']);
         [$secret, $tid] = $this->keyWithScopes(
             (string) $tenant->getKey(),
             (string) $issuer->getAuthIdentifier(),
@@ -89,7 +89,7 @@ final class ScopeEnforcementTest extends TenantIntegrationTestCase
     public function test_malformed_scopes_rejected_at_issue(): void
     {
         $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:apikey:view', 'platform:apikey:manage']);
         $this->stepUp($issuer);
 
         $this->actingAs($issuer)->postJson('/api/v1/platform/api-keys', [

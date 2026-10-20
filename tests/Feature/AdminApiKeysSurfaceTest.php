@@ -19,7 +19,7 @@ final class AdminApiKeysSurfaceTest extends TenantIntegrationTestCase
     public function test_issue_via_web_is_stepup_gated_and_shows_the_secret_once(): void
     {
         $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:apikey:view', 'platform:apikey:manage']);
         $tid = (string) $tenant->getKey();
 
         $issue = fn () => $this->withHeader('Referer', 'http://localhost/platform/api-keys')
@@ -55,7 +55,7 @@ final class AdminApiKeysSurfaceTest extends TenantIntegrationTestCase
     public function test_revoke_and_rotate_via_web_share_the_action_and_gate(): void
     {
         $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:apikey:view', 'platform:apikey:manage']);
         $tid = (string) $tenant->getKey();
         $this->stepUp($issuer);
         $authed = fn () => $this->actingAs($issuer);

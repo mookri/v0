@@ -299,7 +299,7 @@ final class VendorOperationsTest extends TenantIntegrationTestCase
     public function test_payouts_stub_is_owner_scoped_with_cursor_pages(): void
     {
         $tenant = $this->makeTenant();
-        [$owner] = $this->actingAsMembership($tenant);
+        [$owner] = $this->actingAsMembership($tenant, ['vendor:payout:view']);
         $headers = $this->tenantHeaders($tenant);
         $vendorId = $this->ownedVendor($tenant, $owner, $headers);
         $payouts = '/api/v1/vendor/partner/vendors/'.$vendorId.'/payouts';
@@ -354,12 +354,12 @@ final class VendorOperationsTest extends TenantIntegrationTestCase
         [$stranger] = $this->actingAsMembership($tenant);
         $this->actingAs($stranger)->getJson($payouts, $headers)
             ->assertForbidden()
-            ->assertJsonPath('error.code', 'permission_missing');
+            ->assertJsonPath('error.code', 'authorization_denied');
 
         $other = $this->makeTenant();
         [$outsider] = $this->actingAsMembership($other);
         $this->actingAs($outsider)->getJson($payouts, $this->tenantHeaders($other))
-            ->assertNotFound()
-            ->assertJsonPath('error.code', 'not_found');
+            ->assertForbidden()
+            ->assertJsonPath('error.code', 'authorization_denied');
     }
 }

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Platform\Identity\Models\MfaStepUp;
+use App\Platform\Tenancy\Models\TenantMembership;
 use Tests\TenantIntegrationTestCase;
 
 /**
@@ -16,6 +17,23 @@ use Tests\TenantIntegrationTestCase;
  */
 final class AdminRolesSurfaceTest extends TenantIntegrationTestCase
 {
+    /**
+     * Assignments held by ONE membership. Scoped rather than a global
+     * `assertDatabaseCount`, and read through the raw query builder:
+     * `membership_role_assignments` carries BelongsToTenant's global scope,
+     * which filters on an ambient TenantContext that no longer holds after
+     * the request. The harness's own capability-granting role is a row in
+     * this table too, so this suite only ever claims counts about the
+     * target member.
+     */
+    private function assignmentsFor(TenantMembership $membership): int
+    {
+        return \Illuminate\Support\Facades\DB::connection('central')
+            ->table('membership_role_assignments')
+            ->where('membership_id', (string) $membership->getKey())
+            ->count();
+    }
+
     public function test_guests_cannot_read_assignments(): void
     {
         $this->getJson('/api/v1/platform/memberships/x/roles?tenant_id=x')
@@ -25,7 +43,7 @@ final class AdminRolesSurfaceTest extends TenantIntegrationTestCase
     public function test_assignments_endpoint_scopes_to_membership_and_tenant(): void
     {
         $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:role:view', 'platform:role:manage']);
         $tid = (string) $tenant->getKey();
         $this->stepUp($issuer);
         $authed = fn () => $this->actingAs($issuer);
@@ -60,7 +78,7 @@ final class AdminRolesSurfaceTest extends TenantIntegrationTestCase
     public function test_role_grant_via_web_shares_the_action_and_gate(): void
     {
         $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:role:view', 'platform:role:manage']);
         $tid = (string) $tenant->getKey();
 
         $this->actingAs($issuer)->postJson('/api/v1/platform/roles', [
@@ -79,13 +97,13 @@ final class AdminRolesSurfaceTest extends TenantIntegrationTestCase
 
         // No fresh proof → the step-up gate holds (403 page), no write.
         $grant()->assertForbidden();
-        $this->assertDatabaseCount('membership_role_assignments', 0, 'central');
+        $this->assertSame(0, $this->assignmentsFor($membership));
 
         $this->stepUp($issuer);
         $grant()
             ->assertRedirect('http://localhost/platform/users')
             ->assertSessionHas('flash', 'Role granted.');
-        $this->assertDatabaseCount('membership_role_assignments', 1, 'central');
+        $this->assertSame(1, $this->assignmentsFor($membership));
 
         // Returned envelopes (422 unknown role) negotiate to flash_error —
         // no write, same validator as the API path.
@@ -97,13 +115,13 @@ final class AdminRolesSurfaceTest extends TenantIntegrationTestCase
             ])
             ->assertRedirect('http://localhost/platform/users')
             ->assertSessionHas('flash_error', 'validation_failed: Unknown or disabled role.');
-        $this->assertDatabaseCount('membership_role_assignments', 1, 'central');
+        $this->assertSame(1, $this->assignmentsFor($membership));
     }
 
     public function test_role_revoke_via_web_shares_the_action_and_gate(): void
     {
         $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:role:view', 'platform:role:manage']);
         $tid = (string) $tenant->getKey();
         $this->stepUp($issuer);
         $authed = fn () => $this->actingAs($issuer);
@@ -135,13 +153,13 @@ final class AdminRolesSurfaceTest extends TenantIntegrationTestCase
             ]);
 
         $revoke()->assertForbidden();
-        $this->assertDatabaseCount('membership_role_assignments', 1, 'central');
+        $this->assertSame(1, $this->assignmentsFor($membership));
 
         $this->stepUp($issuer);
         $revoke()
             ->assertRedirect('http://localhost/platform/users')
             ->assertSessionHas('flash', 'Role revoked.');
-        $this->assertDatabaseCount('membership_role_assignments', 0, 'central');
+        $this->assertSame(0, $this->assignmentsFor($membership));
     }
 
     public function test_users_page_renders_the_roles_panel(): void

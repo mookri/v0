@@ -122,6 +122,10 @@ Route::prefix(config('platform.api_version', 'v1'))
             ->name('identity.invites.issue');
         Route::post('identity/invites/{id}:revoke', [\App\Platform\Identity\Http\Controllers\InviteController::class, 'revoke'])
             ->name('identity.invites.revoke');
+        // Machine API keys enforce `platform:apikey:view|manage` INSIDE
+        // ApiKeyController::scopeToTenant (same seam as role/SoD: these
+        // routes carry `tenant_id` in the query/body, ResolveTenantContext
+        // is header-only for `api/*`). Do not "tidy" into route middleware.
         Route::get('platform/api-keys', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'index'])
             ->name('api-keys.index');
         Route::post('platform/api-keys', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'issue'])
@@ -130,9 +134,6 @@ Route::prefix(config('platform.api_version', 'v1'))
         Route::post('platform/api-keys/{id}:revoke', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'revoke'])
             ->middleware([RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class])
             ->name('api-keys.revoke');
-        Route::post('platform/api-keys/{id}:rotate', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'rotate'])
-            ->middleware([RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class])
-            ->name('api-keys.rotate');
         Route::post('platform/api-keys/{id}:rotate', [\App\Platform\Identity\Http\Controllers\ApiKeyController::class, 'rotate'])
             ->middleware([RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class])
             ->name('api-keys.rotate');
@@ -160,6 +161,59 @@ Route::prefix(config('platform.api_version', 'v1'))
         Route::post('platform/users/{id}:deactivate', [\App\Platform\Identity\Http\Controllers\UserAdminController::class, 'deactivate'])
             ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:user:manage', RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class])
             ->name('users.deactivate');
+        // Read-only audit trail for the console (W2): tenant-scoped, gated by
+        // platform:audit:view. AuditLog rows are hash-chained and written in
+        // the same transaction as the domain change, so this only reads.
+        Route::get('platform/audit/logs', [\App\Platform\Audit\Http\Controllers\AuditLogController::class, 'index'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:audit:view'])
+            ->name('audit.logs.index');
+        // W2 cross-module read surfaces (stats / settings / billing): each is
+        // a tenant-scoped aggregate or config read, gated by its own capability.
+        Route::get('platform/stats', [\App\Http\Controllers\Ops\StatsController::class, 'index'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:ops:view'])
+            ->name('stats.index');
+        Route::get('platform/settings', [\App\Http\Controllers\Ops\SettingsController::class, 'index'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:config:manage'])
+            ->name('settings.index');
+        Route::get('platform/billing', [\App\Http\Controllers\Ops\BillingController::class, 'index'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:billing:view'])
+            ->name('billing.index');
+        // W2 cross-module ops roll-ups (bookings / content / seo / payouts):
+        // platform-wide read surfaces for the admin console, all gated by
+        // platform:ops:view. bookings + payouts are tenant-scoped; content + seo
+        // are central (global) tables.
+        Route::get('platform/ops/bookings', [\App\Http\Controllers\Ops\BookingsController::class, 'index'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:ops:view'])
+            ->name('ops.bookings.index');
+        Route::get('platform/ops/content', [\App\Http\Controllers\Ops\ContentController::class, 'index'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:ops:view'])
+            ->name('ops.content.index');
+        Route::get('platform/ops/seo', [\App\Http\Controllers\Ops\SeoController::class, 'index'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:ops:view'])
+            ->name('ops.seo.index');
+        Route::get('platform/ops/payouts', [\App\Http\Controllers\Ops\PayoutsController::class, 'index'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:ops:view'])
+            ->name('ops.payouts.index');
+        // W2 security + system read surfaces: security is tenant-scoped (MFA
+        // adoption is reported platform-wide since MFA proofs are user-keyed),
+        // system health is platform-global.
+        Route::get('platform/security', [\App\Http\Controllers\Ops\SecurityController::class, 'index'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:ops:view'])
+            ->name('security.index');
+        Route::get('platform/system', [\App\Http\Controllers\Ops\SystemController::class, 'index'])
+            ->middleware([CheckCapability::class . ':platform:ops:view'])
+            ->name('system.index');
+        // Role + SoD administration enforces `platform:role:view|manage` and
+        // `platform:sod:view|configure` INSIDE RoleController /
+        // SodRuleController::scopeToTenant rather than through a
+        // `ResolveTenantContext` + `CheckCapability` middleware pair. These
+        // routes carry `tenant_id` in the query/body (their wire contract),
+        // while ResolveTenantContext reads that header EXCLUSIVELY for
+        // `api/*` — a correct fail-closed posture this change does not
+        // amend — and the engine needs a TenantContext the controller only
+        // owns once it has scoped. The gate therefore runs at that seam,
+        // before any row is read or written. Do not "tidy" these into route
+        // middleware without also moving them onto the X-Tenant-Id contract.
         Route::get('platform/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'index'])
             ->name('roles.index');
         Route::post('platform/roles', [\App\Platform\Authz\Http\Controllers\RoleController::class, 'store'])

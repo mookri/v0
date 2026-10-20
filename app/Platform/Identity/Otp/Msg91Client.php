@@ -23,16 +23,30 @@ final class Msg91Client implements VerifiesOtpTokens
 {
     private const VERIFY_PATH = '/api/v5/widget/verifyAccessToken';
 
+    /**
+     * The deterministic drill token (runbook §drill identity): a real UI
+     * run against phone …9898989898 with code 123456 yields this token
+     * from the widget loader, and this client attests +91 9898989898 for
+     * it. It MUST NOT be honoured in a production environment — otherwise
+     * anyone presenting the magic token authenticates as that number. The
+     * flag is wired from `app()->environment(['local', 'testing'])` in
+     * AppServiceProvider; it defaults to false so a bare
+     * `new Msg91Client(...)` (and every production boot) falls through to
+     * the real HTTP verification.
+     */
+    private const DEV_SHORTCUT_TOKEN = 'test-token-9898989898';
+
     public function __construct(
         private readonly string $authKey,
         private readonly string $baseUrl,
         private readonly int $timeoutSeconds = 5,
+        private readonly bool $allowDevShortcuts = false,
     ) {
     }
 
     public function verify(string $accessToken): OtpTokenResult
     {
-        if ($accessToken === 'test-token-9898989898' || $accessToken === 'msg91-mock-jwt-token') {
+        if ($this->allowDevShortcuts && $accessToken === self::DEV_SHORTCUT_TOKEN) {
             return OtpTokenResult::attested('919898989898');
         }
 

@@ -15,10 +15,35 @@ final class RoleAdminTest extends TenantIntegrationTestCase
         $this->getJson('/api/v1/platform/roles?tenant_id=x')->assertUnauthorized();
     }
 
+    public function test_membership_alone_does_not_grant_role_administration(): void
+    {
+        // SEC-022: an active membership in the tenant is NOT an
+        // authorization grant. Without platform:role:* the issuer cannot
+        // read roles, and — the escalation this gates — cannot mint a role
+        // and hand it to a member of their own choosing.
+        $tenant = $this->makeTenant();
+        [$issuer] = $this->actingAsMembership($tenant);
+        $tid = (string) $tenant->getKey();
+        $this->stepUp($issuer);
+        $authed = fn () => $this->actingAs($issuer);
+
+        $authed()->getJson("/api/v1/platform/roles?tenant_id={$tid}")
+            ->assertForbidden()
+            ->assertJsonPath('error.code', 'authorization_denied')
+            ->assertJsonPath('error.details.capability', 'platform:role:view');
+
+        $authed()->postJson('/api/v1/platform/roles', [
+            'tenant_id' => $tid, 'code' => 'reviewer', 'name' => 'Reviewer',
+        ])->assertForbidden()->assertJsonPath('error.code', 'authorization_denied');
+
+        // The denial is audited like a route-level CheckCapability denial.
+        $this->assertAuditRecorded($tenant, 'authz.denied');
+    }
+
     public function test_roles_crud_and_assignment_lifecycle(): void
     {
         $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:role:view', 'platform:role:manage']);
         $tid = (string) $tenant->getKey();
         $this->stepUp($issuer);
         $authed = fn () => $this->actingAs($issuer);
@@ -35,7 +60,13 @@ final class RoleAdminTest extends TenantIntegrationTestCase
         ])->assertStatus(409);
 
         $listed = $authed()->getJson("/api/v1/platform/roles?tenant_id={$tid}")->assertOk();
-        $this->assertSame(['reviewer'], collect($listed->json('data'))->pluck('code')->all());
+        $codes = collect($listed->json('data'))->pluck('code')->all();
+        // The harness grants platform:role:* through a role of its own, and
+        // roles are tenant rows — so that role appears here too. Assert the
+        // two properties this test owns: the created row is listed, and the
+        // listing keeps its code ordering.
+        $this->assertContains('reviewer', $codes);
+        $this->assertSame($codes, collect($codes)->sort()->values()->all());
 
         $member = \App\Models\User::factory()->create();
         $membership = $this->makeMembership($tenant, $member);
@@ -77,7 +108,7 @@ final class RoleAdminTest extends TenantIntegrationTestCase
     public function test_role_revoke_is_step_up_gated_like_grant(): void
     {
         $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:role:view', 'platform:role:manage']);
         $tid = (string) $tenant->getKey();
         $this->stepUp($issuer);
         $authed = fn () => $this->actingAs($issuer);

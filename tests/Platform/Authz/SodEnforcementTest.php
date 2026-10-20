@@ -57,7 +57,10 @@ final class SodEnforcementTest extends TenantIntegrationTestCase
     private function tenantWithIssuer(): array
     {
         $tenant = $this->makeTenant();
-        [$issuer, $issuerMembership] = $this->actingAsMembership($tenant);
+        // The issuer administers roles: these tests exercise what happens
+        // AFTER authorization (SoD evaluation), so the issuer must clear
+        // platform:role:* first.
+        [$issuer, $issuerMembership] = $this->actingAsMembership($tenant, ['platform:role:view', 'platform:role:manage']);
         $this->stepUp($issuer);
 
         return [$tenant, $issuer, $issuerMembership];

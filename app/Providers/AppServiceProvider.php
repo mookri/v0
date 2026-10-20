@@ -118,6 +118,11 @@ class AppServiceProvider extends ServiceProvider
                 authKey: (string) config('services.msg91.auth_key', ''),
                 baseUrl: (string) config('services.msg91.verify_base_url', 'https://control.msg91.com'),
                 timeoutSeconds: (int) config('services.msg91.timeout', 5),
+                // Deterministic drill/e2e tokens are a local/test affordance
+                // only. Production (and any env that is neither) is
+                // fail-closed: the shortcut is never honoured, so a leaked
+                // magic token cannot authenticate as +91 9898989898.
+                allowDevShortcuts: app()->environment(['local', 'testing']),
             );
         });
 

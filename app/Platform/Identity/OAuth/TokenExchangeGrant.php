@@ -431,8 +431,12 @@ final class TokenExchangeGrant extends AbstractGrant
 
     private function expiredAt(mixed $at): bool
     {
+        // A missing expiry is NOT "never expires": a row with no
+        // expires_at is either corrupt or tampered with, and treating it
+        // as live would let an attacker strip the expiry claim to mint an
+        // immortal token. Fail closed.
         if ($at === null) {
-            return false;
+            return true;
         }
 
         if ($at instanceof DateTimeInterface) {

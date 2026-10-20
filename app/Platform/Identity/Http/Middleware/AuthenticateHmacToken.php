@@ -34,6 +34,13 @@ final class AuthenticateHmacToken
             if ($actor !== null) {
                 $user = User::query()->where('external_id', $actor['user_id'])->first();
                 if ($user !== null) {
+                    // A deactivated user must not authenticate even with a
+                    // technically valid HMAC actor token (SEC-022): the
+                    // token bridge never auto-provisions and never revives.
+                    if (! $user->isActive()) {
+                        throw new AuthenticationException('Unauthenticated.');
+                    }
+
                     $request->attributes->set('actor', $actor);
                     $this->guard()->setUser($user);
 

@@ -112,7 +112,7 @@ final class AdminEditSurfacesTest extends TenantIntegrationTestCase
     public function test_sod_rule_edit_via_web_shares_the_patch_action(): void
     {
         $tenant = $this->makeTenant();
-        $this->actingAsMembership($tenant);
+        $this->actingAsMembership($tenant, ['platform:sod:view', 'platform:sod:configure']);
 
         $this->withHeader('Referer', 'http://localhost/platform/sod-rules')
             ->post('/platform/sod-rules', [

@@ -52,6 +52,7 @@ Route::middleware(['scope:vendor:partner'])->group(function (): void {
         ->name('partner.vendors.orders.cancel');
 
     Route::get('partner/vendors/{id}/payouts', [VendorPayoutController::class, 'index'])
+        ->middleware('capability:vendor:payout:view')
         ->name('partner.vendors.payouts.index');
 });
 

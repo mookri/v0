@@ -15,7 +15,7 @@ final class StepUpTest extends TenantIntegrationTestCase
     {
         $tenant = $this->makeTenant();
         $tid = (string) $tenant->getKey();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:apikey:view', 'platform:apikey:manage']);
         $authed = fn () => $this->actingAs($issuer);
         $issue = fn () => $authed()->postJson('/api/v1/platform/api-keys', [
             'tenant_id' => $tid, 'name' => 'step-up probe',
@@ -41,7 +41,7 @@ final class StepUpTest extends TenantIntegrationTestCase
     {
         $tenant = $this->makeTenant();
         $tid = (string) $tenant->getKey();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:apikey:view', 'platform:apikey:manage']);
         $this->stepUp($issuer);
 
         $secret = $this->actingAs($issuer)->postJson('/api/v1/platform/api-keys', [

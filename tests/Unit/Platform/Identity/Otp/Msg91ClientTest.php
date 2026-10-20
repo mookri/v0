@@ -115,4 +115,33 @@ final class Msg91ClientTest extends TestCase
         $this->expectException(Msg91VerifyUnavailableException::class);
         $this->client->verify('some.jwt.token');
     }
+
+    public function test_dev_shortcut_is_refused_when_not_enabled(): void
+    {
+        // Default construction is the production posture: the magic token
+        // must never short-circuit — it goes to the wire, and the
+        // provider's verdict is what decides.
+        Http::fake([
+            'https://control.msg91.com/api/v5/widget/verifyAccessToken' => Http::response([
+                'data' => ['type' => 'error', 'message' => 'Invalid access token'],
+                'status' => '400',
+            ], 400),
+        ]);
+
+        $result = $this->client->verify('test-token-9898989898');
+
+        $this->assertFalse($result->verified);
+        $this->assertNull($result->identifier);
+        Http::assertSent(fn ($request) => $request['access_token'] === 'test-token-9898989898');
+    }
+
+    public function test_dev_shortcut_is_honoured_only_when_explicitly_enabled(): void
+    {
+        Http::fake();
+
+        $client = new Msg91Client(self::AUTH_KEY, self::BASE_URL, 5, allowDevShortcuts: true);
+
+        $this->assertSame('919898989898', $client->verify('test-token-9898989898')->identifier);
+        Http::assertNothingSent();
+    }
 }

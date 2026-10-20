@@ -569,3 +569,39 @@ plus3 key-store cases in `dpop-binding.test.ts`.
   sessions continue (file-backed key, parked-key cookie replays);
   issuer restart → token state is DB-backed, nothing dies; key-file
   wipe (e.g. `.next` clean) → the only re-login trigger.
+
+## Capability seeding (post-SEC-022)
+
+`platform:role:view|manage`, `platform:sod:view|configure` and
+`platform:apikey:view|manage` are default-deny and ship **no** seeder
+grant, exactly like `platform:policy:*` / `platform:user:*`. A fresh
+environment reproduces the same chain the runbook describes above:
+
+```sql
+-- one role per tenant holding all platform capabilities (six from the
+-- original security fix #2 plus four added by the console plan W2/W3)
+INSERT INTO roles (id, tenant_id, code, name, state, created_at, updated_at)
+VALUES ('<role-uuid>', '<tenant-id>', 'platform-admin', 'Platform admin',
+        'active', now(), now());
+
+INSERT INTO role_permissions (id, tenant_id, role_id, capability_code, created_at, updated_at)
+VALUES
+  ('<rp-1>', '<tenant-id>', '<role-uuid>', 'platform:role:view', now(), now()),
+  ('<rp-2>', '<tenant-id>', '<role-uuid>', 'platform:role:manage', now(), now()),
+  ('<rp-3>', '<tenant-id>', '<role-uuid>', 'platform:sod:view', now(), now()),
+  ('<rp-4>', '<tenant-id>', '<role-uuid>', 'platform:sod:configure', now(), now()),
+  ('<rp-5>', '<tenant-id>', '<role-uuid>', 'platform:apikey:view', now(), now()),
+  ('<rp-6>', '<tenant-id>', '<role-uuid>', 'platform:apikey:manage', now(), now()),
+  ('<rp-7>', '<tenant-id>', '<role-uuid>', 'platform:audit:view', now(), now()),
+  ('<rp-8>', '<tenant-id>', '<role-uuid>', 'platform:ops:view', now(), now()),
+  ('<rp-9>', '<tenant-id>', '<role-uuid>', 'platform:billing:view', now(), now()),
+  ('<rp-10>', '<tenant-id>', '<role-uuid>', 'platform:config:manage', now(), now());
+
+INSERT INTO membership_role_assignments (id, tenant_id, membership_id, role_id, created_at, updated_at)
+VALUES ('<mra-1>', '<tenant-id>', '<membership-id>', '<role-uuid>', now(), now());
+```
+
+Run `php artisan platform:sync-permissions` first so the capability
+metadata rows exist; the grants above are data, not metadata. Without
+them, local dev console role/SoD/API-key/audit/ops/settings/billing
+management answers 403 `authorization_denied` — intended, not a regression.

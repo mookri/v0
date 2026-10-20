@@ -536,4 +536,33 @@ class SearchController
         $result = trim(implode(' ', $suggestions));
         return $result !== '' && $result !== $query ? $result : null;
     }
+
+    /**
+     * POST /api/v1/search/reindex — reindex search documents.
+     *
+     * Capability `search:index:reindex`. Surfaces the `search:reindex`
+     * artisan command over HTTP so the console can trigger it without shell
+     * access. Optional `type` narrows to one entity type; `fresh` deletes
+     * all existing documents first.
+     */
+    public function reindex(Request $request): JsonResponse
+    {
+        $type = $request->input('type');
+        $type = is_string($type) && $type !== '' ? $type : null;
+        $chunk = (int) $request->input('chunk', 500);
+        $chunk = $chunk > 0 ? $chunk : 500;
+        $fresh = (bool) $request->boolean('fresh');
+
+        // `fresh` handling mirrors the artisan command: delete all first.
+        if ($fresh) {
+            \App\Modules\Search\Models\SearchDocument::query()->delete();
+        }
+
+        $stats = $this->indexer->reindex($type, $chunk);
+
+        return new JsonResponse([
+            'data' => $stats,
+            'meta' => ['request_id' => (string) $request->attributes->get('request_id', '')],
+        ]);
+    }
 }

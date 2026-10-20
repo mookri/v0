@@ -32,7 +32,7 @@ final class TierThrottleTest extends TenantIntegrationTestCase
     public function test_standard_key_trips_at_sixty_per_minute(): void
     {
         $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:apikey:view', 'platform:apikey:manage']);
         [$secret, $tid] = $this->keyWithTier((string) $tenant->getKey(), (string) $issuer->getAuthIdentifier(), 'standard');
         $headers = ['Authorization' => "Bearer {$secret}", 'X-Tenant-Id' => $tid];
 
@@ -50,7 +50,7 @@ final class TierThrottleTest extends TenantIntegrationTestCase
     public function test_enterprise_key_survives_sixty_one_requests(): void
     {
         $tenant = $this->makeTenant();
-        [$issuer] = $this->actingAsMembership($tenant);
+        [$issuer] = $this->actingAsMembership($tenant, ['platform:apikey:view', 'platform:apikey:manage']);
         [$secret, $tid] = $this->keyWithTier((string) $tenant->getKey(), (string) $issuer->getAuthIdentifier(), 'enterprise');
         $headers = ['Authorization' => "Bearer {$secret}", 'X-Tenant-Id' => $tid];
 

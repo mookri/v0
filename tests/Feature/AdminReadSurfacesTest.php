@@ -100,7 +100,22 @@ final class AdminReadSurfacesTest extends TenantIntegrationTestCase
             ->assertJsonFragment(['email' => $user->email]);
     }
 
-    public function test_session_cookie_reads_roles_for_the_workspace(): void
+    public function test_session_cookie_reads_roles_with_the_view_capability(): void
+    {
+        $tenant = $this->makeTenant();
+        $user = User::factory()->create();
+        $membership = $this->makeMembership($tenant, $user);
+        $this->grantCapabilities($tenant, $membership, ['platform:role:view']);
+
+        [$name, $value] = $this->loginSessionFor($user);
+
+        $this->withUnencryptedCookie($name, $value)
+            ->getJson("/api/v1/platform/roles?tenant_id={$tenant->getKey()}", $this->tenantHeaders($tenant))
+            ->assertOk()
+            ->assertJsonStructure(['data', 'meta' => ['request_id']]);
+    }
+
+    public function test_session_cookie_is_denied_roles_without_the_capability(): void
     {
         $tenant = $this->makeTenant();
         $user = User::factory()->create();
@@ -110,7 +125,8 @@ final class AdminReadSurfacesTest extends TenantIntegrationTestCase
 
         $this->withUnencryptedCookie($name, $value)
             ->getJson("/api/v1/platform/roles?tenant_id={$tenant->getKey()}", $this->tenantHeaders($tenant))
-            ->assertOk()
-            ->assertJsonStructure(['data', 'meta' => ['request_id']]);
+            ->assertForbidden()
+            ->assertJsonPath('error.code', 'authorization_denied')
+            ->assertJsonPath('error.details.capability', 'platform:role:view');
     }
 }

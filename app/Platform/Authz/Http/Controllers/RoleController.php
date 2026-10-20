@@ -6,8 +6,11 @@ use App\Platform\Authz\Models\MembershipRoleAssignment;
 use App\Platform\Authz\Models\Role;
 use App\Platform\Authz\Models\RolePermission;
 use App\Platform\Authz\Models\SodRule;
+use App\Platform\Authz\AuthorizationRequest;
 use App\Platform\Authz\Events\SodConflictBlocked;
 use App\Platform\Authz\Events\SodWarning;
+use App\Platform\Authz\Exceptions\AuthorizationDeniedException;
+use App\Platform\Authz\PolicyEvaluationEngine;
 use App\Platform\Authz\SodEvaluator;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Tenancy\ConnectionResolver;
@@ -27,12 +30,17 @@ use Illuminate\Http\Request;
  * Grants pass assignment-time SoD conflict evaluation (SEC-011 §7.2):
  * blocking rules reject with `sod_conflict`, warn rules proceed with a
  * `platform.sod.warning` event; every evaluation is audit-logged.
+ *
+ * Membership alone is NOT an authorization grant (SEC-022): every action
+ * additionally demands `platform:role:view` / `platform:role:manage`
+ * through the full precedence chain — see requireCapability().
  */
 final class RoleController
 {
     public function __construct(
         private readonly AuditWriter $audit,
         private readonly SodEvaluator $sod,
+        private readonly PolicyEvaluationEngine $authz,
     ) {
     }
 
@@ -42,9 +50,34 @@ final class RoleController
     }
 
     /**
+     * Capability gate at the tenant-scoping seam.
+     *
+     * WHY HERE AND NOT ON THE ROUTE: users/policies put
+     * `ResolveTenantContext` + `CheckCapability` in the route's middleware
+     * chain; role/SoD routes cannot. Those endpoints take the tenant from
+     * the X-Tenant-Id header, which `ResolveTenantContext` reads EXCLUSIVELY
+     * for `api/*` (its §41 "API surfaces stay header-only" rule — a
+     * correct fail-closed posture this change deliberately does not amend).
+     * These routes instead take `tenant_id` in the query/body, a wire
+     * contract their tests and console forms already depend on, so
+     * routing them through that middleware would rewrite 422
+     * `validation_failed` into 400 `tenant_header_missing`.
+     *
+     * The engine also needs a resolved TenantContext, which this controller
+     * only owns once scopeToTenant() has run — so the check executes
+     * immediately after `$context->set()` and BEFORE any row is read or
+     * written. Scope order is unchanged (tenant → membership → capability),
+     * so an outsider still sees `membership_inactive`, never a probe of
+     * which capabilities exist.
+     *
+     * Denials throw so WebMutations::negotiate keeps them on their real
+     * status (see its docblock): the envelope renders the same
+     * `authorization_denied` code + `error.details.capability` a
+     * route-level CheckCapability would produce, plus the audit record.
+     *
      * @return array{tenant: Tenant, ownsContext: bool, context: TenantContext}|JsonResponse
      */
-    private function scopeToTenant(Request $request, string $tenantId): array|JsonResponse
+    private function scopeToTenant(Request $request, string $tenantId, string $capability): array|JsonResponse
     {
         $tenant = Tenant::query()->find($tenantId);
         if ($tenant === null || $tenant->state !== Tenant::STATE_ACTIVE) {
@@ -76,7 +109,45 @@ final class RoleController
             );
         }
 
+        // Clear on denial too — the file's `finally { ... clear() }`
+        // discipline must hold on every exit path, or a thrown check
+        // would leave a resolved context behind for the error renderer.
+        try {
+            $this->requireCapability($request, $context, $capability);
+        } catch (\Throwable $denied) {
+            if ($ownsContext) {
+                $context->clear();
+            }
+
+            throw $denied;
+        }
+
         return ['tenant' => $tenant, 'ownsContext' => $ownsContext, 'context' => $context];
+    }
+
+    /**
+     * Full SEC-022 precedence-chain check (deny → constraints → grants →
+     * default deny), mirroring CheckCapability route middleware including
+     * its `authz.denied` audit record.
+     */
+    private function requireCapability(Request $request, TenantContext $context, string $capability): void
+    {
+        try {
+            $this->authz->ensure(new AuthorizationRequest(
+                principal: $request->user(),
+                capability: $capability,
+            ));
+        } catch (AuthorizationDeniedException $exception) {
+            if ($context->isResolved()) {
+                $this->audit->record(
+                    action: 'authz.denied',
+                    resource: ['module' => 'platform', 'resource_type' => 'capability', 'resource_id' => $capability],
+                    after: ['capability' => $capability, 'reason' => $exception->reason],
+                );
+            }
+
+            throw $exception;
+        }
     }
 
     public function index(Request $request): JsonResponse
@@ -88,7 +159,7 @@ final class RoleController
             ], 422);
         }
 
-        $scoped = $this->scopeToTenant($request, $tenantId);
+        $scoped = $this->scopeToTenant($request, $tenantId, 'platform:role:view');
         if ($scoped instanceof JsonResponse) {
             return $scoped;
         }
@@ -121,7 +192,7 @@ final class RoleController
             'name' => ['required', 'string', 'max:190'],
         ]);
 
-        $scoped = $this->scopeToTenant($request, $validated['tenant_id']);
+        $scoped = $this->scopeToTenant($request, $validated['tenant_id'], 'platform:role:manage');
         if ($scoped instanceof JsonResponse) {
             return WebMutations::negotiate($request, $scoped, '');
         }
@@ -169,7 +240,7 @@ final class RoleController
     {
         $validated = $request->validate(['tenant_id' => ['required', 'string']]);
 
-        $scoped = $this->scopeToTenant($request, $validated['tenant_id']);
+        $scoped = $this->scopeToTenant($request, $validated['tenant_id'], 'platform:role:view');
         if ($scoped instanceof JsonResponse) {
             return $scoped;
         }
@@ -225,7 +296,7 @@ final class RoleController
             'role_code' => ['required', 'string'],
         ]);
 
-        $scoped = $this->scopeToTenant($request, $validated['tenant_id']);
+        $scoped = $this->scopeToTenant($request, $validated['tenant_id'], 'platform:role:manage');
         if ($scoped instanceof JsonResponse) {
             return $scoped;
         }
@@ -364,7 +435,7 @@ final class RoleController
     {
         $validated = $request->validate(['tenant_id' => ['required', 'string']]);
 
-        $scoped = $this->scopeToTenant($request, $validated['tenant_id']);
+        $scoped = $this->scopeToTenant($request, $validated['tenant_id'], 'platform:role:manage');
         if ($scoped instanceof JsonResponse) {
             return $scoped;
         }

@@ -3,10 +3,16 @@
 namespace App\Platform\Identity\Http\Controllers;
 
 use App\Platform\Api\WebMutations;
+use App\Platform\Audit\AuditWriter;
+use App\Platform\Authz\AuthorizationRequest;
+use App\Platform\Authz\Exceptions\AuthorizationDeniedException;
+use App\Platform\Authz\PolicyEvaluationEngine;
 use App\Platform\Identity\Models\ApiKey;
 use App\Platform\Identity\MachinePrincipal;
+use App\Platform\Tenancy\ConnectionResolver;
 use App\Platform\Tenancy\Models\Tenant;
 use App\Platform\Tenancy\Models\TenantMembership;
+use App\Platform\Tenancy\TenantContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,9 +23,21 @@ use Illuminate\Support\Str;
  * revoke (immediate), rotate (24h dual-active overlap). Secrets are
  * SHA-256 stored; rotation creates a new row and revokes the old after
  * the overlap — never secret edits.
+ *
+ * A key is a long-lived machine credential whose scopes decide what a
+ * machine principal may do afterwards, so MINTING ONE IS A PRIVILEGE
+ * GRANT in its own right: membership alone must NOT suffice. Every
+ * action therefore demands `platform:apikey:view` / `platform:apikey:manage`
+ * through the full SEC-022 chain — see scopeToTenant().
  */
 final class ApiKeyController
 {
+    public function __construct(
+        private readonly AuditWriter $audit,
+        private readonly PolicyEvaluationEngine $authz,
+    ) {
+    }
+
     private function requestId(Request $request): string
     {
         return (string) $request->attributes->get('request_id', '');
@@ -42,15 +60,23 @@ final class ApiKeyController
         return null;
     }
 
-    public function index(Request $request): JsonResponse
+    /**
+     * Capability gate at the tenant-scoping seam (same seam as
+     * RoleController::scopeToTenant / SodRuleController::scopeToTenant —
+     * see RoleController for why these checks live here rather than in
+     * route middleware: these routes carry `tenant_id` in the query/body,
+     * ResolveTenantContext is header-only for `api/*`, and the engine
+     * needs a TenantContext this controller only owns once it has scoped).
+     *
+     * Scope order is unchanged — tenant → membership → capability — so an
+     * outsider still sees `membership_inactive`, never a probe of which
+     * capabilities exist.
+     *
+     * @return array{tenant: Tenant, ownsContext: bool, context: TenantContext}|JsonResponse
+     */
+    private function scopeToTenant(Request $request, string $tenantId, string $capability): array|JsonResponse
     {
-        if ($denied = $this->machineDenial($request)) {
-            return $denied;
-        }
-
-        $validated = $request->validate(['tenant_id' => ['required', 'string']]);
-
-        $tenant = Tenant::query()->find($validated['tenant_id']);
+        $tenant = Tenant::query()->find($tenantId);
         if ($tenant === null || $tenant->state !== Tenant::STATE_ACTIVE) {
             return new JsonResponse([
                 'error' => ['code' => 'not_found', 'message' => 'Tenant unavailable.', 'request_id' => $this->requestId($request)],
@@ -68,7 +94,79 @@ final class ApiKeyController
             ], 403);
         }
 
-        $keys = ApiKey::query()->where('tenant_id', (string) $tenant->getKey())->orderByDesc('created_at')->get();
+        $context = app(TenantContext::class);
+        $ownsContext = ! $context->isResolved();
+        if ($ownsContext) {
+            $context->set(
+                (string) $tenant->getKey(),
+                (string) $issuer->getKey(),
+                $issuer->org_node_id,
+                (new ConnectionResolver())->cachedFor($tenant),
+                ['user_id' => (string) $request->user()->getAuthIdentifier()]
+            );
+        }
+
+        // Clear on denial too — every exit path of this method honours the
+        // ownsContext contract, a thrown check included.
+        try {
+            $this->requireCapability($request, $context, $capability);
+        } catch (\Throwable $denied) {
+            if ($ownsContext) {
+                $context->clear();
+            }
+
+            throw $denied;
+        }
+
+        // Downstream code (key queries, issuance) filters by explicit
+        // tenant_id, not the ambient context — clear it now so the singleton
+        // does not leak into the next request's ResolveTenantContext.
+        if ($ownsContext) {
+            $context->clear();
+        }
+
+        return ['tenant' => $tenant, 'ownsContext' => false, 'context' => $context];
+    }
+
+    /**
+     * Full SEC-022 precedence-chain check (deny → constraints → grants →
+     * default deny), mirroring CheckCapability route middleware including
+     * its `authz.denied` audit record.
+     */
+    private function requireCapability(Request $request, TenantContext $context, string $capability): void
+    {
+        try {
+            $this->authz->ensure(new AuthorizationRequest(
+                principal: $request->user(),
+                capability: $capability,
+            ));
+        } catch (AuthorizationDeniedException $exception) {
+            if ($context->isResolved()) {
+                $this->audit->record(
+                    action: 'authz.denied',
+                    resource: ['module' => 'identity', 'resource_type' => 'capability', 'resource_id' => $capability],
+                    after: ['capability' => $capability, 'reason' => $exception->reason],
+                );
+            }
+
+            throw $exception;
+        }
+    }
+
+    public function index(Request $request): JsonResponse
+    {
+        if ($denied = $this->machineDenial($request)) {
+            return $denied;
+        }
+
+        $validated = $request->validate(['tenant_id' => ['required', 'string']]);
+
+        $scoped = $this->scopeToTenant($request, (string) $validated['tenant_id'], 'platform:apikey:view');
+        if ($scoped instanceof JsonResponse) {
+            return $scoped;
+        }
+
+        $keys = ApiKey::query()->where('tenant_id', (string) $scoped['tenant']->getKey())->orderByDesc('created_at')->get();
 
         return new JsonResponse([
             'data' => $keys->map(static fn (ApiKey $key): array => [
@@ -116,23 +214,11 @@ final class ApiKeyController
             'ttl_hours' => ['nullable', 'integer', 'min:1', 'max:8760'],
         ]);
 
-        $tenant = Tenant::query()->find($validated['tenant_id']);
-        if ($tenant === null || $tenant->state !== Tenant::STATE_ACTIVE) {
-            return new JsonResponse([
-                'error' => ['code' => 'not_found', 'message' => 'Tenant unavailable.', 'request_id' => $this->requestId($request)],
-            ], 404);
+        $scoped = $this->scopeToTenant($request, (string) $validated['tenant_id'], 'platform:apikey:manage');
+        if ($scoped instanceof JsonResponse) {
+            return $scoped;
         }
-
-        $issuer = TenantMembership::query()
-            ->where('tenant_id', (string) $tenant->getKey())
-            ->where('user_id', (string) $request->user()->getAuthIdentifier())
-            ->where('state', TenantMembership::STATE_ACTIVE)
-            ->first();
-        if ($issuer === null) {
-            return new JsonResponse([
-                'error' => ['code' => 'membership_inactive', 'message' => 'No active membership in this tenant.', 'request_id' => $this->requestId($request)],
-            ], 403);
-        }
+        $tenant = $scoped['tenant'];
 
         $secret = 'sk_live_'.Str::random(32);
         $key = new ApiKey();
@@ -185,15 +271,9 @@ final class ApiKeyController
             ], 404);
         }
 
-        $issuer = TenantMembership::query()
-            ->where('tenant_id', $key->tenant_id)
-            ->where('user_id', (string) $request->user()->getAuthIdentifier())
-            ->where('state', TenantMembership::STATE_ACTIVE)
-            ->first();
-        if ($issuer === null) {
-            return new JsonResponse([
-                'error' => ['code' => 'membership_inactive', 'message' => 'No active membership in this tenant.', 'request_id' => $this->requestId($request)],
-            ], 403);
+        $scoped = $this->scopeToTenant($request, (string) $key->tenant_id, 'platform:apikey:manage');
+        if ($scoped instanceof JsonResponse) {
+            return $scoped;
         }
 
         $key->forceFill(['revoked_at' => now()->toDateTimeString()])->save();
@@ -228,15 +308,9 @@ final class ApiKeyController
             ], 404);
         }
 
-        $issuer = TenantMembership::query()
-            ->where('tenant_id', $key->tenant_id)
-            ->where('user_id', (string) $request->user()->getAuthIdentifier())
-            ->where('state', TenantMembership::STATE_ACTIVE)
-            ->first();
-        if ($issuer === null) {
-            return new JsonResponse([
-                'error' => ['code' => 'membership_inactive', 'message' => 'No active membership in this tenant.', 'request_id' => $this->requestId($request)],
-            ], 403);
+        $scoped = $this->scopeToTenant($request, (string) $key->tenant_id, 'platform:apikey:manage');
+        if ($scoped instanceof JsonResponse) {
+            return $scoped;
         }
 
         $secret = 'sk_live_'.Str::random(32);

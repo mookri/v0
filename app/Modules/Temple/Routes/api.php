@@ -71,12 +71,15 @@ Route::middleware(['scope:temple:partner'])->group(function () {
         ->name('partner.temples.managers.index');
 
     Route::post('partner/temples/{templeId}/managers', [TempleManagerController::class, 'store'])
+        ->middleware('capability:temple:manager:manage')
         ->name('partner.temples.managers.store');
 
     Route::put('partner/temples/{templeId}/managers/{managerId}', [TempleManagerController::class, 'update'])
+        ->middleware('capability:temple:manager:manage')
         ->name('partner.temples.managers.update');
 
     Route::delete('partner/temples/{templeId}/managers/{managerId}', [TempleManagerController::class, 'destroy'])
+        ->middleware('capability:temple:manager:manage')
         ->name('partner.temples.managers.destroy');
 
     // Temple dashboard

@@ -59,12 +59,30 @@ return [
         // The kernel has no on-disk module.json (doc 05 §2.4); its
         // manifest entries are declared here and materialized by
         // platform:sync-permissions.
+        //
+        // `view` and `configure` come from ManifestValidator::CORE_ACTIONS;
+        // `explain` and `manage` are the kernel's declared extension above.
+        // role/sod declarations back the capability gates inside
+        // RoleController::scopeToTenant / SodRuleController::scopeToTenant
+        // (SEC-022): granting them is a role_permissions + policy concern
+        // exactly like platform:policy:* — no seeder ships one, the
+        // capability chain is seeded per environment.
         'permissions' => [
             ['code' => 'platform:policy:view', 'name' => 'View policies'],
             ['code' => 'platform:policy:configure', 'name' => 'Configure policies', 'sensitive' => true],
             ['code' => 'platform:authz:explain', 'name' => 'Explain authorization decisions', 'sensitive' => true],
             ['code' => 'platform:user:view', 'name' => 'View users'],
             ['code' => 'platform:user:manage', 'name' => 'Suspend and deactivate users', 'sensitive' => true],
+            ['code' => 'platform:role:view', 'name' => 'View roles'],
+            ['code' => 'platform:role:manage', 'name' => 'Create roles and change assignments', 'sensitive' => true],
+            ['code' => 'platform:sod:view', 'name' => 'View separation-of-duties rules'],
+            ['code' => 'platform:sod:configure', 'name' => 'Configure separation-of-duties rules', 'sensitive' => true],
+            ['code' => 'platform:apikey:view', 'name' => 'View machine API keys'],
+            ['code' => 'platform:apikey:manage', 'name' => 'Issue, revoke and rotate machine API keys', 'sensitive' => true],
+            ['code' => 'platform:audit:view', 'name' => 'View the tenant audit trail'],
+            ['code' => 'platform:ops:view', 'name' => 'View platform operations roll-ups'],
+            ['code' => 'platform:billing:view', 'name' => 'View billing and plan information'],
+            ['code' => 'platform:config:manage', 'name' => 'Manage global platform configuration', 'sensitive' => true],
         ],
         'scopes' => [],
         'events' => [

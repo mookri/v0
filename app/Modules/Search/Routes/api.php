@@ -21,6 +21,14 @@ Route::middleware(['capability:search:privileged:view', 'throttle:search-privile
             ->name('search.privileged');
     });
 
+// Reindex (capability-gated, step-up-free): surfaces the search:reindex
+// artisan command over HTTP so the console can trigger it.
+Route::middleware(['capability:search:index:reindex', 'throttle:search-privileged'])
+    ->group(function () {
+        Route::post('reindex', [SearchController::class, 'reindex'])
+            ->name('search.reindex');
+    });
+
 Route::withoutMiddleware(['auth.any', 'tenant'])->group(function () {
     Route::middleware(['throttle:search-public'])->group(function () {
         Route::get('/', [SearchController::class, 'search'])->name('search.search');
