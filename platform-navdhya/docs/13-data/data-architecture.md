@@ -132,6 +132,12 @@ Database-level foreign keys are allowed only within one module's tables. Cross-m
   `tenant_shared` **and** every dedicated tenant DB; progress is tracked in a
   central `tenant_migrations` table (`migration, connection, tenant_id NULL,
   batch, applied_at`) where `tenant_id NULL` means `tenant_shared`.
+
+> **Implementation note (2026-10-20):** `migrate:tenants` is documented above
+> but is **not registered** in the current checkout's `php artisan list`.
+> Verify the actual tenant migration execution path with the backend owner
+> before relying on it in a deploy. Central migrations are the verified path
+> (`php artisan migrate`).
 - New dedicated databases are created from the current full tenant schema
   (`tenant:provision-db --tenant=<id>` dumps + replays the schema, then
   records all migrations as applied).

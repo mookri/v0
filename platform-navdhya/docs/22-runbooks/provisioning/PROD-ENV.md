@@ -1,5 +1,12 @@
 # PROD-ENV: Production Environment (CI/CD + Vault Sync)
 
+> **Status: Target — not the current deployment.** The current backend deploy
+> is host-based, has no Dockerfile and stores its environment on the host
+> (see [`../deploy.md`](../deploy.md) and
+> [`../../../../docs/operations/BACKEND.md`](../../../../docs/operations/BACKEND.md)).
+> This page describes a proposed Vault/ECS-style environment. Do not follow it
+> as the live procedure until the infrastructure exists.
+
 **Target:** All production secrets injected at deploy time via GitHub Actions + Vault
 **Model:** Hybrid — GitHub Environments for runtime config, Vault for secrets, sync via OIDC
 

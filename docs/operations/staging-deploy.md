@@ -1,5 +1,12 @@
 # Staging Deploy Matrix
 
+> **Status: Historical (2026-10-01 drill).** This page records a local
+> production-build drill, not a deployed staging environment. The "staging
+> origin" column uses production domains as placeholders. Current procedures:
+> [`DEPLOYMENT.md`](DEPLOYMENT.md), [`ENVIRONMENTS.md`](ENVIRONMENTS.md) and
+> [`ROLLBACK.md`](ROLLBACK.md). The 18-page count below is from that drill;
+> the customer app has since grown (54 pages at the 2026-10 review).
+
 Target: prove each app boots standalone with mocks, behind its own origin,
 before any production cutover (phase 25).
 
@@ -26,8 +33,9 @@ before any production cutover (phase 25).
 3. BFF routes return envelope errors (no stack leaks) when unauthenticated.
 4. Old web routes still live (strangler fallback intact).
 
-Status: matrix documented; deploy run pending (see `migration-status.yaml`
-`19-staging-deploy`).
+Status: **Historical.** The 2026-10-01 local drill is complete; no deployed
+staging environment is recorded as of 2026-10-20. Current procedures are in
+[`DEPLOYMENT.md`](DEPLOYMENT.md) and [`ENVIRONMENTS.md`](ENVIRONMENTS.md).
 
 ## Local staging run (2026-10-01, Windows dev box, node v24 vs wanted 20.x)
 
