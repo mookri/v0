@@ -10,9 +10,28 @@ import type { Locale } from "@/i18n";
 export type MessageNode = string | { [key: string]: MessageNode };
 export type MessageBundle = { [key: string]: MessageNode };
 
-const MESSAGES_DIR = join(process.cwd(), "messages");
+// `process.cwd()` is the app directory when Next.js serves the app, but a
+// repo-root script (`pnpm i18n:check`) imports this module from the monorepo
+// root. Accept both layouts instead of failing on cwd.
+const MESSAGES_DIRS = [
+  join(process.cwd(), "messages"),
+  join(process.cwd(), "apps", "web", "messages"),
+];
 
 const _cache = new Map<Locale, MessageBundle>();
+
+/** Read the first candidate directory that contains `<locale>.json`. */
+async function readBundle(locale: Locale): Promise<MessageBundle | null> {
+  for (const dir of MESSAGES_DIRS) {
+    try {
+      const raw = await fs.readFile(join(dir, `${locale}.json`), "utf8");
+      return JSON.parse(raw) as MessageBundle;
+    } catch {
+      // Try the next candidate; a missing file is not fatal until all fail.
+    }
+  }
+  return null;
+}
 
 /**
  * Load all messages for a locale from `messages/<locale>.json`.
@@ -22,18 +41,15 @@ const _cache = new Map<Locale, MessageBundle>();
  */
 export async function loadMessages(locale: Locale): Promise<MessageBundle> {
   if (_cache.has(locale)) return _cache.get(locale)!;
-  const file = join(MESSAGES_DIR, `${locale}.json`);
-  try {
-    const raw = await fs.readFile(file, "utf8");
-    const parsed = JSON.parse(raw) as MessageBundle;
+  const parsed = await readBundle(locale);
+  if (parsed !== null) {
     _cache.set(locale, parsed);
     return parsed;
-  } catch {
-    if (locale === "en") throw new Error(`i18n: missing messages/en.json (required)`);
-    const empty: MessageBundle = {};
-    _cache.set(locale, empty);
-    return empty;
   }
+  if (locale === "en") throw new Error(`i18n: missing messages/en.json (required)`);
+  const empty: MessageBundle = {};
+  _cache.set(locale, empty);
+  return empty;
 }
 
 /**

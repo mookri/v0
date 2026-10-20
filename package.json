@@ -21,7 +21,7 @@
     "secrets:baseline": "detect-secrets-scan --create-baseline .secrets.baseline",
     "secrets:check": "detect-secrets-scan --baseline .secrets.baseline",
     "i18n:translate": "npx tsx scripts/translate.ts",
-    "i18n:check": "npx tsx scripts/check-bundle-parity.ts",
+    "i18n:check": "npx tsx --tsconfig apps/web/tsconfig.json scripts/check-bundle-parity.ts",
     "domain:check": "node tooling/scripts/domain-check.js",
     "verify": "turbo run typecheck lint test",
     "check:architecture": "vitest run tests/architecture && node tooling/scripts/domain-check.js availability booking pandit pricing puja recommendations search user payment"

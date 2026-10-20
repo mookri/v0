@@ -31,7 +31,11 @@
 //   The signing key should be set via the `CSRF_SECRET` environment
 //   variable. If unset, a per-process ephemeral key is used
 //   (resets on every restart) which is fine for dev/CI but MUST
-//   be set in production. The check is at module load.
+//   be set in production. The check runs on first use, not at
+//   import: `next build` imports every route to collect page data
+//   with NODE_ENV=production, and a build must never require a
+//   runtime secret. Issuing or validating a token still fails
+//   closed when the secret is missing in production.
 
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
@@ -40,25 +44,39 @@ const CSRF_HEADER = "x-csrf-token";
 const CSRF_FORM_FIELD = "_csrf";
 const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000; // 24h
 
-const SERVER_SECRET =
-  process.env.CSRF_SECRET ??
-  // Ephemeral dev/CI secret. Logged once so the operator notices.
-  (() => {
-    if (process.env.NODE_ENV === "production") {
-      // Fail-closed: if there's no CSRF_SECRET in production, refuse
-      // to issue tokens (the helper will throw on first call).
-      throw new Error(
-        "CSRF_SECRET is not set in production; refusing to issue CSRF tokens.",
-      );
-    }
-    const e = randomBytes(32).toString("hex");
-    // eslint-disable-next-line no-console
-    console.warn(
-      "[csrf] No CSRF_SECRET set; using an ephemeral dev-only secret. " +
-        "Set CSRF_SECRET in production.",
+let cachedServerSecret: string | null = null;
+
+/**
+ * Resolve the signing key lazily. Fail-closed in production: without
+ * CSRF_SECRET the first attempt to sign throws, so no token can be issued or
+ * accepted. The throw is deliberately not at module scope, because Next.js
+ * imports route modules while prerendering a production build.
+ */
+function resolveServerSecret(): string {
+  if (cachedServerSecret !== null) return cachedServerSecret;
+
+  const configured = process.env.CSRF_SECRET;
+  if (configured) {
+    cachedServerSecret = configured;
+    return cachedServerSecret;
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "CSRF_SECRET is not set in production; refusing to issue CSRF tokens.",
     );
-    return e;
-  })();
+  }
+
+  // Ephemeral dev/CI secret. Logged once so the operator notices.
+  const ephemeral = randomBytes(32).toString("hex");
+  // eslint-disable-next-line no-console
+  console.warn(
+    "[csrf] No CSRF_SECRET set; using an ephemeral dev-only secret. " +
+      "Set CSRF_SECRET in production.",
+  );
+  cachedServerSecret = ephemeral;
+  return cachedServerSecret;
+}
 
 export interface CsrfTokenOptions {
   /** TTL in milliseconds. Default 24h. */
@@ -75,7 +93,7 @@ export interface CsrfTokenResult {
 }
 
 function sign(value: string): string {
-  return createHmac("sha256", SERVER_SECRET).update(value).digest("base64url");
+  return createHmac("sha256", resolveServerSecret()).update(value).digest("base64url");
 }
 
 /** Issue a fresh CSRF token + the Set-Cookie attributes. */

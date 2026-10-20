@@ -1,6 +1,9 @@
 import { TemplesListView } from '@/presentation/temples/TemplesListView';
 import { partnerApi } from '@/adapters/backend/partner-api-client';
 
+// Per-request data: tenant-scoped, and the builder has no API to call.
+export const dynamic = 'force-dynamic';
+
 export default async function TemplesPage() {
   try {
     const data = await partnerApi.getTemples({ limit: 20 });

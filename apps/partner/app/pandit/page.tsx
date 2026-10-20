@@ -4,6 +4,11 @@ import { PanditAvailabilityView } from '@/presentation/pandit/PanditAvailability
 import { PanditAssignmentsView } from '@/presentation/pandit/PanditAssignmentsView';
 import { PanditReviewsView } from '@/presentation/pandit/PanditReviewsView';
 
+// Per-request data. Prerendering this page at build time made `next build`
+// block for 60s per attempt against an API the builder cannot reach, and
+// would in any case bake one pandit's data into the image.
+export const dynamic = 'force-dynamic';
+
 export default async function PanditDashboardPage() {
   let profile: Record<string, unknown> | null = null;
   let assignments: unknown[] = [];
