@@ -19,6 +19,7 @@ Start with the task, not the tool:
 | Rebuild search | [`search/index-rebuild.md`](search/index-rebuild.md) |
 | Review the admin surface | [`admin-operations.md`](admin-operations.md) |
 | Understand the CI/CD target | [`../CI-CD-PIPELINE-PLAN.md`](../CI-CD-PIPELINE-PLAN.md) |
+| DevOps practices and tooling | [`DEVOPS.md`](DEVOPS.md) |
 
 ---
 
