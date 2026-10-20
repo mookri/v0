@@ -1,6 +1,6 @@
 # Application Lifecycle
 
-**Status:** Current
+**Status:** Current (host deployment steps are **Target**)
 **Scope:** Managing applications from provisioning through retirement.
 
 ---
@@ -62,6 +62,8 @@ See [`../deployment/README.md`](../deployment/README.md) and [`../operations/DEP
 | Smoke health endpoints | Deploy script | Smoke check results |
 
 **Exit criteria:** All smoke checks pass; 15-minute clean watch window.
+
+> **Target note:** Steps 4-8 (verify checksums, unpack, switch symlink, restart, smoke) depend on deploy scripts that are not implemented yet. Steps 1-3 (build, package, attest) are implemented in CI.
 
 ### 2.4 Monitor
 
@@ -142,16 +144,17 @@ Each environment (local, preview, staging, production) follows a subset of the a
 Tenants follow their own lifecycle within the platform:
 
 ```
-Provisioning → Active → Suspended → Archived → Deleted
+provisioned → active ⇄ suspended → offboarded
+(promoting is a transient state during plan/blueprint changes)
 ```
 
 | State | Description | Transition |
 | --- | --- | --- |
-| Provisioning | Tenant record created; schema applied | → Active on success |
-| Active | Tenant is operational | → Suspended on payment failure or admin action |
-| Suspended | Tenant access blocked; data retained | → Active on payment resolution; → Archived after retention period |
-| Archived | Read-only access; data retained for compliance | → Deleted after retention period |
-| Deleted | All tenant data purged | Terminal state |
+| provisioned | Tenant record created; schema applied | → active on success |
+| active | Tenant is operational | ⇄ suspended on payment failure or admin action; → offboarded on termination |
+| suspended | Tenant access blocked; data retained | → active on payment resolution |
+| offboarded | Tenant terminated; data retained per compliance, then purged | Terminal state |
+| promoting | Transient state during plan/blueprint changes | → active on success |
 
 See `platform-navdhya/docs/22-runbooks/provisioning.md` for the provisioning pipeline.
 

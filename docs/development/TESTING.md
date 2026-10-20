@@ -13,8 +13,8 @@ The goal is not "more tests"; it is the right gate at the right layer. Fast unit
 | --- | --- | --- | --- |
 | Web unit/component | Jest | `apps/web` | Every PR (`unit-web`) |
 | Customer/partner/dashboard unit | Vitest | `apps/{customer,partner,dashboard}` | Every PR (`unit-apps`) |
-| Package unit | Vitest | `packages/*` | Every PR (`packages`) |
-| API/contract | Vitest | `tests/api` | Every PR (`gates`) |
+| Package unit | Vitest | `packages/*` | Every PR that changes `packages/*` (path-filtered `packages` job) |
+| API/contract | Vitest | `tests/api` | **Not currently gated on PRs** — the `gates` job runs `tests/architecture` and `tests/ci` plus the domain check; `tests/api` is not wired into CI yet |
 | Architecture | Vitest + domain manifests | `tests/architecture`, `tooling/scripts/domain-check.js` | Every PR (`gates`, `check:architecture`) |
 | Backend unit/integration | PHPUnit | `platform-navdhya/tests` | Backend CI (dormant in monorepo) |
 | Full-stack E2E | PowerShell + Playwright | `e2e/` | Nightly, gated by `E2E_ENABLED` |
@@ -133,7 +133,7 @@ If a rule is wrong, amend the rule with a documented rationale; do not weaken th
 
 ## 5. Test data and safety
 
-- **Never run `migrate:fresh` on the e2e databases.** `e2e/run.ps1` provisions only `navdhya_e2e_central` and `navdhya_e2e_tenant`, with an explicit guard; PHPUnit's MySQL lane uses `navdhya_test_*`.
+- **Do not run `migrate:fresh` manually** on the e2e or shared test databases. The guarded E2E runner (`e2e/run.ps1`) and PHPUnit MySQL lane manage their own provisioning and may use `migrate:fresh` internally; manual use outside those runners can destroy shared state.
 - **Do not write `.env` or the SQLite files during E2E.** Overrides ride process environment variables; the immutable Dotenv repository wins over `.env`.
 - **No live MSG91.** Drill mode uses `OTP_LOG_CODES=true` and reads codes from the local log.
 - **No live Razorpay.** Use test/fake drivers; webhook verification still runs.

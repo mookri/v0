@@ -49,6 +49,9 @@ cd platform-navdhya
 composer install
 cp .env.example .env          # PowerShell: Copy-Item .env.example .env
 php artisan key:generate
+# SQLite files must exist before migrating (fresh checkout has none):
+# PowerShell: New-Item -ItemType File -Force database/central.sqlite, database/tenant_shared.sqlite
+# POSIX: touch database/central.sqlite database/tenant_shared.sqlite
 php artisan migrate
 php artisan serve             # http://localhost:8000
 ```

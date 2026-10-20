@@ -19,9 +19,9 @@ See [`../operations/DEPLOYMENT.md`](../operations/DEPLOYMENT.md) for the canonic
 
 ---
 
-## Common deployment contract
+## Common deployment contract (Next.js apps only)
 
-All apps follow the same contract (see [`../operations/DEPLOYMENT.md`](../operations/DEPLOYMENT.md) and [`../../scripts/deploy/README.md`](../../scripts/deploy/README.md)):
+The four Next.js apps follow this contract (see [`../operations/DEPLOYMENT.md`](../operations/DEPLOYMENT.md) and [`../../scripts/deploy/README.md`](../../scripts/deploy/README.md)). The Laravel backend is deployed separately on the host and does not produce a Next.js standalone bundle; see [`backend.md`](backend.md).
 
 1. Build with `NEXT_STANDALONE=1`.
 2. Package standalone output (plus `.next/static` and `public` — currently missing; see P0 gap).

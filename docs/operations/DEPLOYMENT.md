@@ -162,8 +162,9 @@ The backend is a Laravel application in `platform-navdhya/`. It is **not** deplo
 ### First deploy (order matters)
 
 1. Create the environment file from `.env.example`; set `APP_KEY`, `APP_URL`, database credentials and `IDENTITY_HMAC_SECRET`.
-2. Run `php artisan migrate --force`.
-3. Generate Passport keys with `php artisan passport:keys --force`; back them up.
+2. Install dependencies: `composer install --no-dev --optimize-autoloader`.
+3. Run `php artisan migrate --force`.
+4. Generate Passport keys with `php artisan passport:keys --force`; back them up.
 4. Install the scheduler cron entry.
 5. Start the queue worker under Supervisor or the host process manager.
 6. Run `php artisan api:compose --check`.

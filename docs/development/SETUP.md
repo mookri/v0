@@ -19,7 +19,7 @@ This guide assumes Windows PowerShell or a POSIX shell. Commands are shown from 
 | Docker Desktop | Optional | Only for the local Postgres/Redis stack |
 | MySQL 8 | Optional | Backend parity; the default local backend uses SQLite |
 
-PHP extensions used by the backend: `mbstring`, `pdo_mysql`, `pdo_sqlite`, `sqlite3`, `sodium`, `intl`.
+PHP extensions used by the backend: `mbstring`, `openssl`, `pdo_mysql`, `pdo_sqlite`, `sqlite3`, `sodium`, `intl`.
 
 ---
 
@@ -234,7 +234,7 @@ Do not point E2E at production MSG91, Razorpay or customer data. The Linux runne
 | Port already in use | Find and stop the conflicting process; keep the documented port |
 | `php artisan` cannot connect to SQLite | Ensure `database/central.sqlite` and `database/tenant_shared.sqlite` exist and are writable |
 | `could not find driver` | Enable `pdo_sqlite`/`pdo_mysql` and `sqlite3` in PHP |
-| Composer memory exhaustion | Re-run with `php -d memory_limit=-1 composer install` |
+| Composer memory exhaustion | Re-run with `COMPOSER_MEMORY_LIMIT=-1 composer install` (or `php -d memory_limit=-1 $(which composer) install`) |
 | Customer login fails in wired mode | Check `SESSION_SIGNING_KEY` = `IDENTITY_HMAC_SECRET`, `NAVDHYA_API_BASE` origin, and tenant ID |
 | Backend 500 after clone | Run `php artisan key:generate`; check `storage/` and `bootstrap/cache/` permissions |
 | Hook does not scan secrets | Install gitleaks/detect-secrets; CI still scans |

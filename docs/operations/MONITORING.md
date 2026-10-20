@@ -13,9 +13,9 @@ The backend's normative SRE targets and alert classes live in [`platform-navdhya
 | --- | --- | --- |
 | Web BFF | `GET /api/healthz` | Process is alive; no dependency checks |
 | Web BFF | `GET /api/readyz` | Ready for traffic; probes backend `/up` with a 2 s budget when wired |
-| Customer | `GET /api/health` | Returns `{ status: 'ok', product: 'customer' }` |
-| Customer | `GET /api/version` | Version, commit, build time, environment |
-| Partner | `GET /api/health` | Returns `{ status: 'ok', product: 'partner' }` |
+| Customer | `GET /api/health` | Returns `{ data: { status: 'ok', product: 'customer' }, requestId }` |
+| Customer | `GET /api/version` | Returns `{ data: { version, commitSha, buildAt, environment }, requestId }` |
+| Partner | `GET /api/health` | Returns `{ data: { status: 'ok', product: 'partner' }, requestId }` |
 | Partner | `GET /api/version` | Version, commit, build time, environment |
 | Backend | `GET /up` | Laravel liveness (process/bootstrap) |
 | Backend | `GET /ready` | Readiness: central DB, tenant DB, Redis, queue and outbox per the backend contract |

@@ -44,7 +44,7 @@ Source: `apps/customer/.env.example`.
 | `CUSTOMER_AUTH_CLIENT_SECRET` | Federated | **Secret** | OIDC client secret |
 | `CUSTOMER_AUTH_PAR` | No | No | RFC 9126 pushed authorization requests: `off` or `required` |
 | `CUSTOMER_DPOP_KEY_FILE` | Federated DPoP | **Secret file** | Private key file for DPoP token binding |
-| `SESSION_COOKIE_SECURE` | Production | No | Force `Secure` cookies when TLS terminates upstream |
+| `SESSION_COOKIE_SECURE` | Optional override | No | Force `Secure` cookies when TLS terminates upstream; both apps default to secure cookies in production based on `NODE_ENV` |
 | `DEV_CUSTOMER_SESSION` | Local only | No | Dev-only mock session; **never** set in production |
 
 Example wired local values:
@@ -60,6 +60,11 @@ CUSTOMER_AUTH_MODE=direct
 ---
 
 ## 3. Web app — Signals and analytics
+
+> The web app's Laravel BFF also depends on the shared BFF settings in
+> section 2 (`CUSTOMER_BACKEND`, `NAVDHYA_API_BASE`, `CUSTOMER_TENANT_ID`,
+> `SESSION_SIGNING_KEY`) when admin routes are wired; without `CUSTOMER_TENANT_ID`
+> those routes return 503.
 
 Source: `apps/web/.env.example`.
 

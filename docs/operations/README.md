@@ -26,13 +26,13 @@ Start with the task, not the tool:
 
 1. **Confirm scope.** Is the symptom on `www`, `app`, `partner`, the dashboard, or the API? Check the environment before changing anything.
 2. **Check health.**
-   - Web BFF: `GET /api/healthz` (liveness) and `GET /api/readyz` (backend readiness).
+   - Web BFF: `GET /api/healthz` (liveness) and `GET /api/readyz` (BFF readiness; checks backend liveness via `/up`). For dependency readiness, use the backend `GET /ready`.
    - Customer: `GET /api/health` and `GET /api/version`.
    - Partner: `GET /api/health` and `GET /api/version`.
    - Backend: `GET /up`, `GET /ready`, `GET /.well-known/jwks.json`.
 3. **Check the most recent change.** Compare the current deployment with the last known-good release/tag. Prefer rollback over an improvised forward fix.
 4. **Stop the bleeding.** Roll back the frontend, disable the relevant flag, or scale the affected backend process. Do not run `migrate:rollback` in staging or production.
-5. **Record and escalate.** Open an incident record, capture timestamps and request IDs, and follow [`ROLLBACK.md`](ROLLBACK.md) and the backend incident runbook.
+5. **Record and escalate.** Open an incident record, capture timestamps and request IDs, and follow [`ROLLBACK.md`](ROLLBACK.md) and the backend incident runbook ([`platform-navdhya/docs/22-runbooks/incident-response.md`](../../platform-navdhya/docs/22-runbooks/incident-response.md)).
 
 ---
 

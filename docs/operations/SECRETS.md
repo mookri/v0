@@ -133,7 +133,7 @@ Repository variables (`CI_STRICT`, `CI_ADVANCED_SECURITY`, `DEPLOY_ENABLED`, `E2
 | Secret | Extra care |
 | --- | --- |
 | `APP_KEY` | Rotating it breaks encrypted columns and existing sessions. Plan a data migration/re-encryption, not a casual rotation. |
-| `IDENTITY_HMAC_SECRET` + `SESSION_SIGNING_KEY` | Rotate both together. All existing customer sessions become invalid; communicate a re-login. |
+| `IDENTITY_HMAC_SECRET` + `SESSION_SIGNING_KEY` | Rotate both together. All existing customer sessions become invalid; partner actor tokens signed with the same secret also invalidate, so plan for partner re-authentication. Communicate a re-login. |
 | Passport keys | Publish the new key in JWKS before removing the old one; keep the old key until issued tokens expire. Back up the key pair. |
 | Database password | Create the new credential, deploy it, verify connections, then revoke the old one. |
 | SSH deploy key | Add the new public key to the host, deploy, then remove the old key. |

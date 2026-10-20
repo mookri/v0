@@ -63,7 +63,7 @@ High-risk paths require explicit review from the owning engineer (see `.github/C
 
 - `apps/web/lib/auth/`, `apps/web/lib/infra/`, `apps/web/app/api/ads/` → `@eng-a`
 - `platform-navdhya/` → backend module owner
-- `.github/workflows/` → `@eng-a` + `@platform-lead`
+- `.github/workflows/` → `@eng-a` (per `.github/CODEOWNERS`; `@platform-lead` is advisory, not enforced)
 - `docs/operations/`, `docs/development/` → all maintainers
 
 ### 3.3 RACI matrix (key processes)
@@ -100,10 +100,12 @@ High-risk paths require explicit review from the owning engineer (see `.github/C
 | --- | --- | --- |
 | `@navdhya/config` | Env validation, feature flags | All apps |
 | `@navdhya/security` | CSRF, rate-limit, origin checks | All apps |
-| `@navdhya/api-envelope` | Response envelopes, request IDs | All apps + BFF |
+| `@navdhya/api-contracts` | API contract definitions | Apps + tests |
 | `@navdhya/contracts` | Shared TypeScript contracts | Apps + tests |
-| `@navdhya/auth` | Session, OIDC, DPoP helpers | Customer, web |
-| `@navdhya/telemetry` | Signals, analytics | All apps |
+| `@navdhya/api-client` | Backend client helpers | Apps + BFF |
+| `@navdhya/identity` | Session, OIDC, DPoP helpers | Customer, web |
+| `@navdhya/observability` | Signals, analytics | All apps |
+| `@navdhya/design-system` | UI components | All apps |
 
 ### 4.3 Dependency rules
 
@@ -393,12 +395,12 @@ See `SECURITY.md` for the reporting policy and channels.
 - Audit logs retained per compliance requirements.
 - CI/security scan results retained per workflow retention.
 - Release attestations (SLSA provenance) for all artefacts.
-- Migration records in `tenant_migrations` table.
+- Migration records in `tenant_migrations` table (planned; `migrate:tenants` is not registered and the table does not exist yet).
 
 ### 12.3 Data governance
 
 - No production data in preview/staging/E2E.
-- Tenant data separation enforced at the database connection level.
+- Tenant data separation: shared-mode tenants use one `tenant_shared` database with row-level `tenant_id` scopes; dedicated-mode tenants use separate databases. Both modes must be documented and tested.
 - Privacy erasure tooling exists (`tooling/scripts/privacy-erasure.ts`).
 - Data retention policies defined per domain.
 

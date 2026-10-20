@@ -52,7 +52,7 @@ pnpm --filter @navdhya/partner-app run build
 
 | Variable | Required | Secret? | Notes |
 | --- | --- | --- | --- |
-| `CUSTOMER_BACKEND` | If wired | No | Set to `laravel` |
+| `PARTNER_BACKEND` | If wired | No | Set to `laravel` (the partner client reads this, not `CUSTOMER_BACKEND`) |
 | `NAVDHYA_API_BASE` | If wired | No | Origin only |
 | `CUSTOMER_TENANT_ID` | If wired | No | Tenant ULID |
 | `SESSION_SIGNING_KEY` | If wired | Yes | Must equal backend `IDENTITY_HMAC_SECRET` |
@@ -105,7 +105,7 @@ See [`../operations/ROLLBACK.md`](../operations/ROLLBACK.md).
 
 ## 8. Security considerations
 
-- Authenticated app; all routes require a valid session.
+- Authenticated app; protected application routes require a valid session. Health, version, and authentication endpoints are public.
 - 401 envelope is stable and tested.
 - No payment processing in the partner app (read-only earnings view).
 - Contract tests enforce BFF-to-Laravel route resolution.

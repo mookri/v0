@@ -62,7 +62,7 @@ Environment variables are project-scoped in Vercel. Use different values for Pro
 | `CUSTOMER_BACKEND` | unset (mock) | `laravel` |
 | `NAVDHYA_API_BASE` | unset | `https://api.navdhya.com` (origin only) |
 | `CUSTOMER_TENANT_ID` | unset | production tenant ULID |
-| `SESSION_SIGNING_KEY` | unset | same value as backend `IDENTITY_HMAC_SECRET` |
+| `SESSION_SIGNING_KEY` | set a unique preview-only key | same value as backend `IDENTITY_HMAC_SECRET` | The mock customer login path still requires this key in production mode, so do not leave it unset in previews.
 | `CUSTOMER_AUTH_MODE` | unset/`direct` | `direct` unless federation is enabled |
 | `SESSION_COOKIE_SECURE` | unset | `true` (TLS is terminated at the edge) |
 
@@ -93,7 +93,7 @@ Never put a production secret in the Preview environment. Preview deployments sh
    - **A few seconds** usually means configuration, install or root-directory failure.
    - **Several minutes** usually means the app compiled and then failed in a later phase.
 4. Check **Settings → General → Root Directory** and **Node.js Version** against the table above.
-5. Check the deployment's environment: a missing `SESSION_SIGNING_KEY` with `CUSTOMER_BACKEND=laravel` can fail the build or runtime checks.
+5. Check the deployment's environment: an unset `SESSION_SIGNING_KEY` does not fail `next build`; it surfaces as a runtime auth failure when a request uses token authentication. Check runtime logs, not build logs.
 
 ### With a Vercel token or CLI login
 

@@ -14,7 +14,7 @@ This page is the environment contract. The deploy procedure is in [`DEPLOYMENT.m
 | **Purpose** | Development and tests | Per-PR review | Release rehearsal | Live customers |
 | **Frontend host** | `localhost` ports 3000–3003 | Vercel-generated preview URL | Partly documented; `app-staging.navdhya.com` for customer, others TBD | `www.navdhya.com`, `app.navdhya.com`, `partner.navdhya.com` |
 | **Backend host** | `http://localhost:8000` | Mock, or a dedicated test backend | Staging API host TBD | `api.navdhya.com` (documented target) |
-| **Frontend backend mode** | Mock by default; wired opt-in | Mock by default | Wired to staging backend | Wired to production backend |
+| **Frontend backend mode** | Mock by default; wired opt-in | Mock by default | **Target/unprovisioned** — no staging backend recorded; intended wired mode | Wired to production backend |
 | **Database** | SQLite (`database/central.sqlite`, `database/tenant_shared.sqlite`) | None by default; never production | MySQL 8 (dedicated) | MySQL 8 (central + tenant_shared) |
 | **Cache/queue** | `database` defaults; `sync` in tests | Not applicable | Redis/DB per backend config | Database queue by default; Redis optional |
 | **Queue worker** | Optional; run manually | Not applicable | Required | Required |

@@ -64,7 +64,10 @@ Backend releases are additive and backward-compatible by policy, so rollback is 
 
 ```sh
 cd /path/to/platform-navdhya
-git fetch --tags
+# The backend repository may have no configured remote (GIT-001). Ensure the
+# previous release tag is available locally (via the release artifact or a
+# configured remote) before attempting checkout.
+git fetch --tags   # only if a remote is configured
 git checkout <previous-release-tag>
 composer install --no-dev --optimize-autoloader
 php artisan config:cache
@@ -106,7 +109,7 @@ The customer/partner strangler is flag-gated. Turning the flag off returns traff
 
 Rollback:
 
-1. Set the relevant flag to `0` (or remove `STRANGLER_CUSTOMER_LIVE`).
+1. Set the relevant flag to `0`. If `STRANGLER_CUSTOMER_LIVE` was used, remove it **and** set every per-class override (`STRANGLER_CUSTOMER_BOOK`, `STRANGLER_CUSTOMER_USER`, `STRANGLER_CUSTOMER_SETTINGS`) to `0` explicitly; removing the umbrella flag alone leaves overrides active.
 2. Redeploy web, or flip the environment if the platform supports runtime config.
 3. Verify the web route returns 200 without a redirect.
 4. Record the flip in [`../architecture/cutover-log.md`](../architecture/cutover-log.md) — timestamp, direction, actor, probes.

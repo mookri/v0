@@ -63,7 +63,7 @@ Status labels used across the docs:
 | This plan | `docs/DOCUMENTATION-PLAN.md` | **Current** | Added in this batch |
 | MNC-grade plan | `docs/MNC-GRADE-PLAN.md` | **Current** | Master MNC-grade plan; links all other docs |
 | Per-app deployment | `docs/deployment/*.md` | **Current/Target** | Per-app build, env, health, rollback |
-| Application lifecycle | `docs/lifecycle/*.md` | **Current** | Provision through retirement, release, change management |
+| Application lifecycle | `docs/lifecycle/*.md` | **Mixed/Target** | Provision through retirement; host deploy/monitoring steps are Target until scripts exist |
 | CI/CD | `docs/CI-CD-PIPELINE-PLAN.md` | **Target** | Detailed target pipeline; root and backend jobs are not fully wired yet |
 | Security | `SECURITY.md` | **Current** | Reporting policy at the repository root |
 | Security architecture | `docs/SECURITY-AND-THREAT-MODEL.md` | **Current** | OTP, BFF, session and trust boundaries |

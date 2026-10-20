@@ -43,7 +43,10 @@ Do not seed production with demo data. Do not run `migrate:fresh` on any environ
 ## 3. Every deploy
 
 ```sh
-git pull <release-tag>
+# The backend has no configured remote in some environments (GIT-001).
+# Fetch the tag from the configured remote, then check it out explicitly:
+git fetch origin tag <release-tag> --no-tags
+git checkout <release-tag>
 composer install --no-dev --optimize-autoloader
 php artisan migrate --force
 php artisan config:cache

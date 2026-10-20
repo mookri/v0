@@ -86,7 +86,7 @@ If you are unsure whether an action is allowed, ask us first at `hntlsquad@gmail
 ## For contributors
 
 - Never commit secrets, tokens, private keys, or real customer data. Use `.env.local` or the secret manager; `.env.example` contains placeholders only.
-- Run `pnpm secrets:scan` before pushing. The pre-commit hook runs gitleaks.
+- Run `pnpm secrets:scan` before committing and `pnpm secrets:scan:all` before pushing; the former scans only staged changes, the latter scans full history. The pre-commit hook runs gitleaks only when gitleaks is installed, so install gitleaks (or run the npm scripts manually) rather than relying on the hook alone.
 - Do not weaken authentication, authorization, tenant isolation, RLS, CSRF, or session protections without a reviewed threat model and tests.
 - Keep dependencies patched and review `pnpm audit` output.
 - Report dependency or supply-chain issues through the private channels above, not a public issue.

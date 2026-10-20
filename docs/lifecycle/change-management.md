@@ -42,7 +42,7 @@
 2. Implement the minimal fix.
 3. Run targeted tests.
 4. Tag a hotfix release (`v*.*.*-hotfix.N`).
-5. Deploy to production with expedited approval.
+5. Deploy to production with expedited approval (**Target** until deploy scripts and staging/production promotion exist; until then, follow the current supported path in `../operations/DEPLOYMENT.md`).
 6. File a postmortem within 5 business days.
 7. Backport the fix to `main`.
 

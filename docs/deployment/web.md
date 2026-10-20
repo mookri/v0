@@ -61,8 +61,9 @@ Server-only variables (`SIGNALS_HMAC_SECRET`, `SIGNALS_CONSENT_TOKEN_SECRET`, et
 ```sh
 pnpm --filter @navdhya/web test
 pnpm --filter @navdhya/web run build
-# Verify .next/standalone/server.js exists
-# Verify .next/BUILD_ID exists
+# With the monorepo tracing root, the server lives at:
+#   .next/standalone/apps/web/server.js
+# Verify that path (not .next/standalone/server.js) and .next/BUILD_ID
 ```
 
 ---
@@ -115,7 +116,7 @@ See [`../operations/VERCEL.md`](../operations/VERCEL.md).
 
 Follow the contract in [`../../scripts/deploy/README.md`](../../scripts/deploy/README.md). Web-specific notes:
 
-- Static assets (`.next/static`, `public`) must be present alongside `standalone/`.
+- With the monorepo tracing root, the server runs from `standalone/apps/web`; copy `.next/static` and `public` into that directory beside `server.js` so they are served.
 - The process manager must set `PORT` and `HOSTNAME`.
 - `NEXT_PUBLIC_*` values are baked at build time; changing them requires a rebuild.
 

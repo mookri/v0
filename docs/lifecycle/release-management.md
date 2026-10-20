@@ -9,10 +9,12 @@
 
 | Type | Trigger | Artefacts | Deploy |
 | --- | --- | --- | --- |
-| **Patch** | `v*.*.x` tag | 4 standalone tarballs + checksums + attestation | Optional (gated) |
-| **Minor** | `v*.x.0` tag | Same as patch | Optional (gated) |
-| **Major** | `v*x.0.0` tag | Same as patch | Optional (gated) |
-| **Hotfix** | `v*.*.*-hotfix.N` tag | Same as patch | Optional (gated) |
+| **Patch** | Version bump category; released with a `v*` tag (e.g. `v0.1.1`) | 4 standalone tarballs + checksums + attestation | Optional (gated) |
+| **Minor** | Version bump category; released with a `v*` tag (e.g. `v0.2.0`) | Same as patch | Optional (gated) |
+| **Major** | Version bump category; released with a `v*` tag (e.g. `v1.0.0`) | Same as patch | Optional (gated) |
+| **Hotfix** | Emergency fix; released with a `v*` tag (e.g. `v0.1.1-hotfix.1`) | Same as patch | Optional (gated) |
+
+The workflow accepts any `v*` tag and does not classify release types; patch/minor/major are version-bump categories only.
 
 ---
 
@@ -57,11 +59,12 @@ Key conditions:
 - `attest` creates build provenance for the tarballs.
 - `publish` creates/updates the GitHub Release with notes and checksums.
 - `deploy` only runs when `vars.DEPLOY_ENABLED == 'true'` and the event is a tag push (or manual dispatch with `dry_run=false`).
-- Deploy environments are `staging` and `production`.
+- **Limitation:** a manual dispatch with `dry_run=false` still cannot deploy because `publish` is skipped for non-tag refs and `deploy` depends on `publish`. Document this or change the workflow to allow dispatch deployments.
+- Deploy environments are `staging` and `production`, but neither deploy script exists yet, so deployment is **disabled/target** until the executable scripts are implemented.
 
 ### 2.4 Manual dispatch
 
-The workflow supports `workflow_dispatch` with `dry_run` (default `true`). A dry run builds and attests but does not deploy.
+The workflow supports `workflow_dispatch` with `dry_run` (default `true`). A dry run builds and attests but does not deploy. A non-dry-run dispatch still cannot deploy (see the limitation above).
 
 ### 2.5 Post-release
 
@@ -95,6 +98,8 @@ The workflow supports `workflow_dispatch` with `dry_run` (default `true`). A dry
 ## 5. Release notes
 
 Generated from conventional commit history. The PR title convention ensures derivable release notes.
+
+> **Illustrative example:** the workflow emits raw commit subjects; the categorized format below is an example of how release notes can be organized, not the current output.
 
 Format:
 
