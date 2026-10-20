@@ -45,6 +45,33 @@ NEXT_STANDALONE=1 pnpm --filter @navdhya/dashboard run build
 
 PowerShell: set `$env:NEXT_STANDALONE='1'` before each build.
 
+## Individual app deploy commands (target)
+
+Host deploy scripts do not exist yet. The intended per-app commands once the host path is implemented:
+
+```sh
+# Web
+pnpm --filter @navdhya/web run build
+# deploy artefact: dist/navdhya-web-<tag>.tar.gz
+
+# Customer
+pnpm --filter @navdhya/customer run build
+# deploy artefact: dist/navdhya-customer-<tag>.tar.gz
+
+# Partner
+pnpm --filter @navdhya/partner-app run build
+# deploy artefact: dist/navdhya-partner-<tag>.tar.gz
+
+# Dashboard
+pnpm --filter @navdhya/dashboard run build
+# deploy artefact: dist/navdhya-dashboard-<tag>.tar.gz
+
+# Backend (separate host procedure)
+cd platform-navdhya && composer install --no-dev --optimize-autoloader
+```
+
+PowerShell: set `$env:NEXT_STANDALONE='1'` before each build.
+
 ---
 
 ## Health endpoints
