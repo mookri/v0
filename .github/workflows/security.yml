@@ -37,7 +37,9 @@ jobs:
   secrets:
     name: secrets
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    # Full-history scan of ~380 commits. 8 minutes was not enough once the
+    # backend's history joined this repository.
+    timeout-minutes: 15
     permissions:
       # gitleaks enumerates the PR's commits through the API; with only
       # `contents: read` it fails with "Resource not accessible by integration"
@@ -53,6 +55,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_CONFIG: .gitleaks.toml
+          # Report in the job summary only. Commenting needs
+          # `pull-requests: write`, which a fork PR must never receive; without
+          # this the action retried a 403 once per finding and the job timed out
+          # before it could finish scanning.
+          GITLEAKS_ENABLE_COMMENTS: 'false'
           # Only required when the repository is owned by an organisation.
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
 
