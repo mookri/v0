@@ -18,8 +18,8 @@ use Carbon\CarbonImmutable;
 interface CalculatesQuotes
 {
     /**
-     * @param  list<array{sku: string, quantity: int, pandit_id?: int|null, market?: string|null}>  $lines
-     * @return array{ok: true, lines: list<array{sku: string, quantity: int, pandit_id?: int|null, market: string, unit_minor: int, line_minor: int}>, total_minor: int, currency: string}|array{ok: false, error: string}
+     * @param  list<array{sku: string, quantity: int, pandit_id?: string|null, market?: string|null}>  $lines
+     * @return array{ok: true, lines: list<array{sku: string, quantity: int, pandit_id?: string|null, market: string, unit_minor: int, line_minor: int}>, total_minor: int, currency: string}|array{ok: false, error: string}
      */
     public function quote(string $currency, array $lines, CarbonImmutable $at): array;
 }

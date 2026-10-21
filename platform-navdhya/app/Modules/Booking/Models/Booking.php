@@ -38,7 +38,8 @@ final class Booking extends Model
     protected $connection = 'tenant_shared';
 
     protected $fillable = [
-        'tenant_id', 'user_id', 'service_sku', 'status', 'scheduled_at',
+        'tenant_id', 'user_id', 'service_sku', 'idempotency_key', 'idempotency_hash',
+        'status', 'scheduled_at',
         'duration_minutes', 'address_snapshot', 'total_minor', 'currency',
         'version',
     ];

@@ -20,8 +20,8 @@ use Carbon\CarbonImmutable;
 final class QuoteCalculator
 {
     /**
-     * @param list<array{sku: string, quantity: int, pandit_id?: int|null, market?: string|null}> $lines
-     * @return array{lines: list<array{sku: string, quantity: int, pandit_id?: int|null, market: string, unit_minor: int, line_minor: int}>, total_minor: int, currency: string}
+     * @param list<array{sku: string, quantity: int, pandit_id?: string|null, market?: string|null}> $lines
+     * @return array{lines: list<array{sku: string, quantity: int, pandit_id?: string|null, market: string, unit_minor: int, line_minor: int}>, total_minor: int, currency: string}
      */
     public function quote(string $currency, array $lines, CarbonImmutable $at, string $defaultMarket = 'in'): array
     {
@@ -31,7 +31,11 @@ final class QuoteCalculator
         foreach ($lines as $line) {
             $sku = (string) ($line['sku'] ?? '');
             $quantity = (int) ($line['quantity'] ?? 0);
-            $panditId = isset($line['pandit_id']) ? (int) $line['pandit_id'] : null;
+            // Pandit ids are ULIDs: casting to int destroyed the id and
+            // made every pandit-specific price unreachable.
+            $panditId = isset($line['pandit_id']) && $line['pandit_id'] !== null
+                ? (string) $line['pandit_id']
+                : null;
             $market = (string) ($line['market'] ?? $defaultMarket);
 
             if ($sku === '' || $quantity <= 0) {

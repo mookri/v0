@@ -41,7 +41,10 @@ final class PriceController
             'currency' => ['required', 'string', 'size:3'],
             'price_minor' => ['required', 'integer', 'min:0'],
             'market' => ['nullable', 'string', 'max:16'],
-            'pandit_id' => ['nullable', 'integer', 'min:1'],
+            // Pandit ids are ULIDs (26 characters), not integers: an integer
+            // column could never hold one, so a pandit-specific price was
+            // unreachable and the quote always fell back to the base price.
+            'pandit_id' => ['nullable', 'string', 'ulid'],
         ]);
 
         $market = $validated['market'] ?? 'in';
@@ -96,7 +99,7 @@ final class PriceController
             'lines' => ['required', 'array', 'min:1', 'max:100'],
             'lines.*.sku' => ['required', 'string'],
             'lines.*.quantity' => ['required', 'integer', 'min:1'],
-            'lines.*.pandit_id' => ['nullable', 'integer', 'min:1'],
+            'lines.*.pandit_id' => ['nullable', 'string', 'ulid'],
             'lines.*.market' => ['nullable', 'string', 'max:16'],
         ]);
 

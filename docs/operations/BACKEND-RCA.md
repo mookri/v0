@@ -13,8 +13,8 @@ Five audits produced **90+ distinct findings**. After verification:
 
 | Outcome | Count |
 | --- | --- |
-| **Fixed in this change** | 27 |
-| **Confirmed, deferred with a documented reason** | 46 |
+| **Fixed in this change** | 30 |
+| **Confirmed, deferred with a documented reason** | 43 |
 | **Verified as not a defect** | 20 |
 
 The most serious issues were not exotic:
@@ -76,7 +76,7 @@ All four Next.js apps already send `code_challenge_method: S256`, so no client c
 
 **Root cause.** `routes/platform/api.php` mounts `StartSession` group-wide *in addition to* the api group's `SessionContextForReads`. Middleware priority places `StartSession` **outside** the session reader, so the outer `StartSession` finished last and overwrote the encrypted cookie with the raw session id. The browser then held a **plaintext bearer credential** for the platform surface, and the web session was destroyed (the web group cannot decrypt a raw id).
 
-**Fix.** New global middleware `App\Platform\Http\Middleware\EncryptsSessionCookie` — the outer invariant: **a session cookie that leaves the process is always encrypted**, whichever surface issued it. It decrypts the outgoing value to find out whether it is already an encrypted session cookie, and encrypts it only when it is not (so there is no double encryption). The web group is unaffected: its cookie is already encrypted and passes through untouched.
+**Fix.** New global middleware `App`Platform`Http`Middleware`EncryptsSessionCookie` — the outer invariant: **a session cookie that leaves the process is always encrypted**, whichever surface issued it. It decrypts the outgoing value to find out whether it is already an encrypted session cookie, and encrypts it only when it is not (so there is no double encryption). The web group is unaffected: its cookie is already encrypted and passes through untouched.
 
 The alternative fix — dropping the group-wide `StartSession` — was tried first and **reverted**: the platform API needs a session to exist even for cookie-less bearer clients (`/api/v1/identity/sessions:revoke-others` answers "revoked: 0" in that degraded mode), and the platform API's cookie-authenticated writes are a supported flow. The global invariant fixes the defect without changing any behaviour.
 
@@ -233,6 +233,30 @@ The availability case was the worst of them: a mid-loop failure left the pandit 
 
 **Fix.** The mutex expires after 10 minutes, and the daily cleanup sweep no longer runs concurrently on every node.
 
+### 2.29 The booking `Idempotency-Key` was required but never stored (P2)
+
+**Root cause.** Booking creation demanded an `Idempotency-Key` header and then threw it away: the replay check was a 60-second, payload-shaped heuristic (same user, same SKU, same slot, created in the last minute). A client retry after a minute created a **second** booking, and two legitimate bookings for the same slot inside the minute collapsed onto the first one - the client was handed a booking id it had not created.
+
+**Fix.** Two migrations and one behavioural change:
+- `2026_10_21_000001_add_idempotency_key_to_bookings_table.php` adds `idempotency_key` (128) and `idempotency_hash` (64) with a unique index on `(tenant_id, user_id, idempotency_key)`.
+- The controller stores the key and a hash of the canonical payload. The same key with the same payload replays the same booking (200); the same key with a **different** payload is refused with `409 idempotency_key_conflict`; a lost race on the unique index is resolved by reading the winner's row.
+
+### 2.30 The provider order was created inside the state-change transaction (P1)
+
+**Root cause.** `:confirm` opened the Razorpay order and wrote the intent row inside the booking transaction. A rollback after that destroyed the intent row while the order lived on at the provider: an **orphan the customer could still pay**, and the retry opened a **second** order.
+
+**Fix.** `:confirm` now runs two **committed** transactions:
+- **TX1** - the intent and the provider order. The booking row is locked here, so concurrent confirms serialise and only ONE order is ever opened. The intent row, the outbox fact and the audit row commit with it.
+- **TX2** - the booking state change. If it fails on its own, the intent (and the order) is already committed, so a retry **reuses that order** instead of opening a second payable one.
+
+The residual window is now the narrow one: the intent insert itself failing after the provider call. Everything else is durable.
+
+### 2.31 Pandit-specific pricing was structurally impossible (P2)
+
+**Root cause.** `catalog_prices.pandit_id` was an `unsignedBigInteger` while every pandit id is a 26-character ULID. A ULID could not be stored, the quote cast the id to `int` (destroying it), and every pandit-specific price silently fell back to the base price - a `pandit_id` of 1 addressed a pandit that does not exist.
+
+**Fix.** `2026_10_21_000002_change_catalog_prices_pandit_id_to_string.php` changes the column to `string(26)` (the pricing index is dropped and restored around the change), the model cast is a string, the validation is `ulid`, and the quote keeps the id as a string. A pandit-specific price now wins at quote time, and a different pandit still gets the base price.
+
 ---
 
 ## 3. Confirmed but deferred
@@ -265,14 +289,13 @@ Each item below is a real finding that this change deliberately does **not** fix
 
 ### 3.1 Wave 2 — modules and kernel (deferred)
 
+Findings **W1** (booking `Idempotency-Key`), **W2** (the provider order inside the transaction) and **W6** (`catalog_prices.pandit_id`) were the three that needed a schema change; they are now **fixed** in sections 2.29-2.31.
+
 | # | Finding | Severity | Why deferred | Follow-up |
 | --- | --- | --- | --- | --- |
-| W1 | `Idempotency-Key` is required on booking creation but never stored: the replay check is a 60-second, payload-shaped heuristic, so a retry creates a second booking and a legitimate second booking returns the first one | P2 | Needs a schema change (`idempotency_key` column + unique index) and a kernel idempotency layer | Add the column + a kernel `IdempotencyKey` middleware (scope, replay, hash-mismatch 409) |
-| W2 | The Razorpay order is created *inside* the booking transaction, so a later rollback orphans a payable provider order and the retry creates a second one | P1 | The transaction is now on the right connection, but the provider call must move **out** of it and the intent insert must be idempotent on a client-supplied key (Razorpay `receipt`) | Move `createOrder()` out of the transaction; make the intent insert `firstOrCreate` |
 | W3 | `confirm` never re-checks the slot overlap (the store-time guard only considers CONFIRMED/ASSIGNED), so two DRAFT bookings for one slot can both be paid | P2 | Needs the overlap predicate to include PENDING_PAYMENT rows inside the confirm transaction | Run the overlap check inside `confirm`'s locked transaction |
 | W4 | `reschedule` compares the optimistic-lock version outside the transaction and takes no row lock, so two concurrent reschedules both pass and the second write is lost | P2 | The fix is to move the read + checks inside a locked transaction on the tenant connection | Re-read the booking under `lockForUpdate()` inside the transaction |
 | W5 | The pandit conflict probe runs outside the assignment transaction, so a pandit can still be committed to two overlapping bookings | P2 | The transaction now runs on the right connection, but the probe must move inside it and re-run against the locked set | Lock the pandit's assignments and re-probe inside the transaction |
-| W6 | `catalog_prices.pandit_id` is an unsigned bigint while pandit ids are ULIDs, so pandit-specific pricing silently never applies and the quote always falls back to the base price | P2 | Needs a migration changing the column to a 26-char string plus the validation and the `(int)` casts | Change the column type, the validation and the quote casts |
 | W7 | A `refund.processed` webhook that arrives before its `payment.captured` is answered `200 ignored`, so the provider stops retrying and the refund is never reconciled | P2 | Changing the webhook contract (a retryable status) is a provider-facing change with its own test matrix | Resolve the intent by order id as a fallback and answer a retryable status |
 | W8 | The public `POST /api/v1/search/analytics` lets an anonymous caller write 100 arbitrary rows per request into a shared, un-swept table, and the text is echoed back by the trending endpoint | P2 | Needs a retention sweep and a signed-caller story; the write is rate-limited per IP | Strip and cap the stored text; add a sweeper; require a known caller |
 | W9 | The per-tenant module feature flag is never enforced on the request path: the module routes are mounted unconditionally, so `flags:set module.x false` has no runtime effect | P2 | The gate needs a per-request tenant-scoped middleware, not just a mount-time check | Add a `tenant.module.enabled` middleware and gate the mount |
@@ -393,7 +416,8 @@ The Next.js layer is not the bottleneck — the backend is — but the two must 
 ## 5. Test evidence
 
 - **Baseline (before this change):** 18 failures, all of them DPoP key-generation failures (`openssl could not generate a DPoP test key: error:80000003`) in `DpopBindingTest` and `AccessTokenSessionBindingTest` — the local OpenSSL 3.5.6 build cannot generate keys at all (`openssl_pkey_new` fails for EC *and* RSA). Verified as pre-existing by running the suite on a stashed tree.
-- **After this change:** the same 18 environmental failures, 1152 passing, and no others.
+- **After this change:** the same 18 environmental failures, 1171 passing, and no others.
+- **Migrations:** two new migrations, both applied cleanly on SQLite (the test database) and on the dev database: the booking idempotency columns and the `catalog_prices.pandit_id` type change (the pricing index is dropped and restored around it).
 - **Static analysis:** `pint --test` passes on every changed file. `phpstan` reports no new error in any changed file; 19 pre-existing errors remain in files this change does not touch (`IdentitySelfServiceController`, `OAuthClientController`, `RequiresPushedAuthorizationRequest`, `PushedAuthorizationRequest`) and are tracked separately.
 
 New regression tests, one per defect that could silently come back:
@@ -405,6 +429,9 @@ New regression tests, one per defect that could silently come back:
 | `tests/Modules/Customers/CustomerOtpEnumerationTest.php` | Known and unknown identities answer the OTP endpoint identically |
 | `tests/Platform/Security/EdgeHardeningTest.php` | The api group carries a rate limit and the surface really answers `429`; a forged `Host` header is rejected and a trusted one resolves; the ops surfaces reject a foreign `?tenant_id=`; public search refuses an unknown tenant and never reads a foreign tenant |
 | `tests/Platform/Tenancy/ConnectionResolverCacheHitTest.php` | A dedicated tenant registers its connection on a **cache hit** (the `Cache::remember` trap) |
+| `tests/Modules/Booking/BookingIdempotencyTest.php` | The same key replays the same booking; a different key creates a second one; the same key with a different payload is refused |
+| `tests/Modules/Payment/PaymentOrderCommitTest.php` | A failed state change keeps the committed provider order, and a confirm on a non-draft booking opens no order |
+| `tests/Modules/Catalog/CatalogPanditPricingTest.php` | A pandit-specific (ULID) price wins over the base price, and a pandit id must be a ULID |
 
 Two existing tests changed because they codified a defect:
 `OnboardingReviewTest::test_request_info_returns_to_draft` (a write verb was

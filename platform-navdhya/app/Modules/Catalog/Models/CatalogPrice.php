@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $sku
  * @property string $market
  * @property string $currency
- * @property int|null $pandit_id
+ * @property string|null $pandit_id
  * @property int $price_minor
  * @property \Illuminate\Support\Carbon $effective_from
  * @property \Illuminate\Support\Carbon|null $effective_to
@@ -35,7 +35,9 @@ final class CatalogPrice extends Model
     {
         return [
             'price_minor' => 'integer',
-            'pandit_id' => 'integer',
+            // Pandit ids are ULIDs: an integer cast destroyed the id.
+
+            'pandit_id' => 'string',
             'effective_from' => 'datetime',
             'effective_to' => 'datetime',
         ];

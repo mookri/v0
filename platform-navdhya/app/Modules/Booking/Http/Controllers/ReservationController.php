@@ -138,8 +138,8 @@ final class ReservationController
         }
 
         // Idempotency-Key required (fail-closed)
-        $idempotencyKey = $request->header('Idempotency-Key');
-        if (! $idempotencyKey || ! is_string($idempotencyKey)) {
+        $idempotencyKey = trim((string) $request->header('Idempotency-Key', ''));
+        if ($idempotencyKey === '' || strlen($idempotencyKey) > 128) {
             return new JsonResponse([
                 'error' => [
                     'code' => 'validation_failed',
@@ -174,27 +174,45 @@ final class ReservationController
         $tenantId = (string) app(TenantContext::class)->tenantId();
         $userId = (string) $user->getAuthIdentifier();
 
-        // Idempotent replay: check for existing booking with same idempotency key
-        // We store the key in a dedicated column or use a composite unique index.
-        // For v1, we use a simple approach: check if a DRAFT booking with same key exists for this user.
-        // Since we don't have an idempotency_key column yet, we'll use a pragmatic approach:
-        // search for a DRAFT booking with same user, sku, scheduled_at created within last minute.
-        // In a full implementation, we'd add an idempotency_keys table (see ADR-00X).
-        $existingDraft = Booking::query()
-            ->where('user_id', $userId)
+        // Idempotent replay: the key is the identity of the request. It
+        // is stored with the booking (scoped to tenant + user), and the
+        // request hash beside it tells a true replay (same key, same
+        // payload) from a key reuse (same key, different payload).
+        //
+        // The previous check was a 60-second, payload-shaped heuristic:
+        // a retry after a minute created a second booking, and two
+        // legitimate bookings for the same slot inside the minute
+        // collapsed onto the first one.
+        $idempotencyHash = hash('sha256', (string) json_encode([
+            'service_sku' => $validated['service_sku'],
+            'scheduled_at' => $validated['scheduled_at'],
+            'duration_minutes' => $validated['duration_minutes'] ?? null,
+            'address_id' => $validated['address_id'] ?? null,
+        ], JSON_UNESCAPED_SLASHES));
+
+        $existing = Booking::query()
             ->where('tenant_id', $tenantId)
-            ->where('service_sku', $validated['service_sku'])
-            ->where('status', BookingLifecycle::STATUS_DRAFT)
-            ->where('scheduled_at', $validated['scheduled_at'])
-            ->where('created_at', '>=', CarbonImmutable::now()->subMinute())
+            ->where('user_id', $userId)
+            ->where('idempotency_key', $idempotencyKey)
             ->first();
 
-        if ($existingDraft !== null) {
-            // Idempotent replay: return same representation
+        if ($existing !== null) {
+            if ($existing->idempotency_hash !== null
+                && ! hash_equals((string) $existing->idempotency_hash, $idempotencyHash)) {
+                return new JsonResponse([
+                    'error' => [
+                        'code' => 'idempotency_key_conflict',
+                        'message' => 'Idempotency-Key was already used with a different payload.',
+                        'request_id' => $this->requestId($request),
+                    ],
+                ], 409);
+            }
+
+            // True replay: the same booking comes back.
             return new JsonResponse([
-                'data' => self::serialize($existingDraft),
+                'data' => self::serialize($existing),
                 'meta' => ['request_id' => $this->requestId($request)],
-            ], 201);
+            ], 200);
         }
 
         $newStart = CarbonImmutable::parse($validated['scheduled_at']);
@@ -233,6 +251,8 @@ final class ReservationController
             'tenant_id' => $tenantId,
             'user_id' => $userId,
             'service_sku' => $validated['service_sku'],
+            'idempotency_key' => $idempotencyKey,
+            'idempotency_hash' => $idempotencyHash,
             'status' => BookingLifecycle::STATUS_DRAFT,
             'scheduled_at' => $newStart->toDateTimeString(),
             'duration_minutes' => $duration,
@@ -244,25 +264,44 @@ final class ReservationController
         // and the lifecycle fact commit atomically on the ambient tenant
         // connection — a crash between them can lose neither the state
         // nor the fact. The drain replays the fact into notifications.
-        $booking->getConnection()->transaction(function () use ($booking, $tenantId, $userId, $validated, $newStart): void {
-            $booking->save();
+        try {
+            $booking->getConnection()->transaction(function () use ($booking, $tenantId, $userId, $validated, $newStart): void {
+                $booking->save();
 
-            // Record creation transition (null → DRAFT)
-            $this->recordTransition($booking, '', BookingLifecycle::STATUS_DRAFT, 'created', $userId);
+                // Record creation transition (null → DRAFT)
+                $this->recordTransition($booking, '', BookingLifecycle::STATUS_DRAFT, 'created', $userId);
 
-            $this->outbox->append(
-                $tenantId,
-                'booking',
-                (string) $booking->getKey(),
-                'booking.reservation.created',
-                [
-                    'booking_id' => (string) $booking->getKey(),
-                    'user_id' => $userId,
-                    'service_sku' => (string) $validated['service_sku'],
-                    'scheduled_at' => $newStart->toDateTimeString(),
-                ],
-            );
-        });
+                $this->outbox->append(
+                    $tenantId,
+                    'booking',
+                    (string) $booking->getKey(),
+                    'booking.reservation.created',
+                    [
+                            'booking_id' => (string) $booking->getKey(),
+                            'user_id' => $userId,
+                            'service_sku' => (string) $validated['service_sku'],
+                            'scheduled_at' => $newStart->toDateTimeString(),
+                        ],
+                );
+            });
+        } catch (\Illuminate\Database\UniqueConstraintViolationException) {
+            // Lost the race on the (tenant, user, idempotency key) index:
+            // the winner's booking is the answer.
+            $winner = Booking::query()
+                ->where('tenant_id', $tenantId)
+                ->where('user_id', $userId)
+                ->where('idempotency_key', $idempotencyKey)
+                ->first();
+
+            if ($winner === null) {
+                throw new \RuntimeException('booking idempotency conflict could not be resolved');
+            }
+
+            return new JsonResponse([
+                'data' => self::serialize($winner),
+                'meta' => ['request_id' => $this->requestId($request)],
+            ], 200);
+        }
 
         $this->audit->record(
             'booking.reservation.created',
@@ -423,11 +462,21 @@ final class ReservationController
             ], 422);
         }
 
-        // One transaction: intent + snapshot + transition + audit. The
-        // row lock serializes concurrent confirms (no-op on sqlite,
-        // WHERE … FOR UPDATE on MySQL), so a racing pair can never open
-        // two provider orders.
-        $outcome = $booking->getConnection()->transaction(function () use ($booking, $user, $tenantId, $currency, $quote): array {
+        // Two COMMITTED transactions, not one.
+        //
+        // TX1 - the payment intent and the provider order. The booking
+        // row is locked here, so two concurrent confirms serialise and
+        // only ONE provider order is ever opened. The intent row, the
+        // outbox fact and the audit row commit with it.
+        //
+        // TX2 - the booking state change. It can fail on its own (the
+        // booking was cancelled in between). When it does, the provider
+        // order is still recorded by a COMMITTED intent row, and a
+        // retry reuses that order instead of opening a second, payable
+        // one. With a single transaction a rollback destroyed the
+        // intent row while the order lived on at the provider - an
+        // orphan the customer could still pay.
+        $intentOutcome = $booking->getConnection()->transaction(function () use ($booking, $user, $tenantId, $currency, $quote): array {
             $locked = Booking::query()
                 ->whereKey((string) $booking->getKey())
                 ->lockForUpdate()
@@ -445,7 +494,7 @@ final class ReservationController
                 return ['conflict' => true];
             }
 
-            $intent = $this->payments->begin(
+            return $this->payments->begin(
                 tenantId: $tenantId,
                 bookingId: (string) $locked->getKey(),
                 userId: (int) $user->getAuthIdentifier(),
@@ -453,9 +502,63 @@ final class ReservationController
                 currency: $currency,
                 quote: $quote,
             );
+        });
 
-            if (! ($intent['ok'] ?? false)) {
-                return $intent;
+        if (isset($intentOutcome['not_found'])) {
+            return new JsonResponse([
+                'error' => ['code' => 'not_found', 'message' => 'Booking not found.', 'request_id' => $this->requestId($request)],
+            ], 404);
+        }
+
+        if (isset($intentOutcome['replay'])) {
+            // The intent already exists: the same one comes back.
+            $intent = $this->payments->forBooking($tenantId, $bookingId);
+            if ($intent === null) {
+                return new JsonResponse([
+                    'error' => ['code' => 'state_forbidden', 'message' => 'Booking awaits payment without an intent — operator attention.', 'request_id' => $this->requestId($request)],
+                ], 409);
+            }
+
+            return new JsonResponse([
+                'data' => $intent,
+                'meta' => ['request_id' => $this->requestId($request)],
+            ], 201);
+        }
+
+        if (isset($intentOutcome['conflict'])) {
+            return new JsonResponse([
+                'error' => ['code' => 'state_forbidden', 'message' => 'Cannot initiate payment in this state.', 'request_id' => $this->requestId($request)],
+            ], 409);
+        }
+
+        if (! ($intentOutcome['ok'] ?? false)) {
+            if (($intentOutcome['reason'] ?? null) === 'gateway_unavailable') {
+                return new JsonResponse([
+                    'error' => ['code' => 'dependency_unavailable', 'message' => 'Payment provider is unavailable.', 'request_id' => $this->requestId($request)],
+                ], 503);
+            }
+
+            return new JsonResponse([
+                'error' => ['code' => 'dependency_unavailable', 'message' => 'Payment could not be initiated.', 'request_id' => $this->requestId($request)],
+            ], 503);
+        }
+
+        $outcome = $booking->getConnection()->transaction(function () use ($booking, $user, $tenantId, $currency, $quote, $intentOutcome): array {
+            $locked = Booking::query()
+                ->whereKey((string) $booking->getKey())
+                ->lockForUpdate()
+                ->first();
+
+            if ($locked === null) {
+                return ['not_found' => true];
+            }
+
+            if ($locked->status === BookingLifecycle::STATUS_PENDING_PAYMENT) {
+                return ['replay' => true];
+            }
+
+            if ($locked->status !== BookingLifecycle::STATUS_DRAFT) {
+                return ['conflict' => true];
             }
 
             $locked->forceFill([
@@ -480,7 +583,7 @@ final class ReservationController
                 ['status' => BookingLifecycle::STATUS_PENDING_PAYMENT, 'total_minor' => (int) $quote['total_minor'], 'currency' => $currency],
             );
 
-            return ['intent' => $intent['intent']];
+            return ['intent' => $intentOutcome['intent']];
         });
 
         if (isset($outcome['not_found'])) {
