@@ -146,7 +146,18 @@ final class OnboardingReviewTest extends TenantIntegrationTestCase
 
     public function test_request_info_returns_to_draft(): void
     {
+        // request-info is a write: it needs a write capability and a
+        // fresh step-up, exactly like approve and reject. It used to be
+        // gated on the READ capability alone, which let any queue viewer
+        // mutate every application in the tenant.
         [$tenant, $reviewer, $id] = $this->submittedApp(['onboarding:review:view']);
+
+        $this->actingAs($reviewer)->postJson("/api/v1/onboarding/review/{$id}:request-info", [], $this->tenantHeaders($tenant))
+            ->assertForbidden()
+            ->assertJsonPath('error.code', 'authorization_denied');
+
+        [$tenant, $reviewer, $id] = $this->submittedApp(['onboarding:review:view', 'onboarding:review:approve']);
+        $this->stepUp($reviewer);
 
         $this->actingAs($reviewer)->postJson("/api/v1/onboarding/review/{$id}:request-info", [], $this->tenantHeaders($tenant))
             ->assertOk()
@@ -201,9 +212,12 @@ final class OnboardingReviewTest extends TenantIntegrationTestCase
 
         $reviewer = User::factory()->create();
         $membership = $this->makeMembership($tenant, $reviewer);
-        $this->grantCapabilities($tenant, $membership, ['onboarding:review:view']);
+        // request-info is a write: it needs the write capability and a
+        // fresh step-up, like the other review decisions.
+        $this->grantCapabilities($tenant, $membership, ['onboarding:review:view', 'onboarding:review:approve']);
         $headers = $this->tenantHeaders($tenant);
         $actor = fn () => $this->actingAs($reviewer);
+        $this->stepUp($reviewer);
 
         $actor()->postJson("/api/v1/onboarding/review/{$leaving}:request-info", [], $headers)->assertOk();
 

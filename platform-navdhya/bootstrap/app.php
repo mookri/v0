@@ -18,6 +18,29 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Rate limit for the whole API surface. The limiter itself is
+        // registered in AppServiceProvider::boot(); Laravel only adds
+        // it to the `api` group when it is told to, and without it the
+        // entire /api/v1 surface was unthrottled for human principals
+        // (`throttle.tier` only covers machine clients).
+        $middleware->throttleApi('api');
+
+        // Trusted hosts: without them, absolute URLs (password-reset
+        // links, the federation login bounce) are built from the Host
+        // header, so a forged Host delivers a reset token to the
+        // attacker.
+        //
+        // The list is read through a CALLABLE: this callback runs when
+        // the HTTP kernel is resolved, which is BEFORE the
+        // configuration is loaded, and a direct env() lookup would
+        // return null under php artisan config:cache. The callable
+        // is resolved per request, by which time the (cached) config
+        // is available.
+        $middleware->trustHosts(
+            at: fn (): array => (array) config('trusted.hosts', []),
+            subdomains: true,
+        );
+
         // Request correlation generated at the edge (doc 05 §11.1).
         $middleware->prepend(AttachRequestId::class);
 

@@ -17,7 +17,6 @@ use App\Platform\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Reservations (B5, ADR-005): caller-scoped reads plus the cancel /
@@ -428,7 +427,7 @@ final class ReservationController
         // row lock serializes concurrent confirms (no-op on sqlite,
         // WHERE … FOR UPDATE on MySQL), so a racing pair can never open
         // two provider orders.
-        $outcome = DB::transaction(function () use ($booking, $user, $tenantId, $currency, $quote): array {
+        $outcome = $booking->getConnection()->transaction(function () use ($booking, $user, $tenantId, $currency, $quote): array {
             $locked = Booking::query()
                 ->whereKey((string) $booking->getKey())
                 ->lockForUpdate()

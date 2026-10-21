@@ -28,6 +28,9 @@ use App\Platform\Identity\OAuth\Signing\KmsHttpSigner;
 use App\Platform\Identity\OAuth\Signing\SigningCustody;
 use App\Platform\Identity\OAuth\Signing\SignsTokenRemotely;
 use App\Platform\Tenancy\Http\Middleware\ResolveTenantContext;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
@@ -167,6 +170,54 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // The API surface rate limiter. It used to live in
+        // RouteServiceProvider, which is NOT registered
+        // (bootstrap/providers.php lists only this provider and
+        // PlatformServiceProvider), so the limiter never existed and
+        // `throttle:api` would have thrown "Rate limiter [api] is not
+        // defined". The whole /api/v1 surface was therefore
+        // unthrottled for human principals: `throttle.tier` only
+        // covers machine clients.
+        RateLimiter::for('api', function (Request $request): Limit {
+            $identifier = $request->user()?->getAuthIdentifier();
+
+            return Limit::perMinute(120)->by($identifier !== null ? (string) $identifier : $request->ip());
+        });
+
+        // A production deployment without a trusted-host allowlist
+        // builds absolute URLs (password-reset links) from the Host
+        // header, so a forged Host delivers a reset token to the
+        // attacker. Fail closed rather than serve it.
+        if ((string) config('app.env') === 'production' && (array) config('trusted.hosts', []) === []) {
+            throw new \RuntimeException(
+                'TRUSTED_HOSTS must list the production hostnames (comma separated). '
+                .'An empty list trusts every Host header.'
+            );
+        }
+
+        // Trusted proxies: behind a TLS-terminating load balancer the
+        // client IP and the original scheme are only in the
+        // X-Forwarded-* headers. Without this every request looks like
+        // it came from the load balancer, which collapses every per-IP
+        // rate limit into one shared bucket and downgrades generated
+        // links to http://.
+        //
+        // This is set here, not in bootstrap/app.php: the middleware
+        // callback runs before the configuration is loaded, and the
+        // proxy list has to be resolved from the (cached) config.
+        $trustedProxies = (array) config('trusted.proxies', []);
+
+        if ($trustedProxies !== []) {
+            \Illuminate\Http\Middleware\TrustProxies::at($trustedProxies);
+            \Illuminate\Http\Middleware\TrustProxies::withHeaders(
+                Request::HEADER_X_FORWARDED_FOR
+                | Request::HEADER_X_FORWARDED_HOST
+                | Request::HEADER_X_FORWARDED_PORT
+                | Request::HEADER_X_FORWARDED_PROTO
+                | Request::HEADER_X_FORWARDED_AWS_ELB,
+            );
+        }
+
         // P2 (TOKEN-001): Passport routes on with the consent screen;
         // token lifetimes per SEC-003 (15 min access max, 30 d refresh
         // lineage). Password + implicit grants stay disabled (banned).

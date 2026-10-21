@@ -27,8 +27,14 @@ Route::post('review/{id}:approve', [ReviewController::class, 'approve'])
 Route::post('review/{id}:reject', [ReviewController::class, 'reject'])
     ->middleware(['capability:onboarding:review:reject', 'stepup:2'])
     ->name('review.reject');
+// request-info is a WRITE (it moves the application back to DRAFT,
+// overwrites reviewed_at/reviewer_id and writes a review record), so it
+// is gated on a write capability and the same step-up as its sibling
+// decision verbs. It used to be gated on the READ capability
+// `onboarding:review:view`, which let any queue viewer mutate every
+// application in the tenant.
 Route::post('review/{id}:request-info', [ReviewController::class, 'requestInfo'])
-    ->middleware('capability:onboarding:review:view')
+    ->middleware(['capability:onboarding:review:approve', 'stepup:2'])
     ->name('review.request-info');
 Route::put('applications/{id}/step/{step}', [DraftController::class, 'putStep'])->name('applications.step');
 Route::get('applications/{id}/status', [DraftController::class, 'status'])->name('applications.status');

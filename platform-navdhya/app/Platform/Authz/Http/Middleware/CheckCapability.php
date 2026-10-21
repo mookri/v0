@@ -59,10 +59,18 @@ final class CheckCapability
             return;
         }
 
-        $this->audit->record(
-            action: 'authz.denied',
-            resource: ['module' => 'platform', 'resource_type' => 'capability', 'resource_id' => $capability],
-            after: ['capability' => $capability, 'reason' => $reason],
-        );
+        try {
+            $this->audit->record(
+                action: 'authz.denied',
+                resource: ['module' => 'platform', 'resource_type' => 'capability', 'resource_id' => $capability],
+                after: ['capability' => $capability, 'reason' => $reason],
+            );
+        } catch (\Throwable $e) {
+            // The denial is the contract; the audit row is evidence.
+            // A failing audit write (tenant database down, table not
+            // provisioned yet) used to replace the 403 with a 500 and
+            // destroy the very signal the alerting keys on.
+            report($e);
+        }
     }
 }

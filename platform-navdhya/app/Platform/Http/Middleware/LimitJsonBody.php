@@ -21,7 +21,18 @@ final class LimitJsonBody
         $contentType = (string) $request->headers->get('Content-Type', '');
 
         if (str_contains($contentType, 'application/json')) {
-            $size = (int) $request->server('CONTENT_LENGTH', strlen((string) $request->getContent()));
+            // The declared length is used when it is present: reading
+            // the body first would buffer the whole payload into
+            // memory before the cap is applied, so a 500 MB body was
+            // fully materialised and only then rejected. The body is
+            // read ONLY when the length is unknown, and an empty
+            // Content-Length is treated as unknown (it used to cast to
+            // 0 and skip the check entirely).
+            $declared = $request->server('CONTENT_LENGTH');
+            $size = ($declared === null || $declared === '')
+                ? strlen((string) $request->getContent())
+                : (int) $declared;
+
             if ($size > self::MAX_BYTES) {
                 return response()->json([
                     'error' => [

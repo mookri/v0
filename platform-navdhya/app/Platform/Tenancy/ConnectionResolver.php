@@ -34,7 +34,11 @@ final class ConnectionResolver
             throw new TenantContextMissingException("unknown db_mode {$mode} for tenant {$tenant->getKey()}");
         }
 
-        $name = 'tenant_ded_'.$tenant->getKey();
+        // The stored name wins: `tenant:promote` records the connection
+        // it cut the tenant over to. Falling back to the computed name
+        // would silently ignore that decision and look for a different
+        // database than the one the operator provisioned.
+        $name = (string) ($tenant->db_connection_name ?: 'tenant_ded_'.$tenant->getKey());
 
         if ($this->isRegistered($name)) {
             return $name;
@@ -50,7 +54,23 @@ final class ConnectionResolver
     {
         $key = "tenant:conn:{$tenant->getKey()}";
 
-        return Cache::remember($key, 60, fn (): string => $this->for($tenant));
+        // The cache holds the CONNECTION NAME, not the registration.
+        // `Cache::remember()` returns the cached value without running
+        // the closure, so a cache hit never reached `for()` - and
+        // `for()` is the only place the runtime connection is
+        // registered. A dedicated tenant therefore 500'd on every
+        // request inside the cache window ("Database connection
+        // [tenant_ded_...] not configured"), which looked like
+        // flapping rather than a deterministic defect. Registration is
+        // idempotent, so it is safe to repeat on every call.
+        $name = Cache::remember($key, 60, fn (): string => $this->for($tenant));
+
+        if ($name !== self::SHARED_CONNECTION && ! $this->isRegistered($name)) {
+            $config = $this->decryptConfig($tenant);
+            config()->set("database.connections.{$name}", $config);
+        }
+
+        return $name;
     }
 
     public static function bust(Tenant $tenant): void

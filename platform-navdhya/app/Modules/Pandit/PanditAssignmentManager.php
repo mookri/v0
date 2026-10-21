@@ -12,7 +12,6 @@ use App\Platform\Audit\AuditWriter;
 use App\Platform\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Pandit assignment management (deptrac-blessed Contracts implementation).
@@ -65,7 +64,7 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
         // Fail-closed overlap guard before any write
         $this->checkConflict($tenantId, $panditId, $bookingId, $window);
 
-        $assignment = DB::transaction(function () use ($tenantId, $panditId, $bookingId, $compensationMinor) {
+        $assignment = (new \App\Modules\Pandit\Models\PanditAssignment())->getConnection()->transaction(function () use ($tenantId, $panditId, $bookingId, $compensationMinor) {
             $assignment = new PanditAssignment();
             $assignment->forceFill([
                 'tenant_id' => $tenantId,

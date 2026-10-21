@@ -202,7 +202,7 @@ final class PaymentWebhookController
         $context->set((string) $intent->tenant_id, null);
 
         try {
-            $applied = DB::transaction(function () use ($intent, $toStatus, $eventType, $outcome, $intentPatch): bool {
+            $applied = DB::connection($intent->getConnectionName() ?: (string) config('database.default'))->transaction(function () use ($intent, $toStatus, $eventType, $outcome, $intentPatch): bool {
                 $booking = ($outcome)((string) $intent->booking_id);
 
                 if (! ($booking['ok'] ?? false)) {

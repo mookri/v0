@@ -15,6 +15,14 @@ Order matters — keys before traffic, migrations before seed:
    (`php artisan key:generate`), database credentials, `APP_URL`
    (canonical base — discovery, JWKS, and redirect validation derive
    from it), `IDENTITY_HMAC_SECRET` (pending VAULT-001, env file).
+   **Production also requires `TRUSTED_HOSTS`** (comma-separated
+   hostnames): absolute URLs such as the password-reset link are built
+   from the `Host` header, and the application **refuses to boot**
+   without the list. Set `TRUSTED_PROXIES` when a TLS-terminating
+   load balancer fronts the app (otherwise every request looks like it
+   came from the proxy: the client IP is wrong and generated links come
+   out as `http://`), and `CORS_ALLOWED_ORIGINS` for the browser
+   origins that call the API.
 2. **Migrations** — `php artisan migrate --force`. Our migrations are
    timestamp-ordered; the stock Passport `oauth_*` tables
    (`043234`–`043238`) and the lookup index (`043239`) run after the

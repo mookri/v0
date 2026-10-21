@@ -3,19 +3,19 @@
 **Status:** Active
 **Date:** 2026-10-21
 **Scope:** `platform-navdhya/` (Laravel 12 backend)
-**Method:** Three independent read-only audits (SSO/OIDC/OAuth, session/cookie/OTP, auth latency) plus a general security sweep, every finding verified against source before it was actioned.
+**Method:** Five independent read-only audits — SSO/OIDC/OAuth, session/cookie/OTP, auth latency, the domain modules, and the platform kernel — every finding verified against source before it was actioned.
 
 ---
 
 ## 1. Executive summary
 
-Three audits produced **48 distinct findings**. After verification:
+Five audits produced **90+ distinct findings**. After verification:
 
 | Outcome | Count |
 | --- | --- |
-| **Fixed in this change** | 13 |
-| **Confirmed, deferred with a documented reason** | 22 |
-| **Not a defect** (verified false positive) | 13 |
+| **Fixed in this change** | 27 |
+| **Confirmed, deferred with a documented reason** | 46 |
+| **Verified as not a defect** | 20 |
 
 The most serious issues were not exotic:
 
@@ -27,6 +27,16 @@ The most serious issues were not exotic:
 6. **The OTP login endpoint was an account-enumeration oracle**: an unknown identity always answered `202`, a known one answered `429` on its second request.
 7. **Login timing leaked account existence** (~250 ms delta), and the throttle had no account-scoped budget, so a distributed attacker could rotate IPs for unlimited guesses.
 8. **Auth latency was structural**: the cache store was the database, the RSA key was re-parsed per verification, and the JWKS document was rebuilt from disk on every request.
+
+The module and kernel sweep added five more that are just as serious:
+
+9. **The entire `/api/v1` surface was unthrottled** — the limiter was declared in a provider that is never registered, and `throttle.tier` only covers machine clients.
+10. **A forged `Host` header could steal a password reset** — `TrustHosts` was never configured.
+11. **Transactions opened on the wrong connection**, so every business row lock was a no-op and the booking/payment/outbox writes were not atomic (a Razorpay order could be orphaned by a rollback).
+12. **A dedicated tenant 500'd on every request inside the cache window** — `Cache::remember` never ran the closure that registers the connection.
+13. **The platform ops surfaces leaked across tenants** — a `?tenant_id=` query parameter was never compared with the resolved tenant.
+14. **Public search read any tenant**, and `GET /search/entities/{type}/{slug}` had no tenant filter at all.
+15. **A write verb was gated on a read capability** — any onboarding queue viewer could mutate every application in the tenant.
 
 ---
 
@@ -129,8 +139,103 @@ A shared rate-limiter was tried first and **reverted**: it cannot see that a kno
 
 ---
 
-## 3. Confirmed but deferred
+### 2.15 The whole `/api/v1` surface was unthrottled (P1)
 
+**Root cause.** Laravel only adds a limiter to the `api` group when it is told to (`$middleware->throttleApi()`), and the `api` limiter was declared in `RouteServiceProvider` — a provider that is **not registered** (`bootstrap/providers.php` lists only `AppServiceProvider` and `PlatformServiceProvider`). The limiter therefore never existed, and `throttle.tier` only covers *machine* principals, so a human session could loop every state-changing route (booking create/confirm/cancel, address writes, support tickets, inventory adjust, policy and role writes) at full network speed.
+
+**Fix.** The `api` limiter is registered in `AppServiceProvider::boot()` (120/minute, keyed on the authenticated identifier, falling back to the client IP) and `bootstrap/app.php` now calls `$middleware->throttleApi('api')`.
+
+### 2.16 Host-header poisoning of the password-reset link (P1)
+
+**Root cause.** `TrustHosts` was never configured, so `url()` built absolute URLs from the `Host` header. `POST /forgot-password` with `Host: attacker.example` mailed the victim a reset link pointing at the attacker's host — a full account takeover, and the same vector on the federation login bounce.
+
+**Fix.** `TRUSTED_HOSTS` (comma separated) is read into `config/trusted.php` at config-build time and applied through `$middleware->trustHosts()`. The host list is passed as a **callable** on purpose: the middleware callback runs when the HTTP kernel is resolved, which is *before* the configuration is loaded, so a direct `config()` read there would be empty and a direct `env()` read would be null under `php artisan config:cache`. The callable is resolved per request, by which time the (cached) configuration is available. `AppServiceProvider::boot()` **refuses to boot in production** when the list is empty. The variable is documented in `.env.example`.
+
+### 2.17 `TrustProxies` was never configured (P2)
+
+**Root cause.** Behind a TLS-terminating load balancer, `X-Forwarded-For` was ignored, so `$request->ip()` was the load balancer's address for every request — collapsing every per-IP rate limit into one shared bucket — and `url()` produced `http://` links.
+
+**Fix.** `TRUSTED_PROXIES` (comma separated) is read from the cached configuration and applied with `TrustProxies::at()` + `TrustProxies::withHeaders()` in `AppServiceProvider::boot()` - not in `bootstrap/app.php`, for the same reason as the host list: the proxy list has to be resolved from the configuration, which is not loaded yet when the middleware callback runs.
+
+### 2.18 CORS was entirely off (P2)
+
+**Root cause.** There was no `config/cors.php`. `HandleCors` is in the global stack but matches `config('cors.paths', [])`, so no path ever matched and no `Access-Control-Allow-Origin` header was ever emitted — every cross-origin browser call failed the preflight.
+
+**Fix.** `config/cors.php` with an explicit origin allow-list driven by `CORS_ALLOWED_ORIGINS`. `*` is never paired with credentials.
+
+### 2.19 Transactions opened on the wrong connection — the row locks were no-ops (P1)
+
+**Root cause.** `DB::transaction()` uses `config('database.default')` = **central**, but every business model writes on the ambient **tenant** connection. The `lockForUpdate()` inside those transactions therefore ran on the tenant connection *outside any transaction* — on MySQL a `SELECT … FOR UPDATE` outside a transaction releases immediately — so the documented guarantee "a racing pair can never open two provider orders" was false. The booking state change, the payment intent and the outbox row were also not atomic with each other.
+
+**Fix.** Every affected call site now opens the transaction on the model's own connection:
+
+| File | Change |
+| --- | --- |
+| `ReservationController::confirm` | `$booking->getConnection()->transaction(...)` |
+| `PaymentWebhookController::apply` | `DB::connection($intent->getConnectionName())->transaction(...)` |
+| `TempleManagementService::create` | the temple model's connection |
+| `PanditAssignmentManager::assign` | the assignment model's connection |
+| `PanditAvailabilityManager::replaceAvailability` | the availability model's connection |
+
+The availability case was the worst of them: a mid-loop failure left the pandit with **no** availability windows at all, because the delete had committed and the inserts had not.
+
+### 2.20 The dedicated-tenant connection was never registered on a cache hit (P1)
+
+**Root cause.** `ConnectionResolver::cachedFor()` used `Cache::remember()`, which returns the cached value **without running the closure** — and the closure was the only place the runtime connection was registered. A dedicated tenant therefore 500'd ("Database connection [tenant_ded_…] not configured") on every request inside the 60-second cache window, which looked like flapping rather than a deterministic defect.
+
+**Fix.** The cache holds the connection *name*; the registration is repeated idempotently on every call. The resolver also now honours the stored `db_connection_name` (which `tenant:promote` writes and nothing read) instead of always computing `tenant_ded_<id>`.
+
+### 2.21 The platform ops surfaces leaked across tenants (P2)
+
+**Root cause.** `StatsController`, `SecurityController`, `SettingsController`, `BillingController`, `BookingsController` and `PayoutsController` resolve the tenant from the `X-Tenant-Id` header (capability checked there) and then filtered by the `tenant_id` **query parameter** without comparing the two. A principal holding `platform:ops:view` in tenant A could point the query parameter at tenant B and read B's member counts, plan code, currency and locale.
+
+**Fix.** New `App\Platform\Tenancy\TenantScopeGuard::assertSameTenant()` compares the requested tenant with the resolved one and fails closed with `401 tenant_not_in_token`.
+
+### 2.22 Public search read any tenant (P2)
+
+**Root cause.** The public search routes drop the `tenant` middleware, so the `X-Tenant-Id` header was honoured verbatim: an anonymous caller could name any tenant (or a non-existent one) and read its indexed catalogue. `GET /api/v1/search/entities/{type}/{slug}` had **no tenant predicate at all** and returned the full document row of any tenant by slug.
+
+**Fix.** The header is only honoured for a tenant that exists and is ACTIVE (`SearchController::resolveTenantId()`), and `entity()` now applies the same tenant predicate as the other public search endpoints.
+
+### 2.23 A write verb was gated on a read capability (P2)
+
+**Root cause.** `POST /api/v1/onboarding/review/{id}:request-info` was gated on `onboarding:review:view` — a read capability — while its sibling verbs (`approve`, `reject`) require a sensitive write capability and a step-up. The verb mutates the application status, overwrites `reviewed_at`/`reviewer_id` and writes a review record, so any queue viewer could mutate every application in the tenant. The existing test codified the behaviour.
+
+**Fix.** The verb now requires `onboarding:review:approve` and `stepup:2`, and the test asserts that a view-only reviewer is denied.
+
+### 2.24 An audit failure masked the authorization denial (P2)
+
+**Root cause.** `CheckCapability::recordDenial()` wrote the audit row *inside* the catch block. If the audit insert failed (tenant database down, table not provisioned on a fresh tenant), the original `AuthorizationDeniedException` was replaced by the database error: the client received `500 internal_error` instead of `403 authorization_denied`, and the alerting that keys on `authorization_denied` lost the signal.
+
+**Fix.** The denial is the contract; the audit row is evidence. The write is now best-effort and the failure is reported.
+
+### 2.25 The per-tenant audit chain forked under concurrency (P2)
+
+**Root cause.** `AuditWriter::record()` read the chain head with a plain `SELECT` and inserted in a separate statement, with no lock and no transaction. Two concurrent writes for the same tenant sealed against the same predecessor and branched the chain.
+
+**Fix.** The head read and the insert run in one transaction on the audit table's own connection, with the previous row locked.
+
+### 2.26 The body limit did not bound memory (P2)
+
+**Root cause.** `LimitJsonBody` computed the size with `(int) $request->server('CONTENT_LENGTH', strlen((string) $request->getContent()))`. PHP evaluates the default argument eagerly, so `getContent()` — a full `php://input` read into a string — ran on **every** JSON request before the comparison. A 500 MB body was fully materialised in the worker and only then rejected. An empty `Content-Length` cast to `0` and skipped the check entirely.
+
+**Fix.** The declared length is used when present; the body is read only when the length is unknown, and an empty length is treated as unknown.
+
+### 2.27 Queue jobs could run before their transaction committed (P2)
+
+**Root cause.** `after_commit` was `false` on every queue connection, so a job dispatched inside a transaction became visible to the worker before the commit — the worker could read rows that do not exist yet, or act on a transaction that later rolls back. The platform is explicitly transactional (the outbox), so this contradicted its own posture.
+
+**Fix.** `after_commit => true` on all four connections. The `failed` and `batching` tables also fell back to a **sqlite** connection instead of the project default, so a misconfigured deploy would have written failed jobs to a SQLite file — now `central`.
+
+### 2.28 A crashed outbox drain stalled the outbox for a day (P2)
+
+**Root cause.** `Schedule::command('outbox:drain')->everyMinute()->withoutOverlapping()` uses Laravel's 24-hour default mutex expiry. A drain killed mid-flight (OOM, SIGKILL) held the mutex for a whole day, and the failure was invisible: the readiness probe's relay check was a stub that always reported `ok`.
+
+**Fix.** The mutex expires after 10 minutes, and the daily cleanup sweep no longer runs concurrently on every node.
+
+---
+
+## 3. Confirmed but deferred
 Each item below is a real finding that this change deliberately does **not** fix. The reason and the required follow-up are recorded so nothing is silently dropped.
 
 | # | Finding | Severity | Why deferred | Follow-up |
@@ -157,6 +262,35 @@ Each item below is a real finding that this change deliberately does **not** fix
 | D19 | `audit_logs` has no `(tenant_id, id)` composite | P3 | Performance; needs a migration | Add the index (see §5) |
 | D20 | `auth_events` has no index on `token_jti_ref` / `request_id`, the documented investigation path | P3 | Performance; needs a migration | Add the indexes (see §5) |
 | D21 | The federation `web` mutations redirect to `Referer` | — | Merged with D8 | — |
+
+### 3.1 Wave 2 — modules and kernel (deferred)
+
+| # | Finding | Severity | Why deferred | Follow-up |
+| --- | --- | --- | --- | --- |
+| W1 | `Idempotency-Key` is required on booking creation but never stored: the replay check is a 60-second, payload-shaped heuristic, so a retry creates a second booking and a legitimate second booking returns the first one | P2 | Needs a schema change (`idempotency_key` column + unique index) and a kernel idempotency layer | Add the column + a kernel `IdempotencyKey` middleware (scope, replay, hash-mismatch 409) |
+| W2 | The Razorpay order is created *inside* the booking transaction, so a later rollback orphans a payable provider order and the retry creates a second one | P1 | The transaction is now on the right connection, but the provider call must move **out** of it and the intent insert must be idempotent on a client-supplied key (Razorpay `receipt`) | Move `createOrder()` out of the transaction; make the intent insert `firstOrCreate` |
+| W3 | `confirm` never re-checks the slot overlap (the store-time guard only considers CONFIRMED/ASSIGNED), so two DRAFT bookings for one slot can both be paid | P2 | Needs the overlap predicate to include PENDING_PAYMENT rows inside the confirm transaction | Run the overlap check inside `confirm`'s locked transaction |
+| W4 | `reschedule` compares the optimistic-lock version outside the transaction and takes no row lock, so two concurrent reschedules both pass and the second write is lost | P2 | The fix is to move the read + checks inside a locked transaction on the tenant connection | Re-read the booking under `lockForUpdate()` inside the transaction |
+| W5 | The pandit conflict probe runs outside the assignment transaction, so a pandit can still be committed to two overlapping bookings | P2 | The transaction now runs on the right connection, but the probe must move inside it and re-run against the locked set | Lock the pandit's assignments and re-probe inside the transaction |
+| W6 | `catalog_prices.pandit_id` is an unsigned bigint while pandit ids are ULIDs, so pandit-specific pricing silently never applies and the quote always falls back to the base price | P2 | Needs a migration changing the column to a 26-char string plus the validation and the `(int)` casts | Change the column type, the validation and the quote casts |
+| W7 | A `refund.processed` webhook that arrives before its `payment.captured` is answered `200 ignored`, so the provider stops retrying and the refund is never reconciled | P2 | Changing the webhook contract (a retryable status) is a provider-facing change with its own test matrix | Resolve the intent by order id as a fallback and answer a retryable status |
+| W8 | The public `POST /api/v1/search/analytics` lets an anonymous caller write 100 arbitrary rows per request into a shared, un-swept table, and the text is echoed back by the trending endpoint | P2 | Needs a retention sweep and a signed-caller story; the write is rate-limited per IP | Strip and cap the stored text; add a sweeper; require a known caller |
+| W9 | The per-tenant module feature flag is never enforced on the request path: the module routes are mounted unconditionally, so `flags:set module.x false` has no runtime effect | P2 | The gate needs a per-request tenant-scoped middleware, not just a mount-time check | Add a `tenant.module.enabled` middleware and gate the mount |
+| W10 | A global feature-flag change has no durable audit record (only an INFO log line) and the tenant-scoped row records no operator | P2 | Needs a central, chain-sealed record type | Record flag changes in `auth_events` (or a dedicated table) with the operator |
+| W11 | `tenant:promote` never writes `db_config_ciphertext`, so a promoted tenant has no connection config to decrypt | P2 | The resolver now honours the stored name and fails closed, so the failure is loud rather than silent — but the provisioning step itself is missing | Write the encrypted config during promotion (or make provisioning write it) |
+| W12 | `search` escapes LIKE wildcards in `suggest()` but not in the sqlite/full-text fallback, so a query of `%` matches every row | P3 | One-line fix, but it is in the hot query path and needs a golden-file check | Apply the same `addcslashes` escape |
+| W13 | A booking review comment and a customer activity label are stored and returned with user input verbatim, against the recorder's own contract | P3 | Needs a decision on whether these fields are plain text or markup | `strip_tags` on write, or document them as plain text |
+| W14 | The onboarding countersignature accepts an arbitrary string as `second_reviewer` (only "not me" is checked), so separation of duties can be satisfied by typing a name | P3 | Needs a membership lookup with the review capability | Resolve the second reviewer to a real membership |
+| W15 | The `payment.failed` leg verifies neither amount nor currency, unlike the `captured` leg | P3 | Small, but it changes a money-path contract | Mirror the `captured` money guard |
+| W16 | `provider_payment_id` and `provider_order_id` are indexed but not unique, while the webhook resolves them with `first()` | P3 | Needs a migration; a duplicate would need a cleanup first | Make both unique |
+| W17 | The pagination cursor is unsigned and not bound to the tenant or the sort key; an invalid cursor is silently ignored, so a client can loop on page 1 | P3 | Signing the cursor changes the API contract | Sign the cursor and answer `422 invalid_cursor` |
+| W18 | `api_keys`, `invites`, `sod_rules` and `tenant_feature_flags` carry a `tenant_id` without a foreign key, so a deleted tenant leaves a live machine credential behind | P3 | Needs a migration and a cleanup of any existing orphans | Add the foreign keys with cascade/nullOnDelete |
+| W19 | The outbox drain's failure bookkeeping runs outside the claim transaction, so a failing update means the attempt counter never grows and the row is retried forever | P3 | Needs a restructure of the drain command | Increment `attempts` inside the claim transaction |
+| W20 | The outbox drain's hot query has no tenant-leading index, so every tenant's drain scans the global pending set | P3 | Needs a migration | Add `(tenant_id, dispatched_at, attempts)` |
+| W21 | `audit_logs` has no `(tenant_id, id)` or `(tenant_id, occurred_at)` index, so both of its hot queries scan the tenant's whole history on the **write** path of every audited change | P3 | Needs a migration | Add both indexes |
+| W22 | `RequestTiming` registers a `DB::listen` callback per request on a process-wide dispatcher; under a long-lived worker the listeners accumulate | P3 | Drill-only flag, so the blast radius is small | Forget the listener in the `finally` block |
+| W23 | The client-supplied correlation id is trusted and echoed into logs and audit rows, so an attacker can pin one id across many requests | P3 | Needs a convention change (client ids vs generated ids) | Prefix client ids distinctly, or always generate |
+| W24 | `RouteServiceProvider` is dead code (never registered) and `routes/api.php` documents the wrong middleware alias (`auth` instead of `auth.any`) | P3 | Cosmetic, but it misleads the next author | Delete the provider; fix the comment |
 
 ### Not defects (verified)
 
@@ -269,6 +403,14 @@ New regression tests, one per defect that could silently come back:
 | `tests/Platform/Identity/AuthHardeningTest.php` | Basic-auth clients stay inside the profile gate; the production session cookie is `Secure`; the actor-token issuer refuses an empty secret; the auth-event seal is keyed; the chain verifier detects a tampered row; a raw session cookie is encrypted on the way out and an encrypted one is not encrypted twice |
 | `tests/Platform/Identity/PkceMandateTest.php` | `require_pkce` is enforced at the authorize endpoint; the `plain` challenge method is refused; `S256` still works |
 | `tests/Modules/Customers/CustomerOtpEnumerationTest.php` | Known and unknown identities answer the OTP endpoint identically |
+| `tests/Platform/Security/EdgeHardeningTest.php` | The api group carries a rate limit and the surface really answers `429`; a forged `Host` header is rejected and a trusted one resolves; the ops surfaces reject a foreign `?tenant_id=`; public search refuses an unknown tenant and never reads a foreign tenant |
+| `tests/Platform/Tenancy/ConnectionResolverCacheHitTest.php` | A dedicated tenant registers its connection on a **cache hit** (the `Cache::remember` trap) |
+
+Two existing tests changed because they codified a defect:
+`OnboardingReviewTest::test_request_info_returns_to_draft` (a write verb was
+gated on a read capability) and
+`OnboardingReviewTest::test_queue_status_filter` (it used that verb to
+move an application out of the queue).
 
 The DPoP failures are an **environment defect, not a product defect** — but they block the security suite locally, so the OpenSSL key-generation capability must be provisioned on developer machines and in CI before the DPoP suite can be trusted as a gate.
 

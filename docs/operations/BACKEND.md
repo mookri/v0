@@ -114,6 +114,9 @@ Use [`../development/ENVIRONMENT-VARIABLES.md`](../development/ENVIRONMENT-VARIA
 | `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET` | Live values only in production |
 | `MAIL_*` | Real provider in production; log/array in tests |
 | `AWS_*` | Only if S3-compatible storage is enabled |
+| `TRUSTED_HOSTS` | **Required in production** — the app refuses to boot without it (password-reset links are built from the Host header) |
+| `TRUSTED_PROXIES` | Required behind a TLS-terminating proxy, otherwise every request looks like it came from the proxy |
+| `CORS_ALLOWED_ORIGINS` | Browser origins allowed to call the API; never `*` with credentials |
 
 `SESSION_SIGNING_KEY` (customer app) and `IDENTITY_HMAC_SECRET` (backend) are a matched pair. Rotate them together.
 

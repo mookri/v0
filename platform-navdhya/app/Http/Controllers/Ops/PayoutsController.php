@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Ops;
 
 use App\Modules\Vendor\Models\VendorPayout;
+use App\Platform\Tenancy\TenantScopeGuard;
 use App\Platform\Tenancy\Models\Tenant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -24,6 +25,8 @@ final class PayoutsController
     public function index(Request $request): JsonResponse
     {
         $validated = $request->validate(['tenant_id' => ['required', 'string']]);
+
+        TenantScopeGuard::assertSameTenant($request, (string) $validated['tenant_id']);
 
         $tenant = Tenant::query()->find($validated['tenant_id']);
         if ($tenant === null || $tenant->state !== Tenant::STATE_ACTIVE) {

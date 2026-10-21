@@ -4,7 +4,6 @@ namespace App\Modules\Temple;
 
 use App\Modules\Temple\Contracts\ManagesTemples;
 use App\Modules\Temple\Models\Temple;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Temple management service (deptrac-blessed ManagesTemples implementation).
@@ -30,7 +29,7 @@ final class TempleManagementService implements ManagesTemples
     {
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
 
-        return DB::transaction(function () use ($tenantId, $data) {
+        return (new \App\Modules\Temple\Models\Temple())->getConnection()->transaction(function () use ($tenantId, $data) {
             $temple = new \App\Modules\Temple\Models\Temple();
             $temple->forceFill([
                 'tenant_id' => $tenantId,

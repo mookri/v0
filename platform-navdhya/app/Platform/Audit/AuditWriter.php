@@ -7,6 +7,7 @@ use App\Platform\Tenancy\TenantContext;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Kernel audit writer (K-025, CON-004): every state change and every
@@ -44,36 +45,41 @@ final class AuditWriter
         // Bypass the tenant scope deliberately — the row set is already
         // restricted to this tenant by the explicit where clause below
         // (architecture-tested bypass site, TEN-009).
-        $prevHash = AuditLog::query()
-            ->withoutGlobalScopes()
-            ->where('tenant_id', $tenantId)
-            ->orderByDesc('id')
-            ->value('hash');
+        $connection = (new AuditLog())->getConnectionName() ?: (string) config('database.default');
 
-        $seal = [
-            'tenant_id' => $tenantId,
-            'actor' => $actor,
-            'action' => $action,
-            'resource' => $resource,
-            'before' => $before,
-            'after' => $after,
-            'request_id' => $requestId,
-            'prev_hash' => $prevHash,
-            'occurred_at' => $occurredAt->toISOString(),
-        ];
+        return DB::connection($connection)->transaction(function () use ($tenantId, $actor, $requestId, $occurredAt, $action, $resource, $before, $after): AuditLog {
+            $prevHash = AuditLog::query()
+                ->withoutGlobalScopes()
+                ->where('tenant_id', $tenantId)
+                ->orderByDesc('id')
+                ->lockForUpdate()
+                ->value('hash');
 
-        return AuditLog::create([
-            'tenant_id' => $tenantId,
-            'actor' => $actor,
-            'action' => $action,
-            'resource' => $resource,
-            'before' => $before,
-            'after' => $after,
-            'request_id' => $requestId,
-            'prev_hash' => $prevHash,
-            'hash' => hash('sha256', (string) json_encode($seal, JSON_UNESCAPED_SLASHES)),
-            'occurred_at' => $occurredAt,
-        ]);
+            $seal = [
+                'tenant_id' => $tenantId,
+                'actor' => $actor,
+                'action' => $action,
+                'resource' => $resource,
+                'before' => $before,
+                'after' => $after,
+                'request_id' => $requestId,
+                'prev_hash' => $prevHash,
+                'occurred_at' => $occurredAt->toISOString(),
+            ];
+
+            return AuditLog::create([
+                'tenant_id' => $tenantId,
+                'actor' => $actor,
+                'action' => $action,
+                'resource' => $resource,
+                'before' => $before,
+                'after' => $after,
+                'request_id' => $requestId,
+                'prev_hash' => $prevHash,
+                'hash' => hash('sha256', (string) json_encode($seal, JSON_UNESCAPED_SLASHES)),
+                'occurred_at' => $occurredAt,
+            ]);
+        });
     }
 
     /**

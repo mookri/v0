@@ -192,6 +192,14 @@ Production uses two MySQL 8 databases: central (identity, authz, registry) and t
 
 Passport RS256 keys are files under `storage/oauth-*.key`, not environment values. Back them up with the environment secrets and restrict permissions. Missing keys surface as a 503 on `/.well-known/jwks.json`.
 
+### Edge and deployment posture
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `TRUSTED_HOSTS` | **Production** | Comma-separated hostnames this deployment answers for. Without it, absolute URLs (password-reset links) are built from the `Host` header, so a forged Host delivers a reset token to the attacker. The app **refuses to boot in production** with an empty list. |
+| `TRUSTED_PROXIES` | Behind a proxy | Comma-separated proxies whose `X-Forwarded-*` headers may be trusted. Without it every request looks like it came from the load balancer: the client IP is wrong (collapsing every per-IP rate limit into one bucket) and generated links are `http://`. |
+| `CORS_ALLOWED_ORIGINS` | Cross-origin callers | Comma-separated browser origins allowed to call the API. Never `*` together with credentials. |
+
 ---
 
 ## 5. CI variables and secrets

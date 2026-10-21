@@ -6,7 +6,6 @@ use App\Modules\Pandit\Contracts\ManagesPanditAvailability;
 use App\Modules\Pandit\Models\PanditAvailability;
 use App\Modules\Pandit\Models\PanditProfile;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Pandit availability management (deptrac-blessed Contracts implementation).
@@ -27,7 +26,7 @@ final class PanditAvailabilityManager implements ManagesPanditAvailability
         // Fail closed before any write: overlapping slots are never persisted.
         $this->assertNoOverlaps($slots);
 
-        return DB::transaction(function () use ($tenantId, $panditId, $slots) {
+        return (new \App\Modules\Pandit\Models\PanditAvailability())->getConnection()->transaction(function () use ($tenantId, $panditId, $slots) {
             // Delete existing availability for this pandit
             PanditAvailability::query()
                 ->where('tenant_id', $tenantId)

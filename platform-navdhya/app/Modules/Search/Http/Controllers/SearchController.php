@@ -5,10 +5,10 @@ namespace App\Modules\Search\Http\Controllers;
 use App\Modules\Search\Models\SearchDocument;
 use App\Modules\Search\Models\SearchQuery;
 use App\Modules\Search\Models\SearchTerm;
-use App\Modules\Search\Models\SearchMeta;
 use App\Modules\Search\SearchIndexer;
 use App\Modules\Search\Services\SearchNormalizer;
 use App\Modules\Search\Services\SearchScorer;
+use App\Platform\Tenancy\Models\Tenant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -52,7 +52,7 @@ class SearchController
             return $resp;
         }
 
-        $tenantId = $request->headers->get('X-Tenant-Id');
+        $tenantId = $this->resolveTenantId($request);
 
         // Recall: FULLTEXT (mysql) / LIKE (sqlite + tests).
         $recallStart = microtime(true);
@@ -174,7 +174,7 @@ class SearchController
             return $resp;
         }
 
-        $tenantId = $request->headers->get('X-Tenant-Id');
+        $tenantId = $this->resolveTenantId($request);
         $start = microtime(true);
 
         $normalized = $this->normalizer->normalize($query);
@@ -313,11 +313,23 @@ class SearchController
         return $resp;
     }
 
-    public function entity(string $type, string $slug): JsonResponse
+    public function entity(Request $request, string $type, string $slug): JsonResponse
     {
+        $tenantId = $this->resolveTenantId($request);
+
+        // The tenant predicate is mandatory here: without it this
+        // public, unauthenticated endpoint returned ANY tenant's search
+        // document by slug - a cross-tenant read of the full row
+        // (title, body, card_json, url_path, image_url, city).
         $doc = SearchDocument::active()
             ->where('entity_type', $type)
             ->where('slug', $slug)
+            ->where(function ($q) use ($tenantId) {
+                $q->whereNull('tenant_id');
+                if ($tenantId !== null) {
+                    $q->orWhere('tenant_id', $tenantId);
+                }
+            })
             ->first();
 
         if (! $doc) {
@@ -327,6 +339,32 @@ class SearchController
         }
 
         return response()->json(['data' => $doc->toArray()]);
+    }
+
+    /**
+     * Resolve the tenant a public search may read.
+     *
+     * The public search surfaces drop the `tenant` middleware, so the
+     * `X-Tenant-Id` header was honoured verbatim: an anonymous caller
+     * could name ANY tenant (or a non-existent one) and read its
+     * indexed catalogue. The header is now only honoured for a tenant
+     * that exists and is ACTIVE; anything else falls back to the
+     * platform-default documents (`tenant_id IS NULL`).
+     */
+    private function resolveTenantId(Request $request): ?string
+    {
+        $header = trim((string) $request->headers->get('X-Tenant-Id', ''));
+
+        if ($header === '') {
+            return null;
+        }
+
+        $exists = Tenant::query()
+            ->whereKey($header)
+            ->where('state', Tenant::STATE_ACTIVE)
+            ->exists();
+
+        return $exists ? $header : null;
     }
 
     public function analytics(Request $request): JsonResponse
@@ -402,7 +440,10 @@ class SearchController
     {
         $resp->headers->set('X-Search-Trace', sprintf(
             'tid=%s; recall=%dms; score=%dms; total=%dms',
-            $traceId, $recallMs, $scoreMs, $totalMs
+            $traceId,
+            $recallMs,
+            $scoreMs,
+            $totalMs
         ));
         $resp->headers->set('X-Request-Id', $traceId);
     }
