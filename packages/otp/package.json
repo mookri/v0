@@ -11,7 +11,7 @@
     "./schemas": "./src/schemas.ts"
   },
   "scripts": { "typecheck": "tsc --noEmit", "test": "vitest run" },
-  "dependencies": { "zod": "3.25.76" },
+  "dependencies": { "zod": "4.6.6" },
   "peerDependencies": { "react": "^19" },
   "peerDependenciesMeta": { "react": { "optional": true } },
   "devDependencies": { "typescript": "^5.7.3" }
