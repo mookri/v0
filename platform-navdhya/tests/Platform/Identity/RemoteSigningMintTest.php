@@ -295,8 +295,7 @@ final class RemoteSigningMintTest extends KernelTestCase
         // No database in this harness: the D5 audit write inside the
         // failure path throws too — it must never mask the signing
         // error the caller needs.
-        $signer = new RemoteSigningSigner(new class implements SignsTokenRemotely
-        {
+        $signer = new RemoteSigningSigner(new class () implements SignsTokenRemotely {
             public function sign(string $signingInput): string
             {
                 throw new RemoteSigningException('shim down');

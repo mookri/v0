@@ -4,6 +4,7 @@ namespace App\Modules\Booking\Http\Controllers;
 
 use App\Models\User;
 use App\Modules\Booking\Domain\BookingLifecycle;
+use App\Modules\Booking\Domain\BookingRequestFingerprint;
 use App\Modules\Booking\Models\Booking;
 use App\Modules\Booking\Models\BookingTransition;
 use App\Modules\Catalog\Contracts\CalculatesQuotes;
@@ -65,7 +66,7 @@ final class ReservationController
 
         $user = $request->user();
 
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return new JsonResponse([
                 'error' => ['code' => 'unauthenticated', 'message' => 'Unauthenticated.', 'request_id' => $this->requestId($request)],
             ], 401);
@@ -96,7 +97,7 @@ final class ReservationController
 
         $user = $request->user();
 
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return new JsonResponse([
                 'error' => ['code' => 'unauthenticated', 'message' => 'Unauthenticated.', 'request_id' => $this->requestId($request)],
             ], 401);
@@ -113,7 +114,7 @@ final class ReservationController
 
         return new JsonResponse([
             'data' => array_map(
-                static fn (Booking $booking): array => self::serialize($booking),
+                static fn(Booking $booking): array => self::serialize($booking),
                 $bookings
             ),
             'meta' => ['request_id' => $this->requestId($request), 'page' => $page],
@@ -131,7 +132,7 @@ final class ReservationController
 
         $user = $request->user();
 
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return new JsonResponse([
                 'error' => ['code' => 'unauthenticated', 'message' => 'Unauthenticated.', 'request_id' => $this->requestId($request)],
             ], 401);
@@ -174,21 +175,7 @@ final class ReservationController
         $tenantId = (string) app(TenantContext::class)->tenantId();
         $userId = (string) $user->getAuthIdentifier();
 
-        // Idempotent replay: the key is the identity of the request. It
-        // is stored with the booking (scoped to tenant + user), and the
-        // request hash beside it tells a true replay (same key, same
-        // payload) from a key reuse (same key, different payload).
-        //
-        // The previous check was a 60-second, payload-shaped heuristic:
-        // a retry after a minute created a second booking, and two
-        // legitimate bookings for the same slot inside the minute
-        // collapsed onto the first one.
-        $idempotencyHash = hash('sha256', (string) json_encode([
-            'service_sku' => $validated['service_sku'],
-            'scheduled_at' => $validated['scheduled_at'],
-            'duration_minutes' => $validated['duration_minutes'] ?? null,
-            'address_id' => $validated['address_id'] ?? null,
-        ], JSON_UNESCAPED_SLASHES));
+        $idempotencyHash = BookingRequestFingerprint::hash($validated);
 
         $existing = Booking::query()
             ->where('tenant_id', $tenantId)
@@ -197,8 +184,7 @@ final class ReservationController
             ->first();
 
         if ($existing !== null) {
-            if ($existing->idempotency_hash !== null
-                && ! hash_equals((string) $existing->idempotency_hash, $idempotencyHash)) {
+            if (!BookingRequestFingerprint::matches($validated, $existing->idempotency_hash, (int) $existing->idempotency_hash_version, $existing->address_snapshot)) {
                 return new JsonResponse([
                     'error' => [
                         'code' => 'idempotency_key_conflict',
@@ -215,7 +201,7 @@ final class ReservationController
             ], 200);
         }
 
-        $newStart = CarbonImmutable::parse($validated['scheduled_at']);
+        $newStart = CarbonImmutable::parse($validated['scheduled_at'])->utc();
         $duration = $validated['duration_minutes'] ?? 60;
         $newEnd = $newStart->addMinutes($duration);
 
@@ -253,6 +239,7 @@ final class ReservationController
             'service_sku' => $validated['service_sku'],
             'idempotency_key' => $idempotencyKey,
             'idempotency_hash' => $idempotencyHash,
+            'idempotency_hash_version' => BookingRequestFingerprint::VERSION,
             'status' => BookingLifecycle::STATUS_DRAFT,
             'scheduled_at' => $newStart->toDateTimeString(),
             'duration_minutes' => $duration,
@@ -268,8 +255,13 @@ final class ReservationController
             $booking->getConnection()->transaction(function () use ($booking, $tenantId, $userId, $validated, $newStart): void {
                 $booking->save();
 
-                // Record creation transition (null → DRAFT)
                 $this->recordTransition($booking, '', BookingLifecycle::STATUS_DRAFT, 'created', $userId);
+                $this->audit->record(
+                    'booking.reservation.created',
+                    ['module' => 'booking', 'resource_type' => 'booking', 'resource_id' => (string) $booking->getKey()],
+                    null,
+                    ['user_id' => $userId, 'service_sku' => $validated['service_sku']],
+                );
 
                 $this->outbox->append(
                     $tenantId,
@@ -277,11 +269,11 @@ final class ReservationController
                     (string) $booking->getKey(),
                     'booking.reservation.created',
                     [
-                            'booking_id' => (string) $booking->getKey(),
-                            'user_id' => $userId,
-                            'service_sku' => (string) $validated['service_sku'],
-                            'scheduled_at' => $newStart->toDateTimeString(),
-                        ],
+                        'booking_id' => (string) $booking->getKey(),
+                        'user_id' => $userId,
+                        'service_sku' => (string) $validated['service_sku'],
+                        'scheduled_at' => $newStart->toDateTimeString(),
+                    ],
                 );
             });
         } catch (\Illuminate\Database\UniqueConstraintViolationException) {
@@ -297,18 +289,21 @@ final class ReservationController
                 throw new \RuntimeException('booking idempotency conflict could not be resolved');
             }
 
+            if (!BookingRequestFingerprint::matches($validated, $winner->idempotency_hash, (int) $winner->idempotency_hash_version, $winner->address_snapshot)) {
+                return new JsonResponse([
+                    'error' => [
+                        'code' => 'idempotency_key_conflict',
+                        'message' => 'Idempotency-Key was already used with a different payload.',
+                        'request_id' => $this->requestId($request),
+                    ],
+                ], 409);
+            }
+
             return new JsonResponse([
                 'data' => self::serialize($winner),
                 'meta' => ['request_id' => $this->requestId($request)],
             ], 200);
         }
-
-        $this->audit->record(
-            'booking.reservation.created',
-            ['module' => 'booking', 'resource_type' => 'booking', 'resource_id' => (string) $booking->getKey()],
-            null,
-            ['user_id' => $userId, 'service_sku' => $validated['service_sku']]
-        );
 
         return new JsonResponse([
             'data' => self::serialize($booking->fresh()),
@@ -329,67 +324,36 @@ final class ReservationController
         ]);
     }
 
-    public function cancel(Request $request, string $id): JsonResponse
+    public function cancel(Request $request, string $id, \App\Modules\Booking\Application\CancelBookingUseCase $cancelUseCase): JsonResponse
     {
         $found = $this->ownBooking($request, $id);
         if ($found instanceof JsonResponse) {
             return $found;
         }
         ['user' => $user, 'booking' => $booking] = $found;
+        $tenantId = (string) app(TenantContext::class)->tenantId();
 
-        // Idempotent replay: cancelling a CANCELLED booking returns the
-        // same representation (safe retries, same as reschedule versions).
-        if ($booking->status === BookingLifecycle::STATUS_CANCELLED) {
+        try {
+            $result = $cancelUseCase->execute(
+                tenantId: $tenantId,
+                bookingId: (string) $booking->getKey(),
+                userId: $user->getAuthIdentifier(),
+                reason: $request->input('reason')
+            );
+
             return new JsonResponse([
-                'data' => self::serialize($booking),
+                'data' => self::serialize($result['booking']),
                 'meta' => ['request_id' => $this->requestId($request)],
             ]);
-        }
-
-        if (! BookingLifecycle::canCancel($booking->status)) {
+        } catch (\App\Modules\Booking\Domain\Exceptions\BookingStateForbiddenException $e) {
             return new JsonResponse([
-                'error' => ['code' => 'state_forbidden', 'message' => 'Cannot cancel in this state.', 'request_id' => $this->requestId($request)],
+                'error' => ['code' => 'state_forbidden', 'message' => $e->getMessage(), 'request_id' => $this->requestId($request)],
             ], 409);
+        } catch (\App\Modules\Booking\Domain\Exceptions\BookingNotFoundException $e) {
+            return new JsonResponse([
+                'error' => ['code' => 'not_found', 'message' => $e->getMessage(), 'request_id' => $this->requestId($request)],
+            ], 404);
         }
-
-        $from = $booking->status;
-
-        // Same-tx outbox (N2): cancel state + transition + lifecycle fact
-        // commit together on the ambient tenant connection; the drain
-        // replays the fact into the customer's inbox.
-        $booking->getConnection()->transaction(function () use ($booking, $from, $user): void {
-            $booking->forceFill([
-                'status' => BookingLifecycle::STATUS_CANCELLED,
-                'version' => $booking->version + 1,
-            ])->save();
-
-            $this->recordTransition($booking, $from, BookingLifecycle::STATUS_CANCELLED, 'cancelled', (string) $user->getAuthIdentifier());
-
-            $this->outbox->append(
-                (string) $booking->tenant_id,
-                'booking',
-                (string) $booking->getKey(),
-                'booking.reservation.cancelled',
-                [
-                    'booking_id' => (string) $booking->getKey(),
-                    'user_id' => (string) $user->getAuthIdentifier(),
-                    'from' => (string) $from,
-                    'to' => BookingLifecycle::STATUS_CANCELLED,
-                ],
-            );
-        });
-
-        $this->audit->record(
-            'booking.reservation.cancelled',
-            ['module' => 'booking', 'resource_type' => 'booking', 'resource_id' => (string) $booking->getKey()],
-            null,
-            ['user_id' => (string) $user->getAuthIdentifier(), 'from' => $from]
-        );
-
-        return new JsonResponse([
-            'data' => self::serialize($booking->fresh()),
-            'meta' => ['request_id' => $this->requestId($request)],
-        ]);
     }
 
     /**
@@ -410,7 +374,7 @@ final class ReservationController
         // Feature gate (doc 07 §10 rule 1): payments.enabled is seeded
         // default-off; while off the checkout surface does not exist
         // (fail-closed, no oracle).
-        if (! $this->flags->enabled('payments.enabled')) {
+        if (!$this->flags->enabled('payments.enabled')) {
             return new JsonResponse([
                 'error' => ['code' => 'not_found', 'message' => 'Booking not found.', 'request_id' => $this->requestId($request)],
             ], 404);
@@ -446,7 +410,7 @@ final class ReservationController
         // never client-supplied.
         $items = $this->catalog->itemsBySkus([(string) $booking->service_sku]);
         $currency = $items[0]['currency'] ?? null;
-        if ($items === [] || ! is_string($currency) || $currency === '') {
+        if ($items === [] || !is_string($currency) || $currency === '') {
             return new JsonResponse([
                 'error' => ['code' => 'validation_failed', 'message' => 'Service SKU is no longer payable.', 'request_id' => $this->requestId($request)],
             ], 422);
@@ -456,9 +420,9 @@ final class ReservationController
             ['sku' => (string) $booking->service_sku, 'quantity' => 1],
         ], CarbonImmutable::now('UTC'));
 
-        if (! ($quote['ok'] ?? false)) {
+        if (!($quote['ok'] ?? false)) {
             return new JsonResponse([
-                'error' => ['code' => 'validation_failed', 'message' => 'Quote failed: '.(string) ($quote['error'] ?? 'unavailable'), 'request_id' => $this->requestId($request)],
+                'error' => ['code' => 'validation_failed', 'message' => 'Quote failed: ' . (string) ($quote['error'] ?? 'unavailable'), 'request_id' => $this->requestId($request)],
             ], 422);
         }
 
@@ -531,7 +495,7 @@ final class ReservationController
             ], 409);
         }
 
-        if (! ($intentOutcome['ok'] ?? false)) {
+        if (!($intentOutcome['ok'] ?? false)) {
             if (($intentOutcome['reason'] ?? null) === 'gateway_unavailable') {
                 return new JsonResponse([
                     'error' => ['code' => 'dependency_unavailable', 'message' => 'Payment provider is unavailable.', 'request_id' => $this->requestId($request)],
@@ -543,7 +507,7 @@ final class ReservationController
             ], 503);
         }
 
-        $outcome = $booking->getConnection()->transaction(function () use ($booking, $user, $tenantId, $currency, $quote, $intentOutcome): array {
+        $outcome = $booking->getConnection()->transaction(function () use ($booking, $user, $intentOutcome): array {
             $locked = Booking::query()
                 ->whereKey((string) $booking->getKey())
                 ->lockForUpdate()
@@ -563,8 +527,8 @@ final class ReservationController
 
             $locked->forceFill([
                 'status' => BookingLifecycle::STATUS_PENDING_PAYMENT,
-                'total_minor' => (int) $quote['total_minor'],
-                'currency' => $currency,
+                'total_minor' => (int) $intentOutcome['intent']['amount_minor'],
+                'currency' => $intentOutcome['intent']['currency'],
                 'version' => $locked->version + 1,
             ])->save();
 
@@ -580,7 +544,7 @@ final class ReservationController
                 'booking.payment.initiated',
                 ['module' => 'booking', 'resource_type' => 'booking', 'resource_id' => (string) $locked->getKey()],
                 ['status' => BookingLifecycle::STATUS_DRAFT],
-                ['status' => BookingLifecycle::STATUS_PENDING_PAYMENT, 'total_minor' => (int) $quote['total_minor'], 'currency' => $currency],
+                ['status' => BookingLifecycle::STATUS_PENDING_PAYMENT, 'total_minor' => (int) $intentOutcome['intent']['amount_minor'], 'currency' => $intentOutcome['intent']['currency']],
             );
 
             return ['intent' => $intentOutcome['intent']];
@@ -626,7 +590,7 @@ final class ReservationController
         ], 201);
     }
 
-    public function reschedule(Request $request, string $id): JsonResponse
+    public function reschedule(Request $request, string $id, \App\Modules\Booking\Application\RescheduleBookingUseCase $rescheduleUseCase): JsonResponse
     {
         $found = $this->ownBooking($request, $id);
         if ($found instanceof JsonResponse) {
@@ -639,64 +603,40 @@ final class ReservationController
             'version' => ['required', 'integer', 'min:1'],
         ]);
 
-        if (! BookingLifecycle::canReschedule($booking->status)) {
-            return new JsonResponse([
-                'error' => ['code' => 'state_forbidden', 'message' => 'Cannot reschedule in this state.', 'request_id' => $this->requestId($request)],
-            ], 409);
-        }
+        $newStart = CarbonImmutable::parse($validated['new_start_time'])->utc();
+        $tenantId = (string) app(TenantContext::class)->tenantId();
 
-        if ((int) $validated['version'] !== (int) $booking->version) {
-            return new JsonResponse([
-                'error' => ['code' => 'version_conflict', 'message' => 'Booking changed since you read it.', 'request_id' => $this->requestId($request)],
-            ], 409);
-        }
-
-        $newStart = CarbonImmutable::parse($validated['new_start_time']);
-        $newEnd = $newStart->addMinutes($booking->duration_minutes);
-
-        if ($this->overlaps($booking, $newStart, $newEnd)) {
-            return new JsonResponse([
-                'error' => ['code' => 'conflict', 'message' => 'The new slot overlaps another booking.', 'request_id' => $this->requestId($request)],
-            ], 409);
-        }
-
-        $oldStart = $booking->scheduled_at?->toDateTimeString() ?? '';
-
-        // Same-tx outbox (N2): reschedule state + transition + lifecycle
-        // fact commit together on the ambient tenant connection.
-        $booking->getConnection()->transaction(function () use ($booking, $oldStart, $newStart, $user): void {
-            $booking->forceFill([
-                'scheduled_at' => $newStart->toDateTimeString(),
-                'version' => $booking->version + 1,
-            ])->save();
-
-            $this->recordTransition($booking, $booking->status, $booking->status, 'rescheduled', (string) $user->getAuthIdentifier());
-
-            $this->outbox->append(
-                (string) $booking->tenant_id,
-                'booking',
-                (string) $booking->getKey(),
-                'booking.reservation.rescheduled',
-                [
-                    'booking_id' => (string) $booking->getKey(),
-                    'user_id' => (string) $user->getAuthIdentifier(),
-                    'old_start' => $oldStart,
-                    'new_start' => $newStart->toDateTimeString(),
-                ],
+        try {
+            $result = $rescheduleUseCase->execute(
+                tenantId: $tenantId,
+                bookingId: (string) $booking->getKey(),
+                userId: $user->getAuthIdentifier(),
+                newStart: $newStart,
+                expectedVersion: (int) $validated['version'],
+                reason: $request->input('reason')
             );
-        });
 
-        $this->audit->record(
-            'booking.reservation.rescheduled',
-            ['module' => 'booking', 'resource_type' => 'booking', 'resource_id' => (string) $booking->getKey()],
-            null,
-            ['user_id' => (string) $user->getAuthIdentifier(), 'version' => $booking->version]
-        );
-
-        return new JsonResponse([
-            'data' => self::serialize($booking->fresh()),
-            'meta' => ['request_id' => $this->requestId($request)],
-        ]);
+            return new JsonResponse([
+                'data' => self::serialize($result['booking']),
+                'meta' => ['request_id' => $this->requestId($request)],
+            ]);
+        } catch (\App\Modules\Booking\Domain\Exceptions\BookingVersionConflictException $e) {
+            return new JsonResponse([
+                'error' => ['code' => 'version_conflict', 'message' => $e->getMessage(), 'request_id' => $this->requestId($request)],
+            ], 409);
+        } catch (\App\Modules\Booking\Domain\Exceptions\BookingStateForbiddenException $e) {
+            return new JsonResponse([
+                'error' => ['code' => 'state_forbidden', 'message' => $e->getMessage(), 'request_id' => $this->requestId($request)],
+            ], 409);
+        } catch (\App\Modules\Booking\Domain\Exceptions\BookingConflictException $e) {
+            return new JsonResponse([
+                'error' => ['code' => 'conflict', 'message' => $e->getMessage(), 'request_id' => $this->requestId($request)],
+            ], 409);
+        } catch (\App\Modules\Booking\Domain\Exceptions\BookingNotFoundException $e) {
+            return new JsonResponse([
+                'error' => ['code' => 'not_found', 'message' => $e->getMessage(), 'request_id' => $this->requestId($request)],
+            ], 404);
+        }
     }
 
     public function history(Request $request, string $id): JsonResponse
@@ -713,7 +653,7 @@ final class ReservationController
             ->get();
 
         return new JsonResponse([
-            'data' => $transitions->map(static fn (BookingTransition $transition): array => [
+            'data' => $transitions->map(static fn(BookingTransition $transition): array => [
                 'id' => (string) $transition->getKey(),
                 'from' => $transition->from_status,
                 'to' => $transition->to_status,
@@ -725,28 +665,6 @@ final class ReservationController
         ]);
     }
 
-    private function overlaps(Booking $booking, CarbonImmutable $newStart, CarbonImmutable $newEnd): bool
-    {
-        $userId = (string) $booking->user_id;
-
-        $others = Booking::query()
-            ->where('id', '!=', (string) $booking->getKey())
-            ->where('user_id', $userId)
-            ->whereIn('status', [BookingLifecycle::STATUS_CONFIRMED, BookingLifecycle::STATUS_ASSIGNED])
-            ->whereNotNull('scheduled_at')
-            ->get();
-
-        foreach ($others as $other) {
-            $start = CarbonImmutable::parse($other->scheduled_at);
-            $end = $start->addMinutes($other->duration_minutes);
-
-            if ($start < $newEnd && $newStart < $end) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     private function recordTransition(Booking $booking, string $from, string $to, ?string $reason, string $actorId): void
     {

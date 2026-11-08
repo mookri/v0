@@ -6,11 +6,8 @@ use App\Modules\Search\Contracts\ProvidesSearchDocuments;
 use App\Modules\Search\Observers\CatalogSearchObserver;
 use App\Modules\Search\Observers\PanditSearchObserver;
 use App\Modules\Search\Observers\TempleSearchObserver;
-use App\Modules\Catalog\Contracts\ListsCatalogItems;
 use App\Modules\Catalog\Models\CatalogItem;
-use App\Modules\Pandit\Contracts\ListsPanditProfiles;
 use App\Modules\Pandit\Models\PanditProfile;
-use App\Modules\Temple\Contracts\ListsTemples;
 use App\Modules\Temple\Models\Temple;
 use App\Platform\Modules\ModuleServiceProvider as BaseModuleServiceProvider;
 

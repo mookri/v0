@@ -52,11 +52,11 @@ export async function proxy(request: NextRequest) {
     return response;
   }
 
-  // API handlers own their auth decision and return typed JSON 401
-  // envelopes. Redirecting them to the HTML login page makes fetch
-  // clients fail while parsing the response; only page navigations get
-  // the browser-friendly redirect. Session refresh above still applies.
-  if (pathname.startsWith('/api/')) {
+  // API fetch clients that ask for JSON own their auth decision and receive
+  // typed JSON 401 envelopes. Browser navigations or requests without JSON
+  // accept header get redirected to /login.
+  const acceptsJson = request.headers.get('accept')?.includes('application/json');
+  if (pathname.startsWith('/api/') && acceptsJson) {
     return response;
   }
 

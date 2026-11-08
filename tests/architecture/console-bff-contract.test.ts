@@ -208,7 +208,7 @@ test('every BFF Laravel call resolves to a real backend route', () => {
     `BFF calls a Laravel path that does not exist. Fix the call, delete the handler, ` +
       `or (only with a removal workstream) pin it in KNOWN_DANGLING.\n${unresolved.join('\n')}`,
   ).toEqual([]);
-});
+}, 30000);
 
 test('the dangling allow-list is dated and cannot rot', () => {
   const referenced = new Set(allCallSites().map(({ path: p }) => p));

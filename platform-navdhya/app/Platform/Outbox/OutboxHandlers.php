@@ -4,10 +4,11 @@ namespace App\Platform\Outbox;
 
 /**
  * Handler registry for outbox events (F2). Producers never call
- * handlers directly; `outbox:drain` dispatches an event to the handler
- * registered for its event_type INSIDE the claim transaction, so the
- * handler's tenant-DB writes commit atomically with the dispatched_at
- * mark (replay-safe by construction).
+ * handlers directly; `outbox:drain` dispatches an event to all named
+ * consumers registered for its event_type in registration order INSIDE
+ * the claim transaction. Their same-connection tenant-DB writes commit
+ * atomically with the dispatched_at mark; any failure propagates and
+ * rolls back the whole claim (all consumers replay on retry).
  *
  * Contract for handlers:
  *  - tenant-DB writes only inside the handler (they ride the claim tx);
@@ -19,15 +20,19 @@ namespace App\Platform\Outbox;
  */
 final class OutboxHandlers
 {
-    /** @var array<string, callable(OutboxEvent): void> */
+    /** @var array<string, array<string, callable(OutboxEvent): void>> */
     private array $handlers = [];
 
     /**
      * @param  callable(OutboxEvent): void  $handler
      */
-    public function register(string $eventType, callable $handler): void
+    public function register(string $eventType, string $consumerId, callable $handler): void
     {
-        $this->handlers[$eventType] = $handler;
+        if (isset($this->handlers[$eventType][$consumerId])) {
+            throw new \LogicException("Outbox consumer '{$consumerId}' is already registered for event type '{$eventType}'.");
+        }
+
+        $this->handlers[$eventType][$consumerId] = $handler;
     }
 
     public function has(string $eventType): bool
@@ -45,6 +50,12 @@ final class OutboxHandlers
 
     public function dispatch(OutboxEvent $event): void
     {
-        ($this->handlers[$event->event_type])($event);
+        if (! $this->has($event->event_type)) {
+            throw new \LogicException("No outbox consumers registered for event type '{$event->event_type}'.");
+        }
+
+        foreach ($this->handlers[$event->event_type] as $handler) {
+            $handler($event);
+        }
     }
 }

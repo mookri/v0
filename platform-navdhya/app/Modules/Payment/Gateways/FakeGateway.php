@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
  */
 final class FakeGateway implements PaymentGateway
 {
-    public function createOrder(int $amountMinor, string $currency, string $receipt): ?string
+    public function createOrder(int $amountMinor, string $currency, string $receipt): string
     {
         return 'order_fake_'.strtolower((string) Str::ulid());
     }

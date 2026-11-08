@@ -7,6 +7,7 @@ use App\Modules\Booking\Domain\BookingLifecycle;
 use App\Modules\Booking\Models\Booking;
 use App\Modules\Booking\Models\BookingTransition;
 use App\Modules\Customers\Models\BuyerProfile;
+use App\Platform\Audit\AuditLog;
 use App\Platform\Tenancy\Models\Tenant;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Artisan;
@@ -157,6 +158,98 @@ final class BookingReservationTest extends TenantIntegrationTestCase
         $actor()->postJson('/api/v1/booking/reservations/'.(string) $done->getKey().':reschedule', [
             'new_start_time' => '2030-06-01 10:00:00', 'version' => 1,
         ], $headers)->assertStatus(409)->assertJsonPath('error.code', 'state_forbidden');
+    }
+
+    public function test_cancel_rechecks_the_locked_booking_state(): void
+    {
+        [$tenant, $user] = $this->customer();
+        $booking = $this->seedBooking($tenant, $user, BookingLifecycle::STATUS_CONFIRMED);
+        $id = (string) $booking->getKey();
+        $changed = false;
+
+        Booking::retrieved(function (Booking $retrieved) use ($id, &$changed): void {
+            if ((string) $retrieved->getKey() === $id && ! $changed) {
+                $changed = true;
+                $retrieved->getConnection()->table('bookings')->where('id', $id)->update([
+                    'status' => BookingLifecycle::STATUS_COMPLETED,
+                    'version' => 2,
+                ]);
+            }
+        });
+
+        $this->postJson("/api/v1/booking/reservations/{$id}:cancel", [], $this->tenantHeaders($tenant))
+            ->assertStatus(409)->assertJsonPath('error.code', 'state_forbidden');
+
+        $this->assertDatabaseHas('bookings', ['id' => $id, 'status' => 'COMPLETED', 'version' => 2], 'tenant_shared');
+        $this->assertDatabaseMissing('booking_transitions', ['booking_id' => $id], 'tenant_shared');
+    }
+
+    public function test_reschedule_rechecks_the_locked_booking_version(): void
+    {
+        [$tenant, $user] = $this->customer();
+        $booking = $this->seedBooking($tenant, $user, BookingLifecycle::STATUS_CONFIRMED, '2030-05-01 10:00:00');
+        $id = (string) $booking->getKey();
+        $changed = false;
+
+        Booking::retrieved(function (Booking $retrieved) use ($id, &$changed): void {
+            if ((string) $retrieved->getKey() === $id && ! $changed) {
+                $changed = true;
+                $retrieved->getConnection()->table('bookings')->where('id', $id)->update([
+                    'scheduled_at' => '2030-05-03 10:00:00',
+                    'version' => 2,
+                ]);
+            }
+        });
+
+        $this->postJson("/api/v1/booking/reservations/{$id}:reschedule", [
+            'new_start_time' => '2030-05-02 10:00:00',
+            'version' => 1,
+        ], $this->tenantHeaders($tenant))->assertStatus(409)->assertJsonPath('error.code', 'version_conflict');
+
+        $this->assertDatabaseHas('bookings', ['id' => $id, 'scheduled_at' => '2030-05-03 10:00:00', 'version' => 2], 'tenant_shared');
+        $this->assertDatabaseMissing('booking_transitions', ['booking_id' => $id], 'tenant_shared');
+    }
+
+    public function test_cancel_rolls_back_when_its_audit_write_fails(): void
+    {
+        [$tenant, $user] = $this->customer();
+        $booking = $this->seedBooking($tenant, $user, BookingLifecycle::STATUS_CONFIRMED);
+        $id = (string) $booking->getKey();
+
+        AuditLog::creating(function (AuditLog $audit): void {
+            if ($audit->action === 'booking.reservation.cancelled') {
+                throw new \RuntimeException('Audit storage unavailable.');
+            }
+        });
+
+        $this->postJson("/api/v1/booking/reservations/{$id}:cancel", [], $this->tenantHeaders($tenant))
+            ->assertStatus(500);
+
+        $this->assertDatabaseHas('bookings', ['id' => $id, 'status' => 'CONFIRMED', 'version' => 1], 'tenant_shared');
+        $this->assertDatabaseMissing('booking_transitions', ['booking_id' => $id], 'tenant_shared');
+        $this->assertDatabaseMissing('outbox_events', ['aggregate_id' => $id], 'tenant_shared');
+    }
+
+    public function test_reschedule_rolls_back_when_its_audit_write_fails(): void
+    {
+        [$tenant, $user] = $this->customer();
+        $booking = $this->seedBooking($tenant, $user, BookingLifecycle::STATUS_CONFIRMED, '2030-05-01 10:00:00');
+        $id = (string) $booking->getKey();
+
+        AuditLog::creating(function (AuditLog $audit): void {
+            if ($audit->action === 'booking.reservation.rescheduled') {
+                throw new \RuntimeException('Audit storage unavailable.');
+            }
+        });
+
+        $this->postJson("/api/v1/booking/reservations/{$id}:reschedule", [
+            'new_start_time' => '2030-05-02 10:00:00',
+            'version' => 1,
+        ], $this->tenantHeaders($tenant))->assertStatus(500);
+
+        $this->assertDatabaseHas('bookings', ['id' => $id, 'scheduled_at' => '2030-05-01 10:00:00', 'version' => 1], 'tenant_shared');
+        $this->assertDatabaseMissing('booking_transitions', ['booking_id' => $id], 'tenant_shared');
+        $this->assertDatabaseMissing('outbox_events', ['aggregate_id' => $id], 'tenant_shared');
     }
 
     public function test_history_foreign_and_guests(): void

@@ -30,6 +30,8 @@ final class BookingPaymentTransitions implements TransitionsBookingPayment
     public function __construct(
         private readonly AuditWriter $audit,
         private readonly Outbox $outbox,
+        private readonly \App\Modules\Booking\Domain\ResourceAllocationManager $allocations,
+        private readonly \App\Modules\Booking\Domain\StockReservationManager $stock,
     ) {
     }
 
@@ -84,11 +86,18 @@ final class BookingPaymentTransitions implements TransitionsBookingPayment
         ])->save();
 
         if ($to === BookingLifecycle::STATUS_CONFIRMED) {
+            $this->allocations->commitAllocations((string) $booking->tenant_id, (string) $booking->getKey());
+            $this->stock->commitStock((string) $booking->tenant_id, (string) $booking->getKey());
+
             // Capture drives both matrix hops (PENDING_PAYMENT →
             // PAYMENT_CONFIRMED → CONFIRMED); each is recorded so the
             // timeline matches the lifecycle exactly.
             $this->record($booking, BookingLifecycle::STATUS_PENDING_PAYMENT, BookingLifecycle::STATUS_PAYMENT_CONFIRMED, $reason);
             $this->record($booking, BookingLifecycle::STATUS_PAYMENT_CONFIRMED, BookingLifecycle::STATUS_CONFIRMED, $reason);
+        } elseif ($to === BookingLifecycle::STATUS_FAILED) {
+            $this->allocations->releaseAllocations((string) $booking->tenant_id, (string) $booking->getKey(), 'payment_failed');
+            $this->stock->releaseStock((string) $booking->tenant_id, (string) $booking->getKey());
+            $this->record($booking, $from, $to, $reason);
         } else {
             $this->record($booking, $from, $to, $reason);
         }

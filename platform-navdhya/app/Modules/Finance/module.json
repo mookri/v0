@@ -1,0 +1,21 @@
+{
+  "code": "finance",
+  "name": "Finance Subledger & Settlement",
+  "version": "0.1.0",
+  "phase": 5,
+  "priority": 220,
+  "dependencies": ["booking", "payment", "tax"],
+  "actions": ["view", "create", "approve", "export"],
+  "permissions": [
+    { "code": "finance:ledger:view", "name": "View finance ledger" },
+    { "code": "finance:payout:approve", "name": "Approve payouts" }
+  ],
+  "scopes": [],
+  "events": [
+    { "name": "finance.journal.posted", "schema": "v1" },
+    { "name": "finance.payout.approved", "schema": "v1" },
+    { "name": "finance.document.issued", "schema": "v1" }
+  ],
+  "navigation": []
+}
+

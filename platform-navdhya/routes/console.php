@@ -20,3 +20,6 @@ Schedule::command('passport:purge --hours=168')->weekly();
 // producers only append; consumers exist only once handlers register
 // (until then the drain reports unhandled and leaves rows pending).
 Schedule::command('outbox:drain')->everyMinute()->withoutOverlapping(10);
+
+// Booking checkout hold reaper (Phase 2, Task 2.3.3): sweep expired locks every minute.
+Schedule::command('booking:reap-expired-holds')->everyMinute()->withoutOverlapping(10);

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Ops;
 
 use App\Modules\SeoContent\Models\SeoPage;
-use App\Platform\Tenancy\Models\Tenant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

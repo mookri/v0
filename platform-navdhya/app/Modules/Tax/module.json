@@ -1,0 +1,19 @@
+{
+  "code": "tax",
+  "name": "Tax",
+  "version": "0.1.0",
+  "phase": 3,
+  "priority": 230,
+  "dependencies": ["booking"],
+  "actions": ["calculate"],
+  "permissions": [
+    { "code": "tax:calculation:calculate", "name": "Calculate taxes" }
+  ],
+  "scopes": [],
+  "events": [
+    { "name": "tax.computation.created", "schema": "v1" },
+    { "name": "tax.computation.committed", "schema": "v1" },
+    { "name": "tax.computation.cancelled", "schema": "v1" }
+  ],
+  "navigation": []
+}

@@ -337,37 +337,67 @@ test('wired pandit availability maps PANDIT_NOT_FOUND to NOT_FOUND', async () =>
   expect(((await res.json()) as { error: { code: string } }).error.code).toBe('NOT_FOUND');
 });
 
-test('wired reschedule reads version then moves', async () => {
+test('wired reschedule forwards the observed version without fetching a newer one', async () => {
   wiredEnv();
   const calls: { url: string; body: unknown }[] = [];
-  vi.stubGlobal(
-    'fetch',
-    vi.fn(async (url: string, init?: RequestInit) => {
-      const body = init?.body !== undefined ? JSON.parse(init.body as string) : undefined;
-      calls.push({ url, body });
-      const payload = url.endsWith(':reschedule')
-        ? { data: { id: 'b1', status: 'CONFIRMED', service_sku: null, scheduled_at: '2030-06-01T10:00:00', version: 2, actions: [] }, meta: { request_id: 'r' } }
-        : { data: { id: 'b1', status: 'CONFIRMED', service_sku: null, scheduled_at: '2030-05-01T10:00:00', version: 1, actions: ['reschedule'] }, meta: { request_id: 'r' } };
-      return new Response(JSON.stringify(payload), { status: 200 });
-    }),
-  );
+  vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
+    calls.push({ url, body: init?.body ? JSON.parse(init.body as string) : undefined });
+    return Response.json({ data: { id: 'b1', status: 'CONFIRMED', service_sku: null, scheduled_at: '2030-06-01T10:00:00', version: 9, actions: [] }, meta: { request_id: 'r' } });
+  }));
   const res = await rescheduleBooking(
     authed('https://app.navdhya.com/api/bookings/b1/reschedule', {
       method: 'POST',
-      body: JSON.stringify({ newStartTime: '2030-06-01T10:00:00.000Z' }),
+      body: JSON.stringify({ newStartTime: '2030-06-01T10:00:00.000Z', version: 8 }),
     }),
     { params: Promise.resolve({ bookingId: 'b1' }) },
   );
   expect(res.status).toBe(200);
-  expect(calls).toEqual([
-    { url: 'https://api.example.test/api/v1/booking/reservations/b1', body: undefined },
-    {
-      url: 'https://api.example.test/api/v1/booking/reservations/b1:reschedule',
-      body: { new_start_time: '2030-06-01T10:00:00.000Z', version: 1 },
-    },
-  ]);
-  const moved = (await res.json()) as { data: { schedule: { date: string }; actions: string[] } };
+  expect(calls).toEqual([{
+    url: 'https://api.example.test/api/v1/booking/reservations/b1:reschedule',
+    body: { new_start_time: '2030-06-01T10:00:00.000Z', version: 8 },
+  }]);
+  const moved = await res.json();
   expect(moved.data.schedule.date).toBe('2030-06-01');
+  expect(moved.data.version).toBe(9);
+});
+
+test.each([undefined, null, 0, -1, 1.5, '8', Number.MAX_SAFE_INTEGER + 1])('wired reschedule rejects invalid version %s before forwarding', async (version) => {
+  wiredEnv();
+  const upstream = vi.fn();
+  vi.stubGlobal('fetch', upstream);
+  const res = await rescheduleBooking(authed('https://app.navdhya.com/api/bookings/b1/reschedule', {
+    method: 'POST',
+    body: JSON.stringify({ newStartTime: '2030-06-01T10:00:00.000Z', version }),
+  }), { params: Promise.resolve({ bookingId: 'b1' }) });
+  expect(res.status).toBe(422);
+  expect((await res.json()).error.code).toBe('VALIDATION_ERROR');
+  expect(upstream).not.toHaveBeenCalled();
+});
+
+test.each([null, [], 7, 'invalid'])('wired reschedule rejects malformed body %s', async (body) => {
+  wiredEnv();
+  const upstream = vi.fn();
+  vi.stubGlobal('fetch', upstream);
+  const res = await rescheduleBooking(authed('https://app.navdhya.com/api/bookings/b1/reschedule', {
+    method: 'POST', body: JSON.stringify(body),
+  }), { params: Promise.resolve({ bookingId: 'b1' }) });
+  expect(res.status).toBe(422);
+  expect(upstream).not.toHaveBeenCalled();
+});
+
+test('wired reschedule preserves a stale-version conflict without retrying', async () => {
+  wiredEnv();
+  const upstream = vi.fn(async (_url: string, init?: RequestInit) => {
+    expect(JSON.parse(init?.body as string).version).toBe(3);
+    return Response.json({ error: { code: 'version_conflict', message: 'Booking changed.', request_id: 'r' } }, { status: 409 });
+  });
+  vi.stubGlobal('fetch', upstream);
+  const res = await rescheduleBooking(authed('https://app.navdhya.com/api/bookings/b1/reschedule', {
+    method: 'POST', body: JSON.stringify({ newStartTime: '2030-06-01T10:00:00.000Z', version: 3 }),
+  }), { params: Promise.resolve({ bookingId: 'b1' }) });
+  expect(res.status).toBe(409);
+  expect((await res.json()).error.code).toBe('STALE_RESOURCE');
+  expect(upstream).toHaveBeenCalledTimes(1);
 });
 
 test('wired home composes four backend reads', async () => {

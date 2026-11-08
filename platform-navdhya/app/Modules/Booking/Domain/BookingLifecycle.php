@@ -32,19 +32,22 @@ final class BookingLifecycle
 
     public const STATUS_REFUNDED = 'REFUNDED';
 
+    public const STATUS_NO_SHOW = 'NO_SHOW';
+
     /** @var array<string, list<string>> */
     public const TRANSITIONS = [
         self::STATUS_DRAFT => [self::STATUS_PENDING_PAYMENT, self::STATUS_CANCELLED, self::STATUS_EXPIRED],
-        self::STATUS_PENDING_PAYMENT => [self::STATUS_PAYMENT_CONFIRMED, self::STATUS_FAILED, self::STATUS_EXPIRED, self::STATUS_CANCELLED],
+        self::STATUS_PENDING_PAYMENT => [self::STATUS_CONFIRMED, self::STATUS_PAYMENT_CONFIRMED, self::STATUS_FAILED, self::STATUS_EXPIRED, self::STATUS_CANCELLED],
         self::STATUS_PAYMENT_CONFIRMED => [self::STATUS_CONFIRMED, self::STATUS_REFUNDED, self::STATUS_FAILED],
-        self::STATUS_CONFIRMED => [self::STATUS_ASSIGNED, self::STATUS_CANCELLED],
-        self::STATUS_ASSIGNED => [self::STATUS_IN_PROGRESS, self::STATUS_CANCELLED],
-        self::STATUS_IN_PROGRESS => [self::STATUS_COMPLETED, self::STATUS_CANCELLED],
+        self::STATUS_CONFIRMED => [self::STATUS_ASSIGNED, self::STATUS_CANCELLED, self::STATUS_FAILED],
+        self::STATUS_ASSIGNED => [self::STATUS_CONFIRMED, self::STATUS_IN_PROGRESS, self::STATUS_CANCELLED, self::STATUS_NO_SHOW, self::STATUS_FAILED],
+        self::STATUS_IN_PROGRESS => [self::STATUS_COMPLETED, self::STATUS_CANCELLED, self::STATUS_FAILED],
         self::STATUS_COMPLETED => [],
         self::STATUS_CANCELLED => [],
         self::STATUS_FAILED => [],
         self::STATUS_EXPIRED => [],
         self::STATUS_REFUNDED => [],
+        self::STATUS_NO_SHOW => [],
     ];
 
     /** @var list<string> */
@@ -67,7 +70,7 @@ final class BookingLifecycle
         'upcoming' => [self::STATUS_DRAFT, self::STATUS_PENDING_PAYMENT, self::STATUS_PAYMENT_CONFIRMED, self::STATUS_CONFIRMED],
         'active' => [self::STATUS_ASSIGNED, self::STATUS_IN_PROGRESS],
         'completed' => [self::STATUS_COMPLETED],
-        'cancelled' => [self::STATUS_CANCELLED, self::STATUS_FAILED, self::STATUS_EXPIRED, self::STATUS_REFUNDED],
+        'cancelled' => [self::STATUS_CANCELLED, self::STATUS_FAILED, self::STATUS_EXPIRED, self::STATUS_REFUNDED, self::STATUS_NO_SHOW],
     ];
 
     /** @var list<string> */

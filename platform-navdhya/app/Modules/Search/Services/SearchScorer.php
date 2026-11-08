@@ -2,7 +2,6 @@
 
 namespace App\Modules\Search\Services;
 
-use App\Modules\Search\Models\SearchDocument;
 use Carbon\Carbon;
 
 /**

@@ -5,11 +5,15 @@ namespace Tests\Modules\Payment;
 use App\Models\User;
 use App\Modules\Booking\Domain\BookingLifecycle;
 use App\Modules\Booking\Models\Booking;
+use App\Modules\Catalog\Contracts\CalculatesQuotes;
 use App\Modules\Catalog\Models\CatalogItem;
 use App\Modules\Catalog\Models\CatalogPrice;
+use App\Modules\Payment\Gateways\FakeGateway;
 use App\Modules\Payment\Models\PaymentIntent;
 use App\Platform\Features\FeatureFlags;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Schema;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TenantIntegrationTestCase;
 
 /**
@@ -95,6 +99,87 @@ final class PaymentOrderCommitTest extends TenantIntegrationTestCase
             BookingLifecycle::STATUS_DRAFT,
             Booking::withoutGlobalScopes()->find($bookingId)->status,
         );
+    }
+
+    #[DataProvider('newerCatalogPrices')]
+    public function test_a_retained_intent_keeps_the_original_booking_amount_and_currency(string $newCurrency, int $newPriceMinor): void
+    {
+        $this->enablePayments();
+        [$tenant, $user, $bookingId] = $this->checkoutFixture();
+        $tenantId = (string) $tenant->getKey();
+        $this->resolveContext($tenant);
+        $quotes = $this->app->make(CalculatesQuotes::class);
+        $lines = [['sku' => 'ORDER-COMMIT-PUJA', 'quantity' => 1]];
+        $originalQuote = $quotes->quote('INR', $lines, CarbonImmutable::now('UTC'));
+        $this->assertTrue($originalQuote['ok']);
+        $this->assertSame(450000, $originalQuote['total_minor']);
+
+        $orderId = (new FakeGateway())->createOrder(450000, 'INR', 'booking_'.$bookingId);
+        $intent = PaymentIntent::query()->create([
+            'tenant_id' => $tenantId,
+            'user_id' => $user->id,
+            'booking_id' => $bookingId,
+            'amount_minor' => 450000,
+            'currency' => 'INR',
+            'status' => PaymentIntent::STATUS_PENDING,
+            'provider' => 'fake',
+            'test_mode' => true,
+            'provider_order_id' => $orderId,
+            'quote_snapshot' => $originalQuote,
+        ]);
+        $this->assertSame(BookingLifecycle::STATUS_DRAFT, Booking::query()->findOrFail($bookingId)->status);
+
+        CatalogItem::query()->where('sku', 'ORDER-COMMIT-PUJA')->update([
+            'currency' => $newCurrency,
+            'price_minor' => $newPriceMinor,
+        ]);
+        (new CatalogPrice())->forceFill([
+            'tenant_id' => $tenantId,
+            'sku' => 'ORDER-COMMIT-PUJA',
+            'market' => 'in',
+            'currency' => $newCurrency,
+            'pandit_id' => null,
+            'price_minor' => $newPriceMinor,
+            'effective_from' => now()->subMinute()->toDateTimeString(),
+        ])->save();
+
+        $newQuote = $quotes->quote($newCurrency, $lines, CarbonImmutable::now('UTC'));
+        $this->assertTrue($newQuote['ok']);
+        $this->assertSame($newPriceMinor, $newQuote['total_minor']);
+        $this->assertSame($newCurrency, $newQuote['currency']);
+        $this->clearContext();
+
+        $this->actingAs($user)
+            ->postJson("/api/v1/booking/reservations/{$bookingId}:confirm", [], $this->tenantHeaders($tenant))
+            ->assertCreated()
+            ->assertJsonPath('data.id', (string) $intent->getKey())
+            ->assertJsonPath('data.provider_order_id', $orderId)
+            ->assertJsonPath('data.booking_id', $bookingId)
+            ->assertJsonPath('data.amount_minor', 450000)
+            ->assertJsonPath('data.currency', 'INR');
+
+        $retained = PaymentIntent::query()->where('tenant_id', $tenantId)->where('booking_id', $bookingId)->sole();
+        $this->assertSame((string) $intent->getKey(), (string) $retained->getKey());
+        $this->assertSame($orderId, $retained->provider_order_id);
+        $this->assertSame($originalQuote, $retained->quote_snapshot);
+        $this->assertSame(450000, (int) $retained->amount_minor);
+        $this->assertSame('INR', $retained->currency);
+
+        $booking = Booking::withoutGlobalScopes()->findOrFail($bookingId);
+        $this->assertSame(BookingLifecycle::STATUS_PENDING_PAYMENT, $booking->status);
+        $this->assertSame(2, (int) $booking->version);
+        $this->assertSame(
+            ['total_minor' => 450000, 'currency' => 'INR'],
+            ['total_minor' => (int) $booking->total_minor, 'currency' => $booking->currency],
+        );
+    }
+
+    public static function newerCatalogPrices(): array
+    {
+        return [
+            'newer price in original currency' => ['INR', 500000],
+            'newer price and currency' => ['USD', 9000],
+        ];
     }
 
     public function test_a_confirm_on_a_non_draft_booking_opens_no_provider_order(): void

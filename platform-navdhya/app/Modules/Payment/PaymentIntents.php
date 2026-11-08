@@ -53,6 +53,12 @@ final class PaymentIntents implements CreatesPaymentIntents
         ]);
         $intent->save();
 
+        app(Domain\DurablePaymentService::class)->registerRoute(
+            (string) config('payments.driver', 'razorpay'),
+            $orderId,
+            $tenantId
+        );
+
         $this->outbox->append(
             $tenantId,
             'payment_intent',

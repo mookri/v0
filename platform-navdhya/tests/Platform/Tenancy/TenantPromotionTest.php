@@ -104,4 +104,23 @@ final class TenantPromotionTest extends TenantIntegrationTestCase
         sort($mirror);
         $this->assertSame($canonical, $mirror);
     }
+
+    public function test_payment_intent_resolves_to_promoted_dedicated_connection(): void
+    {
+        $tenant = $this->makeTenant();
+        $tenantId = (string) $tenant->getKey();
+        $target = $this->targetConnection();
+
+        $this->assertSame(0, Artisan::call('tenant:promote', ['--tenant' => $tenantId, '--target' => $target]));
+
+        $context = app(\App\Platform\Tenancy\TenantContext::class);
+        $context->set($tenantId, null, null, $target);
+
+        try {
+            $intent = new \App\Modules\Payment\Models\PaymentIntent();
+            $this->assertSame($target, $intent->getConnectionName());
+        } finally {
+            $context->clear();
+        }
+    }
 }

@@ -2,8 +2,6 @@
 
 namespace Tests\Unit\Search;
 
-use App\Modules\Search\Models\SearchDocument;
-use App\Modules\Search\Services\SearchNormalizer;
 use App\Modules\Search\Services\SearchScorer;
 use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;

@@ -6,8 +6,6 @@ use App\Models\User;
 use App\Modules\Booking\Models\Booking;
 use App\Modules\Customers\Models\BuyerProfile;
 use App\Modules\Pandit\Models\PanditProfile;
-use App\Modules\Search\Models\SearchDocument;
-use App\Modules\Search\Services\SearchNormalizer;
 use App\Modules\Vendor\Models\Vendor;
 use App\Modules\Vendor\Models\VendorOrder;
 use App\Platform\Audit\AuditWriter;

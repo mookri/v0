@@ -56,11 +56,11 @@ export function createCustomerApi(fetchImpl: CustomerApiFetch) {
       headers: { 'Idempotency-Key': idempotencyKey },
       body: JSON.stringify({}),
     }),
-  rescheduleBooking: (id: string, newStartTime: string, idempotencyKey: string) =>
+  rescheduleBooking: (id: string, newStartTime: string, version: number, idempotencyKey: string) =>
     request(`/api/bookings/${id}/reschedule`, {
       method: 'POST',
       headers: { 'Idempotency-Key': idempotencyKey },
-      body: JSON.stringify({ newStartTime }),
+      body: JSON.stringify({ newStartTime, version }),
     }),
   getProfile: () => request('/api/profile'),
   getVerifications: () => request('/api/verifications'),

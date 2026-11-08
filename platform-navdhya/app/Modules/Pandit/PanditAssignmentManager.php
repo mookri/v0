@@ -57,15 +57,15 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
             ->where('booking_id', $bookingId)
             ->first();
 
-        if ($existing !== null) {
+        if ($existing !== null && in_array($existing->status, [PanditAssignment::STATUS_PENDING, PanditAssignment::STATUS_CONFIRMED], true)) {
             return $this->serialize($existing, $this->bookings->windowsByIds([$bookingId]));
         }
 
         // Fail-closed overlap guard before any write
         $this->checkConflict($tenantId, $panditId, $bookingId, $window);
 
-        $assignment = (new \App\Modules\Pandit\Models\PanditAssignment())->getConnection()->transaction(function () use ($tenantId, $panditId, $bookingId, $compensationMinor) {
-            $assignment = new PanditAssignment();
+        $assignment = (new \App\Modules\Pandit\Models\PanditAssignment())->getConnection()->transaction(function () use ($tenantId, $panditId, $bookingId, $compensationMinor, $existing) {
+            $assignment = $existing ?? new PanditAssignment();
             $assignment->forceFill([
                 'tenant_id' => $tenantId,
                 'pandit_id' => $panditId,
@@ -240,6 +240,7 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
         $assignment = PanditAssignment::query()
             ->where('tenant_id', $tenantId)
             ->where('id', $assignmentId)
+            ->where('status', '!=', PanditAssignment::STATUS_CANCELLED)
             ->firstOrFail();
 
         $this->audit->record(
@@ -249,7 +250,8 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
             ['pandit_id' => (string) $assignment->pandit_id, 'booking_id' => (string) $assignment->booking_id],
         );
 
-        $assignment->delete();
+        $assignment->status = PanditAssignment::STATUS_CANCELLED;
+        $assignment->save();
     }
 
     /**

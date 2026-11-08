@@ -64,13 +64,47 @@ final class PaymentWebhookController
         }
 
         $event = (string) ($payload['event'] ?? '');
+        $incomingEventId = $payload['event_id'] ?? $request->header('X-Razorpay-Event-Id');
 
-        return match ($event) {
+        if (is_string($incomingEventId) && $incomingEventId !== '') {
+            $existingInbox = \App\Modules\Payment\Models\Central\ProviderEventInbox::query()
+                ->where('provider_code', 'RAZORPAY')
+                ->where('event_id', $incomingEventId)
+                ->first();
+
+            if ($existingInbox !== null) {
+                return $this->receipt($request, 'ignored', null, 'replay');
+            }
+            $eventId = $incomingEventId;
+        } else {
+            $eventId = (string) \Illuminate\Support\Str::ulid();
+        }
+
+        // Record incoming verified event in inbox
+        $inboxItem = new \App\Modules\Payment\Models\Central\ProviderEventInbox();
+        $inboxItem->forceFill([
+            'provider_code' => 'RAZORPAY',
+            'event_id' => $eventId,
+            'event_type' => $event,
+            'raw_payload' => $body,
+            'headers_json' => $request->headers->all(),
+            'signature' => $signature,
+            'status' => \App\Modules\Payment\Models\Central\ProviderEventInbox::STATUS_VERIFIED,
+        ]);
+        $inboxItem->save();
+
+        $response = match ($event) {
             'payment.captured' => $this->captured($request, (array) ($payload['payload']['payment']['entity'] ?? [])),
             'payment.failed' => $this->failed($request, (array) ($payload['payload']['payment']['entity'] ?? [])),
             'refund.processed' => $this->refunded($request, (array) ($payload['payload']['refund']['entity'] ?? [])),
             default => $this->receipt($request, 'ignored', null, 'unsupported_event'),
         };
+
+        $inboxItem->status = \App\Modules\Payment\Models\Central\ProviderEventInbox::STATUS_PROCESSED;
+        $inboxItem->processed_at = now();
+        $inboxItem->save();
+
+        return $response;
     }
 
     /**
@@ -79,12 +113,38 @@ final class PaymentWebhookController
     private function captured(Request $request, array $entity): JsonResponse
     {
         $orderId = (string) ($entity['order_id'] ?? '');
-        $intent = $orderId === '' ? null : PaymentIntent::query()
-            ->where('provider_order_id', $orderId)
+        $paymentId = (string) ($entity['id'] ?? '');
+
+        $route = \App\Modules\Payment\Models\Central\ProviderOperationRoute::query()
+            ->where('provider_code', 'RAZORPAY')
+            ->where('provider_operation_id', $orderId)
             ->first();
+
+        $intent = null;
+        if ($route !== null) {
+            $context = app(TenantContext::class);
+            $context->clear();
+            $context->set($route->tenant_id, null, null, $route->connection_name);
+            $intent = PaymentIntent::query()->where('provider_order_id', $orderId)->first();
+        }
+
+        if ($intent === null && $orderId !== '') {
+            $intent = PaymentIntent::query()
+                ->where('provider_order_id', $orderId)
+                ->first();
+        }
 
         if ($intent === null) {
             return $this->receipt($request, 'ignored', null, 'unknown_order');
+        }
+
+        if ($paymentId !== '') {
+            app(\App\Modules\Payment\Domain\DurablePaymentService::class)->registerRoute(
+                'RAZORPAY',
+                $paymentId,
+                (string) $intent->tenant_id,
+                $intent->getConnectionName()
+            );
         }
 
         // Money guard: only the exact snapshot may ever be confirmed —
@@ -107,15 +167,13 @@ final class PaymentWebhookController
             return $this->receipt($request, 'ignored', $intent, 'replay');
         }
 
-        $paymentId = $entity['id'] ?? null;
-
         return $this->apply(
             $request,
             $intent,
             PaymentIntent::STATUS_SUCCEEDED,
             'payment.intent.confirmed',
             fn (string $bookingId): array => $this->bookings->paymentConfirmed($bookingId),
-            is_string($paymentId) && $paymentId !== '' ? ['provider_payment_id' => $paymentId] : [],
+            $paymentId !== '' ? ['provider_payment_id' => $paymentId] : [],
         );
     }
 
@@ -125,9 +183,25 @@ final class PaymentWebhookController
     private function failed(Request $request, array $entity): JsonResponse
     {
         $orderId = (string) ($entity['order_id'] ?? '');
-        $intent = $orderId === '' ? null : PaymentIntent::query()
-            ->where('provider_order_id', $orderId)
+
+        $route = \App\Modules\Payment\Models\Central\ProviderOperationRoute::query()
+            ->where('provider_code', 'RAZORPAY')
+            ->where('provider_operation_id', $orderId)
             ->first();
+
+        $intent = null;
+        if ($route !== null) {
+            $context = app(TenantContext::class);
+            $context->clear();
+            $context->set($route->tenant_id, null, null, $route->connection_name);
+            $intent = PaymentIntent::query()->where('provider_order_id', $orderId)->first();
+        }
+
+        if ($intent === null && $orderId !== '') {
+            $intent = PaymentIntent::query()
+                ->where('provider_order_id', $orderId)
+                ->first();
+        }
 
         if ($intent === null) {
             return $this->receipt($request, 'ignored', null, 'unknown_order');
@@ -152,9 +226,25 @@ final class PaymentWebhookController
     private function refunded(Request $request, array $entity): JsonResponse
     {
         $paymentId = (string) ($entity['payment_id'] ?? '');
-        $intent = $paymentId === '' ? null : PaymentIntent::query()
-            ->where('provider_payment_id', $paymentId)
+
+        $route = \App\Modules\Payment\Models\Central\ProviderOperationRoute::query()
+            ->where('provider_code', 'RAZORPAY')
+            ->where('provider_operation_id', $paymentId)
             ->first();
+
+        $intent = null;
+        if ($route !== null) {
+            $context = app(TenantContext::class);
+            $context->clear();
+            $context->set($route->tenant_id, null, null, $route->connection_name);
+            $intent = PaymentIntent::query()->where('provider_payment_id', $paymentId)->first();
+        }
+
+        if ($intent === null && $paymentId !== '') {
+            $intent = PaymentIntent::query()
+                ->where('provider_payment_id', $paymentId)
+                ->first();
+        }
 
         if ($intent === null) {
             return $this->receipt($request, 'ignored', null, 'unknown_payment');
@@ -192,7 +282,7 @@ final class PaymentWebhookController
      * side, cancelled meanwhile, unknown booking) writes NOTHING and
      * returns an ignored receipt.
      *
-     * @param  \Closure(string): array  $outcome
+     * @param  \Closure(string): array<string, mixed>  $outcome
      * @param  array<string, mixed>  $intentPatch
      */
     private function apply(Request $request, PaymentIntent $intent, string $toStatus, string $eventType, \Closure $outcome, array $intentPatch = []): JsonResponse
@@ -211,6 +301,28 @@ final class PaymentWebhookController
 
                 $fromStatus = (string) $intent->status;
                 $intent->forceFill(['status' => $toStatus, ...$intentPatch])->save();
+
+                $opType = match ($toStatus) {
+                    PaymentIntent::STATUS_SUCCEEDED => \App\Modules\Payment\Models\PaymentOperation::TYPE_CAPTURE,
+                    PaymentIntent::STATUS_FAILED => \App\Modules\Payment\Models\PaymentOperation::TYPE_AUTHORIZE,
+                    PaymentIntent::STATUS_REFUNDED => \App\Modules\Payment\Models\PaymentOperation::TYPE_REFUND,
+                    default => 'UNKNOWN',
+                };
+
+                $operation = new \App\Modules\Payment\Models\PaymentOperation();
+                $operation->forceFill([
+                    'tenant_id' => (string) $intent->tenant_id,
+                    'booking_id' => (string) $intent->booking_id,
+                    'operation_type' => $opType,
+                    'amount_minor' => (int) $intent->amount_minor,
+                    'currency' => (string) $intent->currency,
+                    'status' => $toStatus === PaymentIntent::STATUS_FAILED
+                        ? \App\Modules\Payment\Models\PaymentOperation::STATUS_FAILED
+                        : \App\Modules\Payment\Models\PaymentOperation::STATUS_SUCCEEDED,
+                    'provider_code' => 'RAZORPAY',
+                    'provider_operation_id' => $intentPatch['provider_payment_id'] ?? $intent->provider_payment_id ?? $intent->provider_order_id,
+                ]);
+                $operation->save();
 
                 $this->outbox->append(
                     (string) $intent->tenant_id,

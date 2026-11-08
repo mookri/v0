@@ -26,6 +26,7 @@ use App\Platform\Tenancy\Console\TenantAdoptLegacyCommand;
 use App\Platform\Tenancy\Models\TenantMembership;
 use App\Platform\Tenancy\Console\TenantBackfillV2Command;
 use App\Platform\Tenancy\Console\TenantProvisionSchemaCommand;
+use App\Platform\Tenancy\Console\TenantMigrateUpgradeCommand;
 use App\Platform\Tenancy\Console\TenantDemoteCommand;
 use App\Platform\Tenancy\Console\TenantPromoteCommand;
 use App\Platform\Tenancy\Console\TenantPurgeSharedCommand;
@@ -106,6 +107,7 @@ final class PlatformServiceProvider extends ServiceProvider
                 AuthzExplainCommand::class,
                 TenantBackfillV2Command::class,
                 TenantProvisionSchemaCommand::class,
+                TenantMigrateUpgradeCommand::class,
                 TenantAdoptLegacyCommand::class,
                 TenantPromoteCommand::class,
                 TenantDemoteCommand::class,

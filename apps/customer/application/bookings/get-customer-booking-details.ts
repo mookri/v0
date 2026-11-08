@@ -5,6 +5,7 @@ export type BookingAction = 'cancel' | 'reschedule' | 'confirm' | 'view-puja' | 
 
 export interface CustomerBookingDetails {
   id: string;
+  version: number;
   status: Booking['status'];
   schedule: { date: string; time: string };
   puja: { id: string; name: string; image?: string };
@@ -13,7 +14,7 @@ export interface CustomerBookingDetails {
 }
 
 export function toCustomerBookingDetails(input: {
-  booking: Booking;
+  booking: Booking & { version: number };
   puja: { id: string; name: string; image?: string };
   pandit?: { id: string; name: string };
 }): CustomerBookingDetails {
@@ -27,6 +28,7 @@ export function toCustomerBookingDetails(input: {
   const start = new Date(booking.schedule.startTime);
   return {
     id: booking.id,
+    version: booking.version,
     status: booking.status,
     schedule: {
       date: start.toISOString().slice(0, 10),

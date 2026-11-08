@@ -40,6 +40,7 @@ export function toBookingDetails(reservation: LaravelReservation): CustomerBooki
   if (['COMPLETED', 'CANCELLED'].includes(reservation.status)) actions.push('book-again');
   return {
     id: reservation.id,
+    version: reservation.version,
     status: reservation.status as CustomerBookingDetails['status'],
     schedule: {
       date: reservation.scheduled_at ? reservation.scheduled_at.slice(0, 10) : '',

@@ -59,7 +59,7 @@ export function BookingDetailPage({ details, history, error }: BookingDetailPage
     setActionError(null);
     setFlash(null);
     try {
-      await customerApi.rescheduleBooking(details.id, iso, generateIdempotencyKey());
+      await customerApi.rescheduleBooking(details.id, iso, details.version, generateIdempotencyKey());
       setFlash('Booking rescheduled.');
       setRescheduleValue('');
       router.refresh();

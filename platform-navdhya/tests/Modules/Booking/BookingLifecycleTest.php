@@ -14,7 +14,10 @@ final class BookingLifecycleTest extends TestCase
     public function test_transition_matrix(): void
     {
         $this->assertTrue(BookingLifecycle::canTransition('DRAFT', 'PENDING_PAYMENT'));
+        $this->assertTrue(BookingLifecycle::canTransition('PENDING_PAYMENT', 'CONFIRMED'));
         $this->assertTrue(BookingLifecycle::canTransition('PAYMENT_CONFIRMED', 'CONFIRMED'));
+        $this->assertTrue(BookingLifecycle::canTransition('ASSIGNED', 'CONFIRMED'));
+        $this->assertTrue(BookingLifecycle::canTransition('ASSIGNED', 'NO_SHOW'));
         $this->assertTrue(BookingLifecycle::canTransition('IN_PROGRESS', 'COMPLETED'));
         $this->assertTrue(BookingLifecycle::canTransition('ASSIGNED', 'CANCELLED'));
 
@@ -36,7 +39,7 @@ final class BookingLifecycleTest extends TestCase
         $this->assertTrue(BookingLifecycle::canReschedule('ASSIGNED'));
         $this->assertFalse(BookingLifecycle::canReschedule('IN_PROGRESS'));
 
-        foreach (['COMPLETED', 'CANCELLED', 'FAILED', 'EXPIRED', 'REFUNDED'] as $status) {
+        foreach (['COMPLETED', 'CANCELLED', 'FAILED', 'EXPIRED', 'NO_SHOW', 'REFUNDED'] as $status) {
             $this->assertTrue(BookingLifecycle::isTerminal($status), $status);
         }
         $this->assertFalse(BookingLifecycle::isTerminal('CONFIRMED'));

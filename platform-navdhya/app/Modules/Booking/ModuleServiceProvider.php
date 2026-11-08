@@ -42,10 +42,17 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
         foreach (BookingLifecycleNotifier::EVENT_TYPES as $eventType) {
             $handlers->register(
                 $eventType,
+                'booking.lifecycle-notifier',
                 function (OutboxEvent $event): void {
                     $this->app->make(BookingLifecycleNotifier::class)->handle($event);
                 },
             );
+        }
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                Console\ReapExpiredHoldsCommand::class,
+            ]);
         }
     }
 }

@@ -32,16 +32,20 @@ trait BuildsDpopProofs
         // openssl error — a persistently failing keygen still fails
         // the test exactly as before, nothing is masked.
         $key = false;
+        $opensslConfig = [
+            'private_key_type' => OPENSSL_KEYTYPE_EC,
+            'curve_name' => 'prime256v1',
+        ];
+        if (file_exists('C:\xampp\php\extras\ssl\openssl.cnf')) {
+            $opensslConfig['config'] = 'C:\xampp\php\extras\ssl\openssl.cnf';
+        }
 
         for ($attempt = 0; $attempt < 3 && $key === false; $attempt++) {
             if ($attempt > 0) {
                 usleep(50_000);
             }
 
-            $key = openssl_pkey_new([
-                'private_key_type' => OPENSSL_KEYTYPE_EC,
-                'curve_name' => 'prime256v1',
-            ]);
+            $key = openssl_pkey_new($opensslConfig);
         }
 
         if ($key === false) {
@@ -50,7 +54,7 @@ trait BuildsDpopProofs
 
         $privatePem = '';
 
-        if (! openssl_pkey_export($key, $privatePem)) {
+        if (! openssl_pkey_export($key, $privatePem, null, $opensslConfig)) {
             $this->fail('openssl could not export the DPoP test private key.');
         }
 

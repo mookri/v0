@@ -50,6 +50,17 @@ final class PaymentIntent extends Model
 
     protected $connection = 'tenant_shared';
 
+    public function getConnectionName(): ?string
+    {
+        try {
+            $context = app(\App\Platform\Tenancy\TenantContext::class);
+        } catch (\Throwable) {
+            return $this->connection;
+        }
+
+        return $context->connectionName() ?? $this->connection;
+    }
+
     protected $fillable = [
         'tenant_id', 'user_id', 'booking_id', 'amount_minor', 'currency',
         'status', 'provider', 'test_mode', 'provider_order_id',

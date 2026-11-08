@@ -6,9 +6,10 @@ import { validateProfileUpdate } from '@apps/customer/application/profile/custom
 import { getCustomerHome } from '@apps/customer/application/home/get-customer-home';
 import type { Booking } from '@navdhya/booking/src/domain/Booking';
 
-function booking(over: Partial<Booking> = {}): Booking {
+function booking(over: Partial<Booking> = {}): Booking & { version: number } {
   return {
     id: 'b1',
+    version: 4,
     customer: { userId: 'u1', name: 'A' },
     items: [{ pujaId: 'p1', quantity: 1 }],
     schedule: { startTime: new Date('2026-10-05T10:00:00.000Z'), endTime: new Date('2026-10-05T12:00:00.000Z') },
@@ -28,6 +29,7 @@ test('booking list maps capability summaries to cards', () => {
 
 test('booking detail derives actions from capability state machine', () => {
   const d = toCustomerBookingDetails({ booking: booking(), puja: { id: 'p1', name: 'Puja' } });
+  expect(d.version).toBe(4);
   expect(d.actions).toContain('cancel');
   expect(d.actions).toContain('reschedule');
   const done = toCustomerBookingDetails({ booking: booking({ status: 'COMPLETED' }), puja: { id: 'p1', name: 'Puja' } });

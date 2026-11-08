@@ -107,8 +107,7 @@ final class KmsCustodyExchangeTest extends TenantIntegrationTestCase
         // Rebind the port to a dead shim AFTER the custody validated.
         app()->singleton(
             SignsTokenRemotely::class,
-            fn (): SignsTokenRemotely => new class implements SignsTokenRemotely
-            {
+            fn (): SignsTokenRemotely => new class () implements SignsTokenRemotely {
                 public function sign(string $signingInput): string
                 {
                     throw new RemoteSigningException('shim down');
