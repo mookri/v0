@@ -70,4 +70,3 @@ final class TemplePriest extends Model
         return $this->belongsTo(Temple::class, 'temple_id', 'id');
     }
 }
-

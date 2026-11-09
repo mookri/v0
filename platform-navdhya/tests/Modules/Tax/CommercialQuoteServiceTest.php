@@ -2,15 +2,12 @@
 
 namespace Tests\Modules\Tax;
 
-use App\Modules\Catalog\Contracts\CalculatesQuotes;
 use App\Modules\Catalog\Models\CatalogItem;
 use App\Modules\Catalog\Models\CatalogPrice;
-use App\Modules\Tax\Contracts\CalculatesTax;
 use App\Modules\Tax\Domain\CommercialQuoteService;
 use App\Modules\Tax\Domain\TaxEngine;
 use App\Modules\Tax\Models\CommercialProfile;
 use App\Modules\Tax\Models\TaxComputation;
-use App\Platform\Tenancy\Models\Tenant;
 use Carbon\CarbonImmutable;
 use Tests\TenantIntegrationTestCase;
 

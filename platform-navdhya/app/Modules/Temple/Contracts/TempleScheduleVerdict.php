@@ -54,4 +54,3 @@ final class TempleScheduleVerdict
         return $this->details;
     }
 }
-

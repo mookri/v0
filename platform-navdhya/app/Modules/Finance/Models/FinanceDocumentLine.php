@@ -65,4 +65,3 @@ final class FinanceDocumentLine extends Model
         return $context->connectionName() ?? $this->connection;
     }
 }
-

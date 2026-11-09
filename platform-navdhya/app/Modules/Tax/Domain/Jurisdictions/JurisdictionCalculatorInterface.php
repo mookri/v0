@@ -49,4 +49,3 @@ interface JurisdictionCalculatorInterface
      */
     public function calculate(array $request): array;
 }
-

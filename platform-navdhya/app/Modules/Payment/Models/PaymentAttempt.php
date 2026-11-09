@@ -62,4 +62,3 @@ final class PaymentAttempt extends Model
         return $context->connectionName() ?? $this->connection;
     }
 }
-

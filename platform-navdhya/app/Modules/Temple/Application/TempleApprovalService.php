@@ -147,4 +147,3 @@ final class TempleApprovalService implements ManagesTempleApprovals
         ];
     }
 }
-

@@ -73,4 +73,3 @@ final class SettlementObligation extends Model
         return $context->connectionName() ?? $this->connection;
     }
 }
-

@@ -3,9 +3,6 @@
 namespace Tests\Modules\Vendor;
 
 use App\Modules\Vendor\Models\InventoryMovement;
-use App\Modules\Vendor\Models\Shipment;
-use App\Modules\Vendor\Models\ShipmentEvent;
-use App\Modules\Vendor\Models\Vendor;
 use App\Modules\Vendor\Models\VendorInventory;
 use App\Modules\Vendor\Models\VendorKitComponent;
 use App\Modules\Vendor\Models\VendorWarehouse;

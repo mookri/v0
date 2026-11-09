@@ -81,4 +81,3 @@ final class TempleAartiSchedule extends Model
         return $this->belongsTo(TempleDeity::class, 'deity_id', 'id');
     }
 }
-

@@ -6,7 +6,6 @@ use App\Modules\Finance\Domain\DoubleEntryLedgerService;
 use App\Modules\Finance\Domain\Exceptions\UnbalancedJournalException;
 use App\Modules\Finance\Domain\GaplessSequenceService;
 use App\Modules\Finance\Models\LedgerEntry;
-use App\Platform\Tenancy\Models\Tenant;
 use Carbon\CarbonImmutable;
 use Tests\TenantIntegrationTestCase;
 
@@ -136,4 +135,3 @@ final class DoubleEntryLedgerTest extends TenantIntegrationTestCase
         }
     }
 }
-

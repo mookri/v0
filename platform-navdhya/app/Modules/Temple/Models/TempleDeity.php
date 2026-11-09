@@ -70,4 +70,3 @@ final class TempleDeity extends Model
         return $this->hasMany(TempleAartiSchedule::class, 'deity_id', 'id');
     }
 }
-

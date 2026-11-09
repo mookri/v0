@@ -53,4 +53,3 @@ final class TaxCode extends Model
         return $context->connectionName() ?? $this->connection;
     }
 }
-

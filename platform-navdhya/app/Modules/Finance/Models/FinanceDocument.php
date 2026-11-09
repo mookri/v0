@@ -87,4 +87,3 @@ final class FinanceDocument extends Model
         return $this->hasMany(FinanceDocumentLine::class, 'finance_document_id');
     }
 }
-

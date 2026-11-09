@@ -31,4 +31,3 @@ final class ProviderOperationRoute extends Model
         'connection_name',
     ];
 }
-

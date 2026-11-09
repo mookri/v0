@@ -4,8 +4,6 @@ namespace Tests\Modules\Temple;
 
 use App\Modules\Booking\Domain\Exceptions\ResourceUnavailableException;
 use App\Modules\Booking\Domain\ResourceAllocationManager;
-use App\Modules\Booking\Models\ResourceAllocation;
-use App\Platform\Tenancy\Models\Tenant;
 use Carbon\CarbonImmutable;
 use Tests\TenantIntegrationTestCase;
 

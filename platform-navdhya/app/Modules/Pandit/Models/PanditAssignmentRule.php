@@ -65,4 +65,3 @@ final class PanditAssignmentRule extends Model
         return $this->belongsTo(PanditProfile::class, 'pandit_id', 'id');
     }
 }
-

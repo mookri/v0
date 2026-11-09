@@ -5,7 +5,6 @@ namespace App\Modules\Vendor\Console;
 use App\Modules\Vendor\Models\InventoryMovement;
 use App\Modules\Vendor\Models\VendorInventory;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Verifies and reconciles vendor inventory stock against the append-only movement ledger (D2).

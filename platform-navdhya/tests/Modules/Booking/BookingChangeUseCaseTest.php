@@ -8,10 +8,8 @@ use App\Modules\Booking\Application\RescheduleBookingUseCase;
 use App\Modules\Booking\Domain\BookingLifecycle;
 use App\Modules\Booking\Models\Booking;
 use App\Modules\Booking\Models\BookingChange;
-use App\Modules\Booking\Models\BookingRevision;
 use App\Modules\Booking\Models\ResourceAllocation;
 use App\Modules\Booking\Models\ResourceCalendar;
-use App\Platform\Tenancy\Models\Tenant;
 use Carbon\CarbonImmutable;
 use Tests\TenantIntegrationTestCase;
 
@@ -170,4 +168,3 @@ final class BookingChangeUseCaseTest extends TenantIntegrationTestCase
         }
     }
 }
-

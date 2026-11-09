@@ -48,4 +48,3 @@ final class ScheduleVerdict
         return $this->conflicts;
     }
 }
-

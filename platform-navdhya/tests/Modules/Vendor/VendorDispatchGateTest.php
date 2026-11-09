@@ -2,17 +2,13 @@
 
 namespace Tests\Modules\Vendor;
 
-use App\Models\User;
-use App\Modules\Booking\Application\ConfirmBookingFulfillmentUseCase;
 use App\Modules\Booking\Application\CreateReservationDraftUseCase;
 use App\Modules\Booking\Application\InitiateCheckoutHoldUseCase;
-use App\Modules\Booking\Domain\BookingLifecycle;
 use App\Modules\Catalog\Models\CatalogItem;
 use App\Modules\Vendor\Contracts\ManagesVendorOrders;
 use App\Modules\Vendor\Models\Shipment;
 use App\Modules\Vendor\Models\Vendor;
 use App\Modules\Vendor\Models\VendorInventory;
-use App\Modules\Vendor\Models\VendorOrder;
 use App\Modules\Vendor\Models\VendorWarehouse;
 use Database\Factories\PartnerApplicationFactory;
 use Database\Factories\VendorFactory;

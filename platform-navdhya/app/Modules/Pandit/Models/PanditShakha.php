@@ -63,4 +63,3 @@ final class PanditShakha extends Model
         return $this->hasMany(PanditProfile::class, 'shakha_code', 'code');
     }
 }
-

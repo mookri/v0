@@ -60,4 +60,3 @@ final class TenantSubscription extends Model
         return $this->belongsTo(PlatformSubscriptionPlan::class, 'plan_id');
     }
 }
-

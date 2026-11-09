@@ -5,7 +5,6 @@ namespace App\Modules\Booking\Application;
 use App\Modules\Booking\Domain\Exceptions\BookingNotFoundException;
 use App\Modules\Booking\Models\Booking;
 use App\Modules\Booking\Models\BookingLine;
-use Carbon\CarbonImmutable;
 
 /**
  * Creates a fresh draft reservation reusing preferences (SKU, duration, pandit, temple, address)
@@ -75,4 +74,3 @@ final class RebookBookingUseCase
         );
     }
 }
-

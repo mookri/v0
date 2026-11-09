@@ -4,10 +4,8 @@ namespace Tests\Modules\Payment;
 
 use App\Modules\Payment\Domain\DurablePaymentService;
 use App\Modules\Payment\Models\Central\ProviderEventInbox;
-use App\Modules\Payment\Models\Central\ProviderOperationRoute;
 use App\Modules\Payment\Models\PaymentAttempt;
 use App\Modules\Payment\Models\PaymentOperation;
-use App\Platform\Tenancy\Models\Tenant;
 use Tests\TenantIntegrationTestCase;
 
 final class DurablePaymentServiceTest extends TenantIntegrationTestCase

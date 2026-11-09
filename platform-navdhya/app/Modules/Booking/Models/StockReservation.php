@@ -63,4 +63,3 @@ final class StockReservation extends Model
         return $context->connectionName() ?? $this->connection;
     }
 }
-

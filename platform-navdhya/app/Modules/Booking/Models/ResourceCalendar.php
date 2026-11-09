@@ -63,4 +63,3 @@ final class ResourceCalendar extends Model
         return $this->hasMany(ResourceAllocation::class, 'calendar_id');
     }
 }
-

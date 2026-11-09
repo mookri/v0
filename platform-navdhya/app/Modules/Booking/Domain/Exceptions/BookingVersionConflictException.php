@@ -7,4 +7,3 @@ use RuntimeException;
 final class BookingVersionConflictException extends RuntimeException
 {
 }
-

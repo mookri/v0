@@ -10,7 +10,6 @@ use App\Modules\Vendor\Models\VendorOrder;
 use App\Modules\Vendor\Models\VendorOrderItem;
 use App\Modules\Vendor\Models\VendorOrderTransition;
 use App\Platform\Api\CodedHttpException;
-use Illuminate\Support\Facades\DB;
 
 /**
  * ManagesVendorOrders port implementation: placement, linear lifecycle,

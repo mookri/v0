@@ -66,4 +66,3 @@ final class LedgerJournal extends Model
         return $this->hasMany(LedgerEntry::class, 'journal_id');
     }
 }
-

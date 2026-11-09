@@ -47,4 +47,3 @@ final class GotraList
         return in_array(strtoupper(trim($gotra)), self::CANONICAL, true);
     }
 }
-

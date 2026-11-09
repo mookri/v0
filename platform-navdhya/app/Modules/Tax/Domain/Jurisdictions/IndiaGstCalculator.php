@@ -100,4 +100,3 @@ final class IndiaGstCalculator implements JurisdictionCalculatorInterface
         ];
     }
 }
-

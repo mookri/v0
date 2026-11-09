@@ -11,7 +11,6 @@ use App\Platform\Audit\AuditWriter;
 use App\Platform\Tenancy\ConnectionResolver;
 use App\Platform\Tenancy\Models\Tenant;
 use App\Platform\Tenancy\TenantContext;
-use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
 
 /**
@@ -100,4 +99,3 @@ final class ReapExpiredHoldsCommand extends Command
         return self::SUCCESS;
     }
 }
-

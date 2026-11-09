@@ -2,7 +2,6 @@
 
 namespace Tests\Platform\Billing;
 
-use App\Platform\Billing\Models\PlatformInvoice;
 use App\Platform\Billing\Models\PlatformSubscriptionPlan;
 use App\Platform\Billing\Models\TenantSubscription;
 use App\Platform\Billing\TenantSubscriptionService;

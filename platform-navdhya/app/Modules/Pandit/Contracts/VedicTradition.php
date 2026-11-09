@@ -14,4 +14,3 @@ enum VedicTradition: string
     case MADHVA = 'MADHVA';
     case RAMANUJA = 'RAMANUJA';
 }
-

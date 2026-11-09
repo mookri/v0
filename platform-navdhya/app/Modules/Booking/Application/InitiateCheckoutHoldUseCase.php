@@ -99,7 +99,6 @@ final class InitiateCheckoutHoldUseCase
                             $line->selected_pandit_id,
                             (string) $booking->getKey(),
                             $booking->current_revision_id,
-
                             $effectiveWindow->bufferedStart,
                             $effectiveWindow->bufferedEnd,
                             $expiresAt

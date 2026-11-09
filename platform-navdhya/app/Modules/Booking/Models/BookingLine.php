@@ -64,4 +64,3 @@ final class BookingLine extends Model
         return $context->connectionName() ?? $this->connection;
     }
 }
-

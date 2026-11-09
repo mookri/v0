@@ -10,7 +10,6 @@ use App\Modules\Vendor\Models\VendorKitComponent;
 use App\Modules\Vendor\Models\VendorWarehouse;
 use App\Platform\Api\CodedHttpException;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Authoritative stock truth engine & multi-warehouse routing service (D2, D3).

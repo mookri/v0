@@ -29,4 +29,3 @@ interface PanditSchedulePolicy
         CarbonImmutable $end
     ): EffectiveWindow;
 }
-

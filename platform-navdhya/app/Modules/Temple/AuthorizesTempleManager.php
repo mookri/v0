@@ -88,4 +88,3 @@ trait AuthorizesTempleManager
             ->exists();
     }
 }
-

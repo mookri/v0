@@ -142,4 +142,3 @@ final class TempleSchedulePolicyService implements TempleSchedulePolicy
         return TempleScheduleVerdict::allowed($availableCapacity);
     }
 }
-

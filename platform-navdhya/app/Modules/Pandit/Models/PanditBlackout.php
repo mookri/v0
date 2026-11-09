@@ -71,4 +71,3 @@ final class PanditBlackout extends Model
         return $this->belongsTo(PanditProfile::class, 'pandit_id', 'id');
     }
 }
-

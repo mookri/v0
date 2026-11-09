@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class () extends Migration {
     public function up(): void
     {
         $conn = 'tenant_shared';
@@ -84,4 +84,3 @@ return new class extends Migration {
         Schema::connection($conn)->dropIfExists('tax_registrations');
     }
 };
-

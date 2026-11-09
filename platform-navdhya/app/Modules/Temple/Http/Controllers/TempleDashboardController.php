@@ -148,13 +148,13 @@ final class TempleDashboardController
         ]);
 
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
-        $actorUserId = (string) $request->user()?->getKey();
+        $actorUserId = (int) ($request->user()?->getKey() ?? 0);
         $decision = (string) $request->input('decision');
         $reason = $request->input('reason');
 
         /** @var \App\Modules\Temple\Contracts\ManagesTempleApprovals $approvalsManager */
         $approvalsManager = app(\App\Modules\Temple\Contracts\ManagesTempleApprovals::class);
-        $result = $approvalsManager->decide($tenantId, $approvalId, $actorUserId, $decision, $reason);
+        $result = $approvalsManager->recordDecision($tenantId, $approvalId, $actorUserId, $decision, $reason);
 
         return new JsonResponse([
             'data' => $result,

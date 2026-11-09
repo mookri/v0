@@ -10,6 +10,8 @@ use App\Modules\Booking\Models\ResourceAllocation;
 use App\Modules\Booking\Models\ResourceCalendar;
 use App\Modules\Catalog\Models\CatalogItem;
 use App\Modules\Catalog\Models\CatalogPrice;
+use App\Modules\Pandit\Models\PanditProfile;
+use App\Modules\Pandit\Models\PanditServiceEligibility;
 use App\Modules\Finance\Domain\Exceptions\MakerCheckerViolationException;
 use App\Modules\Finance\Domain\FinanceDocumentService;
 use App\Modules\Finance\Domain\MakerCheckerPayoutService;
@@ -103,6 +105,21 @@ final class EndToEndBookingToSettlementTest extends TenantIntegrationTestCase
         // -------------------------------------------------------------
         // Step 3: Draft Booking & Concurrency Slot Locking
         // -------------------------------------------------------------
+        PanditProfile::factory()->create([
+            'id' => 'pandit_e2e_001',
+            'tenant_id' => $this->tenantId,
+            'verification_status' => PanditProfile::VERIFICATION_VERIFIED,
+            'status' => PanditProfile::STATUS_ACTIVE,
+        ]);
+
+        PanditServiceEligibility::query()->create([
+            'tenant_id' => $this->tenantId,
+            'pandit_id' => 'pandit_e2e_001',
+            'service_sku' => 'RITUAL-GANESH-PUJA',
+            'is_qualified' => true,
+            'qualification_level' => 'PRIMARY',
+        ]);
+
         $calendar = new ResourceCalendar();
         $calendar->forceFill([
             'tenant_id' => $this->tenantId,

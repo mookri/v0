@@ -12,10 +12,9 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: '.',
-  // Both flows run: the auth/OTP lifecycle (ui.spec.ts) and the 21-section
-  // role-console smoke (console.spec.ts). The previous pattern matched only
-  // ui.spec.ts, so the console suite was silently never executed.
-  testMatch: /(ui|console)\.spec\.ts/,
+  // Flows run: the auth/OTP lifecycle (ui.spec.ts), the role-console smoke (console.spec.ts),
+  // and the comprehensive end-to-end booking lifecycle & quality suite (booking-full-lifecycle.spec.ts).
+  testMatch: /(ui|console|booking-full-lifecycle)\.spec\.ts/,
   timeout: 180_000,
   expect: { timeout: 15_000 },
   fullyParallel: false,

@@ -15,4 +15,3 @@ final class BookingConflictException extends RuntimeException
         parent::__construct($message, $code, $previous);
     }
 }
-

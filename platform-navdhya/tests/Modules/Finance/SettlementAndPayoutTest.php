@@ -7,7 +7,6 @@ use App\Modules\Finance\Domain\MakerCheckerPayoutService;
 use App\Modules\Finance\Domain\SettlementObligationService;
 use App\Modules\Finance\Models\Payout;
 use App\Modules\Finance\Models\SettlementObligation;
-use App\Platform\Tenancy\Models\Tenant;
 use Tests\TenantIntegrationTestCase;
 
 final class SettlementAndPayoutTest extends TenantIntegrationTestCase
@@ -96,4 +95,3 @@ final class SettlementAndPayoutTest extends TenantIntegrationTestCase
         }
     }
 }
-

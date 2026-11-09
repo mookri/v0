@@ -26,4 +26,3 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
         $this->loadModuleMigrations();
     }
 }
-

@@ -51,4 +51,3 @@ final class FinanceSequence extends Model
         return $context->connectionName() ?? $this->connection;
     }
 }
-

@@ -31,4 +31,3 @@ return new class () extends Migration {
         Schema::connection('tenant_shared')->dropIfExists('pandit_assignment_rules');
     }
 };
-

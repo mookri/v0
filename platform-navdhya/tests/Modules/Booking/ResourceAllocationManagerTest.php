@@ -198,4 +198,3 @@ final class ResourceAllocationManagerTest extends TenantIntegrationTestCase
         $this->assertSame('HOLD_TIMEOUT', $alloc->release_reason);
     }
 }
-

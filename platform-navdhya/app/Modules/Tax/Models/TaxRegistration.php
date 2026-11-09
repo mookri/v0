@@ -64,4 +64,3 @@ final class TaxRegistration extends Model
         return $context->connectionName() ?? $this->connection;
     }
 }
-

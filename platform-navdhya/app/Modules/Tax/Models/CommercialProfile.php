@@ -57,4 +57,3 @@ final class CommercialProfile extends Model
         return $context->connectionName() ?? $this->connection;
     }
 }
-

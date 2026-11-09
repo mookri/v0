@@ -42,4 +42,3 @@ final class GaplessSequenceService
         return sprintf('%s-%d-%06d', $prefix, $targetYear, $nextVal);
     }
 }
-

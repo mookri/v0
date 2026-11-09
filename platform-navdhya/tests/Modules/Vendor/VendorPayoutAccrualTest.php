@@ -2,9 +2,7 @@
 
 namespace Tests\Modules\Vendor;
 
-use App\Modules\Vendor\Models\Vendor;
 use App\Modules\Vendor\Models\VendorOrder;
-use App\Modules\Vendor\Models\VendorOrderItem;
 use App\Modules\Vendor\Models\VendorPayout;
 use Database\Factories\PartnerApplicationFactory;
 use Database\Factories\VendorFactory;

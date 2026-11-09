@@ -52,4 +52,3 @@ interface CalculatesTax
      */
     public function calculate(array $request): array;
 }
-

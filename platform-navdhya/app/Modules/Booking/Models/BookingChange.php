@@ -78,4 +78,3 @@ final class BookingChange extends Model
         return $context->connectionName() ?? $this->connection;
     }
 }
-

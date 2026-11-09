@@ -21,4 +21,3 @@ interface TempleSchedulePolicy
         int $requestedUnits = 1
     ): TempleScheduleVerdict;
 }
-

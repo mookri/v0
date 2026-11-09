@@ -30,7 +30,7 @@ final class ProcessAssignmentSlaCommand extends Command
         $tenantIdOption = $this->option('tenant');
         $tenants = Tenant::query()
             ->where('state', Tenant::STATE_ACTIVE)
-            ->when($tenantIdOption !== null, fn($q) => $q->where('id', $tenantIdOption))
+            ->when($tenantIdOption !== null, fn ($q) => $q->where('id', $tenantIdOption))
             ->get();
 
         $totalDeclined = 0;

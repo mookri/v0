@@ -53,4 +53,3 @@ final class TaxRuleVersion extends Model
         return $context->connectionName() ?? $this->connection;
     }
 }
-

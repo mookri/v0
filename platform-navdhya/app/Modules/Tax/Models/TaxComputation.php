@@ -69,4 +69,3 @@ final class TaxComputation extends Model
         return $context->connectionName() ?? $this->connection;
     }
 }
-

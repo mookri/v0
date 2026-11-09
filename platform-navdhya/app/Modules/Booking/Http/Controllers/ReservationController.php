@@ -114,7 +114,7 @@ final class ReservationController
 
         return new JsonResponse([
             'data' => array_map(
-                static fn(Booking $booking): array => self::serialize($booking),
+                static fn (Booking $booking): array => self::serialize($booking),
                 $bookings
             ),
             'meta' => ['request_id' => $this->requestId($request), 'page' => $page],
@@ -653,7 +653,7 @@ final class ReservationController
             ->get();
 
         return new JsonResponse([
-            'data' => $transitions->map(static fn(BookingTransition $transition): array => [
+            'data' => $transitions->map(static fn (BookingTransition $transition): array => [
                 'id' => (string) $transition->getKey(),
                 'from' => $transition->from_status,
                 'to' => $transition->to_status,

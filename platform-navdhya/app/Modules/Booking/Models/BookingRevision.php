@@ -64,4 +64,3 @@ final class BookingRevision extends Model
         return $this->hasMany(BookingLine::class, 'revision_id');
     }
 }
-

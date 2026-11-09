@@ -42,4 +42,3 @@ Route::post('reservations/{bookingId}/reschedule', [ReservationV2Controller::cla
 
 Route::post('reservations/{bookingId}/rebook', [ReservationV2Controller::class, 'rebook'])
     ->name('reservations.rebook');
-

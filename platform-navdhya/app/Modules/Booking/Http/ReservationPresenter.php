@@ -38,4 +38,3 @@ final class ReservationPresenter
         return 'W/"v' . ((int) $booking->version) . '"';
     }
 }
-

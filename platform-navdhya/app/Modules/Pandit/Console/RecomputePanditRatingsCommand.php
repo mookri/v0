@@ -86,4 +86,3 @@ final class RecomputePanditRatingsCommand extends Command
         return 0;
     }
 }
-

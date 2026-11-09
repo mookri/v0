@@ -178,4 +178,3 @@ final class TenantSubscriptionService
         return $invoice;
     }
 }
-

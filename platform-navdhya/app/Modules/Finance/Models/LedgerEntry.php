@@ -65,4 +65,3 @@ final class LedgerEntry extends Model
         return $context->connectionName() ?? $this->connection;
     }
 }
-

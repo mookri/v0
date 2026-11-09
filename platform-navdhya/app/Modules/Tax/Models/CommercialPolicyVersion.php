@@ -53,4 +53,3 @@ final class CommercialPolicyVersion extends Model
         return $context->connectionName() ?? $this->connection;
     }
 }
-

@@ -32,4 +32,3 @@ interface ManagesTempleApprovals
         ?string $reason = null
     ): array;
 }
-

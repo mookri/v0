@@ -5,7 +5,6 @@ namespace App\Modules\Booking\Application;
 use App\Modules\Booking\Domain\BookingLifecycle;
 use App\Modules\Booking\Domain\Exceptions\BookingNotFoundException;
 use App\Modules\Booking\Domain\Exceptions\BookingStateForbiddenException;
-use App\Modules\Booking\Domain\ResourceAllocationManager;
 use App\Modules\Booking\Models\Booking;
 use App\Modules\Booking\Models\BookingLine;
 use Carbon\CarbonImmutable;
@@ -113,4 +112,3 @@ final class PreviewRescheduleUseCase
         ];
     }
 }
-

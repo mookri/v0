@@ -208,4 +208,3 @@ final class TaxEngineTest extends TestCase
         $this->assertSame(20000, $zoneResult['total_amount_minor']);
     }
 }
-

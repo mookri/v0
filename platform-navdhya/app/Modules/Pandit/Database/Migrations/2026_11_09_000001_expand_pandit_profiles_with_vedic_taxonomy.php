@@ -56,4 +56,3 @@ return new class () extends Migration {
         Schema::connection('tenant_shared')->dropIfExists('pandit_shakhas');
     }
 };
-

@@ -68,4 +68,3 @@ final class ResourceAllocation extends Model
         return $context->connectionName() ?? $this->connection;
     }
 }
-
