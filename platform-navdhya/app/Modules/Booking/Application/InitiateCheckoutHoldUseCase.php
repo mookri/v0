@@ -8,6 +8,7 @@ use App\Modules\Booking\Domain\ResourceAllocationManager;
 use App\Modules\Booking\Models\Booking;
 use App\Modules\Booking\Models\BookingLine;
 use App\Modules\Booking\Models\BookingTransition;
+use App\Modules\Pandit\Contracts\PanditSchedulePolicy;
 use App\Platform\Audit\AuditWriter;
 use Carbon\CarbonImmutable;
 
@@ -19,6 +20,7 @@ final class InitiateCheckoutHoldUseCase
     public function __construct(
         private readonly ResourceAllocationManager $allocations,
         private readonly AuditWriter $audit,
+        private readonly ?PanditSchedulePolicy $schedulePolicy = null,
     ) {
     }
 
@@ -31,7 +33,7 @@ final class InitiateCheckoutHoldUseCase
             ->lockForUpdate()
             ->firstOrFail();
 
-        if (! in_array($booking->status, [BookingLifecycle::STATUS_DRAFT, BookingLifecycle::STATUS_PENDING_PAYMENT], true)) {
+        if (!in_array($booking->status, [BookingLifecycle::STATUS_DRAFT, BookingLifecycle::STATUS_PENDING_PAYMENT], true)) {
             throw new BookingStateForbiddenException("Cannot checkout booking in status '{$booking->status}'.");
         }
 
@@ -50,13 +52,17 @@ final class InitiateCheckoutHoldUseCase
 
                 foreach ($lines as $line) {
                     if ($line->selected_pandit_id !== null) {
+                        $policy = $this->schedulePolicy ?? app(PanditSchedulePolicy::class);
+                        $effectiveWindow = $policy->getEffectiveWindow($tenantId, $line->selected_pandit_id, $start, $end);
+
                         $this->allocations->holdPanditSlot(
                             $tenantId,
                             $line->selected_pandit_id,
                             (string) $booking->getKey(),
                             $booking->current_revision_id,
-                            $start,
-                            $end,
+
+                            $effectiveWindow->bufferedStart,
+                            $effectiveWindow->bufferedEnd,
                             $expiresAt
                         );
                     }

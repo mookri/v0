@@ -2,6 +2,7 @@
 
 namespace App\Modules\Pandit\Models;
 
+use App\Modules\Pandit\Contracts\VedicTradition;
 use App\Platform\Tenancy\BelongsToTenant;
 use Database\Factories\PanditProfileFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -9,6 +10,9 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -20,6 +24,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $tenant_id
  * @property int $user_id
  * @property string $display_name
+ * @property VedicTradition|string|null $tradition
+ * @property string|null $gotra
+ * @property string|null $shakha_code
  * @property string|null $bio
  * @property list<string>|null $languages
  * @property list<string>|null $specializations
@@ -27,6 +34,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property list<string>|null $certification_refs
  * @property string $verification_status
  * @property list<array<string, mixed>>|null $verification_documents
+ * @property int $travel_buffer_minutes
+ * @property int $travel_radius_km
+ * @property string $timezone
  * @property int|null $base_rate_minor
  * @property string $currency
  * @property string $market
@@ -63,9 +73,12 @@ final class PanditProfile extends Model
     protected $connection = 'tenant_shared';
 
     protected $fillable = [
-        'tenant_id', 'user_id', 'display_name', 'bio', 'languages',
+        'tenant_id', 'user_id', 'display_name',
+        'tradition', 'gotra', 'shakha_code',
+        'bio', 'languages',
         'specializations', 'experience_years', 'certification_refs',
         'verification_status', 'verification_documents',
+        'travel_buffer_minutes', 'travel_radius_km', 'timezone',
         'base_rate_minor', 'currency', 'market',
         'rating_avg', 'rating_count', 'total_bookings',
         'status',
@@ -74,10 +87,13 @@ final class PanditProfile extends Model
     protected function casts(): array
     {
         return [
+            'tradition' => VedicTradition::class,
             'languages' => 'array',
             'specializations' => 'array',
             'certification_refs' => 'array',
             'verification_documents' => 'array',
+            'travel_buffer_minutes' => 'integer',
+            'travel_radius_km' => 'integer',
             'base_rate_minor' => 'integer',
             'rating_avg' => 'decimal:1',
             'rating_count' => 'integer',
@@ -117,6 +133,38 @@ final class PanditProfile extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    /**
+     * @return BelongsTo<PanditShakha, $this>
+     */
+    public function shakha(): BelongsTo
+    {
+        return $this->belongsTo(PanditShakha::class, 'shakha_code', 'code');
+    }
+
+    /**
+     * @return HasMany<PanditBlackout, $this>
+     */
+    public function blackouts(): HasMany
+    {
+        return $this->hasMany(PanditBlackout::class, 'pandit_id', 'id');
+    }
+
+    /**
+     * @return HasMany<PanditServiceEligibility, $this>
+     */
+    public function eligibilities(): HasMany
+    {
+        return $this->hasMany(PanditServiceEligibility::class, 'pandit_id', 'id');
+    }
+
+    /**
+     * @return HasOne<PanditAssignmentRule, $this>
+     */
+    public function assignmentRule(): HasOne
+    {
+        return $this->hasOne(PanditAssignmentRule::class, 'pandit_id', 'id');
     }
 
     /**

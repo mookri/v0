@@ -15,6 +15,8 @@ use App\Modules\Booking\Models\BookingLine;
 use App\Modules\Booking\Models\BookingRevision;
 use App\Modules\Booking\Models\ResourceAllocation;
 use App\Modules\Catalog\Models\CatalogItem;
+use App\Modules\Pandit\Models\PanditProfile;
+use App\Modules\Pandit\Models\PanditServiceEligibility;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Outbox\Outbox;
 use Tests\TenantIntegrationTestCase;
@@ -30,6 +32,7 @@ final class BookingUseCasesTest extends TenantIntegrationTestCase
     private ResourceAllocationManager $allocationManager;
     private string $tenantId;
     private string $userId;
+    private string $panditId;
 
     protected function setUp(): void
     {
@@ -57,6 +60,24 @@ final class BookingUseCasesTest extends TenantIntegrationTestCase
             'currency' => 'INR',
             'price_minor' => 500000,
         ]);
+
+        $panditUser = User::factory()->create();
+        $panditProfile = PanditProfile::factory()->create([
+            'tenant_id' => $this->tenantId,
+            'user_id' => $panditUser->getAuthIdentifier(),
+            'display_name' => 'Pandit Sharma',
+            'verification_status' => PanditProfile::VERIFICATION_VERIFIED,
+            'status' => PanditProfile::STATUS_ACTIVE,
+            'travel_buffer_minutes' => 30,
+        ]);
+        $this->panditId = (string) $panditProfile->getKey();
+
+        PanditServiceEligibility::query()->create([
+            'tenant_id' => $this->tenantId,
+            'pandit_id' => $this->panditId,
+            'service_sku' => 'SATYANARAYAN-PUJA',
+            'is_qualified' => true,
+        ]);
     }
 
     public function test_create_reservation_draft_creates_revision_and_lines_and_outbox(): void
@@ -65,7 +86,7 @@ final class BookingUseCasesTest extends TenantIntegrationTestCase
             'service_sku' => 'SATYANARAYAN-PUJA',
             'scheduled_at' => '2030-07-01T10:00:00Z',
             'duration_minutes' => 90,
-            'selected_pandit_id' => 'pandit-sharma',
+            'selected_pandit_id' => $this->panditId,
             'address_snapshot' => ['street' => '108 Temple Lane', 'city' => 'Varanasi'],
         ];
 
@@ -85,7 +106,7 @@ final class BookingUseCasesTest extends TenantIntegrationTestCase
         $lines = BookingLine::query()->where('revision_id', $revision->id)->get();
         $this->assertCount(1, $lines);
         $this->assertSame('SATYANARAYAN-PUJA', $lines[0]->sku);
-        $this->assertSame('pandit-sharma', $lines[0]->selected_pandit_id);
+        $this->assertSame($this->panditId, $lines[0]->selected_pandit_id);
     }
 
     public function test_initiate_checkout_hold_holds_pandit_allocation_and_sets_pending_payment(): void
@@ -94,7 +115,7 @@ final class BookingUseCasesTest extends TenantIntegrationTestCase
             'service_sku' => 'SATYANARAYAN-PUJA',
             'scheduled_at' => '2030-07-01T10:00:00Z',
             'duration_minutes' => 60,
-            'selected_pandit_id' => 'pandit-sharma',
+            'selected_pandit_id' => $this->panditId,
         ];
 
         $booking = $this->createUseCase->execute($this->tenantId, $this->userId, 'key-checkout-1', $input);
@@ -120,7 +141,7 @@ final class BookingUseCasesTest extends TenantIntegrationTestCase
             'service_sku' => 'SATYANARAYAN-PUJA',
             'scheduled_at' => '2030-07-01T10:00:00Z',
             'duration_minutes' => 60,
-            'selected_pandit_id' => 'pandit-sharma',
+            'selected_pandit_id' => $this->panditId,
         ];
 
         $booking1 = $this->createUseCase->execute($this->tenantId, $this->userId, 'key-cust-1', $input);
@@ -131,7 +152,7 @@ final class BookingUseCasesTest extends TenantIntegrationTestCase
 
         // Second customer checks out same slot & pandit: must be refused
         $this->expectException(ResourceUnavailableException::class);
-        $this->expectExceptionMessage("Pandit 'pandit-sharma' is not available");
+        $this->expectExceptionMessage("Pandit '{$this->panditId}' is not available");
 
         $this->checkoutUseCase->execute($this->tenantId, (string) $booking2->getKey(), $this->userId, 15);
     }
@@ -142,7 +163,7 @@ final class BookingUseCasesTest extends TenantIntegrationTestCase
             'service_sku' => 'SATYANARAYAN-PUJA',
             'scheduled_at' => '2030-07-01T10:00:00Z',
             'duration_minutes' => 60,
-            'selected_pandit_id' => 'pandit-sharma',
+            'selected_pandit_id' => $this->panditId,
         ];
 
         $booking = $this->createUseCase->execute($this->tenantId, $this->userId, 'key-confirm-1', $input);

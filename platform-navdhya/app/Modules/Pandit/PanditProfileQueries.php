@@ -4,8 +4,10 @@ namespace App\Modules\Pandit;
 
 use App\Modules\Pandit\Contracts\ListsPanditProfiles;
 use App\Modules\Pandit\Models\PanditProfile;
+use App\Modules\Pandit\Models\PanditServiceEligibility;
 use App\Platform\Api\CursorPagination;
 use App\Platform\Tenancy\TenantContext;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 
 /**
@@ -45,6 +47,18 @@ final class PanditProfileQueries implements ListsPanditProfiles
             $query->where('rating_avg', '>=', $filters['min_rating']);
         }
 
+        if (isset($filters['tradition'])) {
+            $query->where('tradition', $filters['tradition']);
+        }
+
+        if (isset($filters['gotra'])) {
+            $query->where('gotra', $filters['gotra']);
+        }
+
+        if (isset($filters['shakha_code'])) {
+            $query->where('shakha_code', $filters['shakha_code']);
+        }
+
         $request = new Request(array_merge(['limit' => $limit, 'cursor' => $cursor], $filters));
         [$items, $page] = CursorPagination::paginate($query, $request);
 
@@ -57,6 +71,9 @@ final class PanditProfileQueries implements ListsPanditProfiles
                 'specializations' => $p->specializations ?? [],
                 'base_rate_minor' => $p->base_rate_minor,
                 'currency' => $p->currency,
+                'tradition' => $p->tradition instanceof \App\Modules\Pandit\Contracts\VedicTradition ? $p->tradition->value : (is_string($p->tradition) ? $p->tradition : null),
+                'gotra' => $p->gotra,
+                'shakha_code' => $p->shakha_code,
             ], $items),
             'page' => $page,
         ];
@@ -92,6 +109,12 @@ final class PanditProfileQueries implements ListsPanditProfiles
             'total_bookings' => (int) $profile->total_bookings,
             'verification_status' => $profile->verification_status,
             'status' => $profile->status,
+            'tradition' => $profile->tradition instanceof \App\Modules\Pandit\Contracts\VedicTradition ? $profile->tradition->value : (is_string($profile->tradition) ? $profile->tradition : null),
+            'gotra' => $profile->gotra,
+            'shakha_code' => $profile->shakha_code,
+            'travel_buffer_minutes' => (int) ($profile->travel_buffer_minutes ?? 30),
+            'travel_radius_km' => (int) ($profile->travel_radius_km ?? 25),
+            'timezone' => $profile->timezone ?? 'Asia/Kolkata',
         ];
     }
 
@@ -132,5 +155,32 @@ final class PanditProfileQueries implements ListsPanditProfiles
             ], $items),
             'page' => $page,
         ];
+    }
+
+    public function isQualifiedForService(string $tenantId, string $panditId, string $serviceSku): bool
+    {
+        $profile = PanditProfile::query()
+            ->where('tenant_id', $tenantId)
+            ->where('id', $panditId)
+            ->where('verification_status', PanditProfile::VERIFICATION_VERIFIED)
+            ->where('status', PanditProfile::STATUS_ACTIVE)
+            ->first();
+
+        if ($profile === null) {
+            return false;
+        }
+
+        $now = CarbonImmutable::now()->toDateTimeString();
+
+        return PanditServiceEligibility::query()
+            ->where('tenant_id', $tenantId)
+            ->where('pandit_id', $panditId)
+            ->where('service_sku', $serviceSku)
+            ->where('is_qualified', true)
+            ->where(function ($query) use ($now): void {
+                $query->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', $now);
+            })
+            ->exists();
     }
 }

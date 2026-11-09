@@ -2,9 +2,13 @@
 
 namespace App\Modules\Pandit;
 
+use App\Modules\Pandit\Application\PanditSchedulePolicyService;
+use App\Modules\Pandit\Console\ProcessAssignmentSlaCommand;
+use App\Modules\Pandit\Console\RecomputePanditRatingsCommand;
 use App\Modules\Pandit\Contracts\ListsPanditProfiles;
 use App\Modules\Pandit\Contracts\ManagesPanditAssignments;
 use App\Modules\Pandit\Contracts\ManagesPanditAvailability;
+use App\Modules\Pandit\Contracts\PanditSchedulePolicy;
 use App\Platform\Modules\ModuleServiceProvider as BaseModuleServiceProvider;
 
 /**
@@ -20,10 +24,18 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
         $this->app->bind(ListsPanditProfiles::class, PanditProfileQueries::class);
         $this->app->bind(ManagesPanditAvailability::class, PanditAvailabilityManager::class);
         $this->app->bind(ManagesPanditAssignments::class, PanditAssignmentManager::class);
+        $this->app->bind(PanditSchedulePolicy::class, PanditSchedulePolicyService::class);
     }
 
     public function bootModule(): void
     {
         $this->loadModuleMigrations();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                ProcessAssignmentSlaCommand::class,
+                RecomputePanditRatingsCommand::class,
+            ]);
+        }
     }
 }

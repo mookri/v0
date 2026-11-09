@@ -9,6 +9,8 @@ use App\Modules\Booking\Models\BookingLine;
 use App\Modules\Booking\Models\BookingRevision;
 use App\Modules\Booking\Models\BookingTransition;
 use App\Modules\Catalog\Contracts\ListsCatalogItems;
+use App\Modules\Pandit\Contracts\ListsPanditProfiles;
+use App\Modules\Pandit\Contracts\PanditSchedulePolicy;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Outbox\Outbox;
 use Carbon\CarbonImmutable;
@@ -23,6 +25,8 @@ final class CreateReservationDraftUseCase
         private readonly ListsCatalogItems $catalog,
         private readonly AuditWriter $audit,
         private readonly Outbox $outbox,
+        private readonly ?ListsPanditProfiles $pandits = null,
+        private readonly ?PanditSchedulePolicy $schedulePolicy = null,
     ) {
     }
 
@@ -49,6 +53,21 @@ final class CreateReservationDraftUseCase
         $duration = (int) ($input['duration_minutes'] ?? 60);
         $scheduledAt = CarbonImmutable::parse($input['scheduled_at'])->utc();
         $endsAt = $scheduledAt->addMinutes($duration);
+
+        if (! empty($input['selected_pandit_id'])) {
+            $panditId = (string) $input['selected_pandit_id'];
+            $panditsPort = $this->pandits ?? app(ListsPanditProfiles::class);
+            $policy = $this->schedulePolicy ?? app(PanditSchedulePolicy::class);
+
+            if (! $panditsPort->isQualifiedForService($tenantId, $panditId, $sku)) {
+                throw new InvalidArgumentException("Selected pandit '{$panditId}' is not qualified or inactive for service SKU '{$sku}'.");
+            }
+
+            $verdict = $policy->isAvailableAt($tenantId, $panditId, $scheduledAt, $endsAt);
+            if (! $verdict->isAvailable()) {
+                throw new InvalidArgumentException("Selected pandit '{$panditId}' is not available for requested window: {$verdict->reason()}.");
+            }
+        }
 
         $fingerprint = BookingRequestFingerprint::hash($input);
 

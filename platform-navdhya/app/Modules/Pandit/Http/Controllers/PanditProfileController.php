@@ -33,9 +33,12 @@ final class PanditProfileController
             'specialization' => ['sometimes', 'string', 'max:64'],
             'market' => ['sometimes', 'string', 'max:16'],
             'min_rating' => ['sometimes', 'numeric', 'min:0', 'max:5'],
+            'tradition' => ['sometimes', 'string', 'max:32'],
+            'gotra' => ['sometimes', 'string', 'max:64'],
+            'shakha_code' => ['sometimes', 'string', 'max:32'],
         ]);
 
-        $filters = $request->only(['specialization', 'market', 'min_rating']);
+        $filters = $request->only(['specialization', 'market', 'min_rating', 'tradition', 'gotra', 'shakha_code']);
         $limit = min((int) $request->query('limit', 20), 100);
         $cursor = is_string($request->query('cursor')) ? $request->query('cursor') : null;
 
@@ -124,7 +127,11 @@ final class PanditProfileController
         }
 
         // Strict field allowlist (same pattern as CustomerProfileController)
-        $allowed = ['display_name', 'bio', 'languages', 'specializations', 'experience_years', 'certification_refs', 'base_rate_minor', 'currency', 'market'];
+        $allowed = [
+            'display_name', 'bio', 'languages', 'specializations', 'experience_years',
+            'certification_refs', 'base_rate_minor', 'currency', 'market',
+            'tradition', 'gotra', 'shakha_code', 'travel_buffer_minutes', 'travel_radius_km', 'timezone',
+        ];
         $unknown = array_diff(array_keys($request->all()), $allowed);
         if ($unknown !== []) {
             return new JsonResponse([
@@ -150,6 +157,12 @@ final class PanditProfileController
             'base_rate_minor' => ['nullable', 'integer', 'min:0'],
             'currency' => ['sometimes', 'string', 'size:3'],
             'market' => ['nullable', 'string', 'max:16'],
+            'tradition' => ['nullable', 'string', new \Illuminate\Validation\Rules\Enum(\App\Modules\Pandit\Contracts\VedicTradition::class)],
+            'gotra' => ['nullable', 'string', 'max:64'],
+            'shakha_code' => ['nullable', 'string', 'max:32'],
+            'travel_buffer_minutes' => ['nullable', 'integer', 'min:0', 'max:360'],
+            'travel_radius_km' => ['nullable', 'integer', 'min:0', 'max:500'],
+            'timezone' => ['nullable', 'string', 'max:64'],
         ]);
 
         $profile->forceFill($validated)->save();
@@ -314,6 +327,9 @@ final class PanditProfileController
         return [
             'id' => (string) $profile->getKey(),
             'display_name' => $profile->display_name,
+            'tradition' => $profile->tradition instanceof \App\Modules\Pandit\Contracts\VedicTradition ? $profile->tradition->value : (is_string($profile->tradition) ? $profile->tradition : null),
+            'gotra' => $profile->gotra,
+            'shakha_code' => $profile->shakha_code,
             'bio' => $profile->bio,
             'languages' => $profile->languages,
             'specializations' => $profile->specializations,
@@ -321,6 +337,9 @@ final class PanditProfileController
             'certification_refs' => $profile->certification_refs,
             'verification_status' => $profile->verification_status,
             'verification_documents' => $profile->verification_documents,
+            'travel_buffer_minutes' => (int) ($profile->travel_buffer_minutes ?? 30),
+            'travel_radius_km' => (int) ($profile->travel_radius_km ?? 25),
+            'timezone' => $profile->timezone ?? 'Asia/Kolkata',
             'base_rate_minor' => $profile->base_rate_minor,
             'currency' => $profile->currency,
             'market' => $profile->market,

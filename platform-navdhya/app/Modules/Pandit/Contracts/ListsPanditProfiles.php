@@ -7,8 +7,8 @@ namespace App\Modules\Pandit\Contracts;
  * list verified profiles and resolve profiles without importing pandit models.
  * Ambient tenant context scopes every call.
  *
- * @phpstan-type PanditPublicProfile array{id: string, display_name: string, rating_avg: float, rating_count: int, specializations: list<string>, base_rate_minor: int|null, currency: string}
- * @phpstan-type PanditProfileData array{id: string, display_name: string, bio: string|null, languages: list<string>|null, specializations: list<string>|null, experience_years: int|null, certification_refs: list<string>|null, base_rate_minor: int|null, currency: string, market: string, rating_avg: float, rating_count: int, total_bookings: int, verification_status: string, status: string}
+ * @phpstan-type PanditPublicProfile array{id: string, display_name: string, rating_avg: float, rating_count: int, specializations: list<string>, base_rate_minor: int|null, currency: string, tradition?: string|null, gotra?: string|null, shakha_code?: string|null}
+ * @phpstan-type PanditProfileData array{id: string, display_name: string, bio: string|null, languages: list<string>|null, specializations: list<string>|null, experience_years: int|null, certification_refs: list<string>|null, base_rate_minor: int|null, currency: string, market: string, rating_avg: float, rating_count: int, total_bookings: int, verification_status: string, status: string, tradition?: string|null, gotra?: string|null, shakha_code?: string|null, travel_buffer_minutes?: int, travel_radius_km?: int, timezone?: string}
  * @phpstan-type PanditAdminProfile array{id: string, display_name: string, status: string, verification_status: string}
  * @phpstan-type PanditPage array{limit: int, has_more: bool, next_cursor: string|null}
  */
@@ -32,4 +32,9 @@ interface ListsPanditProfiles
      * @return array{items: list<PanditAdminProfile>, page: PanditPage}
      */
     public function adminProfiles(array $filters = [], int $limit = 20, ?string $cursor = null): array;
+
+    /**
+     * Check whether a pandit is qualified, certified, and eligible to officiate a ritual service SKU.
+     */
+    public function isQualifiedForService(string $tenantId, string $panditId, string $serviceSku): bool;
 }
