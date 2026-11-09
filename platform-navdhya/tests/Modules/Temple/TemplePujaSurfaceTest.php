@@ -22,12 +22,25 @@ final class TemplePujaSurfaceTest extends TenantIntegrationTestCase
      */
     private function seedTemple(Tenant $tenant, array $overrides = []): Temple
     {
-        return Temple::factory()->create([
+        $temple = Temple::factory()->create([
             'tenant_id' => (string) $tenant->getKey(),
             'status' => Temple::STATUS_ACTIVE,
             'verification_status' => Temple::VERIFICATION_VERIFIED,
             ...$overrides,
         ]);
+
+        if (auth()->check()) {
+            \App\Modules\Temple\Models\TempleManager::forceCreate([
+                'tenant_id' => (string) $tenant->getKey(),
+                'temple_id' => (string) $temple->getKey(),
+                'user_id' => (string) auth()->id(),
+                'role' => \App\Modules\Temple\Models\TempleManager::ROLE_OWNER,
+                'invited_at' => now()->toISOString(),
+                'accepted_at' => now()->toISOString(),
+            ]);
+        }
+
+        return $temple;
     }
 
     /**

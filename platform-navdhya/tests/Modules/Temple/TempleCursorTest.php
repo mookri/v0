@@ -23,14 +23,31 @@ final class TempleCursorTest extends TenantIntegrationTestCase
     /**
      * @param  array<string, mixed>  $overrides
      */
-    private function seedTemple(Tenant $tenant, array $overrides = []): Temple
+    private function seedTemple(Tenant $tenant, array $overrides = [], bool $asManager = true): Temple
     {
-        return Temple::factory()->create([
+        $temple = Temple::factory()->create([
             'tenant_id' => (string) $tenant->getKey(),
             'status' => Temple::STATUS_ACTIVE,
             'verification_status' => Temple::VERIFICATION_VERIFIED,
             ...$overrides,
         ]);
+
+        if ($asManager && auth()->check()) {
+            TempleManager::query()->firstOrCreate(
+                [
+                    'tenant_id' => (string) $tenant->getKey(),
+                    'temple_id' => (string) $temple->getKey(),
+                    'user_id' => (string) auth()->id(),
+                ],
+                [
+                    'role' => TempleManager::ROLE_OWNER,
+                    'invited_at' => now()->toISOString(),
+                    'accepted_at' => now()->toISOString(),
+                ]
+            );
+        }
+
+        return $temple;
     }
 
     /**
@@ -135,7 +152,7 @@ final class TempleCursorTest extends TenantIntegrationTestCase
 
         $managed = [];
         foreach (range(1, 3) as $ignored) {
-            $temple = $this->seedTemple($tenant);
+            $temple = $this->seedTemple($tenant, asManager: false);
             TempleManager::factory()->create([
                 'tenant_id' => (string) $tenant->getKey(),
                 'temple_id' => (string) $temple->getKey(),

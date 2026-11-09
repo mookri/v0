@@ -30,6 +30,7 @@ use Illuminate\Http\Request;
  */
 final class TempleDashboardService implements ProvidesTempleDashboard
 {
+    use AuthorizesTempleManager;
     public function __construct(
         private readonly ReadsBookings $bookings,
         private readonly ListsCatalogItems $catalog,
@@ -51,11 +52,8 @@ final class TempleDashboardService implements ProvidesTempleDashboard
     {
         $tenantId = (string) app(TenantContext::class)->tenantId();
 
-        // Scoped lookup: unknown temple fails closed with the kernel 404.
-        Temple::query()
-            ->where('tenant_id', $tenantId)
-            ->where('id', $templeId)
-            ->firstOrFail();
+        // Scoped lookup: unauthorized or unknown temple fails closed with kernel 404.
+        $this->findAuthorizedTemple($tenantId, $templeId);
 
         $totalPujas = TemplePuja::query()
             ->where('tenant_id', $tenantId)
@@ -119,10 +117,20 @@ final class TempleDashboardService implements ProvidesTempleDashboard
     public function pujas(string $templeId, array $filters = [], int $limit = 20, ?string $cursor = null): array
     {
         $tenantId = (string) app(TenantContext::class)->tenantId();
+        $identities = $this->currentManagerIdentities();
 
         $query = TemplePuja::query()
             ->where('tenant_id', $tenantId)
-            ->where('temple_id', $templeId);
+            ->where('temple_id', $templeId)
+            ->whereHas('temple', function ($q) use ($identities) {
+                $q->where(function ($sub) use ($identities) {
+                    $sub->whereIn('owner_id', $identities)
+                        ->orWhereHas('managers', function ($m) use ($identities) {
+                            $m->whereIn('user_id', $identities)
+                              ->whereNotNull('accepted_at');
+                        });
+                });
+            });
 
         if (isset($filters['status']) && is_string($filters['status'])) {
             $query->where('status', $filters['status']);
@@ -322,6 +330,8 @@ final class TempleDashboardService implements ProvidesTempleDashboard
     {
         $tenantId = (string) app(TenantContext::class)->tenantId();
 
+        $this->findAuthorizedTemple($tenantId, $templeId);
+
         $temple = Temple::query()
             ->where('tenant_id', $tenantId)
             ->where('id', $templeId)
@@ -376,10 +386,20 @@ final class TempleDashboardService implements ProvidesTempleDashboard
     private function pujaContext(string $templeId): array
     {
         $tenantId = (string) app(TenantContext::class)->tenantId();
+        $identities = $this->currentManagerIdentities();
 
         $assignments = TemplePuja::query()
             ->where('tenant_id', $tenantId)
             ->where('temple_id', $templeId)
+            ->whereHas('temple', function ($q) use ($identities) {
+                $q->where(function ($sub) use ($identities) {
+                    $sub->whereIn('owner_id', $identities)
+                        ->orWhereHas('managers', function ($m) use ($identities) {
+                            $m->whereIn('user_id', $identities)
+                              ->whereNotNull('accepted_at');
+                        });
+                });
+            })
             ->orderBy('id')
             ->get()
             ->all();

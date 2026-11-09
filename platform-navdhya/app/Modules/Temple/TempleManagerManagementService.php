@@ -11,6 +11,8 @@ use App\Modules\Temple\Models\TempleManager;/**
 
 final class TempleManagerManagementService implements ManagesTempleManagers
 {
+    use AuthorizesTempleManager;
+
     /**
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \InvalidArgumentException
@@ -18,22 +20,14 @@ final class TempleManagerManagementService implements ManagesTempleManagers
     public function addManager(string $templeId, array $data): array
     {
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
-        $identityId = (string) app(\App\Platform\Tenancy\TenantContext::class)->membershipId();
 
-        $temple = \App\Modules\Temple\Models\Temple::query()
-            ->where('tenant_id', $tenantId)
-            ->where('id', $data['temple_id'] ?? $templeId)
-            ->firstOrFail();
+        try {
+            $this->findAuthorizedTemple($tenantId, $data['temple_id'] ?? $templeId);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
+            throw new TempleNotFoundException('Temple not found or access denied.');
+        }
 
-        // Verify ownership
-        $isOwner = \App\Modules\Temple\Models\TempleManager::query()
-            ->where('tenant_id', $tenantId)
-            ->where('temple_id', $templeId)
-            ->where('user_id', $identityId)
-            ->where('role', \App\Modules\Temple\Models\TempleManager::ROLE_OWNER)
-            ->exists();
-
-        if (!$isOwner) {
+        if (! $this->isTempleOwner($tenantId, $templeId)) {
             throw new \InvalidArgumentException('Only owners can add managers.');
         }
 
@@ -70,21 +64,14 @@ final class TempleManagerManagementService implements ManagesTempleManagers
     public function removeManager(string $templeId, string $managerId): void
     {
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
-        $identityId = (string) app(\App\Platform\Tenancy\TenantContext::class)->membershipId();
 
-        $temple = \App\Modules\Temple\Models\Temple::query()
-            ->where('tenant_id', $tenantId)
-            ->where('id', $templeId)
-            ->firstOrFail();
+        try {
+            $this->findAuthorizedTemple($tenantId, $templeId);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
+            throw new TempleNotFoundException('Temple not found or access denied.');
+        }
 
-        $isOwner = \App\Modules\Temple\Models\TempleManager::query()
-            ->where('tenant_id', $tenantId)
-            ->where('temple_id', $templeId)
-            ->where('user_id', $identityId)
-            ->where('role', \App\Modules\Temple\Models\TempleManager::ROLE_OWNER)
-            ->exists();
-
-        if (!$isOwner) {
+        if (! $this->isTempleOwner($tenantId, $templeId)) {
             throw new \InvalidArgumentException('Only owners can remove managers.');
         }
 
@@ -113,26 +100,19 @@ final class TempleManagerManagementService implements ManagesTempleManagers
     public function updateManagerRole(string $templeId, string $managerId, string $role): array
     {
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
-        $identityId = (string) app(\App\Platform\Tenancy\TenantContext::class)->membershipId();
 
-        $temple = \App\Modules\Temple\Models\Temple::query()
-            ->where('tenant_id', $tenantId)
-            ->where('id', $templeId)
-            ->firstOrFail();
+        try {
+            $this->findAuthorizedTemple($tenantId, $templeId);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
+            throw new TempleNotFoundException('Temple not found or access denied.');
+        }
 
-        $isOwner = \App\Modules\Temple\Models\TempleManager::query()
-            ->where('tenant_id', $tenantId)
-            ->where('temple_id', $templeId)
-            ->where('user_id', $identityId)
-            ->where('role', \App\Modules\Temple\Models\TempleManager::ROLE_OWNER)
-            ->exists();
-
-        if (!$isOwner) {
+        if (! $this->isTempleOwner($tenantId, $templeId)) {
             throw new \InvalidArgumentException('Only owners can update manager roles.');
         }
 
         $manager = \App\Modules\Temple\Models\TempleManager::query()
-            ->where('tenant_id', (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId())
+            ->where('tenant_id', $tenantId)
             ->where('temple_id', $templeId)
             ->where('id', $managerId)
             ->firstOrFail();
@@ -153,6 +133,12 @@ final class TempleManagerManagementService implements ManagesTempleManagers
     public function listManagers(string $templeId): array
     {
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
+
+        try {
+            $this->findAuthorizedTemple($tenantId, $templeId);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
+            throw new TempleNotFoundException('Temple not found or access denied.');
+        }
 
         $managers = \App\Modules\Temple\Models\TempleManager::query()
             ->where('tenant_id', $tenantId)

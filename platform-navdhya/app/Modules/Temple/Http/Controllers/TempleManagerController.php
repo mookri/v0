@@ -23,7 +23,13 @@ final class TempleManagerController
     // PARTNER: List managers for a temple
     public function index(Request $request, string $templeId): JsonResponse
     {
-        $managers = $this->managers->listManagers($templeId);
+        try {
+            $managers = $this->managers->listManagers($templeId);
+        } catch (\App\Modules\Temple\TempleNotFoundException) {
+            return new JsonResponse([
+                'error' => ['code' => 'TEMPLE_NOT_FOUND', 'message' => 'Temple not found or access denied.', 'request_id' => $this->requestId($request)],
+            ], 404);
+        }
 
         return new JsonResponse([
             'data' => $managers,
@@ -41,6 +47,10 @@ final class TempleManagerController
 
         try {
             $manager = $this->managers->addManager($templeId, $validated);
+        } catch (\App\Modules\Temple\TempleNotFoundException) {
+            return new JsonResponse([
+                'error' => ['code' => 'TEMPLE_NOT_FOUND', 'message' => 'Temple not found or access denied.', 'request_id' => $this->requestId($request)],
+            ], 404);
         } catch (\InvalidArgumentException $e) {
             return new JsonResponse([
                 'error' => ['code' => 'validation_failed', 'message' => $e->getMessage(), 'request_id' => $this->requestId($request)],
@@ -62,9 +72,9 @@ final class TempleManagerController
 
         try {
             $manager = $this->managers->updateManagerRole($templeId, $managerId, $validated['role']);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException|\App\Modules\Temple\TempleNotFoundException) {
             return new JsonResponse([
-                'error' => ['code' => 'TEMPLE_NOT_FOUND', 'message' => 'Temple not found.', 'request_id' => $this->requestId($request)],
+                'error' => ['code' => 'TEMPLE_NOT_FOUND', 'message' => 'Temple not found or access denied.', 'request_id' => $this->requestId($request)],
             ], 404);
         } catch (\InvalidArgumentException $e) {
             return new JsonResponse([
@@ -83,9 +93,9 @@ final class TempleManagerController
     {
         try {
             $this->managers->removeManager($templeId, $managerId);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException|\App\Modules\Temple\TempleNotFoundException) {
             return new JsonResponse([
-                'error' => ['code' => 'TEMPLE_NOT_FOUND', 'message' => 'Temple not found.', 'request_id' => $this->requestId($request)],
+                'error' => ['code' => 'TEMPLE_NOT_FOUND', 'message' => 'Temple not found or access denied.', 'request_id' => $this->requestId($request)],
             ], 404);
         }
 

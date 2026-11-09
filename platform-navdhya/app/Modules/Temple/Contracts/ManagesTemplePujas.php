@@ -35,6 +35,7 @@ interface ManagesTemplePujas
      *
      * @return array{id: string, temple_id: string, puja_id: string, price_override_minor: int|null, capacity: int|null, schedule_json: string|null, status: string, created_at: string}
      *
+     * @throws \App\Modules\Temple\TempleNotFoundException
      * @throws \App\Modules\Temple\TemplePujaNotFoundException
      */
     public function updatePuja(string $templeId, string $pujaId, array $data): array;
@@ -42,6 +43,7 @@ interface ManagesTemplePujas
     /**
      * Remove puja from temple.
      *
+     * @throws \App\Modules\Temple\TempleNotFoundException
      * @throws \App\Modules\Temple\TemplePujaNotFoundException
      */
     public function removePuja(string $templeId, string $pujaId): void;
@@ -52,6 +54,8 @@ interface ManagesTemplePujas
      * @param  array<string, mixed>  $filters
      * @param  string|null  $cursor  opaque cursor from a previous page (null = first page)
      * @return array{items: list<array{id: string, temple_id: string, puja_id: string, price_override_minor: int|null, capacity: int|null, schedule_json: string|null, status: string}>, page: array{limit: int, has_more: bool, next_cursor: string|null}}
+     *
+     * @throws \App\Modules\Temple\TempleNotFoundException
      */
     public function listPujas(string $templeId, array $filters = [], int $limit = 20, ?string $cursor = null): array;
 
@@ -61,6 +65,7 @@ interface ManagesTemplePujas
      *
      * @return array{id: string, temple_id: string, puja_id: string, price_override_minor: int|null, capacity: int|null, schedule_json: string|null, status: string, created_at: string}
      *
+     * @throws \App\Modules\Temple\TempleNotFoundException
      * @throws \App\Modules\Temple\TemplePujaNotFoundException
      */
     public function showPuja(string $templeId, string $pujaId): array;

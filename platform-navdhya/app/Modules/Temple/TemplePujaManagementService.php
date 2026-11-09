@@ -13,17 +13,16 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  */
 final class TemplePujaManagementService implements ManagesTemplePujas
 {
+    use AuthorizesTempleManager;
+
     public function assignPuja(string $templeId, array $data): array
     {
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
 
         try {
-            $temple = Temple::query()
-                ->where('tenant_id', $tenantId)
-                ->where('id', $templeId)
-                ->firstOrFail();
+            $temple = $this->findAuthorizedTemple($tenantId, $templeId);
         } catch (ModelNotFoundException) {
-            throw new TempleNotFoundException('Temple not found.');
+            throw new TempleNotFoundException('Temple not found or access denied.');
         }
 
         $pujaAssignment = new TemplePuja();
@@ -48,6 +47,12 @@ final class TemplePujaManagementService implements ManagesTemplePujas
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
 
         try {
+            $this->findAuthorizedTemple($tenantId, $templeId);
+        } catch (ModelNotFoundException) {
+            throw new TempleNotFoundException('Temple not found or access denied.');
+        }
+
+        try {
             $puja = TemplePuja::query()
                 ->where('tenant_id', $tenantId)
                 ->where('temple_id', $templeId)
@@ -70,6 +75,12 @@ final class TemplePujaManagementService implements ManagesTemplePujas
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
 
         try {
+            $this->findAuthorizedTemple($tenantId, $templeId);
+        } catch (ModelNotFoundException) {
+            throw new TempleNotFoundException('Temple not found or access denied.');
+        }
+
+        try {
             $puja = TemplePuja::query()
                 ->where('tenant_id', $tenantId)
                 ->where('temple_id', $templeId)
@@ -88,8 +99,14 @@ final class TemplePujaManagementService implements ManagesTemplePujas
     {
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
 
+        try {
+            $this->findAuthorizedTemple($tenantId, $templeId);
+        } catch (ModelNotFoundException) {
+            throw new TempleNotFoundException('Temple not found or access denied.');
+        }
+
         $query = \App\Modules\Temple\Models\TemplePuja::query()
-            ->where('tenant_id', (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId())
+            ->where('tenant_id', $tenantId)
             ->where('temple_id', $templeId);
 
         if (isset($filters['status']) && is_string($filters['status'])) {
@@ -108,6 +125,12 @@ final class TemplePujaManagementService implements ManagesTemplePujas
     public function showPuja(string $templeId, string $pujaId): array
     {
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
+
+        try {
+            $this->findAuthorizedTemple($tenantId, $templeId);
+        } catch (ModelNotFoundException) {
+            throw new TempleNotFoundException('Temple not found or access denied.');
+        }
 
         try {
             $puja = TemplePuja::query()

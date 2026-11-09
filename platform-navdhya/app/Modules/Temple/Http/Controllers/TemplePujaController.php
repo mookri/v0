@@ -34,7 +34,13 @@ final class TemplePujaController
         $limit = min((int) $request->query('limit', 20), 100);
         $cursor = is_string($request->query('cursor')) ? $request->query('cursor') : null;
 
-        $result = $this->pujas->listPujas($templeId, $filters, $limit, $cursor);
+        try {
+            $result = $this->pujas->listPujas($templeId, $filters, $limit, $cursor);
+        } catch (TempleNotFoundException) {
+            return new JsonResponse([
+                'error' => ['code' => 'TEMPLE_NOT_FOUND', 'message' => 'Temple not found.', 'request_id' => $this->requestId($request)],
+            ], 404);
+        }
 
         return new JsonResponse([
             'data' => $result['items'],
@@ -75,7 +81,7 @@ final class TemplePujaController
     {
         try {
             $puja = $this->pujas->showPuja($templeId, $pujaId);
-        } catch (TemplePujaNotFoundException) {
+        } catch (TempleNotFoundException|TemplePujaNotFoundException) {
             return new JsonResponse([
                 'error' => ['code' => 'TEMPLE_PUJA_NOT_FOUND', 'message' => 'Puja assignment not found.', 'request_id' => $this->requestId($request)],
             ], 404);
@@ -99,7 +105,7 @@ final class TemplePujaController
 
         try {
             $puja = $this->pujas->updatePuja($templeId, $pujaId, $validated);
-        } catch (TemplePujaNotFoundException) {
+        } catch (TempleNotFoundException|TemplePujaNotFoundException) {
             return new JsonResponse([
                 'error' => ['code' => 'TEMPLE_PUJA_NOT_FOUND', 'message' => 'Puja assignment not found.', 'request_id' => $this->requestId($request)],
             ], 404);
@@ -116,7 +122,7 @@ final class TemplePujaController
     {
         try {
             $this->pujas->removePuja($templeId, $pujaId);
-        } catch (TemplePujaNotFoundException) {
+        } catch (TempleNotFoundException|TemplePujaNotFoundException) {
             return new JsonResponse([
                 'error' => ['code' => 'TEMPLE_PUJA_NOT_FOUND', 'message' => 'Puja assignment not found.', 'request_id' => $this->requestId($request)],
             ], 404);

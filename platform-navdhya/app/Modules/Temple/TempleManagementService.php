@@ -11,6 +11,7 @@ use App\Modules\Temple\Models\Temple;
  */
 final class TempleManagementService implements ManagesTemples
 {
+    use AuthorizesTempleManager;
     /**
      * @return array{
      *   id: string,
@@ -82,13 +83,10 @@ final class TempleManagementService implements ManagesTemples
     {
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
 
-        $temple = \App\Modules\Temple\Models\Temple::query()
-            ->where('tenant_id', $tenantId)
-            ->where('id', $templeId)
-            ->first();
-
-        if ($temple === null) {
-            throw new TempleNotFoundException('Temple not found.');
+        try {
+            $temple = $this->findAuthorizedTemple($tenantId, $templeId);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
+            throw new TempleNotFoundException('Temple not found or access denied.');
         }
 
         $allowed = [
@@ -231,17 +229,10 @@ final class TempleManagementService implements ManagesTemples
     public function partnerProfile(string $templeId): ?array
     {
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
-        $identityId = (string) app(\App\Platform\Tenancy\TenantContext::class)->membershipId();
 
-        $temple = \App\Modules\Temple\Models\Temple::query()
-            ->where('tenant_id', $tenantId)
-            ->where('id', $templeId)
-            ->whereHas('managers', function ($q) use ($identityId) {
-                $q->where('user_id', $identityId);
-            })
-            ->first();
-
-        if ($temple === null) {
+        try {
+            $temple = $this->findAuthorizedTemple($tenantId, $templeId);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
             return null;
         }
 

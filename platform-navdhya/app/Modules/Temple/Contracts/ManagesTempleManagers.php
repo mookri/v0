@@ -29,6 +29,7 @@ interface ManagesTempleManagers
     /**
      * Remove a manager from a temple (owner only).
      *
+     * @throws \App\Modules\Temple\TempleNotFoundException
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \InvalidArgumentException
      */
@@ -39,6 +40,7 @@ interface ManagesTempleManagers
      *
      * @return array{id: string, temple_id: string, user_id: string, role: string, invited_at: string, accepted_at: string|null}
      *
+     * @throws \App\Modules\Temple\TempleNotFoundException
      * @throws \App\Modules\Temple\TempleManagerNotFoundException
      * @throws \InvalidArgumentException
      */
@@ -48,6 +50,8 @@ interface ManagesTempleManagers
      * List managers for a temple.
      *
      * @return array{items: list<array{id: string, temple_id: string, user_id: string, role: string, invited_at: string, accepted_at: string|null}>}
+     *
+     * @throws \App\Modules\Temple\TempleNotFoundException
      */
     public function listManagers(string $templeId): array;
 }
