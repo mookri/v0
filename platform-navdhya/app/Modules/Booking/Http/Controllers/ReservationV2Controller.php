@@ -792,5 +792,61 @@ final class ReservationV2Controller
             'ETag' => 'W/"v' . $version . '"',
         ]);
     }
+
+    public function shipment(Request $request, string $bookingId): JsonResponse
+    {
+        $resolved = $this->resolveTenantAndUser($request);
+        if ($resolved instanceof JsonResponse) {
+            return $resolved;
+        }
+        [$tenantId, $user] = $resolved;
+
+        $booking = Booking::withoutGlobalScopes()
+            ->where('tenant_id', $tenantId)
+            ->where('id', $bookingId)
+            ->first();
+
+        if ($booking === null) {
+            return BookingProblemResponder::create(404, 'not_found', 'Booking Not Found', "Booking {$bookingId} not found.");
+        }
+
+        if ((string) $booking->user_id !== (string) $user->getAuthIdentifier() && ! $request->attributes->get('is_admin', false)) {
+            return BookingProblemResponder::create(403, 'permission_missing', 'Forbidden', 'Not authorized to view shipment for this booking.');
+        }
+
+        $order = (new Booking())->getConnection()
+            ->table('vendor_orders')
+            ->where('tenant_id', $tenantId)
+            ->where('reference', 'bkg_' . $bookingId)
+            ->first();
+
+        if ($order === null) {
+            return BookingProblemResponder::create(404, 'not_found', 'Shipment Not Found', 'No vendor order found for this booking.');
+        }
+
+        $shipment = (new Booking())->getConnection()
+            ->table('shipments')
+            ->where('tenant_id', $tenantId)
+            ->where('order_id', $order->id)
+            ->first();
+
+        if ($shipment === null) {
+            return BookingProblemResponder::create(404, 'not_found', 'Shipment Not Found', 'No shipment details found for this booking.');
+        }
+
+        return new JsonResponse([
+            'data' => [
+                'id' => (string) $shipment->id,
+                'order_id' => (string) $shipment->order_id,
+                'status' => (string) $shipment->status,
+                'carrier_name' => $shipment->carrier_name,
+                'tracking_code' => $shipment->tracking_code,
+                'dispatched_at' => $shipment->dispatched_at,
+                'delivered_at' => $shipment->delivered_at,
+                'pod_note' => $shipment->pod_note,
+            ],
+            'meta' => ['request_id' => (string) $request->attributes->get('request_id', '')],
+        ]);
+    }
 }
 

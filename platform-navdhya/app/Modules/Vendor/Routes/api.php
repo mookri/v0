@@ -29,6 +29,7 @@ Route::middleware(['scope:vendor:partner'])->group(function (): void {
         ->name('partner.vendors.update');
 
     Route::get('partner/vendors/{id}/products', [VendorProductController::class, 'index'])
+        ->middleware('throttle:60,1')
         ->name('partner.vendors.products.index');
     Route::post('partner/vendors/{id}/products', [VendorProductController::class, 'store'])
         ->name('partner.vendors.products.store');
@@ -36,17 +37,21 @@ Route::middleware(['scope:vendor:partner'])->group(function (): void {
         ->name('partner.vendors.products.update');
 
     Route::get('partner/vendors/{id}/inventory', [VendorInventoryController::class, 'index'])
+        ->middleware('throttle:60,1')
         ->name('partner.vendors.inventory.index');
     Route::post('partner/vendors/{id}/inventory:adjust', [VendorInventoryController::class, 'adjust'])
+        ->middleware('throttle:30,1')
         ->name('partner.vendors.inventory.adjust');
 
     Route::get('partner/vendors/{id}/orders', [VendorOrderController::class, 'index'])
         ->name('partner.vendors.orders.index');
     Route::post('partner/vendors/{id}/orders', [VendorOrderController::class, 'store'])
+        ->middleware('throttle:10,1')
         ->name('partner.vendors.orders.store');
     Route::get('partner/vendors/{id}/orders/{orderId}', [VendorOrderController::class, 'show'])
         ->name('partner.vendors.orders.show');
     Route::post('partner/vendors/{id}/orders/{orderId}:advance', [VendorOrderController::class, 'advance'])
+        ->middleware('throttle:30,1')
         ->name('partner.vendors.orders.advance');
     Route::post('partner/vendors/{id}/orders/{orderId}:cancel', [VendorOrderController::class, 'cancel'])
         ->name('partner.vendors.orders.cancel');

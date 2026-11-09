@@ -3,17 +3,18 @@
 namespace App\Modules\Vendor;
 
 use App\Modules\Vendor\Contracts\ManagesVendorOrders;
+use App\Modules\Vendor\Models\Shipment;
+use App\Modules\Vendor\Models\ShipmentEvent;
 use App\Modules\Vendor\Models\Vendor;
 use App\Modules\Vendor\Models\VendorOrder;
 use App\Modules\Vendor\Models\VendorOrderItem;
 use App\Modules\Vendor\Models\VendorOrderTransition;
 use App\Platform\Api\CodedHttpException;
+use Illuminate\Support\Facades\DB;
 
 /**
- * ManagesVendorOrders port implementation: placement and the linear
- * lifecycle. Every mutation appends a transition row (from → to with the
- * acting user); orders are always resolved inside their vendor so a
- * foreign order id is indistinguishable from an absent one (404).
+ * ManagesVendorOrders port implementation: placement, linear lifecycle,
+ * and multi-stage dispatch pipeline (D5).
  */
 final class VendorOrderService implements ManagesVendorOrders
 {
@@ -68,20 +69,96 @@ final class VendorOrderService implements ManagesVendorOrders
         return $this->detail($order);
     }
 
-    public function advance(string $vendorId, string $orderId, ?int $actorUserId): array
+    public function advance(string $vendorId, string $orderId, ?int $actorUserId, array $payload = []): array
     {
         $order = VendorOrder::query()
             ->where('vendor_id', $vendorId)
             ->where('id', $orderId)
             ->firstOrFail();
 
+        $requestedStatus = $payload['status'] ?? null;
+
+        // Linear lifecycle supports both classic 4-step and granular dispatch pipeline (D5)
         $next = match ($order->status) {
-            VendorOrder::STATUS_NEW => VendorOrder::STATUS_PROCESSING,
-            VendorOrder::STATUS_PROCESSING => VendorOrder::STATUS_DISPATCHED,
+            VendorOrder::STATUS_NEW => $requestedStatus ?? VendorOrder::STATUS_PROCESSING,
+            VendorOrder::STATUS_PROCESSING => $requestedStatus ?? (isset($payload['carrier_name']) || isset($payload['tracking_code']) ? Shipment::STATUS_HANDOFF : VendorOrder::STATUS_DISPATCHED),
+            Shipment::STATUS_PACKED => $requestedStatus ?? Shipment::STATUS_HANDOFF,
+            Shipment::STATUS_HANDOFF => $requestedStatus ?? Shipment::STATUS_IN_TRANSIT,
+            Shipment::STATUS_IN_TRANSIT => $requestedStatus ?? VendorOrder::STATUS_DELIVERED,
             VendorOrder::STATUS_DISPATCHED => VendorOrder::STATUS_DELIVERED,
             VendorOrder::STATUS_DELIVERED => throw new CodedHttpException(409, 'state_forbidden', 'Order is already delivered.'),
             default => throw new CodedHttpException(409, 'state_forbidden', 'Cancelled orders cannot advance.'),
         };
+
+        // Money check guard: PACKED -> HANDOFF or PROCESSING -> HANDOFF / DISPATCHED
+        if (in_array($next, [Shipment::STATUS_HANDOFF, VendorOrder::STATUS_DISPATCHED], true)) {
+            // Check if order is backed by a booking
+            if (str_starts_with($order->reference, 'bkg_')) {
+                $bookingId = substr($order->reference, 4);
+                $bookingStatus = (new VendorOrder())->getConnection()
+                    ->table('bookings')
+                    ->where('id', $bookingId)
+                    ->value('status');
+
+                if ($bookingStatus !== null && $bookingStatus !== 'CONFIRMED') {
+                    throw new CodedHttpException(409, 'payment_not_confirmed', 'Order cannot be dispatched before payment is confirmed.');
+                }
+            }
+
+            if ($next === Shipment::STATUS_HANDOFF) {
+                if (empty($payload['carrier_name']) || empty($payload['tracking_code'])) {
+                    throw new CodedHttpException(422, 'validation_failed', 'Carrier name and tracking code are required for handoff.');
+                }
+            }
+        }
+
+        if ($next === VendorOrder::STATUS_DELIVERED && in_array($order->status, [Shipment::STATUS_IN_TRANSIT, Shipment::STATUS_HANDOFF], true)) {
+            if (empty($payload['pod_note'])) {
+                throw new CodedHttpException(422, 'validation_failed', 'Proof of delivery note (pod_note) is required to deliver order.');
+            }
+        }
+
+        // Update / create shipment record for dispatch stages
+        if (in_array($next, [Shipment::STATUS_PACKED, Shipment::STATUS_HANDOFF, Shipment::STATUS_IN_TRANSIT, VendorOrder::STATUS_DELIVERED], true)) {
+            $shipment = Shipment::withoutGlobalScopes()->where('order_id', $order->getKey())->first();
+            if ($shipment === null) {
+                $shipment = new Shipment();
+                $shipment->forceFill([
+                    'tenant_id' => $order->tenant_id,
+                    'order_id' => $order->getKey(),
+                    'status' => $next,
+                ]);
+            } else {
+                $shipment->status = $next;
+            }
+
+            if (! empty($payload['carrier_name'])) {
+                $shipment->carrier_name = (string) $payload['carrier_name'];
+            }
+            if (! empty($payload['tracking_code'])) {
+                $shipment->tracking_code = (string) $payload['tracking_code'];
+            }
+            if ($next === Shipment::STATUS_HANDOFF || $next === Shipment::STATUS_IN_TRANSIT) {
+                $shipment->dispatched_at = now();
+            }
+            if ($next === VendorOrder::STATUS_DELIVERED) {
+                $shipment->delivered_at = now();
+                if (! empty($payload['pod_note'])) {
+                    $shipment->pod_note = (string) $payload['pod_note'];
+                }
+            }
+            $shipment->save();
+
+            $shipmentEvent = new ShipmentEvent();
+            $shipmentEvent->forceFill([
+                'tenant_id' => $order->tenant_id,
+                'shipment_id' => $shipment->getKey(),
+                'status' => $next,
+                'note' => $payload['pod_note'] ?? $payload['note'] ?? null,
+                'actor_id' => $actorUserId !== null ? (string) $actorUserId : null,
+            ]);
+            $shipmentEvent->save();
+        }
 
         $from = $order->status;
         $order->forceFill(['status' => $next])->save();
@@ -125,7 +202,7 @@ final class VendorOrderService implements ManagesVendorOrders
         return $data;
     }
 
-    private function transition(string $orderId, ?string $from, string $to, ?int $actorUserId, ?string $note): void
+    private function transition(string $orderId, ?string $from, string $to, ?int $actorUserId, ?string $reason): void
     {
         $row = new VendorOrderTransition();
         $row->forceFill([
@@ -133,7 +210,7 @@ final class VendorOrderService implements ManagesVendorOrders
             'from_status' => $from,
             'to_status' => $to,
             'actor_user_id' => $actorUserId,
-            'note' => $note,
+            'note' => $reason,
         ]);
         $row->save();
     }

@@ -28,12 +28,13 @@ interface ManagesVendorOrders
     /**
      * Advance the order one lifecycle step.
      *
+     * @param array<string, mixed> $payload Optional dispatch metadata (carrier_name, tracking_code, pod_note, status)
      * @return VendorOrderDetail
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException when the order is absent, out of tenant scope, or for another vendor
      * @throws \App\Platform\Api\CodedHttpException 409 state_forbidden when the order is terminal or cancelled
      */
-    public function advance(string $vendorId, string $orderId, ?int $actorUserId): array;
+    public function advance(string $vendorId, string $orderId, ?int $actorUserId, array $payload = []): array;
 
     /**
      * Cancel a NEW or PROCESSING order.

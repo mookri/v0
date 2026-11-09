@@ -33,7 +33,7 @@ deptrac:
         - name: ModuleCore
           collectors:
               - type: classLike
-                value: ^App\\Modules\\[A-Za-z0-9]+\\(Domain|Events|Listeners|Jobs|Policies|Database)\\.*
+                value: ^App\\Modules\\[A-Za-z0-9]+\\(Domain|Events|Listeners|Jobs|Policies|Database|Application)\\.*
         - name: ModuleHttp
           collectors:
               - type: classLike

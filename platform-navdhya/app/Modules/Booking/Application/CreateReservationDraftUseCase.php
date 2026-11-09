@@ -41,6 +41,9 @@ final class CreateReservationDraftUseCase
      *     address_snapshot?: array<string, mixed>|null,
      *     selected_pandit_id?: string|null,
      *     selected_temple_id?: string|null,
+     *     kit_sku?: string|null,
+     *     kit_quantity?: int|null,
+     *     selected_vendor_id?: string|null,
      * } $input
      */
     public function execute(string $tenantId, string $userId, string $idempotencyKey, array $input): Booking
@@ -131,6 +134,21 @@ final class CreateReservationDraftUseCase
                 'selected_temple_id' => $input['selected_temple_id'] ?? null,
             ]);
             $line->save();
+
+            if (! empty($input['kit_sku'])) {
+                $kitLine = new BookingLine();
+                $kitLine->forceFill([
+                    'tenant_id' => $tenantId,
+                    'revision_id' => (string) $revision->getKey(),
+                    'line_number' => 2,
+                    'line_kind' => 'KIT',
+                    'sku' => (string) $input['kit_sku'],
+                    'quantity' => (int) ($input['kit_quantity'] ?? 1),
+                    'server_duration_minutes' => 0,
+                    'selected_vendor_id' => $input['selected_vendor_id'] ?? null,
+                ]);
+                $kitLine->save();
+            }
 
             $booking->current_revision_id = (string) $revision->getKey();
             $booking->save();

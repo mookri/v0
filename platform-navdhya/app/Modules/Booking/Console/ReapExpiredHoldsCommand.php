@@ -80,6 +80,8 @@ final class ReapExpiredHoldsCommand extends Command
                     ]);
                     $transition->save();
 
+                    app(\App\Modules\Booking\Domain\StockReservationManager::class)->releaseStock($tenantId, $bookingId);
+
                     $audit->record(
                         'booking.expired',
                         ['module' => 'booking', 'resource_type' => 'booking', 'resource_id' => (string) $booking->getKey()],

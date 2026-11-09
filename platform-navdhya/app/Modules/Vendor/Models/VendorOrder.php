@@ -68,6 +68,14 @@ final class VendorOrder extends Model
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne<Shipment, $this>
+     */
+    public function shipment(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Shipment::class, 'order_id');
+    }
+
+    /**
      * Base wire shape; order detail/management responses append `items`.
      *
      * @return array{id: string, object: string, vendor_id: string, reference: string, customer_name: string|null, status: string, currency: string, total_minor: int, created_at: string, updated_at: string}

@@ -10,6 +10,7 @@ use App\Modules\Booking\Models\Booking;
 use App\Modules\Booking\Models\BookingLine;
 use App\Modules\Booking\Models\BookingTransition;
 use App\Modules\Temple\Contracts\ManagesTempleApprovals;
+use App\Modules\Vendor\Contracts\ManagesVendorOrders;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Outbox\Outbox;
 
@@ -24,6 +25,7 @@ final class ConfirmBookingFulfillmentUseCase
         private readonly AuditWriter $audit,
         private readonly Outbox $outbox,
         private readonly ?ManagesTempleApprovals $templeApprovals = null,
+        private readonly ?ManagesVendorOrders $vendorOrders = null,
     ) {
     }
 
@@ -108,6 +110,57 @@ final class ConfirmBookingFulfillmentUseCase
             $booking->checkout_expires_at = null;
             $booking->version += 1;
             $booking->save();
+
+            // Consume kit reservations
+            $this->stock->consumeStock($tenantId, (string) $booking->getKey());
+
+            // Auto-create vendor orders for any kit lines
+            if ($booking->current_revision_id !== null) {
+                $kitLines = BookingLine::query()
+                    ->where('tenant_id', $tenantId)
+                    ->where('revision_id', $booking->current_revision_id)
+                    ->where('line_kind', 'KIT')
+                    ->whereNotNull('selected_vendor_id')
+                    ->get();
+
+                if ($kitLines->isNotEmpty()) {
+                    $ordersPort = $this->vendorOrders ?? (app()->bound(ManagesVendorOrders::class) ? app(ManagesVendorOrders::class) : null);
+                    if ($ordersPort !== null) {
+                        $groupedByVendor = $kitLines->groupBy('selected_vendor_id');
+                        foreach ($groupedByVendor as $vId => $lines) {
+                            $orderRef = 'bkg_' . $booking->getKey();
+                            $existingOrder = (new Booking())->getConnection()
+                                ->table('vendor_orders')
+                                ->where('tenant_id', $tenantId)
+                                ->where('vendor_id', (string) $vId)
+                                ->where('reference', $orderRef)
+                                ->exists();
+
+                            if ($existingOrder) {
+                                continue;
+                            }
+
+                            $orderItems = [];
+                            foreach ($lines as $l) {
+                                $orderItems[] = [
+                                    'sku' => $l->sku,
+                                    'name' => 'Samagri Kit ' . $l->sku,
+                                    'quantity' => (int) $l->quantity,
+                                    'unit_minor' => 0,
+                                ];
+                            }
+
+                            $actorUserId = is_numeric($booking->user_id) ? (int) $booking->user_id : (is_numeric($actorId) ? (int) $actorId : null);
+                            $ordersPort->place((string) $vId, [
+                                'reference' => $orderRef,
+                                'customer_name' => (string) $booking->user_id,
+                                'currency' => 'INR',
+                                'items' => $orderItems,
+                            ], $actorUserId);
+                        }
+                    }
+                }
+            }
 
             $transition = new BookingTransition();
             $transition->forceFill([

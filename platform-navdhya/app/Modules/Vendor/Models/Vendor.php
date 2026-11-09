@@ -76,6 +76,22 @@ final class Vendor extends Model
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<VendorWarehouse, $this>
+     */
+    public function warehouses(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(VendorWarehouse::class, 'vendor_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<VendorKitComponent, $this>
+     */
+    public function kitComponents(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(VendorKitComponent::class, 'vendor_id');
+    }
+
+    /**
      * Wire shape (partner and admin surfaces share it).
      *
      * @return array{id: string, object: string, application_id: string, owner_user_id: int, name: string, description: string|null, city: string|null, state: string|null, status: string, verification_status: string, created_at: string, updated_at: string}

@@ -6,15 +6,19 @@ use App\Platform\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Vendor inventory row (tenant_shared): on-hand stock for one vendor SKU.
+ * Vendor inventory row (tenant_shared, D1): on-hand and reserved stock for one vendor SKU.
  *
  * @property string $id
  * @property string $tenant_id
  * @property string $vendor_id
  * @property string $sku
+ * @property string|null $location_id
  * @property int $on_hand
+ * @property int $reserved
+ * @property int $version
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
  *
@@ -33,7 +37,16 @@ final class VendorInventory extends Model
         'tenant_id',
         'vendor_id',
         'sku',
+        'location_id',
         'on_hand',
+        'reserved',
+        'version',
+    ];
+
+    protected $casts = [
+        'on_hand' => 'integer',
+        'reserved' => 'integer',
+        'version' => 'integer',
     ];
 
     /**
@@ -56,7 +69,23 @@ final class VendorInventory extends Model
     }
 
     /**
-     * @return array{id: string, object: string, vendor_id: string, sku: string, on_hand: int, created_at: string, updated_at: string}
+     * @return BelongsTo<VendorWarehouse, $this>
+     */
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(VendorWarehouse::class, 'location_id');
+    }
+
+    /**
+     * Available physical units not committed to active reservations.
+     */
+    public function available(): int
+    {
+        return max(0, (int) $this->on_hand - (int) $this->reserved);
+    }
+
+    /**
+     * @return array{id: string, object: string, vendor_id: string, sku: string, location_id: string|null, on_hand: int, reserved: int, available: int, version: int, created_at: string, updated_at: string}
      */
     public static function shape(self $row): array
     {
@@ -65,7 +94,11 @@ final class VendorInventory extends Model
             'object' => 'vendor_inventory',
             'vendor_id' => $row->vendor_id,
             'sku' => $row->sku,
+            'location_id' => $row->location_id,
             'on_hand' => (int) $row->on_hand,
+            'reserved' => (int) $row->reserved,
+            'available' => $row->available(),
+            'version' => (int) $row->version,
             'created_at' => (string) $row->created_at,
             'updated_at' => (string) $row->updated_at,
         ];

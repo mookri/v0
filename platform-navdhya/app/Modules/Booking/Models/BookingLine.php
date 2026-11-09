@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $server_duration_minutes
  * @property string|null $selected_pandit_id
  * @property string|null $selected_temple_id
+ * @property string|null $selected_vendor_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  */
@@ -40,6 +41,7 @@ final class BookingLine extends Model
         'server_duration_minutes',
         'selected_pandit_id',
         'selected_temple_id',
+        'selected_vendor_id',
     ];
 
     protected function casts(): array

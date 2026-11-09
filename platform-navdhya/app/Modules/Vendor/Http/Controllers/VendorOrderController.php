@@ -111,7 +111,7 @@ final class VendorOrderController
     {
         $vendor = $this->ownedVendor($request, $id);
 
-        $order = $this->orders->advance($vendor['id'], $orderId, (int) $this->identityId($request));
+        $order = $this->orders->advance($vendor['id'], $orderId, (int) $this->identityId($request), $request->all());
 
         return new JsonResponse([
             'data' => $order,

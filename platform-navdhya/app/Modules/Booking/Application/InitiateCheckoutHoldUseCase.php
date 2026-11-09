@@ -5,6 +5,7 @@ namespace App\Modules\Booking\Application;
 use App\Modules\Booking\Domain\BookingLifecycle;
 use App\Modules\Booking\Domain\Exceptions\BookingStateForbiddenException;
 use App\Modules\Booking\Domain\ResourceAllocationManager;
+use App\Modules\Booking\Domain\StockReservationManager;
 use App\Modules\Booking\Models\Booking;
 use App\Modules\Booking\Models\BookingLine;
 use App\Modules\Booking\Models\BookingTransition;
@@ -21,6 +22,7 @@ final class InitiateCheckoutHoldUseCase
         private readonly ResourceAllocationManager $allocations,
         private readonly AuditWriter $audit,
         private readonly ?PanditSchedulePolicy $schedulePolicy = null,
+        private readonly ?StockReservationManager $stock = null,
     ) {
     }
 
@@ -79,6 +81,19 @@ final class InitiateCheckoutHoldUseCase
                             10, // Default temple slot capacity limit
                             $expiresAt,
                             $units
+                        );
+                    }
+
+                    if (($line->line_kind === 'KIT' || $line->selected_vendor_id !== null) && $line->selected_vendor_id !== null) {
+                        $stockMgr = $this->stock ?? app(StockReservationManager::class);
+                        $stockMgr->holdStock(
+                            $tenantId,
+                            (string) $line->selected_vendor_id,
+                            $line->sku,
+                            (string) $booking->getKey(),
+                            $booking->current_revision_id,
+                            max(1, (int) ($line->quantity ?? 1)),
+                            $expiresAt
                         );
                     }
                 }
