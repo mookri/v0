@@ -1,6 +1,7 @@
 import { newRequestId, ok, err } from '@/application/api-envelope';
-import { partnerActorResolver, headersToRecord } from '@/application/actor';
+import { partnerActorResolver, headersToRecord, bearerOrSessionCookie } from '@/application/actor';
 import { acceptOffer } from '@/application/assignments';
+import { laravelEnabled, laravelPost, PartnerApiError } from '@/adapters/backend/laravel-client';
 import { MemoryAssignmentGateway } from '@navdhya/fulfillment/src/adapters/memory-assignment';
 
 const actors = partnerActorResolver();
@@ -18,6 +19,26 @@ export async function POST(req: Request, { params }: { params: Promise<{ assignm
   if (!actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
   const { assignmentId } = await params;
   const idempotencyKey = req.headers.get('Idempotency-Key') ?? `ik_${requestId}`;
+
+  if (laravelEnabled()) {
+    try {
+      const token = bearerOrSessionCookie(req.headers);
+      const { data } = await laravelPost(
+        token,
+        `/pandit/assignments/${encodeURIComponent(assignmentId)}:confirm`,
+        {},
+        { not_found: 'ASSIGNMENT_NOT_FOUND', state_forbidden: 'ASSIGNMENT_CONFLICT' },
+        { 'Idempotency-Key': idempotencyKey }
+      );
+      return Response.json(ok({ assignmentId, status: 'ACCEPTED', data }, requestId));
+    } catch (e) {
+      if (e instanceof PartnerApiError) {
+        return Response.json(err(e.code, e.message, requestId), { status: e.status });
+      }
+      return Response.json(err('INTERNAL_ERROR', 'Could not accept assignment.', requestId), { status: 500 });
+    }
+  }
+
   const offer = await assignments.get(assignmentId);
   const result = acceptOffer(offer, actor.userId, new Date().toISOString(), idempotencyKey);
   if (!result.ok && result.reason === 'NOT_FOUND') {

@@ -100,6 +100,13 @@ Route::middleware(['scope:temple:partner'])->group(function () {
 
     Route::get('partner/temples/{templeId}/dashboard/settings', [TempleDashboardController::class, 'settings'])
         ->name('partner.temples.dashboard.settings');
+
+    // Council Approvals (C3, WP6)
+    Route::get('partner/temples/{templeId}/council/approvals', [TempleDashboardController::class, 'councilApprovals'])
+        ->name('partner.temples.council.approvals.index');
+
+    Route::post('partner/temples/{templeId}/council/approvals/{approvalId}/decide', [TempleDashboardController::class, 'decideCouncilApproval'])
+        ->name('partner.temples.council.approvals.decide');
 });
 
 // Admin surface (scope:temple:admin + capability)

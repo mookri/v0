@@ -117,4 +117,48 @@ final class TempleDashboardController
             'meta' => ['request_id' => $this->requestId($request)],
         ]);
     }
+
+    // PARTNER: Council Approvals (C3, WP6)
+    public function councilApprovals(Request $request, string $templeId): JsonResponse
+    {
+        $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
+        $state = (string) $request->query('state', 'PENDING');
+
+        $query = \App\Modules\Temple\Models\TempleBookingApproval::query()
+            ->where('tenant_id', $tenantId)
+            ->where('temple_id', $templeId);
+
+        if ($state !== 'ALL') {
+            $query->where('state', $state);
+        }
+
+        $approvals = $query->orderByDesc('created_at')->get();
+
+        return new JsonResponse([
+            'data' => $approvals,
+            'meta' => ['request_id' => $this->requestId($request)],
+        ]);
+    }
+
+    public function decideCouncilApproval(Request $request, string $templeId, string $approvalId): JsonResponse
+    {
+        $request->validate([
+            'decision' => ['required', 'string', 'in:APPROVED,DECLINED'],
+            'reason' => ['sometimes', 'nullable', 'string', 'max:500'],
+        ]);
+
+        $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
+        $actorUserId = (string) $request->user()?->getKey();
+        $decision = (string) $request->input('decision');
+        $reason = $request->input('reason');
+
+        /** @var \App\Modules\Temple\Contracts\ManagesTempleApprovals $approvalsManager */
+        $approvalsManager = app(\App\Modules\Temple\Contracts\ManagesTempleApprovals::class);
+        $result = $approvalsManager->decide($tenantId, $approvalId, $actorUserId, $decision, $reason);
+
+        return new JsonResponse([
+            'data' => $result,
+            'meta' => ['request_id' => $this->requestId($request)],
+        ]);
+    }
 }
