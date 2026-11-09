@@ -4,6 +4,7 @@ namespace App\Modules\Customers\Http\Controllers;
 
 use App\Modules\Customers\Models\CustomerAddress;
 use App\Modules\Customers\CustomerActivityRecorder;
+use App\Modules\Customers\Outbox\FactAppender;
 use App\Platform\Api\CursorPagination;
 use App\Platform\Audit\AuditWriter;
 use Illuminate\Http\JsonResponse;
@@ -16,8 +17,14 @@ use Illuminate\Http\Request;
  */
 final class CustomerAddressController extends CustomerSelfServiceController
 {
-    public function __construct(private readonly AuditWriter $audit, private readonly CustomerActivityRecorder $activity)
-    {
+    private readonly FactAppender $facts;
+
+    public function __construct(
+        private readonly AuditWriter $audit,
+        private readonly CustomerActivityRecorder $activity,
+        ?FactAppender $facts = null
+    ) {
+        $this->facts = $facts ?? app(FactAppender::class);
     }
 
     public function index(Request $request): JsonResponse
@@ -91,6 +98,7 @@ final class CustomerAddressController extends CustomerSelfServiceController
             null,
             ['user_id' => $userId]
         );
+        $this->facts->append('customers.address.added', $userId, ['address_id' => (string) $address->getKey()]);
         $this->activity->record($userId, 'address_added', "Address '{$validated['label']}' added");
 
         return new JsonResponse([
@@ -130,6 +138,7 @@ final class CustomerAddressController extends CustomerSelfServiceController
             null,
             ['user_id' => $userId, 'fields' => array_keys($validated)]
         );
+        $this->facts->append('customers.address.updated', $userId, ['address_id' => (string) $address->getKey(), 'fields' => array_keys($validated)]);
         $this->activity->record($userId, 'address_updated', "Address '{$address->label}' updated");
 
         return new JsonResponse([
@@ -169,6 +178,7 @@ final class CustomerAddressController extends CustomerSelfServiceController
             null,
             ['user_id' => $userId]
         );
+        $this->facts->append('customers.address.removed', $userId, ['address_id' => $id]);
         $this->activity->record($userId, 'address_removed', 'Address removed');
 
         return new JsonResponse([

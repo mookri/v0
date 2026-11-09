@@ -4,6 +4,7 @@ namespace App\Modules\Customers\Http\Controllers;
 
 use App\Modules\Customers\Models\CustomerOtpChallenge;
 use App\Modules\Customers\CustomerActivityRecorder;
+use App\Modules\Customers\Outbox\FactAppender;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Identity\Otp\OtpChallengeManager;
 use App\Platform\Identity\Otp\OtpDeliveryPolicy;
@@ -35,11 +36,15 @@ final class CustomerVerificationController extends CustomerSelfServiceController
         CustomerOtpChallenge::PURPOSE_CHANGE_EMAIL,
     ];
 
+    private readonly FactAppender $facts;
+
     public function __construct(
         private readonly OtpChallengeManager $otp,
         private readonly AuditWriter $audit,
         private readonly CustomerActivityRecorder $activity,
+        ?FactAppender $facts = null,
     ) {
+        $this->facts = $facts ?? app(FactAppender::class);
     }
 
     public function status(Request $request): JsonResponse
@@ -248,6 +253,7 @@ final class CustomerVerificationController extends CustomerSelfServiceController
             null,
             ['user_id' => (string) $user->getAuthIdentifier(), 'channel' => $channel]
         );
+        $this->facts->append('customers.verification.completed', (string) $user->getAuthIdentifier(), ['channel' => $channel]);
         $this->activity->record(
             (string) $user->getAuthIdentifier(),
             'verification',

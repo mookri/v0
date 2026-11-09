@@ -5,6 +5,7 @@ namespace App\Modules\Customers\Http\Controllers;
 use App\Modules\Customers\Models\SupportMessage;
 use App\Modules\Customers\Models\SupportTicket;
 use App\Modules\Customers\CustomerActivityRecorder;
+use App\Modules\Customers\Outbox\FactAppender;
 use App\Platform\Api\CursorPagination;
 use App\Platform\Audit\AuditWriter;
 use Illuminate\Http\JsonResponse;
@@ -18,10 +19,14 @@ use Illuminate\Http\Request;
  */
 final class CustomerSupportController extends CustomerSelfServiceController
 {
+    private readonly FactAppender $facts;
+
     public function __construct(
         private readonly AuditWriter $audit,
         private readonly CustomerActivityRecorder $activity,
+        ?FactAppender $facts = null,
     ) {
+        $this->facts = $facts ?? app(FactAppender::class);
     }
 
     public function store(Request $request): JsonResponse
@@ -61,6 +66,7 @@ final class CustomerSupportController extends CustomerSelfServiceController
             null,
             ['user_id' => $userId]
         );
+        $this->facts->append('customers.ticket.created', $userId, ['ticket_id' => (string) $ticket->getKey()]);
         $this->activity->record($userId, 'support_opened', "Ticket '{$validated['subject']}' opened");
 
         return new JsonResponse([
@@ -138,6 +144,7 @@ final class CustomerSupportController extends CustomerSelfServiceController
             null,
             ['user_id' => $userId, 'reopened' => $reopened]
         );
+        $this->facts->append('customers.ticket.replied', $userId, ['ticket_id' => (string) $ticket->getKey(), 'reopened' => $reopened]);
         $this->activity->record($userId, 'support_replied', 'Replied to a support ticket');
 
         return new JsonResponse([
@@ -173,6 +180,7 @@ final class CustomerSupportController extends CustomerSelfServiceController
             null,
             ['user_id' => $userId]
         );
+        $this->facts->append('customers.ticket.closed', $userId, ['ticket_id' => (string) $ticket->getKey()]);
         $this->activity->record($userId, 'support_closed', 'Closed a support ticket');
 
         return new JsonResponse([

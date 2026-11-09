@@ -4,6 +4,7 @@ namespace App\Modules\Customers\Http\Controllers;
 
 use App\Modules\Customers\Models\CustomerSetting;
 use App\Modules\Customers\CustomerActivityRecorder;
+use App\Modules\Customers\Outbox\FactAppender;
 use App\Platform\Audit\AuditWriter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,8 +17,14 @@ use Illuminate\Http\Request;
  */
 final class CustomerSettingController extends CustomerSelfServiceController
 {
-    public function __construct(private readonly AuditWriter $audit, private readonly CustomerActivityRecorder $activity)
-    {
+    private readonly FactAppender $facts;
+
+    public function __construct(
+        private readonly AuditWriter $audit,
+        private readonly CustomerActivityRecorder $activity,
+        ?FactAppender $facts = null
+    ) {
+        $this->facts = $facts ?? app(FactAppender::class);
     }
 
     public function index(Request $request): JsonResponse
@@ -71,6 +78,7 @@ final class CustomerSettingController extends CustomerSelfServiceController
             null,
             ['user_id' => $userId, 'keys' => array_keys($validated)]
         );
+        $this->facts->append('customers.settings.updated', $userId, ['keys' => array_keys($validated)]);
         $this->activity->record($userId, 'settings_updated', 'Settings updated');
 
         return new JsonResponse([

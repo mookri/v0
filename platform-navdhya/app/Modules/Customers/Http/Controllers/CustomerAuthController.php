@@ -8,6 +8,7 @@ use App\Modules\Customers\Models\BuyerProfile;
 use App\Modules\Customers\Models\CustomerOtpChallenge;
 use App\Modules\Customers\Models\ReferralAttribution;
 use App\Modules\Customers\Models\ReferralCode;
+use App\Modules\Customers\Outbox\FactAppender;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Identity\ActorSessionRotation;
 use App\Platform\Identity\ActorTokenIssuer;
@@ -60,11 +61,15 @@ use Illuminate\Support\Str;
  */
 final class CustomerAuthController
 {
+    private readonly FactAppender $facts;
+
     public function __construct(
         private readonly OtpChallengeManager $otp,
         private readonly AuditWriter $audit,
         private readonly CustomerActivityRecorder $activity,
+        ?FactAppender $facts = null,
     ) {
+        $this->facts = $facts ?? app(FactAppender::class);
     }
 
     private function requestId(Request $request): string
@@ -481,6 +486,7 @@ final class CustomerAuthController
                 null,
                 ['tenant_id' => $tenantId, 'user_id' => (string) $user->getAuthIdentifier()]
             );
+            $this->facts->append('customers.account.signed_up', (string) $user->getAuthIdentifier(), ['tenant_id' => $tenantId]);
             $this->activity->record((string) $user->getAuthIdentifier(), 'signup', 'Account created');
 
             $this->issueReferralCode($tenantId, (string) $user->getAuthIdentifier());
@@ -663,6 +669,7 @@ final class CustomerAuthController
                 null,
                 ['tenant_id' => $tenantId, 'user_id' => (string) $user->getAuthIdentifier()]
             );
+            $this->facts->append('customers.auth.logged_in', (string) $user->getAuthIdentifier(), ['tenant_id' => $tenantId]);
             $this->activity->record((string) $user->getAuthIdentifier(), 'login', 'Signed in');
         } finally {
             if ($scoped['ownsContext']) {
@@ -705,6 +712,7 @@ final class CustomerAuthController
             null,
             ['user_id' => (string) $request->user()->getAuthIdentifier()]
         );
+        $this->facts->append('customers.auth.logged_out', (string) $request->user()->getAuthIdentifier());
         $this->activity->record((string) $request->user()->getAuthIdentifier(), 'logout', 'Signed out');
 
         return new JsonResponse([
@@ -828,5 +836,6 @@ final class CustomerAuthController
             null,
             ['tenant_id' => $tenantId, 'referrer_user_id' => (string) $referral->user_id, 'referred_user_id' => $userId]
         );
+        $this->facts->append('customers.referral.attributed', $userId, ['referrer_user_id' => (string) $referral->user_id, 'code' => $code]);
     }
 }

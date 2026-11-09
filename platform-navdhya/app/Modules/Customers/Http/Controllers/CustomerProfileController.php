@@ -3,9 +3,10 @@
 namespace App\Modules\Customers\Http\Controllers;
 
 use App\Models\User;
+use App\Modules\Customers\CustomerActivityRecorder;
 use App\Modules\Customers\Models\BuyerProfile;
 use App\Modules\Customers\Models\CustomerOtpChallenge;
-use App\Modules\Customers\CustomerActivityRecorder;
+use App\Modules\Customers\Outbox\FactAppender;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Identity\Otp\OtpChallengeManager;
 use App\Platform\Identity\Otp\OtpProviderUnavailableException;
@@ -27,8 +28,14 @@ use Illuminate\Http\Request;
  */
 final class CustomerProfileController extends CustomerSelfServiceController
 {
-    public function __construct(private readonly AuditWriter $audit, private readonly CustomerActivityRecorder $activity)
-    {
+    private readonly FactAppender $facts;
+
+    public function __construct(
+        private readonly AuditWriter $audit,
+        private readonly CustomerActivityRecorder $activity,
+        ?FactAppender $facts = null
+    ) {
+        $this->facts = $facts ?? app(FactAppender::class);
     }
 
     public function show(Request $request): JsonResponse
@@ -89,6 +96,7 @@ final class CustomerProfileController extends CustomerSelfServiceController
             null,
             ['user_id' => (string) $user->getAuthIdentifier(), 'fields' => array_keys($validated)]
         );
+        $this->facts->append('customers.profile.updated', (string) $user->getAuthIdentifier(), ['fields' => array_keys($validated)]);
         $this->activity->record((string) $user->getAuthIdentifier(), 'profile_updated', 'Profile updated');
 
         return new JsonResponse([
@@ -192,6 +200,7 @@ final class CustomerProfileController extends CustomerSelfServiceController
                 null,
                 ['user_id' => (string) $user->getAuthIdentifier(), 'membership_id' => (string) $membership->getKey()]
             );
+            $this->facts->append('customers.account.reactivated', (string) $user->getAuthIdentifier(), ['membership_id' => (string) $membership->getKey()]);
             $this->activity->record((string) $user->getAuthIdentifier(), 'reactivated', 'Account reactivated');
         } finally {
             if ($scoped['ownsContext']) {
@@ -282,6 +291,7 @@ final class CustomerProfileController extends CustomerSelfServiceController
             null,
             ['user_id' => (string) $user->getAuthIdentifier(), 'membership_id' => (string) $membership->getKey()]
         );
+        $this->facts->append('customers.account.deactivated', (string) $user->getAuthIdentifier(), ['membership_id' => (string) $membership->getKey()]);
         $this->activity->record((string) $user->getAuthIdentifier(), 'deactivated', 'Account deactivated');
 
         return new JsonResponse([
@@ -389,6 +399,7 @@ final class CustomerProfileController extends CustomerSelfServiceController
             null,
             ['user_id' => (string) $user->getAuthIdentifier(), 'membership_id' => (string) $membership->getKey()]
         );
+        $this->facts->append('customers.account.deleted', (string) $user->getAuthIdentifier(), ['membership_id' => (string) $membership->getKey()]);
         $this->activity->record((string) $user->getAuthIdentifier(), 'deleted', 'Account deleted');
 
         return new JsonResponse([

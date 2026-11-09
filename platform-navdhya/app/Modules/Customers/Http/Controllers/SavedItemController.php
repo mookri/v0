@@ -4,6 +4,7 @@ namespace App\Modules\Customers\Http\Controllers;
 
 use App\Modules\Customers\Models\SavedItem;
 use App\Modules\Customers\CustomerActivityRecorder;
+use App\Modules\Customers\Outbox\FactAppender;
 use App\Platform\Api\CursorPagination;
 use App\Platform\Audit\AuditWriter;
 use Illuminate\Http\JsonResponse;
@@ -17,8 +18,14 @@ use Illuminate\Http\Request;
  */
 final class SavedItemController extends CustomerSelfServiceController
 {
-    public function __construct(private readonly AuditWriter $audit, private readonly CustomerActivityRecorder $activity)
-    {
+    private readonly FactAppender $facts;
+
+    public function __construct(
+        private readonly AuditWriter $audit,
+        private readonly CustomerActivityRecorder $activity,
+        ?FactAppender $facts = null
+    ) {
+        $this->facts = $facts ?? app(FactAppender::class);
     }
 
     public function index(Request $request): JsonResponse
@@ -96,6 +103,7 @@ final class SavedItemController extends CustomerSelfServiceController
             null,
             ['user_id' => $userId, 'ref_type' => $item->ref_type, 'ref_id' => $item->ref_id]
         );
+        $this->facts->append('customers.saved.added', $userId, ['ref_type' => $item->ref_type, 'ref_id' => $item->ref_id]);
         $this->activity->record($userId, 'saved_added', "Saved {$item->ref_type}");
 
         return new JsonResponse([
@@ -130,6 +138,7 @@ final class SavedItemController extends CustomerSelfServiceController
             null,
             ['user_id' => (string) $user->getAuthIdentifier()]
         );
+        $this->facts->append('customers.saved.removed', (string) $user->getAuthIdentifier(), ['saved_item_id' => $id]);
         $this->activity->record((string) $user->getAuthIdentifier(), 'saved_removed', 'Removed a saved item');
 
         return new JsonResponse([

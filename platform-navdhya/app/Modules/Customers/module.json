@@ -28,7 +28,12 @@
     { "name": "customers.ticket.created", "schema": "v1" },
     { "name": "customers.ticket.replied", "schema": "v1" },
     { "name": "customers.ticket.closed", "schema": "v1" },
-    { "name": "customers.referral.attributed", "schema": "v1" }
+    { "name": "customers.referral.attributed", "schema": "v1" },
+    { "name": "customers.account.deleted", "schema": "v1" },
+    { "name": "customers.spiritual_profile.updated", "schema": "v1" },
+    { "name": "customers.family_member.updated", "schema": "v1" },
+    { "name": "customers.reminder.fired", "schema": "v1" },
+    { "name": "customers.consent.changed", "schema": "v1" }
   ],
   "navigation": [],
   "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/customers" }

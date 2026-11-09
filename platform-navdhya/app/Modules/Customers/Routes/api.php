@@ -10,6 +10,10 @@ use App\Modules\Customers\Http\Controllers\CustomerNotificationController;
 use App\Modules\Customers\Http\Controllers\CustomerProfileController;
 use App\Modules\Customers\Http\Controllers\CustomerSettingController;
 use App\Modules\Customers\Http\Controllers\CustomerVerificationController;
+use App\Modules\Customers\Http\Controllers\CustomerPrivacyController;
+use App\Modules\Customers\Http\Controllers\CustomerSpiritualController;
+use App\Modules\Customers\Http\Controllers\CustomerTelemetryController;
+use App\Modules\Customers\Http\Controllers\CustomerWebhookController;
 use App\Modules\Customers\Http\Controllers\SavedItemController;
 use App\Modules\Customers\Http\Controllers\StaffSupportController;
 use App\Platform\Identity\Http\Middleware\LegacyLoginSurfaceGate;
@@ -162,3 +166,56 @@ Route::post('support/staff/tickets/{id}/messages', [StaffSupportController::clas
 Route::post('support/staff/tickets/{id}:close', [StaffSupportController::class, 'close'])
     ->middleware('capability:customers:support:manage')
     ->name('support.staff.close');
+
+// Notification Delivery Receipt Webhooks (E4)
+Route::post('webhooks/msg91', [CustomerWebhookController::class, 'handleMsg91'])
+    ->withoutMiddleware(['auth.any', 'tenant'])
+    ->middleware('throttle:60,1')
+    ->name('webhooks.msg91');
+Route::match(['get', 'post'], 'webhooks/whatsapp', [CustomerWebhookController::class, 'handleWhatsApp'])
+    ->withoutMiddleware(['auth.any', 'tenant'])
+    ->middleware('throttle:60,1')
+    ->name('webhooks.whatsapp');
+
+// Telemetry Event Ingestion (E5)
+Route::post('events', [CustomerTelemetryController::class, 'store'])
+    ->middleware('throttle:20,1')
+    ->name('telemetry.store');
+
+// Devotee Privacy, Data Rights & Erasure (E6)
+Route::get('me/data-export', [CustomerPrivacyController::class, 'export'])
+    ->middleware('throttle:5,1')
+    ->name('privacy.export');
+Route::post('me/erasure', [CustomerPrivacyController::class, 'erasure'])
+    ->middleware('throttle:5,1')
+    ->name('privacy.erasure');
+
+// Spiritual Profiles, Ancestral Lineage & Panchang Reminders (E1 / E2 / E3)
+Route::get('spiritual', [CustomerSpiritualController::class, 'showSpiritual'])
+    ->name('spiritual.show');
+Route::put('spiritual', [CustomerSpiritualController::class, 'updateSpiritual'])
+    ->name('spiritual.update');
+
+Route::get('family', [CustomerSpiritualController::class, 'listFamily'])
+    ->name('family.list');
+Route::post('family', [CustomerSpiritualController::class, 'storeFamily'])
+    ->name('family.store');
+Route::delete('family/{id}', [CustomerSpiritualController::class, 'destroyFamily'])
+    ->name('family.destroy');
+
+Route::get('reminders', [CustomerSpiritualController::class, 'listReminders'])
+    ->name('reminders.list');
+Route::post('reminders', [CustomerSpiritualController::class, 'storeReminder'])
+    ->name('reminders.store');
+Route::delete('reminders/{id}', [CustomerSpiritualController::class, 'destroyReminder'])
+    ->name('reminders.destroy');
+
+Route::get('consent', [CustomerSpiritualController::class, 'getConsent'])
+    ->name('consent.get');
+Route::post('consent', [CustomerSpiritualController::class, 'updateConsent'])
+    ->name('consent.update');
+
+Route::get('preferences', [CustomerSpiritualController::class, 'getPreferences'])
+    ->name('preferences.get');
+Route::patch('preferences', [CustomerSpiritualController::class, 'updatePreferences'])
+    ->name('preferences.update');
