@@ -72,12 +72,13 @@ final class ResourceAllocationManager
         CarbonImmutable $start,
         CarbonImmutable $end,
         int $capacityLimit,
-        CarbonImmutable $expiresAt
+        CarbonImmutable $expiresAt,
+        int $units = 1
     ): ResourceAllocation {
         $calendar = $this->lockOrCreateCalendar($tenantId, ResourceCalendar::TYPE_TEMPLE, $templeId);
 
         $now = now();
-        $activeCount = ResourceAllocation::query()
+        $activeUnits = (int) ResourceAllocation::query()
             ->where('tenant_id', $tenantId)
             ->where('calendar_id', (string) $calendar->getKey())
             ->where(function ($query) use ($now): void {
@@ -93,9 +94,9 @@ final class ResourceAllocationManager
                 $query->whereNull('booking_id')
                     ->orWhere('booking_id', '!=', $bookingId);
             })
-            ->count();
+            ->sum('units');
 
-        if ($activeCount >= $capacityLimit) {
+        if (($activeUnits + $units) > $capacityLimit) {
             throw new ResourceUnavailableException("Temple venue capacity limit ({$capacityLimit}) reached for the requested slot.");
         }
 
@@ -107,7 +108,7 @@ final class ResourceAllocationManager
             'revision_id' => $revisionId,
             'interval_start' => $start->toDateTimeString(),
             'interval_end' => $end->toDateTimeString(),
-            'units' => 1,
+            'units' => $units,
             'status' => ResourceAllocation::STATUS_HELD,
             'expires_at' => $expiresAt->toDateTimeString(),
         ]);

@@ -20,10 +20,18 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
         $this->app->bind(\App\Modules\Temple\Contracts\ManagesTemplePujas::class, TemplePujaManagementService::class);
         $this->app->bind(\App\Modules\Temple\Contracts\ManagesTempleManagers::class, TempleManagerManagementService::class);
         $this->app->bind(\App\Modules\Temple\Contracts\ProvidesTempleDashboard::class, TempleDashboardService::class);
+        $this->app->bind(\App\Modules\Temple\Contracts\ManagesTempleApprovals::class, \App\Modules\Temple\Application\TempleApprovalService::class);
+        $this->app->bind(\App\Modules\Temple\Contracts\TempleSchedulePolicy::class, \App\Modules\Temple\Application\TempleSchedulePolicyService::class);
     }
 
     public function bootModule(): void
     {
         $this->loadModuleMigrations();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                \App\Modules\Temple\Console\ProcessTempleApprovalSlaCommand::class,
+            ]);
+        }
     }
 }

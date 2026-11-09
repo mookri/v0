@@ -20,6 +20,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $puja_id
  * @property int|null $price_override_minor
  * @property int|null $capacity
+ * @property string $slot_type
+ * @property int $min_persons
+ * @property int $max_persons
+ * @property bool $requires_approval
+ * @property int $approval_sla_minutes
  * @property string|null $schedule_json
  * @property string $status
  * @property \Illuminate\Support\Carbon $created_at
@@ -37,6 +42,10 @@ final class TemplePuja extends Model
     public const STATUS_ACTIVE = 'ACTIVE';
     public const STATUS_INACTIVE = 'INACTIVE';
 
+    public const SLOT_TYPE_PUJA = 'PUJA';
+    public const SLOT_TYPE_DARSHAN = 'DARSHAN';
+    public const SLOT_TYPE_HOMA = 'HOMA';
+
     protected $connection = 'tenant_shared';
 
     protected $fillable = [
@@ -45,6 +54,11 @@ final class TemplePuja extends Model
         'puja_id',
         'price_override_minor',
         'capacity',
+        'slot_type',
+        'min_persons',
+        'max_persons',
+        'requires_approval',
+        'approval_sla_minutes',
         'schedule_json',
         'status',
     ];
@@ -53,6 +67,10 @@ final class TemplePuja extends Model
     {
         return [
             'schedule_json' => 'array',
+            'min_persons' => 'integer',
+            'max_persons' => 'integer',
+            'requires_approval' => 'boolean',
+            'approval_sla_minutes' => 'integer',
         ];
     }
 

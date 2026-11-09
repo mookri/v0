@@ -11,6 +11,7 @@ use App\Modules\Booking\Models\BookingTransition;
 use App\Modules\Catalog\Contracts\ListsCatalogItems;
 use App\Modules\Pandit\Contracts\ListsPanditProfiles;
 use App\Modules\Pandit\Contracts\PanditSchedulePolicy;
+use App\Modules\Temple\Contracts\TempleSchedulePolicy;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Outbox\Outbox;
 use Carbon\CarbonImmutable;
@@ -27,6 +28,7 @@ final class CreateReservationDraftUseCase
         private readonly Outbox $outbox,
         private readonly ?ListsPanditProfiles $pandits = null,
         private readonly ?PanditSchedulePolicy $schedulePolicy = null,
+        private readonly ?TempleSchedulePolicy $templeSchedulePolicy = null,
     ) {
     }
 
@@ -66,6 +68,19 @@ final class CreateReservationDraftUseCase
             $verdict = $policy->isAvailableAt($tenantId, $panditId, $scheduledAt, $endsAt);
             if (! $verdict->isAvailable()) {
                 throw new InvalidArgumentException("Selected pandit '{$panditId}' is not available for requested window: {$verdict->reason()}.");
+            }
+        }
+
+        if (! empty($input['selected_temple_id'])) {
+            $templeId = (string) $input['selected_temple_id'];
+            $templePolicy = $this->templeSchedulePolicy ?? (app()->bound(TempleSchedulePolicy::class) ? app(TempleSchedulePolicy::class) : null);
+            if ($templePolicy !== null) {
+                $units = 1;
+                $slotType = (string) ($input['slot_type'] ?? 'PUJA');
+                $tVerdict = $templePolicy->evaluateSlot($tenantId, $templeId, $slotType, $scheduledAt, $endsAt, $units);
+                if (! $tVerdict->isAllowed()) {
+                    throw new InvalidArgumentException("Selected temple slot is unavailable: {$tVerdict->reason()}.");
+                }
             }
         }
 

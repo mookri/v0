@@ -68,6 +68,7 @@ final class InitiateCheckoutHoldUseCase
                     }
 
                     if ($line->selected_temple_id !== null) {
+                        $units = max(1, (int) ($line->quantity ?? 1));
                         $this->allocations->holdTempleSlot(
                             $tenantId,
                             $line->selected_temple_id,
@@ -76,7 +77,8 @@ final class InitiateCheckoutHoldUseCase
                             $start,
                             $end,
                             10, // Default temple slot capacity limit
-                            $expiresAt
+                            $expiresAt,
+                            $units
                         );
                     }
                 }

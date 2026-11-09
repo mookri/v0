@@ -26,6 +26,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $state
  * @property float|null $lat
  * @property float|null $lng
+ * @property string $timezone
+ * @property int|null $daily_booking_cap
  * @property list<string> $images
  * @property list<string> $amenities
  * @property string|null $description
@@ -68,6 +70,8 @@ final class Temple extends Model
         'state',
         'lat',
         'lng',
+        'timezone',
+        'daily_booking_cap',
         'images',
         'amenities',
         'description',
@@ -83,6 +87,7 @@ final class Temple extends Model
             'amenities' => 'array',
             'lat' => 'float',
             'lng' => 'float',
+            'daily_booking_cap' => 'integer',
         ];
     }
 
@@ -119,6 +124,54 @@ final class Temple extends Model
     public function managers(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Modules\Temple\Models\TempleManager::class, 'temple_id');
+    }
+
+    /**
+     * @return HasMany<TempleDeity, $this>
+     */
+    public function deities(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(TempleDeity::class, 'temple_id', 'id');
+    }
+
+    /**
+     * @return HasMany<TempleAartiSchedule, $this>
+     */
+    public function aartis(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(TempleAartiSchedule::class, 'temple_id', 'id');
+    }
+
+    /**
+     * @return HasMany<TempleSanctumRule, $this>
+     */
+    public function sanctumRules(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(TempleSanctumRule::class, 'temple_id', 'id');
+    }
+
+    /**
+     * @return HasMany<TempleVenueLimit, $this>
+     */
+    public function venueLimits(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(TempleVenueLimit::class, 'temple_id', 'id');
+    }
+
+    /**
+     * @return HasMany<TemplePriest, $this>
+     */
+    public function priests(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(TemplePriest::class, 'temple_id', 'id');
+    }
+
+    /**
+     * @return HasMany<TempleBookingApproval, $this>
+     */
+    public function approvals(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(TempleBookingApproval::class, 'temple_id', 'id');
     }
 
     /**

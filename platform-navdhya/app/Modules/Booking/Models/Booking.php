@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $idempotency_hash_version
  * @property string|null $service_sku
  * @property string $status
+ * @property string|null $status_detail
+ * @property int|null $refund_amount_minor
  * @property \Carbon\CarbonImmutable|\Illuminate\Support\Carbon|null $scheduled_at
  * @property int $duration_minutes
  * @property array<string, mixed>|null $address_snapshot
@@ -49,7 +51,7 @@ final class Booking extends Model
 
     protected $fillable = [
         'tenant_id', 'user_id', 'service_sku', 'idempotency_key', 'idempotency_hash', 'idempotency_hash_version',
-        'status', 'scheduled_at',
+        'status', 'status_detail', 'refund_amount_minor', 'scheduled_at',
         'duration_minutes', 'address_snapshot', 'total_minor', 'currency',
         'version',
         'current_revision_id', 'checkout_expires_at', 'service_start_at', 'service_end_at',
@@ -64,6 +66,8 @@ final class Booking extends Model
             'service_start_at' => 'datetime',
             'service_end_at' => 'datetime',
             'address_snapshot' => 'array',
+            'total_minor' => 'integer',
+            'refund_amount_minor' => 'integer',
         ];
     }
 
