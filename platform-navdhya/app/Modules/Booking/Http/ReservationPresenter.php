@@ -26,6 +26,7 @@ final class ReservationPresenter
             'address_snapshot' => $booking->address_snapshot,
             'amount_minor' => (int) ($booking->total_minor ?? 0),
             'currency' => $booking->currency ?? 'INR',
+            'accepted_quote_hash' => $booking->accepted_quote_hash,
             'checkout_expires_at' => $booking->checkout_expires_at,
             'created_at' => $booking->created_at?->toISOString(),
             'updated_at' => $booking->updated_at?->toISOString(),

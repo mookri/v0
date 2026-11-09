@@ -4,13 +4,14 @@ namespace App\Modules\Tax\Domain;
 
 use App\Modules\Catalog\Contracts\CalculatesQuotes;
 use App\Modules\Tax\Contracts\CalculatesTax;
+use App\Modules\Tax\Contracts\QuotesCommercials;
 use App\Modules\Tax\Models\CommercialProfile;
 use App\Modules\Tax\Models\TaxRegistration;
 use Carbon\CarbonImmutable;
 use RuntimeException;
 
 /**
- * Commercial Quote Service (Phase 3, Sub-phase 3.3).
+ * Commercial Quote Service (Phase 3, Sub-phase 3.3; WP3).
  *
  * Server-authoritative composite commercial pricing with:
  * - Deterministic SKU price resolution
@@ -19,7 +20,7 @@ use RuntimeException;
  * - Strict integer minor-unit arithmetic with invariant:
  *   sum(lines.total_minor) + platform_fee_minor == total_minor
  */
-final class CommercialQuoteService
+final class CommercialQuoteService implements QuotesCommercials
 {
     public function __construct(
         private readonly CalculatesQuotes $catalogQuotes,

@@ -16,6 +16,9 @@ Route::post('reservations', [ReservationV2Controller::class, 'store'])
 Route::get('reservations/{bookingId}', [ReservationV2Controller::class, 'show'])
     ->name('reservations.show');
 
+Route::post('reservations/{bookingId}/quote', [ReservationV2Controller::class, 'quote'])
+    ->name('reservations.quote');
+
 Route::get('reservations/{bookingId}/shipment', [ReservationV2Controller::class, 'shipment'])
     ->name('reservations.shipment');
 

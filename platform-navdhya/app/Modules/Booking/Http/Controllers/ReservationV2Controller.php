@@ -11,6 +11,7 @@ use App\Modules\Booking\Application\PreviewCancellationUseCase;
 use App\Modules\Booking\Application\PreviewRescheduleUseCase;
 use App\Modules\Booking\Application\RebookBookingUseCase;
 use App\Modules\Booking\Application\RescheduleBookingUseCase;
+use App\Modules\Booking\Domain\BookingLifecycle;
 use App\Modules\Booking\Domain\CommandDeduplicator;
 use App\Modules\Booking\Domain\Exceptions\BookingConflictException;
 use App\Modules\Booking\Domain\Exceptions\BookingNotFoundException;
@@ -21,6 +22,8 @@ use App\Modules\Booking\Domain\Exceptions\ResourceUnavailableException;
 use App\Modules\Booking\Http\BookingProblemResponder;
 use App\Modules\Booking\Http\ReservationPresenter;
 use App\Modules\Booking\Models\Booking;
+use App\Modules\Booking\Models\BookingLine;
+use App\Modules\Tax\Contracts\QuotesCommercials;
 use App\Platform\Identity\MachinePrincipal;
 use App\Platform\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
@@ -46,6 +49,7 @@ final class ReservationV2Controller
         private readonly RescheduleBookingUseCase $rescheduleBooking,
         private readonly RebookBookingUseCase $rebookBooking,
         private readonly CommandDeduplicator $deduplicator,
+        private readonly ?QuotesCommercials $quoteService = null,
     ) {
     }
 
@@ -209,6 +213,106 @@ final class ReservationV2Controller
     }
 
     /**
+     * POST /api/v2/booking/reservations/{bookingId}/quote
+     */
+    public function quote(Request $request, string $bookingId): JsonResponse
+    {
+        $resolved = $this->resolveTenantAndUser($request);
+        if ($resolved instanceof JsonResponse) {
+            return $resolved;
+        }
+        [$tenantId, $user] = $resolved;
+
+        $booking = $this->resolveOwnBooking($tenantId, $bookingId, (string) $user->getKey());
+        if ($booking === null) {
+            return BookingProblemResponder::create(
+                404,
+                'not_found',
+                'Booking Not Found',
+                'The requested reservation does not exist.'
+            );
+        }
+
+        if (!in_array($booking->status, [BookingLifecycle::STATUS_DRAFT, BookingLifecycle::STATUS_PENDING_PAYMENT], true)) {
+            return BookingProblemResponder::create(
+                409,
+                'invalid_state',
+                'State Conflict',
+                "Cannot quote booking in status '{$booking->status}'."
+            );
+        }
+
+        $lines = [];
+        if ($booking->current_revision_id !== null) {
+            $bookingLines = BookingLine::query()
+                ->where('tenant_id', $tenantId)
+                ->where('revision_id', $booking->current_revision_id)
+                ->get();
+
+            foreach ($bookingLines as $line) {
+                $lines[] = [
+                    'sku' => (string) $line->sku,
+                    'quantity' => (int) $line->quantity,
+                    'pandit_id' => $line->selected_pandit_id,
+                ];
+            }
+        }
+
+        if ($lines === []) {
+            return BookingProblemResponder::create(
+                422,
+                'empty_lines',
+                'Unprocessable Entity',
+                'Booking has no line items to quote.'
+            );
+        }
+
+        $customerState = $request->input('customer_state', $booking->address_snapshot['state'] ?? null);
+        $customerPostalCode = $request->input('customer_postal_code', $booking->address_snapshot['postal_code'] ?? null);
+        $jurisdiction = $request->input('jurisdiction', $booking->address_snapshot['jurisdiction'] ?? null);
+
+        $quoteRequest = [
+            'tenant_id' => $tenantId,
+            'currency' => $booking->currency ?? 'INR',
+            'jurisdiction' => $jurisdiction,
+            'customer_state' => $customerState,
+            'customer_postal_code' => $customerPostalCode,
+            'lines' => $lines,
+        ];
+
+        $quoteService = $this->quoteService ?? app(QuotesCommercials::class);
+        $quoteResult = $quoteService->createQuote($quoteRequest, CarbonImmutable::now());
+
+        if (! ($quoteResult['ok'] ?? false)) {
+            return BookingProblemResponder::create(
+                422,
+                'quote_failed',
+                'Commercial Calculation Failed',
+                (string) ($quoteResult['error'] ?? 'Could not calculate commercial quote.')
+            );
+        }
+
+        $booking->accepted_quote_hash = $quoteResult['quote_hash'];
+        $booking->total_minor = (int) $quoteResult['summary']['total_minor'];
+        $booking->save();
+
+        return new JsonResponse([
+            'data' => [
+                'booking_id' => (string) $booking->getKey(),
+                'quote_hash' => $quoteResult['quote_hash'],
+                'currency' => $quoteResult['currency'],
+                'jurisdiction' => $quoteResult['jurisdiction'],
+                'selling_model' => $quoteResult['selling_model'],
+                'lines' => $quoteResult['lines'],
+                'summary' => $quoteResult['summary'],
+            ],
+            'meta' => ['request_id' => (string) $request->attributes->get('request_id', '')],
+        ], 200, [
+            'ETag' => ReservationPresenter::etag($booking),
+        ]);
+    }
+
+    /**
      * POST /api/v2/booking/reservations/{bookingId}/checkout
      */
     public function checkout(Request $request, string $bookingId): JsonResponse
@@ -253,6 +357,13 @@ final class ReservationV2Controller
                         'version' => (int) $updated->version,
                     ];
                 }
+            );
+        } catch (BookingConflictException $e) {
+            return BookingProblemResponder::create(
+                409,
+                $e->errorCode,
+                'Quote Stale',
+                $e->getMessage()
             );
         } catch (BookingStateForbiddenException $e) {
             return BookingProblemResponder::create(
@@ -351,6 +462,13 @@ final class ReservationV2Controller
                         'version' => (int) $updated->version,
                     ];
                 }
+            );
+        } catch (BookingConflictException $e) {
+            return BookingProblemResponder::create(
+                409,
+                $e->errorCode,
+                'Quote Stale',
+                $e->getMessage()
             );
         } catch (BookingStateForbiddenException $e) {
             return BookingProblemResponder::create(
