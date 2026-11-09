@@ -1,13 +1,13 @@
 {
   "code": "booking",
   "name": "Booking Lifecycle",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "phase": 3,
   "priority": 250,
   "dependencies": [],
-  "actions": ["cancel", "reschedule", "confirm"],
+  "actions": ["cancel", "reschedule", "confirm", "rebook"],
   "permissions": [],
-  "scopes": ["booking:self"],
+  "scopes": ["booking:self", "booking:read", "booking:write"],
   "events": [
     { "name": "booking.reservation.created", "schema": "v1" },
     { "name": "booking.reservation.cancelled", "schema": "v1" },

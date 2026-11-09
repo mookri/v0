@@ -26,6 +26,13 @@ return [
     'api_version' => 'v1',
 
     /*
+     * Supported API versions per module for multi-version routing.
+     */
+    'api_versions' => [
+        'booking' => ['v1', 'v2'],
+    ],
+
+    /*
      * Authorization engine (T-0K01-02, SEC-022).
      */
     'authz' => [

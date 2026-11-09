@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 require __DIR__.'/platform/api.php';
 
 $version = config('platform.api_version', 'v1');
+$apiVersions = config('platform.api_versions', []);
 
 foreach (ModuleRegistry::modules() as $module) {
     $routes = $module->routesPath('api');
@@ -30,5 +31,20 @@ foreach (ModuleRegistry::modules() as $module) {
             ->middleware(['auth.any', 'tenant'])
             ->name($module->code.'.')
             ->group($routes);
+    }
+
+    $versions = $apiVersions[$module->code] ?? [];
+    foreach ($versions as $extraVersion) {
+        if ($extraVersion === 'v1') {
+            continue;
+        }
+
+        $extraRoutes = $module->routesPath('api-'.$extraVersion);
+        if (is_file($extraRoutes)) {
+            Route::prefix($extraVersion.'/'.$module->code)
+                ->middleware(['auth.any', 'tenant'])
+                ->name($module->code.'.'.$extraVersion.'.')
+                ->group($extraRoutes);
+        }
     }
 }
