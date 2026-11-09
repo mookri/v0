@@ -4,6 +4,7 @@ import Link from "next/link"
 import Script from "next/script"
 import { ChevronDown, Heart, Eye, ShoppingCart, Filter, X, ArrowRight, MapPin, Star, Award, Calendar, Users, Phone, Mail, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { buildBookStartUrl, type BookingIntent } from "@navdhya/booking"
 
 export default function BookConsultationClient({ consultationSchema }: { consultationSchema: string }) {
   const [formData, setFormData] = useState({
@@ -45,9 +46,21 @@ export default function BookConsultationClient({ consultationSchema }: { consult
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', formData);
-    alert('Thank you! We will contact you shortly to confirm your consultation.');
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + 30 * 60 * 1000);
+    const customerBaseUrl = process.env.NEXT_PUBLIC_CUSTOMER_URL || 'http://localhost:3000';
+
+    const intent: BookingIntent = {
+      v: 1,
+      pujaId: formData.serviceType || 'pandit-consultation',
+      source: 'web_pandit_consultation',
+      idempotencyKey: `ik_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+      createdAtIso: now.toISOString(),
+      expiresAtIso: expiresAt.toISOString(),
+    };
+
+    const targetUrl = buildBookStartUrl(customerBaseUrl, intent);
+    window.location.href = targetUrl;
   };
 
   return (

@@ -6,6 +6,10 @@ export interface BookingIntent {
   pujaId?: string;
   panditId?: string;
   slotRef?: string;
+  durationMinutes?: number;
+  timezone?: string;
+  templeId?: string;
+  slotType?: string;
   source: string;
   idempotencyKey: string;
   createdAtIso: string;
@@ -20,18 +24,42 @@ export interface BookingIntent {
 // links keep decoding, and atob throws on malformed input, which the
 // decoder maps to INTENT_MALFORMED (same outcome lenient node decoding
 // produced before, via JSON.parse failing one step later).
+function safeBtoa(binary: string): string {
+  if (typeof btoa === 'function') return btoa(binary);
+  return Buffer.from(binary, 'binary').toString('base64');
+}
+
+function safeAtob(base64: string): string {
+  if (typeof atob === 'function') return atob(base64);
+  return Buffer.from(base64, 'base64').toString('binary');
+}
+
+function encodeUtf8(json: string): Uint8Array {
+  if (typeof TextEncoder !== 'undefined') {
+    return new TextEncoder().encode(json);
+  }
+  return Uint8Array.from(Buffer.from(json, 'utf-8'));
+}
+
+function decodeUtf8(bytes: Uint8Array): string {
+  if (typeof TextDecoder !== 'undefined') {
+    return new TextDecoder().decode(bytes);
+  }
+  return Buffer.from(bytes).toString('utf-8');
+}
+
 function toBase64Url(json: string): string {
-  const bytes = new TextEncoder().encode(json);
+  const bytes = encodeUtf8(json);
   let binary = '';
   for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  return safeBtoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 function fromBase64Url(raw: string): string {
   const base64 = raw.replace(/-/g, '+').replace(/_/g, '/');
-  const binary = atob(base64);
+  const binary = safeAtob(base64);
   const bytes = Uint8Array.from(binary, (ch) => ch.charCodeAt(0));
-  return new TextDecoder().decode(bytes);
+  return decodeUtf8(bytes);
 }
 
 export function encodeBookingIntent(intent: BookingIntent): string {
@@ -54,8 +82,22 @@ export function decodeBookingIntent(raw: string, nowIso: string): BookingIntent 
     throw new Error('INTENT_MALFORMED');
   }
   if (intent.expiresAtIso <= nowIso) throw new Error('INTENT_EXPIRED');
-  for (const field of [intent.pujaId, intent.panditId, intent.slotRef] as const) {
+
+  if (intent.durationMinutes !== undefined && (typeof intent.durationMinutes !== 'number' || intent.durationMinutes <= 0 || !Number.isFinite(intent.durationMinutes))) {
+    throw new Error('INTENT_MALFORMED');
+  }
+
+  for (const field of [intent.pujaId, intent.panditId, intent.slotRef, intent.timezone, intent.templeId, intent.slotType] as const) {
     if (field !== undefined && (typeof field !== 'string' || field.length === 0)) throw new Error('INTENT_MALFORMED');
   }
   return intent as BookingIntent;
+}
+
+/**
+ * Builds safe customer application handoff URL with encoded booking intent (WP5).
+ */
+export function buildBookStartUrl(baseCustomerUrl: string, intent: BookingIntent): string {
+  const encoded = encodeBookingIntent(intent);
+  const base = baseCustomerUrl.replace(/\/$/, '');
+  return `${base}/book/start?intent=${encodeURIComponent(encoded)}`;
 }

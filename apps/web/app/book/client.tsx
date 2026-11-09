@@ -9,6 +9,7 @@ import { Calendar, Clock, Users, MapPin, Phone, Mail } from "lucide-react"
 import Script from "next/script"
 import Link from "next/link"
 import { useState } from "react"
+import { buildBookStartUrl, type BookingIntent } from "@navdhya/booking"
 
 const serviceTypes = [
   { id: "home-puja", name: "Home Puja Service", description: "Pujas performed in the comfort of your home" },
@@ -48,10 +49,22 @@ export default function BookingClient({ bookingSchema }: { bookingSchema: string
   }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Booking data:', formData)
-    // In a real implementation, this would submit to an API
-    alert('Booking request submitted! In a real application, this would be sent to our servers.')
+    e.preventDefault();
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + 30 * 60 * 1000);
+    const customerBaseUrl = process.env.NEXT_PUBLIC_CUSTOMER_URL || 'http://localhost:3000';
+
+    const intent: BookingIntent = {
+      v: 1,
+      pujaId: formData.serviceType || 'home-puja',
+      source: 'web_book_funnel',
+      idempotencyKey: `ik_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+      createdAtIso: now.toISOString(),
+      expiresAtIso: expiresAt.toISOString(),
+    };
+
+    const targetUrl = buildBookStartUrl(customerBaseUrl, intent);
+    window.location.href = targetUrl;
   }
 
   return (
