@@ -10,6 +10,16 @@ export interface CustomerBookingDetails {
   schedule: { date: string; time: string };
   puja: { id: string; name: string; image?: string };
   pandit?: { id: string; name: string };
+  amountMinor?: number;
+  currency?: string;
+  checkoutExpiresAt?: string | null;
+  acceptedQuoteHash?: string | null;
+  shipment?: {
+    id: string;
+    carrierName?: string | null;
+    trackingCode?: string | null;
+    status: string;
+  } | null;
   actions: BookingAction[];
 }
 

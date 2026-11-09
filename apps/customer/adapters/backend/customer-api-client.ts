@@ -4,6 +4,8 @@ export interface CustomerApiErrorShape {
   requestId: string;
   /** Upstream Retry-After header (seconds as string), when present. */
   retryAfter?: string;
+  /** Upstream RFC 7807/9457 detail message when available. */
+  detail?: string;
 }
 
 export class CustomerApiError extends Error {
@@ -11,13 +13,15 @@ export class CustomerApiError extends Error {
   status: number;
   requestId: string;
   retryAfter?: string;
+  detail?: string;
 
   constructor(shape: CustomerApiErrorShape) {
-    super(shape.code);
+    super(shape.detail || shape.code);
     this.code = shape.code;
     this.status = shape.status;
     this.requestId = shape.requestId;
     this.retryAfter = shape.retryAfter;
+    this.detail = shape.detail;
   }
 }
 
@@ -55,6 +59,26 @@ export function createCustomerApi(fetchImpl: CustomerApiFetch) {
       method: 'POST',
       headers: { 'Idempotency-Key': idempotencyKey },
       body: JSON.stringify({}),
+    }),
+  checkoutBooking: (id: string, idempotencyKey: string) =>
+    request(`/api/bookings/${id}/checkout`, {
+      method: 'POST',
+      headers: { 'Idempotency-Key': idempotencyKey },
+      body: JSON.stringify({}),
+    }),
+  confirmBooking: (id: string, version: number, idempotencyKey: string) =>
+    request(`/api/bookings/${id}/confirm`, {
+      method: 'POST',
+      headers: {
+        'Idempotency-Key': idempotencyKey,
+        'If-Match': `W/"v${version}"`,
+      },
+      body: JSON.stringify({}),
+    }),
+  quoteBooking: (id: string, payload: Record<string, unknown> = {}) =>
+    request(`/api/bookings/${id}/quote`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
     }),
   rescheduleBooking: (id: string, newStartTime: string, version: number, idempotencyKey: string) =>
     request(`/api/bookings/${id}/reschedule`, {

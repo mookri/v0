@@ -36,7 +36,12 @@ export const DEFAULT_BACKEND_CODE_MAP: BackendCodeMap = {
   not_found: 'NOT_FOUND',
   conflict: 'CONFLICT',
   version_conflict: 'STALE_RESOURCE',
+  precondition_required: 'STALE_RESOURCE',
+  precondition_failed: 'STALE_RESOURCE',
+  quote_stale: 'CONFLICT',
+  resource_unavailable: 'CONFLICT',
   state_forbidden: 'CONFLICT',
+  invalid_state_transition: 'CONFLICT',
   rate_limited: 'RATE_LIMITED',
   service_unavailable: 'DEPENDENCY_UNAVAILABLE',
   // OTP exchange: the typed 503 — provider creds
@@ -66,6 +71,7 @@ export interface LaravelPage {
 export interface LaravelResponse<T> {
   data: T;
   meta: { request_id?: string; page?: LaravelPage };
+  etag?: string | null;
 }
 
 async function callLaravel<T>(
@@ -76,10 +82,13 @@ async function callLaravel<T>(
   body: unknown = undefined,
   codeMap: BackendCodeMap = {},
   extraHeaders: Record<string, string> = {},
+  apiVersion?: 'v1' | 'v2',
 ): Promise<LaravelResponse<T>> {
   const params = new URLSearchParams(query);
   const qs = params.size > 0 ? `?${params.toString()}` : '';
-  const url = `${laravelBase()}/api/v1${path}${qs}`;
+  const version = apiVersion ?? (path.startsWith('/v2/') || path.startsWith('v2/') ? 'v2' : 'v1');
+  const cleanPath = path.replace(/^\/?v[12]\//, '/');
+  const url = `${laravelBase()}/api/${version}${cleanPath}${qs}`;
   const headers: Record<string, string> = { 'Content-Type': 'application/json', ...extraHeaders };
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
@@ -99,18 +108,24 @@ async function callLaravel<T>(
     body: body === undefined ? undefined : JSON.stringify(body),
     signal: AbortSignal.timeout(TIMEOUT_MS.normal),
   });
-  const parsed = (await res.json().catch(() => null)) as LaravelEnvelope | null;
+  const etag = res.headers.get('etag');
+  const contentType = res.headers.get('content-type') ?? '';
+  const isProblemJson = contentType.includes('application/problem+json');
+  const parsed = (await res.json().catch(() => null)) as (LaravelEnvelope & { code?: string; title?: string; detail?: string }) | null;
   if (!res.ok) {
+    const rawCode = isProblemJson ? (parsed?.code ?? '') : (parsed?.error?.code ?? '');
+    const detailMsg = isProblemJson ? (parsed?.detail ?? parsed?.title ?? '') : undefined;
     throw new CustomerApiError({
-      code: mapBackendCode(parsed?.error?.code ?? '', codeMap),
+      code: mapBackendCode(rawCode, codeMap),
       status: res.status,
-      requestId: parsed?.error?.requestId ?? parsed?.meta?.request_id ?? 'unknown',
+      requestId: parsed?.error?.requestId ?? parsed?.meta?.request_id ?? (parsed as any)?.request_id ?? 'unknown',
       // 429s carry actionable timing (backend throttle, MFA lock) —
       // the web console's client forwards it; parity here (S50).
       retryAfter: res.headers.get('retry-after') ?? undefined,
+      detail: detailMsg,
     });
   }
-  return { data: (parsed?.data ?? null) as T, meta: parsed?.meta ?? {} };
+  return { data: (parsed?.data ?? null) as T, meta: parsed?.meta ?? {}, etag };
 }
 
 export function laravelGet<T>(
@@ -118,8 +133,10 @@ export function laravelGet<T>(
   path: string,
   query: Record<string, string> = {},
   codeMap: BackendCodeMap = {},
+  extraHeaders: Record<string, string> = {},
+  apiVersion?: 'v1' | 'v2',
 ): Promise<LaravelResponse<T>> {
-  return callLaravel<T>(token, 'GET', path, query, undefined, codeMap);
+  return callLaravel<T>(token, 'GET', path, query, undefined, codeMap, extraHeaders, apiVersion);
 }
 
 export function laravelPost<T>(
@@ -128,16 +145,19 @@ export function laravelPost<T>(
   body: unknown,
   codeMap: BackendCodeMap = {},
   extraHeaders: Record<string, string> = {},
+  apiVersion?: 'v1' | 'v2',
 ): Promise<LaravelResponse<T>> {
-  return callLaravel<T>(token, 'POST', path, {}, body, codeMap, extraHeaders);
+  return callLaravel<T>(token, 'POST', path, {}, body, codeMap, extraHeaders, apiVersion);
 }
 
 export function laravelDelete<T>(
   token: string | null,
   path: string,
   codeMap: BackendCodeMap = {},
+  extraHeaders: Record<string, string> = {},
+  apiVersion?: 'v1' | 'v2',
 ): Promise<LaravelResponse<T>> {
-  return callLaravel<T>(token, 'DELETE', path, {}, undefined, codeMap);
+  return callLaravel<T>(token, 'DELETE', path, {}, undefined, codeMap, extraHeaders, apiVersion);
 }
 
 export function laravelPatch<T>(
@@ -145,8 +165,10 @@ export function laravelPatch<T>(
   path: string,
   body: unknown,
   codeMap: BackendCodeMap = {},
+  extraHeaders: Record<string, string> = {},
+  apiVersion?: 'v1' | 'v2',
 ): Promise<LaravelResponse<T>> {
-  return callLaravel<T>(token, 'PATCH', path, {}, body, codeMap);
+  return callLaravel<T>(token, 'PATCH', path, {}, body, codeMap, extraHeaders, apiVersion);
 }
 
 export function laravelPut<T>(
@@ -154,8 +176,10 @@ export function laravelPut<T>(
   path: string,
   body: unknown,
   codeMap: BackendCodeMap = {},
+  extraHeaders: Record<string, string> = {},
+  apiVersion?: 'v1' | 'v2',
 ): Promise<LaravelResponse<T>> {
-  return callLaravel<T>(token, 'PUT', path, {}, body, codeMap);
+  return callLaravel<T>(token, 'PUT', path, {}, body, codeMap, extraHeaders, apiVersion);
 }
 
 // Shared failure mapping for branched handlers: backend-mapped BFF codes
@@ -168,7 +192,7 @@ export function laravelErrorResponse(e: unknown, message: string, requestId: str
     // the web console's client (S50).
     const headers: Record<string, string> = {};
     if (e.retryAfter) headers['Retry-After'] = e.retryAfter;
-    return Response.json(err(e.code as ApiErrorCode, message, requestId), {
+    return Response.json(err(e.code as ApiErrorCode, e.detail || message, requestId), {
       status: e.status,
       headers,
     });

@@ -24,14 +24,38 @@ async function laravelBooking(req: Request, bookingId: string, requestId: string
   if (!bookingId || bookingId.length > 200) {
     return Response.json(err('VALIDATION_ERROR', 'Invalid booking id.', requestId), { status: 422 });
   }
+  const token = readCustomerToken(cookie);
   try {
-    const { data: reservation } = await laravelGet<LaravelReservation>(
-      readCustomerToken(cookie),
+    const { data: reservation, etag } = await laravelGet<LaravelReservation>(
+      token,
       `/booking/reservations/${encodeURIComponent(bookingId)}`,
       {},
       { not_found: 'BOOKING_NOT_FOUND' },
+      {},
+      'v2',
     );
-    return Response.json(ok(toBookingDetails(reservation), requestId));
+
+    // Attempt to enrich with shipment tracking details if available
+    let shipmentData: LaravelReservation['shipment'] = null;
+    try {
+      const shipRes = await laravelGet<{ shipment?: any }>(
+        token,
+        `/booking/reservations/${encodeURIComponent(bookingId)}/shipment`,
+        {},
+        {},
+        {},
+        'v2',
+      );
+      shipmentData = (shipRes.data as any)?.shipment ?? null;
+    } catch {
+      // Non-fatal if shipment is not created or 404
+    }
+
+    const merged = { ...reservation, shipment: shipmentData };
+    const headers: Record<string, string> = {};
+    if (etag) headers['ETag'] = etag;
+
+    return Response.json(ok(toBookingDetails(merged), requestId), { headers });
   } catch (e) {
     return laravelErrorResponse(e, 'Booking is unavailable.', requestId);
   }

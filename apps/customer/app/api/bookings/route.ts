@@ -75,14 +75,17 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { data: booking } = await laravelPost<{ data: Record<string, unknown> }>(
+    const { data: booking, etag } = await laravelPost<Record<string, unknown>>(
       actor.token,
       '/booking/reservations',
       body,
       {}, // codeMap
-      extraHeaders
+      extraHeaders,
+      'v2',
     );
-    return Response.json(ok(booking, requestId), { status: 201 });
+    const headers: Record<string, string> = {};
+    if (etag) headers['ETag'] = etag;
+    return Response.json(ok(booking, requestId), { status: 201, headers });
   } catch (e: any) {
     if (e.status === 422) {
       return Response.json(

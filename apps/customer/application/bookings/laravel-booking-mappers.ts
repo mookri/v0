@@ -14,7 +14,17 @@ export interface LaravelReservation {
   service_sku: string | null;
   scheduled_at: string | null;
   version: number;
-  actions: string[];
+  amount_minor?: number;
+  currency?: string;
+  checkout_expires_at?: string | null;
+  accepted_quote_hash?: string | null;
+  actions?: string[];
+  shipment?: {
+    id: string;
+    carrier_name?: string | null;
+    tracking_code?: string | null;
+    status: string;
+  } | null;
 }
 
 type CardStatus = BookingSummary['status'];
@@ -33,9 +43,14 @@ export function toBookingCard(reservation: LaravelReservation): CustomerBookingC
 const STATIC_ACTIONS: BookingAction[] = ['view-puja', 'contact-support'];
 
 export function toBookingDetails(reservation: LaravelReservation): CustomerBookingDetails {
+  const backendActions = reservation.actions ?? [];
   const actions: BookingAction[] = [];
-  if (reservation.actions.includes('cancel')) actions.push('cancel');
-  if (reservation.actions.includes('reschedule')) actions.push('reschedule');
+  if (backendActions.includes('cancel') || ['DRAFT', 'PENDING_PAYMENT', 'CONFIRMED'].includes(reservation.status)) {
+    actions.push('cancel');
+  }
+  if (backendActions.includes('reschedule') || ['DRAFT', 'PENDING_PAYMENT', 'CONFIRMED', 'ASSIGNED'].includes(reservation.status)) {
+    actions.push('reschedule');
+  }
   actions.push(...STATIC_ACTIONS);
   if (['COMPLETED', 'CANCELLED'].includes(reservation.status)) actions.push('book-again');
   return {
@@ -49,6 +64,16 @@ export function toBookingDetails(reservation: LaravelReservation): CustomerBooki
     // BFF enriches puja names via catalog in a later slice; the SKU is the
     // stable reference until then.
     puja: { id: reservation.service_sku ?? reservation.id, name: reservation.service_sku ?? 'Ritual service' },
+    amountMinor: reservation.amount_minor,
+    currency: reservation.currency,
+    checkoutExpiresAt: reservation.checkout_expires_at,
+    acceptedQuoteHash: reservation.accepted_quote_hash,
+    shipment: reservation.shipment ? {
+      id: reservation.shipment.id,
+      carrierName: reservation.shipment.carrier_name,
+      trackingCode: reservation.shipment.tracking_code,
+      status: reservation.shipment.status,
+    } : null,
     actions,
   };
 }

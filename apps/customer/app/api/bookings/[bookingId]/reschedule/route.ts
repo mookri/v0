@@ -32,15 +32,27 @@ export async function POST(req: Request, { params }: { params: Promise<{ booking
   const codeMap = {
     not_found: 'BOOKING_NOT_FOUND',
     state_forbidden: 'BOOKING_RESCHEDULE_UNAVAILABLE',
+    invalid_state_transition: 'BOOKING_RESCHEDULE_UNAVAILABLE',
     version_conflict: 'STALE_RESOURCE',
+    precondition_required: 'STALE_RESOURCE',
+    precondition_failed: 'STALE_RESOURCE',
     conflict: 'BOOKING_SLOT_CONFLICT',
   } as const;
+
+  const idempotencyKey = req.headers.get('Idempotency-Key') ?? `ik_${requestId}`;
+  const extraHeaders: Record<string, string> = {
+    'Idempotency-Key': idempotencyKey,
+    'If-Match': `W/"v${body.version}"`,
+  };
+
   try {
     const { data: moved } = await laravelPost<LaravelReservation>(
       actor.token,
-      `/booking/reservations/${encodeURIComponent(bookingId)}:reschedule`,
-      { new_start_time: start.toISOString(), version: body.version },
+      `/booking/reservations/${encodeURIComponent(bookingId)}/reschedule`,
+      { scheduled_at: start.toISOString() },
       codeMap,
+      extraHeaders,
+      'v2',
     );
     return Response.json(ok(toBookingDetails(moved), requestId));
   } catch (e) {
