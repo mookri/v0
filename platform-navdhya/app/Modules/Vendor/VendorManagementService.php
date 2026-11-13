@@ -2,9 +2,11 @@
 
 namespace App\Modules\Vendor;
 
+use App\Domain\Verification\Projector\VerificationProjector;
 use App\Modules\Vendor\Contracts\ManagesVendors;
 use App\Modules\Vendor\Models\Vendor;
 use App\Platform\Api\CodedHttpException;
+use App\Platform\Audit\AuditWriter;
 
 /**
  * ManagesVendors port implementation: vendor profile writes. The
@@ -14,6 +16,21 @@ use App\Platform\Api\CodedHttpException;
  */
 final class VendorManagementService implements ManagesVendors
 {
+    public function __construct(
+        private readonly ?AuditWriter $audit = null,
+        private readonly ?VerificationProjector $projector = null,
+    ) {
+    }
+
+    private function auditWriter(): AuditWriter
+    {
+        return $this->audit ?? app(AuditWriter::class);
+    }
+
+    private function projector(): VerificationProjector
+    {
+        return $this->projector ?? app(VerificationProjector::class);
+    }
     public function create(string $identityId, string $applicationId, array $data): array
     {
         if (Vendor::query()->where('application_id', $applicationId)->exists()) {
@@ -51,27 +68,55 @@ final class VendorManagementService implements ManagesVendors
 
     public function verify(string $vendorId): array
     {
-        $vendor = Vendor::query()->findOrFail($vendorId);
+        return (new Vendor())->getConnection()->transaction(function () use ($vendorId): array {
+            $vendor = Vendor::query()->findOrFail($vendorId);
 
-        if ($vendor->verification_status === Vendor::VERIFICATION_VERIFIED) {
-            throw new CodedHttpException(409, 'state_forbidden', 'Vendor is already verified.');
-        }
+            if ($vendor->verification_status === Vendor::VERIFICATION_VERIFIED) {
+                throw new CodedHttpException(409, 'state_forbidden', 'Vendor is already verified.');
+            }
 
-        $vendor->forceFill(['verification_status' => Vendor::VERIFICATION_VERIFIED])->save();
+            $before = ['verification_status' => $vendor->verification_status];
 
-        return Vendor::shape($vendor);
+            $actorId = (string) (app(\App\Platform\Tenancy\TenantContext::class)->membershipId() ?? 'system:admin');
+            $claim = $this->projector()->grantManualClaimAndProject(
+                subject: $vendor,
+                subjectType: 'vendor',
+                actorId: $actorId,
+                metadata: ['source' => 'vendor.admin.verify'],
+            );
+
+            $this->auditWriter()->record(
+                'vendor.profile.verified',
+                ['module' => 'vendor', 'resource_type' => 'vendor', 'resource_id' => (string) $vendor->getKey()],
+                $before,
+                ['verification_status' => $vendor->verification_status, 'claim_id' => (string) $claim->getKey()],
+            );
+
+            return Vendor::shape($vendor);
+        });
     }
 
     public function suspend(string $vendorId): array
     {
-        $vendor = Vendor::query()->findOrFail($vendorId);
+        return (new Vendor())->getConnection()->transaction(function () use ($vendorId): array {
+            $vendor = Vendor::query()->findOrFail($vendorId);
 
-        if ($vendor->status === Vendor::STATUS_SUSPENDED) {
-            throw new CodedHttpException(409, 'state_forbidden', 'Vendor is already suspended.');
-        }
+            if ($vendor->status === Vendor::STATUS_SUSPENDED) {
+                throw new CodedHttpException(409, 'state_forbidden', 'Vendor is already suspended.');
+            }
 
-        $vendor->forceFill(['status' => Vendor::STATUS_SUSPENDED])->save();
+            $before = ['status' => $vendor->status];
 
-        return Vendor::shape($vendor);
+            $vendor->forceFill(['status' => Vendor::STATUS_SUSPENDED])->save();
+
+            $this->auditWriter()->record(
+                'vendor.profile.suspended',
+                ['module' => 'vendor', 'resource_type' => 'vendor', 'resource_id' => (string) $vendor->getKey()],
+                $before,
+                ['status' => $vendor->status],
+            );
+
+            return Vendor::shape($vendor);
+        });
     }
 }

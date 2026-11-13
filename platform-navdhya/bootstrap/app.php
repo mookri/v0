@@ -59,6 +59,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->prepend(\App\Platform\Http\Middleware\EncryptsSessionCookie::class);
 
         $middleware->appendToGroup('api', LimitJsonBody::class);
+        $middleware->appendToGroup('api', \App\Platform\Http\Middleware\EnforcePrivateCacheHeaders::class);
 
         // Session context for API reads only (doc 06 §8.4): interactive
         // admin-shell components fetch module JSON with the web session's

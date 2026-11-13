@@ -2,8 +2,10 @@
 
 namespace App\Modules\Search\Contracts;
 
-use App\Modules\Search\Models\SearchDocument;
 use App\Modules\Catalog\Models\CatalogItem;
+use App\Modules\Search\Models\SearchDocument;
+use App\Modules\Search\Support\KeyFolder;
+use App\Modules\Search\Support\RegionResolver;
 use Illuminate\Support\Str;
 
 class PujaServiceSearchProvider implements ProvidesSearchDocuments
@@ -55,6 +57,10 @@ class PujaServiceSearchProvider implements ProvidesSearchDocuments
             ...array_values($attributes),
         ]));
 
+        $rawCity = $attributes['city'] ?? null;
+        $region = RegionResolver::resolve($rawCity);
+        $cityName = $region ? $region->name_en : $rawCity;
+
         return new SearchDocument([
             'entity_type' => 'puja_service',
             'entity_id' => $item->id,
@@ -65,10 +71,13 @@ class PujaServiceSearchProvider implements ProvidesSearchDocuments
             'subtitle' => $attributes['category'] ?? 'Puja Service',
             'body' => $searchText,
             'image_url' => $attributes['image'] ?? null,
-            'city' => $attributes['city'] ?? null,
+            'city' => $cityName,
+            'region_id' => $region?->id,
             'card_json' => $cardJson,
+            'keys_json' => KeyFolder::generateKeySet($item->name),
             'status' => $item->status,
             'indexed_at' => now(),
+            'source_updated_at' => $item->getAttribute('updated_at'),
         ]);
     }
 }

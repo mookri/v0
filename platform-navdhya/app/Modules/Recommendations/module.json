@@ -1,0 +1,21 @@
+{
+    "code": "recommendations",
+    "name": "Recommendations",
+    "version": "1.0.0",
+    "phase": 110,
+    "priority": 510,
+    "dependencies": ["search", "catalog"],
+    "permissions": [
+        {"code": "recommendations:discovery:view", "name": "View recommendations and discovery feed", "sensitive": false},
+        {"code": "recommendations:admin:update", "name": "Manage recommendation rules and candidate sources", "sensitive": true}
+    ],
+    "scopes": ["recommendations:read"],
+    "events": [
+        {"name": "recommendations.feed.generated", "schema": "Recommendations/Events/schemas/feed_generated.v1.json"}
+    ],
+    "navigation": [],
+    "actions": ["refresh"],
+    "api": {
+        "basePath": "discovery"
+    }
+}

@@ -1,25 +1,13 @@
-import { BookingStatus } from '@navdhya/booking/src/domain/BookingStatus';
+import {
+  BOOKING_STATUS_SECTION_MAP,
+  type BookingSection,
+  type BookingStatus,
+} from '@navdhya/contracts/src/generated/booking-lifecycle';
 
-export type BookingSection = 'upcoming' | 'active' | 'completed' | 'cancelled';
+export type { BookingSection };
 
 export function bookingSection(status: BookingStatus): BookingSection {
-  switch (status) {
-    case 'DRAFT':
-    case 'PENDING_PAYMENT':
-    case 'PAYMENT_CONFIRMED':
-    case 'CONFIRMED':
-    case 'ASSIGNED':
-      return 'upcoming';
-    case 'IN_PROGRESS':
-      return 'active';
-    case 'COMPLETED':
-    case 'REFUNDED':
-      return 'completed';
-    case 'CANCELLED':
-    case 'FAILED':
-    case 'EXPIRED':
-      return 'cancelled';
-  }
+  return BOOKING_STATUS_SECTION_MAP[status];
 }
 
 export function statusLabel(status: BookingStatus): string {

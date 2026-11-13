@@ -200,6 +200,24 @@ Route::prefix(config('platform.api_version', 'v1'))
         Route::get('platform/ops/payouts', [\App\Http\Controllers\Ops\PayoutsController::class, 'index'])
             ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:ops:view'])
             ->name('ops.payouts.index');
+        Route::post('platform/ops/payouts', [\App\Http\Controllers\Ops\PayoutsController::class, 'initiate'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:billing:view'])
+            ->name('ops.payouts.initiate');
+        Route::post('platform/ops/payouts/{payoutId}:approve', [\App\Http\Controllers\Ops\PayoutsController::class, 'approve'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:billing:view', RequiresAcr::class . ':2', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class])
+            ->name('ops.payouts.approve');
+        Route::get('platform/ops/reconciliation', [\App\Http\Controllers\Ops\ReconciliationController::class, 'index'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:ops:view'])
+            ->name('ops.reconciliation.index');
+        Route::post('platform/ops/reconciliation/{intentId}:retry', [\App\Http\Controllers\Ops\ReconciliationController::class, 'retry'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:ops:view', RequiresAcr::class . ':2'])
+            ->name('ops.reconciliation.retry');
+        Route::get('platform/ops/dispatch', [\App\Http\Controllers\Ops\DispatchController::class, 'index'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:ops:view'])
+            ->name('ops.dispatch.index');
+        Route::get('platform/ops/tax', [\App\Http\Controllers\Ops\TaxController::class, 'index'])
+            ->middleware([ResolveTenantContext::class, CheckCapability::class . ':platform:ops:view'])
+            ->name('ops.tax.index');
         // W2 security + system read surfaces: security is tenant-scoped (MFA
         // adoption is reported platform-wide since MFA proofs are user-keyed),
         // system health is platform-global.

@@ -15,7 +15,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $market
  * @property string $currency
  * @property string|null $pandit_id
+ * @property string|null $package_tier_code
+ * @property string|null $qualification_tier_code
  * @property int $price_minor
+ * @property int $version
+ * @property bool $is_current
  * @property \Illuminate\Support\Carbon $effective_from
  * @property \Illuminate\Support\Carbon|null $effective_to
  */
@@ -27,7 +31,9 @@ final class CatalogPrice extends Model
     protected $connection = 'tenant_shared';
 
     protected $fillable = [
-        'tenant_id', 'sku', 'market', 'currency', 'pandit_id', 'price_minor',
+        'tenant_id', 'sku', 'market', 'currency', 'pandit_id',
+        'package_tier_code', 'qualification_tier_code',
+        'price_minor', 'version', 'is_current',
         'effective_from', 'effective_to',
     ];
 
@@ -35,9 +41,13 @@ final class CatalogPrice extends Model
     {
         return [
             'price_minor' => 'integer',
+            'version' => 'integer',
+            'is_current' => 'boolean',
             // Pandit ids are ULIDs: an integer cast destroyed the id.
 
             'pandit_id' => 'string',
+            'package_tier_code' => 'string',
+            'qualification_tier_code' => 'string',
             'effective_from' => 'datetime',
             'effective_to' => 'datetime',
         ];

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Vendor\Models;
 
+use App\Domain\Verification\Concerns\BlocksDirectVerificationStatusWrite;
 use App\Platform\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,6 +31,7 @@ use Illuminate\Database\Eloquent\Model;
 final class Vendor extends Model
 {
     use BelongsToTenant;
+    use BlocksDirectVerificationStatusWrite;
     use HasUlids;
     /** @use HasFactory<\Database\Factories\VendorFactory> */
     use HasFactory;
@@ -38,9 +40,11 @@ final class Vendor extends Model
 
     public const STATUS_ACTIVE = 'ACTIVE';
     public const STATUS_SUSPENDED = 'SUSPENDED';
+    public const STATUS_REJECTED = 'REJECTED';
 
     public const VERIFICATION_PENDING = 'PENDING';
     public const VERIFICATION_VERIFIED = 'VERIFIED';
+    public const VERIFICATION_REJECTED = 'REJECTED';
 
     protected $connection = 'tenant_shared';
 

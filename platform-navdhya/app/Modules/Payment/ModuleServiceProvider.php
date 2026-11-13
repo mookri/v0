@@ -2,7 +2,9 @@
 
 namespace App\Modules\Payment;
 
+use App\Modules\Payment\Console\ReconcileUncertainPaymentsCommand;
 use App\Modules\Payment\Contracts\CreatesPaymentIntents;
+use App\Modules\Payment\Domain\PaymentReconciliationService;
 use App\Modules\Payment\Gateways\FakeGateway;
 use App\Modules\Payment\Gateways\PaymentGateway;
 use App\Modules\Payment\Gateways\RazorpayGateway;
@@ -41,5 +43,11 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
     public function bootModule(): void
     {
         $this->loadModuleMigrations();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                ReconcileUncertainPaymentsCommand::class,
+            ]);
+        }
     }
 }

@@ -54,8 +54,24 @@ final class OutboxHandlers
             throw new \LogicException("No outbox consumers registered for event type '{$event->event_type}'.");
         }
 
-        foreach ($this->handlers[$event->event_type] as $handler) {
-            $handler($event);
+        $payload = $event->payload ?? [];
+        $completedConsumers = $payload['_completed_consumers'] ?? [];
+
+        foreach ($this->handlers[$event->event_type] as $consumerId => $handler) {
+            if (in_array($consumerId, $completedConsumers, true)) {
+                // Already succeeded for this consumer on an earlier attempt
+                continue;
+            }
+
+            try {
+                $handler($event);
+                $completedConsumers[] = $consumerId;
+                $payload['_completed_consumers'] = $completedConsumers;
+                $event->payload = $payload;
+            } catch (\Throwable $e) {
+                $event->payload = $payload;
+                throw $e;
+            }
         }
     }
 }

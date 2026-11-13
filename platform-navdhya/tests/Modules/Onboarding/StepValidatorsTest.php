@@ -33,7 +33,12 @@ final class StepValidatorsTest extends TenantIntegrationTestCase
             ['gstin' => ['gstin_must_be_15_chars'], 'bank_account' => ['bank_account_required']],
             StepValidators::validate('business', ['gstin' => 'short', 'bankAccount' => ''])
         );
-        $this->assertSame([], StepValidators::validate('business', ['gstin' => '29ABCDE1234F1Z5', 'bank_account' => '123']));
+        $this->assertSame(
+            ['gstin' => ['INVALID_EMBEDDED_PAN', 'INVALID_CHECK_DIGIT']],
+            StepValidators::validate('business', ['gstin' => '29ABCDE1234F1Z5', 'bank_account' => '1234567890'])
+        );
+        $this->assertSame([], StepValidators::validate('business', ['gstin' => '29AABCT1234F1ZM', 'bank_account' => '1234567890']));
+        $this->assertSame([], StepValidators::validate('business', ['gst_status' => 'exempt_below_threshold', 'bank_account' => '1234567890']));
         $this->assertSame([], StepValidators::validate('capacity', ['weeklySlots' => 10]));
         $this->assertSame(
             ['weekly_slots' => ['weekly_slots_must_be_positive_integer']],

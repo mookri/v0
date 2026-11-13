@@ -125,6 +125,7 @@ final class AuthenticateAny
         $request->attributes->set('actor', [
             'user_id' => (string) $user->getAuthIdentifier(),
             'session_id' => $claims['jti'],
+            'aud' => $claims['aud'],
             'roles' => [],
             'scopes' => $claims['scopes'],
             'via' => 'passport',

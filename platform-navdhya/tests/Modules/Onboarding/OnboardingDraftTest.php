@@ -48,7 +48,8 @@ final class OnboardingDraftTest extends TenantIntegrationTestCase
         $started = $this->actingAs($user)->postJson('/api/v1/onboarding/applications', ['track' => 'pandit'], $headers);
         $id = $started->json('data.id');
 
-        $file = UploadedFile::fake()->create('id.jpg', 100, 'image/jpeg');
+        $jpegBytes = "\xFF\xD8\xFF\xE0\x00\x10JFIF\x00\x01\x01\x00\x00\x01\x00\x01\x00\x00" . str_repeat("\x11", 256);
+        $file = UploadedFile::fake()->createWithContent('id.jpg', $jpegBytes);
         $res = $this->actingAs($user)->post(
             "/api/v1/onboarding/applications/{$id}/documents",
             ['kind' => 'id-proof', 'file' => $file],

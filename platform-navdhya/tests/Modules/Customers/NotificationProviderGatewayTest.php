@@ -100,8 +100,14 @@ final class NotificationProviderGatewayTest extends TenantIntegrationTestCase
         $this->resolveContext($tenant);
         $tenantId = (string) $tenant->getKey();
 
-        // Seed a pending delivery row
+        // 1. Unsigned / unconfigured webhook must fail closed with 401 (C-07)
         $msgId = 'msg_provider_ext_12345';
+        $payload = ['request_id' => $msgId, 'status' => 'delivered'];
+
+        $unsignedResponse = $this->postJson('/api/v1/customers/webhooks/msg91', $payload);
+        $unsignedResponse->assertStatus(401);
+
+        // Seed a pending delivery row
         $delivery = NotificationDelivery::query()->create([
             'tenant_id' => $tenantId,
             'user_id' => 1003,
@@ -109,13 +115,19 @@ final class NotificationProviderGatewayTest extends TenantIntegrationTestCase
             'category' => 'reminder',
             'channel' => 'sms',
             'status' => NotificationDelivery::STATUS_PENDING,
+            'dedup_key' => 'dedup_receipt_test_' . $msgId,
             'provider_message_id' => $msgId,
         ]);
 
-        // Post delivery receipt webhook
-        $response = $this->postJson('/api/v1/customers/webhooks/msg91', [
-            'request_id' => $msgId,
-            'status' => 'delivered',
+        // 2. Configure secret and post signed delivery receipt webhook
+        $secret = 'test_webhook_secret_key_9988';
+        config(['notifications.msg91.webhook_secret' => $secret]);
+
+        $bodyJson = json_encode($payload, JSON_THROW_ON_ERROR);
+        $signature = hash_hmac('sha256', $bodyJson, $secret);
+
+        $response = $this->postJson('/api/v1/customers/webhooks/msg91', $payload, [
+            'X-Msg91-Signature' => $signature,
         ]);
 
         $response->assertStatus(200);

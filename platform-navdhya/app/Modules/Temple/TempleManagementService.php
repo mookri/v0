@@ -2,8 +2,10 @@
 
 namespace App\Modules\Temple;
 
+use App\Domain\Verification\Projector\VerificationProjector;
 use App\Modules\Temple\Contracts\ManagesTemples;
 use App\Modules\Temple\Models\Temple;
+use App\Platform\Audit\AuditWriter;
 
 /**
  * Temple management service (deptrac-blessed ManagesTemples implementation).
@@ -12,6 +14,22 @@ use App\Modules\Temple\Models\Temple;
 final class TempleManagementService implements ManagesTemples
 {
     use AuthorizesTempleManager;
+
+    public function __construct(
+        private readonly ?AuditWriter $audit = null,
+        private readonly ?VerificationProjector $projector = null,
+    ) {
+    }
+
+    private function auditWriter(): AuditWriter
+    {
+        return $this->audit ?? app(AuditWriter::class);
+    }
+
+    private function projector(): VerificationProjector
+    {
+        return $this->projector ?? app(VerificationProjector::class);
+    }
     /**
      * @return array{
      *   id: string,
@@ -117,23 +135,71 @@ final class TempleManagementService implements ManagesTemples
     {
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
 
-        $temple = \App\Modules\Temple\Models\Temple::query()
-            ->where('tenant_id', $tenantId)
-            ->where('id', $templeId)
-            ->firstOrFail();
+        return (new Temple())->getConnection()->transaction(function () use ($tenantId, $templeId): array {
+            $temple = Temple::query()
+                ->where('tenant_id', $tenantId)
+                ->where('id', $templeId)
+                ->firstOrFail();
 
-        if ($temple->verification_status === \App\Modules\Temple\Models\Temple::VERIFICATION_VERIFIED) {
-            throw new \InvalidArgumentException('Temple is already verified.');
-        }
+            if ($temple->verification_status === Temple::VERIFICATION_VERIFIED) {
+                throw new \InvalidArgumentException('Temple is already verified.');
+            }
 
-        $temple->forceFill([
-            'verification_status' => \App\Modules\Temple\Models\Temple::VERIFICATION_VERIFIED,
-            'status' => \App\Modules\Temple\Models\Temple::STATUS_ACTIVE,
-        ])->save();
+            $before = [
+                'verification_status' => $temple->verification_status,
+                'status' => $temple->status,
+            ];
 
-        return $this->toUpdated(
-            \App\Modules\Temple\Models\Temple::query()->where('id', $templeId)->firstOrFail()
-        );
+            $actorId = (string) (app(\App\Platform\Tenancy\TenantContext::class)->membershipId() ?? 'system:admin');
+            $claim = $this->projector()->grantManualClaimAndProject(
+                subject: $temple,
+                subjectType: 'temple',
+                actorId: $actorId,
+                metadata: ['source' => 'temple.admin.verify'],
+            );
+
+            $this->auditWriter()->record(
+                'temple.profile.verified',
+                ['module' => 'temple', 'resource_type' => 'temple', 'resource_id' => (string) $temple->getKey()],
+                $before,
+                ['verification_status' => $temple->verification_status, 'status' => $temple->status, 'claim_id' => (string) $claim->getKey()],
+            );
+
+            return $this->toUpdated($temple);
+        });
+    }
+
+    public function publish(string $templeId): array
+    {
+        $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
+
+        return (new Temple())->getConnection()->transaction(function () use ($tenantId, $templeId): array {
+            $temple = Temple::query()
+                ->where('tenant_id', $tenantId)
+                ->where('id', $templeId)
+                ->firstOrFail();
+
+            if ($temple->verification_status !== Temple::VERIFICATION_VERIFIED) {
+                throw new \InvalidArgumentException('Temple must be verified before publishing.');
+            }
+
+            if ($temple->status === Temple::STATUS_ACTIVE) {
+                throw new \InvalidArgumentException('Temple is already published.');
+            }
+
+            $before = ['status' => $temple->status];
+
+            $temple->forceFill(['status' => Temple::STATUS_ACTIVE])->save();
+
+            $this->auditWriter()->record(
+                'temple.profile.published',
+                ['module' => 'temple', 'resource_type' => 'temple', 'resource_id' => (string) $temple->getKey()],
+                $before,
+                ['status' => $temple->status],
+            );
+
+            return $this->toUpdated($temple);
+        });
     }
 
     /**
@@ -154,20 +220,28 @@ final class TempleManagementService implements ManagesTemples
     {
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
 
-        $temple = \App\Modules\Temple\Models\Temple::query()
-            ->where('tenant_id', $tenantId)
-            ->where('id', $templeId)
-            ->firstOrFail();
+        return (new Temple())->getConnection()->transaction(function () use ($tenantId, $templeId): array {
+            $temple = Temple::query()
+                ->where('tenant_id', $tenantId)
+                ->where('id', $templeId)
+                ->firstOrFail();
 
-        if ($temple->status === \App\Modules\Temple\Models\Temple::STATUS_INACTIVE) {
-            throw new \InvalidArgumentException('Temple is already suspended.');
-        }
+            if ($temple->status === Temple::STATUS_INACTIVE) {
+                throw new \InvalidArgumentException('Temple is already suspended.');
+            }
 
-        $temple->forceFill(['status' => \App\Modules\Temple\Models\Temple::STATUS_INACTIVE])->save();
+            $before = ['status' => $temple->status];
+            $temple->forceFill(['status' => Temple::STATUS_INACTIVE])->save();
 
-        return $this->toUpdated(
-            \App\Modules\Temple\Models\Temple::query()->where('id', $templeId)->firstOrFail()
-        );
+            $this->auditWriter()->record(
+                'temple.profile.suspended',
+                ['module' => 'temple', 'resource_type' => 'temple', 'resource_id' => (string) $temple->getKey()],
+                $before,
+                ['status' => $temple->status],
+            );
+
+            return $this->toUpdated($temple);
+        });
     }
 
     /**
@@ -188,20 +262,28 @@ final class TempleManagementService implements ManagesTemples
     {
         $tenantId = (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId();
 
-        $temple = \App\Modules\Temple\Models\Temple::query()
-            ->where('tenant_id', $tenantId)
-            ->where('id', $templeId)
-            ->firstOrFail();
+        return (new Temple())->getConnection()->transaction(function () use ($tenantId, $templeId): array {
+            $temple = Temple::query()
+                ->where('tenant_id', $tenantId)
+                ->where('id', $templeId)
+                ->firstOrFail();
 
-        if ($temple->status === \App\Modules\Temple\Models\Temple::STATUS_ACTIVE) {
-            throw new \InvalidArgumentException('Temple is already active.');
-        }
+            if ($temple->status === Temple::STATUS_ACTIVE) {
+                throw new \InvalidArgumentException('Temple is already active.');
+            }
 
-        $temple->forceFill(['status' => \App\Modules\Temple\Models\Temple::STATUS_ACTIVE])->save();
+            $before = ['status' => $temple->status];
+            $temple->forceFill(['status' => Temple::STATUS_ACTIVE])->save();
 
-        return $this->toUpdated(
-            \App\Modules\Temple\Models\Temple::query()->where('id', $templeId)->firstOrFail()
-        );
+            $this->auditWriter()->record(
+                'temple.profile.reactivated',
+                ['module' => 'temple', 'resource_type' => 'temple', 'resource_id' => (string) $temple->getKey()],
+                $before,
+                ['status' => $temple->status],
+            );
+
+            return $this->toUpdated($temple);
+        });
     }
 
     /**

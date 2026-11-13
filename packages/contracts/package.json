@@ -10,5 +10,12 @@
       "default": "./src/index.ts"
     }
   },
-  "dependencies": {}
+  "scripts": {
+    "contract": "cd ../../platform-navdhya && php artisan contracts:export --check",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@navdhya/validation": "workspace:*"
+  }
 }

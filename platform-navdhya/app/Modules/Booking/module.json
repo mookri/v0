@@ -5,8 +5,10 @@
   "phase": 3,
   "priority": 250,
   "dependencies": [],
-  "actions": ["cancel", "reschedule", "confirm", "rebook"],
-  "permissions": [],
+  "actions": ["cancel", "reschedule", "confirm", "rebook", "checkin", "noshow"],
+  "permissions": [
+    { "code": "booking:noshow:confirm", "name": "Confirm operational booking no-show", "sensitive": true }
+  ],
   "scopes": ["booking:self", "booking:read", "booking:write"],
   "events": [
     { "name": "booking.reservation.created", "schema": "v1" },
@@ -14,7 +16,10 @@
     { "name": "booking.reservation.rescheduled", "schema": "v1" },
     { "name": "booking.reservation.transitioned", "schema": "v1" },
     { "name": "booking.review.created", "schema": "v1" },
-    { "name": "booking.review.removed", "schema": "v1" }
+    { "name": "booking.review.removed", "schema": "v1" },
+    { "name": "booking.pandit_arrival.recorded", "schema": "v1" },
+    { "name": "booking.pandit_arrival.overdue", "schema": "v1" },
+    { "name": "booking.no_show.confirmed", "schema": "v1" }
   ],
   "navigation": [],
   "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/booking" }

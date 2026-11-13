@@ -21,9 +21,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $status
  * @property \Illuminate\Support\Carbon $assigned_at
  * @property \Illuminate\Support\Carbon|null $confirmed_at
+ * @property \Illuminate\Support\Carbon|null $service_started_at
  * @property \Illuminate\Support\Carbon|null $declined_at
  * @property string|null $decline_reason
+ * @property array<string, mixed>|null $checklist_json
  * @property int|null $compensation_minor
+ * @property int $version
  */
 final class PanditAssignment extends Model
 {
@@ -36,6 +39,8 @@ final class PanditAssignment extends Model
 
     public const STATUS_CONFIRMED = 'CONFIRMED';
 
+    public const STATUS_IN_PROGRESS = 'IN_PROGRESS';
+
     public const STATUS_DECLINED = 'DECLINED';
 
     public const STATUS_COMPLETED = 'COMPLETED';
@@ -46,8 +51,8 @@ final class PanditAssignment extends Model
 
     protected $fillable = [
         'tenant_id', 'pandit_id', 'booking_id', 'status',
-        'assigned_at', 'confirmed_at', 'declined_at',
-        'decline_reason', 'compensation_minor',
+        'assigned_at', 'confirmed_at', 'service_started_at', 'declined_at',
+        'decline_reason', 'checklist_json', 'compensation_minor', 'version',
     ];
 
     protected function casts(): array
@@ -55,8 +60,11 @@ final class PanditAssignment extends Model
         return [
             'assigned_at' => 'datetime',
             'confirmed_at' => 'datetime',
+            'service_started_at' => 'datetime',
             'declined_at' => 'datetime',
+            'checklist_json' => 'array',
             'compensation_minor' => 'integer',
+            'version' => 'integer',
         ];
     }
 

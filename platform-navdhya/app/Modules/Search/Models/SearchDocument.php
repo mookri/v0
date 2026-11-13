@@ -18,13 +18,16 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $body
  * @property string|null $image_url
  * @property string|null $city
+ * @property string|null $region_id
  * @property int $bookings_30d
  * @property int $views_7d
  * @property string $locale
  * @property \Carbon\Carbon|null $popularity_updated_at
  * @property mixed $card_json
+ * @property array<string, mixed>|null $keys_json
  * @property string $status
  * @property \Carbon\Carbon|null $indexed_at
+ * @property \Carbon\Carbon|null $source_updated_at
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  */
@@ -48,21 +51,26 @@ class SearchDocument extends Model
         'body',
         'image_url',
         'city',
+        'region_id',
         'bookings_30d',
         'views_7d',
         'locale',
         'popularity_updated_at',
         'card_json',
+        'keys_json',
         'status',
         'indexed_at',
+        'source_updated_at',
     ];
 
     protected $casts = [
-        'card_json' => 'json',
-        'indexed_at' => 'datetime',
-        'popularity_updated_at' => 'datetime',
+        'card_json' => 'array',
+        'keys_json' => 'array',
         'bookings_30d' => 'integer',
         'views_7d' => 'integer',
+        'popularity_updated_at' => 'datetime',
+        'indexed_at' => 'datetime',
+        'source_updated_at' => 'datetime',
     ];
 
     /**
@@ -99,5 +107,13 @@ class SearchDocument extends Model
     public function scopeInCity(Builder $query, string $city): Builder
     {
         return $query->where('city', $city);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<SearchPosting, $this>
+     */
+    public function postings(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(SearchPosting::class, 'search_document_id');
     }
 }

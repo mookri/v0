@@ -49,7 +49,7 @@ interface ManagesTemples
     public function update(string $templeId, array $data): array;
 
     /**
-     * Verify temple (admin only, step-up required).
+     * Verify temple (admin only, step-up required). Does not publish draft visibility.
      *
      * @return array{id: string, slug: string, name: string, trust_name: string, type: string, city: string, state: string, status: string, verification_status: string, updated_at: string}
      *
@@ -57,6 +57,16 @@ interface ManagesTemples
      * @throws \InvalidArgumentException when already verified
      */
     public function verify(string $templeId): array;
+
+    /**
+     * Explicitly publish a verified temple into public discovery.
+     *
+     * @return array{id: string, slug: string, name: string, trust_name: string, type: string, city: string, state: string, status: string, verification_status: string, updated_at: string}
+     *
+     * @throws \App\Modules\Temple\TempleNotFoundException
+     * @throws \InvalidArgumentException when unverified or already active
+     */
+    public function publish(string $templeId): array;
 
     /**
      * Suspend temple (admin only, step-up required).

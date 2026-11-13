@@ -26,6 +26,11 @@ final class EventRegistry
         'sign_up',
         'view_item',
         'zero_results_search',
+        // Catalog discovery extensions (F5)
+        'facet_view',
+        'price_tier_viewed',
+        'quote_viewed',
+        'kit_opt_in',
         // Customer domain extensions
         'reminder_viewed',
         'spiritual_profile_updated',

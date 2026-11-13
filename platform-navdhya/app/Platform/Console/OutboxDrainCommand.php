@@ -134,10 +134,11 @@ final class OutboxDrainCommand extends Command
             }
 
             $id = (string) $candidate->getKey();
+            $event = null;
 
             try {
                 $dispatched = OutboxEvent::query()->getConnection()->transaction(
-                    function () use ($id, $handlers): bool {
+                    function () use ($id, $handlers, &$event): bool {
                         $event = OutboxEvent::query()->where('id', $id)->lockForUpdate()->first();
 
                         // Raced (already claimed) or pushed past the cap by a
@@ -171,10 +172,27 @@ final class OutboxDrainCommand extends Command
                     ->whereNull('dispatched_at')
                     ->first();
                 if ($failed !== null) {
-                    $failed->forceFill([
-                        'attempts' => $failed->attempts + 1,
-                        'last_error' => Str::limit($e->getMessage() !== '' ? $e->getMessage() : $e::class, 490),
-                    ])->save();
+                    $newAttempts = $failed->attempts + 1;
+                    $errorMsg = Str::limit($e->getMessage() !== '' ? $e->getMessage() : $e::class, 490);
+                    
+                    // Preserve per-consumer progress across rolled back attempts
+                    $updateFields = [
+                        'attempts' => $newAttempts,
+                        'last_error' => $errorMsg,
+                    ];
+                    $completed = $event?->payload['_completed_consumers'] ?? null;
+                    if (is_array($completed)) {
+                        $payload = $failed->payload ?? [];
+                        $payload['_completed_consumers'] = $completed;
+                        $updateFields['payload'] = $payload;
+                    }
+
+                    $failed->forceFill($updateFields)->save();
+
+                    // Quarantine exhausted dead-letters (T-JYAUT-00e / D-16)
+                    if ($newAttempts >= OutboxEvent::MAX_ATTEMPTS) {
+                        (new \App\Platform\Outbox\DeadLetterStore())->quarantine($failed, $errorMsg);
+                    }
                 }
             }
         }

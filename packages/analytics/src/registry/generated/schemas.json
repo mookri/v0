@@ -190,6 +190,85 @@
         }
       }
     },
+    "facet_view": {
+      "priority": "P2",
+      "producer": "client",
+      "surfaces": [
+        "web",
+        "customer"
+      ],
+      "allowedSinks": [
+        "gtm_ga4",
+        "collector_bigquery"
+      ],
+      "params": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "facet_key",
+          "facet_value",
+          "result_count"
+        ],
+        "properties": {
+          "facet_key": {
+            "type": "string",
+            "description": "Category or filter key."
+          },
+          "facet_value": {
+            "type": "string",
+            "description": "Selected facet value."
+          },
+          "result_count": {
+            "type": "number",
+            "description": "Matching items count."
+          },
+          "category_path": {
+            "type": "string",
+            "description": "Materialized category path."
+          }
+        }
+      }
+    },
+    "kit_opt_in": {
+      "priority": "P2",
+      "producer": "client",
+      "surfaces": [
+        "web",
+        "customer"
+      ],
+      "allowedSinks": [
+        "gtm_ga4",
+        "collector_bigquery"
+      ],
+      "params": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "service_sku",
+          "kit_sku",
+          "obligation",
+          "action"
+        ],
+        "properties": {
+          "service_sku": {
+            "type": "string",
+            "description": "Base ritual SKU."
+          },
+          "kit_sku": {
+            "type": "string",
+            "description": "Bound kit SKU."
+          },
+          "obligation": {
+            "type": "string",
+            "description": "MANDATORY | OPTIONAL | INCLUDED."
+          },
+          "action": {
+            "type": "string",
+            "description": "selected | unselected."
+          }
+        }
+      }
+    },
     "kyc_submitted": {
       "priority": "P1",
       "producer": "client",
@@ -345,6 +424,46 @@
         }
       }
     },
+    "price_tier_viewed": {
+      "priority": "P2",
+      "producer": "client",
+      "surfaces": [
+        "web",
+        "customer"
+      ],
+      "allowedSinks": [
+        "gtm_ga4",
+        "collector_bigquery"
+      ],
+      "params": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sku",
+          "package_tier",
+          "price_minor",
+          "currency"
+        ],
+        "properties": {
+          "sku": {
+            "type": "string",
+            "description": "Service SKU."
+          },
+          "package_tier": {
+            "type": "string",
+            "description": "Standard | Premium | Complete."
+          },
+          "price_minor": {
+            "type": "number",
+            "description": "Price in minor currency units."
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code."
+          }
+        }
+      }
+    },
     "purchase_viewed": {
       "priority": "P1",
       "producer": "client",
@@ -375,6 +494,134 @@
         }
       }
     },
+    "quote_viewed": {
+      "priority": "P2",
+      "producer": "client",
+      "surfaces": [
+        "web",
+        "customer"
+      ],
+      "allowedSinks": [
+        "gtm_ga4",
+        "collector_bigquery"
+      ],
+      "params": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sku",
+          "package_tier",
+          "qualification_tier",
+          "total_minor",
+          "currency"
+        ],
+        "properties": {
+          "sku": {
+            "type": "string",
+            "description": "Service SKU."
+          },
+          "package_tier": {
+            "type": "string",
+            "description": "Package tier code."
+          },
+          "qualification_tier": {
+            "type": "string",
+            "description": "Pandit qualification tier."
+          },
+          "total_minor": {
+            "type": "number",
+            "description": "Total quote in minor units."
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code."
+          }
+        }
+      }
+    },
+    "reco_impressed": {
+      "priority": "P2",
+      "producer": "client",
+      "surfaces": [
+        "web",
+        "customer"
+      ],
+      "allowedSinks": [
+        "collector_bigquery"
+      ],
+      "params": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "placement",
+          "reco_ref",
+          "items_shown",
+          "surface"
+        ],
+        "properties": {
+          "placement": {
+            "type": "string",
+            "description": "Placement slot identifier."
+          },
+          "reco_ref": {
+            "type": "string",
+            "description": "Recommendation generation run ID."
+          },
+          "items_shown": {
+            "type": "string",
+            "description": "Comma-separated item refs."
+          },
+          "surface": {
+            "type": "string",
+            "description": "Page surface displaying recommendations."
+          }
+        }
+      }
+    },
+    "reco_selected": {
+      "priority": "P2",
+      "producer": "client",
+      "surfaces": [
+        "web",
+        "customer"
+      ],
+      "allowedSinks": [
+        "collector_bigquery"
+      ],
+      "params": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "placement",
+          "reco_ref",
+          "entity_type",
+          "entity_ref",
+          "position"
+        ],
+        "properties": {
+          "placement": {
+            "type": "string",
+            "description": "Placement slot identifier."
+          },
+          "reco_ref": {
+            "type": "string",
+            "description": "Recommendation generation run ID."
+          },
+          "entity_type": {
+            "type": "string",
+            "description": "puja_service | temple | pandit."
+          },
+          "entity_ref": {
+            "type": "string",
+            "description": "Recommended item identifier."
+          },
+          "position": {
+            "type": "number",
+            "description": "Zero-based rank position within shelf."
+          }
+        }
+      }
+    },
     "search": {
       "priority": "P1",
       "producer": "client",
@@ -401,6 +648,233 @@
           "result_count": {
             "type": "number",
             "description": "Number of results shown."
+          },
+          "category_filter": {
+            "type": "string",
+            "description": "Category filter applied."
+          },
+          "query_trace_id": {
+            "type": "string",
+            "description": "Trace id."
+          }
+        }
+      }
+    },
+    "search_query_abandoned": {
+      "priority": "P2",
+      "producer": "client",
+      "surfaces": [
+        "web",
+        "customer"
+      ],
+      "allowedSinks": [
+        "collector_bigquery"
+      ],
+      "params": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "trace_id",
+          "last_query_text",
+          "dwell_total_ms"
+        ],
+        "properties": {
+          "trace_id": {
+            "type": "string",
+            "description": "Search trace ID."
+          },
+          "last_query_text": {
+            "type": "string",
+            "description": "Last query attempted before abandonment."
+          },
+          "dwell_total_ms": {
+            "type": "number",
+            "description": "Total search session duration in ms."
+          }
+        }
+      }
+    },
+    "search_query_reformulated": {
+      "priority": "P2",
+      "producer": "client",
+      "surfaces": [
+        "web",
+        "customer"
+      ],
+      "allowedSinks": [
+        "collector_bigquery"
+      ],
+      "params": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "prev_query_text",
+          "new_query_text",
+          "elapsed_ms"
+        ],
+        "properties": {
+          "prev_query_text": {
+            "type": "string",
+            "description": "Previous query text."
+          },
+          "new_query_text": {
+            "type": "string",
+            "description": "New query text."
+          },
+          "elapsed_ms": {
+            "type": "number",
+            "description": "Milliseconds between searches."
+          }
+        }
+      }
+    },
+    "search_query_submitted": {
+      "priority": "P1",
+      "producer": "client",
+      "surfaces": [
+        "web",
+        "customer"
+      ],
+      "allowedSinks": [
+        "collector_bigquery"
+      ],
+      "params": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "query_text_norm",
+          "query_length",
+          "script_family",
+          "surface",
+          "result_count",
+          "trace_id"
+        ],
+        "properties": {
+          "query_text_norm": {
+            "type": "string",
+            "description": "Normalized query string."
+          },
+          "query_length": {
+            "type": "number",
+            "description": "Character length of query."
+          },
+          "script_family": {
+            "type": "string",
+            "description": "devanagari | latin | iast | mixed."
+          },
+          "surface": {
+            "type": "string",
+            "description": "web_header | web_search_page | customer_home."
+          },
+          "result_count": {
+            "type": "number",
+            "description": "Number of results returned."
+          },
+          "trace_id": {
+            "type": "string",
+            "description": "Search trace ID."
+          }
+        }
+      }
+    },
+    "search_result_impressed": {
+      "priority": "P1",
+      "producer": "client",
+      "surfaces": [
+        "web",
+        "customer"
+      ],
+      "allowedSinks": [
+        "collector_bigquery"
+      ],
+      "params": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "trace_id",
+          "entity_type",
+          "entity_ref",
+          "position",
+          "page_offset",
+          "dwell_ms",
+          "viewport_ratio"
+        ],
+        "properties": {
+          "trace_id": {
+            "type": "string",
+            "description": "Search trace ID."
+          },
+          "entity_type": {
+            "type": "string",
+            "description": "puja_service | temple | pandit | guide."
+          },
+          "entity_ref": {
+            "type": "string",
+            "description": "Result entity identifier."
+          },
+          "position": {
+            "type": "number",
+            "description": "Zero-based rank position in result set."
+          },
+          "page_offset": {
+            "type": "number",
+            "description": "Pagination offset."
+          },
+          "dwell_ms": {
+            "type": "number",
+            "description": "Dwell time in viewport in milliseconds."
+          },
+          "viewport_ratio": {
+            "type": "number",
+            "description": "Intersection ratio (e.g. 0.50)."
+          }
+        }
+      }
+    },
+    "search_result_selected": {
+      "priority": "P1",
+      "producer": "client",
+      "surfaces": [
+        "web",
+        "customer"
+      ],
+      "allowedSinks": [
+        "collector_bigquery"
+      ],
+      "params": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "trace_id",
+          "entity_type",
+          "entity_ref",
+          "position",
+          "action"
+        ],
+        "properties": {
+          "trace_id": {
+            "type": "string",
+            "description": "Search trace ID."
+          },
+          "entity_type": {
+            "type": "string",
+            "description": "puja_service | temple | pandit | guide."
+          },
+          "entity_ref": {
+            "type": "string",
+            "description": "Selected entity identifier."
+          },
+          "position": {
+            "type": "number",
+            "description": "Zero-based rank position of clicked item."
+          },
+          "action": {
+            "type": "string",
+            "description": "click | quick_view | book_direct."
+          },
+          "dwell_before_click_ms": {
+            "type": "number",
+            "description": "Dwell time before clicking."
           }
         }
       }
@@ -460,6 +934,18 @@
           "value": {
             "type": "number",
             "description": "Displayed price in INR. Display only — never pricing truth."
+          },
+          "category_path": {
+            "type": "string",
+            "description": "Materialized category path."
+          },
+          "package_tier": {
+            "type": "string",
+            "description": "Standard | Premium | Complete tier."
+          },
+          "duration_minutes": {
+            "type": "number",
+            "description": "Authoritative duration."
           }
         }
       }

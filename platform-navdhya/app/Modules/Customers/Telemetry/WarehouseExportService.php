@@ -99,7 +99,13 @@ final class WarehouseExportService
             }
 
             if (is_scalar($v) && count($cleanParams) < self::MAX_PARAMS) {
-                $cleanParams[$k] = $v;
+                // Coarse-export truncates category_path to root segment for BigQuery privacy (F5)
+                if ($lowerKey === 'category_path' && is_string($v)) {
+                    $segments = array_values(array_filter(explode('/', trim($v, '/'))));
+                    $cleanParams[$k] = ! empty($segments) ? '/' . $segments[0] . '/' : '/';
+                } else {
+                    $cleanParams[$k] = $v;
+                }
             }
         }
 
@@ -117,3 +123,4 @@ final class WarehouseExportService
         ];
     }
 }
+

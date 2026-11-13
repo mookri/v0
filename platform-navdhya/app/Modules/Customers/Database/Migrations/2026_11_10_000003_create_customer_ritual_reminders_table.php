@@ -22,7 +22,7 @@ return new class () extends Migration {
             $table->json('anchor_rule'); // Authoritative rule: tithi, paksha, masa, tradition, etc.
             $table->json('advance_days'); // Advance alert slots, e.g. [7, 3, 1, 0]
             $table->dateTime('next_occurrence_at')->nullable(); // Operational cursor
-            $table->string('last_fired_period', 32)->nullable(); // Deduplication marker, e.g. "2026-CH-K-11"
+            $table->string('last_fired_period', 191)->nullable(); // Deduplication marker, e.g. "{reminder_id}:{year}-{masa}-{paksha}-{tithi}:{daysUntil}d"
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 

@@ -19,6 +19,10 @@ Route::get('public/items', [CatalogItemController::class, 'publicIndex'])
     ->withoutMiddleware(['auth.any', 'tenant'])
     ->middleware('throttle:30,1')
     ->name('public.items');
+Route::get('public/categories', [CatalogItemController::class, 'publicCategories'])
+    ->withoutMiddleware(['auth.any', 'tenant'])
+    ->middleware('throttle:30,1')
+    ->name('public.categories');
 
 Route::get('items', [CatalogItemController::class, 'index'])
     ->middleware(['scope:catalog:read', 'throttle.tier'])
@@ -42,4 +46,5 @@ Route::post('items/{id}/prices', [PriceController::class, 'store'])
     ->middleware('capability:catalog:item:manage')
     ->name('prices.store');
 Route::post('quote', [PriceController::class, 'quote'])
+    ->middleware(['scope:catalog:read', 'throttle.tier'])
     ->name('quote');

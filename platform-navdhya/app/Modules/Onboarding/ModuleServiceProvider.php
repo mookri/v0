@@ -37,5 +37,32 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
     public function bootModule(): void
     {
         $this->loadModuleMigrations();
+
+        $this->app->bind(
+            \App\Domain\Verification\Contracts\IndicTransliterator::class,
+            \App\Modules\Search\Support\SearchIndicTransliteratorAdapter::class,
+        );
+        $this->app->bind(
+            \App\Domain\Verification\Contracts\VerifiesPayoutOwnership::class,
+            \App\Domain\Verification\Fiscal\PayoutEligibilityGuard::class,
+        );
+        $this->app->bind(
+            \App\Domain\Verification\Contracts\TaxRegistrationVerifierPort::class,
+            \App\Domain\Verification\Fiscal\DisabledTaxRegistrationVerifier::class,
+        );
+        $this->app->bind(
+            \App\Domain\Verification\Contracts\BankAccountVerifierPort::class,
+            \App\Domain\Verification\Fiscal\ManualBankAccountVerifier::class,
+        );
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                \App\Domain\Verification\Console\VerifyAuditAndEvidenceChainCommand::class,
+                \App\Domain\Verification\Console\BackfillLegacyClaimsCommand::class,
+                \App\Domain\Verification\Console\ExpireVerificationClaimsCommand::class,
+                \App\Domain\Verification\Console\MigrateLegacyFiscalJsonCommand::class,
+                \App\Domain\Privacy\Console\PurgeExpiredRetentionCommand::class,
+            ]);
+        }
     }
 }

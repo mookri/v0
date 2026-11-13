@@ -22,6 +22,12 @@ const config: Config = {
   moduleNameMapper: {
     '^@/components/(.*)$': '<rootDir>/components/$1',
     '^@/lib/(.*)$': '<rootDir>/lib/$1',
+    '^@navdhya/api-client$': '<rootDir>/../../packages/api-client/src/index.ts',
+    '^@navdhya/auth-client$': '<rootDir>/../../packages/auth-client/src/index.ts',
+    '^@navdhya/contracts$': '<rootDir>/../../packages/contracts/src/index.ts',
+    '^@navdhya/contracts/(.+)$': '<rootDir>/../../packages/contracts/$1',
+    '^@navdhya/jyotish$': '<rootDir>/../../packages/jyotish/src/index.ts',
+    '^@navdhya/jyotish/(.+)$': '<rootDir>/../../packages/jyotish/$1',
   },
   modulePathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/websec/', '<rootDir>/drafts/'],
   testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/', '<rootDir>/websec/', '<rootDir>/drafts/'],

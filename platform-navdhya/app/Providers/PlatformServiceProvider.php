@@ -32,9 +32,15 @@ use App\Platform\Tenancy\Console\TenantPromoteCommand;
 use App\Platform\Tenancy\Console\TenantPurgeSharedCommand;
 use App\Platform\Modules\Console\ModuleListCommand;
 use App\Platform\Api\Console\ApiComposeCommand;
+use App\Platform\Api\Console\ContractsExportCommand;
 use App\Platform\Console\CleanupExpiredCommand;
 use App\Platform\Console\DoctorCommand;
 use App\Platform\Console\OutboxDrainCommand;
+use App\Platform\Console\OutboxReplayCommand;
+use App\Domain\Jyotish\Console\RulesetStalenessSweepCommand;
+use App\Domain\Calendar\Console\AutonomousPanchangGenerationCommand;
+use App\Domain\Calendar\Console\GenerationHorizonWatchdogCommand;
+use App\Domain\Calendar\Console\TzdbDriftDetectionCommand;
 use App\Platform\Outbox\Outbox;
 use App\Platform\Outbox\OutboxHandlers;
 use App\Platform\Modules\ManifestValidator;
@@ -100,9 +106,15 @@ final class PlatformServiceProvider extends ServiceProvider
                 DoctorCommand::class,
                 CleanupExpiredCommand::class,
                 OutboxDrainCommand::class,
+                OutboxReplayCommand::class,
+                RulesetStalenessSweepCommand::class,
+                AutonomousPanchangGenerationCommand::class,
+                GenerationHorizonWatchdogCommand::class,
+                TzdbDriftDetectionCommand::class,
                 FeatureFlagSetCommand::class,
                 FeatureFlagListCommand::class,
                 ApiComposeCommand::class,
+                ContractsExportCommand::class,
                 SyncPermissionsCommand::class,
                 AuthzExplainCommand::class,
                 TenantBackfillV2Command::class,

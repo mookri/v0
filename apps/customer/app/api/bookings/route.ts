@@ -67,12 +67,17 @@ export async function POST(req: Request) {
     );
   }
 
-  // Forward Idempotency-Key header
-  const idempotencyKey = req.headers.get('Idempotency-Key');
-  const extraHeaders: Record<string, string> = {};
-  if (idempotencyKey) {
-    extraHeaders['Idempotency-Key'] = idempotencyKey;
+  // Fail closed when client omits Idempotency-Key (T-AP02-01)
+  const idempotencyKey = req.headers.get('Idempotency-Key')?.trim() ?? '';
+  if (!idempotencyKey) {
+    return Response.json(
+      err('VALIDATION_ERROR', 'Idempotency-Key header is required.', requestId),
+      { status: 400 }
+    );
   }
+  const extraHeaders: Record<string, string> = {
+    'Idempotency-Key': idempotencyKey,
+  };
 
   try {
     const { data: booking, etag } = await laravelPost<Record<string, unknown>>(

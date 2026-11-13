@@ -23,6 +23,8 @@
     "i18n:translate": "npx tsx scripts/translate.ts",
     "i18n:check": "npx tsx --tsconfig apps/web/tsconfig.json scripts/check-bundle-parity.ts",
     "domain:check": "node tooling/scripts/domain-check.js",
+    "contracts:export": "cd platform-navdhya && php artisan contracts:export",
+    "contracts:check": "cd platform-navdhya && php artisan contracts:export --check",
     "verify": "turbo run typecheck lint test",
     "prepare": "git config core.hooksPath .githooks || true",
     "check:architecture": "vitest run tests/architecture && node tooling/scripts/domain-check.js availability booking pandit pricing puja recommendations search user payment"

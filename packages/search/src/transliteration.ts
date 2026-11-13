@@ -1,48 +1,175 @@
-// Devanagari -> Latin fold map (data, not code). Mirrors
-// platform-navdhya/app/Modules/Search/Support/TransliterationMap.php.
-// Lossy phonetic approximation for matching only.
+// packages/search/src/transliteration.ts
+//
+// Single source of truth transliteration engine for TypeScript.
+// Driven by generated artifact packages/search/gen/transliteration.v1.json (closes D-13).
 
-const MAP: Record<string, string> = {
-  'अ': 'a', 'आ': 'a', 'इ': 'i', 'ई': 'i', 'उ': 'u', 'ऊ': 'u', 'ऋ': 'ri',
-  'ए': 'e', 'ऐ': 'ai', 'ओ': 'o', 'औ': 'au', 'अं': 'am', 'अः': 'ah',
-  'क': 'k', 'ख': 'kh', 'ग': 'g', 'घ': 'gh', 'ङ': 'ng',
-  'च': 'ch', 'छ': 'chh', 'ज': 'j', 'झ': 'jh', 'ञ': 'ny',
-  'ट': 't', 'ठ': 'th', 'ड': 'd', 'ढ': 'dh', 'ण': 'n',
-  'त': 't', 'थ': 'th', 'द': 'd', 'ध': 'dh', 'न': 'n',
-  'प': 'p', 'फ': 'ph', 'ब': 'b', 'भ': 'bh', 'म': 'm',
-  'य': 'y', 'र': 'r', 'ल': 'l', 'व': 'v', 'श': 'sh', 'ष': 'sh', 'स': 's',
-  'ह': 'h', 'क्ष': 'ksh', 'त्र': 'tr', 'ज्ञ': 'gy', 'श्र': 'shr',
-  'ा': 'a', 'ि': 'i', 'ी': 'i', 'ु': 'u', 'ू': 'u', 'ृ': 'ri',
-  'े': 'e', 'ै': 'ai', 'ो': 'o', 'ौ': 'au', 'ं': 'm', 'ः': 'h', '्': '',
-  'ँ': 'n',
-  '०': '0', '१': '1', '२': '2', '३': '3', '४': '4', '५': '5', '६': '6',
-  '७': '7', '८': '8', '९': '9',
-};
+import schema from '../gen/transliteration.v1.json';
 
-const KEYS = Object.keys(MAP).sort((a, b) => b.length - a.length);
+export const TRANSLITERATION_SCHEMA = schema;
 
-export function foldDevanagari(value: string): string {
+const INDEPENDENT_VOWELS = schema.independent_vowels as Record<string, string>;
+const VOWEL_MATRAS = schema.vowel_matras as Record<string, string>;
+const CONSONANTS = schema.consonants as Record<string, string>;
+const SPECIAL_SIGNS = schema.special_signs as Record<string, string>;
+const DIGITS = schema.digits as Record<string, string>;
+const LATIN_FOLD = schema.latin_fold as Record<string, string>;
+
+/**
+ * Convert Devanagari text to exact IAST scientific transliteration.
+ */
+export function devaToIast(text: string): string {
+  const chars = Array.from(text);
   let out = '';
-  let i = 0;
-  const len = value.length; // code units; use Array.from for code points
-  const chars = Array.from(value);
   const n = chars.length;
-  let idx = 0;
-  while (idx < n) {
-    let matched = false;
-    for (const k of KEYS) {
-      const kl = Array.from(k).length;
-      if (kl > 1 && chars.slice(idx, idx + kl).join('') === k) {
-        out += MAP[k];
-        idx += kl;
-        matched = true;
-        break;
-      }
+
+  for (let i = 0; i < n; i++) {
+    const c = chars[i];
+
+    if (DIGITS[c]) {
+      out += DIGITS[c];
+      continue;
     }
-    if (matched) continue;
-    const ch = chars[idx];
-    out += MAP[ch] ?? ch;
-    idx++;
+
+    if (INDEPENDENT_VOWELS[c]) {
+      out += INDEPENDENT_VOWELS[c];
+      continue;
+    }
+
+    if (CONSONANTS[c]) {
+      out += CONSONANTS[c];
+      const next = chars[i + 1];
+      if (next === '्') {
+        // virama suppresses inherent vowel
+        i++;
+      } else if (next && VOWEL_MATRAS[next]) {
+        out += VOWEL_MATRAS[next];
+        i++;
+      } else {
+        out += 'a';
+      }
+      continue;
+    }
+
+    if (VOWEL_MATRAS[c]) {
+      out += VOWEL_MATRAS[c];
+      continue;
+    }
+
+    if (SPECIAL_SIGNS[c]) {
+      out += SPECIAL_SIGNS[c];
+      continue;
+    }
+
+    out += c;
   }
+
   return out;
+}
+
+/**
+ * Fold IAST / Devanagari to plain ASCII lowercase (no diacritics).
+ */
+export function foldToLatin(text: string): string {
+  const hasDevanagari = /[\u0900-\u097F]/.test(text);
+  const iast = hasDevanagari ? devaToIast(text) : text;
+  let lower = iast.toLowerCase();
+
+  for (const [k, v] of Object.entries(LATIN_FOLD)) {
+    lower = lower.replaceAll(k, v);
+  }
+
+  return lower;
+}
+
+/**
+ * Backwards-compatible Devanagari folding function.
+ */
+export function foldDevanagari(value: string): string {
+  return foldToLatin(value);
+}
+
+/**
+ * Phonetic representation for fuzzy search indexing and recall.
+ */
+export function toPhoneticKey(text: string): string {
+  let clean = foldToLatin(text).replace(/[^a-z0-9]+/g, '');
+
+  const phoneticMap: Record<string, string> = {
+    sh: 's',
+    ee: 'i',
+    oo: 'u',
+    aa: 'a',
+    kh: 'k',
+    gh: 'g',
+    chh: 'c',
+    ch: 'c',
+    jh: 'j',
+    th: 't',
+    dh: 'd',
+    ph: 'p',
+    bh: 'b',
+    w: 'v',
+    m: 'n',
+  };
+
+  for (const [pattern, replacement] of Object.entries(phoneticMap)) {
+    clean = clean.replaceAll(pattern, replacement);
+  }
+
+  // Collapse consecutive duplicates (e.g. ss -> s)
+  return clean.replace(/(.)\1+/g, '$1');
+}
+
+export interface KeySet {
+  display: string;
+  key_dev: string;
+  key_lat: string;
+  key_fold: string;
+  key_phon: string;
+  key_tr: string[];
+}
+
+export function generateKeySet(text: string): KeySet {
+  const display = text.trim();
+  if (!display) {
+    return {
+      display: '',
+      key_dev: '',
+      key_lat: '',
+      key_fold: '',
+      key_phon: '',
+      key_tr: [],
+    };
+  }
+
+  const isDevanagari = /[\u0900-\u097F]/.test(display);
+  const keyDev = isDevanagari ? display : '';
+  const keyLat = isDevanagari ? devaToIast(display) : display;
+  const keyFold = foldToLatin(display);
+  const keyPhon = toPhoneticKey(display);
+
+  const variants = new Set<string>();
+  variants.add(keyFold);
+
+  if (keyFold.endsWith('a') && keyFold.length > 3) {
+    variants.add(keyFold.slice(0, -1));
+  }
+  if (keyFold.includes('i')) {
+    variants.add(keyFold.replaceAll('i', 'ee'));
+  }
+  if (keyFold.includes('u')) {
+    variants.add(keyFold.replaceAll('u', 'oo'));
+  }
+  if (keyFold.includes('v')) {
+    variants.add(keyFold.replaceAll('v', 'w'));
+  }
+
+  return {
+    display,
+    key_dev: keyDev,
+    key_lat: keyLat,
+    key_fold: keyFold,
+    key_phon: keyPhon,
+    key_tr: Array.from(variants),
+  };
 }

@@ -45,6 +45,24 @@
         "item_count": "number"
       }
     },
+    "facet_view": {
+      "version": 1,
+      "params": {
+        "facet_key": "string",
+        "facet_value": "string",
+        "result_count": "number",
+        "category_path": "string"
+      }
+    },
+    "kit_opt_in": {
+      "version": 1,
+      "params": {
+        "service_sku": "string",
+        "kit_sku": "string",
+        "obligation": "string",
+        "action": "string"
+      }
+    },
     "kyc_submitted": {
       "version": 1,
       "params": {
@@ -81,6 +99,15 @@
         "transaction_ref": "string"
       }
     },
+    "price_tier_viewed": {
+      "version": 1,
+      "params": {
+        "sku": "string",
+        "package_tier": "string",
+        "price_minor": "number",
+        "currency": "string"
+      }
+    },
     "purchase_viewed": {
       "version": 1,
       "params": {
@@ -88,11 +115,92 @@
         "item_count": "number"
       }
     },
+    "quote_viewed": {
+      "version": 1,
+      "params": {
+        "sku": "string",
+        "package_tier": "string",
+        "qualification_tier": "string",
+        "total_minor": "number",
+        "currency": "string"
+      }
+    },
+    "reco_impressed": {
+      "version": 1,
+      "params": {
+        "placement": "string",
+        "reco_ref": "string",
+        "items_shown": "string",
+        "surface": "string"
+      }
+    },
+    "reco_selected": {
+      "version": 1,
+      "params": {
+        "placement": "string",
+        "reco_ref": "string",
+        "entity_type": "string",
+        "entity_ref": "string",
+        "position": "number"
+      }
+    },
     "search": {
       "version": 1,
       "params": {
         "search_term": "string",
-        "result_count": "number"
+        "result_count": "number",
+        "category_filter": "string",
+        "query_trace_id": "string"
+      }
+    },
+    "search_query_abandoned": {
+      "version": 1,
+      "params": {
+        "trace_id": "string",
+        "last_query_text": "string",
+        "dwell_total_ms": "number"
+      }
+    },
+    "search_query_reformulated": {
+      "version": 1,
+      "params": {
+        "prev_query_text": "string",
+        "new_query_text": "string",
+        "elapsed_ms": "number"
+      }
+    },
+    "search_query_submitted": {
+      "version": 1,
+      "params": {
+        "query_text_norm": "string",
+        "query_length": "number",
+        "script_family": "string",
+        "surface": "string",
+        "result_count": "number",
+        "trace_id": "string"
+      }
+    },
+    "search_result_impressed": {
+      "version": 1,
+      "params": {
+        "trace_id": "string",
+        "entity_type": "string",
+        "entity_ref": "string",
+        "position": "number",
+        "page_offset": "number",
+        "dwell_ms": "number",
+        "viewport_ratio": "number"
+      }
+    },
+    "search_result_selected": {
+      "version": 1,
+      "params": {
+        "trace_id": "string",
+        "entity_type": "string",
+        "entity_ref": "string",
+        "position": "number",
+        "action": "string",
+        "dwell_before_click_ms": "number"
       }
     },
     "sign_up": {
@@ -106,7 +214,10 @@
       "params": {
         "item_type": "string",
         "item_category": "string",
-        "value": "number"
+        "value": "number",
+        "category_path": "string",
+        "package_tier": "string",
+        "duration_minutes": "number"
       }
     },
     "zero_results_search": {

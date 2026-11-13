@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from "next/link"
 import { ChevronDown, Heart, Eye, ShoppingCart, Filter, X, ArrowRight, MapPin, Star, Award, Calendar, Users, Phone, Mail, Clock, BookOpen, Lightbulb, TrendingUp, Play, FileText, Video, Search, MessageCircle, ThumbsUp, Reply, Flag, MoreHorizontal, User, Flame, Check, Plus, Leaf } from "lucide-react"
+import { CatalogListing } from "@/components/sections/CatalogListing"
 
 // Havan & Yagya packages data
 const havanPackages = [
@@ -296,65 +297,12 @@ export default function HavanYagyaClient() {
         </div>
       </div>
 
-      {/* Havan & Yagya Packages */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12">
-        <div className="text-center mb-10">
-          <h2 className="text-2xl font-serif font-semibold mb-4">Havan & Yagya Packages</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Choose the perfect package for your spiritual needs
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {havanPackages.map((pkg) => (
-            <div 
-              key={pkg.id} 
-              className={`border border-border rounded-lg overflow-hidden bg-card flex flex-col h-full relative ${
-                pkg.popular ? 'ring-2 ring-[#0E3F2E]' : ''
-              }`}
-            >
-              {pkg.popular && (
-                <div className="absolute top-4 right-4 z-10">
-                  <span className="bg-[#0E3F2E] text-white px-3 py-1 rounded-full text-xs font-medium">
-                    Most Popular
-                  </span>
-                </div>
-              )}
-              
-              <div className="p-6 flex-grow">
-                <h3 className="font-medium text-lg mb-2">{pkg.name}</h3>
-                <div className="mb-4">
-                  <span className="text-2xl font-bold text-[#0E3F2E]">{pkg.price}</span>
-                  <span className="text-sm text-muted-foreground line-through ml-2">{pkg.originalPrice}</span>
-                </div>
-                <p className="text-sm text-muted-foreground mb-4">{pkg.description}</p>
-                
-                <ul className="space-y-2 mb-6">
-                  {pkg.features.map((feature, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-[#0E3F2E] mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="px-6 py-4 bg-muted/50 border-t border-border">
-                <button 
-                  className={`w-full py-2.5 rounded-md text-sm font-medium transition-all duration-300 ${
-                    selectedPackage === pkg.id
-                      ? 'bg-[#0E3F2E] text-white'
-                      : 'bg-background border border-border text-foreground hover:bg-muted'
-                  }`}
-                  onClick={() => setSelectedPackage(pkg.id)}
-                >
-                  {selectedPackage === pkg.id ? 'Selected' : 'Select Package'}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Havan & Yagya Packages — Powered by Centralized Catalog (F6) */}
+      <CatalogListing
+        categorySlug="havan-yagya"
+        title="Havan & Yagya Ceremonies"
+        description="Choose authoritative Vedic fire rituals performed with consecrated samagri by verified pandits."
+      />
 
       {/* Testimonials */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12">

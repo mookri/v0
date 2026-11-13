@@ -4,6 +4,8 @@
 import { type NextRequest } from "next/server";
 import { GET as search } from "@/app/api/search/route";
 import { GET as suggest } from "@/app/api/search/suggest/route";
+import { POST as analytics } from "@/app/api/search/analytics/route";
+import { GET as trending } from "@/app/api/search/trending/route";
 
 // These run against the disk SEO corpus (CUSTOMER_BACKEND unset -> the
 // backend leg is disabled and the BM25 leg serves alone), which is exactly
@@ -102,3 +104,62 @@ describe("GET /api/search/suggest", () => {
     }
   });
 });
+
+describe("POST /api/search/analytics", () => {
+  it("400s with empty payload or empty query", async () => {
+    const req = new Request("http://localhost/api/search/analytics", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query: "" }),
+    });
+    const response = await (analytics as RouteFn)(req as never);
+    expect(response.status).toBe(400);
+    const json = await response.json();
+    expect(json.error.code).toBe("VALIDATION_ERROR");
+  });
+
+  it("accepts single query analytics from search-box", async () => {
+    const req = new Request("http://localhost/api/search/analytics", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query: "Satyanarayan", results: 5 }),
+    });
+    const response = await (analytics as RouteFn)(req as never);
+    expect(response.status).toBe(200);
+    const json = await response.json();
+    expect(json.data.accepted).toBe(1);
+    expect(json.requestId).toMatch(/^req_/);
+  });
+
+  it("accepts batch queries payload", async () => {
+    const req = new Request("http://localhost/api/search/analytics", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        queries: [
+          { q: "Rudrabhishek", results: 3 },
+          { q: "Griha Pravesh", results: 1 },
+        ],
+      }),
+    });
+    const response = await (analytics as RouteFn)(req as never);
+    expect(response.status).toBe(200);
+    const json = await response.json();
+    expect(json.data.accepted).toBe(2);
+  });
+});
+
+describe("GET /api/search/trending", () => {
+  it("returns trending queries list with defaults when backend disabled", async () => {
+    const response = await call(trending as RouteFn, "/api/search/trending", { limit: "4" });
+    expect(response.status).toBe(200);
+    const json = await response.json();
+    expect(json.requestId).toMatch(/^req_/);
+    expect(Array.isArray(json.data.trending)).toBe(true);
+    expect(json.data.trending.length).toBe(4);
+    expect(json.data.trending[0]).toHaveProperty("query");
+    expect(typeof json.data.trending[0].query).toBe("string");
+    expect(response.headers.get("Cache-Control")).toContain("max-age=120");
+  });
+});
+

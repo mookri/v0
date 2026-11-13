@@ -84,7 +84,7 @@ final class PanditAssignmentController
         }
 
         $request->validate([
-            'status' => ['sometimes', 'string', 'in:PENDING,CONFIRMED,DECLINED,COMPLETED,CANCELLED'],
+            'status' => ['sometimes', 'string', 'in:PENDING,CONFIRMED,IN_PROGRESS,DECLINED,COMPLETED,CANCELLED'],
             'limit' => ['sometimes', 'integer', 'min:1', 'max:100'],
         ]);
 
@@ -125,7 +125,40 @@ final class PanditAssignmentController
         ]);
     }
 
-    // SELF: Complete assignment (completes the booking: ASSIGNED → IN_PROGRESS → COMPLETED)
+    // SELF: Start assignment (begins ceremony: ASSIGNED → IN_PROGRESS)
+    public function start(Request $request, string $id): JsonResponse
+    {
+        $profile = $this->ownProfile($request);
+
+        if ($profile instanceof JsonResponse) {
+            return $profile;
+        }
+
+        $validated = $request->validate([
+            'checklist' => ['sometimes', 'array'],
+        ]);
+
+        try {
+            $assignment = $this->assignments->start(
+                (string) $profile->getKey(),
+                $id,
+                is_array($validated['checklist'] ?? null) ? $validated['checklist'] : [],
+            );
+        } catch (AssignmentNotFoundException $e) {
+            return $this->error($request, 'PANDIT_ASSIGNMENT_NOT_FOUND', $e->getMessage())->setStatusCode(404);
+        } catch (BookingWrongStateException $e) {
+            return $this->error($request, 'PANDIT_BOOKING_WRONG_STATE', $e->getMessage())->setStatusCode(409);
+        } catch (\InvalidArgumentException $e) {
+            return $this->error($request, 'PANDIT_ASSIGNMENT_WRONG_STATE', $e->getMessage())->setStatusCode(409);
+        }
+
+        return new JsonResponse([
+            'data' => $assignment,
+            'meta' => ['request_id' => $this->requestId($request)],
+        ]);
+    }
+
+    // SELF: Complete assignment (completes the booking: ASSIGNED|IN_PROGRESS → COMPLETED)
     public function complete(Request $request, string $id): JsonResponse
     {
         $profile = $this->ownProfile($request);

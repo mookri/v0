@@ -119,6 +119,10 @@ Route::middleware(['scope:temple:admin'])->group(function () {
         ->middleware(['capability:temple:profile:manage', 'stepup:2'])
         ->name('admin.profiles.verify');
 
+    Route::post('admin/profiles/{id}:publish', [TempleProfileController::class, 'publish'])
+        ->middleware(['capability:temple:profile:manage', 'stepup:2'])
+        ->name('admin.profiles.publish');
+
     Route::post('admin/profiles/{id}:suspend', [TempleProfileController::class, 'suspend'])
         ->middleware(['capability:temple:profile:manage', 'stepup:2'])
         ->name('admin.profiles.suspend');

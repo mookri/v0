@@ -7,17 +7,35 @@ const actors = partnerActorResolver();
 export async function GET(req: Request) {
   const requestId = newRequestId();
 
-  if (!laravelEnabled()) {
-    const actor = await actors.resolve(headersToRecord(req.headers));
-    if (!actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
-    return Response.json(ok({ data: { total_minor: 0, currency: 'INR', breakdown: [] }, meta: { fallback: true } }, requestId));
+  const actor = await actors.resolve(headersToRecord(req.headers));
+  if (!actor) {
+    return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), {
+      status: 401,
+      headers: { 'Cache-Control': 'private, no-store', Vary: 'Cookie, Authorization' },
+    });
   }
 
-  const actor = await actors.resolve(headersToRecord(req.headers));
-  if (!actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
+  if (!laravelEnabled()) {
+    return Response.json(
+      err(
+        'DEPENDENCY_UNAVAILABLE',
+        'Partner earnings ledger backend is unavailable (NAVDHYA_API_BASE not configured).',
+        requestId,
+      ),
+      {
+        status: 503,
+        headers: { 'Cache-Control': 'private, no-store', Vary: 'Cookie, Authorization' },
+      },
+    );
+  }
 
   const token = bearerOrSessionCookie(req.headers);
-  if (!token) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
+  if (!token) {
+    return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), {
+      status: 401,
+      headers: { 'Cache-Control': 'private, no-store', Vary: 'Cookie, Authorization' },
+    });
+  }
 
   try {
     const { data } = await laravelGet<unknown>(
@@ -31,8 +49,10 @@ export async function GET(req: Request) {
       },
     );
 
-    return Response.json(ok(data, requestId), { headers: { 'Cache-Control': 'private, max-age=60' } });
+    return Response.json(ok(data, requestId), {
+      headers: { 'Cache-Control': 'private, no-store', Vary: 'Cookie, Authorization' },
+    });
   } catch (e) {
-    return laravelErrorResponse(e, 'Pandit earnings are unavailable.', requestId);
+    return laravelErrorResponse(e, 'Pandit earnings ledger is currently unavailable.', requestId);
   }
 }

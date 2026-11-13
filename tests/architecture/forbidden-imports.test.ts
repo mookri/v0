@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 const packagesDir = path.join(process.cwd(), 'packages');
-const BUSINESS_CAPABILITIES = ['user', 'puja', 'pandit', 'availability', 'pricing', 'booking', 'search', 'recommendations'];
+const BUSINESS_CAPABILITIES = ['user', 'puja', 'pandit', 'availability', 'pricing', 'booking', 'search', 'recommendations', 'jyotish'];
 
 function getAllFiles(dir: string): string[] {
   let results: string[] = [];

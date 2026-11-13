@@ -19,6 +19,7 @@
     { "name": "temple.profile.created", "schema": "v1" },
     { "name": "temple.profile.updated", "schema": "v1" },
     { "name": "temple.profile.verified", "schema": "v1" },
+    { "name": "temple.profile.published", "schema": "v1" },
     { "name": "temple.profile.suspended", "schema": "v1" },
     { "name": "temple.profile.reactivated", "schema": "v1" },
     { "name": "temple.puja.assigned", "schema": "v1" },

@@ -25,7 +25,8 @@ export function proxy(request: NextRequest) {
     pathname === '/api/auth/login' ||
     pathname === '/api/auth/logout' ||
     pathname === '/api/auth/logout/start' ||
-    pathname === '/api/auth/logout/landing'
+    pathname === '/api/auth/logout/landing' ||
+    pathname.startsWith('/api/health')
   ) {
     return NextResponse.next();
   }
@@ -39,7 +40,10 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(login, 302);
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  response.headers.set('Cache-Control', 'private, no-store');
+  response.headers.set('Vary', 'Cookie, Authorization');
+  return response;
 }
 
 export const config = {

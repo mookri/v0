@@ -22,6 +22,10 @@ final class TenantScope implements Scope
 {
     public function apply(Builder $builder, Model $model): void
     {
+        if (PlatformScope::isSystemBypassActive()) {
+            return;
+        }
+
         $context = app(TenantContext::class);
         $column = $model->qualifyColumn('tenant_id');
 

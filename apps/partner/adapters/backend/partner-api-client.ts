@@ -132,12 +132,28 @@ export const partnerApi = {
   getPanditAvailability: () => request('/api/pandit/availability'),
   replacePanditAvailability: (body: unknown) =>
     request('/api/pandit/availability', { method: 'PUT', body: JSON.stringify(body) }),
-  confirmPanditAssignment: (id: string) =>
-    request(`/api/pandit/assignments/${encodeURIComponent(id)}/confirm`, { method: 'POST' }),
-  declinePanditAssignment: (id: string, reason?: string) =>
-    request(`/api/pandit/assignments/${encodeURIComponent(id)}/decline`, { method: 'POST', body: JSON.stringify({ reason: reason ?? '' }) }),
-  completePanditAssignment: (id: string) =>
-    request(`/api/pandit/assignments/${encodeURIComponent(id)}/complete`, { method: 'POST' }),
+  confirmPanditAssignment: (id: string, idempotencyKey?: string) =>
+    request(`/api/pandit/assignments/${encodeURIComponent(id)}/confirm`, {
+      method: 'POST',
+      headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
+    }),
+  startPanditAssignment: (id: string, idempotencyKey: string, checklist?: Record<string, unknown>) =>
+    request(`/api/pandit/assignments/${encodeURIComponent(id)}/start`, {
+      method: 'POST',
+      headers: { 'Idempotency-Key': idempotencyKey },
+      body: JSON.stringify(checklist ? { checklist } : {}),
+    }),
+  declinePanditAssignment: (id: string, reason?: string, idempotencyKey?: string) =>
+    request(`/api/pandit/assignments/${encodeURIComponent(id)}/decline`, {
+      method: 'POST',
+      headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
+      body: JSON.stringify({ reason: reason ?? '' }),
+    }),
+  completePanditAssignment: (id: string, idempotencyKey?: string) =>
+    request(`/api/pandit/assignments/${encodeURIComponent(id)}/complete`, {
+      method: 'POST',
+      headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
+    }),
 
   // Vendor surface (P12)
   getVendors: (params?: { limit?: number; cursor?: string }) => {

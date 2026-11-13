@@ -7,19 +7,13 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Headers;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * Customer notification email (N3): the delivery body behind the
- * dispatcher's email leg. Subject renders per kind through
- * NotificationEmailTemplates (locale carried from CustomerSetting);
- * the body renders the notification's own title/body through the Blade
- * template — `{{ }}` escapes, so producer copy can never inject markup.
- *
- * Sent inline by the dispatch job (never queued on its own): the job's
- * try/backoff owns retries and the delivery-row claim owns idempotency.
- * Provider stays Laravel's mailer config (MAIL_* — log in dev, SMTP or
- * an API transport in production): provider-agnostic by construction.
+ * Customer notification email (E-CM-06): the delivery body behind the
+ * dispatcher's email leg. Sacred Ember brand tokens, multipart text alternative,
+ * and deliverability headers.
  */
 final class NotificationEmail extends Mailable
 {
@@ -32,8 +26,6 @@ final class NotificationEmail extends Mailable
         public readonly ?string $body,
         string $locale,
     ) {
-        // Mailable declares $locale (view translation locale) — assign it
-        // rather than redeclare; the envelope reads it too.
         $this->locale = $locale;
     }
 
@@ -48,11 +40,22 @@ final class NotificationEmail extends Mailable
     {
         return new Content(
             view: 'mail.notification-email',
+            text: 'mail.notification-email-text',
             with: [
                 'title' => $this->title,
                 'body' => $this->body,
                 'locale' => $this->locale,
             ],
+        );
+    }
+
+    public function headers(): Headers
+    {
+        return new Headers(
+            text: [
+                'X-Entity-Ref-ID' => $this->kind,
+                'X-Auto-Response-Suppress' => 'OOF, AutoReply',
+            ]
         );
     }
 }

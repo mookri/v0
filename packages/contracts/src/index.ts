@@ -18,3 +18,11 @@ export * from "./messaging/outbox";
 export * from "./storage/object-storage";
 export * from "./search/search-index";
 export * from "./governance/manifest";
+export * from "./generated/openapi-operations";
+export * from "./api/envelope";
+export * from "./api/booking";
+export * from "./api/views";
+export * from "./api/webhooks";
+export * from "./api/version-skew";
+export * from "./api/jyotish";
+

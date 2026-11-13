@@ -1,0 +1,27 @@
+{
+  "code": "feedback",
+  "name": "Devotee Feedback & Quality Aggregation",
+  "version": "1.0.0",
+  "phase": 3,
+  "priority": 260,
+  "dependencies": ["booking", "pandit"],
+  "actions": ["submit", "moderate", "respond", "decide", "review", "aggregate"],
+  "permissions": [
+    { "code": "feedback:submission:submit", "name": "Submit verified booking feedback" },
+    { "code": "feedback:publication:moderate", "name": "Moderate and redact feedback publications", "sensitive": true },
+    { "code": "feedback:appeal:decide", "name": "Decide feedback moderation and eligibility appeals", "sensitive": true },
+    { "code": "feedback:integrity:review", "name": "Review held integrity signals", "sensitive": true }
+  ],
+  "scopes": ["feedback:self", "feedback:read", "feedback:admin"],
+  "events": [
+    { "name": "feedback.invitation.sent", "schema": "v1" },
+    { "name": "feedback.submission.recorded", "schema": "v1" },
+    { "name": "feedback.submission.held", "schema": "v1" },
+    { "name": "feedback.publication.moderated", "schema": "v1" },
+    { "name": "feedback.response.posted", "schema": "v1" },
+    { "name": "feedback.appeal.resolved", "schema": "v1" },
+    { "name": "feedback.aggregation.updated", "schema": "v1" }
+  ],
+  "navigation": [],
+  "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/feedback" }
+}

@@ -2,6 +2,12 @@
 
 import React from 'react';
 import { useState, useEffect } from 'react';
+import {
+  CANONICAL_GOTRAS,
+  CANONICAL_NAKSHATRAS,
+  SERVICE_VENUES,
+  type ServiceVenue,
+} from '@navdhya/validation';
 import { customerApi } from '@/adapters/backend/customer-api-client';
 import { resolveBookStart } from '@/application/bookings/resolve-book-start';
 import { confirmBookingDraft } from '@/application/bookings/confirm-booking-draft';
@@ -29,12 +35,18 @@ function slotToIso(value: string): string | null {
 const FRIENDLY_ERRORS: Record<string, string> = {
   NOT_FOUND: 'This puja is no longer available.',
   PUJA_SKU_UNAVAILABLE: 'This ritual is not currently bookable.',
+  INVALID_SERVICE_VENUE: 'Choose whether the ritual happens at Home, Temple, or Online.',
+  INVALID_GOTRA: 'Please select a canonical Gotra from the list.',
+  INVALID_NAKSHATRA: 'Please select a canonical Nakshatra from the list.',
 };
 
 export default function BookStartPage({ searchParams }: BookStartPageProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState('');
   const [slotValue, setSlotValue] = useState('');
+  const [serviceVenue, setServiceVenue] = useState<ServiceVenue>('home');
+  const [gotra, setGotra] = useState('');
+  const [nakshatra, setNakshatra] = useState('');
   const [result, setResult] = useState<ReturnType<typeof resolveBookStart> | null>(null);
 
   // Resolve intent on mount
@@ -61,7 +73,7 @@ export default function BookStartPage({ searchParams }: BookStartPageProps) {
           getPuja: async (id) => (await customerApi.getPuja(id)) as { sku?: string },
           createBooking: (payload, idempotencyKey) => customerApi.createBooking(payload, idempotencyKey),
         },
-        draft,
+        { ...draft, serviceVenue, gotra, nakshatra },
       );
 
       // Redirect to booking detail
@@ -166,28 +178,87 @@ export default function BookStartPage({ searchParams }: BookStartPageProps) {
   storeIdempotencyKey(draft.pujaId, idempotencyKey);
 
   return (
-    <main className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Review your booking</h1>
+    <main className="p-6 max-w-2xl mx-auto text-[#2A2421]">
+      <h1 className="text-2xl font-bold mb-6 text-[#2C2033]">Review your booking</h1>
 
-      <dl className="space-y-4 mb-6">
+      <dl className="space-y-4 mb-6 rounded-lg border border-[#EFE3D3] bg-[#FFF7ED] p-4">
         <div>
-          <dt className="text-gray-500 text-sm">Puja</dt>
-          <dd className="font-medium text-gray-900">{draft.pujaId}</dd>
+          <dt className="text-[#2C2033] text-sm font-medium">Puja</dt>
+          <dd className="font-medium text-[#2A2421]">{draft.pujaId}</dd>
         </div>
         {draft.panditId && (
           <div>
-            <dt className="text-gray-500 text-sm">Pandit</dt>
-            <dd className="font-medium text-gray-900">{draft.panditId}</dd>
+            <dt className="text-[#2C2033] text-sm font-medium">Pandit</dt>
+            <dd className="font-medium text-[#2A2421]">{draft.panditId}</dd>
           </div>
         )}
         <div>
-          <dt className="text-gray-500 text-sm">Slot</dt>
-          <dd className="font-medium text-gray-900">{draft.slotRef ? new Date(draft.slotRef).toLocaleString() : 'TBD'}</dd>
+          <dt className="text-[#2C2033] text-sm font-medium">Slot</dt>
+          <dd className="font-medium text-[#2A2421]">{draft.slotRef ? new Date(draft.slotRef).toLocaleString() : 'TBD'}</dd>
         </div>
       </dl>
 
+      <div className="space-y-4 mb-6 rounded-lg border border-[#EFE3D3] bg-[#FFF7ED] p-4">
+        <div>
+          <label htmlFor="service_venue" className="block text-sm font-medium text-[#2C2033] mb-1">
+            Ritual Venue
+          </label>
+          <select
+            id="service_venue"
+            value={serviceVenue}
+            onChange={(e) => setServiceVenue(e.target.value as ServiceVenue)}
+            className="w-full rounded-lg border border-[#EFE3D3] bg-[#FFF7ED] px-3 py-2.5 text-[#2A2421] focus:outline-none focus:ring-2 focus:ring-[#F16A24]"
+            disabled={isCreating}
+          >
+            {SERVICE_VENUES.map((v) => (
+              <option key={v} value={v}>
+                {v === 'home' ? 'At Home / Residence' : v === 'temple' ? 'At Temple Sanctuary' : 'Online Live Stream'}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="booking_gotra" className="block text-sm font-medium text-[#2C2033] mb-1">
+              Gotra (Sankalpa, optional)
+            </label>
+            <select
+              id="booking_gotra"
+              value={gotra}
+              onChange={(e) => setGotra(e.target.value)}
+              className="w-full rounded-lg border border-[#EFE3D3] bg-[#FFF7ED] px-3 py-2.5 text-[#2A2421] focus:outline-none focus:ring-2 focus:ring-[#F16A24]"
+              disabled={isCreating}
+            >
+              <option value="">Not specified</option>
+              {CANONICAL_GOTRAS.map((g) => (
+                <option key={g} value={g}>{g}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="booking_nakshatra" className="block text-sm font-medium text-[#2C2033] mb-1">
+              Nakshatra (optional)
+            </label>
+            <select
+              id="booking_nakshatra"
+              value={nakshatra}
+              onChange={(e) => setNakshatra(e.target.value)}
+              className="w-full rounded-lg border border-[#EFE3D3] bg-[#FFF7ED] px-3 py-2.5 text-[#2A2421] focus:outline-none focus:ring-2 focus:ring-[#F16A24]"
+              disabled={isCreating}
+            >
+              <option value="">Not specified</option>
+              {CANONICAL_NAKSHATRAS.map((n) => (
+                <option key={n} value={n}>{n.replace(/_/g, ' ')}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm" role="alert">
+        <div className="mb-4 p-3 bg-[#FFF7ED] border border-[#B74717] rounded-lg text-[#B74717] text-sm" role="alert">
           {error}
         </div>
       )}
@@ -195,13 +266,13 @@ export default function BookStartPage({ searchParams }: BookStartPageProps) {
       <button
         onClick={() => handleCreateBooking({ pujaId: draft.pujaId, slotRef: draft.slotRef ?? '', idempotencyKey })}
         disabled={isCreating || !draft.slotRef}
-        className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+        className="w-full px-6 py-3 bg-[#2C2033] text-[#FFF7ED] font-semibold rounded-lg hover:bg-[#2C2033]/90 disabled:opacity-50 transition-colors"
       >
         {isCreating ? 'Creating booking...' : 'Confirm booking'}
       </button>
 
-      <p className="mt-4 text-center text-sm text-gray-500">
-        <a href="/discover" className="text-indigo-600 hover:underline">← Back to discover</a>
+      <p className="mt-4 text-center text-sm text-[#2A2421]">
+        <a href="/discover" className="text-[#B74717] hover:underline">← Back to discover</a>
       </p>
     </main>
   );

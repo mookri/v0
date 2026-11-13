@@ -3,6 +3,7 @@
 namespace App\Modules\Payment;
 
 use App\Modules\Payment\Contracts\CreatesPaymentIntents;
+use App\Modules\Payment\Domain\PaymentReconciliationService;
 use App\Modules\Payment\Gateways\PaymentGateway;
 use App\Modules\Payment\Models\PaymentIntent;
 use App\Platform\Audit\AuditWriter;
@@ -88,6 +89,13 @@ final class PaymentIntents implements CreatesPaymentIntents
         $row = $this->intentRow($tenantId, $bookingId);
 
         return $row === null ? null : self::serialize($row);
+    }
+
+    public function markUnknown(string $tenantId, string $bookingId, string $reason): ?array
+    {
+        $updated = app(PaymentReconciliationService::class)->markUnknown($tenantId, $bookingId, $reason);
+
+        return $updated === null ? null : self::serialize($updated);
     }
 
     private function intentRow(string $tenantId, string $bookingId): ?PaymentIntent

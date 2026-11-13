@@ -3,6 +3,8 @@ import { PanditProfileView } from '@/presentation/pandit/PanditProfileView';
 import { PanditAvailabilityView } from '@/presentation/pandit/PanditAvailabilityView';
 import { PanditAssignmentsView } from '@/presentation/pandit/PanditAssignmentsView';
 import { PanditReviewsView } from '@/presentation/pandit/PanditReviewsView';
+import { PanditEarningsClient } from '@/presentation/pandit/PanditEarningsClient';
+import type { PanditEarningsPayload } from '@/presentation/pandit/PanditEarningsView';
 
 // Per-request data. Prerendering this page at build time made `next build`
 // block for 60s per attempt against an API the builder cannot reach, and
@@ -12,7 +14,8 @@ export const dynamic = 'force-dynamic';
 export default async function PanditDashboardPage() {
   let profile: Record<string, unknown> | null = null;
   let assignments: unknown[] = [];
-  let earnings: Record<string, unknown> | null = null;
+  let earnings: PanditEarningsPayload | null = null;
+  let earningsError: string | null = null;
   let availability: { day: string; start: string; end: string }[] = [];
   let reviews: unknown[] = [];
 
@@ -30,9 +33,10 @@ export default async function PanditDashboardPage() {
   }
 
   try {
-    earnings = (await partnerApi.getPanditEarnings()) as Record<string, unknown>;
+    earnings = (await partnerApi.getPanditEarnings()) as PanditEarningsPayload;
   } catch {
     earnings = null;
+    earningsError = 'Live earnings ledger unavailable during server render; checking BFF ledger…';
   }
 
   try {
@@ -50,34 +54,30 @@ export default async function PanditDashboardPage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-8">
-      <h1 className="text-2xl font-bold">Pandit Dashboard</h1>
+    <div className="space-y-8 text-[#2A2421]">
+      <h1 className="text-2xl font-bold text-[#2C2033]">Pandit Courtyard Dashboard</h1>
 
-      <section className="rounded-lg border border-gray-200 p-4">
+      <section className="rounded-lg border border-[#EFE3D3] bg-[#FFF7ED] p-4">
         <PanditProfileView profile={profile as Parameters<typeof PanditProfileView>[0]['profile']} />
       </section>
 
-      <section className="rounded-lg border border-gray-200 p-4">
+      <section className="rounded-lg border border-[#EFE3D3] bg-[#FFF7ED] p-4">
         <PanditAvailabilityView slots={availability} />
       </section>
 
-      <section className="rounded-lg border border-gray-200 p-4">
-        <h2 className="text-lg font-semibold mb-2">Assignments</h2>
+      <section className="rounded-lg border border-[#EFE3D3] bg-[#FFF7ED] p-4">
+        <h2 className="mb-2 text-lg font-semibold text-[#2C2033]">Assignments</h2>
         <PanditAssignmentsView assignments={assignments as Parameters<typeof PanditAssignmentsView>[0]['assignments']} />
       </section>
 
-      <section className="rounded-lg border border-gray-200 p-4">
-        <h2 className="text-lg font-semibold mb-2">Reviews</h2>
+      <section className="rounded-lg border border-[#EFE3D3] bg-[#FFF7ED] p-4">
+        <h2 className="mb-2 text-lg font-semibold text-[#2C2033]">Reviews</h2>
         <PanditReviewsView reviews={reviews as Parameters<typeof PanditReviewsView>[0]['reviews']} />
       </section>
 
-      <section className="rounded-lg border border-gray-200 p-4">
-        <h2 className="text-lg font-semibold mb-2">Earnings</h2>
-        {earnings ? (
-          <pre className="text-xs text-gray-600 overflow-auto">{JSON.stringify(earnings, null, 2)}</pre>
-        ) : (
-          <p className="text-gray-500">No earnings data yet.</p>
-        )}
+      <section className="rounded-lg border border-[#EFE3D3] bg-[#FFF7ED] p-4">
+        <h2 className="mb-2 text-lg font-semibold text-[#2C2033]">Earnings &amp; Settlements</h2>
+        <PanditEarningsClient initialEarnings={earnings} initialError={earnings ? null : earningsError} />
       </section>
     </div>
   );

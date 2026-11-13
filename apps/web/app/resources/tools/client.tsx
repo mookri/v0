@@ -32,57 +32,57 @@ interface Tool {
 const tools: Tool[] = [
   {
     id: 1,
-    title: "Horoscope Calculator",
-    description: "Generate your personalized horoscope based on your birth details for daily, weekly, and monthly predictions.",
+    title: "Janma Kundli (Vedic Horoscope)",
+    description: "Generate your Vedic birth chart with planetary longitudes, divisional harmonics, and North/South/East chart visualizers.",
     icon: <Compass className="w-6 h-6" />,
     category: "Astrology",
-    href: "/resources/tools/horoscope",
-    color: "bg-blue-100 text-blue-800"
+    href: "/resources/tools/kundli",
+    color: "bg-[#FFF7ED] text-[#F16A24] border border-[#2C2033]/15"
   },
   {
     id: 2,
-    title: "Muhurat Finder",
-    description: "Find the most auspicious timings for important events like weddings, business ventures, and religious ceremonies.",
+    title: "Auspicious Muhurat Finder",
+    description: "Find Shastric-vetted auspicious timings for Griha Pravesh, Vivah, business launches, and sacred ceremonies.",
     icon: <Target className="w-6 h-6" />,
     category: "Rituals",
     href: "/resources/tools/muhurat",
-    color: "bg-green-100 text-green-800"
+    color: "bg-[#EFE3D3] text-[#B74717] border border-[#2C2033]/15"
   },
   {
     id: 3,
-    title: "Panchang Calculator",
-    description: "Daily Panchang with Tithi, Nakshatra, Yoga, and Karana details for spiritual planning.",
+    title: "Daily Vedic Panchang",
+    description: "High-precision five-limb ephemeris with Tithi, Nakshatra, Yoga, Karana, Rahu Kaal, and Choghadiya periods.",
     icon: <CalendarDays className="w-6 h-6" />,
     category: "Calendar",
     href: "/resources/tools/panchang",
-    color: "bg-purple-100 text-purple-800"
+    color: "bg-[#2C2033]/10 text-[#2C2033] border border-[#2C2033]/15"
   },
   {
     id: 4,
-    title: "Kundli Matching",
-    description: "Compatibility analysis for marriages based on astrological charts and planetary positions.",
+    title: "Kundli Matching (Ashtakoota)",
+    description: "Comprehensive 36-Guna compatibility analysis based on sidereal Moon positions and planetary friendship.",
     icon: <Heart className="w-6 h-6" />,
     category: "Astrology",
-    href: "/resources/tools/kundli-matching",
-    color: "bg-red-100 text-red-800"
+    href: "/resources/tools/kundli",
+    color: "bg-[#FFF7ED] text-[#B74717] border border-[#2C2033]/15"
   },
   {
     id: 5,
-    title: "Gemstone Recommendation",
-    description: "Personalized gemstone suggestions based on your birth chart and planetary influences.",
+    title: "Ethical Remedy Guidance",
+    description: "Evidence-grounded Vedic remedies, Stotra recitation, and dana recommendations without commercial fear-mongering.",
     icon: <Star className="w-6 h-6" />,
     category: "Astrology",
-    href: "/resources/tools/gemstones",
-    color: "bg-yellow-100 text-yellow-800"
+    href: "/resources/tools/kundli",
+    color: "bg-[#EFE3D3] text-[#F16A24] border border-[#2C2033]/15"
   },
   {
     id: 6,
     title: "Vastu Compass",
-    description: "Directional analysis tool to determine the best orientations for your home and workspace.",
+    description: "Directional analysis tool to determine auspicious alignments for your sacred altar, home, and workspace.",
     icon: <Compass className="w-6 h-6" />,
     category: "Vastu",
-    href: "/resources/tools/vastu",
-    color: "bg-indigo-100 text-indigo-800"
+    href: "/resources/tools/panchang",
+    color: "bg-[#2C2033]/10 text-[#2C2033] border border-[#2C2033]/15"
   }
 ];
 
@@ -137,19 +137,19 @@ export default function ToolsClient({ toolsSchema }: { toolsSchema: string }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-6">
           <div className="bg-card border border-border rounded-lg p-4 grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
-              <div className="text-xl font-bold text-[#0E3F2E]">500K+</div>
+              <div className="text-xl font-bold text-[#F16A24]">500K+</div>
               <div className="text-xs text-muted-foreground">Calculations Performed</div>
             </div>
             <div className="text-center">
-              <div className="text-xl font-bold text-[#0E3F2E]">98%</div>
+              <div className="text-xl font-bold text-[#F16A24]">98%</div>
               <div className="text-xs text-muted-foreground">Accuracy Rate</div>
             </div>
             <div className="text-center">
-              <div className="text-xl font-bold text-[#0E3F2E]">4.9/5</div>
+              <div className="text-xl font-bold text-[#F16A24]">4.9/5</div>
               <div className="text-xs text-muted-foreground">User Satisfaction</div>
             </div>
             <div className="text-center">
-              <div className="text-xl font-bold text-[#0E3F2E]">6</div>
+              <div className="text-xl font-bold text-[#F16A24]">6</div>
               <div className="text-xs text-muted-foreground">Specialized Tools</div>
             </div>
           </div>
@@ -168,7 +168,7 @@ export default function ToolsClient({ toolsSchema }: { toolsSchema: string }) {
                       onClick={() => setCategoryFilter(category)}
                       className={`px-3 py-1.5 text-xs rounded-full transition-colors ${
                         categoryFilter === category
-                          ? 'bg-[#0E3F2E] text-white' 
+                          ? 'bg-[#2C2033] text-white' 
                           : 'bg-background hover:bg-muted border border-border text-foreground'
                       }`}
                     >
@@ -194,7 +194,7 @@ export default function ToolsClient({ toolsSchema }: { toolsSchema: string }) {
                   <div className={`w-12 h-12 rounded-lg ${tool.color} flex items-center justify-center mb-4`}>
                     {tool.icon}
                   </div>
-                  <h3 className="font-medium text-lg mb-3 group-hover:text-[#0E3F2E] transition-colors">
+                  <h3 className="font-medium text-lg mb-3 group-hover:text-[#F16A24] transition-colors">
                     {tool.title}
                   </h3>
                   <p className="text-sm text-muted-foreground mb-4">
@@ -206,7 +206,7 @@ export default function ToolsClient({ toolsSchema }: { toolsSchema: string }) {
                 </div>
                 <div className="px-6 py-4 bg-muted/50 border-t border-border">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-[#0E3F2E]">Use Tool</span>
+                    <span className="text-sm font-medium text-[#B74717]">Use Tool</span>
                     <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
@@ -229,21 +229,21 @@ export default function ToolsClient({ toolsSchema }: { toolsSchema: string }) {
             <h2 className="text-xl font-semibold mb-4">How to Use Our Tools</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="border border-border rounded-lg p-4">
-                <div className="text-2xl font-bold text-[#0E3F2E] mb-2">1</div>
+                <div className="text-2xl font-bold text-[#F16A24] mb-2">1</div>
                 <h3 className="font-medium text-sm mb-2">Enter Your Details</h3>
                 <p className="text-xs text-muted-foreground">
                   Provide accurate birth information including date, time, and place for precise calculations.
                 </p>
               </div>
               <div className="border border-border rounded-lg p-4">
-                <div className="text-2xl font-bold text-[#0E3F2E] mb-2">2</div>
+                <div className="text-2xl font-bold text-[#F16A24] mb-2">2</div>
                 <h3 className="font-medium text-sm mb-2">Select Your Tool</h3>
                 <p className="text-xs text-muted-foreground">
                   Choose from our specialized calculators based on your specific spiritual or ritual needs.
                 </p>
               </div>
               <div className="border border-border rounded-lg p-4">
-                <div className="text-2xl font-bold text-[#0E3F2E] mb-2">3</div>
+                <div className="text-2xl font-bold text-[#F16A24] mb-2">3</div>
                 <h3 className="font-medium text-sm mb-2">Get Your Results</h3>
                 <p className="text-xs text-muted-foreground">
                   Receive detailed, personalized insights and recommendations for your spiritual journey.

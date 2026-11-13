@@ -2,6 +2,7 @@
 
 namespace App\Modules\Temple\Models;
 
+use App\Domain\Verification\Concerns\BlocksDirectVerificationStatusWrite;
 use App\Platform\Tenancy\BelongsToTenant;
 use Database\Factories\TempleFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -42,6 +43,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 final class Temple extends Model
 {
     use BelongsToTenant;
+    use BlocksDirectVerificationStatusWrite;
     use HasUlids;
     /** @use HasFactory<TempleFactory> */
     use HasFactory;

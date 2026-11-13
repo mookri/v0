@@ -132,7 +132,10 @@ final class VendorDispatchGateTest extends TenantIntegrationTestCase
         $this->actingAs($user)->postJson(
             "/api/v2/booking/reservations/{$booking->getKey()}/confirm",
             [],
-            array_merge($headers, ['If-Match' => 'W/"v2"'])
+            array_merge($headers, [
+                'If-Match' => 'W/"v2"',
+                'Idempotency-Key' => (string) Str::uuid(),
+            ])
         )->assertOk();
 
         // 6. Now advancing to HANDOFF succeeds!

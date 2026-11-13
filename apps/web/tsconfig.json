@@ -44,6 +44,15 @@
       "@navdhya/otp/*": [
         "../../packages/otp/src/*"
       ],
+      "@navdhya/api-client": [
+        "../../packages/api-client/src/index.ts"
+      ],
+      "@navdhya/auth-client": [
+        "../../packages/auth-client/src/index.ts"
+      ],
+      "@navdhya/contracts": [
+        "../../packages/contracts/src/index.ts"
+      ],
       "@navdhya/*": [
         "../../packages/*"
       ]

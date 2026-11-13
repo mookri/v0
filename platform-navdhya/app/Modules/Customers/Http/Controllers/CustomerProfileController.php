@@ -258,7 +258,7 @@ final class CustomerProfileController extends CustomerSelfServiceController
 
         $membershipId = $this->membershipId();
         $membership = $membershipId !== null
-            ? TenantMembership::query()->withoutGlobalScopes()->find($membershipId)
+            ? TenantMembership::query()->find($membershipId)
             : null;
 
         if ($membership === null || (string) $membership->user_id !== (string) $user->getAuthIdentifier()) {
@@ -369,7 +369,7 @@ final class CustomerProfileController extends CustomerSelfServiceController
 
         $membershipId = $this->membershipId();
         $membership = $membershipId !== null
-            ? TenantMembership::query()->withoutGlobalScopes()->find($membershipId)
+            ? TenantMembership::query()->find($membershipId)
             : null;
 
         if ($membership === null || (string) $membership->user_id !== (string) $user->getAuthIdentifier()) {

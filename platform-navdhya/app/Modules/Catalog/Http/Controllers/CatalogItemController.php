@@ -2,9 +2,12 @@
 
 namespace App\Modules\Catalog\Http\Controllers;
 
+use App\Modules\Catalog\Models\CatalogCategory;
 use App\Modules\Catalog\Models\CatalogItem;
+use App\Modules\Catalog\Outbox\CatalogFactAppender;
 use App\Platform\Api\CursorPagination;
 use App\Platform\Tenancy\Models\Tenant;
+use App\Platform\Tenancy\PlatformScope;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -16,6 +19,13 @@ use Illuminate\Http\Request;
  */
 final class CatalogItemController
 {
+    private readonly CatalogFactAppender $facts;
+
+    public function __construct(?CatalogFactAppender $facts = null)
+    {
+        $this->facts = $facts ?? app(CatalogFactAppender::class);
+    }
+
     private function requestId(Request $request): string
     {
         return (string) $request->attributes->get('request_id', '');
@@ -32,6 +42,7 @@ final class CatalogItemController
     {
         $validated = $request->validate([
             'tenant_id' => ['required', 'string', 'max:26'],
+            'category' => ['nullable', 'string', 'max:100'],
         ]);
 
         $tenant = Tenant::query()->find($validated['tenant_id']);
@@ -42,23 +53,64 @@ final class CatalogItemController
             ], 404);
         }
 
-        $items = CatalogItem::query()
-            ->withoutGlobalScopes()
-            ->where('tenant_id', (string) $tenant->getKey())
-            ->where('status', CatalogItem::STATUS_ACTIVE)
-            ->orderBy('name')
-            ->get()
-            ->map(static fn (CatalogItem $item): array => [
-                'id' => (string) $item->getKey(),
-                'object' => 'catalog_item',
-                'sku' => $item->sku,
-                'name' => $item->name,
-                'description' => $item->description,
-                'currency' => $item->currency,
-                'price_minor' => $item->price_minor,
-            ])
-            ->values()
-            ->all();
+        $items = PlatformScope::run(
+            'public_catalog_browse',
+            static function () use ($tenant, $validated, $request): array {
+                $query = CatalogItem::query()
+                    ->where('tenant_id', (string) $tenant->getKey())
+                    ->where('status', CatalogItem::STATUS_ACTIVE);
+
+                if (! empty($validated['category'])) {
+                    $cat = CatalogCategory::query()
+                        ->where(function ($q) use ($tenant) {
+                            $q->where('tenant_id', (string) $tenant->getKey())
+                                ->orWhereNull('tenant_id');
+                        })
+                        ->where(function ($q) use ($validated) {
+                            $q->where('slug', $validated['category'])
+                                ->orWhere('id', $validated['category']);
+                        })
+                        ->first();
+
+                    if ($cat !== null) {
+                        $categoryIds = CatalogCategory::query()
+                            ->where('path', 'like', $cat->path . '%')
+                            ->pluck('id')
+                            ->push($cat->id)
+                            ->unique()
+                            ->all();
+
+                        $query->whereIn('category_id', $categoryIds);
+                    }
+                }
+
+                return $query->orderBy('name')
+                    ->get()
+                    ->map(static function (CatalogItem $item) use ($request): array {
+                        $payload = [
+                            'id' => (string) $item->getKey(),
+                            'object' => 'catalog_item',
+                            'sku' => $item->sku,
+                            'name' => $item->name,
+                            'description' => $item->description,
+                            'currency' => $item->currency,
+                            'price_minor' => $item->price_minor,
+                        ];
+
+                        if ($request->boolean('include_details') || $request->has('category')) {
+                            $payload['slug'] = $item->slug;
+                            $payload['item_kind'] = $item->item_kind;
+                            $payload['category_id'] = $item->category_id;
+                            $payload['base_duration_minutes'] = $item->base_duration_minutes;
+                        }
+
+                        return $payload;
+                    })
+                    ->values()
+                    ->all();
+            },
+            tenantId: (string) $tenant->getKey(),
+        );
 
         return new JsonResponse(
             [
@@ -66,8 +118,58 @@ final class CatalogItemController
                 'meta' => ['request_id' => $this->requestId($request)],
             ],
             200,
-            ['Cache-Control' => 'public, max-age=60'],
+            [
+                'Content-Type' => 'application/json',
+                'Cache-Control' => 'public, max-age=60',
+            ]
         );
+    }
+
+    public function publicCategories(Request $request): JsonResponse
+    {
+        $tenantId = $request->query('tenant_id');
+        $resolvedTenant = is_string($tenantId) && $tenantId !== '' ? $tenantId : null;
+
+        $categories = PlatformScope::run(
+            'public_catalog_categories',
+            static function () use ($resolvedTenant) {
+                $query = CatalogCategory::query()->where('status', CatalogCategory::STATUS_ACTIVE);
+                if ($resolvedTenant !== null) {
+                    $query->where(function ($q) use ($resolvedTenant): void {
+                        $q->where('tenant_id', $resolvedTenant)->orWhereNull('tenant_id');
+                    });
+                }
+
+                return $query->orderBy('sort')->get();
+            },
+            tenantId: $resolvedTenant,
+        );
+        $roots = $categories->whereNull('parent_id')->values()->map(function (CatalogCategory $root) use ($categories): array {
+            return [
+                'id' => $root->id,
+                'name' => $root->name,
+                'slug' => $root->slug,
+                'kind' => $root->kind,
+                'provenance' => $root->provenance,
+                'depth' => $root->depth,
+                'children' => $categories->where('parent_id', $root->id)->values()->map(fn (CatalogCategory $c): array => [
+                    'id' => $c->id,
+                    'name' => $c->name,
+                    'slug' => $c->slug,
+                    'kind' => $c->kind,
+                    'provenance' => $c->provenance,
+                    'depth' => $c->depth,
+                ])->all(),
+            ];
+        })->all();
+
+        return new JsonResponse([
+            'data' => $roots,
+            'meta' => ['request_id' => $this->requestId($request)],
+        ], 200, [
+            'Content-Type' => 'application/json',
+            'Cache-Control' => 'public, max-age=60',
+        ]);
     }
 
     public function index(Request $request): JsonResponse
@@ -130,6 +232,12 @@ final class CatalogItemController
         ]);
         $item->save();
 
+        $this->facts->append('catalog.item.created', $item->sku, [
+            'sku' => $item->sku,
+            'name' => $item->name,
+            'status' => $item->status,
+        ]);
+
         return new JsonResponse([
             'data' => self::serialize($item),
             'meta' => ['request_id' => $this->requestId($request)],
@@ -153,6 +261,11 @@ final class CatalogItemController
         }
 
         $item->forceFill(['status' => CatalogItem::STATUS_ACTIVE])->save();
+
+        $this->facts->append('catalog.item.published', $item->sku, [
+            'sku' => $item->sku,
+            'status' => CatalogItem::STATUS_ACTIVE,
+        ]);
 
         return new JsonResponse([
             'data' => self::serialize($item),
@@ -186,6 +299,11 @@ final class CatalogItemController
 
         $item->forceFill($validated)->save();
 
+        $this->facts->append('catalog.item.updated', $item->sku, [
+            'sku' => $item->sku,
+            'changes' => array_keys($validated),
+        ]);
+
         return new JsonResponse([
             'data' => self::serialize($item),
             'meta' => ['request_id' => $this->requestId($request)],
@@ -209,6 +327,11 @@ final class CatalogItemController
         }
 
         $item->forceFill(['status' => CatalogItem::STATUS_ARCHIVED])->save();
+
+        $this->facts->append('catalog.item.archived', $item->sku, [
+            'sku' => $item->sku,
+            'status' => CatalogItem::STATUS_ARCHIVED,
+        ]);
 
         return new JsonResponse([
             'data' => self::serialize($item),

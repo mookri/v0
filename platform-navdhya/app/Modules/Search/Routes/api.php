@@ -35,6 +35,7 @@ Route::withoutMiddleware(['auth.any', 'tenant'])->group(function () {
         Route::get('index-docs', [SearchController::class, 'indexDocs'])->name('search.index-docs');
         Route::get('entities/{type}/{slug}', [SearchController::class, 'entity'])->name('search.entity');
         Route::get('trending', [SearchController::class, 'trending'])->name('search.trending');
+        Route::get('health', [SearchController::class, 'health'])->name('search.health');
     });
 
     Route::middleware(['throttle:search-suggest'])->group(function () {
@@ -43,5 +44,6 @@ Route::withoutMiddleware(['auth.any', 'tenant'])->group(function () {
 
     Route::middleware(['throttle:search-analytics'])->group(function () {
         Route::post('analytics', [SearchController::class, 'analytics'])->name('search.analytics');
+        Route::post('typing-telemetry', [SearchController::class, 'typingTelemetry'])->name('search.typing-telemetry');
     });
 });

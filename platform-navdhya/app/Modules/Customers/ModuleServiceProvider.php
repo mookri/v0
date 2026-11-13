@@ -6,8 +6,10 @@ use App\Modules\Customers\Console\ProcessRitualRemindersCommand;
 use App\Modules\Customers\Console\PurgeTelemetryCommand;
 use App\Modules\Customers\Console\RefreshCustomerInsightsCommand;
 use App\Modules\Customers\Contracts\NotifiesCustomers;
-use App\Modules\Customers\Domain\Panchang\AnchorOccurrenceResolver;
-use App\Modules\Customers\Domain\Panchang\Contracts\ComputesPanchang;
+use App\Modules\Customers\Contracts\ResolvesCustomerParties;
+use App\Modules\Customers\Services\CustomerPartyResolver;
+use App\Domain\Calendar\Contracts\ComputesPanchang;
+use App\Domain\Calendar\Panchang\AnchorOccurrenceResolver;
 use App\Modules\Customers\Listeners\CustomerLifecycleBridge;
 use App\Modules\Customers\Providers\Contracts\NotificationProvider;
 use App\Modules\Customers\Providers\FakeNotificationProvider;
@@ -32,6 +34,7 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
     {
         $this->app->bind(TrackSeeder::class, CustomersTrackSeeder::class);
         $this->app->bind(NotifiesCustomers::class, CustomerNotifier::class);
+        $this->app->bind(ResolvesCustomerParties::class, CustomerPartyResolver::class);
         $this->app->singleton(ComputesPanchang::class, AnchorOccurrenceResolver::class);
 
         $this->app->singleton(NotificationProvider::class, function (Application $app): NotificationProvider {
@@ -48,13 +51,29 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
 
     public function bootModule(): void
     {
+        $driver = (string) config('notifications.driver', 'fake');
+        if ($this->app->environment('production') && $driver === 'fake') {
+            throw new \RuntimeException(
+                'Production environment cannot boot with NOTIFICATIONS_DRIVER=fake. Live or non-fake provider credentials must be configured.'
+            );
+        }
+
         $this->loadModuleMigrations();
+
+        \Illuminate\Support\Facades\RateLimiter::for('webhook-msg91', function (\Illuminate\Http\Request $request) {
+            return \Illuminate\Cache\RateLimiting\Limit::perMinute(300)->by('provider:msg91:' . ($request->header('X-Msg91-Signature') ? 'signed' : 'anon'));
+        });
+
+        \Illuminate\Support\Facades\RateLimiter::for('webhook-meta', function (\Illuminate\Http\Request $request) {
+            return \Illuminate\Cache\RateLimiting\Limit::perMinute(600)->by('provider:meta:' . ($request->header('X-Hub-Signature-256') ? 'signed' : 'anon'));
+        });
 
         if ($this->app->runningInConsole()) {
             $this->commands([
                 ProcessRitualRemindersCommand::class,
                 PurgeTelemetryCommand::class,
                 RefreshCustomerInsightsCommand::class,
+                \App\Domain\Delivery\Console\DeliveryReconcileCommand::class,
             ]);
         }
 

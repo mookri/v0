@@ -1,0 +1,106 @@
+{
+    "source": "platform-navdhya/app/Modules/Booking/Domain/BookingLifecycle.php",
+    "statuses": [
+        "DRAFT",
+        "PENDING_PAYMENT",
+        "PAYMENT_CONFIRMED",
+        "CONFIRMED",
+        "ASSIGNED",
+        "IN_PROGRESS",
+        "COMPLETED",
+        "CANCELLED",
+        "FAILED",
+        "EXPIRED",
+        "REFUNDED",
+        "NO_SHOW"
+    ],
+    "transitions": {
+        "DRAFT": [
+            "PENDING_PAYMENT",
+            "CANCELLED",
+            "EXPIRED"
+        ],
+        "PENDING_PAYMENT": [
+            "CONFIRMED",
+            "PAYMENT_CONFIRMED",
+            "FAILED",
+            "EXPIRED",
+            "CANCELLED"
+        ],
+        "PAYMENT_CONFIRMED": [
+            "CONFIRMED",
+            "REFUNDED",
+            "FAILED"
+        ],
+        "CONFIRMED": [
+            "ASSIGNED",
+            "CANCELLED",
+            "FAILED"
+        ],
+        "ASSIGNED": [
+            "CONFIRMED",
+            "IN_PROGRESS",
+            "CANCELLED",
+            "NO_SHOW",
+            "FAILED"
+        ],
+        "IN_PROGRESS": [
+            "COMPLETED",
+            "CANCELLED",
+            "FAILED"
+        ],
+        "COMPLETED": [],
+        "CANCELLED": [],
+        "FAILED": [],
+        "EXPIRED": [],
+        "REFUNDED": [],
+        "NO_SHOW": []
+    },
+    "cancellable": [
+        "DRAFT",
+        "PENDING_PAYMENT",
+        "CONFIRMED",
+        "ASSIGNED",
+        "IN_PROGRESS"
+    ],
+    "reschedulable": [
+        "CONFIRMED",
+        "ASSIGNED"
+    ],
+    "sections": {
+        "upcoming": [
+            "DRAFT",
+            "PENDING_PAYMENT",
+            "PAYMENT_CONFIRMED",
+            "CONFIRMED"
+        ],
+        "active": [
+            "ASSIGNED",
+            "IN_PROGRESS"
+        ],
+        "completed": [
+            "COMPLETED"
+        ],
+        "cancelled": [
+            "CANCELLED",
+            "FAILED",
+            "EXPIRED",
+            "REFUNDED",
+            "NO_SHOW"
+        ]
+    },
+    "sectionsList": [
+        "upcoming",
+        "active",
+        "completed",
+        "cancelled"
+    ],
+    "terminal": [
+        "COMPLETED",
+        "CANCELLED",
+        "FAILED",
+        "EXPIRED",
+        "REFUNDED",
+        "NO_SHOW"
+    ]
+}

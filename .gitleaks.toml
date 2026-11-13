@@ -56,6 +56,35 @@ regex = '''(?i)uidp[^\n]{0,40}eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z
 keywords = ["uidp", "eyj"]
 tags = ["secret", "uidp"]
 
+[[rules]]
+id = "navdhya-msg91-auth-key"
+description = "MSG91 Auth Key"
+regex = '''(?i)(?:msg91[_-]?auth[_-]?key|MSG91_AUTH_KEY)\s*[:=]\s*['"]?[A-Za-z0-9]{24,36}['"]?'''
+keywords = ["msg91", "authkey"]
+tags = ["secret", "msg91"]
+
+[[rules]]
+id = "navdhya-whatsapp-access-token"
+description = "Meta WhatsApp System User Access Token"
+regex = '''(?i)(?:whatsapp[_-]?(?:access[_-]?)?token|WHATSAPP_ACCESS_TOKEN)\s*[:=]\s*['"]?EA[A-Za-z0-9]{50,}['"]?'''
+keywords = ["whatsapp", "access_token"]
+tags = ["secret", "whatsapp"]
+
+[[rules]]
+id = "navdhya-whatsapp-app-secret"
+description = "Meta WhatsApp App Secret"
+regex = '''(?i)(?:whatsapp[_-]?app[_-]?secret|WHATSAPP_APP_SECRET)\s*[:=]\s*['"]?[a-f0-9]{32}['"]?'''
+keywords = ["whatsapp", "app_secret"]
+tags = ["secret", "whatsapp"]
+
+[[rules]]
+id = "navdhya-dlt-entity-id"
+description = "Indian Telecom DLT Entity / Telemarketer ID"
+regex = '''(?i)(?:dlt[_-]?entity[_-]?id|DLT_ENTITY_ID)\s*[:=]\s*['"]?1[0-9]{18}['"]?'''
+keywords = ["dlt", "entity_id"]
+tags = ["secret", "telecom", "dlt"]
+
+
 # Whitelist: mocks, fixtures, and the audit file itself must not be flagged.
 [allowlist]
 paths = [

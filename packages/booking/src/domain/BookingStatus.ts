@@ -1,12 +1,2 @@
-export type BookingStatus =
-  | 'DRAFT'
-  | 'PENDING_PAYMENT'
-  | 'PAYMENT_CONFIRMED'
-  | 'CONFIRMED'
-  | 'ASSIGNED'
-  | 'IN_PROGRESS'
-  | 'COMPLETED'
-  | 'CANCELLED'
-  | 'FAILED'
-  | 'EXPIRED'
-  | 'REFUNDED';
+export type { BookingStatus } from '@navdhya/contracts/src/generated/booking-lifecycle';
+export { BOOKING_STATUSES } from '@navdhya/contracts/src/generated/booking-lifecycle';

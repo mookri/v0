@@ -1,14 +1,15 @@
+import {
+  BackendApiError,
+  createBackendClient,
+  DEFAULT_BACKEND_CODE_MAP as SHARED_DEFAULT_CODE_MAP,
+  mapBackendCode as sharedMapBackendCode,
+  type BackendCodeMap as SharedBackendCodeMap,
+  type BackendPage,
+  type BackendResponse,
+} from '@navdhya/api-client';
 import { TIMEOUT_MS } from '@/application/api-policy';
 import { err, type PartnerApiErrorCode } from '@/application/api-envelope';
 
-// Server-side Laravel client for Partner BFF: calls
-// api.navdhya.com through here when PARTNER_BACKEND=laravel.
-// Mocks remain the default — no flag, no backend calls, no rewrites.
-//
-// Envelope translation (parity-partners.md): kernel `{data, meta}`
-// unwraps to `data`; backend snake codes map per call site.
-
-// Re-export TIMEOUT_MS for consumers
 export { TIMEOUT_MS } from '@/application/api-policy';
 
 export function laravelEnabled(): boolean {
@@ -20,56 +21,20 @@ export function laravelBase(): string {
 }
 
 export function laravelTenant(): string {
-  // Tenant from subdomain/session — set by middleware or route handler
   return process.env.PARTNER_TENANT_ID ?? '';
 }
 
 export type BackendCodeMap = Record<string, PartnerApiErrorCode>;
 
-export const DEFAULT_BACKEND_CODE_MAP: BackendCodeMap = {
-  unauthenticated: 'UNAUTHENTICATED',
-  membership_inactive: 'UNAUTHENTICATED',
-  tenant_suspended: 'FORBIDDEN',
-  permission_missing: 'FORBIDDEN',
-  authorization_denied: 'FORBIDDEN',
-  validation_failed: 'VALIDATION_ERROR',
-  not_found: 'NOT_FOUND',
-  conflict: 'CONFLICT',
-  version_conflict: 'STALE_RESOURCE',
-  state_forbidden: 'CONFLICT',
-  rate_limited: 'RATE_LIMITED',
-  service_unavailable: 'DEPENDENCY_UNAVAILABLE',
-  internal_error: 'INTERNAL_ERROR',
-  onboarding_not_found: 'ONBOARDING_NOT_FOUND',
-  onboarding_incomplete: 'ONBOARDING_INCOMPLETE',
-  onboarding_invalid_transition: 'ONBOARDING_INVALID_TRANSITION',
-  otp_rate_limited: 'RATE_LIMITED',
-  otp_invalid: 'UNAUTHENTICATED',
-  payload_too_large: 'VALIDATION_ERROR',
-  unknown_track: 'VALIDATION_ERROR',
-  step_up_required: 'FORBIDDEN',
-};
+export const DEFAULT_BACKEND_CODE_MAP: BackendCodeMap =
+  SHARED_DEFAULT_CODE_MAP as unknown as BackendCodeMap;
 
 export function mapBackendCode(code: string, overrides: BackendCodeMap = {}): PartnerApiErrorCode {
-  return overrides[code] ?? DEFAULT_BACKEND_CODE_MAP[code] ?? 'INTERNAL_ERROR';
+  return sharedMapBackendCode(code, overrides as SharedBackendCodeMap) as PartnerApiErrorCode;
 }
 
-interface LaravelEnvelope {
-  data?: unknown;
-  error?: { code?: string; requestId?: string };
-  meta?: { request_id?: string };
-}
-
-export interface LaravelPage {
-  limit?: number;
-  has_more?: boolean;
-  next_cursor?: string | null;
-}
-
-export interface LaravelResponse<T> {
-  data: T;
-  meta: { request_id?: string; page?: LaravelPage };
-}
+export type LaravelPage = BackendPage;
+export type LaravelResponse<T> = BackendResponse<T>;
 
 export class PartnerApiError extends Error {
   code: PartnerApiErrorCode;
@@ -84,6 +49,13 @@ export class PartnerApiError extends Error {
   }
 }
 
+const client = createBackendClient({
+  baseUrl: laravelBase,
+  tenantId: laravelTenant,
+  useDpop: false,
+  defaultTimeoutMs: TIMEOUT_MS.normal,
+});
+
 async function callLaravel<T>(
   token: string | null,
   method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE',
@@ -93,27 +65,24 @@ async function callLaravel<T>(
   codeMap: BackendCodeMap = {},
   extraHeaders: Record<string, string> = {},
 ): Promise<LaravelResponse<T>> {
-  const params = new URLSearchParams(query);
-  const qs = params.size > 0 ? `?${params.toString()}` : '';
-  const headers: Record<string, string> = { 'Content-Type': 'application/json', ...extraHeaders };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-  const tenant = laravelTenant();
-  if (tenant) headers['X-Tenant-Id'] = tenant;
-  const res = await fetch(`${laravelBase()}/api/v1${path}${qs}`, {
-    method,
-    headers,
-    body: body === undefined ? undefined : JSON.stringify(body),
-    signal: AbortSignal.timeout(TIMEOUT_MS.normal),
-  });
-  const parsed = (await res.json().catch(() => null)) as LaravelEnvelope | null;
-  if (!res.ok) {
-    throw new PartnerApiError({
-      code: mapBackendCode(parsed?.error?.code ?? '', codeMap),
-      status: res.status,
-      requestId: parsed?.error?.requestId ?? parsed?.meta?.request_id ?? 'unknown',
+  try {
+    return await client.call<T>(token, method, path, {
+      query,
+      body,
+      codeMap: codeMap as SharedBackendCodeMap,
+      extraHeaders,
+      apiVersion: 'v1',
     });
+  } catch (e) {
+    if (e instanceof BackendApiError) {
+      throw new PartnerApiError({
+        code: e.code as PartnerApiErrorCode,
+        status: e.status,
+        requestId: e.requestId,
+      });
+    }
+    throw e;
   }
-  return { data: (parsed?.data ?? null) as T, meta: parsed?.meta ?? {} };
 }
 
 export function laravelGet<T>(
@@ -152,7 +121,6 @@ export function laravelDelete<T>(
   return callLaravel<T>(token, 'DELETE', path, {}, undefined, codeMap);
 }
 
-// Low-level call for multipart/form-data or other custom needs.
 export async function laravelCall<T>(
   token: string | null,
   method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE',
@@ -165,9 +133,6 @@ export async function laravelCall<T>(
   return callLaravel<T>(token, method, path, query, body, codeMap, extraHeaders);
 }
 
-// Shared failure mapping for branched handlers: backend-mapped BFF codes
-// render as envelopes; anything else propagates to the framework 500
-// (BFF convention: no explicit 500 envelopes).
 export function laravelErrorResponse(e: unknown, message: string, requestId: string): Response {
   if (e instanceof PartnerApiError) {
     return Response.json(err(e.code, message, requestId), { status: e.status });
@@ -175,5 +140,4 @@ export function laravelErrorResponse(e: unknown, message: string, requestId: str
   throw e;
 }
 
-// Re-export err and newRequestId for convenience
 export { err, newRequestId } from '@/application/api-envelope';

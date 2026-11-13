@@ -10,3 +10,4 @@ export * from "./primitives/textarea";
 export * from "./navigation/NavLink";
 export * from "./feedback/ProgressBar";
 export * from "./context/LoadingContext";
+export * from "./charts";

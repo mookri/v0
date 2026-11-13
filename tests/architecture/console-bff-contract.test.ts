@@ -239,7 +239,12 @@ test('backend route extraction actually finds routes (guards the parser)', () =>
 });
 
 test('API_PREFIX matches the client builder', () => {
-  const client = fs.readFileSync(path.join(WEB, 'adapters', 'backend', 'laravel-client.ts'), 'utf8');
-  expect(client).toContain('/api/v1${path}');
+  const webClient = fs.readFileSync(path.join(WEB, 'adapters', 'backend', 'laravel-client.ts'), 'utf8');
+  const sharedClient = fs.readFileSync(
+    path.join(ROOT, 'packages', 'api-client', 'src', 'laravel-client.ts'),
+    'utf8',
+  );
+  expect(webClient).toContain("apiVersion: 'v1'");
+  expect(sharedClient).toContain('/api/${version}${cleanPath}');
   expect(API_PREFIX).toBe('/api/v1');
 });

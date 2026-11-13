@@ -27,6 +27,11 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 \App\Modules\Search\Console\SearchReindexCommand::class,
+                \App\Modules\Search\Console\ExportSearchSchemasCommand::class,
+                \App\Modules\Search\Console\SearchIndexWorkCommand::class,
+                \App\Modules\Search\Console\SearchVerifyCommand::class,
+                \App\Modules\Search\Console\SearchReplayCommand::class,
+                \App\Modules\Search\Console\SearchAggregatePatternsCommand::class,
             ]);
         }
     }

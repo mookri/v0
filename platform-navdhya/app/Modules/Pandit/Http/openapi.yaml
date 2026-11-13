@@ -529,10 +529,54 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  /api/v1/pandit/assignments/{id}:start:
+    post:
+      operationId: startPanditAssignment
+      summary: 'Start a CONFIRMED assignment owned by the caller (moves booking ASSIGNED → IN_PROGRESS).'
+      x-gate: ownership
+      x-scope: pandit:self
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Assignment marked IN_PROGRESS.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, status]
+                    properties:
+                      id: { $ref: '#/components/schemas/Ulid' }
+                      status: { type: string, enum: [IN_PROGRESS] }
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AuthorizationDenied' }
+        '404':
+          description: PANDIT_ASSIGNMENT_NOT_FOUND — unknown or foreign assignment (or no own profile).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+        '409':
+          description: PANDIT_ASSIGNMENT_WRONG_STATE — the assignment is no longer CONFIRMED. PANDIT_BOOKING_WRONG_STATE — the booking's lifecycle state refuses starting service (nothing written).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
   /api/v1/pandit/assignments/{id}:complete:
     post:
       operationId: completePanditAssignment
-      summary: 'Complete a CONFIRMED assignment owned by the caller (completes the booking: ASSIGNED → IN_PROGRESS → COMPLETED).'
+      summary: 'Complete a CONFIRMED or IN_PROGRESS assignment owned by the caller (completes the booking).'
       x-gate: ownership
       x-scope: pandit:self
       parameters:

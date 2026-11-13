@@ -1,0 +1,28 @@
+openapi: 3.0.3
+info:
+  title: Navdhya Vedic Calendar API
+  version: 0.1.0
+  description: Vedic panchang and festival calendar services.
+paths:
+  /api/v1/calendar/health:
+    get:
+      summary: Calendar module health status
+      operationId: getCalendarHealth
+      responses:
+        '200':
+          description: Operational status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: operational
+                  module:
+                    type: string
+                    example: calendar
+                  version:
+                    type: string
+                    example: 0.1.0
+

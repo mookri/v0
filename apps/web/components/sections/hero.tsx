@@ -56,8 +56,8 @@ const slides: Slide[] = [
 
 const trustItems: TrustItem[] = [
   {
-    title: "Verified Pandits",
-    description: "Trusted & Experienced",
+    title: "Document-Checked Pandits",
+    description: "Evidence-Reviewed Credentials",
     icon: ShieldCheck,
   },
   {
@@ -253,7 +253,7 @@ export default function HeroCarousel() {
               >
                 Book Authentic Pujas
                 <br />
-                with Verified Pandits
+                with Reviewed Pandits
               </h1>
 
               {/* Description */}

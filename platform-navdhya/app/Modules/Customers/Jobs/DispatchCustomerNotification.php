@@ -96,12 +96,26 @@ final class DispatchCustomerNotification implements ShouldQueue
                 $this->deliverInApp();
             }
 
-            // Email is routed above by the N1 matrix (flag + preference +
-            // quiet hours) and executed here (N3): provider-agnostic
-            // Laravel mailer, claim-row idempotency below. Sms stays
-            // routed-but-undelivered until its provider track.
+            $consentGate = app(\App\Modules\Customers\NotificationConsentGateService::class);
+
+            // Email delivery guarded by consent gate (E-CM-08 / C-05)
             if (in_array(NotificationChannels::CHANNEL_EMAIL, $channels, true)) {
-                $this->deliverEmail($settings);
+                $verdict = $consentGate->canDispatch($this->userId, $this->kind, 'EMAIL');
+                if ($verdict['permitted']) {
+                    $this->deliverEmail($settings);
+                } else {
+                    $this->recordSuppression(NotificationChannels::CHANNEL_EMAIL, $verdict['reason']);
+                }
+            }
+
+            // SMS delivery guarded by consent gate (E-CM-08 / C-05)
+            if (in_array(NotificationChannels::CHANNEL_SMS, $channels, true)) {
+                $verdict = $consentGate->canDispatch($this->userId, $this->kind, 'SMS');
+                if ($verdict['permitted']) {
+                    $this->deliverSms($settings);
+                } else {
+                    $this->recordSuppression(NotificationChannels::CHANNEL_SMS, $verdict['reason']);
+                }
             }
         } finally {
             if ($ownsContext) {
@@ -152,12 +166,48 @@ final class DispatchCustomerNotification implements ShouldQueue
      *
      * @param  array<string, mixed>  $settings  resolved CustomerSetting values (key => value)
      */
+    private function recordSuppression(string $channel, string $reason): void
+    {
+        $dedupKey = $this->eventId !== null
+            ? NotificationChannels::dedupKey($this->kind, $this->eventId, (string) $this->userId, $channel)
+            : \App\Domain\Delivery\Support\DedupKeyGenerator::generate(
+                (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId(),
+                $this->kind,
+                (string) $this->userId,
+                "suppression_{$channel}",
+                1
+            );
+
+        $claim = new NotificationDelivery();
+        $claim->forceFill([
+            'user_id' => $this->userId,
+            'kind' => $this->kind,
+            'category' => NotificationChannels::categoryFor($this->kind),
+            'channel' => $channel,
+            'dedup_key' => $dedupKey,
+            'status' => NotificationDelivery::STATUS_SUPPRESSED,
+            'error' => $reason,
+        ]);
+
+        try {
+            $claim->save();
+        } catch (\Illuminate\Database\UniqueConstraintViolationException) {
+            // Replay collapsed
+        }
+    }
+
     private function deliverEmail(array $settings): void
     {
         $email = $this->emailAddress();
         $dedupKey = $this->eventId !== null
             ? NotificationChannels::dedupKey($this->kind, $this->eventId, $this->userId, NotificationChannels::CHANNEL_EMAIL)
-            : null;
+            : \App\Domain\Delivery\Support\DedupKeyGenerator::generate(
+                (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId(),
+                $this->kind,
+                (string) $this->userId,
+                'email_dispatch',
+                1
+            );
 
         if ($dedupKey === null) {
             if ($email !== null) {
@@ -249,6 +299,109 @@ final class DispatchCustomerNotification implements ShouldQueue
             $this->body,
             is_string($locale) && $locale !== '' ? $locale : 'en',
         ));
+    }
+
+    /**
+     * SMS delivery (E-CM-05 / C-04): claim-row idempotency log and execution
+     * through the bound NotificationProvider.
+     *
+     * @param array<string, mixed> $settings
+     */
+    private function deliverSms(array $settings): void
+    {
+        $phone = $this->phoneNumber();
+        $dedupKey = $this->eventId !== null
+            ? NotificationChannels::dedupKey($this->kind, $this->eventId, (string) $this->userId, NotificationChannels::CHANNEL_SMS)
+            : \App\Domain\Delivery\Support\DedupKeyGenerator::generate(
+                (string) app(\App\Platform\Tenancy\TenantContext::class)->tenantId(),
+                $this->kind,
+                (string) $this->userId,
+                'sms_dispatch',
+                1
+            );
+
+        $delivery = NotificationDelivery::query()->where('dedup_key', $dedupKey)->first();
+
+        if ($delivery === null) {
+            $claim = new NotificationDelivery();
+            $claim->forceFill([
+                'user_id' => $this->userId,
+                'kind' => $this->kind,
+                'category' => NotificationChannels::categoryFor($this->kind),
+                'channel' => NotificationChannels::CHANNEL_SMS,
+                'provider' => 'msg91',
+                'dedup_key' => $dedupKey,
+                'status' => $phone === null
+                    ? NotificationDelivery::STATUS_SUPPRESSED
+                    : NotificationDelivery::STATUS_PENDING,
+                'error' => $phone === null ? 'no_phone' : null,
+            ]);
+
+            try {
+                $claim->save();
+                $delivery = $claim;
+            } catch (UniqueConstraintViolationException) {
+                $delivery = NotificationDelivery::query()->where('dedup_key', $dedupKey)->first();
+            }
+        }
+
+        if ($delivery === null || $delivery->status !== NotificationDelivery::STATUS_PENDING) {
+            return;
+        }
+
+        if ($phone === null) {
+            $delivery->forceFill([
+                'status' => NotificationDelivery::STATUS_SUPPRESSED,
+                'error' => 'no_phone',
+            ])->save();
+
+            return;
+        }
+
+        $provider = app(\App\Modules\Customers\Providers\Contracts\NotificationProvider::class);
+        $message = new \App\Modules\Customers\Providers\NotificationMessage(
+            userId: $this->userId,
+            recipient: $phone,
+            category: NotificationChannels::categoryFor($this->kind),
+            channel: 'SMS',
+            template: $this->kind,
+            variables: ['title' => $this->title, 'body' => $this->body],
+            idempotencyKey: $dedupKey
+        );
+
+        $result = $provider->send($message);
+
+        if ($result->ok) {
+            $delivery->forceFill([
+                'status' => NotificationDelivery::STATUS_SENT,
+                'provider_message_id' => $result->providerMessageId,
+                'sent_at' => now(),
+                'error' => null,
+            ])->save();
+        } else {
+            $status = $result->isAmbiguous
+                ? NotificationDelivery::STATUS_DELIVERY_UNKNOWN
+                : NotificationDelivery::STATUS_FAILED;
+
+            $delivery->forceFill([
+                'status' => $status,
+                'error' => $result->error,
+                'failed_at' => now(),
+            ])->save();
+        }
+    }
+
+    private function phoneNumber(): ?string
+    {
+        $phone = User::query()->whereKey($this->userId)->value('phone');
+
+        if (! is_string($phone)) {
+            return null;
+        }
+
+        $phone = trim($phone);
+
+        return $phone !== '' ? $phone : null;
     }
 
     /**

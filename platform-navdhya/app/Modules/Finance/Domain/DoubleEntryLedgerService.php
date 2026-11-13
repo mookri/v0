@@ -2,12 +2,16 @@
 
 namespace App\Modules\Finance\Domain;
 
+use App\Modules\Finance\Domain\Exceptions\AccountingPeriodLockedException;
+use App\Modules\Finance\Domain\Exceptions\JournalReversalException;
 use App\Modules\Finance\Domain\Exceptions\UnbalancedJournalException;
+use App\Modules\Finance\Models\AccountingPeriodLock;
 use App\Modules\Finance\Models\LedgerEntry;
 use App\Modules\Finance\Models\LedgerJournal;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Outbox\Outbox;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\DB;
 
 final class DoubleEntryLedgerService
 {
@@ -34,8 +38,12 @@ final class DoubleEntryLedgerService
         string $referenceId,
         string $description,
         array $entries,
-        CarbonImmutable $postedAt
+        CarbonImmutable $postedAt,
+        ?string $reversesJournalId = null,
     ): LedgerJournal {
+        $period = $postedAt->setTimezone('UTC')->format('Y-m');
+        $this->assertPeriodOpen($tenantId, $period);
+
         // Enforce non-empty entries
         if ($entries === []) {
             throw new UnbalancedJournalException('Journal must contain at least two balanced entries.');
@@ -76,7 +84,9 @@ final class DoubleEntryLedgerService
             'reference_id' => $referenceId,
             'description' => $description,
             'posted_at' => $postedAt,
+            'accounting_period' => $period,
             'status' => LedgerJournal::STATUS_POSTED,
+            'reverses_journal_id' => $reversesJournalId,
         ]);
         $journal->save();
 
@@ -115,5 +125,126 @@ final class DoubleEntryLedgerService
         );
 
         return $journal;
+    }
+
+    /**
+     * Posts a balanced contra reversal journal (inverting DEBIT <-> CREDIT) for an
+     * immutable posted journal, recording the reversal link in the open `$reversedAt` period.
+     */
+    public function reverseJournal(
+        string $tenantId,
+        string $journalId,
+        string $reason,
+        CarbonImmutable $reversedAt,
+    ): LedgerJournal {
+        $connection = (new LedgerJournal())->getConnectionName() ?: 'tenant_shared';
+
+        return DB::connection($connection)->transaction(function () use ($tenantId, $journalId, $reason, $reversedAt): LedgerJournal {
+            /** @var LedgerJournal|null $original */
+            $original = LedgerJournal::query()
+                ->where('tenant_id', $tenantId)
+                ->where('id', $journalId)
+                ->lockForUpdate()
+                ->first();
+
+            if ($original === null) {
+                throw new JournalReversalException('Ledger journal not found.');
+            }
+
+            if ($original->status !== LedgerJournal::STATUS_POSTED) {
+                throw new JournalReversalException("Only POSTED journals can be reversed (current state: {$original->status}).");
+            }
+
+            if ($original->reversed_by_journal_id !== null) {
+                throw new JournalReversalException('Ledger journal has already been reversed.');
+            }
+
+            $entries = LedgerEntry::query()
+                ->where('tenant_id', $tenantId)
+                ->where('journal_id', (string) $original->getKey())
+                ->get();
+
+            $contraEntries = $entries->map(static fn (LedgerEntry $entry): array => [
+                'account_code' => $entry->account_code,
+                'entry_direction' => $entry->entry_direction === LedgerEntry::DIRECTION_DEBIT
+                    ? LedgerEntry::DIRECTION_CREDIT
+                    : LedgerEntry::DIRECTION_DEBIT,
+                'amount_minor' => (int) $entry->amount_minor,
+                'currency' => $entry->currency,
+            ])->all();
+
+            $contra = $this->postJournal(
+                tenantId: $tenantId,
+                referenceType: 'REVERSAL',
+                referenceId: (string) $original->getKey(),
+                description: sprintf('Reversal of %s: %s', $original->journal_number, $reason),
+                entries: $contraEntries,
+                postedAt: $reversedAt,
+                reversesJournalId: (string) $original->getKey(),
+            );
+
+            $original->status = LedgerJournal::STATUS_REVERSED;
+            $original->reversed_by_journal_id = (string) $contra->getKey();
+            $original->reversed_at = $reversedAt;
+            $original->save();
+
+            $this->outbox->append(
+                $tenantId,
+                'ledger_journal',
+                (string) $original->getKey(),
+                'finance.journal.reversed',
+                [
+                    'original_journal_id' => (string) $original->getKey(),
+                    'contra_journal_id' => (string) $contra->getKey(),
+                    'reason' => $reason,
+                ],
+            );
+
+            $this->audit->record(
+                'finance.journal.reversed',
+                ['module' => 'finance', 'resource_type' => 'ledger_journal', 'resource_id' => (string) $original->getKey()],
+                ['status' => LedgerJournal::STATUS_POSTED],
+                ['status' => LedgerJournal::STATUS_REVERSED, 'contra_journal_id' => (string) $contra->getKey()],
+            );
+
+            return $contra;
+        });
+    }
+
+    public function lockPeriod(
+        string $tenantId,
+        string $accountingPeriod,
+        string $lockedBy,
+        ?string $reason = null,
+    ): AccountingPeriodLock {
+        $lock = AccountingPeriodLock::query()->firstOrNew([
+            'tenant_id' => $tenantId,
+            'accounting_period' => $accountingPeriod,
+        ]);
+
+        $lock->forceFill([
+            'status' => AccountingPeriodLock::STATUS_LOCKED,
+            'locked_by' => $lockedBy,
+            'locked_at' => CarbonImmutable::now('UTC'),
+            'lock_reason' => $reason,
+        ]);
+        $lock->save();
+
+        return $lock;
+    }
+
+    private function assertPeriodOpen(string $tenantId, string $accountingPeriod): void
+    {
+        $locked = AccountingPeriodLock::query()
+            ->where('tenant_id', $tenantId)
+            ->where('accounting_period', $accountingPeriod)
+            ->where('status', AccountingPeriodLock::STATUS_LOCKED)
+            ->exists();
+
+        if ($locked) {
+            throw new AccountingPeriodLockedException(
+                "Accounting period [{$accountingPeriod}] is locked; post adjustments or reversals into an open period.",
+            );
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Finance\Domain;
 
+use App\Domain\Verification\Contracts\VerifiesPayoutOwnership;
 use App\Modules\Finance\Domain\Exceptions\MakerCheckerViolationException;
 use App\Modules\Finance\Models\Payout;
 use App\Platform\Audit\AuditWriter;
@@ -14,6 +15,7 @@ final class MakerCheckerPayoutService
     public function __construct(
         private readonly AuditWriter $audit,
         private readonly Outbox $outbox,
+        private readonly ?VerifiesPayoutOwnership $payoutGuard = null,
     ) {
     }
 
@@ -44,12 +46,14 @@ final class MakerCheckerPayoutService
     }
 
     /**
-     * Checker approves payout — strictly enforces maker != checker.
+     * Checker approves payout — strictly enforces maker != checker and payout-ownership invariant (G-FISCAL-1).
      */
     public function approvePayout(
         string $tenantId,
         string $payoutId,
-        string $checkerId
+        string $checkerId,
+        ?string $instrumentId = null,
+        bool $requireVerifiedInstrument = false,
     ): Payout {
         /** @var Payout|null $payout */
         $payout = Payout::query()
@@ -69,6 +73,14 @@ final class MakerCheckerPayoutService
         // Maker/Checker dual custody: maker cannot approve their own payout
         if ((string) $payout->maker_id === (string) $checkerId) {
             throw new MakerCheckerViolationException('Maker/Checker violation: Payout creator cannot approve their own payout.');
+        }
+
+        $guard = $this->payoutGuard ?? (app()->bound(VerifiesPayoutOwnership::class) ? app(VerifiesPayoutOwnership::class) : null);
+        if (
+            $guard !== null
+            && ($instrumentId !== null || $requireVerifiedInstrument || $guard->subjectHasVerificationState($tenantId, (string) $payout->beneficiary_id))
+        ) {
+            $guard->assertEligible($tenantId, (string) $payout->beneficiary_id, $instrumentId);
         }
 
         $now = CarbonImmutable::now('UTC');

@@ -2935,7 +2935,7 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td><span class="badge bg-success-subtle text-success py-1 px-2">Verified</span></td>
+                                                <td><span class="badge py-1 px-2" style="background-color:#EFE3D3;color:#2C2033;border:1px solid #B74717;">Manually Reviewed</span></td>
                                             </tr>
                                             <tr>
                                                 <td>3-128-2</td>

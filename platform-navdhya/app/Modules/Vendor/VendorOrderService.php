@@ -10,6 +10,7 @@ use App\Modules\Vendor\Models\VendorOrder;
 use App\Modules\Vendor\Models\VendorOrderItem;
 use App\Modules\Vendor\Models\VendorOrderTransition;
 use App\Platform\Api\CodedHttpException;
+use App\Platform\Tenancy\PlatformScope;
 
 /**
  * ManagesVendorOrders port implementation: placement, linear lifecycle,
@@ -119,7 +120,11 @@ final class VendorOrderService implements ManagesVendorOrders
 
         // Update / create shipment record for dispatch stages
         if (in_array($next, [Shipment::STATUS_PACKED, Shipment::STATUS_HANDOFF, Shipment::STATUS_IN_TRANSIT, VendorOrder::STATUS_DELIVERED], true)) {
-            $shipment = Shipment::withoutGlobalScopes()->where('order_id', $order->getKey())->first();
+            $shipment = PlatformScope::run(
+                'vendor_order_shipment_transition',
+                static fn () => Shipment::query()->where('order_id', $order->getKey())->first(),
+                tenantId: (string) $order->tenant_id,
+            );
             if ($shipment === null) {
                 $shipment = new Shipment();
                 $shipment->forceFill([

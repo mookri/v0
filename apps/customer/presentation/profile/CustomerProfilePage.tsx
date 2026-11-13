@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { CANONICAL_GOTRAS, CANONICAL_NAKSHATRAS } from '@navdhya/validation';
 import { CustomerProfileViewModel, ProfileUpdateInput, validateProfileUpdate, DeactivateInput } from '@/application/profile/customer-profile';
 
 interface CustomerProfilePageProps {
@@ -33,6 +34,8 @@ export function CustomerProfilePage({ profile, error }: CustomerProfilePageProps
         country: profile.country || '',
         timezone: profile.timezone || '',
         languages: profile.languages || [],
+        gotra: profile.gotra || '',
+        nakshatra: profile.nakshatra || '',
       });
     }
   }, [profile]);
@@ -231,6 +234,18 @@ export function CustomerProfilePage({ profile, error }: CustomerProfilePageProps
                   <dd className="mt-1 text-gray-900">{profile.languages.join(', ')}</dd>
                 </div>
               )}
+              {profile.gotra && (
+                <div>
+                  <dt className="text-sm font-medium text-gray-500">Gotra</dt>
+                  <dd className="mt-1 text-gray-900">{profile.gotra}</dd>
+                </div>
+              )}
+              {profile.nakshatra && (
+                <div>
+                  <dt className="text-sm font-medium text-gray-500">Janma Nakshatra</dt>
+                  <dd className="mt-1 text-gray-900">{profile.nakshatra}</dd>
+                </div>
+              )}
               {profile.mfaEnabled !== undefined && (
                 <div>
                   <dt className="text-sm font-medium text-gray-500">Two-factor authentication</dt>
@@ -344,6 +359,42 @@ export function CustomerProfilePage({ profile, error }: CustomerProfilePageProps
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 disabled={isSaving}
               />
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="gotra" className="block text-sm font-medium text-[#2C2033] mb-1">Gotra (Sankalpa)</label>
+                <select
+                  id="gotra"
+                  value={formData.gotra || ''}
+                  onChange={(e) => handleInputChange('gotra', e.target.value)}
+                  className="w-full px-4 py-3 border border-[#EFE3D3] bg-[#FFF7ED] text-[#2A2421] rounded-lg focus:ring-2 focus:ring-[#F16A24]"
+                  disabled={isSaving}
+                >
+                  <option value="">Select Gotra (optional)</option>
+                  {CANONICAL_GOTRAS.map((g) => (
+                    <option key={g} value={g}>{g}</option>
+                  ))}
+                </select>
+                {fieldErrors.gotra && <p className="mt-1 text-sm text-[#B74717]">{fieldErrors.gotra}</p>}
+              </div>
+
+              <div>
+                <label htmlFor="nakshatra" className="block text-sm font-medium text-[#2C2033] mb-1">Janma Nakshatra</label>
+                <select
+                  id="nakshatra"
+                  value={formData.nakshatra || ''}
+                  onChange={(e) => handleInputChange('nakshatra', e.target.value)}
+                  className="w-full px-4 py-3 border border-[#EFE3D3] bg-[#FFF7ED] text-[#2A2421] rounded-lg focus:ring-2 focus:ring-[#F16A24]"
+                  disabled={isSaving}
+                >
+                  <option value="">Select Nakshatra (optional)</option>
+                  {CANONICAL_NAKSHATRAS.map((n) => (
+                    <option key={n} value={n}>{n.replace(/_/g, ' ')}</option>
+                  ))}
+                </select>
+                {fieldErrors.nakshatra && <p className="mt-1 text-sm text-[#B74717]">{fieldErrors.nakshatra}</p>}
+              </div>
             </div>
 
             <div className="pt-4 border-t border-gray-200 flex flex-wrap gap-3">

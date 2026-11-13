@@ -28,4 +28,11 @@ interface CreatesPaymentIntents
      * @return array{object: string, id: string, booking_id: string, status: string, amount_minor: int, currency: string, provider: string, provider_order_id: string, test_mode: bool}|null
      */
     public function forBooking(string $tenantId, string $bookingId): ?array;
+
+    /**
+     * Transition an existing non-terminal intent to PAYMENT_UNKNOWN when gateway state is ambiguous.
+     *
+     * @return array{object: string, id: string, booking_id: string, status: string, amount_minor: int, currency: string, provider: string, provider_order_id: string, test_mode: bool}|null
+     */
+    public function markUnknown(string $tenantId, string $bookingId, string $reason): ?array;
 }

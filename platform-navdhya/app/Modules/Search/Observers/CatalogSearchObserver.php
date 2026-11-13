@@ -2,28 +2,36 @@
 
 namespace App\Modules\Search\Observers;
 
-use App\Modules\Search\SearchIndexer;
 use App\Modules\Catalog\Models\CatalogItem;
+use App\Modules\Search\Models\SearchIndexOutbox;
 
 class CatalogSearchObserver
 {
-    public function __construct(
-        private readonly SearchIndexer $indexer
-    ) {
-    }
-
     public function saved(CatalogItem $item): void
     {
-        $document = app(\App\Modules\Search\Contracts\PujaServiceSearchProvider::class)->getDocument($item->id);
-        if ($document) {
-            $this->indexer->upsertDocument($document);
-        } else {
-            $this->indexer->deleteDocument('puja_service', $item->id);
-        }
+        $tenantId = (string) ($item->tenant_id ?: config('platform.default_tenant', 'default'));
+
+        SearchIndexOutbox::create([
+            'tenant_id' => $tenantId,
+            'entity_type' => 'puja_service',
+            'entity_id' => (string) $item->id,
+            'revision' => (int) ($item->revision ?? 1),
+            'operation' => SearchIndexOutbox::OP_UPSERT,
+            'status' => SearchIndexOutbox::STATUS_PENDING,
+        ]);
     }
 
     public function deleted(CatalogItem $item): void
     {
-        $this->indexer->deleteDocument('puja_service', $item->id);
+        $tenantId = (string) ($item->tenant_id ?: config('platform.default_tenant', 'default'));
+
+        SearchIndexOutbox::create([
+            'tenant_id' => $tenantId,
+            'entity_type' => 'puja_service',
+            'entity_id' => (string) $item->id,
+            'revision' => (int) ($item->revision ?? 1),
+            'operation' => SearchIndexOutbox::OP_DELETE,
+            'status' => SearchIndexOutbox::STATUS_PENDING,
+        ]);
     }
 }

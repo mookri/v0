@@ -28,8 +28,14 @@ interface TransitionsBookingFulfillment
     public function assignmentAccepted(string $bookingId, string $actorId): array;
 
     /**
-     * Pandit completed the work: ASSIGNED → IN_PROGRESS → COMPLETED
-     * (both matrix hops, one fact).
+     * Pandit began performing the ceremony: ASSIGNED → IN_PROGRESS.
+     *
+     * @return array{ok: true, from: string, to: string}|array{ok: false, reason: 'not_found'|'state_forbidden', from?: string}
+     */
+    public function assignmentStarted(string $bookingId, string $actorId): array;
+
+    /**
+     * Pandit completed the work: ASSIGNED|IN_PROGRESS → COMPLETED.
      *
      * @return array{ok: true, from: string, to: string}|array{ok: false, reason: 'not_found'|'state_forbidden', from?: string}
      */

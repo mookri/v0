@@ -11,13 +11,24 @@ export const EVENT_NAMES = [
   'begin_checkout',
   'booking_confirmed',
   'checkout_started',
+  'facet_view',
+  'kit_opt_in',
   'kyc_submitted',
   'login',
   'page_view',
   'payment_failed',
   'payment_succeeded',
+  'price_tier_viewed',
   'purchase_viewed',
+  'quote_viewed',
+  'reco_impressed',
+  'reco_selected',
   'search',
+  'search_query_abandoned',
+  'search_query_reformulated',
+  'search_query_submitted',
+  'search_result_impressed',
+  'search_result_selected',
   'sign_up',
   'view_item',
   'zero_results_search',
@@ -33,15 +44,26 @@ export interface EventParamMap {
   begin_checkout: { value_basket: number; payment_method?: string };
   booking_confirmed: { value: number; currency: string; service_category: string; city?: string };
   checkout_started: { value_basket: number; item_count: number };
+  facet_view: { facet_key: string; facet_value: string; result_count: number; category_path?: string };
+  kit_opt_in: { service_sku: string; kit_sku: string; obligation: string; action: string };
   kyc_submitted: { doc_type: string };
   login: { method: string };
   page_view: { page_type: string };
   payment_failed: { value: number; currency: string; failure_code?: string; transaction_ref: string };
   payment_succeeded: { value: number; currency: string; method?: string; transaction_ref: string };
+  price_tier_viewed: { sku: string; package_tier: string; price_minor: number; currency: string };
   purchase_viewed: { value: number; item_count: number };
-  search: { search_term: string; result_count: number };
+  quote_viewed: { sku: string; package_tier: string; qualification_tier: string; total_minor: number; currency: string };
+  reco_impressed: { placement: string; reco_ref: string; items_shown: string; surface: string };
+  reco_selected: { placement: string; reco_ref: string; entity_type: string; entity_ref: string; position: number };
+  search: { search_term: string; result_count: number; category_filter?: string; query_trace_id?: string };
+  search_query_abandoned: { trace_id: string; last_query_text: string; dwell_total_ms: number };
+  search_query_reformulated: { prev_query_text: string; new_query_text: string; elapsed_ms: number };
+  search_query_submitted: { query_text_norm: string; query_length: number; script_family: string; surface: string; result_count: number; trace_id: string };
+  search_result_impressed: { trace_id: string; entity_type: string; entity_ref: string; position: number; page_offset: number; dwell_ms: number; viewport_ratio: number };
+  search_result_selected: { trace_id: string; entity_type: string; entity_ref: string; position: number; action: string; dwell_before_click_ms?: number };
   sign_up: { method: string };
-  view_item: { item_type: string; item_category?: string; value?: number };
+  view_item: { item_type: string; item_category?: string; value?: number; category_path?: string; package_tier?: string; duration_minutes?: number };
   zero_results_search: { search_term: string };
 }
 
@@ -286,6 +308,102 @@ export const EVENT_DEFS: Readonly<Record<EventName, EventDef>> =
     "priority": "P1",
     "description": "Checkout entered; trigger for the abandonment rule (analytics-eligibility only — never declares booking truth)."
   },
+  "facet_view": {
+    "name": "facet_view",
+    "version": 1,
+    "owner": "catalog",
+    "producer": "client",
+    "surfaces": [
+      "web",
+      "customer"
+    ],
+    "allowedSinks": [
+      "gtm_ga4",
+      "collector_bigquery"
+    ],
+    "params": [
+      {
+        "name": "facet_key",
+        "type": "string",
+        "required": true,
+        "description": "Category or filter key."
+      },
+      {
+        "name": "facet_value",
+        "type": "string",
+        "required": true,
+        "description": "Selected facet value."
+      },
+      {
+        "name": "result_count",
+        "type": "number",
+        "required": true,
+        "description": "Matching items count."
+      },
+      {
+        "name": "category_path",
+        "type": "string",
+        "required": false,
+        "description": "Materialized category path."
+      }
+    ],
+    "privacyClass": "pseudonymous",
+    "retentionClass": "raw_30d",
+    "sampling": {
+      "mode": "fixed",
+      "rate": 1
+    },
+    "priority": "P2",
+    "description": "Catalog facet viewed or changed."
+  },
+  "kit_opt_in": {
+    "name": "kit_opt_in",
+    "version": 1,
+    "owner": "catalog",
+    "producer": "client",
+    "surfaces": [
+      "web",
+      "customer"
+    ],
+    "allowedSinks": [
+      "gtm_ga4",
+      "collector_bigquery"
+    ],
+    "params": [
+      {
+        "name": "service_sku",
+        "type": "string",
+        "required": true,
+        "description": "Base ritual SKU."
+      },
+      {
+        "name": "kit_sku",
+        "type": "string",
+        "required": true,
+        "description": "Bound kit SKU."
+      },
+      {
+        "name": "obligation",
+        "type": "string",
+        "required": true,
+        "description": "MANDATORY | OPTIONAL | INCLUDED."
+      },
+      {
+        "name": "action",
+        "type": "string",
+        "required": true,
+        "description": "selected | unselected."
+      }
+    ],
+    "privacyClass": "pseudonymous",
+    "retentionClass": "raw_30d",
+    "sampling": {
+      "mode": "fixed",
+      "rate": 1
+    },
+    "priority": "P2",
+    "description": "Samagri kit line item toggled."
+  },
   "kyc_submitted": {
     "name": "kyc_submitted",
     "version": 1,
@@ -474,6 +592,54 @@ export const EVENT_DEFS: Readonly<Record<EventName, EventDef>> =
     "priority": "P0",
     "description": "Payment captured — server truth, transactional outbox, exactly-once downstream effects."
   },
+  "price_tier_viewed": {
+    "name": "price_tier_viewed",
+    "version": 1,
+    "owner": "catalog",
+    "producer": "client",
+    "surfaces": [
+      "web",
+      "customer"
+    ],
+    "allowedSinks": [
+      "gtm_ga4",
+      "collector_bigquery"
+    ],
+    "params": [
+      {
+        "name": "sku",
+        "type": "string",
+        "required": true,
+        "description": "Service SKU."
+      },
+      {
+        "name": "package_tier",
+        "type": "string",
+        "required": true,
+        "description": "Standard | Premium | Complete."
+      },
+      {
+        "name": "price_minor",
+        "type": "number",
+        "required": true,
+        "description": "Price in minor currency units."
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true,
+        "description": "Currency code."
+      }
+    ],
+    "privacyClass": "pseudonymous",
+    "retentionClass": "raw_30d",
+    "sampling": {
+      "mode": "fixed",
+      "rate": 1
+    },
+    "priority": "P2",
+    "description": "Tiered price displayed to user."
+  },
   "purchase_viewed": {
     "name": "purchase_viewed",
     "version": 1,
@@ -510,6 +676,166 @@ export const EVENT_DEFS: Readonly<Record<EventName, EventDef>> =
     "priority": "P1",
     "description": "Confirmation page VIEW — separate event from payment_succeeded. Never a second copy of the purchase: no transaction reference, not a key event."
   },
+  "quote_viewed": {
+    "name": "quote_viewed",
+    "version": 1,
+    "owner": "catalog",
+    "producer": "client",
+    "surfaces": [
+      "web",
+      "customer"
+    ],
+    "allowedSinks": [
+      "gtm_ga4",
+      "collector_bigquery"
+    ],
+    "params": [
+      {
+        "name": "sku",
+        "type": "string",
+        "required": true,
+        "description": "Service SKU."
+      },
+      {
+        "name": "package_tier",
+        "type": "string",
+        "required": true,
+        "description": "Package tier code."
+      },
+      {
+        "name": "qualification_tier",
+        "type": "string",
+        "required": true,
+        "description": "Pandit qualification tier."
+      },
+      {
+        "name": "total_minor",
+        "type": "number",
+        "required": true,
+        "description": "Total quote in minor units."
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true,
+        "description": "Currency code."
+      }
+    ],
+    "privacyClass": "pseudonymous",
+    "retentionClass": "raw_30d",
+    "sampling": {
+      "mode": "fixed",
+      "rate": 1
+    },
+    "priority": "P2",
+    "description": "Commercial quote breakdown viewed."
+  },
+  "reco_impressed": {
+    "name": "reco_impressed",
+    "version": 1,
+    "owner": "recommendations",
+    "producer": "client",
+    "surfaces": [
+      "web",
+      "customer"
+    ],
+    "allowedSinks": [
+      "collector_bigquery"
+    ],
+    "params": [
+      {
+        "name": "placement",
+        "type": "string",
+        "required": true,
+        "description": "Placement slot identifier."
+      },
+      {
+        "name": "reco_ref",
+        "type": "string",
+        "required": true,
+        "description": "Recommendation generation run ID.",
+        "highCardinality": true,
+        "hcReviewed": true
+      },
+      {
+        "name": "items_shown",
+        "type": "string",
+        "required": true,
+        "description": "Comma-separated item refs."
+      },
+      {
+        "name": "surface",
+        "type": "string",
+        "required": true,
+        "description": "Page surface displaying recommendations."
+      }
+    ],
+    "privacyClass": "pseudonymous",
+    "retentionClass": "raw_90d",
+    "sampling": {
+      "mode": "fixed",
+      "rate": 1
+    },
+    "priority": "P2",
+    "description": "Recommendation shelf or tray visible in viewport."
+  },
+  "reco_selected": {
+    "name": "reco_selected",
+    "version": 1,
+    "owner": "recommendations",
+    "producer": "client",
+    "surfaces": [
+      "web",
+      "customer"
+    ],
+    "allowedSinks": [
+      "collector_bigquery"
+    ],
+    "params": [
+      {
+        "name": "placement",
+        "type": "string",
+        "required": true,
+        "description": "Placement slot identifier."
+      },
+      {
+        "name": "reco_ref",
+        "type": "string",
+        "required": true,
+        "description": "Recommendation generation run ID.",
+        "highCardinality": true,
+        "hcReviewed": true
+      },
+      {
+        "name": "entity_type",
+        "type": "string",
+        "required": true,
+        "description": "puja_service | temple | pandit."
+      },
+      {
+        "name": "entity_ref",
+        "type": "string",
+        "required": true,
+        "description": "Recommended item identifier.",
+        "highCardinality": true,
+        "hcReviewed": true
+      },
+      {
+        "name": "position",
+        "type": "number",
+        "required": true,
+        "description": "Zero-based rank position within shelf."
+      }
+    ],
+    "privacyClass": "pseudonymous",
+    "retentionClass": "raw_90d",
+    "sampling": {
+      "mode": "fixed",
+      "rate": 1
+    },
+    "priority": "P2",
+    "description": "Recommended item clicked or selected."
+  },
   "search": {
     "name": "search",
     "version": 1,
@@ -535,6 +861,20 @@ export const EVENT_DEFS: Readonly<Record<EventName, EventDef>> =
         "type": "number",
         "required": true,
         "description": "Number of results shown."
+      },
+      {
+        "name": "category_filter",
+        "type": "string",
+        "required": false,
+        "description": "Category filter applied."
+      },
+      {
+        "name": "query_trace_id",
+        "type": "string",
+        "required": false,
+        "description": "Trace id.",
+        "highCardinality": true,
+        "hcReviewed": true
       }
     ],
     "privacyClass": "pseudonymous",
@@ -545,6 +885,283 @@ export const EVENT_DEFS: Readonly<Record<EventName, EventDef>> =
     },
     "priority": "P1",
     "description": "Search executed with results. Authoritative search log stays in Laravel until B4 fold-in."
+  },
+  "search_query_abandoned": {
+    "name": "search_query_abandoned",
+    "version": 1,
+    "owner": "search",
+    "producer": "client",
+    "surfaces": [
+      "web",
+      "customer"
+    ],
+    "allowedSinks": [
+      "collector_bigquery"
+    ],
+    "params": [
+      {
+        "name": "trace_id",
+        "type": "string",
+        "required": true,
+        "description": "Search trace ID.",
+        "highCardinality": true,
+        "hcReviewed": true
+      },
+      {
+        "name": "last_query_text",
+        "type": "string",
+        "required": true,
+        "description": "Last query attempted before abandonment."
+      },
+      {
+        "name": "dwell_total_ms",
+        "type": "number",
+        "required": true,
+        "description": "Total search session duration in ms."
+      }
+    ],
+    "privacyClass": "pseudonymous",
+    "retentionClass": "raw_90d",
+    "sampling": {
+      "mode": "fixed",
+      "rate": 1
+    },
+    "priority": "P2",
+    "description": "Search session closed or abandoned without selection."
+  },
+  "search_query_reformulated": {
+    "name": "search_query_reformulated",
+    "version": 1,
+    "owner": "search",
+    "producer": "client",
+    "surfaces": [
+      "web",
+      "customer"
+    ],
+    "allowedSinks": [
+      "collector_bigquery"
+    ],
+    "params": [
+      {
+        "name": "prev_query_text",
+        "type": "string",
+        "required": true,
+        "description": "Previous query text."
+      },
+      {
+        "name": "new_query_text",
+        "type": "string",
+        "required": true,
+        "description": "New query text."
+      },
+      {
+        "name": "elapsed_ms",
+        "type": "number",
+        "required": true,
+        "description": "Milliseconds between searches."
+      }
+    ],
+    "privacyClass": "pseudonymous",
+    "retentionClass": "raw_90d",
+    "sampling": {
+      "mode": "fixed",
+      "rate": 1
+    },
+    "priority": "P2",
+    "description": "Search query edited or reformulated within session."
+  },
+  "search_query_submitted": {
+    "name": "search_query_submitted",
+    "version": 1,
+    "owner": "search",
+    "producer": "client",
+    "surfaces": [
+      "web",
+      "customer"
+    ],
+    "allowedSinks": [
+      "collector_bigquery"
+    ],
+    "params": [
+      {
+        "name": "query_text_norm",
+        "type": "string",
+        "required": true,
+        "description": "Normalized query string."
+      },
+      {
+        "name": "query_length",
+        "type": "number",
+        "required": true,
+        "description": "Character length of query."
+      },
+      {
+        "name": "script_family",
+        "type": "string",
+        "required": true,
+        "description": "devanagari | latin | iast | mixed."
+      },
+      {
+        "name": "surface",
+        "type": "string",
+        "required": true,
+        "description": "web_header | web_search_page | customer_home."
+      },
+      {
+        "name": "result_count",
+        "type": "number",
+        "required": true,
+        "description": "Number of results returned."
+      },
+      {
+        "name": "trace_id",
+        "type": "string",
+        "required": true,
+        "description": "Search trace ID.",
+        "highCardinality": true,
+        "hcReviewed": true
+      }
+    ],
+    "privacyClass": "pseudonymous",
+    "retentionClass": "raw_90d",
+    "sampling": {
+      "mode": "fixed",
+      "rate": 1
+    },
+    "priority": "P1",
+    "description": "Search query submitted by user."
+  },
+  "search_result_impressed": {
+    "name": "search_result_impressed",
+    "version": 1,
+    "owner": "search",
+    "producer": "client",
+    "surfaces": [
+      "web",
+      "customer"
+    ],
+    "allowedSinks": [
+      "collector_bigquery"
+    ],
+    "params": [
+      {
+        "name": "trace_id",
+        "type": "string",
+        "required": true,
+        "description": "Search trace ID.",
+        "highCardinality": true,
+        "hcReviewed": true
+      },
+      {
+        "name": "entity_type",
+        "type": "string",
+        "required": true,
+        "description": "puja_service | temple | pandit | guide."
+      },
+      {
+        "name": "entity_ref",
+        "type": "string",
+        "required": true,
+        "description": "Result entity identifier.",
+        "highCardinality": true,
+        "hcReviewed": true
+      },
+      {
+        "name": "position",
+        "type": "number",
+        "required": true,
+        "description": "Zero-based rank position in result set."
+      },
+      {
+        "name": "page_offset",
+        "type": "number",
+        "required": true,
+        "description": "Pagination offset."
+      },
+      {
+        "name": "dwell_ms",
+        "type": "number",
+        "required": true,
+        "description": "Dwell time in viewport in milliseconds."
+      },
+      {
+        "name": "viewport_ratio",
+        "type": "number",
+        "required": true,
+        "description": "Intersection ratio (e.g. 0.50)."
+      }
+    ],
+    "privacyClass": "pseudonymous",
+    "retentionClass": "raw_90d",
+    "sampling": {
+      "mode": "fixed",
+      "rate": 1
+    },
+    "priority": "P1",
+    "description": "Search result candidate visible in viewport >= 50% for >= 300ms."
+  },
+  "search_result_selected": {
+    "name": "search_result_selected",
+    "version": 1,
+    "owner": "search",
+    "producer": "client",
+    "surfaces": [
+      "web",
+      "customer"
+    ],
+    "allowedSinks": [
+      "collector_bigquery"
+    ],
+    "params": [
+      {
+        "name": "trace_id",
+        "type": "string",
+        "required": true,
+        "description": "Search trace ID.",
+        "highCardinality": true,
+        "hcReviewed": true
+      },
+      {
+        "name": "entity_type",
+        "type": "string",
+        "required": true,
+        "description": "puja_service | temple | pandit | guide."
+      },
+      {
+        "name": "entity_ref",
+        "type": "string",
+        "required": true,
+        "description": "Selected entity identifier.",
+        "highCardinality": true,
+        "hcReviewed": true
+      },
+      {
+        "name": "position",
+        "type": "number",
+        "required": true,
+        "description": "Zero-based rank position of clicked item."
+      },
+      {
+        "name": "action",
+        "type": "string",
+        "required": true,
+        "description": "click | quick_view | book_direct."
+      },
+      {
+        "name": "dwell_before_click_ms",
+        "type": "number",
+        "required": false,
+        "description": "Dwell time before clicking."
+      }
+    ],
+    "privacyClass": "pseudonymous",
+    "retentionClass": "raw_90d",
+    "sampling": {
+      "mode": "fixed",
+      "rate": 1
+    },
+    "priority": "P1",
+    "description": "Search result item selected or clicked by user."
   },
   "sign_up": {
     "name": "sign_up",
@@ -607,6 +1224,24 @@ export const EVENT_DEFS: Readonly<Record<EventName, EventDef>> =
         "type": "number",
         "required": false,
         "description": "Displayed price in INR. Display only — never pricing truth."
+      },
+      {
+        "name": "category_path",
+        "type": "string",
+        "required": false,
+        "description": "Materialized category path."
+      },
+      {
+        "name": "package_tier",
+        "type": "string",
+        "required": false,
+        "description": "Standard | Premium | Complete tier."
+      },
+      {
+        "name": "duration_minutes",
+        "type": "number",
+        "required": false,
+        "description": "Authoritative duration."
       }
     ],
     "privacyClass": "pseudonymous",

@@ -219,6 +219,65 @@ paths:
                     required: [request_id]
                     properties:
                       request_id: { type: string }
+  /api/v1/onboarding/documents/{id}/access-link:
+    get:
+      operationId: issueDocumentAccessLink
+      summary: Issue short-lived signed retrieval URL bound to document, tenant, and viewer.
+      x-permission: onboarding:document:access
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+      responses:
+        '200':
+          description: Signed URL issued.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: object
+                    required: [id, url, expires_in_seconds, mime, size, sha256]
+                  meta:
+                    type: object
+                    required: [request_id]
+                    properties:
+                      request_id: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/onboarding/documents/{id}/content:
+    get:
+      operationId: streamDocumentContent
+      summary: Stream verified binary document content via signed link (no raw object key exposure).
+      x-permission: onboarding:document:access
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Ulid' }
+        - name: expires
+          in: query
+          required: true
+          schema: { type: integer }
+        - name: viewer
+          in: query
+          required: true
+          schema: { type: string }
+        - name: sig
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Binary stream with nosniff and sandbox CSP headers.
+        '403':
+          description: Signature invalid, expired, viewer mismatch, or document quarantined.
+        '409':
+          description: SHA-256 or magic-byte integrity mismatch.
   /api/v1/onboarding/applications/{id}/status:
     get:
       operationId: getApplicationStatus

@@ -5,20 +5,39 @@
   "phase": 1,
   "priority": 100,
   "dependencies": [],
-  "actions": ["submit", "review"],
+  "actions": ["submit", "review", "access", "decide", "grant", "revoke", "manage", "request"],
   "permissions": [
     { "code": "onboarding:application:create", "name": "Start applications" },
     { "code": "onboarding:application:view", "name": "View applications" },
     { "code": "onboarding:application:submit", "name": "Submit applications" },
     { "code": "onboarding:review:view", "name": "View review queue" },
     { "code": "onboarding:review:approve", "name": "Approve applications", "sensitive": true },
-    { "code": "onboarding:review:reject", "name": "Reject applications", "sensitive": true }
+    { "code": "onboarding:review:reject", "name": "Reject applications", "sensitive": true },
+    { "code": "onboarding:document:access", "name": "Access uploaded onboarding documents", "sensitive": true },
+    { "code": "onboarding:appeal:submit", "name": "Submit onboarding appeal" },
+    { "code": "onboarding:appeal:decide", "name": "Decide onboarding appeal", "sensitive": true },
+    { "code": "onboarding:claim:grant", "name": "Grant verification claims", "sensitive": true },
+    { "code": "onboarding:claim:revoke", "name": "Revoke verification claims", "sensitive": true },
+    { "code": "onboarding:payout:approve", "name": "Approve payout instruments", "sensitive": true },
+    { "code": "onboarding:consent:manage", "name": "Manage verification consents" },
+    { "code": "onboarding:subject:request", "name": "Submit partner privacy rights requests" },
+    { "code": "onboarding:policy:manage", "name": "Manage verification policy versions", "sensitive": true }
   ],
   "scopes": ["onboarding:applicant", "onboarding:reviewer"],
   "events": [
     { "name": "onboarding.application.submitted", "schema": "v1" },
     { "name": "onboarding.application.approved", "schema": "v1" },
-    { "name": "onboarding.application.rejected", "schema": "v1" }
+    { "name": "onboarding.application.rejected", "schema": "v1" },
+    { "name": "onboarding.document.accessed", "schema": "v1" },
+    { "name": "onboarding.document.reviewed", "schema": "v1" },
+    { "name": "onboarding.document.integrity_failed", "schema": "v1" },
+    { "name": "onboarding.claim.decided", "schema": "v1" },
+    { "name": "onboarding.claim.expired", "schema": "v1" },
+    { "name": "onboarding.claim.revoked", "schema": "v1" },
+    { "name": "onboarding.decision.countersigned", "schema": "v1" },
+    { "name": "onboarding.appeal.submitted", "schema": "v1" },
+    { "name": "onboarding.appeal.resolved", "schema": "v1" },
+    { "name": "onboarding.control.segregation_violation", "schema": "v1" }
   ],
   "navigation": [],
   "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/onboarding" }

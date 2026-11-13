@@ -8,12 +8,19 @@
   "actions": ["manage"],
   "permissions": [
     { "code": "catalog:item:view", "name": "View catalog items" },
-    { "code": "catalog:item:manage", "name": "Manage catalog items", "sensitive": true }
+    { "code": "catalog:item:manage", "name": "Manage catalog items", "sensitive": true },
+    { "code": "catalog:taxonomy:view", "name": "View catalog category taxonomy" },
+    { "code": "catalog:taxonomy:create", "name": "Create category nodes", "sensitive": true },
+    { "code": "catalog:taxonomy:update", "name": "Update category taxonomy hierarchy", "sensitive": true }
   ],
   "scopes": [],
   "events": [
     { "name": "catalog.item.created", "schema": "v1" },
-    { "name": "catalog.item.updated", "schema": "v1" }
+    { "name": "catalog.item.updated", "schema": "v1" },
+    { "name": "catalog.item.published", "schema": "v1" },
+    { "name": "catalog.item.archived", "schema": "v1" },
+    { "name": "catalog.price.updated", "schema": "v1" },
+    { "name": "catalog.category.moved", "schema": "v1" }
   ],
   "navigation": [],
   "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/catalog" }

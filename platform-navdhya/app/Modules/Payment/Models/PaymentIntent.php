@@ -42,6 +42,8 @@ final class PaymentIntent extends Model
 
     public const STATUS_PENDING = 'PENDING';
 
+    public const STATUS_PAYMENT_UNKNOWN = 'PAYMENT_UNKNOWN';
+
     public const STATUS_SUCCEEDED = 'SUCCEEDED';
 
     public const STATUS_FAILED = 'FAILED';
@@ -64,7 +66,8 @@ final class PaymentIntent extends Model
     protected $fillable = [
         'tenant_id', 'user_id', 'booking_id', 'amount_minor', 'currency',
         'status', 'provider', 'test_mode', 'provider_order_id',
-        'provider_payment_id', 'quote_snapshot',
+        'provider_payment_id', 'quote_snapshot', 'reconciled_at',
+        'reconcile_attempts', 'last_reconcile_error',
     ];
 
     protected function casts(): array
@@ -72,6 +75,8 @@ final class PaymentIntent extends Model
         return [
             'test_mode' => 'boolean',
             'quote_snapshot' => 'array',
+            'reconciled_at' => 'datetime',
+            'reconcile_attempts' => 'integer',
         ];
     }
 

@@ -4,6 +4,40 @@ info:
   title: Navdhya Catalog — Items
   version: 1.0.0
 paths:
+  /api/v1/catalog/public/items:
+    get:
+      operationId: listPublicCatalogItems
+      summary: Anonymous browse of active catalog items for marketing and intake.
+      x-gate: public
+      parameters:
+        - name: tenant_id
+          in: query
+          required: true
+          schema: { type: string }
+          description: Tenant identifier.
+        - name: category
+          in: query
+          required: false
+          schema: { type: string }
+          description: Category slug or ULID filter.
+        - name: market
+          in: query
+          required: false
+          schema: { type: string }
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: List of active catalog items.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        '422': { $ref: '#/components/responses/ValidationFailed' }
   /api/v1/catalog/items:
     get:
       operationId: listCatalogItems

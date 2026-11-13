@@ -1,0 +1,29 @@
+{
+  "$schema": "../../Platform/Modules/module.schema.json",
+  "code": "jyotish",
+  "name": "Jyotish Calculation Engine",
+  "version": "0.1.0",
+  "phase": 0,
+  "priority": 110,
+  "dependencies": [],
+  "actions": ["execute", "read", "write", "manage", "interpret", "export"],
+  "permissions": [
+    { "code": "jyotish:calculation:execute", "name": "Execute astronomical and Jyotish calculations" },
+    { "code": "jyotish:chart:read", "name": "Read devotee horoscope charts" },
+    { "code": "jyotish:chart:write", "name": "Generate or save devotee horoscope charts" },
+    { "code": "jyotish:ruleset:manage", "name": "Manage, version or publish astrological rulesets", "sensitive": true },
+    { "code": "jyotish:practitioner:read", "name": "Access practitioner analysis studio tools" }
+  ],
+  "scopes": ["jyotish:self", "jyotish:read", "jyotish:write"],
+  "events": [
+    { "name": "jyotish.chart.completed", "schema": "v1" },
+    { "name": "jyotish.muhurat.calculated", "schema": "v1" },
+    { "name": "jyotish.report.generated", "schema": "v1" },
+    { "name": "jyotish.ruleset.updated", "schema": "v1" }
+  ],
+  "navigation": [],
+  "api": {
+    "openapi": "Http/openapi.yaml",
+    "basePath": "/api/v1/jyotish"
+  }
+}

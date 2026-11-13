@@ -2,14 +2,16 @@
 
 namespace App\Modules\Customers\Providers;
 
+use App\Domain\Delivery\Exceptions\ProviderNotConfiguredException;
 use App\Modules\Customers\Providers\Contracts\NotificationProvider;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 
 /**
  * WhatsApp Cloud API provider adapter (E4).
  * Communicates via Meta Graph API for template message delivery.
+ * Hardened for fail-closed configuration, connect/read timeouts, and message ID integrity.
  */
 final class WhatsAppCloudProvider implements NotificationProvider
 {
@@ -33,7 +35,7 @@ final class WhatsAppCloudProvider implements NotificationProvider
     public function send(NotificationMessage $message): ProviderSendResult
     {
         if (empty($this->accessToken) || empty($this->phoneNumberId)) {
-            return ProviderSendResult::success('wa_sim_' . Str::random(16), ['mode' => 'simulated']);
+            throw new ProviderNotConfiguredException('whatsapp.access_token_or_phone_number_id');
         }
 
         $url = "https://graph.facebook.com/{$this->apiVersion}/{$this->phoneNumberId}/messages";
@@ -44,31 +46,56 @@ final class WhatsAppCloudProvider implements NotificationProvider
             $parameters[] = ['type' => 'text', 'text' => (string) $val];
         }
 
-        try {
-            $response = Http::withToken($this->accessToken)->post($url, [
-                'messaging_product' => 'whatsapp',
-                'recipient_type' => 'individual',
-                'to' => $message->recipient,
-                'type' => 'template',
-                'template' => [
-                    'name' => $message->template,
-                    'language' => ['code' => 'en_US'],
-                    'components' => [
-                        [
-                            'type' => 'body',
-                            'parameters' => $parameters,
-                        ],
+        $payload = [
+            'messaging_product' => 'whatsapp',
+            'recipient_type' => 'individual',
+            'to' => $message->recipient,
+            'type' => 'template',
+            'template' => [
+                'name' => $message->template,
+                'language' => ['code' => 'en_US'],
+                'components' => [
+                    [
+                        'type' => 'body',
+                        'parameters' => $parameters,
                     ],
                 ],
-            ]);
+            ],
+        ];
+
+        if ($message->idempotencyKey !== null && $message->idempotencyKey !== '') {
+            $payload['biz_opaque_callback_data'] = $message->idempotencyKey;
+        }
+
+        try {
+            $response = Http::timeout(5)
+                ->connectTimeout(3)
+                ->withToken($this->accessToken)
+                ->post($url, $payload);
 
             if ($response->successful()) {
                 $body = $response->json();
-                $msgId = (string) ($body['messages'][0]['id'] ?? Str::random(16));
-                return ProviderSendResult::success($msgId, $body);
+                $msgId = (string) ($body['messages'][0]['id'] ?? '');
+
+                if ($msgId === '') {
+                    return ProviderSendResult::failure('WhatsApp API response missing messages[0].id', is_array($body) ? $body : ['raw' => $response->body()]);
+                }
+
+                return ProviderSendResult::success($msgId, is_array($body) ? $body : []);
+            }
+
+            if ($response->status() === 504) {
+                return ProviderSendResult::ambiguous("WhatsApp API 504 Gateway Timeout: {$response->body()}", $response->json());
             }
 
             return ProviderSendResult::failure("WhatsApp API error: {$response->body()}", $response->json());
+        } catch (ConnectionException $e) {
+            $isTimeout = str_contains(strtolower($e->getMessage()), 'timed out') || str_contains(strtolower($e->getMessage()), 'timeout');
+            if ($isTimeout) {
+                return ProviderSendResult::ambiguous("WhatsApp connection timeout: {$e->getMessage()}");
+            }
+
+            return ProviderSendResult::failure("WhatsApp connection failure: {$e->getMessage()}");
         } catch (\Throwable $e) {
             return ProviderSendResult::failure($e->getMessage());
         }
@@ -82,6 +109,10 @@ final class WhatsAppCloudProvider implements NotificationProvider
             $token = $request->query('hub_verify_token');
             $expectedToken = config('notifications.whatsapp.verify_token');
 
+            if ($expectedToken === null || $expectedToken === '') {
+                return WebhookVerificationResult::invalid('Meta verify token unconfigured (fail-closed)');
+            }
+
             if ($mode === 'subscribe' && $token === $expectedToken) {
                 return WebhookVerificationResult::matched('handshake', 'verified');
             }
@@ -90,12 +121,19 @@ final class WhatsAppCloudProvider implements NotificationProvider
         }
 
         // POST status receipt verification
-        if ($this->appSecret !== '') {
-            $signature = (string) $request->header('X-Hub-Signature-256', '');
-            $expected = 'sha256=' . hash_hmac('sha256', $request->getContent(), $this->appSecret);
-            if (! hash_equals($expected, $signature)) {
-                return WebhookVerificationResult::invalid('Invalid WhatsApp HMAC signature');
-            }
+        $secret = $this->appSecret !== '' ? $this->appSecret : (string) config('notifications.whatsapp.app_secret', '');
+        if ($secret === '') {
+            return WebhookVerificationResult::invalid('WhatsApp app secret is unconfigured (fail-closed)');
+        }
+
+        $signature = (string) $request->header('X-Hub-Signature-256', '');
+        if ($signature === '') {
+            return WebhookVerificationResult::invalid('Missing X-Hub-Signature-256 header');
+        }
+
+        $expected = 'sha256=' . hash_hmac('sha256', $request->getContent(), $secret);
+        if (! hash_equals($expected, $signature)) {
+            return WebhookVerificationResult::invalid('Invalid WhatsApp HMAC signature');
         }
 
         $entry = $request->input('entry.0.changes.0.value.statuses.0');

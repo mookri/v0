@@ -132,8 +132,10 @@ export function createCustomerApi(fetchImpl: CustomerApiFetch) {
     service_sku: string;
     scheduled_at: string;
     duration_minutes?: number;
+    service_venue?: 'home' | 'temple' | 'online';
     address_id?: string;
     address_snapshot?: Record<string, unknown>;
+    metadata?: Record<string, unknown>;
   }, idempotencyKey: string) =>
     request('/api/bookings', {
       method: 'POST',

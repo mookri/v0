@@ -49,6 +49,8 @@ export async function proxy(request: NextRequest) {
     response.headers.append('set-cookie', cookie);
   }
   if (rewritten !== null) {
+    response.headers.set('Cache-Control', 'private, no-store');
+    response.headers.set('Vary', 'Cookie, Authorization');
     return response;
   }
 
@@ -57,6 +59,8 @@ export async function proxy(request: NextRequest) {
   // accept header get redirected to /login.
   const acceptsJson = request.headers.get('accept')?.includes('application/json');
   if (pathname.startsWith('/api/') && acceptsJson) {
+    response.headers.set('Cache-Control', 'private, no-store');
+    response.headers.set('Vary', 'Cookie, Authorization');
     return response;
   }
 
@@ -74,6 +78,8 @@ export async function proxy(request: NextRequest) {
     return redirect;
   }
 
+  response.headers.set('Cache-Control', 'private, no-store');
+  response.headers.set('Vary', 'Cookie, Authorization');
   return response;
 }
 

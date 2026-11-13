@@ -5,11 +5,29 @@
     "phase": 100,
     "priority": 500,
     "dependencies": [],
-    "permissions": [],
-    "scopes": [],
-    "events": [],
-    "navigation": [],
     "actions": [],
+    "permissions": [
+        {
+            "code": "seo_content:pages:view",
+            "name": "View SEO pages"
+        },
+        {
+            "code": "seo_content:pages:update",
+            "name": "Manage and update SEO pages",
+            "sensitive": true
+        }
+    ],
+    "scopes": [
+        "seo_content:read",
+        "seo_content:write"
+    ],
+    "events": [
+        {
+            "name": "seo_content.page.published",
+            "schema": "v1"
+        }
+    ],
+    "navigation": [],
     "api": {
         "basePath": "seo"
     }

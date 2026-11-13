@@ -8,7 +8,7 @@
 
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, X } from "lucide-react";
 import {
@@ -53,12 +53,39 @@ function saveRecent(q: string) {
   }
 }
 
-async function recordAnalytics(q: string, results: number) {
+interface ImpressionItem {
+  trace_id: string;
+  entity_type: string;
+  entity_id: string;
+  position: number;
+  dwell_ms: number;
+  viewport_ratio: number;
+}
+
+interface SelectionItem {
+  trace_id: string;
+  entity_type: string;
+  entity_id: string;
+  position: number;
+  action: string;
+  dwell_before_click_ms?: number;
+}
+
+async function recordAnalytics(
+  q: string,
+  results: number,
+  impressions?: ImpressionItem[],
+  selections?: SelectionItem[],
+) {
   try {
     await fetch("/api/search/analytics", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ queries: [{ q, results }] }),
+      body: JSON.stringify({
+        queries: q ? [{ q, results }] : [],
+        impressions: impressions && impressions.length > 0 ? impressions : undefined,
+        selections: selections && selections.length > 0 ? selections : undefined,
+      }),
       keepalive: true,
     });
   } catch {
@@ -82,6 +109,10 @@ export function SearchBox({
   const seqRef = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const traceIdRef = useRef<string>("");
+  const pendingImpressionsRef = useRef<Map<string, ImpressionItem>>(new Map());
+  const openTimeRef = useRef<number>(0);
 
   const items = flattenSuggestions(groups);
   const trimmed = query.trim();
@@ -101,6 +132,81 @@ export function SearchBox({
       }
     })();
   }, []);
+
+  const flushImpressions = useCallback(() => {
+    if (pendingImpressionsRef.current.size > 0) {
+      const imps = Array.from(pendingImpressionsRef.current.values());
+      pendingImpressionsRef.current.clear();
+      void recordAnalytics("", 0, imps);
+    }
+  }, []);
+
+  // Flush impressions on page hide or tab switch
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        flushImpressions();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      flushImpressions();
+    };
+  }, [flushImpressions]);
+
+  // Impression tracking via IntersectionObserver: 50% visibility for >= 300ms
+  useEffect(() => {
+    if (!open || groups.length === 0 || typeof IntersectionObserver === "undefined") return;
+
+    const timers = new Map<Element, ReturnType<typeof setTimeout>>();
+    const startTimes = new Map<Element, number>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const el = entry.target as HTMLElement;
+          const entityType = el.getAttribute("data-entity-type") || "suggestion";
+          const entityId = el.getAttribute("data-entity-id") || el.id;
+          const position = Number(el.getAttribute("data-position") || 0);
+
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+            startTimes.set(el, Date.now());
+            const timer = setTimeout(() => {
+              const dwell = Date.now() - (startTimes.get(el) || Date.now());
+              const key = `${entityType}:${entityId}`;
+              if (!pendingImpressionsRef.current.has(key)) {
+                pendingImpressionsRef.current.set(key, {
+                  trace_id: traceIdRef.current || "tr_anon",
+                  entity_type: entityType,
+                  entity_id: entityId,
+                  position,
+                  dwell_ms: dwell >= 300 ? dwell : 300,
+                  viewport_ratio: Math.round(entry.intersectionRatio * 100) / 100,
+                });
+              }
+            }, 300);
+            timers.set(el, timer);
+          } else {
+            const timer = timers.get(el);
+            if (timer) {
+              clearTimeout(timer);
+              timers.delete(el);
+            }
+          }
+        });
+      },
+      { threshold: 0.5 },
+    );
+
+    const optionEls = listRef.current?.querySelectorAll('[role="option"]');
+    optionEls?.forEach((el) => observer.observe(el));
+
+    return () => {
+      timers.forEach((t) => clearTimeout(t));
+      observer.disconnect();
+    };
+  }, [open, groups]);
 
   useEffect(() => {
     seqRef.current += 1;
@@ -136,6 +242,8 @@ export function SearchBox({
         };
         const suggestions = json?.data?.suggestions ?? [];
         setGroups(suggestions);
+        traceIdRef.current = "tr_" + Math.random().toString(36).slice(2, 10);
+        openTimeRef.current = Date.now();
         setActiveIndex(-1);
       } catch (e) {
         if ((e as { name?: string })?.name === "AbortError") return;
@@ -155,11 +263,15 @@ export function SearchBox({
 
     const onPointerDown = (event: MouseEvent | TouchEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) {
+        flushImpressions();
         setOpen(false);
       }
     };
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") {
+        flushImpressions();
+        setOpen(false);
+      }
     };
 
     document.addEventListener("mousedown", onPointerDown);
@@ -170,16 +282,35 @@ export function SearchBox({
       document.removeEventListener("touchstart", onPointerDown);
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [open]);
+  }, [open, flushImpressions]);
 
-  const goTo = (href: string, clickedTitle?: string) => {
-    if (clickedTitle) {
-      saveRecent(clickedTitle);
+  const goTo = (
+    href: string,
+    clickedItem?: {
+      title: string;
+      entityType?: string;
+      entityId?: string;
+      position?: number;
+    },
+  ) => {
+    if (clickedItem) {
+      saveRecent(clickedItem.title);
       setRecent(loadRecent());
-      void recordAnalytics(trimmed, 1);
+      const dwellBeforeClick = openTimeRef.current ? Date.now() - openTimeRef.current : 0;
+      const selection: SelectionItem = {
+        trace_id: traceIdRef.current || "tr_anon",
+        entity_type: clickedItem.entityType || "suggestion",
+        entity_id: clickedItem.entityId || clickedItem.title,
+        position: clickedItem.position ?? 0,
+        action: "click",
+        dwell_before_click_ms: dwellBeforeClick,
+      };
+      flushImpressions();
+      void recordAnalytics(trimmed, 1, undefined, [selection]);
     } else if (trimmed) {
       saveRecent(trimmed);
       setRecent(loadRecent());
+      flushImpressions();
     }
     setOpen(false);
     router.push(href);
@@ -190,7 +321,7 @@ export function SearchBox({
     const active = activeIndex >= 0 ? items[activeIndex] : undefined;
     goTo(
       active ? active.url : buildSearchHref({ q: trimmed }),
-      active ? active.title : undefined,
+      active ? { title: active.title, entityId: active.url, position: activeIndex } : undefined,
     );
   };
 
@@ -327,6 +458,7 @@ export function SearchBox({
 
       {open && items.length > 0 && (
         <ul
+          ref={listRef}
           id="search-suggest-list"
           role="listbox"
           aria-label="Search suggestions"
@@ -350,9 +482,19 @@ export function SearchBox({
                       id={`search-suggest-option-${index}`}
                       role="option"
                       aria-selected={isActive}
+                      data-entity-type={group.type}
+                      data-entity-id={item.url}
+                      data-position={index}
                       tabIndex={-1}
                       onMouseEnter={() => setActiveIndex(index)}
-                      onClick={() => goTo(item.url, item.title)}
+                      onClick={() =>
+                        goTo(item.url, {
+                          title: item.title,
+                          entityType: group.type,
+                          entityId: item.url,
+                          position: index,
+                        })
+                      }
                       className={`flex cursor-pointer items-center justify-between gap-3 px-4 py-2 text-sm ${
                         isActive ? "bg-muted" : ""
                       }`}
@@ -373,7 +515,7 @@ export function SearchBox({
             <button
               type="button"
               onClick={() => goTo(buildSearchHref({ q: trimmed }))}
-              className="w-full px-4 py-2 text-left text-xs font-semibold text-[#FF4500] hover:bg-muted"
+              className="w-full px-4 py-2 text-left text-xs font-semibold text-[#F16A24] hover:text-[#B74717] hover:bg-muted"
             >
               See all results for &ldquo;{trimmed}&rdquo;
             </button>

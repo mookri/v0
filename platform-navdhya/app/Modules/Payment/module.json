@@ -10,9 +10,11 @@
   "scopes": [],
   "events": [
     { "name": "payment.intent.created", "schema": "v1" },
+    { "name": "payment.intent.unknown", "schema": "v1" },
     { "name": "payment.intent.confirmed", "schema": "v1" },
     { "name": "payment.intent.failed", "schema": "v1" },
-    { "name": "payment.intent.refunded", "schema": "v1" }
+    { "name": "payment.intent.refunded", "schema": "v1" },
+    { "name": "payment.reconciliation.compensation_required", "schema": "v1" }
   ],
   "navigation": [],
   "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/payment" }

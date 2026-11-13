@@ -24,20 +24,33 @@ final class NotificationConsentGateService
     public function canDispatch(int|string $userId, string $category, string $channel): array
     {
         $tenantId = (string) $this->context->tenantId();
-        $normalizedCategory = strtoupper($category);
+        $rawCategory = strtoupper($category);
+        $resolvedCategory = NotificationChannels::categoryFor($category);
+        $normalizedCategory = strtoupper($resolvedCategory);
         $normalizedChannel = strtoupper($channel);
 
-        // 1. Transactional / Security communications always permitted by law & contract
-        if (in_array($normalizedCategory, ['ACCOUNT', 'BOOKING', 'SECURITY', 'TRANSACTIONAL'], true)) {
-            return ['permitted' => true, 'reason' => 'transactional_exemption'];
-        }
+        // 1. Explicit consent-required purposes
+        if (in_array($rawCategory, ['REMINDER', 'PANCHANG_ALERT', 'RITUAL', 'MARKETING', 'OFFERS', 'PROMOTIONS'], true)) {
+            $requiredPurpose = match ($rawCategory) {
+                'REMINDER', 'PANCHANG_ALERT', 'RITUAL' => ConsentLedger::PURPOSE_RITUAL_REMINDERS,
+                'MARKETING', 'OFFERS', 'PROMOTIONS' => ConsentLedger::PURPOSE_MARKETING,
+                default => ConsentLedger::PURPOSE_TRANSACTIONAL,
+            };
+        } else {
+            // Transactional / Security communications always permitted by law & contract
+            if (
+                in_array($normalizedCategory, ['ACCOUNT', 'BOOKING', 'SECURITY', 'TRANSACTIONAL'], true) ||
+                in_array($rawCategory, ['ACCOUNT', 'BOOKING', 'SECURITY', 'TRANSACTIONAL'], true) ||
+                str_starts_with($rawCategory, 'BOOKING') ||
+                str_starts_with($rawCategory, 'PAYMENT') ||
+                str_starts_with($rawCategory, 'AUTH') ||
+                str_starts_with($rawCategory, 'OTP')
+            ) {
+                return ['permitted' => true, 'reason' => 'transactional_exemption'];
+            }
 
-        // 2. Map Category to Required Consent Purpose
-        $requiredPurpose = match ($normalizedCategory) {
-            'REMINDER', 'PANCHANG_ALERT', 'RITUAL' => ConsentLedger::PURPOSE_RITUAL_REMINDERS,
-            'MARKETING', 'OFFERS', 'PROMOTIONS' => ConsentLedger::PURPOSE_MARKETING,
-            default => ConsentLedger::PURPOSE_TRANSACTIONAL,
-        };
+            $requiredPurpose = ConsentLedger::PURPOSE_TRANSACTIONAL;
+        }
 
         // 3. Evaluate Active Consent in consent_ledger (most recent record for purpose)
         $latestConsent = ConsentLedger::query()
@@ -55,7 +68,10 @@ final class NotificationConsentGateService
         }
 
         // 4. Evaluate Channel Preference Matrix
-        $channelEnabled = $this->preferencesReader->isChannelEnabled($userId, $normalizedCategory, $normalizedChannel);
+        $effectiveCategory = in_array($rawCategory, ['REMINDER', 'PANCHANG_ALERT', 'RITUAL', 'MARKETING', 'OFFERS', 'PROMOTIONS'], true)
+            ? $rawCategory
+            : $normalizedCategory;
+        $channelEnabled = $this->preferencesReader->isChannelEnabled($userId, $effectiveCategory, $normalizedChannel);
         if (! $channelEnabled) {
             return [
                 'permitted' => false,

@@ -1,3 +1,8 @@
+import {
+  normalizeCanonicalGotra,
+  normalizeCanonicalNakshatra,
+} from '@navdhya/validation';
+
 // Profile view model matching the BFF /api/profile response
 export interface CustomerProfileViewModel {
   id: string;
@@ -8,6 +13,8 @@ export interface CustomerProfileViewModel {
   country?: string;
   timezone?: string;
   languages?: string[];
+  gotra?: string;
+  nakshatra?: string;
   mfaEnabled?: boolean;
   enrolledAt?: string;
 }
@@ -22,6 +29,8 @@ export function toCustomerProfile(data: Record<string, unknown>): CustomerProfil
     country: data.country ? String(data.country) : undefined,
     timezone: data.timezone ? String(data.timezone) : undefined,
     languages: Array.isArray(data.languages) ? data.languages.map(String) : undefined,
+    gotra: data.gotra ? String(data.gotra) : undefined,
+    nakshatra: data.nakshatra ? String(data.nakshatra) : undefined,
     mfaEnabled: data.mfaEnabled ? Boolean(data.mfaEnabled) : undefined,
     enrolledAt: data.mfaEnrolledAt ? String(data.mfaEnrolledAt) : undefined,
   };
@@ -35,6 +44,8 @@ export interface ProfileUpdateInput {
   country?: string;
   timezone?: string;
   languages?: string[];
+  gotra?: string;
+  nakshatra?: string;
 }
 
 export type ProfileUpdateResult =
@@ -43,9 +54,8 @@ export type ProfileUpdateResult =
 
 export function validateProfileUpdate(input: ProfileUpdateInput): ProfileUpdateResult {
   const fieldErrors: Record<string, string> = {};
-  // Optional contact fields start as '' when the profile has no value.
-  // Blank means "not provided", not "invalid" — only validate a value the
-  // customer actually typed.
+  const normalized: ProfileUpdateInput = { ...input };
+
   if (input.email !== undefined && input.email.trim() !== '' && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(input.email)) {
     fieldErrors.email = 'Please enter a valid email address';
   }
@@ -55,8 +65,25 @@ export function validateProfileUpdate(input: ProfileUpdateInput): ProfileUpdateR
   if (input.phone !== undefined && input.phone.trim() !== '' && input.phone.replace(/\D/g, '').length < 10) {
     fieldErrors.phone = 'Please enter a valid phone number';
   }
+  if (input.gotra !== undefined && input.gotra.trim() !== '') {
+    const canonicalGotra = normalizeCanonicalGotra(input.gotra);
+    if (!canonicalGotra) {
+      fieldErrors.gotra = 'Please select a canonical Gotra from the list';
+    } else {
+      normalized.gotra = canonicalGotra;
+    }
+  }
+  if (input.nakshatra !== undefined && input.nakshatra.trim() !== '') {
+    const canonicalNakshatra = normalizeCanonicalNakshatra(input.nakshatra);
+    if (!canonicalNakshatra) {
+      fieldErrors.nakshatra = 'Please select a canonical Nakshatra from the list';
+    } else {
+      normalized.nakshatra = canonicalNakshatra;
+    }
+  }
+
   if (Object.keys(fieldErrors).length > 0) return { ok: false, reason: 'VALIDATION_ERROR', fieldErrors };
-  return { ok: true, input };
+  return { ok: true, input: normalized };
 }
 
 // Deactivate/Reactivate types

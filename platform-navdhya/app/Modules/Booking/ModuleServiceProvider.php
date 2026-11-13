@@ -6,6 +6,7 @@ use App\Modules\Booking\Contracts\RanksServices;
 use App\Modules\Booking\Contracts\ReadsBookings;
 use App\Modules\Booking\Contracts\TransitionsBookingFulfillment;
 use App\Modules\Booking\Contracts\TransitionsBookingPayment;
+use App\Modules\Booking\Domain\BookingLifecycle;
 use App\Modules\Booking\Listeners\BookingLifecycleNotifier;
 use App\Platform\Modules\ModuleServiceProvider as BaseModuleServiceProvider;
 use App\Platform\Outbox\OutboxEvent;
@@ -29,6 +30,24 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
         $this->app->bind(ReadsBookings::class, BookingReads::class);
         $this->app->bind(TransitionsBookingPayment::class, BookingPaymentTransitions::class);
         $this->app->bind(TransitionsBookingFulfillment::class, BookingFulfillmentTransitions::class);
+        $this->app->bind('navdhya.contracts.lifecycle_snapshot', static function (): array {
+            $statuses = array_keys(BookingLifecycle::TRANSITIONS);
+            $terminal = array_values(array_filter(
+                $statuses,
+                static fn (string $s): bool => BookingLifecycle::isTerminal($s),
+            ));
+
+            return [
+                'source' => 'platform-navdhya/app/Modules/Booking/Domain/BookingLifecycle.php',
+                'statuses' => $statuses,
+                'transitions' => BookingLifecycle::TRANSITIONS,
+                'cancellable' => BookingLifecycle::CANCELLABLE,
+                'reschedulable' => BookingLifecycle::RESCHEDULABLE,
+                'sections' => BookingLifecycle::SECTIONS,
+                'sectionsList' => BookingLifecycle::SECTIONS_LIST,
+                'terminal' => $terminal,
+            ];
+        });
     }
 
     public function bootModule(): void
@@ -52,6 +71,7 @@ final class ModuleServiceProvider extends BaseModuleServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 Console\ReapExpiredHoldsCommand::class,
+                Console\ScanMissingArrivalsCommand::class,
             ]);
         }
     }

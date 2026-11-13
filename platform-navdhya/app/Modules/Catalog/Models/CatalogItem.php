@@ -34,19 +34,46 @@ final class CatalogItem extends Model
 
     public const STATUS_ARCHIVED = 'ARCHIVED';
 
+    public const KIND_SERVICE = 'SERVICE';
+
+    public const KIND_GOODS = 'GOODS';
+
+    public const KIND_KIT = 'KIT';
+
     protected $connection = 'tenant_shared';
 
     protected $fillable = [
-        'tenant_id', 'vendor_id', 'sku', 'name', 'description', 'status',
-        'currency', 'price_minor', 'attributes',
+        'tenant_id', 'vendor_id', 'category_id', 'sku', 'slug', 'name', 'description', 'status',
+        'item_kind', 'currency', 'price_minor', 'base_duration_minutes', 'attributes',
     ];
 
     protected function casts(): array
     {
         return [
             'price_minor' => 'integer',
+            'base_duration_minutes' => 'integer',
             'attributes' => 'array',
         ];
+    }
+
+    public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(CatalogCategory::class, 'category_id');
+    }
+
+    public function scopeServices(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    {
+        return $query->where('item_kind', self::KIND_SERVICE);
+    }
+
+    public function scopeKits(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    {
+        return $query->where('item_kind', self::KIND_KIT);
+    }
+
+    public function scopeGoods(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    {
+        return $query->where('item_kind', self::KIND_GOODS);
     }
 
     /**

@@ -163,7 +163,7 @@ final class PaymentWebhookController
             return $this->receipt($request, 'ignored', $intent, 'money_mismatch');
         }
 
-        if ((string) $intent->status !== PaymentIntent::STATUS_PENDING) {
+        if (! in_array((string) $intent->status, [PaymentIntent::STATUS_PENDING, PaymentIntent::STATUS_PAYMENT_UNKNOWN], true)) {
             return $this->receipt($request, 'ignored', $intent, 'replay');
         }
 
@@ -173,7 +173,11 @@ final class PaymentWebhookController
             PaymentIntent::STATUS_SUCCEEDED,
             'payment.intent.confirmed',
             fn (string $bookingId): array => $this->bookings->paymentConfirmed($bookingId),
-            $paymentId !== '' ? ['provider_payment_id' => $paymentId] : [],
+            array_filter([
+                'provider_payment_id' => $paymentId !== '' ? $paymentId : null,
+                'reconciled_at' => now(),
+                'last_reconcile_error' => null,
+            ], static fn ($v, $k): bool => $k === 'last_reconcile_error' || $v !== null, ARRAY_FILTER_USE_BOTH),
         );
     }
 
@@ -207,7 +211,7 @@ final class PaymentWebhookController
             return $this->receipt($request, 'ignored', null, 'unknown_order');
         }
 
-        if ((string) $intent->status !== PaymentIntent::STATUS_PENDING) {
+        if (! in_array((string) $intent->status, [PaymentIntent::STATUS_PENDING, PaymentIntent::STATUS_PAYMENT_UNKNOWN], true)) {
             return $this->receipt($request, 'ignored', $intent, 'replay');
         }
 
@@ -217,6 +221,7 @@ final class PaymentWebhookController
             PaymentIntent::STATUS_FAILED,
             'payment.intent.failed',
             fn (string $bookingId): array => $this->bookings->paymentFailed($bookingId),
+            ['reconciled_at' => now()],
         );
     }
 

@@ -20,7 +20,14 @@ export function isControlLive(control: OperationalControl, nowIso: string): bool
   return true;
 }
 
-export type CommandRole = 'COMMANDER' | 'TECHNICAL_LEAD' | 'COMMUNICATIONS_LEAD' | 'RECORDER';
+export type CommandRole =
+  | 'COMMANDER'
+  | 'TECHNICAL_LEAD'
+  | 'OPERATIONS_COORDINATOR'
+  | 'COMMUNICATIONS_LEAD'
+  | 'SAFETY_LEAD'
+  | 'PROVIDER_LIAISON'
+  | 'RECORDER';
 
 export interface RoleAssignment {
   incidentId: string;

@@ -21,5 +21,5 @@ export function transitionCase(kase: SupportCase, to: SupportCase['status'], exp
 }
 
 export function customerOwnsCase(kase: SupportCase, customerId: string): boolean {
-  return kase.customerId === customerId;
+  return kase.reporterUserId === customerId;
 }

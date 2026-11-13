@@ -1,0 +1,26 @@
+{
+  "code": "incident",
+  "name": "Ceremony Incident Management & Service Recovery",
+  "version": "1.0.0",
+  "phase": 3,
+  "priority": 270,
+  "dependencies": ["booking", "pandit", "support"],
+  "actions": ["triage", "assign", "command", "correlate", "recover", "close"],
+  "permissions": [
+    { "code": "incident:record:create", "name": "Declare operational and safety incidents" },
+    { "code": "incident:record:command", "name": "Assign roles, correlate and execute incident mitigation", "sensitive": true },
+    { "code": "incident:record:close", "name": "Verify preconditions and close incidents", "sensitive": true },
+    { "code": "incident:recovery:recover", "name": "Manage replacement recovery workflows", "sensitive": true },
+    { "code": "incident:restriction:approve", "name": "Approve time-boxed interim protective restrictions", "sensitive": true }
+  ],
+  "scopes": ["incident:read", "incident:command"],
+  "events": [
+    { "name": "incident.record.created", "schema": "v1" },
+    { "name": "incident.severity.changed", "schema": "v1" },
+    { "name": "incident.recovery.completed", "schema": "v1" },
+    { "name": "incident.record.closed", "schema": "v1" },
+    { "name": "incident.prevention.created", "schema": "v1" }
+  ],
+  "navigation": [],
+  "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/incident" }
+}

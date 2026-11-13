@@ -38,33 +38,36 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
     {
         $tenantId = (string) app(TenantContext::class)->tenantId();
 
-        // Verify pandit exists and belongs to tenant
-        PanditProfile::query()
-            ->where('tenant_id', $tenantId)
-            ->where('id', $panditId)
-            ->firstOrFail();
-
         $window = $this->bookings->windowsByIds([$bookingId])[$bookingId] ?? null;
 
         if ($window === null) {
             throw new UnknownBookingException('Unknown booking.');
         }
 
-        // Idempotent: an existing assignment is returned unchanged
-        $existing = PanditAssignment::query()
-            ->where('tenant_id', $tenantId)
-            ->where('pandit_id', $panditId)
-            ->where('booking_id', $bookingId)
-            ->first();
+        $assignment = (new PanditAssignment())->getConnection()->transaction(function () use ($tenantId, $panditId, $bookingId, $compensationMinor, $window) {
+            // Lock the pandit profile row inside the transaction so concurrent
+            // assignment writes targeting the same pandit serialize before overlap check.
+            PanditProfile::query()
+                ->where('tenant_id', $tenantId)
+                ->where('id', $panditId)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        if ($existing !== null && in_array($existing->status, [PanditAssignment::STATUS_PENDING, PanditAssignment::STATUS_CONFIRMED], true)) {
-            return $this->serialize($existing, $this->bookings->windowsByIds([$bookingId]));
-        }
+            // Idempotent: an existing active assignment is returned unchanged.
+            $existing = PanditAssignment::query()
+                ->where('tenant_id', $tenantId)
+                ->where('pandit_id', $panditId)
+                ->where('booking_id', $bookingId)
+                ->lockForUpdate()
+                ->first();
 
-        // Fail-closed overlap guard before any write
-        $this->checkConflict($tenantId, $panditId, $bookingId, $window);
+            if ($existing !== null && in_array($existing->status, [PanditAssignment::STATUS_PENDING, PanditAssignment::STATUS_CONFIRMED, PanditAssignment::STATUS_IN_PROGRESS], true)) {
+                return $existing;
+            }
 
-        $assignment = (new \App\Modules\Pandit\Models\PanditAssignment())->getConnection()->transaction(function () use ($tenantId, $panditId, $bookingId, $compensationMinor, $existing) {
+            // Fail-closed overlap guard inside the locked transaction.
+            $this->checkConflict($tenantId, $panditId, $bookingId, $window);
+
             $assignment = $existing ?? new PanditAssignment();
             $assignment->forceFill([
                 'tenant_id' => $tenantId,
@@ -73,18 +76,19 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
                 'status' => PanditAssignment::STATUS_PENDING,
                 'assigned_at' => CarbonImmutable::now()->toDateTimeString(),
                 'compensation_minor' => $compensationMinor,
+                'version' => $existing !== null ? ((int) ($existing->version ?? 1)) + 1 : 1,
             ]);
             $assignment->save();
 
+            $this->audit->record(
+                'pandit.assignment.assigned',
+                ['module' => 'pandit', 'resource_type' => 'pandit_assignment', 'resource_id' => (string) $assignment->getKey()],
+                null,
+                ['pandit_id' => $panditId, 'booking_id' => $bookingId, 'compensation_minor' => $compensationMinor],
+            );
+
             return $assignment;
         });
-
-        $this->audit->record(
-            'pandit.assignment.assigned',
-            ['module' => 'pandit', 'resource_type' => 'pandit_assignment', 'resource_id' => (string) $assignment->getKey()],
-            null,
-            ['pandit_id' => $panditId, 'booking_id' => $bookingId, 'compensation_minor' => $compensationMinor],
-        );
 
         return $this->serialize($assignment, $this->bookings->windowsByIds([$bookingId]));
     }
@@ -94,16 +98,22 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
      */
     public function confirm(string $panditId, string $assignmentId): array
     {
-        $assignment = $this->ownedInStatus($panditId, $assignmentId, PanditAssignment::STATUS_PENDING, 'Can only act on pending assignments.');
+        $tenantId = (string) app(TenantContext::class)->tenantId();
 
         // The transaction must wrap the connection the models actually
         // write on — assignment and booking both follow the ambient
         // tenant (TEN-012), never the default connection.
-        $assignment->getConnection()->transaction(function () use ($assignment, $panditId): void {
-            $assignment->forceFill([
-                'status' => PanditAssignment::STATUS_CONFIRMED,
-                'confirmed_at' => CarbonImmutable::now()->toDateTimeString(),
-            ])->save();
+        /** @var PanditAssignment $assignment */
+        $assignment = (new PanditAssignment())->getConnection()->transaction(function () use ($tenantId, $panditId, $assignmentId): PanditAssignment {
+            $assignment = $this->casTransition(
+                $tenantId,
+                $panditId,
+                $assignmentId,
+                [PanditAssignment::STATUS_PENDING],
+                PanditAssignment::STATUS_CONFIRMED,
+                ['confirmed_at' => CarbonImmutable::now('UTC')->toDateTimeString()],
+                'Can only act on pending assignments.',
+            );
 
             // One fact, two module states: the acceptance moves the booking
             // CONFIRMED → ASSIGNED through the lifecycle port. A booking
@@ -120,6 +130,7 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
                     $outcome['from'] ?? '',
                 );
             }
+            return $assignment;
         });
 
         $this->audit->record(
@@ -133,23 +144,76 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
     }
 
     /**
+     * @param  array<string, mixed>  $checklist
+     * @return PanditAssignmentData
+     */
+    public function start(string $panditId, string $assignmentId, array $checklist = []): array
+    {
+        $tenantId = (string) app(TenantContext::class)->tenantId();
+
+        /** @var PanditAssignment $assignment */
+        $assignment = (new PanditAssignment())->getConnection()->transaction(function () use ($tenantId, $panditId, $assignmentId, $checklist): PanditAssignment {
+            $attributes = [
+                'service_started_at' => CarbonImmutable::now('UTC')->toDateTimeString(),
+            ];
+            if ($checklist !== []) {
+                $attributes['checklist_json'] = json_encode($checklist, JSON_THROW_ON_ERROR);
+            }
+
+            $assignment = $this->casTransition(
+                $tenantId,
+                $panditId,
+                $assignmentId,
+                [PanditAssignment::STATUS_CONFIRMED],
+                PanditAssignment::STATUS_IN_PROGRESS,
+                $attributes,
+                'Can only start a confirmed assignment.',
+            );
+
+            $outcome = $this->fulfillment->assignmentStarted(
+                (string) $assignment->booking_id,
+                $this->panditUserId($panditId),
+            );
+
+            if ($outcome['ok'] !== true) {
+                throw new BookingWrongStateException(
+                    'Booking is not in a state that accepts starting service.',
+                    $outcome['from'] ?? '',
+                );
+            }
+
+            return $assignment;
+        });
+
+        $this->audit->record(
+            'pandit.assignment.started',
+            ['module' => 'pandit', 'resource_type' => 'pandit_assignment', 'resource_id' => (string) $assignment->getKey()],
+            null,
+            ['pandit_id' => $panditId, 'booking_id' => (string) $assignment->booking_id, 'checklist' => $checklist],
+        );
+
+        return $this->serialize($assignment, $this->bookings->windowsByIds([(string) $assignment->booking_id]));
+    }
+
+    /**
      * @return PanditAssignmentData
      */
     public function complete(string $panditId, string $assignmentId): array
     {
-        $assignment = $this->ownedInStatus($panditId, $assignmentId, PanditAssignment::STATUS_CONFIRMED, 'Can only complete a confirmed assignment.');
+        $tenantId = (string) app(TenantContext::class)->tenantId();
 
-        // Same ambient-connection transaction as confirm(): the
-        // assignment status change and the booking lifecycle hops commit
-        // together or not at all.
-        $assignment->getConnection()->transaction(function () use ($assignment, $panditId): void {
-            $assignment->forceFill([
-                'status' => PanditAssignment::STATUS_COMPLETED,
-            ])->save();
+        /** @var PanditAssignment $assignment */
+        $assignment = (new PanditAssignment())->getConnection()->transaction(function () use ($tenantId, $panditId, $assignmentId): PanditAssignment {
+            $assignment = $this->casTransition(
+                $tenantId,
+                $panditId,
+                $assignmentId,
+                [PanditAssignment::STATUS_CONFIRMED, PanditAssignment::STATUS_IN_PROGRESS],
+                PanditAssignment::STATUS_COMPLETED,
+                [],
+                'Can only complete a confirmed or in-progress assignment.',
+            );
 
-            // One fact, two module states: completion drives the booking
-            // ASSIGNED → IN_PROGRESS → COMPLETED through the lifecycle
-            // port (both matrix hops, one recorded fact).
             $outcome = $this->fulfillment->assignmentCompleted(
                 (string) $assignment->booking_id,
                 $this->panditUserId($panditId),
@@ -161,6 +225,8 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
                     $outcome['from'] ?? '',
                 );
             }
+
+            return $assignment;
         });
 
         $this->audit->record(
@@ -178,13 +244,23 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
      */
     public function decline(string $panditId, string $assignmentId, string $reason): array
     {
-        $assignment = $this->ownedInStatus($panditId, $assignmentId, PanditAssignment::STATUS_PENDING, 'Can only act on pending assignments.');
+        $tenantId = (string) app(TenantContext::class)->tenantId();
 
-        $assignment->forceFill([
-            'status' => PanditAssignment::STATUS_DECLINED,
-            'declined_at' => CarbonImmutable::now()->toDateTimeString(),
-            'decline_reason' => $reason,
-        ])->save();
+        /** @var PanditAssignment $assignment */
+        $assignment = (new PanditAssignment())->getConnection()->transaction(function () use ($tenantId, $panditId, $assignmentId, $reason): PanditAssignment {
+            return $this->casTransition(
+                $tenantId,
+                $panditId,
+                $assignmentId,
+                [PanditAssignment::STATUS_PENDING],
+                PanditAssignment::STATUS_DECLINED,
+                [
+                    'declined_at' => CarbonImmutable::now('UTC')->toDateTimeString(),
+                    'decline_reason' => $reason,
+                ],
+                'Can only act on pending assignments.',
+            );
+        });
 
         $this->audit->record(
             'pandit.assignment.declined',
@@ -273,28 +349,53 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
     }
 
     /**
-     * The caller's own assignment in the required status (404 for
-     * foreign rows — ownership is the actor — 409 for any other state).
+     * Atomic Compare-And-Swap status/version transition inside an active transaction.
      *
-     * @return PanditAssignment
+     * @param  list<string>  $allowedStatuses
+     * @param  array<string, mixed>  $attributes
      */
-    private function ownedInStatus(string $panditId, string $assignmentId, string $status, string $message): PanditAssignment
-    {
-        $tenantId = (string) app(TenantContext::class)->tenantId();
-
+    private function casTransition(
+        string $tenantId,
+        string $panditId,
+        string $assignmentId,
+        array $allowedStatuses,
+        string $toStatus,
+        array $attributes,
+        string $wrongStateMessage,
+    ): PanditAssignment {
         $assignment = PanditAssignment::query()
             ->where('tenant_id', $tenantId)
             ->where('pandit_id', $panditId)
             ->where('id', $assignmentId)
+            ->lockForUpdate()
             ->first();
 
         if ($assignment === null) {
             throw new AssignmentNotFoundException('Assignment not found.');
         }
 
-        if ($assignment->status !== $status) {
-            throw new \InvalidArgumentException($message);
+        if (! in_array($assignment->status, $allowedStatuses, true)) {
+            throw new \InvalidArgumentException($wrongStateMessage);
         }
+
+        $expectedVersion = (int) ($assignment->version ?? 1);
+        $affected = PanditAssignment::query()
+            ->where('tenant_id', $tenantId)
+            ->where('pandit_id', $panditId)
+            ->where('id', $assignmentId)
+            ->where('status', $assignment->status)
+            ->where('version', $expectedVersion)
+            ->update(array_merge($attributes, [
+                'status' => $toStatus,
+                'version' => $expectedVersion + 1,
+                'updated_at' => CarbonImmutable::now('UTC')->toDateTimeString(),
+            ]));
+
+        if ($affected === 0) {
+            throw new \InvalidArgumentException('Assignment was modified concurrently or is no longer in a valid state.');
+        }
+
+        $assignment->refresh();
 
         return $assignment;
     }
@@ -347,7 +448,12 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
         $query = PanditAssignment::query()
             ->where('tenant_id', $tenantId)
             ->where('pandit_id', $panditId)
-            ->whereIn('status', [PanditAssignment::STATUS_PENDING, PanditAssignment::STATUS_CONFIRMED]);
+            ->whereIn('status', [
+                PanditAssignment::STATUS_PENDING,
+                PanditAssignment::STATUS_CONFIRMED,
+                PanditAssignment::STATUS_IN_PROGRESS,
+            ])
+            ->lockForUpdate();
 
         if ($excludeBookingId !== null) {
             $query->where('booking_id', '!=', $excludeBookingId);
@@ -380,12 +486,125 @@ final class PanditAssignmentManager implements ManagesPanditAssignments
         return [
             'id' => (string) $assignment->getKey(),
             'status' => $assignment->status,
+            'version' => (int) ($assignment->version ?? 1),
             'assigned_at' => $assignment->assigned_at->toJSON(),
             'confirmed_at' => $assignment->confirmed_at?->toJSON(),
+            'service_started_at' => $assignment->service_started_at?->toJSON(),
             'declined_at' => $assignment->declined_at?->toJSON(),
             'decline_reason' => $assignment->decline_reason,
+            'checklist' => is_array($assignment->checklist_json) ? $assignment->checklist_json : null,
             'compensation_minor' => $assignment->compensation_minor,
             'booking' => $windows[(string) $assignment->booking_id] ?? null,
         ];
+    }
+
+    /**
+     * @return array{id: string, pandit_id: string, booking_id: string, status: string, pandit_user_id: int|null}|null
+     */
+    public function assignmentForBooking(string $bookingId): ?array
+    {
+        $tenantId = (string) app(TenantContext::class)->tenantId();
+
+        $assignment = PanditAssignment::query()
+            ->where('tenant_id', $tenantId)
+            ->where('booking_id', $bookingId)
+            ->whereIn('status', [
+                PanditAssignment::STATUS_IN_PROGRESS,
+                PanditAssignment::STATUS_CONFIRMED,
+                PanditAssignment::STATUS_COMPLETED,
+                PanditAssignment::STATUS_PENDING,
+            ])
+            ->orderByDesc('confirmed_at')
+            ->orderByDesc('assigned_at')
+            ->first();
+
+        if ($assignment === null) {
+            $assignment = PanditAssignment::query()
+                ->where('tenant_id', $tenantId)
+                ->where('booking_id', $bookingId)
+                ->orderByDesc('assigned_at')
+                ->first();
+        }
+
+        if ($assignment === null) {
+            return null;
+        }
+
+        $pandit = PanditProfile::query()
+            ->where('tenant_id', $tenantId)
+            ->where('id', $assignment->pandit_id)
+            ->first();
+
+        return [
+            'id' => (string) $assignment->getKey(),
+            'pandit_id' => (string) $assignment->pandit_id,
+            'booking_id' => (string) $assignment->booking_id,
+            'status' => $assignment->status,
+            'pandit_user_id' => $pandit?->user_id !== null ? (int) $pandit->user_id : null,
+        ];
+    }
+
+    public function reassignForIncident(string $bookingId, string $replacementPanditId, int $compensationMinor = 0): array
+    {
+        $tenantId = (string) app(TenantContext::class)->tenantId();
+
+        $window = $this->bookings->windowsByIds([$bookingId])[$bookingId] ?? null;
+        if ($window === null) {
+            throw new UnknownBookingException('Unknown booking.');
+        }
+
+        $now = CarbonImmutable::now('UTC');
+
+        $replacement = (new PanditAssignment())->getConnection()->transaction(function () use (
+            $tenantId,
+            $bookingId,
+            $replacementPanditId,
+            $compensationMinor,
+            $window,
+            $now
+        ): PanditAssignment {
+            PanditProfile::query()
+                ->where('tenant_id', $tenantId)
+                ->where('id', $replacementPanditId)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $this->checkConflict($tenantId, $replacementPanditId, $bookingId, $window);
+
+            PanditAssignment::query()
+                ->where('tenant_id', $tenantId)
+                ->where('booking_id', $bookingId)
+                ->whereIn('status', [PanditAssignment::STATUS_PENDING, PanditAssignment::STATUS_CONFIRMED, PanditAssignment::STATUS_IN_PROGRESS])
+                ->update(['status' => PanditAssignment::STATUS_CANCELLED]);
+
+            $assignment = PanditAssignment::query()->create([
+                'tenant_id' => $tenantId,
+                'pandit_id' => $replacementPanditId,
+                'booking_id' => $bookingId,
+                'status' => PanditAssignment::STATUS_CONFIRMED,
+                'compensation_minor' => $compensationMinor,
+                'assigned_at' => $now->toDateTimeString(),
+                'confirmed_at' => $now->toDateTimeString(),
+                'version' => 1,
+            ]);
+
+            if ($window['status'] === 'CONFIRMED') {
+                $outcome = $this->fulfillment->assignmentAccepted($bookingId, $this->panditUserId($replacementPanditId));
+                if ($outcome['ok'] !== true) {
+                    throw new BookingWrongStateException('Booking refused replacement fulfillment.', $outcome['from'] ?? '');
+                }
+            }
+
+            $this->audit->record(
+                'pandit.assignment.reassigned',
+                ['module' => 'pandit', 'resource_type' => 'pandit_assignment', 'resource_id' => (string) $assignment->getKey()],
+                null,
+                ['booking_id' => $bookingId, 'replacement_pandit_id' => $replacementPanditId]
+            );
+
+            return $assignment;
+        });
+
+        return $this->serialize($replacement, [$bookingId => $window]);
     }
 }

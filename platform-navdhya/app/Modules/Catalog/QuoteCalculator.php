@@ -2,26 +2,50 @@
 
 namespace App\Modules\Catalog;
 
+use App\Modules\Catalog\Domain\Pricing\TieredPriceResolver;
 use App\Modules\Catalog\Models\CatalogItem;
-use App\Modules\Catalog\Models\CatalogPrice;
 use Carbon\CarbonImmutable;
 
 /**
- * Deterministic quote calculation (Wave 3 pricing, promotions excluded):
- * each line resolves its effective price at the quote instant; unknown
- * SKUs and currency mismatches fail the whole quote (never partial
- * totals). Integer minor-unit arithmetic only — no floats anywhere.
- *
- * Full matrix pricing (SKU × pandit × market × currency):
- * - line.pandit_id optional → exact match first, then fallback to base (pandit_id = null)
- * - line.market optional → defaults to 'in'
- * - currency required
+ * Deterministic quote calculation with 2-axis tiered pricing (F4):
+ * each line resolves its effective price at the quote instant via TieredPriceResolver.
+ * Unknown SKUs and currency mismatches fail the whole quote (never partial totals).
+ * Integer minor-unit arithmetic only — no floats anywhere.
  */
 final class QuoteCalculator
 {
+    private readonly TieredPriceResolver $resolver;
+
+    public function __construct(?TieredPriceResolver $resolver = null)
+    {
+        $this->resolver = $resolver ?? new TieredPriceResolver();
+    }
+
     /**
-     * @param list<array{sku: string, quantity: int, pandit_id?: string|null, market?: string|null}> $lines
-     * @return array{lines: list<array{sku: string, quantity: int, pandit_id?: string|null, market: string, unit_minor: int, line_minor: int}>, total_minor: int, currency: string}
+     * @param list<array{
+     *     sku: string,
+     *     quantity: int,
+     *     pandit_id?: string|null,
+     *     package_tier?: string|null,
+     *     qualification_tier?: string|null,
+     *     market?: string|null
+     * }> $lines
+     * @return array{
+     *     lines: list<array{
+     *         sku: string,
+     *         quantity: int,
+     *         pandit_id?: string|null,
+     *         package_tier?: string|null,
+     *         qualification_tier?: string|null,
+     *         market: string,
+     *         effective_rule: string,
+     *         unit_minor: int,
+     *         line_minor: int
+     *     }>,
+     *     total_minor: int,
+     *     currency: string,
+     *     tier_ladder?: list<array<string, mixed>>
+     * }
      */
     public function quote(string $currency, array $lines, CarbonImmutable $at, string $defaultMarket = 'in'): array
     {
@@ -31,10 +55,14 @@ final class QuoteCalculator
         foreach ($lines as $line) {
             $sku = (string) ($line['sku'] ?? '');
             $quantity = (int) ($line['quantity'] ?? 0);
-            // Pandit ids are ULIDs: casting to int destroyed the id and
-            // made every pandit-specific price unreachable.
             $panditId = isset($line['pandit_id']) && $line['pandit_id'] !== null
                 ? (string) $line['pandit_id']
+                : null;
+            $packageTier = isset($line['package_tier']) && $line['package_tier'] !== null
+                ? (string) $line['package_tier']
+                : null;
+            $qualificationTier = isset($line['qualification_tier']) && $line['qualification_tier'] !== null
+                ? (string) $line['qualification_tier']
                 : null;
             $market = (string) ($line['market'] ?? $defaultMarket);
 
@@ -47,53 +75,56 @@ final class QuoteCalculator
                 throw new QuoteFailedException("unknown-or-inactive-sku:{$sku}");
             }
 
-            // Try exact pandit match first, then fall back to base price (pandit_id = null)
-            $price = null;
-            if ($panditId !== null) {
-                $price = CatalogPrice::query()
-                    ->where('sku', $sku)
-                    ->where('currency', $currency)
-                    ->where('market', $market)
-                    ->where('pandit_id', $panditId)
-                    ->where('effective_from', '<=', $at->toDateTimeString())
-                    ->where(function ($query) use ($at): void {
-                        $query->whereNull('effective_to')->orWhere('effective_to', '>', $at->toDateTimeString());
-                    })
-                    ->orderByDesc('effective_from')
-                    ->first();
-            }
+            $resolved = $this->resolver->resolve(
+                sku: $sku,
+                currency: $currency,
+                market: $market,
+                at: $at,
+                panditId: $panditId,
+                packageTier: $packageTier,
+                qualificationTier: $qualificationTier
+            );
 
-            if ($price === null) {
-                // Fallback to base price (pandit_id = null)
-                $price = CatalogPrice::query()
-                    ->where('sku', $sku)
-                    ->where('currency', $currency)
-                    ->where('market', $market)
-                    ->whereNull('pandit_id')
-                    ->where('effective_from', '<=', $at->toDateTimeString())
-                    ->where(function ($query) use ($at): void {
-                        $query->whereNull('effective_to')->orWhere('effective_to', '>', $at->toDateTimeString());
-                    })
-                    ->orderByDesc('effective_from')
-                    ->first();
-            }
-
-            if ($price === null) {
+            if ($resolved === null) {
                 throw new QuoteFailedException("no-price:{$sku}" . ($panditId !== null ? " (pandit_id:{$panditId})" : ''));
             }
 
-            $lineMinor = $price->price_minor * $quantity;
+            $lineMinor = $resolved->priceMinor * $quantity;
             $total += $lineMinor;
+
             $computed[] = [
                 'sku' => $sku,
                 'quantity' => $quantity,
                 'pandit_id' => $panditId,
+                'package_tier' => $packageTier,
+                'qualification_tier' => $qualificationTier,
                 'market' => $market,
-                'unit_minor' => (int) $price->price_minor,
+                'effective_rule' => $resolved->rule,
+                'unit_minor' => $resolved->priceMinor,
                 'line_minor' => $lineMinor,
             ];
         }
 
-        return ['lines' => $computed, 'total_minor' => $total, 'currency' => $currency];
+        $result = [
+            'lines' => $computed,
+            'total_minor' => $total,
+            'currency' => $currency,
+        ];
+
+        if (count($lines) === 1) {
+            $singleSku = (string) $lines[0]['sku'];
+            $singleMarket = (string) ($lines[0]['market'] ?? $defaultMarket);
+            $singleQual = isset($lines[0]['qualification_tier']) ? (string) $lines[0]['qualification_tier'] : null;
+
+            $result['tier_ladder'] = $this->resolver->resolveLadder(
+                sku: $singleSku,
+                currency: $currency,
+                market: $singleMarket,
+                at: $at,
+                qualificationTier: $singleQual
+            );
+        }
+
+        return $result;
     }
 }

@@ -167,14 +167,14 @@ Route::post('support/staff/tickets/{id}:close', [StaffSupportController::class, 
     ->middleware('capability:customers:support:manage')
     ->name('support.staff.close');
 
-// Notification Delivery Receipt Webhooks (E4)
+// Notification Delivery Receipt Webhooks (E4 / E-CM-02)
 Route::post('webhooks/msg91', [CustomerWebhookController::class, 'handleMsg91'])
     ->withoutMiddleware(['auth.any', 'tenant'])
-    ->middleware('throttle:60,1')
+    ->middleware('throttle:webhook-msg91')
     ->name('webhooks.msg91');
 Route::match(['get', 'post'], 'webhooks/whatsapp', [CustomerWebhookController::class, 'handleWhatsApp'])
     ->withoutMiddleware(['auth.any', 'tenant'])
-    ->middleware('throttle:60,1')
+    ->middleware('throttle:webhook-meta')
     ->name('webhooks.whatsapp');
 
 // Telemetry Event Ingestion (E5)

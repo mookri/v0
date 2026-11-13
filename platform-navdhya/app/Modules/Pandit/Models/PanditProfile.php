@@ -2,6 +2,7 @@
 
 namespace App\Modules\Pandit\Models;
 
+use App\Domain\Verification\Concerns\BlocksDirectVerificationStatusWrite;
 use App\Modules\Pandit\Contracts\VedicTradition;
 use App\Platform\Tenancy\BelongsToTenant;
 use Database\Factories\PanditProfileFactory;
@@ -49,6 +50,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 final class PanditProfile extends Model
 {
     use BelongsToTenant;
+    use BlocksDirectVerificationStatusWrite;
     use HasUlids;
     use SoftDeletes;
     /** @use HasFactory<PanditProfileFactory> */
@@ -157,6 +159,14 @@ final class PanditProfile extends Model
     public function eligibilities(): HasMany
     {
         return $this->hasMany(PanditServiceEligibility::class, 'pandit_id', 'id');
+    }
+
+    /**
+     * @return HasMany<PanditServiceArea, $this>
+     */
+    public function serviceAreas(): HasMany
+    {
+        return $this->hasMany(PanditServiceArea::class, 'pandit_id', 'id');
     }
 
     /**

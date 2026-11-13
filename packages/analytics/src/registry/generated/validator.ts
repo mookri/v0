@@ -79,6 +79,32 @@ export function validateEventParams(name: string, params: Record<string, unknown
       }
       break;
     }
+    case 'facet_view': {
+      const allowed = ["facet_key","facet_value","result_count","category_path"];
+      if (typeof params['facet_key'] !== 'string') errors.push('facet_view.facet_key: expected string (required)');
+      if (typeof params['facet_value'] !== 'string') errors.push('facet_view.facet_value: expected string (required)');
+      if (typeof params['result_count'] !== 'number') errors.push('facet_view.result_count: expected number (required)');
+      if ('category_path' in params && typeof params['category_path'] !== 'string') errors.push('facet_view.category_path: expected string');
+      for (const k of Object.keys(params)) {
+        if (!allowed.includes(k)) {
+          errors.push('facet_view: unknown param "' + k + '"');
+        }
+      }
+      break;
+    }
+    case 'kit_opt_in': {
+      const allowed = ["service_sku","kit_sku","obligation","action"];
+      if (typeof params['service_sku'] !== 'string') errors.push('kit_opt_in.service_sku: expected string (required)');
+      if (typeof params['kit_sku'] !== 'string') errors.push('kit_opt_in.kit_sku: expected string (required)');
+      if (typeof params['obligation'] !== 'string') errors.push('kit_opt_in.obligation: expected string (required)');
+      if (typeof params['action'] !== 'string') errors.push('kit_opt_in.action: expected string (required)');
+      for (const k of Object.keys(params)) {
+        if (!allowed.includes(k)) {
+          errors.push('kit_opt_in: unknown param "' + k + '"');
+        }
+      }
+      break;
+    }
     case 'kyc_submitted': {
       const allowed = ["doc_type"];
       if (typeof params['doc_type'] !== 'string') errors.push('kyc_submitted.doc_type: expected string (required)');
@@ -135,6 +161,19 @@ export function validateEventParams(name: string, params: Record<string, unknown
       }
       break;
     }
+    case 'price_tier_viewed': {
+      const allowed = ["sku","package_tier","price_minor","currency"];
+      if (typeof params['sku'] !== 'string') errors.push('price_tier_viewed.sku: expected string (required)');
+      if (typeof params['package_tier'] !== 'string') errors.push('price_tier_viewed.package_tier: expected string (required)');
+      if (typeof params['price_minor'] !== 'number') errors.push('price_tier_viewed.price_minor: expected number (required)');
+      if (typeof params['currency'] !== 'string') errors.push('price_tier_viewed.currency: expected string (required)');
+      for (const k of Object.keys(params)) {
+        if (!allowed.includes(k)) {
+          errors.push('price_tier_viewed: unknown param "' + k + '"');
+        }
+      }
+      break;
+    }
     case 'purchase_viewed': {
       const allowed = ["value","item_count"];
       if (typeof params['value'] !== 'number') errors.push('purchase_viewed.value: expected number (required)');
@@ -146,13 +185,126 @@ export function validateEventParams(name: string, params: Record<string, unknown
       }
       break;
     }
+    case 'quote_viewed': {
+      const allowed = ["sku","package_tier","qualification_tier","total_minor","currency"];
+      if (typeof params['sku'] !== 'string') errors.push('quote_viewed.sku: expected string (required)');
+      if (typeof params['package_tier'] !== 'string') errors.push('quote_viewed.package_tier: expected string (required)');
+      if (typeof params['qualification_tier'] !== 'string') errors.push('quote_viewed.qualification_tier: expected string (required)');
+      if (typeof params['total_minor'] !== 'number') errors.push('quote_viewed.total_minor: expected number (required)');
+      if (typeof params['currency'] !== 'string') errors.push('quote_viewed.currency: expected string (required)');
+      for (const k of Object.keys(params)) {
+        if (!allowed.includes(k)) {
+          errors.push('quote_viewed: unknown param "' + k + '"');
+        }
+      }
+      break;
+    }
+    case 'reco_impressed': {
+      const allowed = ["placement","reco_ref","items_shown","surface"];
+      if (typeof params['placement'] !== 'string') errors.push('reco_impressed.placement: expected string (required)');
+      if (typeof params['reco_ref'] !== 'string') errors.push('reco_impressed.reco_ref: expected string (required)');
+      if (typeof params['items_shown'] !== 'string') errors.push('reco_impressed.items_shown: expected string (required)');
+      if (typeof params['surface'] !== 'string') errors.push('reco_impressed.surface: expected string (required)');
+      for (const k of Object.keys(params)) {
+        if (!allowed.includes(k)) {
+          errors.push('reco_impressed: unknown param "' + k + '"');
+        }
+      }
+      break;
+    }
+    case 'reco_selected': {
+      const allowed = ["placement","reco_ref","entity_type","entity_ref","position"];
+      if (typeof params['placement'] !== 'string') errors.push('reco_selected.placement: expected string (required)');
+      if (typeof params['reco_ref'] !== 'string') errors.push('reco_selected.reco_ref: expected string (required)');
+      if (typeof params['entity_type'] !== 'string') errors.push('reco_selected.entity_type: expected string (required)');
+      if (typeof params['entity_ref'] !== 'string') errors.push('reco_selected.entity_ref: expected string (required)');
+      if (typeof params['position'] !== 'number') errors.push('reco_selected.position: expected number (required)');
+      for (const k of Object.keys(params)) {
+        if (!allowed.includes(k)) {
+          errors.push('reco_selected: unknown param "' + k + '"');
+        }
+      }
+      break;
+    }
     case 'search': {
-      const allowed = ["search_term","result_count"];
+      const allowed = ["search_term","result_count","category_filter","query_trace_id"];
       if (typeof params['search_term'] !== 'string') errors.push('search.search_term: expected string (required)');
       if (typeof params['result_count'] !== 'number') errors.push('search.result_count: expected number (required)');
+      if ('category_filter' in params && typeof params['category_filter'] !== 'string') errors.push('search.category_filter: expected string');
+      if ('query_trace_id' in params && typeof params['query_trace_id'] !== 'string') errors.push('search.query_trace_id: expected string');
       for (const k of Object.keys(params)) {
         if (!allowed.includes(k)) {
           errors.push('search: unknown param "' + k + '"');
+        }
+      }
+      break;
+    }
+    case 'search_query_abandoned': {
+      const allowed = ["trace_id","last_query_text","dwell_total_ms"];
+      if (typeof params['trace_id'] !== 'string') errors.push('search_query_abandoned.trace_id: expected string (required)');
+      if (typeof params['last_query_text'] !== 'string') errors.push('search_query_abandoned.last_query_text: expected string (required)');
+      if (typeof params['dwell_total_ms'] !== 'number') errors.push('search_query_abandoned.dwell_total_ms: expected number (required)');
+      for (const k of Object.keys(params)) {
+        if (!allowed.includes(k)) {
+          errors.push('search_query_abandoned: unknown param "' + k + '"');
+        }
+      }
+      break;
+    }
+    case 'search_query_reformulated': {
+      const allowed = ["prev_query_text","new_query_text","elapsed_ms"];
+      if (typeof params['prev_query_text'] !== 'string') errors.push('search_query_reformulated.prev_query_text: expected string (required)');
+      if (typeof params['new_query_text'] !== 'string') errors.push('search_query_reformulated.new_query_text: expected string (required)');
+      if (typeof params['elapsed_ms'] !== 'number') errors.push('search_query_reformulated.elapsed_ms: expected number (required)');
+      for (const k of Object.keys(params)) {
+        if (!allowed.includes(k)) {
+          errors.push('search_query_reformulated: unknown param "' + k + '"');
+        }
+      }
+      break;
+    }
+    case 'search_query_submitted': {
+      const allowed = ["query_text_norm","query_length","script_family","surface","result_count","trace_id"];
+      if (typeof params['query_text_norm'] !== 'string') errors.push('search_query_submitted.query_text_norm: expected string (required)');
+      if (typeof params['query_length'] !== 'number') errors.push('search_query_submitted.query_length: expected number (required)');
+      if (typeof params['script_family'] !== 'string') errors.push('search_query_submitted.script_family: expected string (required)');
+      if (typeof params['surface'] !== 'string') errors.push('search_query_submitted.surface: expected string (required)');
+      if (typeof params['result_count'] !== 'number') errors.push('search_query_submitted.result_count: expected number (required)');
+      if (typeof params['trace_id'] !== 'string') errors.push('search_query_submitted.trace_id: expected string (required)');
+      for (const k of Object.keys(params)) {
+        if (!allowed.includes(k)) {
+          errors.push('search_query_submitted: unknown param "' + k + '"');
+        }
+      }
+      break;
+    }
+    case 'search_result_impressed': {
+      const allowed = ["trace_id","entity_type","entity_ref","position","page_offset","dwell_ms","viewport_ratio"];
+      if (typeof params['trace_id'] !== 'string') errors.push('search_result_impressed.trace_id: expected string (required)');
+      if (typeof params['entity_type'] !== 'string') errors.push('search_result_impressed.entity_type: expected string (required)');
+      if (typeof params['entity_ref'] !== 'string') errors.push('search_result_impressed.entity_ref: expected string (required)');
+      if (typeof params['position'] !== 'number') errors.push('search_result_impressed.position: expected number (required)');
+      if (typeof params['page_offset'] !== 'number') errors.push('search_result_impressed.page_offset: expected number (required)');
+      if (typeof params['dwell_ms'] !== 'number') errors.push('search_result_impressed.dwell_ms: expected number (required)');
+      if (typeof params['viewport_ratio'] !== 'number') errors.push('search_result_impressed.viewport_ratio: expected number (required)');
+      for (const k of Object.keys(params)) {
+        if (!allowed.includes(k)) {
+          errors.push('search_result_impressed: unknown param "' + k + '"');
+        }
+      }
+      break;
+    }
+    case 'search_result_selected': {
+      const allowed = ["trace_id","entity_type","entity_ref","position","action","dwell_before_click_ms"];
+      if (typeof params['trace_id'] !== 'string') errors.push('search_result_selected.trace_id: expected string (required)');
+      if (typeof params['entity_type'] !== 'string') errors.push('search_result_selected.entity_type: expected string (required)');
+      if (typeof params['entity_ref'] !== 'string') errors.push('search_result_selected.entity_ref: expected string (required)');
+      if (typeof params['position'] !== 'number') errors.push('search_result_selected.position: expected number (required)');
+      if (typeof params['action'] !== 'string') errors.push('search_result_selected.action: expected string (required)');
+      if ('dwell_before_click_ms' in params && typeof params['dwell_before_click_ms'] !== 'number') errors.push('search_result_selected.dwell_before_click_ms: expected number');
+      for (const k of Object.keys(params)) {
+        if (!allowed.includes(k)) {
+          errors.push('search_result_selected: unknown param "' + k + '"');
         }
       }
       break;
@@ -168,10 +320,13 @@ export function validateEventParams(name: string, params: Record<string, unknown
       break;
     }
     case 'view_item': {
-      const allowed = ["item_type","item_category","value"];
+      const allowed = ["item_type","item_category","value","category_path","package_tier","duration_minutes"];
       if (typeof params['item_type'] !== 'string') errors.push('view_item.item_type: expected string (required)');
       if ('item_category' in params && typeof params['item_category'] !== 'string') errors.push('view_item.item_category: expected string');
       if ('value' in params && typeof params['value'] !== 'number') errors.push('view_item.value: expected number');
+      if ('category_path' in params && typeof params['category_path'] !== 'string') errors.push('view_item.category_path: expected string');
+      if ('package_tier' in params && typeof params['package_tier'] !== 'string') errors.push('view_item.package_tier: expected string');
+      if ('duration_minutes' in params && typeof params['duration_minutes'] !== 'number') errors.push('view_item.duration_minutes: expected number');
       for (const k of Object.keys(params)) {
         if (!allowed.includes(k)) {
           errors.push('view_item: unknown param "' + k + '"');

@@ -24,6 +24,10 @@ export interface CatalogItemRow {
   status: string;
   currency: string;
   price_minor: number;
+  item_kind?: string;
+  base_duration_minutes?: number;
+  package_tier_code?: string;
+  qualification_tier_code?: string;
 }
 
 export function CatalogTable({ rows }: { rows: CatalogItemRow[] }) {
@@ -37,20 +41,34 @@ export function CatalogTable({ rows }: { rows: CatalogItemRow[] }) {
   }
 
   return (
-    <ConsoleTable headers={['SKU', 'Name', 'Status', 'Price']}>
-      {rows.map((item) => (
-        <tr key={item.id} data-testid="catalog-row">
-          <td className="px-4 py-3 font-mono text-xs">{item.sku}</td>
-          <td className="px-4 py-3">{item.name}</td>
-          <td className="px-4 py-3">
-            <StatusBadge status={item.status.toLowerCase()} />
-          </td>
-          <td className="px-4 py-3 text-muted-foreground">
-            {item.currency} {(item.price_minor / 100).toFixed(2)}
-          </td>
-        </tr>
-      ))}
-    </ConsoleTable>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+        <span>2-Axis Tiered Pricing active: Standard / Premium / Complete × Pandit Tiers</span>
+        <span className="font-mono">Server Duration Authority</span>
+      </div>
+      <ConsoleTable headers={['SKU', 'Name', 'Status', 'Price', 'Duration', 'Tiers']}>
+        {rows.map((item) => (
+          <tr key={item.id} data-testid="catalog-row">
+            <td className="px-4 py-3 font-mono text-xs">{item.sku}</td>
+            <td className="px-4 py-3 font-medium">{item.name}</td>
+            <td className="px-4 py-3">
+              <StatusBadge status={item.status.toLowerCase()} />
+            </td>
+            <td className="px-4 py-3 text-muted-foreground">
+              {item.currency} {(item.price_minor / 100).toFixed(2)}
+            </td>
+            <td className="px-4 py-3 text-xs text-muted-foreground">
+              {item.base_duration_minutes ? `${item.base_duration_minutes}m` : '60m'}
+            </td>
+            <td className="px-4 py-3">
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#FFF7ED] text-[#B74717] border border-[#EFE3D3]">
+                2-Axis Ladder
+              </span>
+            </td>
+          </tr>
+        ))}
+      </ConsoleTable>
+    </div>
   );
 }
 

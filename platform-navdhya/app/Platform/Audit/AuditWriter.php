@@ -39,7 +39,7 @@ final class AuditWriter
 
         $actor = $this->actor();
         $requestId = $this->requestId();
-        $occurredAt = now();
+        $occurredAt = now()->utc()->startOfSecond();
 
         // Hash chain: each row seals its predecessor (tamper evidence).
         // Bypass the tenant scope deliberately — the row set is already
@@ -55,7 +55,7 @@ final class AuditWriter
                 ->lockForUpdate()
                 ->value('hash');
 
-            $seal = [
+            $hash = self::computeHash([
                 'tenant_id' => $tenantId,
                 'actor' => $actor,
                 'action' => $action,
@@ -65,7 +65,7 @@ final class AuditWriter
                 'request_id' => $requestId,
                 'prev_hash' => $prevHash,
                 'occurred_at' => $occurredAt->toISOString(),
-            ];
+            ]);
 
             return AuditLog::create([
                 'tenant_id' => $tenantId,
@@ -76,10 +76,30 @@ final class AuditWriter
                 'after' => $after,
                 'request_id' => $requestId,
                 'prev_hash' => $prevHash,
-                'hash' => hash('sha256', (string) json_encode($seal, JSON_UNESCAPED_SLASHES)),
+                'hash' => $hash,
                 'occurred_at' => $occurredAt,
             ]);
         });
+    }
+
+    /**
+     * Canonical seal digest shared between writer and chain verifier.
+     *
+     * @param  array<string, mixed>  $seal
+     */
+    public static function computeHash(array $seal): string
+    {
+        return hash('sha256', (string) json_encode([
+            'tenant_id' => $seal['tenant_id'] ?? null,
+            'actor' => $seal['actor'] ?? null,
+            'action' => $seal['action'] ?? null,
+            'resource' => $seal['resource'] ?? null,
+            'before' => $seal['before'] ?? null,
+            'after' => $seal['after'] ?? null,
+            'request_id' => $seal['request_id'] ?? null,
+            'prev_hash' => $seal['prev_hash'] ?? null,
+            'occurred_at' => $seal['occurred_at'] ?? null,
+        ], JSON_UNESCAPED_SLASHES));
     }
 
     /**

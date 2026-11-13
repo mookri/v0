@@ -65,6 +65,7 @@ describe('Partner Actions & Temple Council Approvals (WP6)', () => {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
+        'Idempotency-Key': 'ik_start_test',
       },
       body: JSON.stringify({ note: 'Commencing Vedic homa mantras' }),
     });
@@ -76,6 +77,10 @@ describe('Partner Actions & Temple Council Approvals (WP6)', () => {
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.data.status).toBe('IN_PROGRESS');
+    expect(global.fetch).toHaveBeenCalledWith(
+      'https://api.navdhya.test/api/v1/pandit/assignments/asgn_02:start',
+      expect.objectContaining({ method: 'POST' }),
+    );
   });
 
   it('retrieves temple council approvals queue', async () => {

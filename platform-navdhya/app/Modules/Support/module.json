@@ -1,0 +1,33 @@
+{
+  "code": "support",
+  "name": "Support, Consumer Grievance & Dispute Redressal",
+  "version": "1.0.0",
+  "phase": 3,
+  "priority": 265,
+  "dependencies": ["booking", "customers"],
+  "actions": ["open", "reply", "classify", "resolve", "decide", "manage", "request", "access", "escalate"],
+  "permissions": [
+    { "code": "support:case:view", "name": "View non-restricted support cases" },
+    { "code": "support:case:manage", "name": "Assign, classify and transition support cases", "sensitive": true },
+    { "code": "support:case:resolve", "name": "Resolve and close support cases with recorded remedy", "sensitive": true },
+    { "code": "support:appeal:decide", "name": "Decide independent support case appeals", "sensitive": true },
+    { "code": "support:grievance:manage", "name": "Manage statutory grievance clocks, decisions and NCH referrals", "sensitive": true },
+    { "code": "support:refund:request", "name": "Submit and approve support refund requests to Finance", "sensitive": true },
+    { "code": "support:safety_case:access", "name": "Access restricted safety cases and confidential threads", "sensitive": true },
+    { "code": "support:improvement:manage", "name": "Manage provider improvement plans", "sensitive": true }
+  ],
+  "scopes": ["support:self", "support:staff", "support:admin"],
+  "events": [
+    { "name": "support.case.opened", "schema": "v1" },
+    { "name": "support.case.acknowledged", "schema": "v1" },
+    { "name": "support.case.resolved", "schema": "v1" },
+    { "name": "support.case.reopened", "schema": "v1" },
+    { "name": "support.grievance.copy_issued", "schema": "v1" },
+    { "name": "support.grievance.breached", "schema": "v1" },
+    { "name": "support.refund.requested", "schema": "v1" },
+    { "name": "support.refund.breached", "schema": "v1" },
+    { "name": "support.safety_case.escalated", "schema": "v1" }
+  ],
+  "navigation": [],
+  "api": { "openapi": "Http/openapi.yaml", "basePath": "/api/v1/support" }
+}

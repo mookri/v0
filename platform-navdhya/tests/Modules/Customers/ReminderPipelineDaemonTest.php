@@ -2,7 +2,7 @@
 
 namespace Tests\Modules\Customers;
 
-use App\Modules\Customers\Domain\Panchang\AnchorOccurrenceResolver;
+use App\Domain\Calendar\Panchang\AnchorOccurrenceResolver;
 use App\Modules\Customers\Models\CustomerNotification;
 use App\Modules\Customers\Models\CustomerRitualReminder;
 use App\Platform\Outbox\OutboxEvent;

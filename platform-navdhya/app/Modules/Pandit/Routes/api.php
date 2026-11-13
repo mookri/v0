@@ -52,6 +52,8 @@ Route::middleware(['scope:pandit:self'])->group(function () {
         ->name('assignments.own-index');
     Route::post('assignments/{id}:confirm', [PanditAssignmentController::class, 'confirm'])
         ->name('assignments.confirm');
+    Route::post('assignments/{id}:start', [PanditAssignmentController::class, 'start'])
+        ->name('assignments.start');
     Route::post('assignments/{id}:decline', [PanditAssignmentController::class, 'decline'])
         ->name('assignments.decline');
     Route::post('assignments/{id}:complete', [PanditAssignmentController::class, 'complete'])

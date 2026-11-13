@@ -1,30 +1,21 @@
+import {
+  BOOKING_CANCELLABLE_STATUSES,
+  BOOKING_LEGAL_TRANSITIONS,
+  BOOKING_RESCHEDULABLE_STATUSES,
+} from '@navdhya/contracts/src/generated/booking-lifecycle';
 import { Booking } from './Booking';
 import { BookingStatus } from './BookingStatus';
 
-const LEGAL_TRANSITIONS: Record<BookingStatus, BookingStatus[]> = {
-  DRAFT: ['PENDING_PAYMENT', 'CANCELLED', 'EXPIRED'],
-  PENDING_PAYMENT: ['PAYMENT_CONFIRMED', 'FAILED', 'EXPIRED', 'CANCELLED'],
-  PAYMENT_CONFIRMED: ['CONFIRMED', 'REFUNDED', 'FAILED'],
-  CONFIRMED: ['ASSIGNED', 'CANCELLED'],
-  ASSIGNED: ['IN_PROGRESS', 'CANCELLED'],
-  IN_PROGRESS: ['COMPLETED', 'CANCELLED'],
-  COMPLETED: [],
-  CANCELLED: [],
-  FAILED: [],
-  EXPIRED: [],
-  REFUNDED: [],
-};
-
 export function canTransition(from: BookingStatus, to: BookingStatus): boolean {
-  return LEGAL_TRANSITIONS[from]?.includes(to) ?? false;
+  return BOOKING_LEGAL_TRANSITIONS[from]?.includes(to) ?? false;
 }
 
 export function canCancel(booking: Booking): boolean {
-  return ['DRAFT', 'PENDING_PAYMENT', 'CONFIRMED', 'ASSIGNED', 'IN_PROGRESS'].includes(booking.status);
+  return BOOKING_CANCELLABLE_STATUSES.includes(booking.status);
 }
 
 export function canReschedule(booking: Booking): boolean {
-  return ['CONFIRMED', 'ASSIGNED'].includes(booking.status);
+  return BOOKING_RESCHEDULABLE_STATUSES.includes(booking.status);
 }
 
 export function canConfirm(booking: Booking): boolean {

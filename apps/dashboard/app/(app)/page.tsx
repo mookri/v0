@@ -1,68 +1,114 @@
-export function DashboardHome() {
-  const stats = [
-    { label: 'Total Pujas', value: '142', change: '+12%', icon: '🕉️' },
-    { label: 'Active Bookings', value: '89', change: '+5%', icon: '📅' },
-    { label: 'Customers', value: '1,234', change: '+8%', icon: '👥' },
-    { label: 'Revenue', value: '₹42.5L', change: '+15%', icon: '💰' },
-  ];
+'use client';
 
-  const recentActivity = [
-    { id: 1, type: 'booking', message: 'New booking created for Ganesh Puja', time: '2 min ago', icon: '📅' },
-    { id: 2, type: 'customer', message: 'New customer registered: Rahul Sharma', time: '15 min ago', icon: '👤' },
-    { id: 3, type: 'puja', message: 'Saraswati Puja price updated', time: '1 hour ago', icon: '🕉️' },
-    { id: 4, type: 'booking', message: 'Booking #BK-2024-001 rescheduled', time: '3 hours ago', icon: '📅' },
-    { id: 5, type: 'customer', message: 'Customer Priya Patel completed verification', time: '5 hours ago', icon: '👤' },
-  ];
+import React, { useEffect, useState } from 'react';
+
+interface MetricDefinition {
+  key: string;
+  label: string;
+  value: number;
+  unit: string;
+  numerator: string;
+  denominator: string;
+  formula: string;
+  as_of: string;
+}
+
+interface StatsResponse {
+  data?: {
+    metrics?: MetricDefinition[];
+    tenant?: { code: string; name: string; state: string };
+  };
+  error?: string;
+  message?: string;
+}
+
+export function DashboardHome() {
+  const [metrics, setMetrics] = useState<MetricDefinition[] | null>(null);
+  const [tenantName, setTenantName] = useState<string | null>(null);
+  const [statusError, setStatusError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/ops/stats', { cache: 'no-store' })
+      .then(async (res) => {
+        const body = (await res.json().catch(() => ({}))) as StatsResponse;
+        if (!active) return;
+        if (!res.ok) {
+          setStatusError(body.message || `Telemetry unavailable (${res.status})`);
+          setLoading(false);
+          return;
+        }
+        setMetrics(body.data?.metrics ?? []);
+        setTenantName(body.data?.tenant?.name ?? null);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (!active) return;
+        setStatusError('Unable to reach /api/ops/stats backend.');
+        setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
-    <div className="space-y-8">
-      <header>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-500 mt-1">Welcome back! Here's what's happening.</p>
+    <div className="space-y-8 text-[#2A2421]">
+      <header className="border-b border-[#EFE3D3] pb-5">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[#B74717]">
+          Sacred Ember Control Plane {tenantName ? `· ${tenantName}` : ''}
+        </p>
+        <h1 className="mt-1 text-2xl font-bold text-[#2C2033]">Platform Operations Overview</h1>
+        <p className="text-sm text-[#2A2421] mt-1">
+          Every KPI binds to an explicit numerator, denominator, and formula definition. Unavailable backends report honestly rather than showing estimates.
+        </p>
       </header>
 
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <div key={stat.label} className="bg-white rounded-xl border border-gray-200 p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-500">{stat.label}</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">{stat.value}</p>
-                <p className="text-sm text-green-600 mt-1">{stat.change} vs last month</p>
-              </div>
-              <div className="text-4xl">{stat.icon}</div>
-            </div>
-          </div>
-        ))}
-      </section>
-
-      <section>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activity</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {recentActivity.map((activity) => (
-                <tr key={activity.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">{activity.icon}</span>
-                      <p className="text-gray-900">{activity.message}</p>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{activity.time}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {loading ? (
+        <div className="rounded-xl border border-[#EFE3D3] bg-white p-6 text-sm text-[#2A2421]">
+          Loading authoritative operational metrics...
         </div>
-      </section>
+      ) : statusError ? (
+        <div
+          role="status"
+          className="rounded-xl border border-[#B74717] bg-[#EFE3D3] p-6 text-sm text-[#2C2033]"
+        >
+          <p className="font-semibold text-[#B74717]">Operational KPI Feed Unavailable</p>
+          <p className="mt-1 text-[#2A2421]">{statusError}</p>
+        </div>
+      ) : (
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" aria-label="Key metrics">
+          {(metrics ?? []).map((metric) => (
+            <article
+              key={metric.key}
+              className="rounded-xl border border-[#EFE3D3] bg-white p-6 shadow-sm"
+            >
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#B74717]">{metric.label}</p>
+              <div className="mt-2 flex items-baseline gap-2">
+                <p className="text-3xl font-bold text-[#2C2033]">{metric.value}</p>
+                <span className="text-xs font-medium text-[#2A2421]">{metric.unit}</span>
+              </div>
+              <dl className="mt-4 space-y-1 border-t border-[#EFE3D3] pt-3 text-xs text-[#2A2421]">
+                <div>
+                  <dt className="inline font-semibold text-[#2C2033]">Formula: </dt>
+                  <dd className="inline">{metric.formula}</dd>
+                </div>
+                <div>
+                  <dt className="inline font-semibold text-[#2C2033]">Numerator: </dt>
+                  <dd className="inline">{metric.numerator}</dd>
+                </div>
+                <div>
+                  <dt className="inline font-semibold text-[#2C2033]">Denominator: </dt>
+                  <dd className="inline">{metric.denominator}</dd>
+                </div>
+              </dl>
+            </article>
+          ))}
+        </section>
+      )}
     </div>
   );
 }
+
 export default DashboardHome;

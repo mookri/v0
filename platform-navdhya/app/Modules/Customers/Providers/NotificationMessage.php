@@ -19,6 +19,7 @@ final class NotificationMessage
         public readonly array $variables = [],
         public readonly ?string $subject = null,
         public readonly ?string $body = null,
+        public readonly ?string $idempotencyKey = null,
     ) {
     }
 }

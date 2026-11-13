@@ -87,6 +87,36 @@ actor.anonId, consent, context, source) are documented in the plan doc §B2.
 | `value_basket` | number | yes | Basket value in INR at checkout entry. |
 | `item_count` | number | yes | Line items in basket. |
 
+## `facet_view` (v1)
+
+- **Owner:** catalog · **Producer:** client · **Priority:** P2
+- **Surfaces:** web, customer
+- **Sinks:** gtm_ga4, collector_bigquery
+- **Privacy:** pseudonymous · **Retention:** raw_30d · **Sampling:** fixed @ 1
+- Catalog facet viewed or changed.
+
+| Param | Type | Required | Description |
+|---|---|---|---|
+| `facet_key` | string | yes | Category or filter key. |
+| `facet_value` | string | yes | Selected facet value. |
+| `result_count` | number | yes | Matching items count. |
+| `category_path` | string | no | Materialized category path. |
+
+## `kit_opt_in` (v1)
+
+- **Owner:** catalog · **Producer:** client · **Priority:** P2
+- **Surfaces:** web, customer
+- **Sinks:** gtm_ga4, collector_bigquery
+- **Privacy:** pseudonymous · **Retention:** raw_30d · **Sampling:** fixed @ 1
+- Samagri kit line item toggled.
+
+| Param | Type | Required | Description |
+|---|---|---|---|
+| `service_sku` | string | yes | Base ritual SKU. |
+| `kit_sku` | string | yes | Bound kit SKU. |
+| `obligation` | string | yes | MANDATORY \| OPTIONAL \| INCLUDED. |
+| `action` | string | yes | selected \| unselected. |
+
 ## `kyc_submitted` (v1)
 
 - **Owner:** partner_ops · **Producer:** client · **Priority:** P1
@@ -153,6 +183,21 @@ actor.anonId, consent, context, source) are documented in the plan doc §B2.
 | `method` | string | no | Gateway method family: upi \| card \| netbanking \| wallet. |
 | `transaction_ref` | string | yes | Pseudonymous gateway order reference (GA4 purchase dedup in the sink adapter). |
 
+## `price_tier_viewed` (v1)
+
+- **Owner:** catalog · **Producer:** client · **Priority:** P2
+- **Surfaces:** web, customer
+- **Sinks:** gtm_ga4, collector_bigquery
+- **Privacy:** pseudonymous · **Retention:** raw_30d · **Sampling:** fixed @ 1
+- Tiered price displayed to user.
+
+| Param | Type | Required | Description |
+|---|---|---|---|
+| `sku` | string | yes | Service SKU. |
+| `package_tier` | string | yes | Standard \| Premium \| Complete. |
+| `price_minor` | number | yes | Price in minor currency units. |
+| `currency` | string | yes | Currency code. |
+
 ## `purchase_viewed` (v1)
 
 - **Owner:** commerce · **Producer:** client · **Priority:** P1
@@ -166,6 +211,53 @@ actor.anonId, consent, context, source) are documented in the plan doc §B2.
 | `value` | number | yes | Order value in INR as displayed on the confirmation page. |
 | `item_count` | number | yes | Line items shown on confirmation. |
 
+## `quote_viewed` (v1)
+
+- **Owner:** catalog · **Producer:** client · **Priority:** P2
+- **Surfaces:** web, customer
+- **Sinks:** gtm_ga4, collector_bigquery
+- **Privacy:** pseudonymous · **Retention:** raw_30d · **Sampling:** fixed @ 1
+- Commercial quote breakdown viewed.
+
+| Param | Type | Required | Description |
+|---|---|---|---|
+| `sku` | string | yes | Service SKU. |
+| `package_tier` | string | yes | Package tier code. |
+| `qualification_tier` | string | yes | Pandit qualification tier. |
+| `total_minor` | number | yes | Total quote in minor units. |
+| `currency` | string | yes | Currency code. |
+
+## `reco_impressed` (v1)
+
+- **Owner:** recommendations · **Producer:** client · **Priority:** P2
+- **Surfaces:** web, customer
+- **Sinks:** collector_bigquery
+- **Privacy:** pseudonymous · **Retention:** raw_90d · **Sampling:** fixed @ 1
+- Recommendation shelf or tray visible in viewport.
+
+| Param | Type | Required | Description |
+|---|---|---|---|
+| `placement` | string | yes | Placement slot identifier. |
+| `reco_ref` | string | yes | Recommendation generation run ID. |
+| `items_shown` | string | yes | Comma-separated item refs. |
+| `surface` | string | yes | Page surface displaying recommendations. |
+
+## `reco_selected` (v1)
+
+- **Owner:** recommendations · **Producer:** client · **Priority:** P2
+- **Surfaces:** web, customer
+- **Sinks:** collector_bigquery
+- **Privacy:** pseudonymous · **Retention:** raw_90d · **Sampling:** fixed @ 1
+- Recommended item clicked or selected.
+
+| Param | Type | Required | Description |
+|---|---|---|---|
+| `placement` | string | yes | Placement slot identifier. |
+| `reco_ref` | string | yes | Recommendation generation run ID. |
+| `entity_type` | string | yes | puja_service \| temple \| pandit. |
+| `entity_ref` | string | yes | Recommended item identifier. |
+| `position` | number | yes | Zero-based rank position within shelf. |
+
 ## `search` (v1)
 
 - **Owner:** growth · **Producer:** client · **Priority:** P1
@@ -178,6 +270,88 @@ actor.anonId, consent, context, source) are documented in the plan doc §B2.
 |---|---|---|---|
 | `search_term` | string | yes | User-entered query text. Declared free text; redaction still applies before any external sink. |
 | `result_count` | number | yes | Number of results shown. |
+| `category_filter` | string | no | Category filter applied. |
+| `query_trace_id` | string | no | Trace id. |
+
+## `search_query_abandoned` (v1)
+
+- **Owner:** search · **Producer:** client · **Priority:** P2
+- **Surfaces:** web, customer
+- **Sinks:** collector_bigquery
+- **Privacy:** pseudonymous · **Retention:** raw_90d · **Sampling:** fixed @ 1
+- Search session closed or abandoned without selection.
+
+| Param | Type | Required | Description |
+|---|---|---|---|
+| `trace_id` | string | yes | Search trace ID. |
+| `last_query_text` | string | yes | Last query attempted before abandonment. |
+| `dwell_total_ms` | number | yes | Total search session duration in ms. |
+
+## `search_query_reformulated` (v1)
+
+- **Owner:** search · **Producer:** client · **Priority:** P2
+- **Surfaces:** web, customer
+- **Sinks:** collector_bigquery
+- **Privacy:** pseudonymous · **Retention:** raw_90d · **Sampling:** fixed @ 1
+- Search query edited or reformulated within session.
+
+| Param | Type | Required | Description |
+|---|---|---|---|
+| `prev_query_text` | string | yes | Previous query text. |
+| `new_query_text` | string | yes | New query text. |
+| `elapsed_ms` | number | yes | Milliseconds between searches. |
+
+## `search_query_submitted` (v1)
+
+- **Owner:** search · **Producer:** client · **Priority:** P1
+- **Surfaces:** web, customer
+- **Sinks:** collector_bigquery
+- **Privacy:** pseudonymous · **Retention:** raw_90d · **Sampling:** fixed @ 1
+- Search query submitted by user.
+
+| Param | Type | Required | Description |
+|---|---|---|---|
+| `query_text_norm` | string | yes | Normalized query string. |
+| `query_length` | number | yes | Character length of query. |
+| `script_family` | string | yes | devanagari \| latin \| iast \| mixed. |
+| `surface` | string | yes | web_header \| web_search_page \| customer_home. |
+| `result_count` | number | yes | Number of results returned. |
+| `trace_id` | string | yes | Search trace ID. |
+
+## `search_result_impressed` (v1)
+
+- **Owner:** search · **Producer:** client · **Priority:** P1
+- **Surfaces:** web, customer
+- **Sinks:** collector_bigquery
+- **Privacy:** pseudonymous · **Retention:** raw_90d · **Sampling:** fixed @ 1
+- Search result candidate visible in viewport >= 50% for >= 300ms.
+
+| Param | Type | Required | Description |
+|---|---|---|---|
+| `trace_id` | string | yes | Search trace ID. |
+| `entity_type` | string | yes | puja_service \| temple \| pandit \| guide. |
+| `entity_ref` | string | yes | Result entity identifier. |
+| `position` | number | yes | Zero-based rank position in result set. |
+| `page_offset` | number | yes | Pagination offset. |
+| `dwell_ms` | number | yes | Dwell time in viewport in milliseconds. |
+| `viewport_ratio` | number | yes | Intersection ratio (e.g. 0.50). |
+
+## `search_result_selected` (v1)
+
+- **Owner:** search · **Producer:** client · **Priority:** P1
+- **Surfaces:** web, customer
+- **Sinks:** collector_bigquery
+- **Privacy:** pseudonymous · **Retention:** raw_90d · **Sampling:** fixed @ 1
+- Search result item selected or clicked by user.
+
+| Param | Type | Required | Description |
+|---|---|---|---|
+| `trace_id` | string | yes | Search trace ID. |
+| `entity_type` | string | yes | puja_service \| temple \| pandit \| guide. |
+| `entity_ref` | string | yes | Selected entity identifier. |
+| `position` | number | yes | Zero-based rank position of clicked item. |
+| `action` | string | yes | click \| quick_view \| book_direct. |
+| `dwell_before_click_ms` | number | no | Dwell time before clicking. |
 
 ## `sign_up` (v1)
 
@@ -204,6 +378,9 @@ actor.anonId, consent, context, source) are documented in the plan doc §B2.
 | `item_type` | string | yes | puja \| consultation \| package. |
 | `item_category` | string | no | Catalog category slug. |
 | `value` | number | no | Displayed price in INR. Display only — never pricing truth. |
+| `category_path` | string | no | Materialized category path. |
+| `package_tier` | string | no | Standard \| Premium \| Complete tier. |
+| `duration_minutes` | number | no | Authoritative duration. |
 
 ## `zero_results_search` (v1)
 

@@ -26,6 +26,30 @@ deptrac:
           collectors:
               - type: classLike
                 value: ^App\\Support\\.*
+        - name: Calendar
+          collectors:
+              - type: classLike
+                value: ^App\\Domain\\Calendar\\.*
+        - name: Jyotish
+          collectors:
+              - type: classLike
+                value: ^App\\Domain\\Jyotish\\.*
+        - name: Delivery
+          collectors:
+              - type: classLike
+                value: ^App\\Domain\\Delivery\\.*
+        - name: Privacy
+          collectors:
+              - type: classLike
+                value: ^App\\Domain\\Privacy\\.*
+        - name: Verification
+          collectors:
+              - type: classLike
+                value: ^App\\Domain\\Verification\\.*
+        - name: Trust
+          collectors:
+              - type: classLike
+                value: ^App\\Domain\\Trust\\.*
         - name: Contracts
           collectors:
               - type: classLike
@@ -50,24 +74,71 @@ deptrac:
         Kernel:
             - Support
         Support: []
+        Calendar:
+            - Support
+        Jyotish:
+            - Support
+        Delivery:
+            - Kernel
+            - Support
+            - Contracts
+        Privacy:
+            - Kernel
+            - Support
+            - Contracts
+        Verification:
+            - Kernel
+            - Support
+            - Contracts
+            - Privacy
+        Trust:
+            - Kernel
+            - Support
+            - Contracts
+            - Privacy
+            - Verification
         Contracts:
             - Support
         ModuleCore:
             - Kernel
             - Support
             - Contracts
+            - Calendar
+            - Jyotish
+            - Delivery
+            - Privacy
+            - Verification
+            - Trust
         ModuleHttp:
             - ModuleCore
             - Kernel
             - Support
             - Contracts
+            - Calendar
+            - Jyotish
+            - Delivery
+            - Privacy
+            - Verification
+            - Trust
         ModuleRoot:
             - Kernel
             - Support
             - Contracts
+            - Calendar
+            - Jyotish
+            - Delivery
+            - Privacy
+            - Verification
+            - Trust
             - ModuleCore
             - ModuleHttp
         AppShell:
             - Kernel
             - Support
             - Contracts
+            - Calendar
+            - Jyotish
+            - Delivery
+            - Privacy
+            - Verification
+            - Trust

@@ -16,14 +16,37 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   const body = (await request.json().catch(() => ({}))) as {
     reason_code?: string;
-    note?: string;
+    note?: string | null;
     second_reviewer?: string;
   };
 
+  const reasonCode = typeof body.reason_code === 'string' ? body.reason_code.trim() : '';
+  const secondReviewer = typeof body.second_reviewer === 'string' ? body.second_reviewer.trim() : '';
+
+  if (!reasonCode || !secondReviewer) {
+    return Response.json(
+      err('VALIDATION_ERROR', 'reason_code and second_reviewer countersignature are required to reject an application.', requestId),
+      { status: 422 },
+    );
+  }
+
   if (!laravelEnabled()) {
-    return Response.json(ok({ data: { id, decision: 'rejected', status: 'rejected' }, meta: { fallback: true } }, requestId), {
-      status: 200,
-    });
+    return Response.json(
+      ok(
+        {
+          data: {
+            id,
+            decision: 'rejected',
+            status: 'rejected',
+            reason_code: reasonCode,
+            second_reviewer: secondReviewer,
+          },
+          meta: { fallback: true },
+        },
+        requestId,
+      ),
+      { status: 200 },
+    );
   }
 
   const { token } = extractSessionToken(request);
@@ -46,9 +69,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       token,
       `/onboarding/review/${encodeURIComponent(id)}:reject`,
       {
-        reason_code: body.reason_code ?? 'manual_review',
+        reason_code: reasonCode,
         note: body.note ?? null,
-        second_reviewer: body.second_reviewer ?? '',
+        second_reviewer: secondReviewer,
       },
       {},
       { timeout: 'normal', requestId },

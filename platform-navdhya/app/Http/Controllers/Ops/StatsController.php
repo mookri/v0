@@ -51,12 +51,57 @@ final class StatsController
             ->where('occurred_at', '>=', now()->startOfDay())
             ->count();
 
+        $asOf = now('UTC')->toIso8601String();
+        $activeRatePct = $totalUsers > 0 ? round(($activeUsers / $totalUsers) * 100, 1) : 0.0;
+
         return new JsonResponse([
             'data' => [
                 'users' => ['total' => $totalUsers, 'active' => $activeUsers],
                 'roles' => ['total' => $totalRoles],
                 'audit' => ['total' => $totalAudit, 'denied_today' => $deniedToday],
                 'tenant' => ['code' => $tenant->code, 'name' => $tenant->name, 'state' => $tenant->state],
+                'metrics' => [
+                    [
+                        'key' => 'active_memberships',
+                        'label' => 'Active Members',
+                        'value' => $activeUsers,
+                        'unit' => 'members',
+                        'numerator' => 'TenantMembership(state=active)',
+                        'denominator' => 'TenantMembership(all)',
+                        'formula' => "count(active) = {$activeUsers} / {$totalUsers} ({$activeRatePct}%)",
+                        'as_of' => $asOf,
+                    ],
+                    [
+                        'key' => 'configured_roles',
+                        'label' => 'Configured Roles',
+                        'value' => $totalRoles,
+                        'unit' => 'roles',
+                        'numerator' => 'Role(tenant)',
+                        'denominator' => 'N/A',
+                        'formula' => 'count(roles.id)',
+                        'as_of' => $asOf,
+                    ],
+                    [
+                        'key' => 'audit_events_total',
+                        'label' => 'Audit Log Entries',
+                        'value' => $totalAudit,
+                        'unit' => 'events',
+                        'numerator' => 'AuditLog(tenant)',
+                        'denominator' => 'N/A',
+                        'formula' => 'count(audit_logs.id)',
+                        'as_of' => $asOf,
+                    ],
+                    [
+                        'key' => 'authz_denials_today',
+                        'label' => 'Authz Denials Today',
+                        'value' => $deniedToday,
+                        'unit' => 'denials',
+                        'numerator' => "AuditLog(action='authz.denied', occurred_at >= startOfDay)",
+                        'denominator' => 'AuditLog(today)',
+                        'formula' => 'count(authz.denied since 00:00 UTC)',
+                        'as_of' => $asOf,
+                    ],
+                ],
             ],
             'meta' => ['request_id' => $this->requestId($request)],
         ]);

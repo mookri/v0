@@ -1,0 +1,24 @@
+{
+  "$schema": "../../Platform/Modules/module.schema.json",
+  "code": "calendar",
+  "name": "Vedic Calendar & Panchang",
+  "version": "0.1.0",
+  "phase": 0,
+  "priority": 115,
+  "dependencies": [],
+  "actions": ["read", "manage", "view", "export"],
+  "permissions": [
+    { "code": "calendar:panchang:read", "name": "View daily and monthly Panchang details" },
+    { "code": "calendar:generation:manage", "name": "Build, validate and activate calendar generations", "sensitive": true }
+  ],
+  "scopes": ["calendar:read"],
+  "events": [
+    { "name": "calendar.generation.activated", "schema": "v1" },
+    { "name": "calendar.transition.solved", "schema": "v1" }
+  ],
+  "navigation": [],
+  "api": {
+    "openapi": "Http/openapi.yaml",
+    "basePath": "/api/v1/calendar"
+  }
+}

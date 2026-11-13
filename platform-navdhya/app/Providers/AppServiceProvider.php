@@ -60,6 +60,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind('scope', CheckScope::class);
         $this->app->bind('throttle.tier', ThrottleTier::class);
         $this->app->bind('stepup', RequiresAcr::class);
+        $this->app->bind('audience', \App\Platform\Identity\Http\Middleware\EnforceTokenAudience::class);
         $this->app->bind('authz.current', \App\Platform\Identity\Http\Middleware\RequiresCurrentAuthz::class);
         $this->app->bind('limit.body', \App\Platform\Http\Middleware\LimitJsonBody::class);
 

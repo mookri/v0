@@ -15,6 +15,21 @@ export const MAX_TRACKING_EVENTS = 50;
 /** Cap on the body size (bytes). Matches the decision route. */
 export const MAX_TRACKING_BODY_BYTES = 64 * 1024;
 
+const FORBIDDEN_ANALYTICS_PII_KEYS = new Set([
+  'email',
+  'phone',
+  'mobile',
+  'pan',
+  'aadhaar',
+  'address',
+  'gotra',
+  'nakshatra',
+  'bank_account',
+  'ifsc',
+  'name',
+  'full_name',
+]);
+
 const trackingEventSchema = z.object({
   type: z.string().trim().min(1).max(40),
   requestId: z.string().max(200),
@@ -35,7 +50,13 @@ const trackingEventSchema = z.object({
   viewabilityRatio: z.number().min(0).max(1).optional(),
   viewabilityMs: z.number().min(0).max(600_000).optional(),
   connectionType: z.string().max(32).optional(),
-  customData: z.record(z.string().max(64), z.unknown()).optional(),
+  customData: z
+    .record(z.string().max(64), z.unknown())
+    .refine(
+      (record) => Object.keys(record).every((k) => !FORBIDDEN_ANALYTICS_PII_KEYS.has(k.toLowerCase())),
+      { message: 'Analytics customData must not contain PII keys' },
+    )
+    .optional(),
 });
 
 export const trackingBatchSchema = z.object({

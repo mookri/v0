@@ -3,6 +3,8 @@
 namespace App\Modules\Search\Contracts;
 
 use App\Modules\Search\Models\SearchDocument;
+use App\Modules\Search\Support\KeyFolder;
+use App\Modules\Search\Support\RegionResolver;
 use App\Modules\Temple\Models\Temple;
 
 class TempleSearchProvider implements ProvidesSearchDocuments
@@ -60,6 +62,9 @@ class TempleSearchProvider implements ProvidesSearchDocuments
             ...$amenities,
         ]));
 
+        $region = RegionResolver::resolve($temple->city);
+        $cityName = $region ? $region->name_en : $temple->city;
+
         return new SearchDocument([
             'entity_type' => 'temple',
             'entity_id' => $temple->id,
@@ -70,10 +75,13 @@ class TempleSearchProvider implements ProvidesSearchDocuments
             'subtitle' => $temple->trust_name . ' • ' . $temple->city . ', ' . $temple->state,
             'body' => $searchText,
             'image_url' => $images[0] ?? null,
-            'city' => $temple->city,
+            'city' => $cityName,
+            'region_id' => $region?->id,
             'card_json' => $cardJson,
+            'keys_json' => KeyFolder::generateKeySet($temple->name),
             'status' => $temple->status,
             'indexed_at' => now(),
+            'source_updated_at' => $temple->updated_at,
         ]);
     }
 }

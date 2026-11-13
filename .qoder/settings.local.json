@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"C:/Users/Victo/Downloads/webproj/v0-navdhya-ritual-services/platform-navdhya\" && ls -la && echo \"---MODULES---\" && ls app/Modules/ 2>/dev/null && echo \"---ROUTES---\" && ls routes/ 2>/dev/null && ls routes/platform/ 2>/dev/null)",
+      "Bash(cd /c/Users/Victo/Downloads/webproj/v0-navdhya-ritual-services && ls -la && echo \"---APPS---\" && ls apps/ && echo \"---PACKAGES---\" && ls packages/)",
+      "Bash(cd \"C:\\\\Users\\\\Victo\\\\Downloads\\\\webproj\\\\v0-navdhya-ritual-services\" && ls -la && echo \"---APPS---\" && ls apps/ 2>/dev/null && echo \"---PACKAGES---\" && ls packages/ 2>/dev/null && echo \"---PLATFORM---\" && ls platform-navdhya/ 2>/dev/null && echo \"---WORKFLOWS---\" && ls .github/workflows/ 2>/dev/null)",
+      "Bash(cd \"C:/Users/Victo/Downloads/webproj/v0-navdhya-ritual-services/platform-navdhya\" && find app/Modules -maxdepth 2 -type d | sort && echo \"---ROUTEFILES---\" && find app/Modules -path \"*Routes*\" -name \"*.php\" | sort)",
+      "Bash(cd /c/Users/Victo/Downloads/webproj/v0-navdhya-ritual-services && find apps -path '*/api/*' -name 'route.ts' -o -path '*/api/*' -name 'route.tsx' | sort)",
+      "Bash(cd \"C:\\\\Users\\\\Victo\\\\Downloads\\\\webproj\\\\v0-navdhya-ritual-services\" && ls platform-navdhya/app/Domain/Delivery/Reliability/ 2>/dev/null; echo \"---OBS---\"; ls platform-navdhya/app/Platform/Observability/ 2>/dev/null; echo \"---PKGOBS---\"; ls -R packages/observability/ 2>/dev/null | head -60)"
+    ]
+  }
+}

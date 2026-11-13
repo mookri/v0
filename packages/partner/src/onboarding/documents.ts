@@ -14,11 +14,13 @@ export interface ApplicationDocument {
   applicationId: string;
   kind: DocumentKind;
   status: OnboardingDocumentStatus;
+  integrityState?: 'unverified' | 'verified' | 'corrupted' | 'missing';
   objectKey: string;
   sha256?: string;
   reasonCode?: DocumentRejectReason;
   createdAtIso: string;
   verifiedAtIso?: string;
+  rejectedAtIso?: string;
 }
 
 const KIND_MIMES: Record<DocumentKind, string[]> = {
@@ -46,6 +48,5 @@ export function markDocumentRejected(
   nowIso: string,
 ): ApplicationDocument {
   if (doc.status !== 'PENDING') throw new Error(`DOCUMENT_NOT_PENDING:${doc.id}`);
-  void nowIso;
-  return { ...doc, status: 'REJECTED', reasonCode };
+  return { ...doc, status: 'REJECTED', reasonCode, rejectedAtIso: nowIso };
 }

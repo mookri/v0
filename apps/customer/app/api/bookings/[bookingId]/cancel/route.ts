@@ -14,7 +14,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ booking
     if (actor instanceof Response) return actor;
 
     let ifMatch = req.headers.get('If-Match');
-    const idempotencyKey = req.headers.get('Idempotency-Key') ?? `ik_${requestId}`;
+    const idempotencyKey = req.headers.get('Idempotency-Key')?.trim() ?? '';
+    if (!idempotencyKey) {
+      return Response.json(
+        err('VALIDATION_ERROR', 'Idempotency-Key header is required.', requestId),
+        { status: 400 }
+      );
+    }
     const extraHeaders: Record<string, string> = {
       'Idempotency-Key': idempotencyKey,
     };

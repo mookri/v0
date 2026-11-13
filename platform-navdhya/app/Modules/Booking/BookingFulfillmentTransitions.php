@@ -44,11 +44,23 @@ final class BookingFulfillmentTransitions implements TransitionsBookingFulfillme
         );
     }
 
-    public function assignmentCompleted(string $bookingId, string $actorId): array
+    public function assignmentStarted(string $bookingId, string $actorId): array
     {
         return $this->apply(
             $bookingId,
             [BookingLifecycle::STATUS_ASSIGNED],
+            BookingLifecycle::STATUS_IN_PROGRESS,
+            'booking.fulfillment.started',
+            'assignment_started',
+            $actorId,
+        );
+    }
+
+    public function assignmentCompleted(string $bookingId, string $actorId): array
+    {
+        return $this->apply(
+            $bookingId,
+            [BookingLifecycle::STATUS_ASSIGNED, BookingLifecycle::STATUS_IN_PROGRESS],
             BookingLifecycle::STATUS_COMPLETED,
             'booking.fulfillment.completed',
             'assignment_completed',
@@ -87,11 +99,15 @@ final class BookingFulfillmentTransitions implements TransitionsBookingFulfillme
         ])->save();
 
         if ($to === BookingLifecycle::STATUS_COMPLETED) {
-            // Completion drives both matrix hops (ASSIGNED → IN_PROGRESS
-            // → COMPLETED); each is recorded so the timeline matches the
-            // lifecycle exactly.
-            $this->record($booking, BookingLifecycle::STATUS_ASSIGNED, BookingLifecycle::STATUS_IN_PROGRESS, $reason, $actorId);
-            $this->record($booking, BookingLifecycle::STATUS_IN_PROGRESS, BookingLifecycle::STATUS_COMPLETED, $reason, $actorId);
+            if ($from === BookingLifecycle::STATUS_ASSIGNED) {
+                // Direct completion drives both matrix hops (ASSIGNED → IN_PROGRESS
+                // → COMPLETED); each is recorded so the timeline matches the
+                // lifecycle exactly.
+                $this->record($booking, BookingLifecycle::STATUS_ASSIGNED, BookingLifecycle::STATUS_IN_PROGRESS, $reason, $actorId);
+                $this->record($booking, BookingLifecycle::STATUS_IN_PROGRESS, BookingLifecycle::STATUS_COMPLETED, $reason, $actorId);
+            } else {
+                $this->record($booking, $from, $to, $reason, $actorId);
+            }
         } else {
             $this->record($booking, $from, $to, $reason, $actorId);
         }

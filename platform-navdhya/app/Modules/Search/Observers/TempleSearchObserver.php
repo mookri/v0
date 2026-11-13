@@ -2,29 +2,36 @@
 
 namespace App\Modules\Search\Observers;
 
-use App\Modules\Search\SearchIndexer;
+use App\Modules\Search\Models\SearchIndexOutbox;
 use App\Modules\Temple\Models\Temple;
 
 class TempleSearchObserver
 {
-    public function __construct(
-        private readonly SearchIndexer $indexer
-    ) {
-    }
-
     public function saved(Temple $temple): void
     {
-        $document = app(\App\Modules\Search\Contracts\TempleSearchProvider::class)->getDocument($temple->id);
-        if ($document) {
-            $this->indexer->upsertDocument($document);
-        } else {
-            // Entity doesn't meet criteria (e.g., not ACTIVE), remove from index if present
-            $this->indexer->deleteDocument('temple', $temple->id);
-        }
+        $tenantId = (string) ($temple->tenant_id ?: config('platform.default_tenant', 'default'));
+
+        SearchIndexOutbox::create([
+            'tenant_id' => $tenantId,
+            'entity_type' => 'temple',
+            'entity_id' => (string) $temple->id,
+            'revision' => (int) ($temple->revision ?? 1),
+            'operation' => SearchIndexOutbox::OP_UPSERT,
+            'status' => SearchIndexOutbox::STATUS_PENDING,
+        ]);
     }
 
     public function deleted(Temple $temple): void
     {
-        $this->indexer->deleteDocument('temple', $temple->id);
+        $tenantId = (string) ($temple->tenant_id ?: config('platform.default_tenant', 'default'));
+
+        SearchIndexOutbox::create([
+            'tenant_id' => $tenantId,
+            'entity_type' => 'temple',
+            'entity_id' => (string) $temple->id,
+            'revision' => (int) ($temple->revision ?? 1),
+            'operation' => SearchIndexOutbox::OP_DELETE,
+            'status' => SearchIndexOutbox::STATUS_PENDING,
+        ]);
     }
 }

@@ -2,7 +2,10 @@
 
 namespace App\Modules\Customers\Http\Controllers;
 
-use App\Modules\Customers\Domain\Panchang\Contracts\ComputesPanchang;
+use App\Modules\Customers\Domain\Enums\GotraEnum;
+use App\Modules\Customers\Domain\Enums\NakshatraEnum;
+use App\Modules\Customers\Domain\Enums\RashiEnum;
+use App\Domain\Calendar\Contracts\ComputesPanchang;
 use App\Modules\Customers\Models\ConsentLedger;
 use App\Modules\Customers\Models\CustomerFamilyMember;
 use App\Modules\Customers\Models\CustomerRitualReminder;
@@ -13,8 +16,10 @@ use App\Modules\Customers\Outbox\FactAppender;
 use App\Platform\Audit\AuditWriter;
 use App\Platform\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
+use DateTimeZone;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * Devotee Spiritual Profile, Family Lineage, Ritual Reminders & Consent (E1 / E2 / E3).
@@ -85,15 +90,15 @@ final class CustomerSpiritualController extends CustomerSelfServiceController
         }
 
         $validated = $request->validate([
-            'gotra' => ['nullable', 'string', 'max:100'],
-            'nakshatra' => ['nullable', 'string', 'max:50'],
-            'rashi' => ['nullable', 'string', 'max:50'],
+            'gotra' => ['nullable', 'string', Rule::in(GotraEnum::values())],
+            'nakshatra' => ['nullable', 'string', Rule::in(NakshatraEnum::values())],
+            'rashi' => ['nullable', 'string', Rule::in(RashiEnum::values())],
             'kuladevata_name' => ['nullable', 'string', 'max:190'],
             'kuladevata_temple_id' => ['nullable', 'string', 'max:26'],
             'birth_date' => ['nullable', 'date'],
             'birth_time' => ['nullable', 'string', 'max:10'],
             'birth_place' => ['nullable', 'string', 'max:190'],
-            'birth_timezone' => ['nullable', 'string', 'max:50'],
+            'birth_timezone' => ['nullable', 'string', Rule::in(DateTimeZone::listIdentifiers())],
             'tradition' => ['nullable', 'string', 'in:AMANTA,PURNIMANTA'],
         ]);
 
@@ -180,8 +185,8 @@ final class CustomerSpiritualController extends CustomerSelfServiceController
         $validated = $request->validate([
             'full_name' => ['required', 'string', 'max:190'],
             'relation' => ['required', 'string', 'max:50'],
-            'nakshatra' => ['nullable', 'string', 'max:50'],
-            'rashi' => ['nullable', 'string', 'max:50'],
+            'nakshatra' => ['nullable', 'string', Rule::in(NakshatraEnum::values())],
+            'rashi' => ['nullable', 'string', Rule::in(RashiEnum::values())],
             'birth_date' => ['nullable', 'date'],
             'death_date' => ['nullable', 'date'],
             'data_subject_kind' => ['required', 'string', 'in:SELF,DECEASED,THIRD_PARTY'],
@@ -286,18 +291,28 @@ final class CustomerSpiritualController extends CustomerSelfServiceController
         $userId = (int) $user->getAuthIdentifier();
         $tenantId = (string) $context->tenantId();
 
-        // Calculate next occurrence using Panchang engine
+        // Calculate next occurrence using Panchang engine with server-resolved canonical IANA timezone (P-06)
         $nextOccurrenceAt = null;
         try {
+            $requestedTz = $validated['anchor_rule']['timezone'] ?? 'Asia/Kolkata';
+            $canonicalTz = in_array($requestedTz, DateTimeZone::listIdentifiers(), true)
+                ? $requestedTz
+                : 'Asia/Kolkata';
+
             $occurrence = $this->panchang->occurrenceForAnchor(
                 $validated['anchor_rule'],
                 CarbonImmutable::now('UTC'),
-                $validated['anchor_rule']['timezone'] ?? 'Asia/Kolkata',
+                $canonicalTz,
                 $validated['anchor_rule']['tradition'] ?? 'AMANTA'
             );
             $nextOccurrenceAt = CarbonImmutable::parse($occurrence->sunriseUtc);
         } catch (\Throwable) {
             // Leave next_occurrence_at null if calculation fails or out-of-corpus
+        }
+
+        $anchorRule = $validated['anchor_rule'];
+        if (! isset($anchorRule['rules_version'])) {
+            $anchorRule['rules_version'] = 2; // ADR-0035 rectified sidereal rules
         }
 
         $reminder = CustomerRitualReminder::query()->create([
@@ -306,7 +321,7 @@ final class CustomerSpiritualController extends CustomerSelfServiceController
             'family_member_id' => $validated['family_member_id'] ?? null,
             'type' => $validated['type'],
             'title' => $validated['title'],
-            'anchor_rule' => $validated['anchor_rule'],
+            'anchor_rule' => $anchorRule,
             'advance_days' => $validated['advance_days'] ?? [7, 3, 1],
             'next_occurrence_at' => $nextOccurrenceAt,
             'is_active' => $validated['is_active'] ?? true,

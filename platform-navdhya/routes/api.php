@@ -31,6 +31,16 @@ foreach (ModuleRegistry::modules() as $module) {
             ->middleware(['auth.any', 'tenant'])
             ->name($module->code.'.')
             ->group($routes);
+
+        if (! empty($module->api['basePath'])) {
+            $basePath = (string) $module->api['basePath'];
+            if ($basePath !== $module->code) {
+                Route::prefix($version.'/'.$basePath)
+                    ->middleware(['auth.any', 'tenant'])
+                    ->name($basePath.'.')
+                    ->group($routes);
+            }
+        }
     }
 
     $versions = $apiVersions[$module->code] ?? [];

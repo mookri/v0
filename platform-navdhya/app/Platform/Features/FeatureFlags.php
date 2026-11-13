@@ -46,6 +46,12 @@ final class FeatureFlags
      */
     public const CACHE_TTL_SECONDS = 60;
 
+    public const JYOTISH_ENABLED = 'jyotish.enabled';
+    public const JYOTISH_CONSUMER_TOOLS = 'jyotish.consumer_tools';
+    public const JYOTISH_PRACTITIONER_STUDIO = 'jyotish.practitioner_studio';
+    public const JYOTISH_SPECIALIST_SCHOOLS = 'jyotish.specialist_schools';
+    public const JYOTISH_AI_INTERPRETATION = 'jyotish.ai_interpretation';
+
     private const DEFAULTS_CACHE_KEY = 'feature_flags.defaults';
 
     public function __construct(

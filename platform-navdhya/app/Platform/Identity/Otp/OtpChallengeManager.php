@@ -262,6 +262,11 @@ final class OtpChallengeManager
                 return OtpVerifyResult::mismatch($challenge);
             }
 
+            $policy = OtpPurposePolicy::resolve($challenge->purpose);
+            if ($policy->tier->quorumChannels() > 1 && ! $holdOnMatch) {
+                throw new OtpQuorumRequiredException($challenge->purpose, $policy->tier->quorumChannels());
+            }
+
             if ($holdOnMatch) {
                 $challenge = $challenge->with(['status' => 'token_verified']);
                 $this->store->update($challenge);
@@ -274,6 +279,101 @@ final class OtpChallengeManager
 
             return OtpVerifyResult::match($challenge);
         });
+    }
+
+    /**
+     * Multi-channel 2-of-2 quorum verification for T2/T3 purposes (T-TR02-05, Closes T-13).
+     * Requires two distinct challenge IDs bound to two distinct contact identifiers.
+     *
+     * @param  list<string>  $purposes
+     * @return array{ok: bool, primary: OtpVerifyResult, secondary: OtpVerifyResult}
+     */
+    public function verifyQuorum(
+        string $tenantId,
+        array $purposes,
+        string $primaryChallengeId,
+        string $primaryToken,
+        string $secondaryChallengeId,
+        string $secondaryToken,
+        CarbonImmutable $now,
+    ): array {
+        if ($primaryChallengeId === $secondaryChallengeId) {
+            throw new OtpQuorumRequiredException(implode('|', $purposes), 2);
+        }
+
+        return $this->store->runLocked($tenantId, function () use (
+            $tenantId,
+            $purposes,
+            $primaryChallengeId,
+            $primaryToken,
+            $secondaryChallengeId,
+            $secondaryToken,
+            $now,
+        ): array {
+            $primary = $this->verifySingleWithinLock($tenantId, $purposes, $primaryChallengeId, $primaryToken, $now);
+            if ($primary->status !== OtpVerifyStatus::Match) {
+                return ['ok' => false, 'primary' => $primary, 'secondary' => OtpVerifyResult::notFound()];
+            }
+
+            $secondary = $this->verifySingleWithinLock($tenantId, $purposes, $secondaryChallengeId, $secondaryToken, $now);
+            if ($secondary->status !== OtpVerifyStatus::Match || $primary->challenge?->identifier === $secondary->challenge?->identifier) {
+                return ['ok' => false, 'primary' => $primary, 'secondary' => $secondary];
+            }
+
+            $this->store->delete($primary->challenge->id);
+            $this->store->delete($secondary->challenge->id);
+
+            Event::dispatch(new OtpChallengeConsumed($tenantId, $primary->challenge->purpose, $primary->challenge->id, $primary->challenge->identifier));
+            Event::dispatch(new OtpChallengeConsumed($tenantId, $secondary->challenge->purpose, $secondary->challenge->id, $secondary->challenge->identifier));
+
+            return ['ok' => true, 'primary' => $primary, 'secondary' => $secondary];
+        });
+    }
+
+    /**
+     * @param  list<string>  $purposes
+     */
+    private function verifySingleWithinLock(
+        string $tenantId,
+        array $purposes,
+        string $challengeId,
+        string $token,
+        CarbonImmutable $now,
+    ): OtpVerifyResult {
+        $challenge = $this->store->findLiveForUpdate($tenantId, $purposes, $challengeId);
+
+        if ($challenge === null) {
+            return OtpVerifyResult::notFound();
+        }
+
+        if ($challenge->expiresAt <= $now || $challenge->attempts >= $challenge->maxAttempts) {
+            $this->store->delete($challenge->id);
+
+            return OtpVerifyResult::notFound();
+        }
+
+        $challenge = $challenge->with(['attempts' => $challenge->attempts + 1]);
+        $this->store->update($challenge);
+
+        $provider = $this->providers->get((string) $challenge->provider);
+        $outcome = $provider->verify(new OtpVerifyRequest(
+            codeHash: $challenge->codeHash,
+            providerRef: $challenge->providerRef,
+            code: $token,
+            identifier: $challenge->identifier,
+        ));
+
+        if ($outcome === OtpVerifyOutcome::Unavailable) {
+            throw new OtpProviderUnavailableException('otp provider unavailable during verify');
+        }
+
+        if ($outcome !== OtpVerifyOutcome::Match) {
+            Event::dispatch(new OtpChallengeRejected($tenantId, $challenge->purpose, $challenge->id, $challenge->attempts));
+
+            return OtpVerifyResult::mismatch($challenge);
+        }
+
+        return OtpVerifyResult::match($challenge);
     }
 
     /**

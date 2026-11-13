@@ -68,4 +68,19 @@ interface ReadsBookings
      * @return list<array{service_sku: string, start_at: string, duration_minutes: int, status: string}>
      */
     public function scheduledStartsBySkus(array $serviceSkus, ?string $fromIso = null, ?string $toIso = null): array;
+
+    /**
+     * Resolve booking snapshot needed for Trust (Feedback / Support / Incident)
+     * without importing Booking models (TS-08 / §4).
+     *
+     * @return array{id: string, user_id: int, service_sku: string|null, status: string, scheduled_at: string|null, current_revision_id: string|null, completed_at: string|null}|null
+     */
+    public function bookingSnapshotForTrust(string $bookingId): ?array;
+
+    /**
+     * Resolve recorded arrival evidence for a booking (TS-01 / §7).
+     *
+     * @return array{id: string, pandit_id: string, arrived_at: string, source_channel: string, delta_minutes: int|null, corroborated_at: string|null}|null
+     */
+    public function arrivalForBooking(string $bookingId): ?array;
 }

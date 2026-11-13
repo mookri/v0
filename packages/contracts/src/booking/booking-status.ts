@@ -1,1 +1,12 @@
-export type BookingStatus = "draft" | "payment_pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
+export {
+  BOOKING_STATUSES,
+  BOOKING_SECTIONS_LIST,
+  BOOKING_LEGAL_TRANSITIONS,
+  BOOKING_CANCELLABLE_STATUSES,
+  BOOKING_RESCHEDULABLE_STATUSES,
+  BOOKING_SECTIONS,
+  BOOKING_TERMINAL_STATUSES,
+  BOOKING_STATUS_SECTION_MAP,
+  type BookingStatus,
+  type BookingSection,
+} from '@navdhya/contracts/src/generated/booking-lifecycle';

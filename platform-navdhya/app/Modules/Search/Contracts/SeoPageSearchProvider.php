@@ -3,18 +3,19 @@
 namespace App\Modules\Search\Contracts;
 
 use App\Modules\Search\Models\SearchDocument;
+use App\Modules\Search\Support\KeyFolder;
 use App\Modules\SeoContent\Models\SeoPage;
 
 class SeoPageSearchProvider implements ProvidesSearchDocuments
 {
     public function getDocuments(): iterable
     {
-        return SeoPage::public()->cursor()->map(fn ($page) => $this->buildDocument($page));
+        return SeoPage::public()->with('cluster')->lazy(100)->map(fn ($page) => $this->buildDocument($page));
     }
 
     public function getDocument(string $entityId): ?SearchDocument
     {
-        $page = SeoPage::public()->where('slug', $entityId)->first();
+        $page = SeoPage::public()->with('cluster')->where('slug', $entityId)->first();
 
         return $page ? $this->buildDocument($page) : null;
     }
@@ -22,8 +23,9 @@ class SeoPageSearchProvider implements ProvidesSearchDocuments
     public function getDocumentsSince(\DateTimeInterface $since): iterable
     {
         return SeoPage::public()
+            ->with('cluster')
             ->where('updated_at', '>=', $since)
-            ->cursor()
+            ->lazy(100)
             ->map(fn ($page) => $this->buildDocument($page));
     }
 
@@ -34,7 +36,7 @@ class SeoPageSearchProvider implements ProvidesSearchDocuments
 
     private function clusterBasePath(\App\Modules\SeoContent\Models\SeoPage $page): ?string
     {
-        $cluster = $page->cluster()->first();
+        $cluster = $page->relationLoaded('cluster') ? $page->getRelation('cluster') : $page->cluster()->first();
         return $cluster instanceof \App\Modules\SeoContent\Models\SeoCluster ? $cluster->base_path : null;
     }
 
@@ -48,20 +50,24 @@ class SeoPageSearchProvider implements ProvidesSearchDocuments
             'proof_points' => $pageData['proofPoints'] ?? [],
         ];
 
+        $pageTitle = $page->meta_title ?? $page->title;
+
         return new SearchDocument([
             'entity_type' => 'seo_page',
             'entity_id' => $page->slug,
             'tenant_id' => null, // platform-global
             'slug' => $page->slug,
             'url_path' => '/' . ($this->clusterBasePath($page) ?? $page->cluster) . '/' . $page->slug,
-            'title' => $page->meta_title ?? $page->title,
+            'title' => $pageTitle,
             'subtitle' => $page->meta_description,
             'body' => $page->search_text,
             'image_url' => $pageData['heroImage'] ?? null,
             'city' => null,
             'card_json' => $cardJson,
+            'keys_json' => KeyFolder::generateKeySet($pageTitle),
             'status' => $page->noindex ? 'NOINDEX' : 'ACTIVE',
             'indexed_at' => now(),
+            'source_updated_at' => $page->updated_at ?? now(),
         ]);
     }
 }

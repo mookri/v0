@@ -3,6 +3,7 @@
 namespace App\Modules\Pandit\Console;
 
 use App\Modules\Booking\Contracts\ReadsBookings;
+use App\Modules\Feedback\Contracts\ReadsFeedbackQuality;
 use App\Modules\Pandit\Models\PanditAssignment;
 use App\Modules\Pandit\Models\PanditProfile;
 use App\Platform\Tenancy\ConnectionResolver;
@@ -21,7 +22,8 @@ final class RecomputePanditRatingsCommand extends Command
 
     public function handle(
         TenantContext $context,
-        ReadsBookings $bookingsPort
+        ReadsBookings $bookingsPort,
+        ?ReadsFeedbackQuality $qualityPort = null,
     ): int {
         $tenantIdOption = $this->option('tenant');
         $panditIdOption = $this->option('pandit');
@@ -55,20 +57,26 @@ final class RecomputePanditRatingsCommand extends Command
                     ->where('status', PanditAssignment::STATUS_COMPLETED)
                     ->count();
 
-                // 2. Reviews from bookings assigned to this pandit
-                $assignedBookingIds = PanditAssignment::query()
-                    ->where('tenant_id', $tenantId)
-                    ->where('pandit_id', $panditId)
-                    ->pluck('booking_id')
-                    ->all();
+                // 2. Prefer honest Feedback quality contract when Feedback samples exist; fall back to BookingReview for legacy fixtures
+                $feedbackSummary = $qualityPort?->summaryForSubject('pandit', $panditId);
+                if ($feedbackSummary !== null && $feedbackSummary['sample_count'] > 0) {
+                    $reviewCount = $feedbackSummary['sample_count'];
+                    $ratingAvg = (float) ($feedbackSummary['bayesian_average'] ?? 0.0);
+                } else {
+                    $assignedBookingIds = PanditAssignment::query()
+                        ->where('tenant_id', $tenantId)
+                        ->where('pandit_id', $panditId)
+                        ->pluck('booking_id')
+                        ->all();
 
-                $reviews = $bookingsPort->reviewsForBookings($assignedBookingIds);
-                $reviewCount = count($reviews);
+                    $reviews = $bookingsPort->reviewsForBookings($assignedBookingIds);
+                    $reviewCount = count($reviews);
 
-                $ratingAvg = 0.0;
-                if ($reviewCount > 0) {
-                    $ratings = array_column($reviews, 'rating');
-                    $ratingAvg = round(array_sum($ratings) / $reviewCount, 1);
+                    $ratingAvg = 0.0;
+                    if ($reviewCount > 0) {
+                        $ratings = array_column($reviews, 'rating');
+                        $ratingAvg = round(array_sum($ratings) / $reviewCount, 1);
+                    }
                 }
 
                 $profile->forceFill([

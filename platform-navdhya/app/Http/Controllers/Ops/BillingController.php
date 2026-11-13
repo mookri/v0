@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Ops;
 
+use App\Modules\Finance\Models\FinanceDocument;
 use App\Platform\Tenancy\TenantScopeGuard;
 use App\Platform\Tenancy\Models\Tenant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * Read-only billing surface (W2): the configured tenant's plan and currency.
- * There is no invoice store in the kernel yet, so `invoices` is deliberately
- * an empty list with a `note` rather than a fabricated total. Capability
- * `platform:billing:view` gates the read; tenant resolution matches the rest
- * of the platform surfaces.
+ * Isolated SaaS tenant billing surface (W2 / T-AP04-07 / G-BILL-1):
+ * reports the configured tenant's plan, currency, and SaaS subscription
+ * invoice documents without exposing partner settlement payouts or gateway
+ * clearing ledger lines. Capability `platform:billing:view` gates reads.
  */
 final class BillingController
 {
@@ -34,16 +34,37 @@ final class BillingController
             ], 404);
         }
 
+        $tenantId = (string) $tenant->getKey();
+        $invoices = FinanceDocument::query()
+            ->where('tenant_id', $tenantId)
+            ->where('document_type', FinanceDocument::TYPE_INVOICE)
+            ->whereNull('booking_id')
+            ->orderByDesc('issued_at')
+            ->limit(50)
+            ->get()
+            ->map(static fn (FinanceDocument $doc): array => [
+                'id' => (string) $doc->getKey(),
+                'document_number' => $doc->document_number,
+                'status' => $doc->status,
+                'currency' => $doc->currency,
+                'subtotal_minor' => $doc->subtotal_minor,
+                'tax_minor' => $doc->tax_minor,
+                'total_minor' => $doc->total_minor,
+                'issued_at' => $doc->issued_at?->toJSON(),
+            ])
+            ->values()
+            ->all();
+
         return new JsonResponse([
             'data' => [
                 'plan_code' => $tenant->plan_code,
                 'status' => $tenant->status,
                 'base_currency' => $tenant->base_currency,
-                'invoices' => [],
+                'invoices' => $invoices,
             ],
             'meta' => [
                 'request_id' => $this->requestId($request),
-                'note' => 'Invoice history is not yet wired; only the active plan is reported.',
+                'boundary' => 'saas_tenant_billing_only',
             ],
         ]);
     }

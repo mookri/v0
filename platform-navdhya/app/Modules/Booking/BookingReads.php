@@ -7,6 +7,7 @@ use App\Modules\Booking\Contracts\ReadsBookings;
 use App\Modules\Booking\Domain\BookingLifecycle;
 use App\Modules\Booking\Models\Booking;
 use App\Modules\Booking\Models\BookingReview;
+use App\Modules\Booking\Models\PanditArrival;
 use App\Platform\Api\CursorPagination;
 use Illuminate\Http\Request;
 
@@ -231,5 +232,42 @@ final class BookingReads implements ReadsBookings
             $serviceSkus,
             static fn (string $sku): bool => $sku !== '',
         )));
+    }
+
+    public function bookingSnapshotForTrust(string $bookingId): ?array
+    {
+        $booking = Booking::query()->where('id', $bookingId)->first();
+        if ($booking === null) {
+            return null;
+        }
+
+        return [
+            'id' => (string) $booking->getKey(),
+            'user_id' => (int) $booking->user_id,
+            'service_sku' => $booking->service_sku,
+            'status' => $booking->status,
+            'scheduled_at' => $booking->scheduled_at?->toJSON(),
+            'current_revision_id' => $booking->current_revision_id !== null ? (string) $booking->current_revision_id : null,
+            'completed_at' => $booking->status === BookingLifecycle::STATUS_COMPLETED
+                ? $booking->updated_at?->toJSON()
+                : null,
+        ];
+    }
+
+    public function arrivalForBooking(string $bookingId): ?array
+    {
+        $arrival = PanditArrival::query()->where('booking_id', $bookingId)->first();
+        if ($arrival === null) {
+            return null;
+        }
+
+        return [
+            'id' => (string) $arrival->getKey(),
+            'pandit_id' => (string) $arrival->pandit_id,
+            'arrived_at' => $arrival->arrived_at->toJSON(),
+            'source_channel' => $arrival->source_channel,
+            'delta_minutes' => $arrival->delta_minutes,
+            'corroborated_at' => $arrival->corroborated_at?->toJSON(),
+        ];
     }
 }

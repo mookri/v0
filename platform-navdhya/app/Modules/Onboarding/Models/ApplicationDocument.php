@@ -19,6 +19,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $object_key
  * @property string|null $sha256
  * @property string|null $reason_code
+ * @property string $integrity_state
+ * @property \Illuminate\Support\Carbon|null $integrity_last_checked_at
+ * @property string $quarantine_status
  */
 final class ApplicationDocument extends Model
 {
@@ -31,12 +34,32 @@ final class ApplicationDocument extends Model
 
     public const STATUS_REJECTED = 'REJECTED';
 
+    public const INTEGRITY_UNVERIFIED = 'unverified';
+    public const INTEGRITY_VERIFIED = 'verified';
+    public const INTEGRITY_CORRUPTED = 'corrupted';
+    public const INTEGRITY_MISSING = 'missing';
+
+    public const QUARANTINE_PENDING = 'pending_scan';
+    public const QUARANTINE_CLEAN = 'clean';
+    public const QUARANTINE_QUARANTINED = 'quarantined';
+
     protected $connection = 'tenant_shared';
 
     protected $fillable = [
         'tenant_id', 'application_id', 'kind', 'status',
         'object_key', 'sha256', 'reason_code',
+        'integrity_state', 'integrity_last_checked_at', 'quarantine_status',
+        'rejection_reason_code', 'reviewed_by', 'reviewed_at', 'expires_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'integrity_last_checked_at' => 'datetime',
+            'reviewed_at' => 'datetime',
+            'expires_at' => 'datetime',
+        ];
+    }
 
     public function getConnectionName(): ?string
     {

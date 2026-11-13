@@ -6,6 +6,7 @@ use App\Modules\Search\Contracts\ProvidesSearchDocuments;
 use App\Modules\Search\Models\SearchDocument;
 use App\Modules\Search\Models\SearchMeta;
 use App\Modules\Search\Models\SearchTerm;
+use App\Modules\Search\Services\DictionaryBuilder;
 use App\Modules\Search\Services\SearchNormalizer;
 use Illuminate\Support\Str;
 
@@ -13,12 +14,18 @@ class SearchIndexer
 {
     public function __construct(
         private readonly ?SearchNormalizer $normalizer = null,
+        private readonly ?DictionaryBuilder $dictionaryBuilder = null,
     ) {
     }
 
     private function normalizer(): SearchNormalizer
     {
         return $this->normalizer ?? new SearchNormalizer();
+    }
+
+    public function dictionaryBuilder(): DictionaryBuilder
+    {
+        return $this->dictionaryBuilder ?? new DictionaryBuilder($this->normalizer());
     }
 
     /**
@@ -50,6 +57,7 @@ class SearchIndexer
         );
 
         $this->rebuildTermsForDocument($persisted);
+        $this->dictionaryBuilder()->indexDocument($persisted, $this->getVersion());
         $this->bumpVersion();
     }
 
@@ -60,6 +68,7 @@ class SearchIndexer
             ->first();
 
         if ($doc) {
+            $this->dictionaryBuilder()->removeDocumentPostings($doc->id);
             SearchTerm::where('search_document_id', $doc->id)->delete();
             $doc->delete();
             $this->bumpVersion();
@@ -68,9 +77,12 @@ class SearchIndexer
 
     public function deleteByTenant(string $tenantId): void
     {
-        $ids = SearchDocument::where('tenant_id', $tenantId)->pluck('id');
-        SearchTerm::whereIn('search_document_id', $ids)->delete();
-        SearchDocument::where('tenant_id', $tenantId)->delete();
+        $docs = SearchDocument::where('tenant_id', $tenantId)->get();
+        foreach ($docs as $doc) {
+            $this->dictionaryBuilder()->removeDocumentPostings($doc->id);
+            SearchTerm::where('search_document_id', $doc->id)->delete();
+            $doc->delete();
+        }
         $this->bumpVersion();
     }
 
@@ -124,10 +136,9 @@ class SearchIndexer
         $deleted = 0;
         $terms = 0;
 
-        // Collect current ids for orphan detection.
         $currentIds = [];
-
         $buffer = [];
+
         foreach ($provider->getDocuments() as $document) {
             $buffer[] = $document;
             if (count($buffer) >= $chunk) {
@@ -149,25 +160,17 @@ class SearchIndexer
             $terms += $this->countTermsFor($doc);
         }
 
-        // Orphan deletion.
-        $existingIds = SearchDocument::where('entity_type', $provider->entityType())
-            ->pluck('entity_id')
-            ->toArray();
-
-        $orphaned = array_diff($existingIds, $currentIds);
-        if ($orphaned) {
-            $orphanDocs = SearchDocument::where('entity_type', $provider->entityType())
-                ->whereIn('entity_id', $orphaned)
-                ->get();
-            foreach ($orphanDocs as $od) {
-                SearchTerm::where('search_document_id', $od->id)->delete();
-                $od->delete();
-                $deleted++;
-            }
-        }
-
-        // Rebuild terms for this type from scratch to avoid stale postings.
-        // (upsert already wrote terms; orphan cleanup done above.)
+        // T-SR04-07 (Closes D-10): Keyset streaming orphan diff without loading all IDs into memory
+        SearchDocument::where('entity_type', $provider->entityType())
+            ->whereNotIn('entity_id', $currentIds)
+            ->chunkById(100, function ($orphanDocs) use (&$deleted) {
+                foreach ($orphanDocs as $od) {
+                    $this->dictionaryBuilder()->removeDocumentPostings($od->id);
+                    SearchTerm::where('search_document_id', $od->id)->delete();
+                    $od->delete();
+                    $deleted++;
+                }
+            });
 
         return [
             'total' => $total,

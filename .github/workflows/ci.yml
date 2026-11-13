@@ -233,6 +233,9 @@ jobs:
         # only while a 65-suite jest run saturated the machine. Bounding the
         # workers keeps a 2-vCPU runner from starving its own test timeouts.
         run: pnpm exec vitest run tests/architecture tests/ci --maxWorkers=2
+      - name: Turborepo boundaries (advisory — experimental in turbo 2.11.5)
+        continue-on-error: true
+        run: pnpm exec turbo boundaries
       - name: Declared-manifest drift
         run: pnpm exec node tooling/scripts/domain-check.js availability booking pandit pricing puja recommendations search user payment
 

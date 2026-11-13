@@ -1,0 +1,28 @@
+openapi: 3.0.3
+info:
+  title: Navdhya Jyotish Calculation API
+  version: 0.1.0
+  description: High-precision deterministic Vedic astrological and astronomical calculations.
+paths:
+  /api/v1/jyotish/health:
+    get:
+      summary: Jyotish module health status
+      operationId: getJyotishHealth
+      responses:
+        '200':
+          description: Operational status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: operational
+                  module:
+                    type: string
+                    example: jyotish
+                  version:
+                    type: string
+                    example: 0.1.0
+

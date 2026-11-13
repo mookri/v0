@@ -2,6 +2,10 @@
 
 namespace App\Modules\Onboarding;
 
+use App\Domain\Verification\Fiscal\GstinStructuralValidator;
+use App\Domain\Verification\Fiscal\IfscStructuralValidator;
+use App\Domain\Verification\Issuers\CredentialCategory;
+
 /**
  * Per-category evidence validators (field catalog → code). Each category
  * validates its own shape and returns field-keyed reasons; the step PUT
@@ -59,11 +63,24 @@ final class StepValidators
      */
     private static function validateCertifications(mixed $value): array
     {
-        if (! is_array($value) || ($value['certifications'] ?? null) === null) {
-            return ['credentials' => ['must_be_object']];
+        if (! is_array($value) || ! is_array($value['certifications'] ?? null) || $value['certifications'] === []) {
+            return ['credentials' => ['must_be_non_empty_certification_list']];
         }
 
-        return self::validateIdList($value['certifications'], 'certifications');
+        foreach ($value['certifications'] as $idx => $item) {
+            $categoryCode = is_array($item) ? ($item['credential_type'] ?? $item['category'] ?? null) : $item;
+            if (! is_string($categoryCode) || trim($categoryCode) === '') {
+                return ["certifications.{$idx}" => ['credential_category_required']];
+            }
+            if (CredentialCategory::tryFrom(strtolower(trim($categoryCode))) === null) {
+                return ['certifications' => ['invalid_credential_category']];
+            }
+            if (is_array($item) && (! is_string($item['issuer_id'] ?? $item['issuer_code'] ?? null) || trim((string) ($item['issuer_id'] ?? $item['issuer_code'] ?? '')) === '')) {
+                return ["certifications.{$idx}.issuer" => ['issuer_reference_required']];
+            }
+        }
+
+        return [];
     }
 
     /**
@@ -98,19 +115,47 @@ final class StepValidators
     /**
      * @return array<string, list<string>>
      */
+    /**
+     * @return array<string, list<string>>
+     */
     private static function validateBusiness(mixed $value): array
     {
         $errors = [];
         if (! is_array($value)) {
             return ['business' => ['must_be_object']];
         }
-        $gstin = $value['gstin'] ?? null;
-        if (! is_string($gstin) || preg_match('/^[0-9A-Z]{15}$/', $gstin) !== 1) {
-            $errors['gstin'] = ['gstin_must_be_15_chars'];
+
+        $gstStatus = $value['gst_status'] ?? $value['gstStatus'] ?? 'registered';
+        $allowedStatuses = ['registered', 'composition_dealer', 'exempt_below_threshold', 'unregistered_individual'];
+        if (! is_string($gstStatus) || ! in_array($gstStatus, $allowedStatuses, true)) {
+            $errors['gst_status'] = ['invalid_gst_status'];
         }
+
+        $gstin = $value['gstin'] ?? null;
+        $isExempt = in_array($gstStatus, ['exempt_below_threshold', 'unregistered_individual'], true);
+
+        if (! $isExempt || ($gstin !== null && $gstin !== '')) {
+            if (! is_string($gstin) || preg_match('/^[0-9A-Z]{15}$/', strtoupper(trim($gstin))) !== 1) {
+                $errors['gstin'] = ['gstin_must_be_15_chars'];
+            } else {
+                $check = (new GstinStructuralValidator())->validate($gstin);
+                if (! $check['valid']) {
+                    $errors['gstin'] = $check['reason_codes'];
+                }
+            }
+        }
+
         $bank = $value['bankAccount'] ?? $value['bank_account'] ?? null;
         if (! is_string($bank) || trim($bank) === '') {
             $errors['bank_account'] = ['bank_account_required'];
+        }
+
+        $ifsc = $value['ifsc'] ?? null;
+        if ($ifsc !== null && $ifsc !== '') {
+            $ifscCheck = (new IfscStructuralValidator())->validate((string) $ifsc, (string) $bank);
+            if (! $ifscCheck['valid']) {
+                $errors['ifsc'] = $ifscCheck['reason_codes'];
+            }
         }
 
         return $errors;

@@ -24,8 +24,15 @@ const STEP_PREDICATES: Record<string, (evidence: DraftEvidence) => boolean> = {
   availability: (e) => (e['availability'] as { set?: unknown } | undefined)?.set === true,
   documents: (e) => nonEmptyArray(e['documents']),
   business: (e) => {
-    const v = e['business'] as { gstin?: unknown; bankAccount?: unknown } | undefined;
-    return !!v && nonEmptyString(v.gstin) && nonEmptyString(v.bankAccount);
+    const v = e['business'] as { gstStatus?: unknown; gst_status?: unknown; gstin?: unknown; bankAccount?: unknown; bank_account?: unknown } | undefined;
+    if (!v) return false;
+    const bankOk = nonEmptyString(v.bankAccount) || nonEmptyString(v.bank_account);
+    if (!bankOk) return false;
+    const gstStatus = (v.gstStatus ?? v.gst_status ?? 'registered') as string;
+    if (gstStatus === 'exempt_below_threshold' || gstStatus === 'unregistered_individual') {
+      return true;
+    }
+    return nonEmptyString(v.gstin) && /^[0-9A-Z]{15}$/.test(String(v.gstin).trim().toUpperCase());
   },
   capacity: (e) => {
     const v = e['capacity'] as { weeklySlots?: unknown } | undefined;

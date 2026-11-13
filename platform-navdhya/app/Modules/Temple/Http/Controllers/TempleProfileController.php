@@ -170,6 +170,27 @@ final class TempleProfileController
         ]);
     }
 
+    // ADMIN: Explicitly publish a verified temple
+    public function publish(Request $request, string $id): JsonResponse
+    {
+        try {
+            $temple = $this->management->publish($id);
+        } catch (\App\Modules\Temple\TempleNotFoundException|\Illuminate\Database\Eloquent\ModelNotFoundException) {
+            return new JsonResponse([
+                'error' => ['code' => 'TEMPLE_NOT_FOUND', 'message' => 'Temple not found.', 'request_id' => $this->requestId($request)],
+            ], 404);
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse([
+                'error' => ['code' => 'state_forbidden', 'message' => $e->getMessage(), 'request_id' => $this->requestId($request)],
+            ], 409);
+        }
+
+        return new JsonResponse([
+            'data' => $temple,
+            'meta' => ['request_id' => $this->requestId($request)],
+        ]);
+    }
+
     // ADMIN: Suspend temple
     public function suspend(Request $request, string $id): JsonResponse
     {

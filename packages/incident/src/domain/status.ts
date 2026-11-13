@@ -22,6 +22,20 @@ export function toPublicStatus(input: {
   return { ...input, publishedAt: input.nowIso, updatedAt: input.nowIso, version: 1 };
 }
 
+export function canPublishPublicStatus(input: {
+  safetyClassified: boolean;
+  severity: 'SEV_0' | 'SEV_1' | 'SEV_2' | 'SEV_3' | 'SEV_4';
+  approverId?: string | null;
+}): { allowed: boolean; reason?: string } {
+  if (input.safetyClassified || input.severity === 'SEV_0') {
+    return { allowed: false, reason: 'safety_incident_never_public' };
+  }
+  if (!input.approverId || input.approverId.trim() === '') {
+    return { allowed: false, reason: 'explicit_human_approver_required' };
+  }
+  return { allowed: true };
+}
+
 export interface Postmortem {
   incidentId: string;
   summary: string;

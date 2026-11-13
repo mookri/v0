@@ -9,9 +9,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ assignm
   const actor = await actors.resolve(headersToRecord(req.headers));
   if (!actor) return Response.json(err('UNAUTHENTICATED', 'Sign in to continue.', requestId), { status: 401 });
   const { assignmentId } = await params;
-  const idempotencyKey = req.headers.get('Idempotency-Key') ?? `ik_${requestId}`;
+  const idempotencyKey = req.headers.get('Idempotency-Key')?.trim() || `ik_${requestId}`;
 
-  let body: { note?: string } = {};
+  let body: { note?: string; checklist?: Record<string, unknown> } = {};
   try {
     body = await req.json();
   } catch {
@@ -23,9 +23,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ assignm
       const token = bearerOrSessionCookie(req.headers);
       const { data } = await laravelPost(
         token,
-        `/pandit/assignments/${encodeURIComponent(assignmentId)}:confirm`,
-        { note: body.note ?? 'started' },
-        { not_found: 'ASSIGNMENT_NOT_FOUND', state_forbidden: 'ASSIGNMENT_CONFLICT' },
+        `/pandit/assignments/${encodeURIComponent(assignmentId)}:start`,
+        {
+          note: body.note ?? 'started',
+          ...(body.checklist ? { checklist: body.checklist } : {}),
+        },
+        {
+          not_found: 'ASSIGNMENT_NOT_FOUND',
+          PANDIT_ASSIGNMENT_NOT_FOUND: 'ASSIGNMENT_NOT_FOUND',
+          PANDIT_ASSIGNMENT_WRONG_STATE: 'ASSIGNMENT_CONFLICT',
+          PANDIT_BOOKING_WRONG_STATE: 'ASSIGNMENT_CONFLICT',
+          state_forbidden: 'ASSIGNMENT_CONFLICT',
+        },
         { 'Idempotency-Key': idempotencyKey }
       );
       return Response.json(ok({ assignmentId, status: 'IN_PROGRESS', data }, requestId));

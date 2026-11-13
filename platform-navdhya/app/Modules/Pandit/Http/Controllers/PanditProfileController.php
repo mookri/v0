@@ -2,6 +2,7 @@
 
 namespace App\Modules\Pandit\Http\Controllers;
 
+use App\Domain\Verification\Projector\VerificationProjector;
 use App\Modules\Pandit\Contracts\ListsPanditProfiles;
 use App\Modules\Pandit\Models\PanditProfile;
 use App\Platform\Audit\AuditWriter;
@@ -17,6 +18,7 @@ final class PanditProfileController
     public function __construct(
         private readonly AuditWriter $audit,
         private readonly ListsPanditProfiles $profiles,
+        private readonly VerificationProjector $projector,
     ) {
     }
 
@@ -244,13 +246,18 @@ final class PanditProfileController
 
         // Verification is its own axis: suspension survives it (reactivate
         // is a separate, separately audited decision).
-        $profile->forceFill(['verification_status' => PanditProfile::VERIFICATION_VERIFIED])->save();
+        $claim = $this->projector->grantManualClaimAndProject(
+            subject: $profile,
+            subjectType: 'pandit',
+            actorId: $this->adminActor($request),
+            metadata: ['source' => 'pandit.admin.verify'],
+        );
 
         $this->audit->record(
             'pandit.profile.verified',
             ['module' => 'pandit', 'resource_type' => 'pandit_profile', 'resource_id' => (string) $profile->getKey()],
             null,
-            ['admin_user_id' => $this->adminActor($request)]
+            ['admin_user_id' => $this->adminActor($request), 'claim_id' => (string) $claim->getKey(), 'mode' => $claim->mode]
         );
 
         return new JsonResponse([

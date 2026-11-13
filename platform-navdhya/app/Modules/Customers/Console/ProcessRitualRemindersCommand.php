@@ -3,9 +3,9 @@
 namespace App\Modules\Customers\Console;
 
 use App\Modules\Customers\Contracts\NotifiesCustomers;
-use App\Modules\Customers\Domain\Panchang\Contracts\ComputesPanchang;
-use App\Modules\Customers\Domain\Panchang\Exceptions\OutOfCorpusException;
-use App\Modules\Customers\Domain\Panchang\PanchangOccurrence;
+use App\Domain\Calendar\Contracts\ComputesPanchang;
+use App\Domain\Calendar\Exceptions\OutOfCorpusException;
+use App\Domain\Calendar\Panchang\PanchangOccurrence;
 use App\Modules\Customers\Models\CustomerRitualReminder;
 use App\Modules\Customers\Outbox\FactAppender;
 use App\Platform\Tenancy\ConnectionResolver;
@@ -67,9 +67,12 @@ final class ProcessRitualRemindersCommand extends Command
                         continue;
                     }
 
-                    // 1. Resolve next astronomical occurrence with anchor hash caching
+                    // 1. Resolve next astronomical occurrence with version-aware anchor hash caching (closes P-08)
+                    $ephemerisVersion = config('calendar.ephemeris_version', 'meeus-truncated-v1');
+                    $ayanamsaVersion = config('calendar.ayanamsa_version', 'lahiri-chitrapaksha-v1');
+                    $rulesVersion = (int) ($rule['rules_version'] ?? config('calendar.rules_version', 2));
                     $anchorHash = md5(json_encode($rule));
-                    $cacheKey = "panchang:{$tenantId}:{$now->toDateString()}:{$anchorHash}";
+                    $cacheKey = "panchang:{$tenantId}:{$now->toDateString()}:{$ephemerisVersion}:{$ayanamsaVersion}:{$rulesVersion}:{$anchorHash}";
 
                     try {
                         /** @var PanchangOccurrence $occurrence */
@@ -129,12 +132,13 @@ final class ProcessRitualRemindersCommand extends Command
 
                         $reminder->forceFill(['last_fired_period' => $periodKey])->save();
 
-                        // Emit transactional outbox fact
+                        // Emit transactional outbox fact with explicit rules_version (T-JYAUT-00d)
                         $facts->append('customers.reminder.fired', $reminder->user_id, [
                             'reminder_id' => (string) $reminder->getKey(),
                             'occurrence_date' => $occurrence->date,
                             'days_until' => $daysUntil,
                             'period_key' => $periodKey,
+                            'rules_version' => $rulesVersion,
                         ], $tenantId);
 
                         $firedCount++;

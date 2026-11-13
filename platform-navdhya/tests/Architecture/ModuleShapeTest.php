@@ -15,9 +15,17 @@ use PHPUnit\Framework\TestCase;
  */
 final class ModuleShapeTest extends TestCase
 {
+    private string $basePath;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->basePath = dirname(__DIR__, 2);
+    }
+
     public function test_every_module_has_manifest_provider_and_tests(): void
     {
-        $modulesPath = base_path('app/Modules');
+        $modulesPath = $this->basePath.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'Modules';
 
         if (! is_dir($modulesPath)) {
             $this->markTestSkipped('No domain modules yet (they land in M5).');
@@ -43,7 +51,7 @@ final class ModuleShapeTest extends TestCase
             );
 
             $this->assertDirectoryExists(
-                base_path('tests/Modules/'.$module),
+                $this->basePath.DIRECTORY_SEPARATOR.'tests'.DIRECTORY_SEPARATOR.'Modules'.DIRECTORY_SEPARATOR.$module,
                 "Module {$module} has no tests/Modules/{$module} directory (doc 01 §7(d)).",
             );
         }
@@ -51,7 +59,7 @@ final class ModuleShapeTest extends TestCase
 
     public function test_api_route_file_declares_no_direct_endpoints(): void
     {
-        $source = (string) file_get_contents(base_path('routes/api.php'));
+        $source = (string) file_get_contents($this->basePath.DIRECTORY_SEPARATOR.'routes'.DIRECTORY_SEPARATOR.'api.php');
 
         $this->assertDoesNotMatchRegularExpression(
             '/Route::(get|post|put|patch|delete|any|resource|apiResource)\s*\(/',
@@ -62,7 +70,7 @@ final class ModuleShapeTest extends TestCase
 
     public function test_web_route_file_declares_only_the_admin_shell(): void
     {
-        $source = (string) file_get_contents(base_path('routes/web.php'));
+        $source = (string) file_get_contents($this->basePath.DIRECTORY_SEPARATOR.'routes'.DIRECTORY_SEPARATOR.'web.php');
 
         preg_match_all(
             '/Route::(get|post|put|patch|delete|any|resource|apiResource)\s*\([^;]+\)/s',

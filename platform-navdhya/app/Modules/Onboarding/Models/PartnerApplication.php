@@ -38,13 +38,29 @@ final class PartnerApplication extends Model
 
     public const STATUS_SUBMITTED = 'SUBMITTED';
 
+    public const STATUS_QUEUED = 'QUEUED';
+
     public const STATUS_UNDER_REVIEW = 'UNDER_REVIEW';
+
+    public const STATUS_INFO_REQUESTED = 'INFO_REQUESTED';
+
+    public const STATUS_ESCALATED = 'ESCALATED';
+
+    public const STATUS_COUNTERSIGN_PENDING = 'COUNTERSIGN_PENDING';
+
+    public const STATUS_APPROVED_PROVISIONAL = 'APPROVED_PROVISIONAL';
 
     public const STATUS_APPROVED = 'APPROVED';
 
     public const STATUS_REJECTED = 'REJECTED';
 
     public const STATUS_APPEALED = 'APPEALED';
+
+    public const STATUS_EXPIRED = 'EXPIRED';
+
+    public const STATUS_SUSPENDED = 'SUSPENDED';
+
+    public const STATUS_REVOKED = 'REVOKED';
 
     public const STATUS_WITHDRAWN = 'WITHDRAWN';
 

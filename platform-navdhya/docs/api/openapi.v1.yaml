@@ -701,6 +701,51 @@ paths:
                 properties:
                   data: { type: object, required: [id, object, sku, name, status] }
                   meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  /api/v1/catalog/public/items:
+    get:
+      operationId: listPublicCatalogItems
+      summary: 'Anonymous browse of active catalog items for marketing and intake.'
+      x-gate: public
+      parameters:
+        -
+          name: tenant_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 'Tenant identifier.'
+        -
+          name: category
+          in: query
+          required: false
+          schema:
+            type: string
+          description: 'Category slug or ULID filter.'
+        -
+          name: market
+          in: query
+          required: false
+          schema:
+            type: string
+        -
+          $ref: '#/components/parameters/Limit'
+        -
+          $ref: '#/components/parameters/Cursor'
+      responses:
+        200:
+          description: 'List of active catalog items.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: array }
+                  meta: { $ref: '#/components/schemas/ListMeta' }
+        422:
+          $ref: '#/components/responses/ValidationFailed'
   /api/v1/catalog/quote:
     post:
       operationId: quoteCatalogPrices
@@ -2435,6 +2480,74 @@ paths:
                 properties:
                   data: { type: object, required: [id, object, status] }
                   meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+  '/api/v1/onboarding/documents/{id}/access-link':
+    get:
+      operationId: issueDocumentAccessLink
+      summary: 'Issue short-lived signed retrieval URL bound to document, tenant, and viewer.'
+      x-permission: 'onboarding:document:access'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: 'Signed URL issued.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, url, expires_in_seconds, mime, size, sha256] }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        404:
+          $ref: '#/components/responses/NotFound'
+  '/api/v1/onboarding/documents/{id}/content':
+    get:
+      operationId: streamDocumentContent
+      summary: 'Stream verified binary document content via signed link (no raw object key exposure).'
+      x-permission: 'onboarding:document:access'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+        -
+          name: expires
+          in: query
+          required: true
+          schema:
+            type: integer
+        -
+          name: viewer
+          in: query
+          required: true
+          schema:
+            type: string
+        -
+          name: sig
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'Binary stream with nosniff and sandbox CSP headers.'
+        403:
+          description: 'Signature invalid, expired, viewer mismatch, or document quarantined.'
+        409:
+          description: 'SHA-256 or magic-byte integrity mismatch.'
   /api/v1/onboarding/review/queue:
     get:
       operationId: listReviewQueue
@@ -2983,7 +3096,7 @@ paths:
   '/api/v1/pandit/assignments/{id}:complete':
     post:
       operationId: completePanditAssignment
-      summary: 'Complete a CONFIRMED assignment owned by the caller (completes the booking: ASSIGNED → IN_PROGRESS → COMPLETED).'
+      summary: 'Complete a CONFIRMED or IN_PROGRESS assignment owned by the caller (completes the booking).'
       x-gate: ownership
       x-scope: 'pandit:self'
       parameters:
@@ -3126,6 +3239,50 @@ paths:
                 $ref: '#/components/schemas/ErrorEnvelope'
         422:
           $ref: '#/components/responses/ValidationFailed'
+  '/api/v1/pandit/assignments/{id}:start':
+    post:
+      operationId: startPanditAssignment
+      summary: 'Start a CONFIRMED assignment owned by the caller (moves booking ASSIGNED → IN_PROGRESS).'
+      x-gate: ownership
+      x-scope: 'pandit:self'
+      parameters:
+        -
+          $ref: '#/components/parameters/TenantId'
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ulid'
+      responses:
+        200:
+          description: 'Assignment marked IN_PROGRESS.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - meta
+                properties:
+                  data: { type: object, required: [id, status], properties: { id: { $ref: '#/components/schemas/Ulid' }, status: { type: string, enum: [IN_PROGRESS] } } }
+                  meta: { type: object, required: [request_id], properties: { request_id: { type: string } } }
+        401:
+          $ref: '#/components/responses/Unauthenticated'
+        403:
+          $ref: '#/components/responses/AuthorizationDenied'
+        404:
+          description: 'PANDIT_ASSIGNMENT_NOT_FOUND — unknown or foreign assignment (or no own profile).'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        409:
+          description: "PANDIT_ASSIGNMENT_WRONG_STATE — the assignment is no longer CONFIRMED. PANDIT_BOOKING_WRONG_STATE — the booking's lifecycle state refuses starting service (nothing written)."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/v1/pandit/availability:
     get:
       operationId: listOwnPanditAvailability

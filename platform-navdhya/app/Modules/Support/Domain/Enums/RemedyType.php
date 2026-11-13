@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\Support\Domain\Enums;
+
+enum RemedyType: string
+{
+    case MONETARY_ORIGINAL_METHOD = 'MONETARY_ORIGINAL_METHOD';
+    case RESCHEDULE = 'RESCHEDULE';
+    case REPLACEMENT = 'REPLACEMENT';
+    case REPERFORMANCE = 'REPERFORMANCE';
+    case EXPLANATION_ONLY = 'EXPLANATION_ONLY';
+    case VOLUNTARY_CREDIT = 'VOLUNTARY_CREDIT';
+    case ESCALATED_DISCIPLINARY = 'ESCALATED_DISCIPLINARY';
+    case NO_FAULT_FOUND = 'NO_FAULT_FOUND';
+}
+

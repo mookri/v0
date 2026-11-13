@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\Support\Domain\Enums;
+
+enum CaseType: string
+{
+    case INFORMATION_REQUEST = 'INFORMATION_REQUEST';
+    case SERVICE_COMPLAINT = 'SERVICE_COMPLAINT';
+    case FINANCIAL_DISPUTE = 'FINANCIAL_DISPUTE';
+    case PROVIDER_DISPUTE = 'PROVIDER_DISPUTE';
+    case INSTITUTIONAL_DISPUTE = 'INSTITUTIONAL_DISPUTE';
+    case SAFETY_REPORT = 'SAFETY_REPORT';
+    case FORMAL_GRIEVANCE = 'FORMAL_GRIEVANCE';
+}
+

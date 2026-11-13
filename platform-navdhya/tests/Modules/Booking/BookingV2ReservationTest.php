@@ -118,22 +118,22 @@ final class BookingV2ReservationTest extends TenantIntegrationTestCase
         $createResponse = $this->postJson('/api/v2/booking/reservations', [
             'service_sku' => $sku,
             'scheduled_at' => CarbonImmutable::now()->addDays(4)->toIso8601String(),
-        ], $headers)->assertStatus(201);
+        ], array_merge($headers, ['Idempotency-Key' => (string) Str::uuid()]))->assertStatus(201);
 
         $bookingId = $createResponse->json('data.id');
 
         // Checkout booking to move to PENDING_PAYMENT
-        $this->postJson("/api/v2/booking/reservations/{$bookingId}/checkout", [], $headers)
+        $this->postJson("/api/v2/booking/reservations/{$bookingId}/checkout", [], array_merge($headers, ['Idempotency-Key' => (string) Str::uuid()]))
             ->assertOk();
 
         // 1. Confirm without If-Match header -> 412 precondition_required
-        $noHeaderResponse = $this->postJson("/api/v2/booking/reservations/{$bookingId}/confirm", [], $headers);
+        $noHeaderResponse = $this->postJson("/api/v2/booking/reservations/{$bookingId}/confirm", [], array_merge($headers, ['Idempotency-Key' => (string) Str::uuid()]));
         $noHeaderResponse->assertStatus(412)
             ->assertHeader('Content-Type', 'application/problem+json')
             ->assertJsonPath('code', 'precondition_required');
 
         // 2. Confirm with mismatched If-Match header -> 412 precondition_failed
-        $mismatchHeaders = array_merge($headers, ['If-Match' => 'W/"v99"']);
+        $mismatchHeaders = array_merge($headers, ['If-Match' => 'W/"v99"', 'Idempotency-Key' => (string) Str::uuid()]);
         $mismatchResponse = $this->postJson("/api/v2/booking/reservations/{$bookingId}/confirm", [], $mismatchHeaders);
         $mismatchResponse->assertStatus(412)
             ->assertHeader('Content-Type', 'application/problem+json')
@@ -141,7 +141,7 @@ final class BookingV2ReservationTest extends TenantIntegrationTestCase
 
         // 3. Confirm with valid matching If-Match header -> 200 OK
         // Note: checkout incremented version from 1 to 2
-        $validHeaders = array_merge($headers, ['If-Match' => 'W/"v2"']);
+        $validHeaders = array_merge($headers, ['If-Match' => 'W/"v2"', 'Idempotency-Key' => (string) Str::uuid()]);
         $confirmResponse = $this->postJson("/api/v2/booking/reservations/{$bookingId}/confirm", [], $validHeaders);
         $confirmResponse->assertOk()
             ->assertHeader('ETag', 'W/"v3"')
@@ -206,7 +206,7 @@ final class BookingV2ReservationTest extends TenantIntegrationTestCase
             ->assertJsonPath('code', 'precondition_required');
 
         // Matching If-Match -> 200
-        $validHeaders = array_merge($headers, ['If-Match' => 'W/"v2"']);
+        $validHeaders = array_merge($headers, ['If-Match' => 'W/"v2"', 'Idempotency-Key' => (string) Str::uuid()]);
         $cancelResponse = $this->postJson("/api/v2/booking/reservations/{$bookingId}/cancel", [
             'reason' => 'Schedule change',
         ], $validHeaders);
@@ -276,7 +276,7 @@ final class BookingV2ReservationTest extends TenantIntegrationTestCase
         $response = $this->postJson("/api/v2/booking/reservations/{$sourceId}/rebook", [
             'scheduled_at' => $newTime,
             'duration_minutes' => 120,
-        ], $headers);
+        ], array_merge($headers, ['Idempotency-Key' => (string) Str::uuid()]));
 
         $response->assertStatus(201)
             ->assertHeader('ETag', 'W/"v1"')
@@ -288,5 +288,78 @@ final class BookingV2ReservationTest extends TenantIntegrationTestCase
         $newBookingId = $response->json('data.id');
         $this->assertNotEmpty($newBookingId);
         $this->assertNotSame($sourceId, $newBookingId);
+    }
+
+    public function test_v2_mutations_fail_closed_400_when_idempotency_key_missing(): void
+    {
+        [$tenant, $user] = $this->customer();
+        $sku = 'puja_failclosed_' . Str::random(6);
+        $this->seedCatalogItem($tenant, $sku);
+        $headers = $this->tenantHeaders($tenant);
+
+        // 1. Reserve without Idempotency-Key -> 400
+        $this->postJson('/api/v2/booking/reservations', [
+            'service_sku' => $sku,
+            'scheduled_at' => CarbonImmutable::now()->addDays(4)->toIso8601String(),
+        ], $headers)
+            ->assertStatus(400)
+            ->assertHeader('Content-Type', 'application/problem+json')
+            ->assertJsonPath('code', 'idempotency_key_required');
+
+        $this->resolveContext($tenant);
+        $booking = Booking::factory()->create([
+            'tenant_id' => (string) $tenant->getKey(),
+            'user_id' => $user->id,
+            'service_sku' => $sku,
+            'status' => BookingLifecycle::STATUS_DRAFT,
+            'scheduled_at' => CarbonImmutable::now()->addDays(4)->toDateTimeString(),
+            'version' => 1,
+        ]);
+        $confirmed = Booking::factory()->create([
+            'tenant_id' => (string) $tenant->getKey(),
+            'user_id' => $user->id,
+            'service_sku' => $sku,
+            'status' => BookingLifecycle::STATUS_CONFIRMED,
+            'scheduled_at' => CarbonImmutable::now()->addDays(5)->toDateTimeString(),
+            'version' => 2,
+        ]);
+        $completed = Booking::factory()->create([
+            'tenant_id' => (string) $tenant->getKey(),
+            'user_id' => $user->id,
+            'service_sku' => $sku,
+            'status' => BookingLifecycle::STATUS_COMPLETED,
+            'scheduled_at' => CarbonImmutable::now()->subDays(2)->toDateTimeString(),
+            'version' => 3,
+        ]);
+        $this->clearContext();
+
+        // 2. Checkout without Idempotency-Key -> 400
+        $this->postJson("/api/v2/booking/reservations/{$booking->getKey()}/checkout", [], $headers)
+            ->assertStatus(400)
+            ->assertJsonPath('code', 'idempotency_key_required');
+
+        // 3. Confirm without Idempotency-Key (with If-Match present) -> 400
+        $this->postJson("/api/v2/booking/reservations/{$booking->getKey()}/confirm", [], array_merge($headers, ['If-Match' => 'W/"v1"']))
+            ->assertStatus(400)
+            ->assertJsonPath('code', 'idempotency_key_required');
+
+        // 4. Cancel without Idempotency-Key (with If-Match present) -> 400
+        $this->postJson("/api/v2/booking/reservations/{$confirmed->getKey()}/cancel", [], array_merge($headers, ['If-Match' => 'W/"v2"']))
+            ->assertStatus(400)
+            ->assertJsonPath('code', 'idempotency_key_required');
+
+        // 5. Reschedule without Idempotency-Key (with If-Match present) -> 400
+        $this->postJson("/api/v2/booking/reservations/{$confirmed->getKey()}/reschedule", [
+            'new_scheduled_at' => CarbonImmutable::now()->addDays(6)->toIso8601String(),
+        ], array_merge($headers, ['If-Match' => 'W/"v2"']))
+            ->assertStatus(400)
+            ->assertJsonPath('code', 'idempotency_key_required');
+
+        // 6. Rebook without Idempotency-Key -> 400
+        $this->postJson("/api/v2/booking/reservations/{$completed->getKey()}/rebook", [
+            'scheduled_at' => CarbonImmutable::now()->addDays(7)->toIso8601String(),
+        ], $headers)
+            ->assertStatus(400)
+            ->assertJsonPath('code', 'idempotency_key_required');
     }
 }

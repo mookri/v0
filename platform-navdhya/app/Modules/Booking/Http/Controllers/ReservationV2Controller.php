@@ -100,6 +100,24 @@ final class ReservationV2Controller
     }
 
     /**
+     * Fail closed (T-AP02-01) when a state-changing endpoint is invoked without an explicit Idempotency-Key.
+     */
+    private function requireIdempotencyKey(Request $request): string|JsonResponse
+    {
+        $idempotencyKey = trim((string) $request->header('Idempotency-Key', ''));
+        if ($idempotencyKey === '') {
+            return BookingProblemResponder::create(
+                400,
+                'idempotency_key_required',
+                'Idempotency-Key Required',
+                'Mutating reservation requests require a non-empty Idempotency-Key header.'
+            );
+        }
+
+        return $idempotencyKey;
+    }
+
+    /**
      * POST /api/v2/booking/reservations
      */
     public function store(Request $request): JsonResponse
@@ -131,7 +149,10 @@ final class ReservationV2Controller
             );
         }
 
-        $idempotencyKey = trim((string) $request->header('Idempotency-Key', (string) Str::uuid()));
+        $idempotencyKey = $this->requireIdempotencyKey($request);
+        if ($idempotencyKey instanceof JsonResponse) {
+            return $idempotencyKey;
+        }
         $validated = $validator->validated();
 
         try {
@@ -163,6 +184,13 @@ final class ReservationV2Controller
                 409,
                 'idempotency_conflict',
                 'Idempotency Conflict',
+                $e->getMessage()
+            );
+        } catch (BookingConflictException $e) {
+            return BookingProblemResponder::create(
+                409,
+                $e->errorCode ?: 'conflict',
+                'Conflict',
                 $e->getMessage()
             );
         } catch (\InvalidArgumentException $e) {
@@ -333,7 +361,10 @@ final class ReservationV2Controller
             );
         }
 
-        $idempotencyKey = trim((string) $request->header('Idempotency-Key', (string) Str::uuid()));
+        $idempotencyKey = $this->requireIdempotencyKey($request);
+        if ($idempotencyKey instanceof JsonResponse) {
+            return $idempotencyKey;
+        }
 
         try {
             $response = $this->deduplicator->execute(
@@ -438,7 +469,10 @@ final class ReservationV2Controller
             );
         }
 
-        $idempotencyKey = trim((string) $request->header('Idempotency-Key', (string) Str::uuid()));
+        $idempotencyKey = $this->requireIdempotencyKey($request);
+        if ($idempotencyKey instanceof JsonResponse) {
+            return $idempotencyKey;
+        }
 
         try {
             $response = $this->deduplicator->execute(
@@ -571,7 +605,10 @@ final class ReservationV2Controller
             );
         }
 
-        $idempotencyKey = trim((string) $request->header('Idempotency-Key', (string) Str::uuid()));
+        $idempotencyKey = $this->requireIdempotencyKey($request);
+        if ($idempotencyKey instanceof JsonResponse) {
+            return $idempotencyKey;
+        }
         $reason = $request->input('reason');
 
         try {
@@ -745,7 +782,10 @@ final class ReservationV2Controller
 
         $newStart = CarbonImmutable::parse((string) $request->input('new_scheduled_at'))->utc();
         $reason = $request->input('reason');
-        $idempotencyKey = trim((string) $request->header('Idempotency-Key', (string) Str::uuid()));
+        $idempotencyKey = $this->requireIdempotencyKey($request);
+        if ($idempotencyKey instanceof JsonResponse) {
+            return $idempotencyKey;
+        }
 
         try {
             $response = $this->deduplicator->execute(
@@ -851,7 +891,10 @@ final class ReservationV2Controller
             );
         }
 
-        $idempotencyKey = trim((string) $request->header('Idempotency-Key', (string) Str::uuid()));
+        $idempotencyKey = $this->requireIdempotencyKey($request);
+        if ($idempotencyKey instanceof JsonResponse) {
+            return $idempotencyKey;
+        }
         $validated = $validator->validated();
 
         try {
@@ -893,6 +936,13 @@ final class ReservationV2Controller
                 'Idempotency Conflict',
                 $e->getMessage()
             );
+        } catch (BookingConflictException $e) {
+            return BookingProblemResponder::create(
+                409,
+                $e->errorCode ?: 'conflict',
+                'Conflict',
+                $e->getMessage()
+            );
         } catch (\InvalidArgumentException $e) {
             return BookingProblemResponder::create(
                 422,
@@ -919,7 +969,7 @@ final class ReservationV2Controller
         }
         [$tenantId, $user] = $resolved;
 
-        $booking = Booking::withoutGlobalScopes()
+        $booking = Booking::query()
             ->where('tenant_id', $tenantId)
             ->where('id', $bookingId)
             ->first();

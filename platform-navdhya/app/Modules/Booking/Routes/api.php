@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Booking\Http\Controllers\BookingArrivalController;
 use App\Modules\Booking\Http\Controllers\BookingReviewController;
 use App\Modules\Booking\Http\Controllers\InstantSearchController;
 use App\Modules\Booking\Http\Controllers\ReservationController;
@@ -49,3 +50,12 @@ Route::post('reservations/{id}/reviews', [BookingReviewController::class, 'store
     ->name('reviews.store');
 Route::delete('reviews/{id}', [BookingReviewController::class, 'destroy'])
     ->name('reviews.destroy');
+
+// Arrival evidence & human-confirmed NO_SHOW (TS-01 / TS-02, ADR-0060).
+Route::post('reservations/{id}/arrival', [BookingArrivalController::class, 'recordArrival'])
+    ->name('reservations.arrival');
+Route::post('reservations/{id}/confirm-arrival', [BookingArrivalController::class, 'corroborateArrival'])
+    ->name('reservations.confirm-arrival');
+Route::post('admin/reservations/{id}:confirm-no-show', [BookingArrivalController::class, 'confirmNoShow'])
+    ->middleware('capability:booking:noshow:confirm')
+    ->name('admin.reservations.confirm-no-show');
